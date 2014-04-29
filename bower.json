@@ -1,0 +1,32 @@
+{
+  "name": "modelingframework",
+  "version": "0.0.1",
+  "authors": [
+    "Stephan Erdtmann <erdtmann@dbis.rwth-aachen.de>"
+  ],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "coweb-jsoe": "https://github.com/opencoweb/coweb-jsoe/raw/master/dist/jsoe/coweb-jsoe-0.8.3.tar",
+    "iwc": "http://dbis.rwth-aachen.de/gadgets/iwc/lib/iwc.js",
+    "jquery": "~2.0.3",
+    "jquery-ui": "~1.10.3",
+    "jsPlumb": "git://github.com/sporritt/jsPlumb.git#~1.5.3",
+    "jQuery-contextMenu": "git://github.com/medialize/jQuery-contextMenu.git",
+    "requirejs": "~2.1.8",
+    "requirejs-i18n": "~2.0.4",
+    "lodash": "~2.4.1",
+    "requirejs-text": "~2.0.10",
+    "requirejs-promise": "*",
+    "FileToDataURI": "https://github.com/Aymkdn/FileToDataURI/blob/master/FileToDataURI.swf",
+    "swfobject": "*",
+    "jquery-mousewheel": "~3.1.9",
+    "jszip": "~2.0.0"
+  }
+}

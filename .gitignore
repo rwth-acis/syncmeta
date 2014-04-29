@@ -1,0 +1,6 @@
+.idea/
+node_modules/
+components/
+html/
+doc/
+.dbis.secret.json
