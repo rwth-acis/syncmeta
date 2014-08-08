@@ -5,8 +5,9 @@
     * Use *npm* to install *bower* and *grunt*: ```npm install -g bower grunt```
 2. Install development dependencies: ```npm install```
 3. Install dependencies: ```bower install```
-4. Change *baseUrl* in *Gruntfile.js* to the deployment url
-5. Run ```grunt build``` to build the widgets.
+4. Copy *.localGruntConfig.json.sample* and name it *.localGruntConfig.json*
+5. Change *baseUrl* in *.localGruntConfig.json* to the deployment url
+6. Run ```grunt build``` to build the widgets.
 
 ## Library Documentation
 ### Namespaces
