@@ -13,7 +13,8 @@ define([
     'operations/non_ot/EntitySelectOperation',
     'canvas_widget/AbstractEntity',
     'canvas_widget/SingleValueAttribute',
-    'text!templates/canvas_widget/abstract_node.html'
+    'text!templates/canvas_widget/abstract_node.html',
+    'jquery.transformable'
 ],/** @lends AbstractNode */function(require,$,jsPlumb,_,Util,IWCOT,NodeDeleteOperation,NodeMoveOperation,NodeMoveZOperation,NodeResizeOperation,ActivityOperation,EntitySelectOperation,AbstractEntity,SingleValueAttribute,abstractNodeHtml) {
 
     AbstractNode.prototype = new AbstractEntity();
@@ -989,10 +990,11 @@ define([
             .draggable({
                 containment: "parent",
                 start: function(ev,ui){
+                    console.log("dragStart");
                     originalPos.top = ui.position.top;
                     originalPos.left = ui.position.left;
-                    ui.position.top = 0;
-                    ui.position.left = 0;
+                    //ui.position.top = 0;
+                    //ui.position.left = 0;
                     _canvas.select(that);
                     _$node.css({opacity:0.5});
                     _$node.resizable("disable");
@@ -1000,9 +1002,8 @@ define([
                     _$node.draggable("option","grid",ev.ctrlKey ? [20,20] : '');
                 },
                 drag: function(ev,ui){
-
-                    ui.position.left = Math.round(ui.position.left  / _canvas.getZoom());
-                    ui.position.top = Math.round(ui.position.top / _canvas.getZoom());
+                    // ui.position.left = Math.round(ui.position.left  / _canvas.getZoom());
+                    // ui.position.top = Math.round(ui.position.top / _canvas.getZoom());
 
                     if(drag) repaint();
                     drag = true;
@@ -1012,9 +1013,9 @@ define([
                     _$node.css({opacity:''});
                     _$node.resizable("enable");
                     var id = _$node.attr("id");
-                    _$node.css({top: originalPos.top / _canvas.getZoom(), left: originalPos.left / _canvas.getZoom()});
-                    var offsetX = Math.round(ui.position.left - originalPos.left / _canvas.getZoom());
-                    var offsetY = Math.round(ui.position.top - originalPos.top / _canvas.getZoom());
+                    //_$node.css({top: originalPos.top / _canvas.getZoom(), left: originalPos.left / _canvas.getZoom()});
+                    var offsetX = Math.round((ui.position.left - originalPos.left) / _canvas.getZoom());
+                    var offsetY = Math.round((ui.position.top - originalPos.top) / _canvas.getZoom());
                     var operation = new NodeMoveOperation(id,offsetX,offsetY);
                     propagateNodeMoveOperation(operation);
                     //that.canvas.callListeners(CONFIG.CANVAS.LISTENERS.NODEMOVE,id,offsetX,offsetY);
@@ -1026,6 +1027,12 @@ define([
 
             //Enable Node Rightclick menu
             .contextMenu(true)
+
+            .transformable({
+                rotatable: false,
+                skewable: false,
+                scalable: false
+            })
 
             .find("input").prop("disabled",false).css('pointerEvents','');
 
@@ -1048,6 +1055,8 @@ define([
 
             //Disable Node Rightclick Menu
             .contextMenu(false)
+
+            .transformable('destroy')
 
             .find("input").prop("disabled",true).css('pointerEvents','none');
         };

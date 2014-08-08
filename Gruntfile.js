@@ -4,11 +4,12 @@ module.exports = function(grunt) {
 
     // Project configuration.
     //noinspection JSUnusedGlobalSymbols
+    var localConfig = grunt.file.readJSON('.localGruntConfig.json')
     grunt.initConfig({
 
         pkg: grunt.file.readJSON('package.json'),
 
-        baseUrl: "http://modelingframework.local",
+        baseUrl: localConfig.baseUrl,
         roleSandboxUrl: "http://127.0.0.1:8073",
 
         bowerdir: grunt.file.readJSON('.bowerrc')['directory'],
@@ -30,6 +31,7 @@ module.exports = function(grunt) {
                     {cwd: '<%= bowerdir %>/coweb-jsoe/', expand: true, src: ['org/requirejs/i18n.js'], dest: '<%= distdir %>/js/lib/vendor/'},
                     {src: '<%= bowerdir %>/iwc/index.js', dest: '<%= distdir %>/js/lib/vendor/iwc.js'},
                     {src: '<%= bowerdir %>/jquery/jquery.js', dest: '<%= distdir %>/js/lib/vendor/jquery.js'},
+                    {src: '<%= bowerdir %>/jquery-migrate/jquery-migrate.js', dest: '<%= distdir %>/js/lib/vendor/jquery-migrate.js'},
                     {src: '<%= bowerdir %>/jquery-ui/ui/jquery-ui.js', dest: '<%= distdir %>/js/lib/vendor/jquery-ui.js'},
                     {src: '<%= bowerdir %>/jquery-ui/themes/base/jquery-ui.css', dest: '<%= distdir %>/css/vendor/jquery-ui.css'},
                     {cwd: '<%= bowerdir %>/jquery-ui/themes/base', expand: true, src: ['images/*'], dest: '<%= distdir %>/css/vendor/'},

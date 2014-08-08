@@ -9,12 +9,21 @@ var require = {
             exports: "$",
             deps: ["jquery","jquery.contextMenu","jquery.autoGrowInput","jquery.mousewheel"]
         },
+        jquerymigrate: {
+            deps: ["jquery"]
+        },
         jsplumb: {
             deps: ["jqueryui"],
             exports: "jsPlumb"
         },
         'jquery.contextMenu': {
             deps: ["jquery"]
+        },
+        'jquery.transform': {
+            deps: ["jquery"]
+        },
+        'jquery.transformable': {
+            deps: ["jquery", "jquery.transform", "jqueryui", "jquerymigrate"]
         },
         swfobject: {
             exports: "swfobject"
@@ -25,12 +34,15 @@ var require = {
     },
     paths: {
         jquery: "lib/vendor/jquery",
+        jquerymigrate: "lib/vendor/jquery-migrate",
         jqueryui: "lib/vendor/jquery-ui",
         lodash: "lib/vendor/lodash",
         jsplumb: "lib/vendor/jquery.jsPlumb",
         'jquery.contextMenu': "lib/vendor/jquery.contextMenu",
         'jquery.autoGrowInput': 'lib/jquery/jquery.autoGrowInput',
         'jquery.mousewheel': 'lib/vendor/jquery.mousewheel',
+        'jquery.transform': 'lib/jquery.transform',
+        'jquery.transformable': 'lib/jquery.transformable',
         org: "lib/vendor/org",
         coweb: "lib/vendor/coweb",
         ot: "lib/vendor/coweb/jsoe/OTEngine",
