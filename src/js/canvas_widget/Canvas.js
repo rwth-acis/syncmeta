@@ -15,7 +15,8 @@ define([
     'canvas_widget/ModelAttributesNode',
     'canvas_widget/EntityManager',
     'canvas_widget/AbstractCanvas',
-    'canvas_widget/MoveTool'
+    'canvas_widget/MoveTool',
+    'jquery.transformable'
 ],/** @lends Canvas */function($,jsPlumb,IWCOT,Util,NodeAddOperation,EdgeAddOperation,ToolSelectOperation,EntitySelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportImageOperation,AbstractEntity,ModelAttributesNode,EntityManager,AbstractCanvas,MoveTool) {
 
     Canvas.prototype = new AbstractCanvas();
@@ -336,9 +337,14 @@ define([
                     _$node.draggable("option","containment",[-_canvasWidth+$canvasFrame.width(),-_canvasHeight+$canvasFrame.height(),0,0]);
                 },
                 drag: function(event, ui) {
-                    ui.position.left = Math.round(ui.position.left  / _zoom);
-                    ui.position.top = Math.round(ui.position.top / _zoom);
+                    //ui.position.left = Math.round(ui.position.left  / _zoom);
+                    //ui.position.top = Math.round(ui.position.top / _zoom);
                 }
+            });
+            _$node.transformable({
+                rotatable: false,
+                skewable: false,
+                scalable: false
             });
             _$node.mousewheel(function(event){
                 that.setZoom(that.getZoom()+0.1*event.deltaY);
@@ -424,6 +430,12 @@ define([
             //Enable Canvas Dragging
             _$node.draggable("enable");
 
+            _$node.transformable({
+                rotatable: false,
+                skewable: false,
+                scalable: false
+            });
+
             //Define Node Rightclick Menu
             $.contextMenu({
                 selector: '#' + _$node.attr('id'),
@@ -454,6 +466,8 @@ define([
 
             //Disable Canvas Dragging
             _$node.draggable( "disable" );
+
+            _$node.transformable('destroy');
 
             //Unbind Node and Edge Events
             this.select(null);
@@ -496,11 +510,16 @@ define([
                 return;
             }
             _zoom = zoom;
-            var p = [ "-webkit-", "-moz-", "-ms-", "-o-", "" ],
-                s = "scale(" + zoom + ")";
+            // var p = [ "-webkit-", "-moz-", "-ms-", "-o-", "" ],
+            //     s = "scale(" + zoom + ")";
 
-            for (var i = 0; i < p.length; i++)
-                _$node.css(p[i] + "transform", s);
+            // for (var i = 0; i < p.length; i++)
+            //     _$node.css(p[i] + "transform", s);
+
+            //Used by jquery.transformable to make dragging of the canvas
+            //work correctly
+            _$node.setTransform('scalex', zoom);
+            _$node.setTransform('scaley', zoom);
 
             jsPlumb.setZoom(zoom);
         };
