@@ -65,6 +65,8 @@ define([
          * @private
          */
         var _iwc = new IIWC.Client(componentName);
+        window._iwc_instance_ = _iwc;
+
 
         /**
          * Encapsulates the passed message information into the Android Intent-like format required by the iwc client
@@ -230,6 +232,7 @@ define([
         if(BUFFER_ENABLED) setInterval(sendBufferedMessages,INTERVAL_SEND);
 
         return {
+          _iwc: _iwc,
             /**
              * Connect the iwc client
              * @memberof IWCWrapper#
@@ -332,6 +335,14 @@ define([
      */
     var instance = null;
 
+    IWC.hasInstance = function(){
+      if(instance === null){
+        return false;
+      } else {
+        return instance;
+      }
+    };
+  
     /**
      * Get instance of IWCOTWrapper
      * @param {string} componentName Name of component (widget) using the wrapper

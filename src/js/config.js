@@ -54,6 +54,7 @@ var require = {
         promise: "lib/vendor/requirejs-promise",
         templates: "../templates",
         mfexport: "lib/MFExport",
+        ildeApi: "lib/ildeApi",
         swfobject: "lib/vendor/swfobject/swfobject",
         jszip: "lib/vendor/jszip"
     }

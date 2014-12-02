@@ -341,11 +341,13 @@ define([
                     //ui.position.top = Math.round(ui.position.top / _zoom);
                 }
             });
+            if(_$node.transformable != null){ // since recently, this method doesnt exist anymore.  BUGFIX
             _$node.transformable({
                 rotatable: false,
                 skewable: false,
                 scalable: false
             });
+            }
             _$node.mousewheel(function(event){
                 that.setZoom(that.getZoom()+0.1*event.deltaY);
                 event.preventDefault();

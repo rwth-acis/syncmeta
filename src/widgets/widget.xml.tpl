@@ -59,8 +59,9 @@
         })();*/
     </script>
     <script src="<%= grunt.config('baseUrl') %>/js/config.js"></script>
-    <script src="<%= grunt.config('baseUrl') %>/js/lib/vendor/require.js"></script>
+    <script src="<%= grunt.config('baseUrl') %>/js/lib/vendor/require.js"></script>    
     <%= partial(bodyPartial,null) %>
+    <script src="<%= grunt.config('baseUrl') %>/js/shared.js"></script>    
     ]]>
   </Content>
 </Module>

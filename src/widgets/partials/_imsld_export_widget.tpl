@@ -750,7 +750,388 @@ requirejs([
             });
         });
     });
-
-    });
+    window.createImsldZip = function(f){
+        MFExport.getJSON(function(data,title){
+            createZIP(data).then(function(zip){
+                if(zip){
+                    var blob = zip.generate({type:"blob"});
+                    console.log("uitdarne dutirane dturinadet runiaeuia e-uiae---------- udiatren d-- ")
+                    f(blob);
+                }else{
+                  console.log("for some reason you were not able to create the fucking zip");
+                  var blob = new Blob([],{type:'data:application/zip;base64,'});
+                  f(blob);
+                }
+            });
+        });
+    };
+  });
 </script>
-<button id="imsld">Download ZIP</button>
+<script type="application/javascript">
+    requirejs(['jqueryui','mfexport','ildeApi', 'lodash'], function($,MFExport,ILDE,_){
+        $(function(){
+          var ilde;
+          
+  				var space = new openapp.oo.Resource(openapp.param.space());
+          var context;
+          var existing_ilde_id;
+          var existing_ilde_title;
+          var existing_ilde_resource;
+          openapp.resource.get(openapp.param.space(), (function(s) {
+				    context = s;
+          }));
+          function createResource(ildeid, ildetitle){
+            var resource = getIldeResource();
+            var currentTime = new Date() ;				
+            var documentText = {"ilde":ildeid,"title":ildetitle,"resource":resource};
+            space.create({
+              relation: openapp.ns.role + "data",
+              type: "my:ns:documentText",
+              representation: documentText,
+              callback: function(sub){
+                // Success notification 
+                saySuccess();
+              }
+            });
+          };
+          function getResource(){
+            space.getSubResources({
+              relation: openapp.ns.role + "data",
+              type: "my:ns:documentText",
+              onEach: function(documentText) {
+                documentText.getRepresentation("rdfjson",function(r){
+                  if(r.ilde != null){
+                    existing_ilde_id = r.ilde;
+                    
+                    var downloadButton = $("#downloadIldeButton");
+                    if(downloadButton.classList != null){
+                      downloadButton.classList.remove("nodisplay");
+                    }
+                    existing_ilde_id = r.ilde;
+                    existing_ilde_title = r.title;
+                    existing_ilde_resource = r.resource;
+                    lockIldeResource(r.resource);
+                    whenIldeExists();
+                  }
+                });
+              }
+            });
+			    };
+          // if there is an existing ildeid, find it.
+          getResource();
+          function whenIldeExists(){
+            $("#syncIldeDiv").removeClass("nodisplay");
+            $("#createIldeDiv").addClass("nodisplay");
+            var resource = getIldeResource();
+            var url;
+            if (resource === ""){
+              url = "http://ilde.upf.edu/pg/lds/vieweditor/"+existing_ilde_id;
+            } else {
+              url = "http://ilde.upf.edu/"+resource+"/pg/lds/vieweditor/"+existing_ilde_id;              
+            }
+            $("#ildeLink").attr("href",url);
+            $("#ildeLink").text(url);
+          }
+          function deleteAllResources(){
+            //ilde.deleteLdsById(existing_ilde_id);
+            $("#removeIldeButton").addClass("loading_button");
+            var mlist = openapp.resource.context(context).sub(openapp.ns.role + "data").type("my:ns:documentText").list();
+            for(var i=0;i<mlist.length;i++){
+              openapp.resource.del(mlist[i].uri);            
+            }
+            // otherwise delete existing_ilde_id and existing_ilde_title
+            setTimeout(function(){window.location.reload();},5000);
+            //window.location.reload()
+          }
+          function saySuccess(){
+            $("#success_notification").removeClass("nodisplay");
+            setTimeout(function(){
+              $("#success_notification").addClass("nodisplay");
+            },1500);
+            gadgets.window.adjustHeight()
+          }
+          function sayError(error_message){
+            console.log("idle error: stuff happened")
+            var error_div = $(".error_notification");
+            error_div.removeClass("nodisplay");
+            error_div.text(error_message);
+            setTimeout(function(){
+              error_div.addClass("nodisplay");
+            },3000);
+            gadgets.window.adjustHeight()
+          }
+          function applyOnLogin(aOnLogin){
+              if(ilde == null){
+                $("#ilde_upload_form").addClass("nodisplay");
+                $("#ilde_login_form").removeClass("nodisplay");
+                gadgets.window.adjustHeight();               
+                $("#ilde_login_form").submit(function(event){
+                  var username = this.querySelector("[name=username]").value;
+                  var password = this.querySelector("[name=password]").value;
+                  var resource = this.querySelector("[name=resource]").value;
+                  ilde = new ILDE(username, password, getIldeResource());
+                  ilde.onLoginSuccess(function(){
+                    lockIldeResource(resource);
+                    $("#ilde_login_form").addClass("nodisplay");
+                    $("#ilde_upload_form").removeClass("nodisplay");
+                    aOnLogin()
+                    gadgets.window.adjustHeight()
+                  });
+                  ilde.onLoginFail(function(){
+                    sayError("Please check your login credentils and installation URL!");
+                    ilde = null;
+                  });
+                  event.preventDefault();
+                });
+              } else {
+                aOnLogin();
+                event.preventDefault();
+              }
+          }
+          
+          function lockIldeResource(res_s){
+            if (res_s == null){
+              sayError("This is not a valid installation URL!");
+              return false;
+            }
+            var ress = res_s.split("/");
+            var resource;
+            if (ress.length > 1){
+              resource = ress[3];
+              if (resource === "pg"){
+                resource = "";
+              }
+            } else {
+              resource = ress[0];
+            }
+              
+            $("#ildeResource").val("http://ilde.upf.edu/"+resource);
+            $("#ildeResource").addClass("inputreadonly");
+            $("#ildeResource").attr("readonly","true");
+            return true;
+          }
+          
+          function getIldeResource(){
+            var res = $("#ildeResource").val();
+            var eles = res.split("/");
+            if (eles[3]!=null){
+              return eles[3];
+            }else{
+              return "undefined";
+            }
+          }
+          // push to ilde
+          function syncButtonEvent(){
+            applyOnLogin(function(){
+              MFExport.getJSON(function(design,title){
+                if(existing_ilde_title != null){
+                  title = existing_ilde_title;
+                }
+                window.createImsldZip(function(zip){
+                  ilde.replaceLds(existing_ilde_id,design, zip, function(){
+                    console.log("ILDE design was replaced.");
+                    saySuccess();
+                  });   
+                });
+              });
+            });
+          }
+          function createButtonEvent(){
+            var eles = $("#existingIldeUrl")[0].value.split("/");
+            var goback;
+            if(eles[eles.length-1] === ""){
+              goback = 2;
+            } else {
+              goback = 1;
+            }
+            var id = parseInt(eles[eles.length-goback]);
+            if(isNaN(id)){
+              if($("#existingIldeUrl")[0].value.length > 0){
+                sayError("Please provide a valid url!");
+                return ;
+              }
+              applyOnLogin(function(){
+                MFExport.getJSON(function(design,title){
+                  // create new ilde design
+                  window.createImsldZip(function(blob){
+                    ilde.newLds(design,blob,null,function(result){
+                      existing_ilde_id = result[0].querySelector("id").textContent;
+                      existing_ilde_title = title;
+                      createResource(existing_ilde_id, title)
+                      whenIldeExists() 
+                    });
+                  });
+                });
+              })
+            } else {
+              var resource = eles[3];
+              if (resource === "pg"){
+                resource = "";
+              }
+              if(lockIldeResource(resource)){
+                applyOnLogin(function(){
+                  ilde.getLdsDataById(id,function(lds_model){
+                    window.createImsldZip(function(blob){
+                      ilde.newLds(lds_model,blob,id,function(result){
+                        existing_ilde_id = result[0].querySelector("id").textContent;
+                        createResource(existing_ilde_id, "")
+                        importFromIlde(existing_ilde_id, lds_model);                
+                      })
+                    });
+                  });
+                })
+              }
+            }
+          }
+          $("#createIldeButton").click(createButtonEvent);
+          $("#syncIldeButton").click(syncButtonEvent);
+          $("#removeIldeButton").click(deleteAllResources);
+          function importFromIlde(iid,lds_model){            
+              function getData(type){
+                  var spaceUri = openapp.param.space(),
+                      listOfDataUris = [],
+                      promises = [],
+                      mainDeferred = $.Deferred(),
+                      deferred = $.Deferred();
+
+                  openapp.resource.get(spaceUri,(function(deferred){
+                      return function(space){
+
+                          var resourceUri, resourceObj, values;
+                          for(resourceUri in space.data){
+                              if(space.data.hasOwnProperty(resourceUri)){
+                                  resourceObj = space.data[resourceUri];
+                                  if(resourceObj['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] &&
+                                          _.isArray(resourceObj['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'])){
+
+                                      values = _.map(resourceObj['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'],function(e){
+                                          return e.value;
+                                      });
+
+                                      if(_.contains(values,"http://purl.org/role/terms/Data") && _.contains(values,type)){
+                                          listOfDataUris.push(resourceUri);
+                                      }
+
+                                  }
+
+                              }
+                          }
+                          deferred.resolve();
+                      };
+
+                  })(deferred));
+                  promises.push(deferred.promise());
+
+                  $.when.apply($,promises).then(function(){
+                      mainDeferred.resolve(listOfDataUris);
+                  });
+
+                  return mainDeferred.promise();
+              };
+              getData(CONFIG.NS.MY.MODEL).then(function(modelUris){
+                    if(modelUris.length > 0){
+                        _.map(modelUris,function(uri){
+                            openapp.resource.del(uri);
+                        });
+                    }
+                    space.create({
+                      relation: openapp.ns.role + "data",
+                      type: CONFIG.NS.MY.MODEL,
+                      representation: lds_model,
+                      callback: window._reloadThisFuckingInstance
+                    });
+                });
+
+          };
+          gadgets.window.adjustHeight()
+        });
+    });
+
+</script> 
+<style>
+    /*noinspection CssUnknownTarget,CssUnusedSymbol*/
+    .loading_button {
+        background-image: url('<%= grunt.config('baseUrl') %>/img/loading_small.gif');
+        background-repeat: no-repeat;
+        background-position: right center;
+        padding-right: 20px;
+    }
+    .nodisplay {
+        display: none; 
+    }
+    .inputreadonly {
+      background: grey;
+    }
+    #ilde_login_form * {
+        font-size: 12px;
+    }
+    #ilde_upload_form * {
+      font-size: 12px;
+    }
+    .seperating_box {
+        border: 1px solid;
+        border-radius: 7px; 
+        margin: 18px 7px 7px 7px;
+        padding: 7px 7px 7px 7px;
+        position: relative;
+    }
+    .seperating_box > h5{
+        font-weight: normal;
+        font-style: italic;
+        position: absolute;
+        top: -36px;
+        left: 4px;
+    }
+</style>
+<div class="seperating_box">
+  <h5>Download IMSLD</h5>  
+  <button id="imsld">Download ZIP</button>
+</div>
+<div class="seperating_box">
+  <h5>Integrated Learning Design Environment (ILDE)</h5>
+  <form id="ilde_login_form" class="nodisplay">
+    <div>Please provide your ILDE credentials to use ILDE features. 
+    There are several installations of ILDE. Please provide the url of the homepage of the installation that you want to use (e.g. http://ilde.upf.edu/agora)
+    </div>
+    <table>
+      <tr>
+        <td> Installation: </td>
+        <td> <input id="ildeResource" name="resource" type="text" size="29" value="http://ilde.upf.edu/" /> </td>
+      </tr>
+      <tr>
+        <td> Username: </td>
+        <td> <input name="username" type="text" size="29" /> </td>
+      </tr>
+      <tr>
+        <td> Password: </td>
+        <td> <input name="password" type="password" size="29" /> </td>
+      </tr>
+    </table>
+    <input type="submit" value="Login"/>
+    <span class="error_notification nodisplay" style="color:red"> </span>
+  </form>
+  <div id="ilde_upload_form" >
+    <div id="createIldeDiv" class=""> 
+      <div>
+      This learning design can be synchronized with ILDE. 
+      If you want to synchronize it with an existing ILDE design, 
+      please provide the URL below. Otherwise just click `Start ILDE Sync!'
+      </div> <br>
+      <div>
+        URL of existing design (optional): <input id="existingIldeUrl" type="text" value="" size="40" />
+      </div><br />
+      <input id="createIldeButton" type="submit" value="Start ILDE Sync!">
+    </div>
+    <div id="syncIldeDiv" class="nodisplay">
+      <div> This design is now available also on ILDE: <a id="ildeLink" href="" target="_blank"></a></div><br>
+      <div> Click to push your changes: </div>
+      <input id="syncIldeButton" type="submit" value="Push to ILDE">
+      <input id="removeIldeButton"  type="submit" value="Unlink from ILDE">
+      <span id="success_notification" class="nodisplay" style="color:green"> Success! </span>
+    </div>
+    <span class="error_notification nodisplay" style="color:red"> </span>
+  </div>
+</div>
+
+
+  

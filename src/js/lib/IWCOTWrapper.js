@@ -167,6 +167,7 @@ define([
          * @private
          */
         var _iwc = new IWC.Client(componentName);
+        window._iwc_instance_ = _iwc;
 
         /**
          * OT client
@@ -1052,7 +1053,14 @@ define([
     var instance = null;
 
     var instanceRequested = false;
-
+  
+    IWC.hasInstance = function(){
+      if(instance === null){
+        return false;
+      } else {
+        return instance;
+      }
+    };
     /**
      * Get instance of IWCOTWrapper
      * @param {string} componentName Name of component (widget) using the wrapper

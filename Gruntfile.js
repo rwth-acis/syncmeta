@@ -219,8 +219,8 @@ module.exports = function(grunt) {
                         meta: {
                             title: "IMS LD Export",
                             description: "",
-                            width: "120",
-                            height: "60"
+                            width: "320",
+                            height: "220"
                         },
                         bodyPartial: '_imsld_export_widget.tpl'
                     }
@@ -319,7 +319,7 @@ module.exports = function(grunt) {
     // plugin's task(s), then test the result.
     grunt.registerTask('build', ['clean','requirejs','copy:lib','copy:main','buildwidgets']);
     grunt.registerTask('deploy', 'Deploy to dbis.rwth-aachen.de', function(){
-        grunt.config.set('baseUrl', "http://dbis.rwth-aachen.de/~<%= sshconfig.dbis.username %>/syncmeta");
+        /*grunt.config.set('baseUrl', "http://dbis.rwth-aachen.de/~<%= sshconfig.dbis.username %>/syncmeta");*/
         grunt.config.set('roleSandboxUrl', "http://role-sandbox.eu");
         grunt.task.run(['clean','requirejs','copy:lib','copy:main','buildwidgets'/*,'sftp'*/]);
     });
