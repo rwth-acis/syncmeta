@@ -220,7 +220,7 @@ module.exports = function(grunt) {
                             title: "IMS LD Export",
                             description: "",
                             width: "320",
-                            height: "220"
+                            height: "310"
                         },
                         bodyPartial: '_imsld_export_widget.tpl'
                     }
