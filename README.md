@@ -22,7 +22,7 @@ See SyncMeta in action in [Role-SDK](http://role-sandbox.eu/spaces/syncmeta).
   * [Export widget](https://rwth-acis.github.io/syncmeta/html/export.xml) Export the design to JSON.
   * [IMSLD Export widget](https://rwth-acis.github.io/syncmeta/html/imsld_export.xml) Export the design as ZIP (in the IMSLD format) or link the design to [ILDE](http://ilde.upf.edu/)
   * [Instancelist widget](https://rwth-acis.github.io/syncmeta/html/instances.xml) List all generated instances.
-  * [Generate Instance widget](https://rwth-acis.github.io/syncmeta/html/instances.xml) Generate a new SyncMeta instance.
+  * [Generate Instance widget](https://rwth-acis.github.io/syncmeta/html/generated_instances.xml) Generate a new SyncMeta instance.
   
 ### Deploy
 In order to deploy SyncMeta to [http://role-sandbox.eu/spaces/syncmeta](http://role-sandbox.eu/spaces/syncmeta), 
@@ -34,6 +34,17 @@ you have to push your latest changes to the `gh-pages` github branch.
 ces/syncmeta), 
 you have to push your latest changes to the `gh-pages` github branch. 
 (See [github pages](https://pages.github.com/) for explanation)
+
+[1]: http://dbis.rwth-aachen.de/cms/research/ACIS/SyncMeta
+[2]: http://nodejs.org/
+
+ces/syncmeta), 
+you have to push your latest changes to the `gh-pages` github branch. 
+(See [github pages](https://pages.github.com/) for explanation)
+
+[1]: http://dbis.rwth-aachen.de/cms/research/ACIS/SyncMeta
+[2]: http://nodejs.org/
+s](https://pages.github.com/) for explanation)
 
 [1]: http://dbis.rwth-aachen.de/cms/research/ACIS/SyncMeta
 [2]: http://nodejs.org/

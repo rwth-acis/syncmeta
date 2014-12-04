@@ -87,8 +87,12 @@ define(function() {
       },
       url: this.resource + "services/rest/lds/"+id+"/data",   
       success: function(){
-        arguments[0] = JSON.parse(arguments[0])
-        callback.apply(null, arguments);
+        try{
+          arguments[0] = JSON.parse(arguments[0])
+          callback.apply(null, arguments);
+        } catch (e){
+          throw new Error("The returned json object is not valid! (ILDE getLdsDataById)")
+        }
       },
       error: function(){
         throw new Error(arguments[2]);
@@ -166,12 +170,11 @@ define(function() {
       }
       properties = properties 
           + '</lds>';
+      form.append("properties",new Blob([properties],{type: 'application/xml'}, "myproperties.xml"));
+      form.append("design", new Blob([design], {type: 'application/octet-stream'}, "mydesign.glm"));
       if (zip != null){
         form.append("design_imsld",zip);
       }
-      form.append("properties",new Blob([properties],{type: 'application/xml'}, "myproperties.xml"));
-      form.append("design", new Blob([design], {type: 'application/octet-stream'}, "mydesign.glm"));
-
       $.ajax({ 
         type: "POST", 
         headers: {
