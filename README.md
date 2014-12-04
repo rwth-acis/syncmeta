@@ -31,27 +31,3 @@ you have to push your latest changes to the `gh-pages` github branch.
 
 [1]: http://dbis.rwth-aachen.de/cms/research/ACIS/SyncMeta
 [2]: http://nodejs.org/
-ces/syncmeta), 
-you have to push your latest changes to the `gh-pages` github branch. 
-(See [github pages](https://pages.github.com/) for explanation)
-
-[1]: http://dbis.rwth-aachen.de/cms/research/ACIS/SyncMeta
-[2]: http://nodejs.org/
-
-ces/syncmeta), 
-you have to push your latest changes to the `gh-pages` github branch. 
-(See [github pages](https://pages.github.com/) for explanation)
-
-[1]: http://dbis.rwth-aachen.de/cms/research/ACIS/SyncMeta
-[2]: http://nodejs.org/
-s](https://pages.github.com/) for explanation)
-
-[1]: http://dbis.rwth-aachen.de/cms/research/ACIS/SyncMeta
-[2]: http://nodejs.org/
-
-ces/syncmeta), 
-you have to push your latest changes to the `gh-pages` github branch. 
-(See [github pages](https://pages.github.com/) for explanation)
-
-[1]: http://dbis.rwth-aachen.de/cms/research/ACIS/SyncMeta
-[2]: http://nodejs.org/
