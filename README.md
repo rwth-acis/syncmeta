@@ -14,16 +14,14 @@ See SyncMeta in action in [Role-SDK](http://role-sandbox.eu/spaces/syncmeta).
 6. Run ```grunt build``` to build the widgets.
 
 ## Library Documentation
-### Namespaces
-1. Widgets
-  * [Activity widget](https://rwth-acis.github.io/syncmeta/html/activity_widget.html)
-  * [Attribute widget](https://rwth-acis.github.io/syncmeta/html/attribute_widget.html)
-  * [Canvas widget](https://rwth-acis.github.io/syncmeta/html/canvas_widget.html)
-  * [Palette widget](https://rwth-acis.github.io/syncmeta/html/palette_widget.html)
-2. Operations
-  * [Operations](https://rwth-acis.github.io/syncmeta/html/operations.html)
-  * [OT Operations](https://rwth-acis.github.io/syncmeta/html/operations.ot.html)
-  * [Non OT Operations](https://rwth-acis.github.io/syncmeta/html/operations.non_ot.html)
+### Widgets
+  * [Activity widget](https://rwth-acis.github.io/syncmeta/html/activity.xml) Widget that gives awareness of activities of other users
+  * [Attribute widget](https://rwth-acis.github.io/syncmeta/html/attribute.xml) Edit model attributes
+  * [Canvas widget](https://rwth-acis.github.io/syncmeta/html/widget.xml) The model canvas
+  * [Palette widget](https://rwth-acis.github.io/syncmeta/html/palette.xml) Palette of elements that can be put on the canvas widget
+  * [Export widget](https://rwth-acis.github.io/syncmeta/html/export.xml) Export the design to JSON.
+  * [IMSLD Export widget](https://rwth-acis.github.io/syncmeta/html/palette.xml) Export the design as ZIP (in the IMSLD format) or link the design to [http://ilde.upf.edu/|ILDE]
+  * [Instancelist widget](https://rwth-acis.github.io/syncmeta/html/palette.xml) List all generated instances.
 
 ### Deploy
 In order to deploy SyncMeta to [http://role-sandbox.eu/spaces/syncmeta](http://role-sandbox.eu/spaces/syncmeta), 
