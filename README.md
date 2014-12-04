@@ -20,11 +20,17 @@ See SyncMeta in action in [Role-SDK](http://role-sandbox.eu/spaces/syncmeta).
   * [Canvas widget](https://rwth-acis.github.io/syncmeta/html/widget.xml) The model canvas
   * [Palette widget](https://rwth-acis.github.io/syncmeta/html/palette.xml) Palette of elements that can be put on the canvas widget
   * [Export widget](https://rwth-acis.github.io/syncmeta/html/export.xml) Export the design to JSON.
-  * [IMSLD Export widget](https://rwth-acis.github.io/syncmeta/html/palette.xml) Export the design as ZIP (in the IMSLD format) or link the design to [http://ilde.upf.edu/|ILDE]
+  * [IMSLD Export widget](https://rwth-acis.github.io/syncmeta/html/palette.xml) Export the design as ZIP (in the IMSLD format) or link the design to [ILDE](http://ilde.upf.edu/)
   * [Instancelist widget](https://rwth-acis.github.io/syncmeta/html/palette.xml) List all generated instances.
 
 ### Deploy
 In order to deploy SyncMeta to [http://role-sandbox.eu/spaces/syncmeta](http://role-sandbox.eu/spaces/syncmeta), 
+you have to push your latest changes to the `gh-pages` github branch. 
+(See [github pages](https://pages.github.com/) for explanation)
+
+[1]: http://dbis.rwth-aachen.de/cms/research/ACIS/SyncMeta
+[2]: http://nodejs.org/
+ces/syncmeta), 
 you have to push your latest changes to the `gh-pages` github branch. 
 (See [github pages](https://pages.github.com/) for explanation)
 
