@@ -794,6 +794,8 @@ requirejs([
               }
             });
           };
+          // if possible, get the existing ilde id, title, and 
+          // installation url (in the following named `resource`)
           function getResource(){
             space.getSubResources({
               relation: openapp.ns.role + "data",
@@ -819,6 +821,7 @@ requirejs([
 			    };
           // if there is an existing ildeid, find it.
           getResource();
+          // Function that is called, when ilde exists.
           function whenIldeExists(){
             $("#syncIldeDiv").removeClass("nodisplay");
             $("#createIldeDiv").addClass("nodisplay");
@@ -832,8 +835,9 @@ requirejs([
             $("#ildeLink").attr("href",url);
             $("#ildeLink").text(url);
           }
+          // Delete everything about ilde in openapp.
           function deleteAllResources(){
-            //ilde.deleteLdsById(existing_ilde_id);
+            //ilde.deleteLdsById(existing_ilde_id); // the ILDE rest service does not support CORS
             $("#removeIldeButton").addClass("loading_button");
             var mlist = openapp.resource.context(context).sub(openapp.ns.role + "data").type("my:ns:documentText").list();
             for(var i=0;i<mlist.length;i++){
@@ -843,6 +847,7 @@ requirejs([
             setTimeout(function(){window.location.reload();},5000);
             //window.location.reload()
           }
+          // Print a success message for a short period of time. 
           function saySuccess(){
             $("#success_notification").removeClass("nodisplay");
             setTimeout(function(){
@@ -850,6 +855,7 @@ requirejs([
             },1500);
             gadgets.window.adjustHeight()
           }
+          // Print aan error message for a short period of time. 
           function sayError(error_message){
             console.log("idle error: stuff happened")
             var error_div = $(".error_notification");
@@ -860,6 +866,10 @@ requirejs([
             },3000);
             gadgets.window.adjustHeight()
           }
+          // execute a function (`aOnLogin`), after the user filled in its 
+          // credentials, and the ilde ressource is created. (see ildeApi.js in lib)
+          // When the user is already logged in (variable ilde exists), then
+          // apply it right away.
           function applyOnLogin(aOnLogin){
               if(ilde == null){
                 $("#ilde_upload_form").addClass("nodisplay");
@@ -888,7 +898,10 @@ requirejs([
                 event.preventDefault();
               }
           }
-          
+          // Lock the url to the ilde installation. 
+          // This implies, that the login field is not editable anymore
+          // and the url cannot be changed.
+          // set res_s = "agora" or res_s = "http://ilde.upf.edu/agora" has the same effect.
           function lockIldeResource(res_s){
             if (res_s == null){
               sayError("This is not a valid installation URL!");
@@ -910,7 +923,8 @@ requirejs([
             $("#ildeResource").attr("readonly","true");
             return true;
           }
-          
+          // Get the url to the ilde installation.
+          // This will return something like "agora" for http://ilde.upf.edu/agora
           function getIldeResource(){
             var res = $("#ildeResource").val();
             var eles = res.split("/");
@@ -920,7 +934,8 @@ requirejs([
               return "undefined";
             }
           }
-          // push to ilde
+          // push to ilde. This will get the jsson via MFExport and then
+          // push it on the server.
           function syncButtonEvent(){
             applyOnLogin(function(){
               MFExport.getJSON(function(design,title){
@@ -936,6 +951,11 @@ requirejs([
               });
             });
           }
+          // A new design is created when this event occurs. 
+          // Either, the user filled in an existing ilde design url, 
+          // (then it will fetch this design first, and the "parent" in properties.xsd is set.then
+          // Or a completely new design is created with the existing design in the space. 
+          // 
           function createButtonEvent(){
             var eles = $("#existingIldeUrl")[0].value.split("/");
             var goback;
@@ -986,6 +1006,14 @@ requirejs([
           $("#createIldeButton").click(createButtonEvent);
           $("#syncIldeButton").click(syncButtonEvent);
           $("#removeIldeButton").click(deleteAllResources);
+          //
+          // Fetch an existing design from ilde and use it in this space. 
+          // Therefore, the openapp resource is overwritten and all widgets must be reloaded. 
+          // In shared.js we define some helpers that will be implemented in all widgets. 
+          // When you call window._reloadThisFuckingInstance, then all instances will receive an iwc 
+          // intent, and perform a magical  `window.reload()`. Then, hopefully, all widgets use the 
+          // same design. This works, of course, only if openapp isnt a bitch at the moment.
+          // 
           function importFromIlde(iid,lds_model){            
               function getData(type){
                   var spaceUri = openapp.param.space(),
