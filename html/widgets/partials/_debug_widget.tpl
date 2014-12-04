@@ -1,0 +1,236 @@
+<script type="application/javascript">
+    requirejs(['jqueryui','lodash'],function($,_){
+        $(function(){
+            var $deleteMetamodel = $("#delete-meta-model").prop('disabled', true),
+                $exportMetamodel = $("#export-meta-model").prop('disabled', true),
+                $importMetamodel = $("#import-meta-model"),
+                $deleteModel = $("#delete-model").prop('disabled', true),
+                $exportModel = $("#export-model").prop('disabled', true),
+                $importModel = $("#import-model"),
+                $fileObject = $("#file-object"),
+                $feedback = $("#feedback"),
+                feedbackTimeout,
+
+                feedback = function(msg){
+                    $feedback.text(msg);
+                    clearTimeout(feedbackTimeout);
+                    feedbackTimeout = setTimeout(function(){
+                        $feedback.text("");
+                    },2000);
+                },
+
+                resourceSpace = new openapp.oo.Resource(openapp.param.space());
+
+            var getFileContent = function(){
+                var fileReader,
+                    files = $fileObject[0].files,
+                    file,
+                    deferred = $.Deferred();
+
+                if (!files || files.length === 0) deferred.resolve([]);
+                file = files[0];
+
+                fileReader = new FileReader();
+                fileReader.onload = function (e) {
+                    var data = e.target.result;
+                    try {
+                        data = JSON.parse(data);
+                    } catch (e){
+                        data = [];
+                    }
+                    deferred.resolve(data);
+                };
+                fileReader.readAsText(file);
+                return deferred.promise();
+            };
+
+            var getData = function(type){
+                var spaceUri = openapp.param.space(),
+                    listOfDataUris = [],
+
+                    promises = [],
+                    mainDeferred = $.Deferred(),
+                    deferred = $.Deferred();
+
+                openapp.resource.get(spaceUri,(function(deferred){
+                    return function(space){
+
+                        var resourceUri, resourceObj, values;
+                        for(resourceUri in space.data){
+                            if(space.data.hasOwnProperty(resourceUri)){
+                                resourceObj = space.data[resourceUri];
+                                if(resourceObj['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] &&
+                                        _.isArray(resourceObj['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'])){
+
+                                    values = _.map(resourceObj['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'],function(e){
+                                        return e.value;
+                                    });
+
+                                    if(_.contains(values,"http://purl.org/role/terms/Data") && _.contains(values,type)){
+                                        listOfDataUris.push(resourceUri);
+                                    }
+
+                                }
+
+                            }
+                        }
+                        deferred.resolve();
+                    };
+
+                })(deferred));
+                promises.push(deferred.promise());
+
+                $.when.apply($,promises).then(function(){
+                    mainDeferred.resolve(listOfDataUris);
+                });
+
+                return mainDeferred.promise();
+            };
+
+            $deleteModel.click(function(){
+                getData(CONFIG.NS.MY.MODEL).then(function(modelUris){
+                    if(modelUris.length > 0){
+                        _.map(modelUris,function(uri){
+                            openapp.resource.del(uri,function(){
+                                feedback("Done!");
+                            });
+                        });
+                    } else {
+                        feedback("No Model!");
+                    }
+                });
+            });
+
+            $deleteMetamodel.click(function(){
+                getData(CONFIG.NS.MY.METAMODEL).then(function(modelUris){
+                    if(modelUris.length > 0){
+                        _.map(modelUris,function(uri){
+                            openapp.resource.del(uri,function(){
+                                $exportMetamodel.prop('disabled', true);
+                                $deleteMetamodel.prop('disabled', true);
+                                feedback("Done!");
+                            });
+                        });
+                    } else {
+                        feedback("No Model!");
+                    }
+                });
+            });
+
+            $exportModel.click(function(){
+                getData(CONFIG.NS.MY.MODEL).then(function(modelUris){
+                    if(modelUris.length > 0){
+                        $.get(modelUris[0]+"/:representation").done(function(data){
+                            var link = document.createElement('a');
+                            link.download = "export.json";
+                            link.href = 'data:,'+encodeURI(JSON.stringify(data,null,4));
+                            link.click();
+                        });
+                    } else {
+                        feedback("No Model!");
+                    }
+                });
+            });
+
+            $exportMetamodel.click(function(){
+                getData(CONFIG.NS.MY.METAMODEL).then(function(modelUris){
+                    if(modelUris.length > 0){
+                        $.get(modelUris[0]+"/:representation").done(function(data){
+                            var link = document.createElement('a');
+                            link.download = "export.json";
+                            link.href = 'data:,'+encodeURI(JSON.stringify(data,null,4));
+                            link.click();
+                        });
+                    } else {
+                        feedback("No Model!");
+                    }
+                });
+            });
+
+            $importModel.click(function(){
+                getData(CONFIG.NS.MY.MODEL).then(function(modelUris){
+                    if(modelUris.length > 0){
+                        _.map(modelUris,function(uri){
+                            openapp.resource.del(uri);
+                        });
+                    }
+                    getFileContent().then(function(data){
+                        resourceSpace.create({
+                            relation: openapp.ns.role + "data",
+                            type: CONFIG.NS.MY.MODEL,
+                            representation: data,
+                            callback: function(){
+                                $exportModel.prop('disabled', false);
+                                $deleteModel.prop('disabled', false);
+                                feedback("Done!");
+                            }
+                        });
+                    });
+                });
+            });
+
+            $importMetamodel.click(function(){
+                getData(CONFIG.NS.MY.METAMODEL).then(function(modelUris){
+                    if(modelUris.length > 0){
+                        _.map(modelUris,function(uri){
+                            openapp.resource.del(uri);
+                        });
+                    }
+                    getFileContent().then(function(data){
+                        resourceSpace.create({
+                            relation: openapp.ns.role + "data",
+                            type: CONFIG.NS.MY.METAMODEL,
+                            representation: data,
+                            callback: function(){
+                                $exportModel.prop('disabled', false);
+                                $deleteModel.prop('disabled', false);
+                                feedback("Done!");
+                            }
+                        });
+                    });
+                });
+            });
+
+
+
+            var checkExistence = function(){
+                getData(CONFIG.NS.MY.MODEL).then(function(modelUris){
+                    if(modelUris.length === 0){
+                        $exportModel.prop('disabled', true);
+                        $deleteModel.prop('disabled', true);
+                    } else {
+                        $exportModel.prop('disabled', false);
+                        $deleteModel.prop('disabled', false);
+                    }
+                });
+
+                getData(CONFIG.NS.MY.METAMODEL).then(function(modelUris){
+                    if(modelUris.length === 0){
+                        $exportMetamodel.prop('disabled', true);
+                        $deleteMetamodel.prop('disabled', true);
+                    } else {
+                        $exportMetamodel.prop('disabled', false);
+                        $deleteMetamodel.prop('disabled', false);
+                    }
+                });
+            };
+
+            checkExistence();
+            setInterval(checkExistence,10000);
+
+        });
+    });
+</script>
+<style>
+    textarea, button {
+        width: 100px;
+    }
+</style>
+<input type="file" id="file-object" value="Load a file" />
+<button id="import-meta-model">Import Metamodel</button>
+<button id="export-meta-model">Export Metamodel</button>
+<button id="delete-meta-model">Delete Metamodel</button>
+<button id="import-model">Import Model</button>
+<button id="export-model">Export Model</button>
+<button id="delete-model">Delete Model</button>
+<p id="feedback"></p>

@@ -1,6 +1,7 @@
 # SyncMeta - Near real-time collaborative modeling framework
 ## General information
-For explanations, presentations and demos see the [SyncMeta homepage][1]
+For explanations, presentations and demos see the [SyncMeta homepage][1]. 
+See SyncMeta in action in [Role-SDK](http://role-sandbox.eu/spaces/syncmeta).
 
 ## Build steps
 1. Make sure to have *npm*, *bower* and *grunt* installed
@@ -15,14 +16,19 @@ For explanations, presentations and demos see the [SyncMeta homepage][1]
 ## Library Documentation
 ### Namespaces
 1. Widgets
-  * [Activity widget](activity_widget.html)
-  * [Attribute widget](attribute_widget.html)
-  * [Canvas widget](canvas_widget.html)
-  * [Palette widget](palette_widget.html)
+  * [Activity widget](https://rwth-acis.github.io/syncmeta/html/activity_widget.html)
+  * [Attribute widget](https://rwth-acis.github.io/syncmeta/html/attribute_widget.html)
+  * [Canvas widget](https://rwth-acis.github.io/syncmeta/html/canvas_widget.html)
+  * [Palette widget](https://rwth-acis.github.io/syncmeta/html/palette_widget.html)
 2. Operations
-  * [Operations](operations.html)
-  * [OT Operations](operations.ot.html)
-  * [Non OT Operations](operations.non_ot.html)
+  * [Operations](https://rwth-acis.github.io/syncmeta/html/operations.html)
+  * [OT Operations](https://rwth-acis.github.io/syncmeta/html/operations.ot.html)
+  * [Non OT Operations](https://rwth-acis.github.io/syncmeta/html/operations.non_ot.html)
+
+### Deploy
+In order to deploy SyncMeta to [http://role-sandbox.eu/spaces/syncmeta](http://role-sandbox.eu/spaces/syncmeta), 
+you have to push your latest changes to the `gh-pages` github branch. 
+(See [github pages](https://pages.github.com/) for explanation)
 
 [1]: http://dbis.rwth-aachen.de/cms/research/ACIS/SyncMeta
 [2]: http://nodejs.org/

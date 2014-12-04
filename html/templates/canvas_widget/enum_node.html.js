@@ -1,0 +1,1 @@
+define('text!templates/canvas_widget/enum_node.html',[],function () { return '<div class="class_node">\n    <div class="type"><%= type %></div>\n    <div class="label">&lt;&lt;Enumeration&gt;&gt;</div>\n    <div class="attributes"></div>\n</div>';});

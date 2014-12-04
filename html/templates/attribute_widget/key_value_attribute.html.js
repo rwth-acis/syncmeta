@@ -1,0 +1,1 @@
+define('text!templates/attribute_widget/key_value_attribute.html',[],function () { return '<li class="key_value_attribute">\n    <div class="key"></div>\n    <div class="value"></div>\n    <span class="ui-icon ui-icon-close"></span>\n</li>';});

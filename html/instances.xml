@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- generated on Thu Dec 04 2014 09:02:25 -->
+<Module>
+  <ModulePrefs
+    title="Instances"
+    description=""
+    author="Stephan Erdtmann"
+    author_email="erdtmann@dbis.rwth-aachen.de"
+    width="100"
+    height="300">
+
+    <Require feature="opensocial-0.8" ></Require>
+    <Require feature="openapp" ></Require>
+    <Require feature="dynamic-height"></Require>
+
+    <OAuth>
+      <Service name="openapp" xmlns:openapp="http://www.role-project.eu/xml/openapp/opensocialext/"
+               openapp:service="http://purl.org/role/terms/spaceService"
+               openapp:permitReadAppend="http://purl.org/role/terms/data">
+        <Request method="" url=""></Request>
+        <Authorization url=""></Authorization>
+        <Access method="" url=""></Access>
+      </Service>
+    </OAuth>
+
+  </ModulePrefs>
+  <Content type="html">
+    <![CDATA[
+    <script type="application/javascript">
+        /*(function(){
+          var cnt = 30; // 5 attempts per second => 6 seconds
+          var timeout = function(){
+              var btn = document.getElementById("oauthPersonalizeButton");
+              var wrapper = document.getElementById("oauthPersonalize");
+              if(wrapper && wrapper.offsetParent !== null && btn && btn.onclick){
+                  var win = null;
+                  var openWindow = window.open;
+                  window.open = function(){return win = openWindow.apply(window,arguments);};
+                  btn.onclick.call(btn);
+                  if(win){
+                      win.onload = function(){
+                          win.document.getElementsByTagName("form")[0].submit();
+                          setTimeout(function(){
+                              window.location.reload();
+                              if(win){
+                                  win.close();
+                              }
+                          },1000);
+                      };
+                  }
+              } else {
+                  if(cnt > 0){
+                      cnt -= 1;
+                      setTimeout(timeout,200);
+                  }
+              }
+          };
+          timeout();
+        })();*/
+    </script>
+    <script src="https://rwth-acis.github.io/syncmeta/html/js/config.js"></script>
+    <script src="https://rwth-acis.github.io/syncmeta/html/js/lib/vendor/require.js"></script>    
+    <script type="application/javascript">
+    requirejs(['jqueryui','lodash'],function($,_){
+        $(function(){
+            var $list = $("#list"),
+            //$reload = $("#reload"),
+                    templateString = '<li><a href="<<= url >>" target="_blank"><<= title >></a></li>'.replace(/<</g,"<"+"%").replace(/>>/g,"%"+">"),
+                    template = _.template(templateString),
+
+                    getInstances = function(){
+
+                        $list.empty();
+                        openapp.resource.get("http://role-sandbox.eu/spaces",function(spaces){
+                            var promises = [],
+                                    list = [],
+                                    spaceUri,
+                                    deferred;
+
+                            for(spaceUri in spaces.data){
+                                if(spaces.data.hasOwnProperty(spaceUri)){
+                                    deferred = $.Deferred();
+                                    openapp.resource.get(spaceUri,(function(deferred){
+                                        return function(space){
+
+                                            var resourceUri, resourceObj, values;
+                                            for(resourceUri in space.data){
+                                                if(space.data.hasOwnProperty(resourceUri)){
+                                                    resourceObj = space.data[resourceUri];
+                                                    if(resourceObj['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] &&
+                                                            _.isArray(resourceObj['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'])){
+                                                        values = _.map(resourceObj['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'],function(e){
+                                                            return e.value;
+                                                        });
+                                                        if(_.contains(values,"http://purl.org/role/terms/Data") && _.contains(values,CONFIG.NS.MY.METAMODEL)){
+                                                            list.push({url: space.uri, title: spaces.data[space.uri]['http://purl.org/dc/terms/title'][0].value});
+                                                        }
+                                                    }
+
+                                                }
+                                            }
+                                            deferred.resolve();
+                                        };
+
+                                    })(deferred));
+                                    promises.push(deferred.promise());
+                                }
+                            }
+                            $.when.apply($,promises).then(function(){
+                                _.map(_.sortBy(list,function(e){return e.title.toLowerCase();}),function(e){
+                                    $list.append(template({url: e.url, title: e.title}));
+                                })
+                            })
+                        })
+                    };
+
+            //$reload.click(getInstances);
+
+            getInstances();
+        });
+    });
+</script>
+<style>
+    #list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        overflow-y: scroll;
+        height: 100%;
+    }
+    a, a:visited, a:hover, a:focus {
+        color: #333333;
+        white-space: nowrap;
+    }
+</style>
+<!--<button id="reload">Reload</button>-->
+<ul id="list"></ul>
+    <script src="https://rwth-acis.github.io/syncmeta/html/js/shared.js"></script>    
+    ]]>
+  </Content>
+</Module>

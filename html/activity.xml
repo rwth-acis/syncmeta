@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- generated on Thu Dec 04 2014 09:02:25 -->
+<Module>
+  <ModulePrefs
+    title="User Activity"
+    description=""
+    author="Stephan Erdtmann"
+    author_email="erdtmann@dbis.rwth-aachen.de"
+    width="120"
+    height="400">
+
+    <Require feature="opensocial-0.8" ></Require>
+    <Require feature="openapp" ></Require>
+    <Require feature="dynamic-height"></Require>
+
+    <OAuth>
+      <Service name="openapp" xmlns:openapp="http://www.role-project.eu/xml/openapp/opensocialext/"
+               openapp:service="http://purl.org/role/terms/spaceService"
+               openapp:permitReadAppend="http://purl.org/role/terms/data">
+        <Request method="" url=""></Request>
+        <Authorization url=""></Authorization>
+        <Access method="" url=""></Access>
+      </Service>
+    </OAuth>
+
+  </ModulePrefs>
+  <Content type="html">
+    <![CDATA[
+    <script type="application/javascript">
+        /*(function(){
+          var cnt = 30; // 5 attempts per second => 6 seconds
+          var timeout = function(){
+              var btn = document.getElementById("oauthPersonalizeButton");
+              var wrapper = document.getElementById("oauthPersonalize");
+              if(wrapper && wrapper.offsetParent !== null && btn && btn.onclick){
+                  var win = null;
+                  var openWindow = window.open;
+                  window.open = function(){return win = openWindow.apply(window,arguments);};
+                  btn.onclick.call(btn);
+                  if(win){
+                      win.onload = function(){
+                          win.document.getElementsByTagName("form")[0].submit();
+                          setTimeout(function(){
+                              window.location.reload();
+                              if(win){
+                                  win.close();
+                              }
+                          },1000);
+                      };
+                  }
+              } else {
+                  if(cnt > 0){
+                      cnt -= 1;
+                      setTimeout(timeout,200);
+                  }
+              }
+          };
+          timeout();
+        })();*/
+    </script>
+    <script src="https://rwth-acis.github.io/syncmeta/html/js/config.js"></script>
+    <script src="https://rwth-acis.github.io/syncmeta/html/js/lib/vendor/require.js"></script>    
+    <link rel="stylesheet" type="text/css" href="https://rwth-acis.github.io/syncmeta/html/css/vendor/jquery-ui.css">
+<link rel="stylesheet" type="text/css" href="https://rwth-acis.github.io/syncmeta/html/css/style.css">
+<link rel="stylesheet" type="text/css" href="https://rwth-acis.github.io/syncmeta/html/css/activity_widget.css">
+<script src="https://rwth-acis.github.io/syncmeta/html/js/activity_widget.js"></script>
+<script>
+
+</script>
+<h2>Users online</h2>
+<div class="list_wrapper">
+    <div id="user_list" class="list"></div>
+</div>
+<h2>Activities</h2>
+<div class="list_wrapper">
+    <div id="activity_list" class="list"></div>
+</div>
+<div id="q"></div>
+    <script src="https://rwth-acis.github.io/syncmeta/html/js/shared.js"></script>    
+    ]]>
+  </Content>
+</Module>
