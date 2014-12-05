@@ -14,7 +14,7 @@
 ; enter your terminal preferences here...
 
 [preview]
-index_file = html/export.xml
+index_file = html/imsld_export.xml
 ; enter your preview preferences here...
 
 [search]

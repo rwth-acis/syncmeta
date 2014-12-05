@@ -835,17 +835,25 @@ requirejs([
             $("#ildeLink").attr("href",url);
             $("#ildeLink").text(url);
           }
+          function whenIldeNotExists(){
+            $("#syncIldeDiv").addClass("nodisplay");
+            $("#createIldeDiv").removeClass("nodisplay");
+          }
           // Delete everything about ilde in openapp.
           function deleteAllResources(){
             //ilde.deleteLdsById(existing_ilde_id); // the ILDE rest service does not support CORS
-            $("#removeIldeButton").addClass("loading_button");
+            //$("#removeIldeButton").addClass("loading_button");
             var mlist = openapp.resource.context(context).sub(openapp.ns.role + "data").type("my:ns:documentText").list();
             for(var i=0;i<mlist.length;i++){
               openapp.resource.del(mlist[i].uri);            
             }
-            // otherwise delete existing_ilde_id and existing_ilde_title
-            setTimeout(function(){window.location.reload();},7500);
-            //window.location.reload()
+            // delete existing_ilde_id and existing_ilde_title
+            existing_ilde_id = null;
+            existing_ilde_title = null;
+            ilde = null;
+            unlockIldeResource();
+            whenIldeNotExists();
+            saySuccess("Space is now unlinked");
           }
           // Print a success message for a short period of time. 
           function saySuccess(){
@@ -898,6 +906,12 @@ requirejs([
                 aOnLogin();
                 event.preventDefault();
               }
+          }
+          function unlockIldeResource(){
+            var ir = $("#ildeResource");
+            ir.val("http://ilde.upf.edu/");
+            ir.removeClass("inputreadonly");
+            ir.removeAttr("readonly");
           }
           // Lock the url to the ilde installation. 
           // This implies, that the login field is not editable anymore
@@ -958,6 +972,27 @@ requirejs([
           // Or a completely new design is created with the existing design in the space. 
           // 
           function createButtonEvent(){
+            function sendCreateButtonEvent(){
+              try {
+                var message = {
+                  action: "CREATE_ILDE_BUTTON_PRESSED",
+                  component: "",
+                  data: "",
+                  dataType: "",
+                  flags: ["PUBLISH_GLOBAL"],
+                  extras: {
+                    ilderesource: getIldeResource(),
+                    existing_ilde_id: existing_ilde_id,
+                    existing_ilde_title: existing_ilde_title
+                  }
+                };
+                applyWhenIwcClientExists(function(){
+                  iwcClient.publish(message);                
+                })
+              } catch(e){
+                console.log("was not able to send the intent yet")
+              }  
+            }
             var eles = $("#existingIldeUrl")[0].value.split("/");
             var goback;
             if(eles[eles.length-1] === ""){
@@ -968,7 +1003,7 @@ requirejs([
             var id = parseInt(eles[eles.length-goback]);
             if(isNaN(id)){
               if($("#existingIldeUrl")[0].value.length > 0){
-                sayError("Please provide a valid url!");
+                sayError("Please provide a valid URL!");
                 return ;
               }
               applyOnLogin(function(){
@@ -979,7 +1014,8 @@ requirejs([
                       existing_ilde_id = result[0].querySelector("id").textContent;
                       existing_ilde_title = title;
                       createResource(existing_ilde_id, title)
-                      whenIldeExists() 
+                      whenIldeExists();
+                      sendCreateButtonEvent();
                     });
                   });
                 });
@@ -996,7 +1032,8 @@ requirejs([
                       ilde.newLds(lds_model,blob,id,function(result){
                         existing_ilde_id = result[0].querySelector("id").textContent;
                         createResource(existing_ilde_id, "")
-                        importFromIlde(existing_ilde_id, lds_model);                
+                        importFromIlde(existing_ilde_id, lds_model);      
+                        sendCreateButtonEvent();
                       })
                     });
                   });
@@ -1004,9 +1041,61 @@ requirejs([
               }
             }
           }
+          var iwcClient = null;
           $("#createIldeButton").click(createButtonEvent);
           $("#syncIldeButton").click(syncButtonEvent);
-          $("#removeIldeButton").click(deleteAllResources);
+          $("#removeIldeButton").click(function(){
+            try {
+              var message = {
+                action: "REMOVE_ILDE_BUTTON_PRESSED",
+                component: "",
+                data: "",
+                dataType: "",
+                flags: ["PUBLISH_GLOBAL"],
+                extras: {
+                }
+              };  
+              applyWhenIwcClientExists(function(){
+                iwcClient.publish(message);                
+              })
+            } catch(e){
+              console.log("was not able to send the intent yet")
+            }
+  
+          });
+          
+          // now we do the same for intents
+          function watchEvents(intent){
+            if(intent.action === "CREATE_ILDE_BUTTON_PRESSED"){
+              lockIldeResource(intent.extras.ilderesource);
+              existing_ilde_id = intent.extras.existing_ilde_id;
+              existing_ilde_title = intent.extras.existing_ilde_title;
+              whenIldeExists();
+            } else if(intent.action === "REMOVE_ILDE_BUTTON_PRESSED"){
+              deleteAllResources();
+            }
+          }
+          var whenIwcExists = []          
+          function tryToSetIwcClient(){
+            if(window._addIwcIntentListener != null){
+              iwcClient = window._iwc_instance_;
+              window._addIwcIntentListener(watchEvents);
+              for(var i=0;i<whenIwcExists.length;i++){
+                whenIwcExists[i]()
+              }
+            } else {
+              setTimeout(tryToSetIwcClient,500);
+            }
+          }
+          function applyWhenIwcClientExists(f){
+            if(window._addIwcIntentListener == null){
+              whenIwcExists.push(f);
+            } else {
+              f()
+            }
+          }
+          tryToSetIwcClient();
+  
           //
           // Fetch an existing design from ilde and use it in this space. 
           // Therefore, the openapp resource is overwritten and all widgets must be reloaded. 
@@ -1100,15 +1189,15 @@ requirejs([
     .seperating_box {
         border: 1px solid;
         border-radius: 7px; 
-        margin: 18px 7px 7px 7px;
-        padding: 7px 7px 7px 7px;
+        margin: 18px 20px 7px 7px;
+        padding: 7px 20px 7px 7px;
         position: relative;
     }
-    .seperating_box > h5{
+    .seperating_box > h5 {
         font-weight: normal;
         font-style: italic;
         position: absolute;
-        top: -36px;
+        top: -40px;
         left: 4px;
     }
 </style>
@@ -1116,11 +1205,12 @@ requirejs([
   <h5>Download IMSLD</h5>  
   <button id="imsld">Download ZIP</button>
 </div>
+<div style="font-size:3pt">&nbsp;</div>
 <div class="seperating_box">
   <h5>Integrated Learning Design Environment (ILDE)</h5>
   <form id="ilde_login_form" class="nodisplay">
-    <div>Please provide your ILDE credentials to use ILDE features. 
-    There are several installations of ILDE. Please provide the url of the homepage of the installation that you want to use (e.g. http://ilde.upf.edu/agora)
+    <div>Please provide your ILDE credentials to use this feature. 
+      There are different installations of ILDE. Please provide the URL of installation that you want to use.
     </div>
     <table>
       <tr>
