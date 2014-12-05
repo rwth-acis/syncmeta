@@ -71,6 +71,7 @@ define(function() {
         callback(arguments);
       },
         error: function(){
+          window.sayError(arguments[2])
           throw new Error(arguments[2]);
         }
     });     
@@ -91,10 +92,12 @@ define(function() {
           arguments[0] = JSON.parse(arguments[0])
           callback.apply(null, arguments);
         } catch (e){
+          window.sayError("Sorry, this ILDE installation did not return a proper design.")
           throw new Error("The returned json object is not valid! (ILDE getLdsDataById)")
         }
       },
       error: function(){
+        window.sayError(arguments[2])
         throw new Error(arguments[2]);
       }
     });     
@@ -115,6 +118,7 @@ define(function() {
         callback(arguments);
       },
       error: function(){
+        window.sayError(arguments[2])
         throw new Error(arguments[2]);
       }
     });     
@@ -172,7 +176,7 @@ define(function() {
           + '</lds>';
       form.append("properties",new Blob([properties],{type: 'application/xml'}, "myproperties.xml"));
       form.append("design", new Blob([design], {type: 'application/octet-stream'}, "mydesign.glm"));
-      if (zip != null){
+      if (zip != null && false){ // because of a bug in imsld we must not send the zip.
         form.append("design_imsld",zip);
       }
       $.ajax({ 
@@ -222,7 +226,7 @@ define(function() {
           + '</lds>';
       form.append("properties",new Blob([properties],{type: 'application/xml'}, "myproperties.xml"));
       form.append("design", new Blob([design], {type: 'application/octet-stream'}, "mydesign.glm"));
-      if (zip != null){
+      if (zip != null && false){ // because of a bug in imsld we must not send the zip.
         form.append("design_imsld",zip);
       }
       $.ajax({ 
@@ -239,6 +243,7 @@ define(function() {
         },
         error: function(){
           console.dir(arguments)
+          window.sayError(arguments[2])
           throw new Error(arguments[2]);
         }
       });

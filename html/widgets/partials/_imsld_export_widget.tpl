@@ -844,7 +844,7 @@ requirejs([
               openapp.resource.del(mlist[i].uri);            
             }
             // otherwise delete existing_ilde_id and existing_ilde_title
-            setTimeout(function(){window.location.reload();},5000);
+            setTimeout(function(){window.location.reload();},7500);
             //window.location.reload()
           }
           // Print a success message for a short period of time. 
@@ -866,6 +866,7 @@ requirejs([
             },3000);
             gadgets.window.adjustHeight()
           }
+          window.sayError = sayError;
           // execute a function (`aOnLogin`), after the user filled in its 
           // credentials, and the ilde ressource is created. (see ildeApi.js in lib)
           // When the user is already logged in (variable ilde exists), then
