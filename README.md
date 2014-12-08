@@ -31,7 +31,7 @@ In order to deploy SyncMeta to [http://role-sandbox.eu/spaces/syncmeta](http://r
 you have to push your latest changes to the `gh-pages` github branch. 
 (See [github pages](https://pages.github.com/) for explanation)
 
-*Attention!*, Please be aware that any changes you commit to the gh-pages branch will affect all ROLE spaces that link to widget definitions in this branch. Therefore only push very goodly tested commits to gh-pages.
+_Attention!_, Please be aware that any changes you commit to the gh-pages branch will affect all ROLE spaces that link to widget definitions in this branch. Therefore only push very goodly tested commits to gh-pages.
 
 
 [1]: http://dbis.rwth-aachen.de/cms/research/ACIS/SyncMeta
