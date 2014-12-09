@@ -922,6 +922,9 @@ requirejs([
               sayError("This is not a valid installation URL!");
               return false;
             }
+            if (res_s[res_s.length-1] != "/" && res_s != ""){
+              res_s = res_s + "/";
+            }
             var ress = res_s.split("/");
             var resource;
             if (ress.length > 1){
@@ -942,6 +945,9 @@ requirejs([
           // This will return something like "agora" for http://ilde.upf.edu/agora
           function getIldeResource(){
             var res = $("#ildeResource").val();
+            if (res.length > 0 && res[res.length-1] != "/"){
+              res = res + "/";
+            }
             var eles = res.split("/");
             if (eles[3]!=null){
               return eles[3];
@@ -993,7 +999,11 @@ requirejs([
                 console.log("was not able to send the intent yet")
               }  
             }
-            var eles = $("#existingIldeUrl")[0].value.split("/");
+            var eles = $("#existingIldeUrl").val();
+            if(eles[eles.length-1] != "/" && eles != ""){
+              eles = eles+"/";
+            }
+            eles = eles.split("/");
             var goback;
             if(eles[eles.length-1] === ""){
               goback = 2;
