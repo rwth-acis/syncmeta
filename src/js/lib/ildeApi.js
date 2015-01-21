@@ -176,7 +176,7 @@ define(function() {
           + '</lds>';
       form.append("properties",new Blob([properties],{type: 'application/xml'}, "myproperties.xml"));
       form.append("design", new Blob([design], {type: 'application/octet-stream'}, "mydesign.glm"));
-      if (zip != null && false){ // because of a bug in imsld we must not send the zip.
+      if (zip != null){ // because of a bug in imsld we must not send the zip.
         form.append("design_imsld",zip);
       }
       $.ajax({ 
