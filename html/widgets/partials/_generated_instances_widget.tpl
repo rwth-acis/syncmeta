@@ -155,6 +155,8 @@
                             }).then(function(){
                                 return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/export.xml");
                             }).then(function(){
+                                return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/imsld_export.xml");
+                            }).then(function(){
                                 return addMetamodelToSpace(spaceURI,metamodel);
                             }).then(function(){
                                 return storeGeneratedInstanceMeta(spaceURI,spaceTitle);
