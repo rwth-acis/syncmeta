@@ -27,7 +27,7 @@
   <Content type="html">
     <![CDATA[
     <script type="application/javascript">
-        /*(function(){
+        (function(){
           var cnt = 30; // 5 attempts per second => 6 seconds
           var timeout = function(){
               var btn = document.getElementById("oauthPersonalizeButton");
@@ -56,7 +56,7 @@
               }
           };
           timeout();
-        })();*/
+        })();
     </script>
     <script src="<%= grunt.config('baseUrl') %>/js/config.js"></script>
     <script src="<%= grunt.config('baseUrl') %>/js/lib/vendor/require.js"></script>    

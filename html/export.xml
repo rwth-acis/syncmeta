@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- generated on Thu Jan 22 2015 11:17:25 -->
+<!-- generated on Fri Jan 23 2015 10:48:38 -->
 <Module>
   <ModulePrefs
     title="Export"
@@ -27,7 +27,7 @@
   <Content type="html">
     <![CDATA[
     <script type="application/javascript">
-        /*(function(){
+        (function(){
           var cnt = 30; // 5 attempts per second => 6 seconds
           var timeout = function(){
               var btn = document.getElementById("oauthPersonalizeButton");
@@ -56,7 +56,7 @@
               }
           };
           timeout();
-        })();*/
+        })();
     </script>
     <script src="https://rwth-acis.github.io/syncmeta/html/js/config.js"></script>
     <script src="https://rwth-acis.github.io/syncmeta/html/js/lib/vendor/require.js"></script>    
