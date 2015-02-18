@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- generated on Wed Feb 18 2015 19:06:37 -->
+<Module>
+  <ModulePrefs
+    title="View Canvas"
+    description=""
+    author="Stephan Erdtmann"
+    author_email="erdtmann@dbis.rwth-aachen.de"
+    width="560"
+    height="400">
+
+    <Require feature="opensocial-0.8" ></Require>
+    <Require feature="openapp" ></Require>
+    <Require feature="dynamic-height"></Require>
+
+    <OAuth>
+      <Service name="openapp" xmlns:openapp="http://www.role-project.eu/xml/openapp/opensocialext/"
+               openapp:service="http://purl.org/role/terms/spaceService"
+               openapp:permitReadAppend="http://purl.org/role/terms/data">
+        <Request method="" url=""></Request>
+        <Authorization url=""></Authorization>
+        <Access method="" url=""></Access>
+      </Service>
+    </OAuth>
+
+  </ModulePrefs>
+  <Content type="html">
+    <![CDATA[
+    <script type="application/javascript">
+        (function(){
+          var cnt = 30; // 5 attempts per second => 6 seconds
+          var timeout = function(){
+              var btn = document.getElementById("oauthPersonalizeButton");
+              var wrapper = document.getElementById("oauthPersonalize");
+              if(wrapper && wrapper.offsetParent !== null && btn && btn.onclick){
+                  var win = null;
+                  var openWindow = window.open;
+                  window.open = function(){return win = openWindow.apply(window,arguments);};
+                  btn.onclick.call(btn);
+                  if(win){
+                      win.onload = function(){
+                          win.document.getElementsByTagName("form")[0].submit();
+                          setTimeout(function(){
+                              window.location.reload();
+                              if(win){
+                                  win.close();
+                              }
+                          },1000);
+                      };
+                  }
+              } else {
+                  if(cnt > 0){
+                      cnt -= 1;
+                      setTimeout(timeout,200);
+                  }
+              }
+          };
+          timeout();
+        })();
+    </script>
+    <script src="https://github.com/Mari0/syncmeta/html/js/config.js"></script>
+    <script src="https://github.com/Mari0/syncmeta/html/js/lib/vendor/require.js"></script>    
+    <link rel="stylesheet" type="text/css" href="https://github.com/Mari0/syncmeta/html/css/vendor/jquery-ui.css">
+<link rel="stylesheet" type="text/css" href="https://github.com/Mari0/syncmeta/html/css/vendor/jquery.contextMenu.css">
+<link rel="stylesheet" type="text/css" href="https://github.com/Mari0/syncmeta/html/css/style.css">
+<link rel="stylesheet" type="text/css" href="https://github.com/Mari0/syncmeta/html/css/main_widget.css">
+<link rel="stylesheet" type="text/css" href="https://github.com/Mari0/syncmeta/html/css/viewcanvas_widget.css">
+<script src="https://github.com/Mari0/syncmeta/html/js/viewcanvas_widget.js"></script>
+<script type="application/javascript">
+</script>
+<div id="loading" class="loading"></div>
+<div class="button_bar left">
+	<button id="save"><img width="20px" height="20px" src="https://github.com/Mari0/syncmeta/html/img/save.png" /></button>
+	 <span id="feedback"></span>
+</div>
+<div>
+  <button id="showtype"><img width="20px" height="20px" src="https://github.com/Mari0/syncmeta/html/img/hidetype.png" /></button>
+  <button id="hidetype"><img width="20px" height="20px" src="https://github.com/Mari0/syncmeta/html/img/showtype.png" /></button>
+  <button id="zoomin"><img width="20px" height="20px" src="https://github.com/Mari0/syncmeta/html/img/zoomin.png" /></button>
+  <button id="zoomout"><img width="20px" height="20px" src="https://github.com/Mari0/syncmeta/html/img/zoomout.png" /></button>
+  <button id="undo"><img width="20px" height="20px" src="https://github.com/Mari0/syncmeta/html/img/undo.png" /></button>
+  <button id="redo"><img width="20px" height="20px" src="https://github.com/Mari0/syncmeta/html/img/redo.png" /></button>
+</div>
+<div>
+ <button id="btnCreateViewpoint"><img width="20px" height="20px" src="https://github.com/Mari0/syncmeta/html/img/add196.png" /></button>
+  <input id="txtNameViewpoint" type="text" placeholder="name"  style="display: none;">
+  <button id="btnAddViewpoint" style="display: none;"><img width="20px" height="20px" src="https://github.com/Mari0/syncmeta/html/img/checked21.png" /></button>
+  <button id="btnCancelCreateViewpoint" style="display: none;"><img width="20px" height="20px" src="https://github.com/Mari0/syncmeta/html/img/times1.png" /></button>
+  <select id="ddmViewpointSelection"></select>
+   <button id="btnShowViewPoint">Show</button>
+  <button id="btnDelViewPoint"><img width="20px" height="20px" src="https://github.com/Mari0/syncmeta/html/img/times1.png" /></button>
+</div>
+<div id="canvas-frame">
+  <div id="canvas">
+  </div>
+</div>
+<div id="q"></div>	
+    <script src="https://github.com/Mari0/syncmeta/html/js/shared.js"></script>    
+    ]]>
+  </Content>
+</Module>

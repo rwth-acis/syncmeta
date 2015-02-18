@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- generated on Fri Jan 23 2015 10:48:38 -->
+<!-- generated on Wed Feb 18 2015 19:06:37 -->
 <Module>
   <ModulePrefs
     title="Instances"
     description=""
     author="Stephan Erdtmann"
     author_email="erdtmann@dbis.rwth-aachen.de"
-    width="100"
+    width="200"
     height="300">
 
     <Require feature="opensocial-0.8" ></Require>
@@ -58,8 +58,8 @@
           timeout();
         })();
     </script>
-    <script src="https://rwth-acis.github.io/syncmeta/html/js/config.js"></script>
-    <script src="https://rwth-acis.github.io/syncmeta/html/js/lib/vendor/require.js"></script>    
+    <script src="https://github.com/Mari0/syncmeta/html/js/config.js"></script>
+    <script src="https://github.com/Mari0/syncmeta/html/js/lib/vendor/require.js"></script>    
     <script type="application/javascript">
     requirejs(['jqueryui','lodash'],function($,_){
         $(function(){
@@ -71,7 +71,7 @@
                     getInstances = function(){
 
                         $list.empty();
-                        openapp.resource.get("http://role-sandbox.eu/spaces",function(spaces){
+                        openapp.resource.get("http://127.0.0.1:8073/spaces",function(spaces){
                             var promises = [],
                                     list = [],
                                     spaceUri,
@@ -135,7 +135,7 @@
 </style>
 <!--<button id="reload">Reload</button>-->
 <ul id="list"></ul>
-    <script src="https://rwth-acis.github.io/syncmeta/html/js/shared.js"></script>    
+    <script src="https://github.com/Mari0/syncmeta/html/js/shared.js"></script>    
     ]]>
   </Content>
 </Module>

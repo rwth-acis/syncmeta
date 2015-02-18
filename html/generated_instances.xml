@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- generated on Fri Jan 23 2015 10:48:38 -->
+<!-- generated on Wed Feb 18 2015 19:06:37 -->
 <Module>
   <ModulePrefs
     title="Generate Instance"
@@ -58,8 +58,8 @@
           timeout();
         })();
     </script>
-    <script src="https://rwth-acis.github.io/syncmeta/html/js/config.js"></script>
-    <script src="https://rwth-acis.github.io/syncmeta/html/js/lib/vendor/require.js"></script>    
+    <script src="https://github.com/Mari0/syncmeta/html/js/config.js"></script>
+    <script src="https://github.com/Mari0/syncmeta/html/js/lib/vendor/require.js"></script>    
     <script type="application/javascript">
     requirejs([
         'jqueryui',
@@ -76,7 +76,7 @@
         function generateSpace(spaceLabel,spaceTitle){
 
             function createSpace(spaceLabel,spaceTitle){
-                var url = "http://role-sandbox.eu/spaces/" + spaceLabel;
+                var url = "http://127.0.0.1:8073/spaces/" + spaceLabel;
                 var deferred = $.Deferred();
                 var innerDeferred = $.Deferred();
 
@@ -94,7 +94,7 @@
                 //Create space
                 innerDeferred.then(function(){
                     openapp.resource.post(
-                            "http://role-sandbox.eu/spaces",
+                            "http://127.0.0.1:8073/spaces",
                             function(data){
                                 deferred.resolve(data.uri);
                             },{
@@ -207,17 +207,17 @@
             return getMetaModel().then(function(metamodel){
                 return createSpace(spaceLabel,spaceTitle)
                     .then(function(spaceURI){
-                        return addWidgetToSpace(spaceURI,"https://rwth-acis.github.io/syncmeta/html/activity.xml")
+                        return addWidgetToSpace(spaceURI,"https://github.com/Mari0/syncmeta/html/activity.xml")
                             .then(function(){
-                                return addWidgetToSpace(spaceURI,"https://rwth-acis.github.io/syncmeta/html/widget.xml");
+                                return addWidgetToSpace(spaceURI,"https://github.com/Mari0/syncmeta/html/widget.xml");
                             }).then(function(){
-                                return addWidgetToSpace(spaceURI,"https://rwth-acis.github.io/syncmeta/html/palette.xml");
+                                return addWidgetToSpace(spaceURI,"https://github.com/Mari0/syncmeta/html/palette.xml");
                             }).then(function(){
-                                return addWidgetToSpace(spaceURI,"https://rwth-acis.github.io/syncmeta/html/attribute.xml");
+                                return addWidgetToSpace(spaceURI,"https://github.com/Mari0/syncmeta/html/attribute.xml");
                             }).then(function(){
-                                return addWidgetToSpace(spaceURI,"https://rwth-acis.github.io/syncmeta/html/export.xml");
+                                return addWidgetToSpace(spaceURI,"https://github.com/Mari0/syncmeta/html/export.xml");
                             }).then(function(){
-                                return addWidgetToSpace(spaceURI,"https://rwth-acis.github.io/syncmeta/html/imsld_export.xml");
+                                return addWidgetToSpace(spaceURI,"https://github.com/Mari0/syncmeta/html/imsld_export.xml");
                             }).then(function(){
                                 return addMetamodelToSpace(spaceURI,metamodel);
                             }).then(function(){
@@ -290,7 +290,7 @@
                 clearTimeout(timeout);
                 timeout = setTimeout(function(){
                     $this.addClass('loading_button');
-                    var url = "http://role-sandbox.eu/spaces/" + $this.val().replace(/[^a-zA-Z]/g,"").toLowerCase();
+                    var url = "http://127.0.0.1:8073/spaces/" + $this.val().replace(/[^a-zA-Z]/g,"").toLowerCase();
                     openapp.resource.get(url,function(data){
                         if(data.uri === url){ //Space already exists
                             if(data.data[data.subject['http://purl.org/openapp/owner'][0].value]['http://www.w3.org/2002/07/owl#sameAs'][0].value === openapp.param.user()){
@@ -364,7 +364,7 @@
     /*noinspection CssUnusedSymbol*/
     .loading_button {
         /*noinspection CssUnknownTarget*/
-        background-image: url('https://rwth-acis.github.io/syncmeta/html/img/loading_small.gif');
+        background-image: url('https://github.com/Mari0/syncmeta/html/img/loading_small.gif');
         background-repeat: no-repeat;
         background-position: right center;
         padding-right: 20px;
@@ -372,7 +372,7 @@
 </style>
 <p><strong>Editor space url:</strong>
     <br/>
-    <span id="space_link_input">http://role-sandbox.eu/<input size="16" type="text" id="space_label" /></span>
+    <span id="space_link_input">http://127.0.0.1:8073/<input size="16" type="text" id="space_label" /></span>
     <span id="space_link_text" style="display: none"><a id="space_link" target="_blank" href="#"></a></span>
     <br/>
     <span id="space_link_comment" style="color: #FF3333; display: none">Space already exists, will be overwritten!</span>
@@ -385,7 +385,7 @@
 <button id="reset">Reset</button>
 <p><strong>Generated instances:</strong>
 <ul id="list"></ul>
-    <script src="https://rwth-acis.github.io/syncmeta/html/js/shared.js"></script>    
+    <script src="https://github.com/Mari0/syncmeta/html/js/shared.js"></script>    
     ]]>
   </Content>
 </Module>

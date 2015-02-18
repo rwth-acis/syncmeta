@@ -431,9 +431,9 @@ define([
                         offsetCanvas;
 
                     offsetClick = $(e.target).offset();
-                    offsetCanvas = that.getCanvas().get$node().offset();
-
-                    if(_canvas.getSelectedEntity() === null || _canvas.getSelectedEntity() === that){
+                   	offsetCanvas = that.getCanvas().get$node().offset();
+					
+					if(_canvas.getSelectedEntity() === null || _canvas.getSelectedEntity() === that){
                         menuItems = _.extend(_contextMenuItemCallback(),{
                             connectTo: require('canvas_widget/EntityManager').generateConnectToMenu(that),
                             sepMove: "---------",

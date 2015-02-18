@@ -66,7 +66,8 @@ CONFIG = {
             MAIN: "MAIN",
             PALETTE: "PALETTE",
             ATTRIBUTE: "ATTRIBUTE",
-            ACTIVITY: "ACTIVITY"
+            ACTIVITY: "ACTIVITY",
+			VIEWCANVAS: "VIEWCANVAS"
         }
     },
     ENTITY: {
@@ -165,7 +166,9 @@ CONFIG = {
         MY: {
             MODEL: "my:ns:model",
             METAMODEL: "my:ns:metamodel",
-            INSTANCE: "my:ns:instance"
+            INSTANCE: "my:ns:instance",
+			VIEWPOINT: "my:ns:viewpoint",
+			VIEW: "my:ns:view"
         }
     }
 };

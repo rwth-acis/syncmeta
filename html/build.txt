@@ -19,6 +19,10 @@ css/style.css
 ----------------
 css/style.css
 
+css/viewcanvas_widget.css
+----------------
+css/viewcanvas_widget.css
+
 templates/templates.js
 ----------------
 templates/templates.js
