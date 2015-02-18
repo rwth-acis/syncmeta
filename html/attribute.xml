@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- generated on Wed Feb 18 2015 19:06:37 -->
+<!-- generated on Wed Feb 18 2015 20:03:04 -->
 <Module>
   <ModulePrefs
     title="Property Browser"
@@ -58,12 +58,12 @@
           timeout();
         })();
     </script>
-    <script src="https://github.com/Mari0/syncmeta/html/js/config.js"></script>
-    <script src="https://github.com/Mari0/syncmeta/html/js/lib/vendor/require.js"></script>    
-    <link rel="stylesheet" type="text/css" href="https://github.com/Mari0/syncmeta/html/css/vendor/jquery-ui.css">
-<link rel="stylesheet" type="text/css" href="https://github.com/Mari0/syncmeta/html/css/style.css">
-<link rel="stylesheet" type="text/css" href="https://github.com/Mari0/syncmeta/html/css/attribute_widget.css">
-<script src="https://github.com/Mari0/syncmeta/html/js/attribute_widget.js"></script>
+    <script src="http://mari0.github.io/syncmeta/html/js/config.js"></script>
+    <script src="http://mari0.github.io/syncmeta/html/js/lib/vendor/require.js"></script>    
+    <link rel="stylesheet" type="text/css" href="http://mari0.github.io/syncmeta/html/css/vendor/jquery-ui.css">
+<link rel="stylesheet" type="text/css" href="http://mari0.github.io/syncmeta/html/css/style.css">
+<link rel="stylesheet" type="text/css" href="http://mari0.github.io/syncmeta/html/css/attribute_widget.css">
+<script src="http://mari0.github.io/syncmeta/html/js/attribute_widget.js"></script>
 <style>
 #wrapper {
   /*overflow-y: scroll;*/
@@ -73,7 +73,7 @@
 <div id="loading" class="loading"></div>
 <div id="wrapper"></div>
 <div id="q"></div>
-    <script src="https://github.com/Mari0/syncmeta/html/js/shared.js"></script>    
+    <script src="http://mari0.github.io/syncmeta/html/js/shared.js"></script>    
     ]]>
   </Content>
 </Module>

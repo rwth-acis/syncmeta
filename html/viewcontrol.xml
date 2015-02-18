@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- generated on Wed Feb 18 2015 19:06:37 -->
+<!-- generated on Wed Feb 18 2015 20:03:04 -->
 <Module>
   <ModulePrefs
     title="View Control"
@@ -58,10 +58,10 @@
           timeout();
         })();
     </script>
-    <script src="https://github.com/Mari0/syncmeta/html/js/config.js"></script>
-    <script src="https://github.com/Mari0/syncmeta/html/js/lib/vendor/require.js"></script>    
-    <link rel="stylesheet" type="text/css" href="https://github.com/Mari0/syncmeta/html/css/vendor/jquery-ui.css">
-<link rel="stylesheet" type="text/css" href="https://github.com/Mari0/syncmeta/html/css/style.css">
+    <script src="http://mari0.github.io/syncmeta/html/js/config.js"></script>
+    <script src="http://mari0.github.io/syncmeta/html/js/lib/vendor/require.js"></script>    
+    <link rel="stylesheet" type="text/css" href="http://mari0.github.io/syncmeta/html/css/vendor/jquery-ui.css">
+<link rel="stylesheet" type="text/css" href="http://mari0.github.io/syncmeta/html/css/style.css">
 <script type="application/javascript">
 	 requirejs(['jqueryui','lodash'],function($,_){
 			
@@ -114,7 +114,7 @@
 							});
 							$viewEntry.find('.btnViewListShow').click(function(evt){
 								getCurrentSpaceURI(space).then(function(currentSpaceURI){
-									addWidgetToSpace(currentSpaceURI, "https://github.com/Mari0/syncmeta/html/viewcanvas.xml").then(function(){	
+									addWidgetToSpace(currentSpaceURI, "http://mari0.github.io/syncmeta/html/viewcanvas.xml").then(function(){	
 										var viewpointName = $(evt.target).parents('tr').find('.lblviewname').text();
 										var intent = { 
 											"component": "",
@@ -166,7 +166,7 @@
 		<table id="viewlist"></table>
 	</div>
 </div>
-    <script src="https://github.com/Mari0/syncmeta/html/js/shared.js"></script>    
+    <script src="http://mari0.github.io/syncmeta/html/js/shared.js"></script>    
     ]]>
   </Content>
 </Module>
