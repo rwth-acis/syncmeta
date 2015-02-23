@@ -207,6 +207,8 @@
                 <File name="src\js\palette_widget\RelationshipNodeTool.js" />
                 <File name="src\js\palette_widget\Separator.js" />
                 <File name="src\js\palette_widget\UniDirAssociationEdgeTool.js" />
+                <File name="src\js\palette_widget\ViewRelationshipNodeTool.js" />
+                <File name="src\js\palette_widget\ViewObjectNodeTool.js" />
             </Folder>
             <File name="src\js\activity_widget.js" />
             <File name="src\js\attribute_widget.js" />
@@ -219,6 +221,12 @@
             <File name="src\js\Space.js" />
             <File name="src\js\Util.js" />
             <File name="src\js\viewcanvas_widget.js" />
+            <Folder name="viewcanvas_widget">
+                <File name="src\js\viewcanvas_widget\ViewObjectNode.js" />
+                <File name="src\js\viewcanvas_widget\ViewObjectNodeTool.js" />
+                <File name="src\js\viewcanvas_widget\ViewRelationshipNode.js" />
+                <File name="src\js\viewcanvas_widget\ViewRelationshipNodeTool.js" />
+            </Folder>
         </Folder>
         <Folder name="templates">
             <Folder name="activity_widget">
@@ -299,6 +307,10 @@
                 <File name="src\templates\palette_widget\separator.html" />
             </Folder>
             <File name="src\templates\templates.js" />
+            <Folder name="viewcanvas_widget">
+                <File name="src\templates\viewcanvas_widget\viewobject_node.html" />
+                <File name="src\templates\viewcanvas_widget\viewrelationship_node.html" />
+            </Folder>
         </Folder>
         <Folder name="widgets">
             <Folder name="partials">

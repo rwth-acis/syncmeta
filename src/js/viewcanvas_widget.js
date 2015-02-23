@@ -30,8 +30,12 @@ requirejs([
 		'canvas_widget/GeneralisationEdge',
 		'canvas_widget/BiDirAssociationEdge',
 		'canvas_widget/UniDirAssociationEdge',
+		'viewcanvas_widget/ViewObjectNodeTool',
+		'viewcanvas_widget/ViewObjectNode',
+		'viewcanvas_widget/ViewRelationshipNode',
+		'viewcanvas_widget/ViewRelationshipNodeTool',
 		'promise!Metamodel'
-	], function ($, _, jsPlumb, IWCOT, ToolSelectOperation, ActivityOperation, JoinOperation, Canvas, EntityManager, NodeTool, ObjectNodeTool, AbstractClassNodeTool, RelationshipNodeTool, RelationshipGroupNodeTool, EnumNodeTool, NodeShapeNodeTool, EdgeShapeNodeTool, EdgeTool, GeneralisationEdgeTool, BiDirAssociationEdgeTool, UniDirAssociationEdgeTool, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, metamodel) {
+	], function ($, _, jsPlumb, IWCOT, ToolSelectOperation, ActivityOperation, JoinOperation, Canvas, EntityManager, NodeTool, ObjectNodeTool, AbstractClassNodeTool, RelationshipNodeTool, RelationshipGroupNodeTool, EnumNodeTool, NodeShapeNodeTool, EdgeShapeNodeTool, EdgeTool, GeneralisationEdgeTool, BiDirAssociationEdgeTool, UniDirAssociationEdgeTool, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNodeTool, ViewObjectNode, ViewRelationshipNode, ViewRelationshipNodeTool, metamodel) {
 
 	var iwcot;
 	var canvas = new Canvas($("#canvas"), CONFIG.WIDGET.NAME.VIEWCANVAS);
@@ -56,6 +60,10 @@ requirejs([
 		canvas.addTool(EnumNode.TYPE, new EnumNodeTool());
 		canvas.addTool(NodeShapeNode.TYPE, new NodeShapeNodeTool());
 		canvas.addTool(EdgeShapeNode.TYPE, new EdgeShapeNodeTool());
+		
+		//Add view types to the meta-model editor
+		canvas.addTool(ViewObjectNode.TYPE, new ViewObjectNodeTool());
+		canvas.addTool(ViewRelationshipNode.TYPE, new ViewRelationshipNodeTool());
 	}
 
 	if (metamodel && metamodel.hasOwnProperty("edges")) {

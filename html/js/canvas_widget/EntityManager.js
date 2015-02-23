@@ -15,6 +15,8 @@ define([
 		'canvas_widget/GeneralisationEdge',
 		'canvas_widget/BiDirAssociationEdge',
 		'canvas_widget/UniDirAssociationEdge',
+		'viewcanvas_widget/ViewObjectNode',
+		'viewcanvas_widget/ViewRelationshipNode',
 		'text!templates/canvas_widget/circle_node.html',
 		'text!templates/canvas_widget/diamond_node.html',
 		'text!templates/canvas_widget/rectangle_node.html',
@@ -22,7 +24,7 @@ define([
 		'text!templates/canvas_widget/triangle_node.html',
 		'promise!Metamodel'
 	], /** @lends EntityManager */
-	function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, ModelAttributesNode, Edge, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, circleNodeHtml, diamondNodeHtml, rectangleNodeHtml, roundedRectangleNodeHtml, triangleNodeHtml, metamodel) {
+	function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, ModelAttributesNode, Edge, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNode, ViewRelationshipNode, circleNodeHtml, diamondNodeHtml, rectangleNodeHtml, roundedRectangleNodeHtml, triangleNodeHtml, metamodel) {
 
 	/**
 	 * Predefined node shapes, first is default
@@ -143,6 +145,10 @@ define([
 		nodeTypes[EnumNode.TYPE] = EnumNode;
 		nodeTypes[NodeShapeNode.TYPE] = NodeShapeNode;
 		nodeTypes[EdgeShapeNode.TYPE] = EdgeShapeNode;
+		
+		//add view types
+		nodeTypes[ViewObjectNode.TYPE] = ViewObjectNode;
+		nodeTypes[ViewRelationshipNode.TYPE] = ViewRelationshipNode;
 	}
 
 	/**

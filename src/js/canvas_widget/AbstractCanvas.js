@@ -69,7 +69,7 @@ define([],/** @lends AbstractCanvas */function () {
          * @param {string} name Name of tool
          */
         this.mountTool = function(name){
-            if(_currentToolName) _tools[_currentToolName].unmount();
+            if(_currentToolName && _tools[_currentToolName]) _tools[_currentToolName].unmount();
             if(_tools.hasOwnProperty(name)){
                 _tools[name].mount();
             }

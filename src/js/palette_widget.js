@@ -20,13 +20,15 @@ requirejs([
     'palette_widget/BiDirAssociationEdgeTool',
     'palette_widget/UniDirAssociationEdgeTool',
     'palette_widget/GeneralisationEdgeTool',
+	'palette_widget/ViewObjectNodeTool',
+	'palette_widget/ViewRelationshipNodeTool',
     'text!templates/canvas_widget/circle_node.html',
     'text!templates/canvas_widget/diamond_node.html',
     'text!templates/canvas_widget/rectangle_node.html',
     'text!templates/canvas_widget/rounded_rectangle_node.html',
     'text!templates/canvas_widget/triangle_node.html',
     'promise!Metamodel'
-],function ($,Palette,MoveTool,Separator,NodeTool,ObjectNodeTool,AbstractClassNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,GeneralisationEdgeTool,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,metamodel) {
+],function ($,Palette,MoveTool,Separator,NodeTool,ObjectNodeTool,AbstractClassNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,GeneralisationEdgeTool,ViewObjectNodeTool,ViewRelationshipNodeTool,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,metamodel) {
 
     /**
      * Predefined node shapes, first is default
@@ -100,6 +102,9 @@ requirejs([
         palette.addTool(new EnumNodeTool());
         palette.addTool(new NodeShapeNodeTool());
         palette.addTool(new EdgeShapeNodeTool());
+		palette.addSeparator(new Separator());
+		palette.addTool(new ViewObjectNodeTool());
+		palette.addTool(new ViewRelationshipNodeTool());
     }
     palette.addSeparator(new Separator());
     if(metamodel && metamodel.hasOwnProperty("edges")){
@@ -115,7 +120,8 @@ requirejs([
         palette.addTool(new UniDirAssociationEdgeTool());
         palette.addTool(new GeneralisationEdgeTool());
     }
-
+	
+	
     $("#q").draggable({
         axis: "y",
         start: function(){

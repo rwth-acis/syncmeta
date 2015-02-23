@@ -1,5 +1,5 @@
 var require = {
-    baseUrl: "http://mari0.github.io/syncmeta/html/js",
+    baseUrl: "http://localhost:8081/js",
     waitSeconds: 0,
     shim: {
         iwc: {
