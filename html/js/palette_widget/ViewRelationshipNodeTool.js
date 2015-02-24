@@ -20,7 +20,5 @@ define([
             toolIcon||"class.png"
         );
     }
-
     return ViewRelationshipNodeTool;
-
 });

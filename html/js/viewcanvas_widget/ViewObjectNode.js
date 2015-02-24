@@ -4,9 +4,10 @@ define([
     'jsplumb',
     'lodash',
     'canvas_widget/AbstractNode',
-    'canvas_widget/KeySelectionValueListAttribute',
+	'canvas_widget/SingleSelectionAttribute',
+    'canvas_widget/KeySelectionValueSelectionValueListAttribute',
     'text!templates/viewcanvas_widget/viewobject_node.html'
-],/** @lends ViewObjectNode */function(require,$,jsPlumb,_,AbstractNode,KeySelectionValueListAttribute,viewobjectNodeHtml) {
+],/** @lends ViewObjectNode */function(require,$,jsPlumb,_,AbstractNode,SingleSelectionAttribute,KeySelectionValueSelectionValueListAttribute,viewobjectNodeHtml) {
 
     ViewObjectNode.TYPE = "ViewObject";
     ViewObjectNode.DEFAULT_WIDTH = 150;
@@ -68,8 +69,9 @@ define([
             return AbstractNode.prototype.toJSON.call(this);
         };
 
-       this.addAttribute(new KeySelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File"}));
-
+       this.addAttribute(new SingleSelectionAttribute("[target]", "Target", this, {"class1":"Class1", "class2":"Class2"}));
+       this.addAttribute(new KeySelectionValueSelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File"},{"hidden":"Hidden","show":"Visible"}));
+		
         _$node.find(".label").append(this.getLabel().get$node());
 
         for(var attributeKey in _attributes){

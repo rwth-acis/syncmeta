@@ -3,11 +3,9 @@ define([
     'jsplumb',
     'lodash',
     'attribute_widget/AbstractNode',
-    'attribute_widget/SingleValueAttribute',
-    'attribute_widget/SingleSelectionAttribute',
     'attribute_widget/KeySelectionValueListAttribute',
     'text!templates/attribute_widget/object_node.html'
-],/** @lends ObjectNode */function($,jsPlumb,_,AbstractNode,SingleValueAttribute,SingleSelectionAttribute,KeySelectionValueListAttribute,objectNodeHtml) {
+],/** @lends ObjectNode */function($,jsPlumb,_,AbstractNode,KeySelectionValueListAttribute,objectNodeHtml) {
 
     ObjectNode.TYPE = "Object";
 
@@ -56,8 +54,6 @@ define([
          */
         var _attributes = this.getAttributes();
 
-        //this.addAttribute(new SingleValueAttribute(this.getEntityId()+"[color]","Color",this));
-        //this.addAttribute(new SingleSelectionAttribute(this.getEntityId()+"[shape]","Shape",this,{"rectangle":"Rectangle","circle":"Circle"}));
         this.addAttribute(new KeySelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File"}));
 
         _$node.find(".label").append(this.getLabel().get$node());

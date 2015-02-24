@@ -13,9 +13,10 @@ define([
     'attribute_widget/GeneralisationEdge',
     'attribute_widget/BiDirAssociationEdge',
     'attribute_widget/UniDirAssociationEdge',
-    'attribute_widget/SingleValueAttribute',
+	'attribute_widget/view_types/attr_ViewObjectNode',
+	'attribute_widget/view_types/attr_ViewRelationshipNode',
     'promise!Metamodel'
-],/** @lends EntityManager */function(_,Node,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,ModelAttributesNode,Edge,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge,SingleValueAttribute,metamodel) {
+],/** @lends EntityManager */function(_,Node,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,ModelAttributesNode,Edge,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge, ViewObjectNode, ViewRelationshipNode,metamodel) {
 
     /**
      * Different node types
@@ -39,6 +40,10 @@ define([
         nodeTypes[EnumNode.TYPE] = EnumNode;
         nodeTypes[NodeShapeNode.TYPE] = NodeShapeNode;
         nodeTypes[EdgeShapeNode.TYPE] = EdgeShapeNode;
+		
+		//add view types
+		nodeTypes[ViewObjectNode.TYPE] = ViewObjectNode;
+		nodeTypes[ViewRelationshipNode.TYPE] = ViewRelationshipNode;
     }
 
     /**

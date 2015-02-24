@@ -3,17 +3,18 @@ define([
     'jsplumb',
     'lodash',
     'attribute_widget/AbstractNode',
-    'attribute_widget/KeySelectionValueListAttribute',
+    'attribute_widget/KeySelectionValueSelectionValueListAttribute',
+	'attribute_widget/SingleSelectionAttribute',
     'text!templates/attribute_widget/object_node.html'
-],/** @lends ObjectNode */function($,jsPlumb,_,AbstractNode,KeySelectionValueListAttribute,objectNodeHtml) {
+],/** @lends ViewObjectNode */function($,jsPlumb,_,AbstractNode,KeySelectionValueSelectionValueListAttribute,SingleSelectionAttribute,objectNodeHtml) {
 
-    ObjectNode.TYPE = "Object";
+    ViewObjectNode.TYPE = "ViewObject";
 
-    ObjectNode.prototype = new AbstractNode();
-    ObjectNode.prototype.constructor = ObjectNode;
+    ViewObjectNode.prototype = new AbstractNode();
+    ViewObjectNode.prototype.constructor = ViewObjectNode;
     /**
-     * ObjectNode
-     * @class attribute_widget.ObjectNode
+     * ViewObjectNode
+     * @class attribute_widget.ViewObjectNode
      * @memberof attribute_widget
      * @extends attribute_widget.AbstractNode
      * @constructor
@@ -23,8 +24,8 @@ define([
      * @param {number} width Width of node
      * @param {number} height Height of node
      */
-    function ObjectNode(id,left,top,width,height){
-        AbstractNode.call(this,id,ObjectNode.TYPE,left,top,width,height);
+    function ViewObjectNode(id,left,top,width,height){
+        AbstractNode.call(this,id,ViewObjectNode.TYPE,left,top,width,height);
 
         /**
          * jQuery object of node template
@@ -53,9 +54,9 @@ define([
          * @private
          */
         var _attributes = this.getAttributes();
-
-        this.addAttribute(new KeySelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File"}));
-
+		this.addAttribute(new SingleSelectionAttribute("[target]", "Target", this, {"class1":"Class1", "class2":"Class2"}));
+        this.addAttribute(new KeySelectionValueSelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File"},{"hidden":"Hidden","show":"Visible"}));
+		
         _$node.find(".label").append(this.getLabel().get$node());
 
         for(var attributeKey in _attributes){
@@ -65,6 +66,6 @@ define([
         }
     }
 
-    return ObjectNode;
+    return ViewObjectNode;
 
 });
