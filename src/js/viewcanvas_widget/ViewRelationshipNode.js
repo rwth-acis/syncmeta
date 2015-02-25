@@ -6,8 +6,9 @@ define([
     'canvas_widget/AbstractNode',
 	'canvas_widget/SingleSelectionAttribute',
     'canvas_widget/KeySelectionValueSelectionValueListAttribute',
+	'viewcanvas_widget/ConditionListAttribute',
     'text!templates/viewcanvas_widget/viewrelationship_node.html'
-],/** @lends ViewRelationshipNode */function(require,$,jsPlumb,_,AbstractNode,SingleSelectionAttribute,KeySelectionValueSelectionValueListAttribute,viewrelationshipNodeHtml) {
+],/** @lends ViewRelationshipNode */function(require,$,jsPlumb,_,AbstractNode,SingleSelectionAttribute,KeySelectionValueSelectionValueListAttribute,ConditionListAttribute,viewrelationshipNodeHtml) {
 
     ViewRelationshipNode.TYPE = "ViewRelationship";
     ViewRelationshipNode.DEFAULT_WIDTH = 150;
@@ -70,7 +71,13 @@ define([
         };
 		this.addAttribute(new SingleSelectionAttribute("[target]", "Target", this, {"class1":"Class1", "class2":"Class2"}));
         this.addAttribute(new KeySelectionValueSelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File"},{"hidden":"Hide","top":"Top","center":"Center","bottom":"Bottom"}));
-
+		
+		var attributeOfClass = {"testattr1":"attr1", "testattr2":"attr2"};
+		var operators = {"greater":">", "smaller":"<", "equal":"==","greater_eq":">=","smaller_eq":"<=","nequal":"!="};
+		var operators2 = {"AND":"&&", "OR":"||"};
+		this.addAttribute(new ConditionListAttribute("[condition]", "Conditions", this, attributeOfClass, operators, operators2));
+        
+		
         $node.find(".label").append(this.getLabel().get$node());
 
         for(var attributeKey in _attributes){

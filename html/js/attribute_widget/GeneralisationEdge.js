@@ -7,8 +7,10 @@ define([
     'attribute_widget/ObjectNode',
     'attribute_widget/RelationshipNode',
     'attribute_widget/RelationshipGroupNode',
-    'attribute_widget/EnumNode'
-],/** @lends GeneralisationEdge */function($,jsPlumb,_,AbstractEdge,AbstractClassNode,ObjectNode,RelationshipNode,RelationshipGroupNode,EnumNode) {
+    'attribute_widget/EnumNode',
+	'attribute_widget/view_types/attr_ViewObjectNode',
+	'attribute_widget/view_types/attr_ViewRelationshipNode'
+],/** @lends GeneralisationEdge */function($,jsPlumb,_,AbstractEdge,AbstractClassNode,ObjectNode,RelationshipNode,RelationshipGroupNode,EnumNode,ViewObjectNode,ViewRelationshipNode) {
 
     GeneralisationEdge.TYPE = "Generalisation";
     GeneralisationEdge.RELATIONS = [
@@ -31,6 +33,14 @@ define([
         {
             sourceTypes: [EnumNode.TYPE],
             targetTypes: [EnumNode.TYPE]
+        },
+		{
+            sourceTypes: [ViewObjectNode.TYPE],
+            targetTypes: [ObjectNode.TYPE,AbstractClassNode.TYPE,ViewObjectNode.TYPE]
+        },
+        {
+            sourceTypes: [ViewRelationshipNode.TYPE],
+            targetTypes: [RelationshipNode.TYPE,AbstractClassNode.TYPE,ViewRelationshipNode.TYPE]
         }
     ];
 

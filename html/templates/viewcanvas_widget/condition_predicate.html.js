@@ -1,0 +1,1 @@
+define('text!templates/viewcanvas_widget/condition_predicate.html',[],function () { return '<li class="condition_predicate">\r\n    <div class="property"></div>\r\n    <div class="operator"></div>\r\n    <div class="val"></div>\r\n\t<div class="operator2"></div>\r\n</li>';});

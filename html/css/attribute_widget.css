@@ -8,20 +8,24 @@
     margin-left: 10px;
 }
 
-.key_value_attribute {
+.key_value_attribute, 
+.condition_predicate {
     overflow: auto;
 }
 
-.key_value_attribute div{
+.key_value_attribute div,
+.condition_predicate div {
     width: 30%;
     float: left;
 }
 
-.key_value_attribute div input{
+.key_value_attribute div input,
+.condition_predicate div input{
     border: 1px solid #aaaaaa;
 }
 
-.key_value_attribute span.ui-icon{
+.key_value_attribute span.ui-icon,
+.condition_predicate span.ui-icon{
     margin-top: 3px;
 }
 
@@ -75,6 +79,9 @@
 }
 
 .key_value_attribute input, select {
+    width: 150px;
+}
+.condition_predicate input, select {
     width: 150px;
 }
 

@@ -10,18 +10,20 @@ define([
     'canvas_widget/RelationshipGroupNode',
     'canvas_widget/EnumNode',
     'canvas_widget/NodeShapeNode',
-    'canvas_widget/EdgeShapeNode'
-],/** @lends BiDirAssociationEdge */function(require,$,jsPlumb,_,AbstractEdge,AbstractClassNode,ObjectNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode) {
+    'canvas_widget/EdgeShapeNode',
+	'viewcanvas_widget/ViewObjectNode',
+	'viewcanvas_widget/ViewRelationshipNode'
+],/** @lends BiDirAssociationEdge */function(require,$,jsPlumb,_,AbstractEdge,AbstractClassNode,ObjectNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,ViewObjectNode,ViewRelationshipNode) {
 
     BiDirAssociationEdge.TYPE = "Bi-Dir-Association";
     BiDirAssociationEdge.RELATIONS = [
         {
             sourceTypes: [ObjectNode.TYPE],
-            targetTypes: [EnumNode.TYPE,NodeShapeNode.TYPE,RelationshipNode.TYPE,RelationshipGroupNode.TYPE]
+            targetTypes: [EnumNode.TYPE,NodeShapeNode.TYPE,RelationshipNode.TYPE,RelationshipGroupNode.TYPE,ViewRelationshipNode.TYPE]
         },
         {
             sourceTypes: [RelationshipNode.TYPE],
-            targetTypes: [EnumNode.TYPE,EdgeShapeNode.TYPE,ObjectNode.TYPE,AbstractClassNode.TYPE]
+            targetTypes: [EnumNode.TYPE,EdgeShapeNode.TYPE,ObjectNode.TYPE,AbstractClassNode.TYPE,ViewObjectNode.TYPE]
         },
         {
             sourceTypes: [RelationshipGroupNode.TYPE],
@@ -42,6 +44,14 @@ define([
         {
             sourceTypes: [EdgeShapeNode.TYPE],
             targetTypes: [RelationshipNode.TYPE]
+        },
+		{
+            sourceTypes: [ViewObjectNode.TYPE],
+            targetTypes: [EnumNode.TYPE,NodeShapeNode.TYPE,RelationshipNode.TYPE,RelationshipGroupNode.TYPE,ViewRelationshipNode.TYPE]
+        },
+		{
+            sourceTypes: [ViewRelationshipNode.TYPE],
+            targetTypes: [EnumNode.TYPE,EdgeShapeNode.TYPE,ObjectNode.TYPE,AbstractClassNode.TYPE,ViewObjectNode.TYPE]
         }
     ];
 

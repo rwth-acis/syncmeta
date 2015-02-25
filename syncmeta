@@ -93,6 +93,8 @@
                 <Folder name="view_types">
                     <File name="src\js\attribute_widget\view_types\attr_ViewObjectNode.js" />
                     <File name="src\js\attribute_widget\view_types\attr_ViewRelationshipNode.js" />
+                    <File name="src\js\attribute_widget\view_types\attr_ConditionPredicateAttribute.js" />
+                    <File name="src\js\attribute_widget\view_types\attr_ConditionListAttribute.js" />
                 </Folder>
             </Folder>
             <Folder name="canvas_widget">
@@ -230,6 +232,8 @@
                 <File name="src\js\viewcanvas_widget\ViewObjectNodeTool.js" />
                 <File name="src\js\viewcanvas_widget\ViewRelationshipNode.js" />
                 <File name="src\js\viewcanvas_widget\ViewRelationshipNodeTool.js" />
+                <File name="src\js\viewcanvas_widget\ConditionPredicateAttribute.js" />
+                <File name="src\js\viewcanvas_widget\ConditionListAttribute.js" />
             </Folder>
         </Folder>
         <Folder name="templates">
@@ -270,6 +274,9 @@
                 <File name="src\templates\attribute_widget\single_selection_attribute.html" />
                 <File name="src\templates\attribute_widget\single_value_attribute.html" />
                 <File name="src\templates\attribute_widget\value.html" />
+                <Folder name="view_types">
+                    <File name="src\templates\attribute_widget\view_types\condition_predicate.html" />
+                </Folder>
             </Folder>
             <Folder name="canvas_widget">
                 <File name="src\templates\canvas_widget\abstract_attribute.html" />
@@ -314,6 +321,7 @@
             <Folder name="viewcanvas_widget">
                 <File name="src\templates\viewcanvas_widget\viewobject_node.html" />
                 <File name="src\templates\viewcanvas_widget\viewrelationship_node.html" />
+                <File name="src\templates\attribute_widget\view_types\condition_predicate.html" />
             </Folder>
         </Folder>
         <Folder name="widgets">

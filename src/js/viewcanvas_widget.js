@@ -167,11 +167,7 @@ requirejs([
 
 				resetCanvas();
 				JSONtoGraph(rep.data);
-				if (canvas.getModelAttributesNode() === null) {
-					var modelAttributesNode = EntityManager.createModelAttributesNode();
-					canvas.setModelAttributesNode(modelAttributesNode);
-					modelAttributesNode.addToCanvas(canvas);
-				}
+				
 				canvas.resetTool();
 			});
 		});
@@ -244,8 +240,6 @@ requirejs([
 	iwcot.registerOnHistoryChangedCallback(saveCallback);*/
 	//End Autosave------------------------------------------------------
 	function resetCanvas() {
-		EntityManager.deleteModelAttribute();
-
 		var edges = EntityManager.getEdges();
 		for (edgeId in edges) {
 			if (edges.hasOwnProperty(edgeId)) {
@@ -281,14 +275,8 @@ requirejs([
 		});
 	}
 	function JSONtoGraph(json) {
-		var modelAttributesNode;
 		var nodeId,
 		edgeId;
-		if (json.attributes) {
-			modelAttributesNode = EntityManager.createModelAttributesNodeFromJSON(json.attributes);
-			canvas.setModelAttributesNode(modelAttributesNode);
-			modelAttributesNode.addToCanvas(canvas);
-		}
 		for (nodeId in json.nodes) {
 			if (json.nodes.hasOwnProperty(nodeId)) {
 				var node = EntityManager.createNodeFromJSON(json.nodes[nodeId].type, nodeId, json.nodes[nodeId].left, json.nodes[nodeId].top, json.nodes[nodeId].width, json.nodes[nodeId].height, json.nodes[nodeId].zIndex, json.nodes[nodeId]);
@@ -314,11 +302,11 @@ requirejs([
 					//operation.setData(model);
 					iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
 					//JSONtoGraph(model);
-					if (canvas.getModelAttributesNode() === null) {
+					/*if (canvas.getModelAttributesNode() === null) {
 						var modelAttributesNode = EntityManager.createModelAttributesNode();
 						canvas.setModelAttributesNode(modelAttributesNode);
 						modelAttributesNode.addToCanvas(canvas);
-					}
+					}*/
 					canvas.resetTool();
 					$("#loading").hide();
 					GetViewList();

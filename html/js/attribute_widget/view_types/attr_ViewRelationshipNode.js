@@ -4,8 +4,9 @@ define([
     'attribute_widget/AbstractNode',
     'attribute_widget/KeySelectionValueSelectionValueListAttribute',
 	'attribute_widget/SingleSelectionAttribute',
+	'attribute_widget/view_types/attr_ConditionListAttribute',
     'text!templates/attribute_widget/relationship_node.html'
-],/** @lends ViewRelationshipNode */function($,_,AbstractNode,KeySelectionValueSelectionValueListAttribute,SingleSelectionAttribute,relationshipNodeHtml) {
+],/** @lends ViewRelationshipNode */function($,_,AbstractNode,KeySelectionValueSelectionValueListAttribute,SingleSelectionAttribute,ConditionListAttribute,relationshipNodeHtml) {
 
     ViewRelationshipNode.TYPE = "ViewRelationship";
 
@@ -55,6 +56,13 @@ define([
         var _attributes = this.getAttributes();
 		this.addAttribute(new SingleSelectionAttribute("[target]", "Target", this, {"class1":"Class1", "class2":"Class2"}));
         this.addAttribute(new KeySelectionValueSelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File"},{"hidden":"Hide","top":"Top","center":"Center","bottom":"Bottom"}));
+		 
+		var attributeOfClass = {"testattr1":"attr1", "testattr2":"attr2"};
+		var operators = {"greater":">", "smaller":"<", "equal":"==","greater_eq":">=","smaller_eq":"<=","nequal":"!="};
+		var operators2 = {"AND":"&&", "OR":"||"};
+		this.addAttribute(new ConditionListAttribute("[condition]", "Conditions", this, attributeOfClass, operators, operators2));
+       
+		 
 		 _$node.find(".label").append(this.getLabel().get$node());
 
         for(var attributeKey in _attributes){

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- generated on Tue Feb 24 2015 18:11:21 -->
+<!-- generated on Wed Feb 25 2015 19:52:56 -->
 <Module>
   <ModulePrefs
     title="View Canvas"
@@ -58,44 +58,44 @@
           timeout();
         })();
     </script>
-    <script src="http://localhost:8081/js/config.js"></script>
-    <script src="http://localhost:8081/js/lib/vendor/require.js"></script>    
-    <link rel="stylesheet" type="text/css" href="http://localhost:8081/css/vendor/jquery-ui.css">
-<link rel="stylesheet" type="text/css" href="http://localhost:8081/css/vendor/jquery.contextMenu.css">
-<link rel="stylesheet" type="text/css" href="http://localhost:8081/css/style.css">
-<link rel="stylesheet" type="text/css" href="http://localhost:8081/css/main_widget.css">
-<link rel="stylesheet" type="text/css" href="http://localhost:8081/css/viewcanvas_widget.css">
-<script src="http://localhost:8081/js/viewcanvas_widget.js"></script>
+    <script src="http://mari0.github.io/syncmeta/html/js/config.js"></script>
+    <script src="http://mari0.github.io/syncmeta/html/js/lib/vendor/require.js"></script>    
+    <link rel="stylesheet" type="text/css" href="http://mari0.github.io/syncmeta/html/css/vendor/jquery-ui.css">
+<link rel="stylesheet" type="text/css" href="http://mari0.github.io/syncmeta/html/css/vendor/jquery.contextMenu.css">
+<link rel="stylesheet" type="text/css" href="http://mari0.github.io/syncmeta/html/css/style.css">
+<link rel="stylesheet" type="text/css" href="http://mari0.github.io/syncmeta/html/css/main_widget.css">
+<link rel="stylesheet" type="text/css" href="http://mari0.github.io/syncmeta/html/css/viewcanvas_widget.css">
+<script src="http://mari0.github.io/syncmeta/html/js/viewcanvas_widget.js"></script>
 <script type="application/javascript">
 </script>
 <div id="loading" class="loading"></div>
 <div class="button_bar left">
-	<button id="save"><img width="20px" height="20px" src="http://localhost:8081/img/save.png" /></button>
+	<button id="save"><img width="20px" height="20px" src="http://mari0.github.io/syncmeta/html/img/save.png" /></button>
 	 <span id="feedback"></span>
 </div>
 <div>
-  <button id="showtype"><img width="20px" height="20px" src="http://localhost:8081/img/hidetype.png" /></button>
-  <button id="hidetype"><img width="20px" height="20px" src="http://localhost:8081/img/showtype.png" /></button>
-  <button id="zoomin"><img width="20px" height="20px" src="http://localhost:8081/img/zoomin.png" /></button>
-  <button id="zoomout"><img width="20px" height="20px" src="http://localhost:8081/img/zoomout.png" /></button>
-  <button id="undo"><img width="20px" height="20px" src="http://localhost:8081/img/undo.png" /></button>
-  <button id="redo"><img width="20px" height="20px" src="http://localhost:8081/img/redo.png" /></button>
+  <button id="showtype"><img width="20px" height="20px" src="http://mari0.github.io/syncmeta/html/img/hidetype.png" /></button>
+  <button id="hidetype"><img width="20px" height="20px" src="http://mari0.github.io/syncmeta/html/img/showtype.png" /></button>
+  <button id="zoomin"><img width="20px" height="20px" src="http://mari0.github.io/syncmeta/html/img/zoomin.png" /></button>
+  <button id="zoomout"><img width="20px" height="20px" src="http://mari0.github.io/syncmeta/html/img/zoomout.png" /></button>
+  <button id="undo"><img width="20px" height="20px" src="http://mari0.github.io/syncmeta/html/img/undo.png" /></button>
+  <button id="redo"><img width="20px" height="20px" src="http://mari0.github.io/syncmeta/html/img/redo.png" /></button>
 </div>
 <div>
- <button id="btnCreateViewpoint"><img width="20px" height="20px" src="http://localhost:8081/img/add196.png" /></button>
+ <button id="btnCreateViewpoint"><img width="20px" height="20px" src="http://mari0.github.io/syncmeta/html/img/add196.png" /></button>
   <input id="txtNameViewpoint" type="text" placeholder="name"  style="display: none;">
-  <button id="btnAddViewpoint" style="display: none;"><img width="20px" height="20px" src="http://localhost:8081/img/checked21.png" /></button>
-  <button id="btnCancelCreateViewpoint" style="display: none;"><img width="20px" height="20px" src="http://localhost:8081/img/times1.png" /></button>
+  <button id="btnAddViewpoint" style="display: none;"><img width="20px" height="20px" src="http://mari0.github.io/syncmeta/html/img/checked21.png" /></button>
+  <button id="btnCancelCreateViewpoint" style="display: none;"><img width="20px" height="20px" src="http://mari0.github.io/syncmeta/html/img/times1.png" /></button>
   <select id="ddmViewpointSelection"></select>
    <button id="btnShowViewPoint">Show</button>
-  <button id="btnDelViewPoint"><img width="20px" height="20px" src="http://localhost:8081/img/times1.png" /></button>
+  <button id="btnDelViewPoint"><img width="20px" height="20px" src="http://mari0.github.io/syncmeta/html/img/times1.png" /></button>
 </div>
 <div id="canvas-frame">
   <div id="canvas">
   </div>
 </div>
 <div id="q"></div>	
-    <script src="http://localhost:8081/js/shared.js"></script>    
+    <script src="http://mari0.github.io/syncmeta/html/js/shared.js"></script>    
     ]]>
   </Content>
 </Module>

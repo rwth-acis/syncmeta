@@ -8,8 +8,10 @@ define([
     'canvas_widget/ObjectNode',
     'canvas_widget/RelationshipNode',
     'canvas_widget/RelationshipGroupNode',
-    'canvas_widget/EnumNode'
-],/** @lends GeneralisationEdge */function(require,$,jsPlumb,_,AbstractEdge,AbstractClassNode,ObjectNode,RelationshipNode,RelationshipGroupNode,EnumNode) {
+    'canvas_widget/EnumNode',
+	'viewcanvas_widget/ViewObjectNode',
+	'viewcanvas_widget/ViewRelationshipNode'
+],/** @lends GeneralisationEdge */function(require,$,jsPlumb,_,AbstractEdge,AbstractClassNode,ObjectNode,RelationshipNode,RelationshipGroupNode,EnumNode,ViewObjectNode,ViewRelationshipNode) {
 
     GeneralisationEdge.TYPE = "Generalisation";
     GeneralisationEdge.RELATIONS = [
@@ -32,6 +34,14 @@ define([
         {
             sourceTypes: [EnumNode.TYPE],
             targetTypes: [EnumNode.TYPE]
+        },
+		{
+            sourceTypes: [ViewObjectNode.TYPE],
+            targetTypes: [ObjectNode.TYPE,AbstractClassNode.TYPE,ViewObjectNode.TYPE]
+        },
+        {
+            sourceTypes: [ViewRelationshipNode.TYPE],
+            targetTypes: [RelationshipNode.TYPE,AbstractClassNode.TYPE,ViewRelationshipNode.TYPE]
         }
     ];
 
