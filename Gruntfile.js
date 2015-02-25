@@ -383,6 +383,15 @@ module.exports = function (grunt) {
 						}
 					]
 				}
+			},
+			connect : {
+				server : {
+					options : {
+						port : 8081,
+						base : 'html',
+						keepalive:true
+					}
+				}
 			}
 
 		});
@@ -399,6 +408,7 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-ssh');
 	grunt.loadNpmTasks('grunt-amdcheck');
 	grunt.loadNpmTasks('grunt-jsdoc');
+	grunt.loadNpmTasks('grunt-contrib-connect');
 	//grunt.loadNpmTasks('grunt-contrib-nodeunit');
 
 	// Whenever the "test" task is run, first clean the "tmp" dir, then run this
@@ -410,5 +420,7 @@ module.exports = function (grunt) {
 		grunt.task.run(['clean', 'requirejs', 'copy:lib', 'copy:main', 'buildwidgets' /*,'sftp'*/
 			]);
 	});
-
+	
+	grunt.registerTask('server',['connect']);
+	grunt.registerTask('bns',['clean', 'requirejs', 'copy:lib', 'copy:main', 'buildwidgets','connect']);
 };
