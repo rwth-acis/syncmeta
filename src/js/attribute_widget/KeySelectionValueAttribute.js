@@ -169,6 +169,13 @@ define([
         if(_iwc){
             that.registerCallbacks();
         }
+		
+		this.toKeySelectionValueSelectionValueAttribute = function(subjectEntity, options2){
+			var KeySelectionValueSelectionValueAttribute = require('attribute_widget/KeySelectionValueSelectionValueAttribute');
+			var ksva = new KeySelectionValueSelectionValueAttribute(Util.generateRandomId(), that.getName(), subjectEntity, _options, options2);
+			ksva.getKey().setValue(that.getKey().getValue());
+			return ksva;
+		}
     }
 
     return KeySelectionValueAttribute;

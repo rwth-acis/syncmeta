@@ -234,6 +234,7 @@
                 <File name="src\js\viewcanvas_widget\ViewRelationshipNodeTool.js" />
                 <File name="src\js\viewcanvas_widget\ConditionPredicateAttribute.js" />
                 <File name="src\js\viewcanvas_widget\ConditionListAttribute.js" />
+                <File name="src\js\viewcanvas_widget\ViewTypesUtil.js" />
             </Folder>
         </Folder>
         <Folder name="templates">

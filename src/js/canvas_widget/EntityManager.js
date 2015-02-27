@@ -145,7 +145,7 @@ define([
 		nodeTypes[EnumNode.TYPE] = EnumNode;
 		nodeTypes[NodeShapeNode.TYPE] = NodeShapeNode;
 		nodeTypes[EdgeShapeNode.TYPE] = EdgeShapeNode;
-		
+
 		//add view types
 		nodeTypes[ViewObjectNode.TYPE] = ViewObjectNode;
 		nodeTypes[ViewRelationshipNode.TYPE] = ViewRelationshipNode;
@@ -1018,10 +1018,10 @@ define([
 				return deferred.promise();
 			},
 			/**
-			* Stores current view in the ROLE Space
-			* @param {string} viewId the identifier for the view
-			* @returns {Promise}
-			*/
+			 * Stores current view in the ROLE Space
+			 * @param {string} viewId the identifier for the view
+			 * @returns {Promise}
+			 */
 			storeView : function (viewId) {
 				var resourceSpace = new openapp.oo.Resource(openapp.param.space());
 				var deferred = $.Deferred();
@@ -1037,31 +1037,35 @@ define([
 				return deferred.promise();
 			},
 			/**
-			* Update a view representation in the ROLE Space
-			* @param {string} uri The URI where the view is storeData
-			* @param {string} viewId The Identifier of the view
-			* @returns {Promise}
-			*/
+			 * Update a view representation in the ROLE Space
+			 * @param {string} uri The URI where the view is storeData
+			 * @param {string} viewId The Identifier of the view
+			 * @returns {Promise}
+			 */
 			updateView : function (uri, viewId) {
 				var that = this;
 				var deferred = $.Deferred();
 				var data = this.viewToJSON(viewId);
-				openapp.resource.del(uri, function(context){
-					that.storeView(viewId).then(function(resp){
+				openapp.resource.del(uri, function (context) {
+					that.storeView(viewId).then(function (resp) {
 						deferred.resolve(resp);
 					});
 				});
 				return deferred.promise();
 			},
 			/**
-			* Deletes the ModelAttribute
-			*/
+			 * Deletes the ModelAttribute
+			 */
 			deleteModelAttribute : function () {
 				_modelAttributesNode = null;
+			},
+			clearRecycleBin : function () {
+				_recycleBin = {
+					nodes : {},
+					edges : {}
+				}
 			}
 		};
 	}
-
 	return new EntityManager();
-
 });

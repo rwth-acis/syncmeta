@@ -56,7 +56,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(abstractToolHtml,{icon: toolIcon instanceof $ || !toolIcon ? "" : "http://localhost:8081/img/"+_icon, label: _label, color: _color}));
+        var _$node = $(_.template(abstractToolHtml,{icon: toolIcon instanceof $ || !toolIcon ? "" : "http://mari0.github.io/syncmeta/html/img/"+_icon, label: _label, color: _color}));
 
         /**
          * Get jQuery object of DOM node representing the tool

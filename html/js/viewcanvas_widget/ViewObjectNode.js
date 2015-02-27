@@ -7,8 +7,9 @@ define([
 	'canvas_widget/SingleSelectionAttribute',
     'canvas_widget/KeySelectionValueSelectionValueListAttribute',
 	'viewcanvas_widget/ConditionListAttribute',
+	'viewcanvas_widget/ViewTypesUtil',
     'text!templates/viewcanvas_widget/viewobject_node.html'
-],/** @lends ViewObjectNode */function(require,$,jsPlumb,_,AbstractNode,SingleSelectionAttribute,KeySelectionValueSelectionValueListAttribute,ConditionListAttribute,viewobjectNodeHtml) {
+],/** @lends ViewObjectNode */function(require,$,jsPlumb,_,AbstractNode,SingleSelectionAttribute,KeySelectionValueSelectionValueListAttribute,ConditionListAttribute,ViewTypesUtil,viewobjectNodeHtml) {
 
     ViewObjectNode.TYPE = "ViewObject";
     ViewObjectNode.DEFAULT_WIDTH = 150;
@@ -69,10 +70,16 @@ define([
         this.toJSON = function(){
             return AbstractNode.prototype.toJSON.call(this);
         };
-
-       this.addAttribute(new SingleSelectionAttribute("[target]", "Target", this, {"class1":"Class1", "class2":"Class2"}));
-       this.addAttribute(new KeySelectionValueSelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File"},{"hidden":"Hidden","show":"Visible"}));
-		
+		ViewTypesUtil.GetCurrentBaseModel().then(function(model){
+			var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes);
+			var attribute = new SingleSelectionAttribute("[target]", "Target", that, selectionValues);
+			that.addAttribute(attribute);
+			that.get$node().find('.attributes').prepend(attribute.get$node());
+		});
+		        
+		var attributeList = new KeySelectionValueSelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File"},{"show":"Visible","hide":"Hidden"});
+		this.addAttribute(attributeList);
+		       
 		var attributeOfClass = {"testattr1":"attr1", "testattr2":"attr2"};
 		var operators = {"greater":">", "smaller":"<", "equal":"==","greater_eq":">=","smaller_eq":"<=","nequal":"!="};
 		var operators2 = {"AND":"&&", "OR":"||"};

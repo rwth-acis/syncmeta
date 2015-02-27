@@ -240,6 +240,7 @@ requirejs([
 	iwcot.registerOnHistoryChangedCallback(saveCallback);*/
 	//End Autosave------------------------------------------------------
 	function resetCanvas() {
+		
 		var edges = EntityManager.getEdges();
 		for (edgeId in edges) {
 			if (edges.hasOwnProperty(edgeId)) {
@@ -254,6 +255,7 @@ requirejs([
 				node.remove();
 			}
 		}
+		EntityManager.clearRecycleBin();
 	}
 	function GetViewList() {
 		var resourceSpace = new openapp.oo.Resource(openapp.param.space());
