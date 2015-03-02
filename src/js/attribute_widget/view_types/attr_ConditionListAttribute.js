@@ -173,6 +173,10 @@ define([
             return _$node;
         };
 
+		this.setOptions = function(options){
+			_options = options;
+		}
+		
         /**
          * Set attribute list by its JSON representation
          * @param json

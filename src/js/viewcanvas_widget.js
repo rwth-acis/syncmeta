@@ -160,8 +160,9 @@ requirejs([
 		$('#btnCancelCreateViewpoint').hide();
 	});
 	$('#btnShowViewPoint').click(function () {
-		if ($('#ddmViewpointSelection option:selected').length == 0)
-			return;
+        if ($('#ddmViewpointSelection option:selected').length == 0) {
+            return;
+        }
 		openapp.resource.get($('#ddmViewpointSelection option:selected').attr('link'), function (context) {
 			openapp.resource.context(context).representation().get(function (rep) {
 

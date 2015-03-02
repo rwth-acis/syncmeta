@@ -227,7 +227,11 @@ define([
         this.get$node = function(){
             return _$node;
         };
-
+		
+		this.setOptions = function(options){
+			_options = options;
+		}
+		
         /**
          * Get JSON representation of the attribute (list)
          * @returns {Object}

@@ -89,7 +89,7 @@ define([
          * Propagate an Attribute Delete Operation to the remote users and the local widgets
          * @param {operations.ot.AttributeDeleteOperation} operation
          */
-        var propagateAttributeDeleteOperation = function(operation){
+        this.propagateAttributeDeleteOperation = function(operation){
             processAttributeDeleteOperation(operation);
             _iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.VIEWCANVAS,operation.getOTOperation());
         };
@@ -210,7 +210,7 @@ define([
 		_$node.find(".operator2").append(_value3.get$node());
         _$node.find(".ui-icon-close").click(function(){
             var operation = new AttributeDeleteOperation(that.getEntityId(),that.getSubjectEntityId(),that.getRootSubjectEntity().getEntityId(),ConditionPredicateAttribute.TYPE);
-            propagateAttributeDeleteOperation(operation);
+            that.propagateAttributeDeleteOperation(operation);
         });
 
         if(_iwc){

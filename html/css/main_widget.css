@@ -199,7 +199,6 @@ button[disabled=disabled], button:disabled {
 
 .edge_label .single_value_attribute .value div.val{
     text-align: center;
-
 }
 
 .attributes .list_attribute .name{
@@ -212,7 +211,9 @@ button[disabled=disabled], button:disabled {
     list-style: none;
 }
 
-.attributes .list_attribute ul.list li.key_value_attribute{
+.attributes .list_attribute ul.list li.key_value_attribute,
+.attributes .list_attribute ul.list li.condition_predicate
+{
     overflow: hidden;
 }
 
@@ -225,9 +226,17 @@ button[disabled=disabled], button:disabled {
     float: left;
     width: 50%;
 }
+.attributes .list_attribute ul.list li.condition_predicate div.property,
+.attributes .list_attribute ul.list li.condition_predicate div.operator,
+.attributes .list_attribute ul.list li.condition_predicate div.val,
+.attributes .list_attribute ul.list li.condition_predicate div.operator2{
+    float: left;
+	margin-left: 3px;
+}
 
 .attributes .list_attribute ul.list li.key_value_attribute div.key input,
-.attributes .list_attribute ul.list li.key_value_attribute div.value input{
+.attributes .list_attribute ul.list li.key_value_attribute div.value input,
+.attributes .list_attribute ul.list li.condition_predicate div.val input{
     width: 100%;
     border: 0;
     outline: none;

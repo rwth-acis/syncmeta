@@ -6,9 +6,11 @@ define([
 		'Util',
 		'attribute_widget/AbstractValue',
 		'operations/ot/ValueChangeOperation',
+		'viewcanvas_widget/LogicalOperator',
+		'viewcanvas_widget/LogicalConjunctions',
 		'text!templates/attribute_widget/selection_value.html'
 	], /** @lends SelectionValue */
-	function ($, jsPlumb, _, IWCW, Util, AbstractValue, ValueChangeOperation, selectionValueHtml) {
+	function ($, jsPlumb, _, IWCW, Util, AbstractValue, ValueChangeOperation, LogicalOperator, LogicalConjunctions,selectionValueHtml) {
 
 	SelectionValue.prototype = new AbstractValue();
 	SelectionValue.prototype.constructor = SelectionValue;
@@ -64,25 +66,46 @@ define([
 				var AttributeAddOperation = require('operations/ot/AttributeAddOperation');
 				var AttributeDeleteOperation = require('operations/ot/AttributeDeleteOperation');
 				var KeySelectionValueSelectionValueAttribute = require('attribute_widget/KeySelectionValueSelectionValueAttribute');
-				
+				var ConditionListAttribute = require('attribute_widget/view_types/attr_ConditionListAttribute');
+				var ConditionPredicateAttribute = require('attribute_widget/view_types/attr_ConditionPredicateAttribute');
+
 				if (node = EntityMangager.find(operation.getValue())) {
-					var viewtypeAttribute = that.getRootSubjectEntity().getAttributes()["[attributes]"];
-					for(var key in viewtypeAttribute.getAttributes()){
-						if(viewtypeAttribute.getAttributes().hasOwnProperty(key)){
+					var viewtype = that.getRootSubjectEntity();
+					var viewtypeAttribute = viewtype.getAttributes()["[attributes]"];
+					for (var key in viewtypeAttribute.getAttributes()) {
+						if (viewtypeAttribute.getAttributes().hasOwnProperty(key)) {
 							var attr = viewtypeAttribute.getAttributes()[key];
-							var operation = new AttributeDeleteOperation(attr.getEntityId(),attr.getSubjectEntityId(),attr.getRootSubjectEntity().getEntityId(),KeySelectionValueSelectionValueAttribute.TYPE);
+							var operation = new AttributeDeleteOperation(attr.getEntityId(), attr.getSubjectEntityId(), attr.getRootSubjectEntity().getEntityId(), KeySelectionValueSelectionValueAttribute.TYPE);
 							attr.propagateAttributeDeleteOperation(operation);
 						}
 					}
+					var attributeList = {};
 					var targetAttributes = node.getAttributes()["[attributes]"].getAttributes();
 					for (var key in targetAttributes) {
 						if (targetAttributes.hasOwnProperty(key)) {
-								var id = Util.generateRandomId();
-								var operation = new AttributeAddOperation(id,viewtypeAttribute.getEntityId(),viewtypeAttribute.getRootSubjectEntity().getEntityId(),KeySelectionValueSelectionValueAttribute.TYPE);
-								viewtypeAttribute.propagateAttributeAddOperation(operation);
-								var attr = viewtypeAttribute.getAttribute(id);
-								attr.getKey().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT,targetAttributes[key].getKey().getValue(),0);
+							var id = Util.generateRandomId();
+
+							var operation = new AttributeAddOperation(id, viewtypeAttribute.getEntityId(), viewtypeAttribute.getRootSubjectEntity().getEntityId(), KeySelectionValueSelectionValueAttribute.TYPE);
+							viewtypeAttribute.propagateAttributeAddOperation(operation);
+							var attr = viewtypeAttribute.getAttribute(id);
+							attr.getKey().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT, targetAttributes[key].getKey().getValue(), 0);
+							attributeList[id] = targetAttributes[key].getKey().getValue();
 						}
+					}
+					
+					if (condListAttr = viewtype.getAttribute('[condition]')) {
+						condListAttr.setOptions(attributeList);
+						for (var key in viewtype.getAttribute('[condition]').getAttributes()) {
+							if (viewtype.getAttribute('[condition]').getAttributes().hasOwnProperty(key)) {
+								var attr = viewtype.getAttribute('[condition]').getAttributes()[key];
+								var operation = new AttributeDeleteOperation(attr.getEntityId(), attr.getSubjectEntityId(), attr.getRootSubjectEntity().getEntityId(), ConditionPredicateAttribute.TYPE);
+								attr.propagateAttributeDeleteOperation(operation);
+							}
+						}
+					} else {
+						var condAttr = new ConditionListAttribute("[condition]", "Conditions", viewtype, attributeList, LogicalOperator, LogicalConjunctions);
+						viewtype.addAttribute(condAttr);
+						viewtype.get$node().find('.attributes').append(condAttr.get$node());
 					}
 				}
 			}

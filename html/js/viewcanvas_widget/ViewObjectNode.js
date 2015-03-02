@@ -78,13 +78,7 @@ define([
 		});
 		        
 		var attributeList = new KeySelectionValueSelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File"},{"show":"Visible","hide":"Hidden"});
-		this.addAttribute(attributeList);
-		       
-		var attributeOfClass = {"testattr1":"attr1", "testattr2":"attr2"};
-		var operators = {"greater":">", "smaller":"<", "equal":"==","greater_eq":">=","smaller_eq":"<=","nequal":"!="};
-		var operators2 = {"AND":"&&", "OR":"||"};
-		this.addAttribute(new ConditionListAttribute("[condition]", "Conditions", this, attributeOfClass, operators, operators2));
-        
+		this.addAttribute(attributeList);  
 		
         _$node.find(".label").append(this.getLabel().get$node());
 

@@ -91,24 +91,7 @@ define([
 				"bottom" : "Bottom"
 			}));
 
-		var attributeOfClass = {
-			"testattr1" : "attr1",
-			"testattr2" : "attr2"
-		};
-		var operators = {
-			"greater" : ">",
-			"smaller" : "<",
-			"equal" : "==",
-			"greater_eq" : ">=",
-			"smaller_eq" : "<=",
-			"nequal" : "!="
-		};
-		var operators2 = {
-			"AND" : "&&",
-			"OR" : "||"
-		};
-		this.addAttribute(new ConditionListAttribute("[condition]", "Conditions", this, attributeOfClass, operators, operators2));
-
+		
 		$node.find(".label").append(this.getLabel().get$node());
 
 		for (var attributeKey in _attributes) {

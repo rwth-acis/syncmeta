@@ -167,6 +167,10 @@ define([
 			json.operator2 = _value3.toJSON();
             return json;
         };
+		_$node.find(".val").append(_key.get$node());
+        _$node.find(".property").append(_value.get$node());
+        _$node.find(".operator").append(_value2.get$node());
+		_$node.find(".operator2").append(_value3.get$node());
     }
 
     return ConditionPredicateAttribute;
