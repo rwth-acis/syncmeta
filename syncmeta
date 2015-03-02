@@ -235,6 +235,8 @@
                 <File name="src\js\viewcanvas_widget\ConditionPredicateAttribute.js" />
                 <File name="src\js\viewcanvas_widget\ConditionListAttribute.js" />
                 <File name="src\js\viewcanvas_widget\ViewTypesUtil.js" />
+                <File name="src\js\viewcanvas_widget\LogicalConjunctions.js" />
+                <File name="src\js\viewcanvas_widget\LogicalOperator.js" />
             </Folder>
         </Folder>
         <Folder name="templates">

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- generated on Mon Mar 02 2015 21:14:04 -->
+<!-- generated on Mon Mar 02 2015 21:19:01 -->
 <Module>
   <ModulePrefs
     title="Canvas"
@@ -58,18 +58,18 @@
           timeout();
         })();
     </script>
-    <script src="http://localhost:8081/js/config.js"></script>
-    <script src="http://localhost:8081/js/lib/vendor/require.js"></script>    
-    <link rel="stylesheet" type="text/css" href="http://localhost:8081/css/vendor/jquery-ui.css">
-<link rel="stylesheet" type="text/css" href="http://localhost:8081/css/vendor/jquery.contextMenu.css">
-<link rel="stylesheet" type="text/css" href="http://localhost:8081/css/style.css">
-<link rel="stylesheet" type="text/css" href="http://localhost:8081/css/main_widget.css">
-<script src="http://localhost:8081/js/main_widget.js"></script>
+    <script src="http://mari0.github.io/syncmeta/html/js/config.js"></script>
+    <script src="http://mari0.github.io/syncmeta/html/js/lib/vendor/require.js"></script>    
+    <link rel="stylesheet" type="text/css" href="http://mari0.github.io/syncmeta/html/css/vendor/jquery-ui.css">
+<link rel="stylesheet" type="text/css" href="http://mari0.github.io/syncmeta/html/css/vendor/jquery.contextMenu.css">
+<link rel="stylesheet" type="text/css" href="http://mari0.github.io/syncmeta/html/css/style.css">
+<link rel="stylesheet" type="text/css" href="http://mari0.github.io/syncmeta/html/css/main_widget.css">
+<script src="http://mari0.github.io/syncmeta/html/js/main_widget.js"></script>
 <div id="loading" class="loading"></div>
 <div class="button_bar left">
-  <button id="save"><img width="20px" height="20px" src="http://localhost:8081/img/save.png" /></button>
-  <!--<button id="save_image"><img width="20px" height="20px" src="http://localhost:8081/img/save_image.png" /></button>-->
-  <!--<button id="generate" style="display: none"><img width="20px" height="20px" src="http://localhost:8081/img/generate.png" /></button>-->
+  <button id="save"><img width="20px" height="20px" src="http://mari0.github.io/syncmeta/html/img/save.png" /></button>
+  <!--<button id="save_image"><img width="20px" height="20px" src="http://mari0.github.io/syncmeta/html/img/save_image.png" /></button>-->
+  <!--<button id="generate" style="display: none"><img width="20px" height="20px" src="http://mari0.github.io/syncmeta/html/img/generate.png" /></button>-->
   <span id="feedback"></span>
 </div>
 <div id="dialog" style="display:none" title="Generate editor">
@@ -83,19 +83,19 @@
     <p><strong>Editor space title:</strong><input size="32" type="text" id="space_title" /></p>
 </div>
 <div class="button_bar right">
-  <button id="showtype"><img width="20px" height="20px" src="http://localhost:8081/img/hidetype.png" /></button>
-  <button id="hidetype"><img width="20px" height="20px" src="http://localhost:8081/img/showtype.png" /></button>
-  <button id="zoomin"><img width="20px" height="20px" src="http://localhost:8081/img/zoomin.png" /></button>
-  <button id="zoomout"><img width="20px" height="20px" src="http://localhost:8081/img/zoomout.png" /></button>
-  <button id="undo"><img width="20px" height="20px" src="http://localhost:8081/img/undo.png" /></button>
-  <button id="redo"><img width="20px" height="20px" src="http://localhost:8081/img/redo.png" /></button>
+  <button id="showtype"><img width="20px" height="20px" src="http://mari0.github.io/syncmeta/html/img/hidetype.png" /></button>
+  <button id="hidetype"><img width="20px" height="20px" src="http://mari0.github.io/syncmeta/html/img/showtype.png" /></button>
+  <button id="zoomin"><img width="20px" height="20px" src="http://mari0.github.io/syncmeta/html/img/zoomin.png" /></button>
+  <button id="zoomout"><img width="20px" height="20px" src="http://mari0.github.io/syncmeta/html/img/zoomout.png" /></button>
+  <button id="undo"><img width="20px" height="20px" src="http://mari0.github.io/syncmeta/html/img/undo.png" /></button>
+  <button id="redo"><img width="20px" height="20px" src="http://mari0.github.io/syncmeta/html/img/redo.png" /></button>
 </div>
 <div id="canvas-frame">
   <div id="canvas">
   </div>
 </div>
 <div id="q"></div>
-    <script src="http://localhost:8081/js/shared.js"></script>    
+    <script src="http://mari0.github.io/syncmeta/html/js/shared.js"></script>    
     ]]>
   </Content>
 </Module>
