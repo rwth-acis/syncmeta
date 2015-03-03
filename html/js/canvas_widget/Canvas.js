@@ -558,10 +558,15 @@ define([
 		 * @param {number} height Height of node
 		 * @param {number} [zIndex] Position of node on z-axis
 		 * @param {object} [json] representation of node
+         * @param {string} identifier the identifier of the node, if null a new id is generated
 		 * @return {number} id of new node
 		 */
-		this.createNode = function (type, left, top, width, height, zIndex, json) {
-			var id = Util.generateRandomId(24);
+		this.createNode = function (type, left, top, width, height, zIndex, json, identifier) {
+            var id;
+            if(identifier)
+                id = identifier;
+            else
+			 id= Util.generateRandomId(24);
 			zIndex = zIndex || AbstractEntity.maxZIndex + 1;
 			var operation = new NodeAddOperation(id, type, left, top, width, height, zIndex, json || null);
 			propagateNodeAddOperation(operation);
@@ -576,9 +581,13 @@ define([
 		 * @param {object} [json] representation of edge
 		 * @return {number} id of new edge
 		 */
-		this.createEdge = function (type, source, target, json) {
+		this.createEdge = function (type, source, target, json, identifier) {
 			//if(source !== target){
-			var id = Util.generateRandomId(24);
+			var id = null;
+            if(identifier)
+                id = identifier;
+            else
+                id = Util.generateRandomId(24);
 			var operation = new EdgeAddOperation(id, type, source, target, json || null);
 
 			propagateEdgeAddOperation(operation);

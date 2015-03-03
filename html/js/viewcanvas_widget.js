@@ -163,18 +163,23 @@ requirejs([
         if ($('#ddmViewpointSelection option:selected').length == 0) {
             return;
         }
-		openapp.resource.get($('#ddmViewpointSelection option:selected').attr('link'), function (context) {
+		openapp.resource.get($('#ddmViewpointSelection').find('option:selected').attr('link'), function (context) {
 			openapp.resource.context(context).representation().get(function (rep) {
-
+                canvas.get$node().show();
 				resetCanvas();
+
 				JSONtoGraph(rep.data);
-				
+
+                $('#lblCurrentView').text(rep.data.id);
 				canvas.resetTool();
+
 			});
 		});
 	});
 	$('#btnAddViewpoint').click(function () {
 		var viewpointId = $('#txtNameViewpoint').val();
+        resetCanvas();
+        $('#lblCurrentView').text(viewpointId);
 		EntityManager.storeView(viewpointId).then(function (resp) {
 			var str_optTpl = '<option link="<<= uri >>"><<= val >></option>'.replace(/<</g, "<" + "%").replace(/>>/g, "%" + ">");
 			var option = _.template(str_optTpl);
@@ -191,25 +196,43 @@ requirejs([
 			$('#txtNameViewpoint').hide();
 			$('#btnAddViewpoint').hide();
 			$('#btnCancelCreateViewpoint').hide();
+
+
+            canvas.get$node().show();
+
 			alert("Successfully stored");
 		});
 	});
 
 	$('#btnDelViewPoint').click(function () {
-		openapp.resource.del($('#ddmViewpointSelection option:selected').attr('link'), function (context) {
-			$('#ddmViewpointSelection option:selected').remove();
+        var opt = $('#ddmViewpointSelection').find('option:selected');
+        if(opt.text() !== $('#lblCurrentView').text()) {
+            alert('Load the view before deleting it');
+            return;
+        }
+		openapp.resource.del(opt.attr('link'), function (context) {
+			$('#ddmViewpointSelection').find('option:selected').remove();
+            resetCanvas();
+            $('#lblCurrentView').attr('link','').text('No view displayed');
+            canvas.get$node().hide();
 			alert("Successfully deleted");
 		});
 	});
 	//Start Autosave---------------------------
 	var $feedback = $("#feedback");
 	$("#save").click(function () {
-		var uri = $('#ddmViewpointSelection option:selected').attr('link');
+        var currentView = $('#lblCurrentView').text();
+        var opt =  $('#ddmViewpointSelection').find('option').filter(function(i,v){
+            if($(v).text()===currentView)
+                return true;
+            else return false;
+        });
+      	var uri = opt.attr('link');
 		if (uri) {
 			$feedback.text("Saving...");
-			var viewId = $('#ddmViewpointSelection option:selected').text();
+			var viewId = opt.text();
 			EntityManager.updateView(uri, viewId).then(function (context) {
-				$('#ddmViewpointSelection option:selected').attr('link', context.uri);
+                opt.attr('link', context.uri);
 				$feedback.text("Saved!");
 				setTimeout(function () {
 					$feedback.text("");
@@ -218,27 +241,27 @@ requirejs([
 		}
 	});
 
-	/*var readyToSave = true;
-	var saveTriggered = false;
-	var saveCallback = function () {
-	if (readyToSave) {
-	readyToSave = false;
-	setTimeout(function () {
-	$("#save").click();
-	}, 500);
-	setTimeout(function () {
-	readyToSave = true;
-	if (saveTriggered) {
-	saveTriggered = false;
-	saveCallback();
-	}
-	}, 5000);
-	} else {
-	saveTriggered = true;
-	}
-	};
+    var readyToSave = true;
+    var saveTriggered = false;
+    var saveCallback = function () {
+        if (readyToSave) {
+            readyToSave = false;
+            setTimeout(function () {
+                $("#save").click();
+            }, 500);
+            setTimeout(function () {
+                readyToSave = true;
+                if (saveTriggered) {
+                    saveTriggered = false;
+                    saveCallback();
+                }
+            }, 5000);
+        } else {
+            saveTriggered = true;
+        }
+    };
 
-	iwcot.registerOnHistoryChangedCallback(saveCallback);*/
+	iwcot.registerOnHistoryChangedCallback(saveCallback);
 	//End Autosave------------------------------------------------------
 	function resetCanvas() {
 		
@@ -246,21 +269,20 @@ requirejs([
 		for (edgeId in edges) {
 			if (edges.hasOwnProperty(edgeId)) {
 				var edge = EntityManager.findEdge(edgeId);
-				edge.remove();
+				edge.triggerDeletion();
 			}
 		}
 		var nodes = EntityManager.getNodes();
 		for (nodeId in nodes) {
 			if (nodes.hasOwnProperty(nodeId)) {
 				var node = EntityManager.findNode(nodeId);
-				node.remove();
+				node.triggerDeletion();
 			}
 		}
 		EntityManager.clearRecycleBin();
 	}
 	function GetViewList() {
 		var resourceSpace = new openapp.oo.Resource(openapp.param.space());
-
 		//noinspection JSUnusedGlobalSymbols
 		resourceSpace.getSubResources({
 			relation : openapp.ns.role + "data",
@@ -281,18 +303,14 @@ requirejs([
 		var nodeId,
 		edgeId;
 		for (nodeId in json.nodes) {
-			if (json.nodes.hasOwnProperty(nodeId)) {
-				var node = EntityManager.createNodeFromJSON(json.nodes[nodeId].type, nodeId, json.nodes[nodeId].left, json.nodes[nodeId].top, json.nodes[nodeId].width, json.nodes[nodeId].height, json.nodes[nodeId].zIndex, json.nodes[nodeId]);
-				node.draw();
-				node.addToCanvas(canvas);
-			}
+			if (json.nodes.hasOwnProperty(nodeId))
+                canvas.createNode(json.nodes[nodeId].type, json.nodes[nodeId].left, json.nodes[nodeId].top, json.nodes[nodeId].width, json.nodes[nodeId].height,json.nodes[nodeId].zIndex, json.nodes[nodeId],nodeId);
+
 		}
 		for (edgeId in json.edges) {
-			if (json.edges.hasOwnProperty(edgeId)) {
-				var edge = EntityManager.createEdgeFromJSON(json.edges[edgeId].type, edgeId, json.edges[edgeId].source, json.edges[edgeId].target, json.edges[edgeId]);
-				edge.connect();
-				edge.addToCanvas(canvas);
-			}
+			if (json.edges.hasOwnProperty(edgeId))
+				canvas.createEdge(json.edges[edgeId].type,  json.edges[edgeId].source, json.edges[edgeId].target, json.edges[edgeId], edgeId);
+
 		}
 	}
 
@@ -312,6 +330,7 @@ requirejs([
 					}*/
 					canvas.resetTool();
 					$("#loading").hide();
+                    canvas.get$node().hide();
 					GetViewList();
 
 				} else {

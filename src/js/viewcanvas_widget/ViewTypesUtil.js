@@ -1,4 +1,4 @@
-define(['jqueryui'], function ($) {
+define(['jqueryui', 'lodash'], function ($,_) {
 	function ViewTypesUtil() {};
 	
 	ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList = function (nodes) {
@@ -10,19 +10,17 @@ define(['jqueryui'], function ($) {
 		}
 		return selectionList;
 	};
-		ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2 = function (nodes) {
-		var selectionList = {};
+		ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2 = function (nodes, types) {
+            var selectionList = {};
+            selectionList['empty'] = '';
 		for(var key in nodes){
 			if(nodes.hasOwnProperty(key)){
-				selectionList[key] = nodes[key].label.value.value;
+                if(_.indexOf(types, nodes[key].type) != -1)
+				    selectionList[key] = nodes[key].label.value.value;
 			}
 		}
 		return selectionList;
 	};
-	var Done = function(){
-		
-	}
-	
 	ViewTypesUtil.GetCurrentBaseModel = function () {
 		var resourceSpace = new openapp.oo.Resource(openapp.param.space());
 		var deferred = $.Deferred();

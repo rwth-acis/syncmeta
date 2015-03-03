@@ -59,7 +59,7 @@ define([
 		var _attributes = this.getAttributes();
 		//this.addAttribute(new SingleSelectionAttribute("[target]", "Target", this, {"class1":"Class1", "class2":"Class2"}));
 		ViewTypesUtil.GetCurrentBaseModel().then(function (model) {
-			var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes);
+			var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes, ['Relationship']);
 			var attribute = new SingleSelectionAttribute("[target]", "Target", that, selectionValues);
 			that.addAttribute(attribute);
 			that.get$node().find('.attributes').prepend(attribute.get$node());

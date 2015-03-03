@@ -27,6 +27,7 @@
   <select id="ddmViewpointSelection"></select>
    <button id="btnShowViewPoint">Show</button>
   <button id="btnDelViewPoint"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/times1.png" /></button>
+  <p id="lblCurrentView">No view selected!</p>
 </div>
 <div id="canvas-frame">
   <div id="canvas">
