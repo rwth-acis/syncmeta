@@ -160,12 +160,13 @@ requirejs([
 		$('#btnCancelCreateViewpoint').hide();
 	});
 	$('#btnShowViewPoint').click(function () {
-        if ($('#ddmViewpointSelection option:selected').length == 0) {
+        var selected = $('#ddmViewpointSelection').find('option:selected');
+        if (selected.length == 0 || selected.text() === $('#lblCurrentView').text())
             return;
-        }
-		openapp.resource.get($('#ddmViewpointSelection').find('option:selected').attr('link'), function (context) {
+		openapp.resource.get(selected.attr('link'), function (context) {
 			openapp.resource.context(context).representation().get(function (rep) {
-                canvas.get$node().show();
+                if(canvas.get$node().is(':hidden'))
+                    canvas.get$node().show();
 				resetCanvas();
 
 				JSONtoGraph(rep.data);
@@ -304,12 +305,12 @@ requirejs([
 		edgeId;
 		for (nodeId in json.nodes) {
 			if (json.nodes.hasOwnProperty(nodeId))
-                canvas.createNode(json.nodes[nodeId].type, json.nodes[nodeId].left, json.nodes[nodeId].top, json.nodes[nodeId].width, json.nodes[nodeId].height,json.nodes[nodeId].zIndex, json.nodes[nodeId],nodeId);
+                canvas.createNode(json.nodes[nodeId].type, json.nodes[nodeId].left, json.nodes[nodeId].top, json.nodes[nodeId].width, json.nodes[nodeId].height,json.nodes[nodeId].zIndex, json.nodes[nodeId]);
 
 		}
 		for (edgeId in json.edges) {
 			if (json.edges.hasOwnProperty(edgeId))
-				canvas.createEdge(json.edges[edgeId].type,  json.edges[edgeId].source, json.edges[edgeId].target, json.edges[edgeId], edgeId);
+				canvas.createEdge(json.edges[edgeId].type,  json.edges[edgeId].source, json.edges[edgeId].target, json.edges[edgeId]);
 
 		}
 	}

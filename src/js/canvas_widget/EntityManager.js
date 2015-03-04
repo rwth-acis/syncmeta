@@ -227,7 +227,7 @@ define([
 			 * @returns {canvas_widget.AbstractNode}
 			 */
 			//TODO: switch id and type
-			createNode : function (type, id, left, top, width, height, zIndex) {
+			createNode : function (type, id, left, top, width, height, zIndex,json) {
 				var node;
 				AbstractEntity.maxZIndex = Math.max(AbstractEntity.maxZIndex, zIndex);
 				AbstractEntity.minZIndex = Math.min(AbstractEntity.minZIndex, zIndex);
@@ -238,7 +238,7 @@ define([
 					return node;
 				}
 				if (nodeTypes.hasOwnProperty(type)) {
-					node = new nodeTypes[type](id, left, top, width, height, zIndex);
+					node = new nodeTypes[type](id, left, top, width, height, zIndex,json);
 					_nodes[id] = node;
 					return node;
 				}
@@ -457,7 +457,7 @@ define([
 			 * @returns {canvas_widget.AbstractNode}
 			 */
 			createNodeFromJSON : function (type, id, left, top, width, height, zIndex, json) {
-				var node = this.createNode(type, id, left, top, width, height, zIndex);
+				var node = this.createNode(type, id, left, top, width, height, zIndex, json);
 				if (node) {
 					node.getLabel().getValue().setValue(json.label.value.value);
 					for (var attrId in json.attributes) {

@@ -152,7 +152,7 @@ module.exports = function (grunt) {
 								title : "Palette",
 								description : "",
 								width : "160",
-								height : "700"
+								height : "450"
 							},
 							bodyPartial : '_palette_widget.tpl'
 						}
@@ -169,7 +169,7 @@ module.exports = function (grunt) {
 								title : "Property Browser",
 								description : "",
 								width : "560",
-								height : "200"
+								height : "350"
 							},
 							bodyPartial : '_attribute_widget.tpl'
 						}

@@ -591,6 +591,9 @@ define([
          * Removes edge from canvas
          */
         this.removeFromCanvas = function(){
+            /*strange! if i reload a viewpoint a second time the _canvas is null, so i just commented this line and it works now.
+            * I dont know why the error occurs at all. The canvas is set in addToCanvas and this is called in
+            * the procesNodeAddOperation. Maybe same strange references*/
             _canvas = null;
             _$node.remove();
         };

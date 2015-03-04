@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- generated on Tue Mar 03 2015 19:39:37 -->
+<!-- generated on Wed Mar 04 2015 19:32:17 -->
 <Module>
   <ModulePrefs
     title="Palette"
@@ -7,7 +7,7 @@
     author="Stephan Erdtmann"
     author_email="erdtmann@dbis.rwth-aachen.de"
     width="160"
-    height="700">
+    height="450">
 
     <Require feature="opensocial-0.8" ></Require>
     <Require feature="openapp" ></Require>

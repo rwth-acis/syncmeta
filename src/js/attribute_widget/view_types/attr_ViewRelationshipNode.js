@@ -6,9 +6,11 @@ define([
 		'attribute_widget/SingleSelectionAttribute',
 		'attribute_widget/view_types/attr_ConditionListAttribute',
 		'viewcanvas_widget/ViewTypesUtil',
+    'viewcanvas_widget/LogicalOperator',
+    'viewcanvas_widget/LogicalConjunctions',
 		'text!templates/attribute_widget/relationship_node.html'
 	], /** @lends ViewRelationshipNode */
-	function ($, _, AbstractNode, KeySelectionValueSelectionValueListAttribute, SingleSelectionAttribute, ConditionListAttribute, ViewTypesUtil, relationshipNodeHtml) {
+	function ($, _, AbstractNode, KeySelectionValueSelectionValueListAttribute, SingleSelectionAttribute, ConditionListAttribute, ViewTypesUtil,LogicalOperator,LogicalConjunctions, relationshipNodeHtml) {
 
 	ViewRelationshipNode.TYPE = "ViewRelationship";
 
@@ -26,8 +28,11 @@ define([
 	 * @param {number} height Height of node
 	 * @constructor
 	 */
-	function ViewRelationshipNode(id, left, top, width, height) {
+	function ViewRelationshipNode(id, left, top, width, height,json) {
 		var that = this;
+
+        var _fromResource = json;
+
 		AbstractNode.call(this, id, ViewRelationshipNode.TYPE, left, top, width, height);
 
 		/**
@@ -60,7 +65,34 @@ define([
 		//this.addAttribute(new SingleSelectionAttribute("[target]", "Target", this, {"class1":"Class1", "class2":"Class2"}));
 		ViewTypesUtil.GetCurrentBaseModel().then(function (model) {
 			var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes, ['Relationship']);
-			var attribute = new SingleSelectionAttribute("[target]", "Target", that, selectionValues);
+            var attribute = new SingleSelectionAttribute(id+"[target]", "Target", that, selectionValues);
+
+            if(_fromResource){
+                var targetId = null;
+                for(var key in _fromResource.attributes){
+                    if(_fromResource.attributes.hasOwnProperty(key) && key.indexOf('[target]') != -1){
+                        targetId = key;
+                        break;
+                    }
+                }
+                if(targetId){
+                    attribute.setValueFromJSON(_fromResource.attributes[targetId]);
+                    if(conditonList = _fromResource.attributes["[condition]"]){
+                        var attrList = that.getAttribute('[attributes]').getAttributes();
+                        var targetAttrList = {};
+                        for (var key in attrList) {
+                            if (attrList.hasOwnProperty(key)) {
+                                targetAttrList[key] = attrList[key].getKey().getValue();
+                            }
+                        }
+                        var cla = new ConditionListAttribute("[condition]", "Conditions", that, targetAttrList, LogicalOperator, LogicalConjunctions);
+                        cla.setValueFromJSON(conditonList);
+                        that.addAttribute(cla);
+                        that.get$node().find('.attributes').append(cla.get$node());
+                    }
+                }
+                _fromResource = null;
+            }
 			that.addAttribute(attribute);
 			that.get$node().find('.attributes').prepend(attribute.get$node());
 		});

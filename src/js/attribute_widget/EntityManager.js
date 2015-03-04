@@ -119,7 +119,7 @@ define([
 			 * @returns {attribute_widget.AbstractNode}
 			 */
 			//TODO: switch id and type
-			createNode : function (type, id, left, top, width, height) {
+			createNode : function (type, id, left, top, width, height,json) {
 				var node;
 				if (_recycleBin.nodes.hasOwnProperty(id)) {
 					node = _recycleBin.nodes[id];
@@ -128,7 +128,7 @@ define([
 					return node;
 				}
 				if (nodeTypes.hasOwnProperty(type)) {
-					node = new nodeTypes[type](id, left, top, width, height);
+					node = new nodeTypes[type](id, left, top, width, height,json);
 					_nodes[id] = node;				
 					return node;
 				}
@@ -285,7 +285,7 @@ define([
 			 * @returns {attribute_widget.AbstractNode}
 			 */
 			createNodeFromJSON : function (type, id, left, top, width, height, json) {
-				var node = this.createNode(type, id, left, top, width, height);
+				var node = this.createNode(type, id, left, top, width, height, json);
 				if (node) {
 					node.getLabel().getValue().setValue(json.label.value.value);
 					for (var attrId in json.attributes) {

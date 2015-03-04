@@ -1,20 +1,22 @@
 define([
-		'jqueryui',
-		'jsplumb',
-		'lodash',
-		'attribute_widget/AbstractNode',
-		'attribute_widget/KeySelectionValueSelectionValueListAttribute',
-		'attribute_widget/SingleSelectionAttribute',
-		'attribute_widget/view_types/attr_ConditionListAttribute',
-		'viewcanvas_widget/ViewTypesUtil',
-		'text!templates/attribute_widget/object_node.html'
-	], /** @lends ViewObjectNode */
-	function ($, jsPlumb, _, AbstractNode, KeySelectionValueSelectionValueListAttribute, SingleSelectionAttribute, ConditionListAttribute, ViewTypesUtil, objectNodeHtml) {
+    'jqueryui',
+    'jsplumb',
+    'lodash',
+    'attribute_widget/AbstractNode',
+    'attribute_widget/KeySelectionValueSelectionValueListAttribute',
+    'attribute_widget/SingleSelectionAttribute',
+    'attribute_widget/view_types/attr_ConditionListAttribute',
+    'viewcanvas_widget/ViewTypesUtil',
+    'viewcanvas_widget/LogicalOperator',
+    'viewcanvas_widget/LogicalConjunctions',
+    'text!templates/attribute_widget/object_node.html'
+], /** @lends ViewObjectNode */
+function ($, jsPlumb, _, AbstractNode, KeySelectionValueSelectionValueListAttribute, SingleSelectionAttribute, ConditionListAttribute, ViewTypesUtil, LogicalOperator, LogicalConjunctions, objectNodeHtml) {
 
-	ViewObjectNode.TYPE = "ViewObject";
+    ViewObjectNode.TYPE = "ViewObject";
 
-	ViewObjectNode.prototype = new AbstractNode();
-	ViewObjectNode.prototype.constructor = ViewObjectNode;
+    ViewObjectNode.prototype = new AbstractNode();
+    ViewObjectNode.prototype.constructor = ViewObjectNode;
 	/**
 	 * ViewObjectNode
 	 * @class attribute_widget.ViewObjectNode
@@ -27,8 +29,11 @@ define([
 	 * @param {number} width Width of node
 	 * @param {number} height Height of node
 	 */
-	function ViewObjectNode(id, left, top, width, height) {
+	function ViewObjectNode(id, left, top, width, height,json) {
 		var that = this;
+
+        var _fromResource = json;
+
 		AbstractNode.call(this, id, ViewObjectNode.TYPE, left, top, width, height);
 
 		/**
@@ -64,7 +69,34 @@ define([
 		//this.addAttribute(new SingleSelectionAttribute("[target]", "Target", this, selectionValues));
 		ViewTypesUtil.GetCurrentBaseModel().then(function (model) {
 			var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes, ['Object']);
-			var attribute = new SingleSelectionAttribute("[target]", "Target", that, selectionValues);
+			var attribute = new SingleSelectionAttribute(id+"[target]", "Target", that, selectionValues);
+
+            if(_fromResource){
+                var targetId = null;
+                for(var key in _fromResource.attributes){
+                    if(_fromResource.attributes.hasOwnProperty(key) && key.indexOf('[target]') != -1){
+                        targetId = key;
+                        break;
+                    }
+                }
+                if(targetId){
+                    attribute.setValueFromJSON(_fromResource.attributes[targetId]);
+                    if(conditonList = _fromResource.attributes["[condition]"]){
+                        var attrList = that.getAttribute('[attributes]').getAttributes();
+                        var targetAttrList = {};
+                        for (var key in attrList) {
+                            if (attrList.hasOwnProperty(key)) {
+                                targetAttrList[key] = attrList[key].getKey().getValue();
+                            }
+                        }
+                        var cla = new ConditionListAttribute("[condition]", "Conditions", that, targetAttrList, LogicalOperator, LogicalConjunctions);
+                        cla.setValueFromJSON(conditonList);
+                        that.addAttribute(cla);
+                        that.get$node().find('.attributes').append(cla.get$node());
+                    }
+                }
+                _fromResource = null;
+            }
 			that.addAttribute(attribute);
 			that.get$node().find('.attributes').prepend(attribute.get$node());
 		});

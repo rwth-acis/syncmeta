@@ -1,15 +1,16 @@
 define([
     'require',
     'jqueryui',
-    'jsplumb',
     'lodash',
     'canvas_widget/AbstractNode',
 	'canvas_widget/SingleSelectionAttribute',
     'canvas_widget/KeySelectionValueSelectionValueListAttribute',
 	'viewcanvas_widget/ConditionListAttribute',
 	'viewcanvas_widget/ViewTypesUtil',
+    'viewcanvas_widget/LogicalOperator',
+    'viewcanvas_widget/LogicalConjunctions',
     'text!templates/viewcanvas_widget/viewobject_node.html'
-],/** @lends ViewObjectNode */function(require,$,jsPlumb,_,AbstractNode,SingleSelectionAttribute,KeySelectionValueSelectionValueListAttribute,ConditionListAttribute,ViewTypesUtil,viewobjectNodeHtml) {
+],/** @lends ViewObjectNode */function(require,$,_,AbstractNode,SingleSelectionAttribute,KeySelectionValueSelectionValueListAttribute,ConditionListAttribute,ViewTypesUtil,LogicalOperator,LogicalConjunctions,viewobjectNodeHtml) {
 
     ViewObjectNode.TYPE = "ViewObject";
     ViewObjectNode.DEFAULT_WIDTH = 150;
@@ -30,8 +31,10 @@ define([
      * @param {number} height Height of node
      * @param {number} zIndex Position of node on z-axis
      */
-    function ViewObjectNode(id,left,top,width,height,zIndex){
+    function ViewObjectNode(id,left,top,width,height,zIndex, jsonFromResource){
         var that = this;
+
+        var _fromResource = jsonFromResource;
 
         AbstractNode.call(this,id,ViewObjectNode.TYPE,left,top,width,height,zIndex);
 
@@ -72,8 +75,34 @@ define([
         };
 		ViewTypesUtil.GetCurrentBaseModel().then(function(model){
 			var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes,['Object']);
-			var attribute = new SingleSelectionAttribute("[target]", "Target", that, selectionValues);
-			that.addAttribute(attribute);
+			var attribute = new SingleSelectionAttribute(id+"[target]", "Target", that, selectionValues);
+            if(_fromResource){
+                var targetId = null;
+                for(var key in _fromResource.attributes){
+                    if(_fromResource.attributes.hasOwnProperty(key) && key.indexOf('[target]') != -1){
+                        targetId = key;
+                        break;
+                    }
+                }
+                if(targetId){
+                    attribute.setValueFromJSON(_fromResource.attributes[targetId]);
+                    if(conditonList = _fromResource.attributes["[condition]"]){
+                        var attrList = that.getAttribute('[attributes]').getAttributes();
+                        var targetAttrList = {};
+                        for (var key in attrList) {
+                            if (attrList.hasOwnProperty(key)) {
+                                targetAttrList[key] = attrList[key].getKey().getValue();
+                            }
+                        }
+                        var cla = new ConditionListAttribute("[condition]", "Conditions", that, targetAttrList, LogicalOperator, LogicalConjunctions);
+                        cla.setValueFromJSON(conditonList);
+                        that.addAttribute(cla);
+                        that.get$node().find('.attributes').append(cla.get$node());
+                    }
+                }
+                _fromResource = null;
+            }
+            that.addAttribute(attribute);
 			that.get$node().find('.attributes').prepend(attribute.get$node());
 		});
 		        

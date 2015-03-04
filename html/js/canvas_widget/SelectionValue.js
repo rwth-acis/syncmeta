@@ -75,14 +75,13 @@ define([
 		 * @param {operations.ot.ValueChangeOperation} operation
 		 */
 		var processValueChangeOperation = function (operation) {
-			if (that.getSubjectEntity().getEntityId() === '[target]') {
+			if (that.getRootSubjectEntity().getEntityId() + '[target]' === operation.getEntityId()) {
 				var ConditionListAttribute = require('viewcanvas_widget/ConditionListAttribute');
 				var attrList = that.getRootSubjectEntity().getAttribute('[attributes]').getAttributes();
 				var targetAttrList = {};
 				for (var key in attrList) {
 					if (attrList.hasOwnProperty(key)) {
 						targetAttrList[key] = attrList[key].getKey().getValue();
-						
 					}
 				}
 				if(condAttrList = that.getRootSubjectEntity().getAttribute('[condition]')){
