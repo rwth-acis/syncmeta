@@ -231,7 +231,29 @@ define([
 
                     }
                 },
-                sep: "---------"
+                sep: "---------",
+                copy:{
+                    name:'Copy',
+                    callback:function(){
+                        var resourceSpace = new openapp.oo.Resource(openapp.param.space());
+                        require(["promise!Space"], function(Space){
+                            resourceSpace.getSubResources({
+                                relation: openapp.ns.role + "data",
+                                type: CONFIG.NS.MY.COPY+":"+Space.user[CONFIG.NS.PERSON.JABBERID],
+                                onAll: function(items) {
+                                    for(var i=0;i<items.length;i++) {
+                                        openapp.resource.del(items[i].uri);
+                                    }
+                                    resourceSpace.create({
+                                        relation: openapp.ns.role + "data",
+                                        type: CONFIG.NS.MY.COPY+":"+Space.user[CONFIG.NS.PERSON.JABBERID],
+                                        representation: that.toJSON()
+                                    });
+                                }
+                            });
+                        });
+                    }
+                }
             };
         });
 

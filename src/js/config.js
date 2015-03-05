@@ -168,7 +168,8 @@ CONFIG = {
             METAMODEL: "my:ns:metamodel",
             INSTANCE: "my:ns:instance",
 			VIEWPOINT: "my:ns:viewpoint",
-			VIEW: "my:ns:view"
+			VIEW: "my:ns:view",
+            COPY: "my:ns:copy"
         }
     }
 };
