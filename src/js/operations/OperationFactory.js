@@ -16,8 +16,9 @@ define([
     'operations/non_ot/ExportDataOperation',
     'operations/non_ot/ExportMetaModelOperation',
     'operations/non_ot/ExportImageOperation',
-    'operations/non_ot/JoinOperation'
-],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportImageOperation,JoinOperation) {
+    'operations/non_ot/JoinOperation',
+    'operations/non_ot/WidgetEnterOperation'
+],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportImageOperation,JoinOperation,WidgetEnterOperation) {
 
     /**
      * OperationFactory
@@ -66,6 +67,9 @@ define([
                         break;
                     case JoinOperation.TYPE:
                         resOperation = new JoinOperation(data.user,data.done,data.sender,data.data);
+                        break;
+                    case WidgetEnterOperation.TYPE:
+                        resOperation = new WidgetEnterOperation(data.enteredWidgetName);
                         break;
                 }
                 return resOperation;

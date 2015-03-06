@@ -102,9 +102,18 @@ requirejs([
         palette.addTool(new EnumNodeTool());
         palette.addTool(new NodeShapeNodeTool());
         palette.addTool(new EdgeShapeNodeTool());
-		palette.addSeparator(new Separator());
-		palette.addTool(new ViewObjectNodeTool());
-		palette.addTool(new ViewRelationshipNodeTool());
+
+        var sep = new Separator();
+		palette.addSeparator(sep);
+        sep.get$node().hide();
+
+        var viewObjectTool = new ViewObjectNodeTool();
+		palette.addTool(viewObjectTool);
+        viewObjectTool.get$node().hide();
+
+        var viewRelNodeTool = new ViewRelationshipNodeTool();
+		palette.addTool(viewRelNodeTool);
+        viewRelNodeTool.get$node().hide();
     }
     palette.addSeparator(new Separator());
     if(metamodel && metamodel.hasOwnProperty("edges")){

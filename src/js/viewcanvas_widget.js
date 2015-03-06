@@ -1,43 +1,44 @@
 requirejs([
-		'jqueryui',
-		'lodash',
-		'jsplumb',
-		'iwcotw',
-		'operations/non_ot/ToolSelectOperation',
-		'operations/non_ot/ActivityOperation',
-		'operations/non_ot/JoinOperation',
-		'canvas_widget/Canvas',
-		'canvas_widget/EntityManager',
-		'canvas_widget/NodeTool',
-		'canvas_widget/ObjectNodeTool',
-		'canvas_widget/AbstractClassNodeTool',
-		'canvas_widget/RelationshipNodeTool',
-		'canvas_widget/RelationshipGroupNodeTool',
-		'canvas_widget/EnumNodeTool',
-		'canvas_widget/NodeShapeNodeTool',
-		'canvas_widget/EdgeShapeNodeTool',
-		'canvas_widget/EdgeTool',
-		'canvas_widget/GeneralisationEdgeTool',
-		'canvas_widget/BiDirAssociationEdgeTool',
-		'canvas_widget/UniDirAssociationEdgeTool',
-		'canvas_widget/ObjectNode',
-		'canvas_widget/AbstractClassNode',
-		'canvas_widget/RelationshipNode',
-		'canvas_widget/RelationshipGroupNode',
-		'canvas_widget/EnumNode',
-		'canvas_widget/NodeShapeNode',
-		'canvas_widget/EdgeShapeNode',
-		'canvas_widget/GeneralisationEdge',
-		'canvas_widget/BiDirAssociationEdge',
-		'canvas_widget/UniDirAssociationEdge',
-		'viewcanvas_widget/ViewObjectNodeTool',
-		'viewcanvas_widget/ViewObjectNode',
-		'viewcanvas_widget/ViewRelationshipNode',
-		'viewcanvas_widget/ViewRelationshipNodeTool',
-		'promise!Metamodel'
-	], function ($, _, jsPlumb, IWCOT, ToolSelectOperation, ActivityOperation, JoinOperation, Canvas, EntityManager, NodeTool, ObjectNodeTool, AbstractClassNodeTool, RelationshipNodeTool, RelationshipGroupNodeTool, EnumNodeTool, NodeShapeNodeTool, EdgeShapeNodeTool, EdgeTool, GeneralisationEdgeTool, BiDirAssociationEdgeTool, UniDirAssociationEdgeTool, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNodeTool, ViewObjectNode, ViewRelationshipNode, ViewRelationshipNodeTool, metamodel) {
+    'jqueryui',
+    'lodash',
+    'jsplumb',
+    'iwcotw',
+    'operations/non_ot/ToolSelectOperation',
+    'operations/non_ot/ActivityOperation',
+    'operations/non_ot/JoinOperation',
+    'operations/non_ot/WidgetEnterOperation',
+    'canvas_widget/Canvas',
+    'canvas_widget/EntityManager',
+    'canvas_widget/NodeTool',
+    'canvas_widget/ObjectNodeTool',
+    'canvas_widget/AbstractClassNodeTool',
+    'canvas_widget/RelationshipNodeTool',
+    'canvas_widget/RelationshipGroupNodeTool',
+    'canvas_widget/EnumNodeTool',
+    'canvas_widget/NodeShapeNodeTool',
+    'canvas_widget/EdgeShapeNodeTool',
+    'canvas_widget/EdgeTool',
+    'canvas_widget/GeneralisationEdgeTool',
+    'canvas_widget/BiDirAssociationEdgeTool',
+    'canvas_widget/UniDirAssociationEdgeTool',
+    'canvas_widget/ObjectNode',
+    'canvas_widget/AbstractClassNode',
+    'canvas_widget/RelationshipNode',
+    'canvas_widget/RelationshipGroupNode',
+    'canvas_widget/EnumNode',
+    'canvas_widget/NodeShapeNode',
+    'canvas_widget/EdgeShapeNode',
+    'canvas_widget/GeneralisationEdge',
+    'canvas_widget/BiDirAssociationEdge',
+    'canvas_widget/UniDirAssociationEdge',
+    'viewcanvas_widget/ViewObjectNodeTool',
+    'viewcanvas_widget/ViewObjectNode',
+    'viewcanvas_widget/ViewRelationshipNode',
+    'viewcanvas_widget/ViewRelationshipNodeTool',
+    'promise!Metamodel'
+], function ($, _, jsPlumb, IWCOT, ToolSelectOperation, ActivityOperation, JoinOperation, WidgetEnterOperation, Canvas, EntityManager, NodeTool, ObjectNodeTool, AbstractClassNodeTool, RelationshipNodeTool, RelationshipGroupNodeTool, EnumNodeTool, NodeShapeNodeTool, EdgeShapeNodeTool, EdgeTool, GeneralisationEdgeTool, BiDirAssociationEdgeTool, UniDirAssociationEdgeTool, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNodeTool, ViewObjectNode, ViewRelationshipNode, ViewRelationshipNodeTool, metamodel) {
 
-	var iwcot;
+    var iwcot;
 	var canvas = new Canvas($("#canvas"), CONFIG.WIDGET.NAME.VIEWCANVAS);
 
 	//Add all tool to the canvas
@@ -264,7 +265,14 @@ requirejs([
 
 	iwcot.registerOnHistoryChangedCallback(saveCallback);
 	//End Autosave------------------------------------------------------
-	function resetCanvas() {
+
+    $(document).on('mouseenter', function(event){
+        var operation = new WidgetEnterOperation(CONFIG.WIDGET.NAME.VIEWCANVAS);
+        iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE,operation.toNonOTOperation());
+    });
+
+
+    function resetCanvas() {
 		
 		var edges = EntityManager.getEdges();
 		for (edgeId in edges) {

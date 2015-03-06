@@ -1,8 +1,9 @@
 define([
     'lodash',
     'iwcw',
-    'operations/non_ot/ToolSelectOperation'
-],/** @lends Palette */function(_,IWCW,ToolSelectOperation) {
+    'operations/non_ot/ToolSelectOperation',
+    'operations/non_ot/WidgetEnterOperation'
+],/** @lends Palette */function(_,IWCW,ToolSelectOperation,WidgetEnterOperation) {
 
     /**
      * Palette
@@ -68,6 +69,21 @@ define([
                 processToolSelection(operation.getSelectedToolName());
             }
         };
+
+        var enteredWidgetCallback = function(operation){
+            if(operation instanceof WidgetEnterOperation) {
+                if(operation.getEnteredWidgetName() === CONFIG.WIDGET.NAME.VIEWCANVAS){
+                    _separators[1].get$node().show();
+                    _tools['ViewObject'].get$node().show();
+                    _tools['ViewRelationship'].get$node().show();
+                }
+                else if(operation.getEnteredWidgetName() === CONFIG.WIDGET.NAME.MAIN) {
+                    _separators[1].get$node().hide();
+                    _tools['ViewObject'].get$node().hide();
+                    _tools['ViewRelationship'].get$node().hide();
+                }
+            }
+        }
 
         /**
          * Add tool tool to palette
@@ -137,6 +153,7 @@ define([
          */
         this.registerCallbacks = function(){
             _iwc.registerOnDataReceivedCallback(toolSelectionCallback);
+            _iwc.registerOnDataReceivedCallback(enteredWidgetCallback);
         };
 
         /**
@@ -144,6 +161,7 @@ define([
          */
         this.unregisterCallbacks = function(){
             _iwc.unregisterOnDataReceivedCallback(toolSelectionCallback);
+            _iwc.unregisterOnDataReceivedCallback(enteredWidgetCallback);
         };
 
         if(_iwc){
