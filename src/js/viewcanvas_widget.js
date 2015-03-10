@@ -35,8 +35,9 @@ requirejs([
     'viewcanvas_widget/ViewObjectNode',
     'viewcanvas_widget/ViewRelationshipNode',
     'viewcanvas_widget/ViewRelationshipNodeTool',
+    'text!templates/viewcanvas_widget/select_option.html',
     'promise!Metamodel'
-], function ($, _, jsPlumb, IWCOT, ToolSelectOperation, ActivityOperation, JoinOperation, WidgetEnterOperation, Canvas, EntityManager, NodeTool, ObjectNodeTool, AbstractClassNodeTool, RelationshipNodeTool, RelationshipGroupNodeTool, EnumNodeTool, NodeShapeNodeTool, EdgeShapeNodeTool, EdgeTool, GeneralisationEdgeTool, BiDirAssociationEdgeTool, UniDirAssociationEdgeTool, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNodeTool, ViewObjectNode, ViewRelationshipNode, ViewRelationshipNodeTool, metamodel) {
+], function ($, _, jsPlumb, IWCOT, ToolSelectOperation, ActivityOperation, JoinOperation, WidgetEnterOperation, Canvas, EntityManager, NodeTool, ObjectNodeTool, AbstractClassNodeTool, RelationshipNodeTool, RelationshipGroupNodeTool, EnumNodeTool, NodeShapeNodeTool, EdgeShapeNodeTool, EdgeTool, GeneralisationEdgeTool, BiDirAssociationEdgeTool, UniDirAssociationEdgeTool, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNodeTool, ViewObjectNode, ViewRelationshipNode, ViewRelationshipNodeTool,htmlOptionTpl, metamodel) {
 
     var iwcot;
 	var canvas = new Canvas($("#canvas"), CONFIG.WIDGET.NAME.VIEWCANVAS);
@@ -61,7 +62,7 @@ requirejs([
 		canvas.addTool(EnumNode.TYPE, new EnumNodeTool());
 		canvas.addTool(NodeShapeNode.TYPE, new NodeShapeNodeTool());
 		canvas.addTool(EdgeShapeNode.TYPE, new EdgeShapeNodeTool());
-		
+
 		//Add view types to the meta-model editor
 		canvas.addTool(ViewObjectNode.TYPE, new ViewObjectNodeTool());
 		canvas.addTool(ViewRelationshipNode.TYPE, new ViewRelationshipNodeTool());
@@ -86,7 +87,7 @@ requirejs([
 
 	iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.VIEWCANVAS);
 
-	var space = new openapp.oo.Resource(openapp.param.space());
+	//var space = new openapp.oo.Resource(openapp.param.space());
 
 	var $undo = $("#undo");
 	var $redo = $("#redo");
@@ -165,6 +166,10 @@ requirejs([
         if (selected.length == 0 || selected.text() === $('#lblCurrentView').text())
             return;
 		openapp.resource.get(selected.attr('link'), function (context) {
+            if(!context.uri){
+                selected.remove();
+                return;
+            }
 			openapp.resource.context(context).representation().get(function (rep) {
                 if(canvas.get$node().is(':hidden'))
                     canvas.get$node().show();
@@ -183,16 +188,16 @@ requirejs([
         resetCanvas();
         $('#lblCurrentView').text(viewpointId);
 		EntityManager.storeView(viewpointId).then(function (resp) {
-			var str_optTpl = '<option link="<<= uri >>"><<= val >></option>'.replace(/<</g, "<" + "%").replace(/>>/g, "%" + ">");
-			var option = _.template(str_optTpl);
-
-			$('#ddmViewpointSelection').append($(option({
+			//var str_optTpl = '<option link="<<= uri >>"><<= val >></option>'.replace(/<</g, "<" + "%").replace(/>>/g, "%" + ">");
+			var option = _.template(htmlOptionTpl);
+            var $viewpointSelection = $('#ddmViewpointSelection');
+            $viewpointSelection.append($(option({
 						uri : resp.uri,
 						val : viewpointId
 					})));
-			$('#ddmViewpointSelection').val(viewpointId);
+            $viewpointSelection.val(viewpointId);
 			$('#btnCreateViewpoint').show();
-			$('#ddmViewpointSelection').show();
+            $viewpointSelection.show();
 			$('#btnDelViewPoint').show();
 			$('#btnShowViewPoint').show();
 			$('#txtNameViewpoint').hide();
@@ -202,7 +207,7 @@ requirejs([
 
             canvas.get$node().show();
 
-			alert("Successfully stored");
+			//alert("Successfully stored");
 		});
 	});
 
@@ -212,12 +217,12 @@ requirejs([
             alert('Load the view before deleting it');
             return;
         }
-		openapp.resource.del(opt.attr('link'), function (context) {
+		openapp.resource.del(opt.attr('link'), function () {
 			$('#ddmViewpointSelection').find('option:selected').remove();
             resetCanvas();
             $('#lblCurrentView').attr('link','').text('No view displayed');
             canvas.get$node().hide();
-			alert("Successfully deleted");
+            //alert("Successfully deleted");
 		});
 	});
 	//Start Autosave---------------------------
@@ -225,9 +230,7 @@ requirejs([
 	$("#save").click(function () {
         var currentView = $('#lblCurrentView').text();
         var opt =  $('#ddmViewpointSelection').find('option').filter(function(i,v){
-            if($(v).text()===currentView)
-                return true;
-            else return false;
+            return $(v).text() === currentView;
         });
       	var uri = opt.attr('link');
 		if (uri) {
@@ -266,7 +269,7 @@ requirejs([
 	iwcot.registerOnHistoryChangedCallback(saveCallback);
 	//End Autosave------------------------------------------------------
 
-    $(document).on('mouseenter', function(event){
+    $(document).on('mouseenter', function(){
         var operation = new WidgetEnterOperation(CONFIG.WIDGET.NAME.VIEWCANVAS);
         iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE,operation.toNonOTOperation());
     });
@@ -298,8 +301,7 @@ requirejs([
 			type : CONFIG.NS.MY.VIEW,
 			onEach : function (context) {
 				context.getRepresentation("rdfjson", function (representation) {
-					var str_optTpl = '<option link="<<= uri >>"><<= val >></option>'.replace(/<</g, "<" + "%").replace(/>>/g, "%" + ">");
-					var option = _.template(str_optTpl);
+					var option = _.template(htmlOptionTpl);
 					$('#ddmViewpointSelection').append($(option({
 								uri : context.uri,
 								val : representation.id
@@ -313,8 +315,15 @@ requirejs([
 		edgeId;
 		for (nodeId in json.nodes) {
 			if (json.nodes.hasOwnProperty(nodeId))
-                canvas.createNode(json.nodes[nodeId].type, json.nodes[nodeId].left, json.nodes[nodeId].top, json.nodes[nodeId].width, json.nodes[nodeId].height,json.nodes[nodeId].zIndex, json.nodes[nodeId]);
-
+            var  new_id =  canvas.createNode(json.nodes[nodeId].type, json.nodes[nodeId].left, json.nodes[nodeId].top, json.nodes[nodeId].width, json.nodes[nodeId].height,json.nodes[nodeId].zIndex, json.nodes[nodeId]);
+            for(var edgeId in json.edges){
+                if(json.edges.hasOwnProperty(edgeId)){
+                    if(json.edges[edgeId].source === nodeId)
+                        json.edges[edgeId].source = new_id;
+                    else if(json.edges[edgeId].target === nodeId)
+                        json.edges[edgeId].target = new_id;
+                }
+            }
 		}
 		for (edgeId in json.edges) {
 			if (json.edges.hasOwnProperty(edgeId))
@@ -324,7 +333,7 @@ requirejs([
 	}
 
 	iwcot.registerOnJoinOrLeaveCallback(function (operation) {
-		var activityOperation;
+		//var activityOperation;
 		if (operation instanceof JoinOperation) {
 
 			if (operation.getUser() === iwcot.getUser()[CONFIG.NS.PERSON.JABBERID]) {

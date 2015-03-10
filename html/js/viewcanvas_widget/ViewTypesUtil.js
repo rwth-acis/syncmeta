@@ -1,5 +1,5 @@
 define(['jqueryui', 'lodash'], function ($,_) {
-	function ViewTypesUtil() {};
+	function ViewTypesUtil() {}
 	
 	ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList = function (nodes) {
 		var selectionList = {};
@@ -42,6 +42,6 @@ define(['jqueryui', 'lodash'], function ($,_) {
 			}
 		});
 		return deferred.promise();
-	}
+	};
 	return ViewTypesUtil;
 });

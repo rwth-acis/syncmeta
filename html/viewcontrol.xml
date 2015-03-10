@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- generated on Fri Mar 06 2015 15:11:23 -->
+<!-- generated on Tue Mar 10 2015 18:59:13 -->
 <Module>
   <ModulePrefs
     title="View Control"
@@ -58,96 +58,96 @@
           timeout();
         })();
     </script>
-    <script src="http://localhost:8081/js/config.js"></script>
-    <script src="http://localhost:8081/js/lib/vendor/require.js"></script>    
-    <link rel="stylesheet" type="text/css" href="http://localhost:8081/css/vendor/jquery-ui.css">
-<link rel="stylesheet" type="text/css" href="http://localhost:8081/css/style.css">
+    <script src="http://mari0.github.io/syncmeta/html/js/config.js"></script>
+    <script src="http://mari0.github.io/syncmeta/html/js/lib/vendor/require.js"></script>    
+    <link rel="stylesheet" type="text/css" href="http://mari0.github.io/syncmeta/html/css/vendor/jquery-ui.css">
+<link rel="stylesheet" type="text/css" href="http://mari0.github.io/syncmeta/html/css/style.css">
 <script type="application/javascript">
 	 requirejs(['jqueryui','lodash'],function($,_){
-			
-			
 			$(function(){
-				var getCurrentSpaceURI = function(space){
-					var deferred = $.Deferred();
-					space.getInfo(function(info) {
-						var spaceuri = info[openapp.ns.conserve+ "owner"].substring(0,info[openapp.ns.conserve + "owner"].lastIndexOf("/"));
-						deferred.resolve(spaceuri);
-					});
-					return deferred.promise();
-				};
-				function addWidgetToSpace(spaceURI,widgetURL){
-					var deferred = $.Deferred();
-					openapp.resource.post(
-                        spaceURI,
-                        function(data){
-                            deferred.resolve(data.uri);
-                        },{
-                            "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate":"http://purl.org/role/terms/tool",
-                            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type":"http://purl.org/role/terms/OpenSocialGadget",
-                            "http://www.w3.org/2000/01/rdf-schema#seeAlso":widgetURL
-                        }
-					);
-					return deferred.promise();
-				};
-				
-				var iwcClient;
-				gadgets.util.registerOnLoadHandler(function(){
-					iwcClient = new iwc.Client();
-					iwcClient.connect(); 
-				});
-				var space = new openapp.oo.Resource(openapp.param.space());
-				var templateString = '<tr><td class="lblviewname" uri=<<= uri >>><<= name >></td><td><input class="btnViewListShow" type="button" value="Show"></td><td><input type="button" class="btnViewListDel" value="Delete"></td></tr>'.replace(/<</g,"<"+"%").replace(/>>/g,"%"+">");
-				var tpl = _.template(templateString);
-				
-				space.getSubResources({
-					relation: openapp.ns.role + "data", type: "my:ns:item",
-					onEach: function(item) {
-						_uri = item.uri;
-						item.getRepresentation("rdfjson",function(rep){
-							var $viewEntry = $(tpl({name: rep.name, uri: _uri}));
-							$viewEntry.find('.btnViewListDel').click(function(evt){
-								var resource_uri = $(evt.target).parents('tr').find('.lblviewname').attr('uri');
-								openapp.resource.del(resource_uri,function(data){
-									window.location.reload();
-									//alert("Deleted resource: " + resource_uri);
-								});
-							});
-							$viewEntry.find('.btnViewListShow').click(function(evt){
-								getCurrentSpaceURI(space).then(function(currentSpaceURI){
-									addWidgetToSpace(currentSpaceURI, "http://localhost:8081/viewcanvas.xml").then(function(){	
-										var viewpointName = $(evt.target).parents('tr').find('.lblviewname').text();
-										var intent = { 
-											"component": "",
-											"data": viewpointName,
-											"dataType":"text/json",
-											"action":"ACTION_UPDATE",
-											"flags" :["PUBLISH_GLOBAL"],
-											"extras" :{"ns":"my:ns:item"} 
-										};
-										//iwcClient.publish(intent); 
+				var GetList = function(type, appendTo, tpl){	
+					var space = new openapp.oo.Resource(openapp.param.space());
+					space.getSubResources({
+						relation: openapp.ns.role + "data", type: type,
+						onEach: function(item) {
+							openapp.resource.get(item.uri,function(context){
+								openapp.resource.context(context).representation().get(function (rep) {
+									var $viewEntry = $(tpl({name: rep.data.id, uri: rep.uri}));
+									$viewEntry.find('.json').click(function(event){
+										var $this = $(this).addClass('loading_button');
+										var resource_uri = $(event.target).parents('tr').find('.lblviewname').attr('uri');
+										openapp.resource.get(resource_uri,function(context){
+											openapp.resource.context(context).representation().get(function (rep) {
+												var link = document.createElement('a');
+												link.download = rep.data.id + '.json';
+												link.href = 'data:,'+encodeURI(JSON.stringify(rep.data,null,4));
+												link.click();
+												$this.removeClass('loading_button');
+											});
+										});
 									});
+									$(appendTo).append($viewEntry);	
 								});
 							});
-							$('#viewlist').append($viewEntry);
-							
-						});	
-					} 
-				}); 
-				
-				$('#btnCreateView').click(function(){
-					var text = {"name":$('#txtCreateView').val()};
-					space.create({
-						relation: openapp.ns.role + "data",
-						type: "my:ns:item", 
-						representation: text,
-						callback: function(subres){ 						
-							window.location.reload();
-							alert("Successfully stored");
-						}
+						} 
 					}); 
+				}						
+				var GetListEntryTemplate = function(){
+					var templateString = '<tr><td class="lblviewname" uri=<<= uri >>><<= name >></td><td><button class="json">JSON</button></td></tr>'.replace(/<</g,"<"+"%").replace(/>>/g,"%"+">");
+					return tpl = _.template(templateString);
+				}
+				var getFileContent = function($node){
+				var fileReader,
+                    files = $node[0].files,
+                    file,
+                    deferred = $.Deferred();
+
+                if (!files || files.length === 0) deferred.resolve([]);
+                file = files[0];
+
+                fileReader = new FileReader();
+                fileReader.onload = function (e) {
+                    var data = e.target.result;
+                    try {
+                        data = JSON.parse(data);
+                    } catch (e){
+                        data = [];
+                    }
+                    deferred.resolve(data);
+                };
+                fileReader.readAsText(file);
+                return deferred.promise();
+            };
+			var LoadFileAndStoreToSpace = function(type){
+				getFileContent($('#btnImport')).then(function(data){
+						var space = new openapp.oo.Resource(openapp.param.space());
+						 space.create({
+							relation: openapp.ns.role + "data",
+							type: type,
+							representation: data,
+							callback: function(subres){
+								$('#btnRefresh').click();
+							}
+						}); 
+					});
+			}
+				GetList(CONFIG.NS.MY.VIEW, '#viewlist', GetListEntryTemplate());
+				GetList(CONFIG.NS.MY.VIEWPOINT, '#viewpointlist', GetListEntryTemplate());
+				
+				$('#btnRefresh').click(function(){
+					var tpl = GetListEntryTemplate();
+					$('#viewlist').empty();
+					$('#viewpointlist').empty();
+					GetList(CONFIG.NS.MY.VIEW, '#viewlist', tpl);
+					GetList(CONFIG.NS.MY.VIEWPOINT, '#viewpointlist', tpl);
+				})
+				
+				$('#btnLoadView').click(function(){
+					LoadFileAndStoreToSpace(CONFIG.NS.MY.VIEW);
 				});
-				
-				
+				$('#btnLoadViewpoint').click(function(){
+					LoadFileAndStoreToSpace(CONFIG.NS.MY.VIEWPOINT);
+				});
 			});
 	 });
 </script>
@@ -157,16 +157,20 @@
 	}
 </style>
 <div id="viewcontrol">
-	<p id="createview">
-		<input type="text" id="txtCreateView" size="10" maxlength="30">
-		<input type="button" id="btnCreateView" value="CreateView">
-	</p>
-	<div id="viewlist">
-		<strong>Viewpoint List</strong>
+<button id="btnRefresh">Refresh Lists</button>
+<input type="file" id="btnImport" />
+<button id="btnLoadView">Load a View</button>
+<button id="btnLoadViewpoint">Load a Viewpoint</button>
+	<div>
+		<strong>View List</strong>
 		<table id="viewlist"></table>
 	</div>
+	<div>
+		<strong>Viewpoint List</strong>
+		<table id="viewpointlist"></table>
+	</div>
 </div>
-    <script src="http://localhost:8081/js/shared.js"></script>    
+    <script src="http://mari0.github.io/syncmeta/html/js/shared.js"></script>    
     ]]>
   </Content>
 </Module>

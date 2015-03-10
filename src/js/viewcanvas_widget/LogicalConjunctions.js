@@ -3,4 +3,4 @@ define([], function () {
 		"AND" : "&&",
 		"OR" : "||"
 	}
-})
+});

@@ -7,4 +7,4 @@ define([], function () {
 		"smaller_eq" : "<=",
 		"nequal" : "!="
 	};
-})
+});

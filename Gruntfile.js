@@ -422,5 +422,5 @@ module.exports = function (grunt) {
 	});
 	
 	grunt.registerTask('server',['connect']);
-	grunt.registerTask('bns',['clean', 'requirejs', 'copy:lib', 'copy:main', 'buildwidgets','connect']);
+	grunt.registerTask('run',['clean', 'requirejs', 'copy:lib', 'copy:main', 'buildwidgets','connect']);
 };

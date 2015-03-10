@@ -26,6 +26,7 @@ define([
      * @param {AbstractEntity} subjectEntity Entity the attribute is assigned to
      * @param {Object} options Selection options
      * @param {Object} options2 Selection options
+     * @param {Object} options3 Selection options
      */
     function ConditionListAttribute(id,name,subjectEntity,options,options2, options3){
         var that = this;
@@ -230,7 +231,7 @@ define([
 		
 		this.setOptions = function(options){
 			_options = options;
-		}
+		};
 		
         /**
          * Get JSON representation of the attribute (list)
