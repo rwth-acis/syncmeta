@@ -72,18 +72,18 @@ define([
 
         var enteredWidgetCallback = function(operation){
             if(operation instanceof WidgetEnterOperation) {
-                if(operation.getEnteredWidgetName() === CONFIG.WIDGET.NAME.VIEWCANVAS){
+                if(operation.getEnteredWidgetName() === CONFIG.WIDGET.NAME.VIEWCANVAS && _tools.hasOwnProperty('ViewObject') && _tools.hasOwnProperty('ViewRelationship')){
                     _separators[1].get$node().show();
                     _tools['ViewObject'].get$node().show();
                     _tools['ViewRelationship'].get$node().show();
                 }
-                else if(operation.getEnteredWidgetName() === CONFIG.WIDGET.NAME.MAIN) {
+                else if(operation.getEnteredWidgetName() === CONFIG.WIDGET.NAME.MAIN &&  _tools.hasOwnProperty('ViewObject') && _tools.hasOwnProperty('ViewRelationship')) {
                     _separators[1].get$node().hide();
                     _tools['ViewObject'].get$node().hide();
                     _tools['ViewRelationship'].get$node().hide();
                 }
             }
-        }
+        };
 
         /**
          * Add tool tool to palette

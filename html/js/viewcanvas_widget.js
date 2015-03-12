@@ -35,24 +35,17 @@ requirejs([
     'viewcanvas_widget/ViewObjectNode',
     'viewcanvas_widget/ViewRelationshipNode',
     'viewcanvas_widget/ViewRelationshipNodeTool',
+    'viewcanvas_widget/ViewGenerator',
     'text!templates/viewcanvas_widget/select_option.html',
     'promise!Metamodel'
-], function ($, _, jsPlumb, IWCOT, ToolSelectOperation, ActivityOperation, JoinOperation, WidgetEnterOperation, Canvas, EntityManager, NodeTool, ObjectNodeTool, AbstractClassNodeTool, RelationshipNodeTool, RelationshipGroupNodeTool, EnumNodeTool, NodeShapeNodeTool, EdgeShapeNodeTool, EdgeTool, GeneralisationEdgeTool, BiDirAssociationEdgeTool, UniDirAssociationEdgeTool, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNodeTool, ViewObjectNode, ViewRelationshipNode, ViewRelationshipNodeTool,htmlOptionTpl, metamodel) {
+], function ($, _, jsPlumb, IWCOT, ToolSelectOperation, ActivityOperation, JoinOperation, WidgetEnterOperation, Canvas, EntityManager, NodeTool, ObjectNodeTool, AbstractClassNodeTool, RelationshipNodeTool, RelationshipGroupNodeTool, EnumNodeTool, NodeShapeNodeTool, EdgeShapeNodeTool, EdgeTool, GeneralisationEdgeTool, BiDirAssociationEdgeTool, UniDirAssociationEdgeTool, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNodeTool, ViewObjectNode, ViewRelationshipNode, ViewRelationshipNodeTool, ViewGenerator, htmlOptionTpl, metamodel) {
 
     var iwcot;
 	var canvas = new Canvas($("#canvas"), CONFIG.WIDGET.NAME.VIEWCANVAS);
-
+    var _inInstance = false;
 	//Add all tool to the canvas
 	if (metamodel && metamodel.hasOwnProperty("nodes")) {
-		//Add node tools for the model editor
-		var nodes = metamodel.nodes,
-		node;
-		for (var nodeId in nodes) {
-			if (nodes.hasOwnProperty(nodeId)) {
-				node = nodes[nodeId];
-				canvas.addTool(node.label, new NodeTool(node.label, null, null, node.shape.defaultWidth, node.shape.defaultHeight));
-			}
-		}
+		_inInstance = true;
 	} else {
 		//add node tools for the meta-model editor
 		canvas.addTool(ObjectNode.TYPE, new ObjectNodeTool());
@@ -144,25 +137,13 @@ requirejs([
 	});
 
 	$("#btnCreateViewpoint").click(function () {
-		$('#btnCreateViewpoint').hide();
-		$('#ddmViewpointSelection').hide();
-		$('#btnShowViewPoint').hide();
-		$('#btnDelViewPoint').hide();
-		$('#txtNameViewpoint').show();
-		$('#btnAddViewpoint').show();
-		$('#btnCancelCreateViewpoint').show();
+        ShowViewCreateMenu();
 	});
 	$('#btnCancelCreateViewpoint').click(function () {
-		$('#btnCreateViewpoint').show();
-		$('#ddmViewpointSelection').show();
-		$('#btnDelViewPoint').show();
-		$('#btnShowViewPoint').show();
-		$('#txtNameViewpoint').hide();
-		$('#btnAddViewpoint').hide();
-		$('#btnCancelCreateViewpoint').hide();
+        HideCreateMenu();
 	});
 	$('#btnShowViewPoint').click(function () {
-        var selected = $('#ddmViewpointSelection').find('option:selected');
+        var selected = $('#ddmViewSelection').find('option:selected');
         if (selected.length == 0 || selected.text() === $('#lblCurrentView').text())
             return;
 		openapp.resource.get(selected.attr('link'), function (context) {
@@ -172,7 +153,7 @@ requirejs([
             }
 			openapp.resource.context(context).representation().get(function (rep) {
                 if(canvas.get$node().is(':hidden'))
-                    canvas.get$node().show();
+                    canvas.get$canvas().show();
 				resetCanvas();
 
 				JSONtoGraph(rep.data);
@@ -184,52 +165,56 @@ requirejs([
 		});
 	});
 	$('#btnAddViewpoint').click(function () {
-		var viewpointId = $('#txtNameViewpoint').val();
+		var viewId = $('#txtNameViewpoint').val();
         resetCanvas();
-        $('#lblCurrentView').text(viewpointId);
-		EntityManager.storeView(viewpointId).then(function (resp) {
-			//var str_optTpl = '<option link="<<= uri >>"><<= val >></option>'.replace(/<</g, "<" + "%").replace(/>>/g, "%" + ">");
+        $('#lblCurrentView').text(viewId);
+		EntityManager.storeView(viewId).then(function (resp) {
 			var option = _.template(htmlOptionTpl);
-            var $viewpointSelection = $('#ddmViewpointSelection');
+            var $viewpointSelection = $('#ddmViewSelection');
             $viewpointSelection.append($(option({
 						uri : resp.uri,
-						val : viewpointId
+						val : viewId
 					})));
-            $viewpointSelection.val(viewpointId);
-			$('#btnCreateViewpoint').show();
-            $viewpointSelection.show();
-			$('#btnDelViewPoint').show();
-			$('#btnShowViewPoint').show();
-			$('#txtNameViewpoint').hide();
-			$('#btnAddViewpoint').hide();
-			$('#btnCancelCreateViewpoint').hide();
+            $viewpointSelection.val(viewId);
 
-
-            canvas.get$node().show();
-
+            canvas.get$canvas().show();
+            if(_inInstance) {
+                var viewpointLink = $('#ddmViewpointSelection').find('option:selected').attr('link');
+                openapp.resource.get(viewpointLink, function (context) {
+                    openapp.resource.context(context).representation().get(function (viewpoint) {
+                        var viewGenerator = new ViewGenerator(viewpoint.data);
+                        viewGenerator.apply().then(function(viewVLS) {
+                            JSONtoGraph(viewVLS);
+                        })
+                    })
+                });
+            }
+            HideCreateMenu();
 			//alert("Successfully stored");
 		});
 	});
 
 	$('#btnDelViewPoint').click(function () {
-        var opt = $('#ddmViewpointSelection').find('option:selected');
+        var opt = $('#ddmViewSelection').find('option:selected');
         if(opt.text() !== $('#lblCurrentView').text()) {
-            alert('Load the view before deleting it');
-            return;
+            openapp.resource.del(opt.attr('link'), function () {
+                $('#ddmViewSelection').find('option:selected').remove();
+            });
         }
-		openapp.resource.del(opt.attr('link'), function () {
-			$('#ddmViewpointSelection').find('option:selected').remove();
-            resetCanvas();
-            $('#lblCurrentView').attr('link','').text('No view displayed');
-            canvas.get$node().hide();
-            //alert("Successfully deleted");
-		});
+		else {
+            openapp.resource.del(opt.attr('link'), function () {
+                $('#ddmViewSelection').find('option:selected').remove();
+                resetCanvas();
+                $('#lblCurrentView').attr('link', '').text('No view displayed');
+                canvas.get$canvas().hide();
+            });
+        }
 	});
 	//Start Autosave---------------------------
 	var $feedback = $("#feedback");
 	$("#save").click(function () {
         var currentView = $('#lblCurrentView').text();
-        var opt =  $('#ddmViewpointSelection').find('option').filter(function(i,v){
+        var opt =  $('#ddmViewSelection').find('option').filter(function(i,v){
             return $(v).text() === currentView;
         });
       	var uri = opt.attr('link');
@@ -274,7 +259,28 @@ requirejs([
         iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE,operation.toNonOTOperation());
     });
 
-
+    var ShowViewCreateMenu = function(){
+        $('#btnCreateViewpoint').hide();
+        $('#ddmViewSelection').hide();
+        $('#btnShowViewPoint').hide();
+        $('#btnDelViewPoint').hide();
+        $('#txtNameViewpoint').show();
+        $('#btnAddViewpoint').show();
+        $('#btnCancelCreateViewpoint').show();
+        if(_inInstance)
+            $('#ddmViewpointSelection').show();
+    };
+    var HideCreateMenu = function(){
+        $('#btnCreateViewpoint').show();
+        $('#ddmViewSelection').show();
+        $('#btnDelViewPoint').show();
+        $('#btnShowViewPoint').show();
+        $('#txtNameViewpoint').hide();
+        $('#btnAddViewpoint').hide();
+        $('#btnCancelCreateViewpoint').hide();
+        if(_inInstance)
+            $('#ddmViewpointSelection').hide();
+    };
     function resetCanvas() {
 		
 		var edges = EntityManager.getEdges();
@@ -293,16 +299,16 @@ requirejs([
 		}
 		EntityManager.clearRecycleBin();
 	}
-	function GetViewList() {
+	function GetViewList(type, $selection) {
 		var resourceSpace = new openapp.oo.Resource(openapp.param.space());
 		//noinspection JSUnusedGlobalSymbols
 		resourceSpace.getSubResources({
 			relation : openapp.ns.role + "data",
-			type : CONFIG.NS.MY.VIEW,
+			type : type,
 			onEach : function (context) {
 				context.getRepresentation("rdfjson", function (representation) {
 					var option = _.template(htmlOptionTpl);
-					$('#ddmViewpointSelection').append($(option({
+                    $selection.append($(option({
 								uri : context.uri,
 								val : representation.id
 							})));
@@ -311,21 +317,19 @@ requirejs([
 		});
 	}
 	function JSONtoGraph(json) {
-		var nodeId,
-		edgeId;
-		for (nodeId in json.nodes) {
+		for (var nodeId in json.nodes) {
 			if (json.nodes.hasOwnProperty(nodeId))
             var  new_id =  canvas.createNode(json.nodes[nodeId].type, json.nodes[nodeId].left, json.nodes[nodeId].top, json.nodes[nodeId].width, json.nodes[nodeId].height,json.nodes[nodeId].zIndex, json.nodes[nodeId]);
-            for(var edgeId in json.edges){
-                if(json.edges.hasOwnProperty(edgeId)){
-                    if(json.edges[edgeId].source === nodeId)
-                        json.edges[edgeId].source = new_id;
-                    else if(json.edges[edgeId].target === nodeId)
-                        json.edges[edgeId].target = new_id;
+            for(var edgeId2 in json.edges){
+                if(json.edges.hasOwnProperty(edgeId2)){
+                    if(json.edges[edgeId2].source === nodeId)
+                        json.edges[edgeId2].source = new_id;
+                    else if(json.edges[edgeId2].target === nodeId)
+                        json.edges[edgeId2].target = new_id;
                 }
             }
 		}
-		for (edgeId in json.edges) {
+		for (var edgeId in json.edges) {
 			if (json.edges.hasOwnProperty(edgeId))
 				canvas.createEdge(json.edges[edgeId].type,  json.edges[edgeId].source, json.edges[edgeId].target, json.edges[edgeId]);
 
@@ -348,8 +352,10 @@ requirejs([
 					}*/
 					canvas.resetTool();
 					$("#loading").hide();
-                    canvas.get$node().hide();
-					GetViewList();
+                    canvas.get$canvas().hide();
+					GetViewList(CONFIG.NS.MY.VIEW, $('#ddmViewSelection'));
+                    if(_inInstance)
+                        GetViewList(CONFIG.NS.MY.VIEWPOINT, $('#ddmViewpointSelection'));
 
 				} else {
 					//model = operation.getData();

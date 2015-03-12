@@ -4,8 +4,9 @@
         'lodash',
         'Util',
         'iwcw',
-        'operations/non_ot/ExportMetaModelOperation'
-    ],function($,_,Util,IWCW,ExportMetaModelOperation){
+        'operations/non_ot/ExportMetaModelOperation',
+        'viewcanvas_widget/GenerateViewpointModel'
+    ],function($,_,Util,IWCW,ExportMetaModelOperation,GenerateViewpointModel){
 
         var componentName = "export"+Util.generateRandomId();
 
@@ -181,7 +182,8 @@
 								var deferred = $.Deferred();
 								for(var i=0;i<viewpoints.length;i++){
 									GetViewPoint(viewpoints[i]).then(function(viewpoint){
-										addMetamodelToSpace(spaceURI, viewpoint, CONFIG.NS.MY.VIEWPOINT);
+									    var viewpointmodel = GenerateViewpointModel(viewpoint);
+										addMetamodelToSpace(spaceURI, viewpointmodel, CONFIG.NS.MY.VIEWPOINT);
 									});
 								}
 								deferred.resolve(); 

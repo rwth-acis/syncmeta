@@ -25,7 +25,7 @@ define([
         },
         {
             sourceTypes: [RelationshipGroupNode.TYPE],
-            targetTypes: [RelationshipNode.TYPE]
+            targetTypes: [RelationshipNode.TYPE, ViewRelationshipNode.TYPE]
         },
         {
             sourceTypes: [AbstractClassNode.TYPE],

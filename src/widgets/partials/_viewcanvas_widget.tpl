@@ -22,9 +22,10 @@
 <div>
  <button id="btnCreateViewpoint"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/add196.png" /></button>
   <input id="txtNameViewpoint" type="text" placeholder="name"  style="display: none;">
+   <select id="ddmViewpointSelection" style="display: none;"></select>
   <button id="btnAddViewpoint" style="display: none;"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/checked21.png" /></button>
   <button id="btnCancelCreateViewpoint" style="display: none;"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/times1.png" /></button>
-  <select id="ddmViewpointSelection"></select>
+  <select id="ddmViewSelection"></select>
    <button id="btnShowViewPoint">Show</button>
   <button id="btnDelViewPoint"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/times1.png" /></button>
   <p id="lblCurrentView">No view selected!</p>

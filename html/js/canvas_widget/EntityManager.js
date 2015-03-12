@@ -1064,7 +1064,13 @@ define([
 					nodes : {},
 					edges : {}
 				}
-			}
+			},
+            clear : function(){
+                this.clearRecycleBin();
+                _nodes ={};
+                _edges = {};
+                this.deleteModelAttribute();
+            }
 		};
 	}
 	return new EntityManager();

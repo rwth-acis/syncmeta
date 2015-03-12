@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- generated on Tue Mar 10 2015 18:59:13 -->
+<!-- generated on Thu Mar 12 2015 21:56:26 -->
 <Module>
   <ModulePrefs
     title="Export"
@@ -58,8 +58,8 @@
           timeout();
         })();
     </script>
-    <script src="http://mari0.github.io/syncmeta/html/js/config.js"></script>
-    <script src="http://mari0.github.io/syncmeta/html/js/lib/vendor/require.js"></script>    
+    <script src="http://localhost:8081/js/config.js"></script>
+    <script src="http://localhost:8081/js/lib/vendor/require.js"></script>    
     <script type="application/javascript">
   requirejs(['jqueryui','mfexport','ildeApi', 'lodash'], function($,MFExport,ILDE,_){
         $("#json").click(function(){
@@ -89,7 +89,7 @@
 <style>
     /*noinspection CssUnknownTarget,CssUnusedSymbol*/
     .loading_button {
-        background-image: url('http://mari0.github.io/syncmeta/html/img/loading_small.gif');
+        background-image: url('http://localhost:8081/img/loading_small.gif');
         background-repeat: no-repeat;
         background-position: right center;
         padding-right: 20px;
@@ -97,7 +97,7 @@
 </style>
 <button id="json">Download JSON</button>
 <button id="png">Download PNG Image</button>
-    <script src="http://mari0.github.io/syncmeta/html/js/shared.js"></script>    
+    <script src="http://localhost:8081/js/shared.js"></script>    
     ]]>
   </Content>
 </Module>
