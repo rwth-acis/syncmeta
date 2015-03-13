@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- generated on Thu Mar 12 2015 21:56:26 -->
+<!-- generated on Fri Mar 13 2015 20:53:50 -->
 <Module>
   <ModulePrefs
     title="Instances"
@@ -58,8 +58,8 @@
           timeout();
         })();
     </script>
-    <script src="http://localhost:8081/js/config.js"></script>
-    <script src="http://localhost:8081/js/lib/vendor/require.js"></script>    
+    <script src="http://mari0.github.io/syncmeta/html/js/config.js"></script>
+    <script src="http://mari0.github.io/syncmeta/html/js/lib/vendor/require.js"></script>    
     <script type="application/javascript">
     requirejs(['jqueryui','lodash'],function($,_){
         $(function(){
@@ -135,7 +135,7 @@
 </style>
 <!--<button id="reload">Reload</button>-->
 <ul id="list"></ul>
-    <script src="http://localhost:8081/js/shared.js"></script>    
+    <script src="http://mari0.github.io/syncmeta/html/js/shared.js"></script>    
     ]]>
   </Content>
 </Module>

@@ -1,7 +1,7 @@
 define([
     'jqueryui',
     'jsplumb',
-    'canvas_widget/NodeTool',
+    'viewcanvas_widget/NodeTool',
     'viewcanvas_widget/ViewObjectNode'
 ],/** @lends ObjectNodeTool */function($,jsPlumb,NodeTool,ViewObjectNode) {
 

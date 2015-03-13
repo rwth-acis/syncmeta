@@ -3,7 +3,7 @@ define([
     'jqueryui',
     'jsplumb',
     'lodash',
-    'canvas_widget/AbstractNode',
+    'viewcanvas_widget/AbstractNode',
     'canvas_widget/SingleSelectionAttribute',
     'canvas_widget/KeySelectionValueSelectionValueListAttribute',
     'viewcanvas_widget/ConditionListAttribute',
@@ -132,9 +132,9 @@ function (require, $, jsPlumb, _, AbstractNode, SingleSelectionAttribute, KeySel
 		}
 
 		this.setContextMenuItemCallback(function () {
-			var EdgeShapeNode = require('canvas_widget/EdgeShapeNode'),
-			BiDirAssociationEdge = require('canvas_widget/BiDirAssociationEdge'),
-			UniDirAssociationEdge = require('canvas_widget/UniDirAssociationEdge');
+			var EdgeShapeNode = require('viewcanvas_widget/EdgeShapeNode'),
+			BiDirAssociationEdge = require('viewcanvas_widget/BiDirAssociationEdge'),
+			UniDirAssociationEdge = require('viewcanvas_widget/UniDirAssociationEdge');
 			return {
 				addShape : {
 					name : "Add Edge Shape",
@@ -180,7 +180,7 @@ function (require, $, jsPlumb, _, AbstractNode, SingleSelectionAttribute, KeySel
 								nodeId;
 
 								//noinspection JSAccessibilityCheck
-								nodeId = canvas.createNode(require('canvas_widget/AbstractClassNode').TYPE, appearance.left, appearance.top, appearance.width, appearance.height, that.getZIndex(), that.toJSON());
+								nodeId = canvas.createNode(require('viewcanvas_widget/AbstractClassNode').TYPE, appearance.left, appearance.top, appearance.width, appearance.height, that.getZIndex(), that.toJSON());
 								var edges = that.getOutgoingEdges(),
 								edge,
 								edgeId;
@@ -215,7 +215,7 @@ function (require, $, jsPlumb, _, AbstractNode, SingleSelectionAttribute, KeySel
 								nodeId;
 
 								//noinspection JSAccessibilityCheck
-								nodeId = canvas.createNode(require('canvas_widget/ObjectNode').TYPE, appearance.left, appearance.top, appearance.width, appearance.height, that.getZIndex(), that.toJSON());
+								nodeId = canvas.createNode(require('viewcanvas_widget/ObjectNode').TYPE, appearance.left, appearance.top, appearance.width, appearance.height, that.getZIndex(), that.toJSON());
 								var edges = that.getOutgoingEdges(),
 								edge,
 								edgeId;
@@ -250,7 +250,7 @@ function (require, $, jsPlumb, _, AbstractNode, SingleSelectionAttribute, KeySel
 								nodeId;
 
 								//noinspection JSAccessibilityCheck
-								nodeId = canvas.createNode(require('canvas_widget/RelationshipGroupNode').TYPE, appearance.left, appearance.top, appearance.width, appearance.height, that.getZIndex(), that.toJSON());
+								nodeId = canvas.createNode(require('viewcanvas_widget/RelationshipGroupNode').TYPE, appearance.left, appearance.top, appearance.width, appearance.height, that.getZIndex(), that.toJSON());
 								var edges = that.getOutgoingEdges(),
 								edge,
 								edgeId;

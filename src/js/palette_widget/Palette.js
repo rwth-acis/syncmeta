@@ -136,6 +136,7 @@ define([
                 processToolSelection(name);
                 var operation = new ToolSelectOperation(name);
                 _iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.toNonOTOperation());
+                //_iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.VIEWCANVAS,operation.toNonOTOperation());
             }
         };
 

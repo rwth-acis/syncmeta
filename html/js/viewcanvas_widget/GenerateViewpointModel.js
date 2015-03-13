@@ -175,6 +175,23 @@ define(['Util',
                 return attributes;
             }
 
+            function getViewTypeAttributes(node){
+                var target;
+                var conditions = [];
+                var nodeid = node.getEntityId();
+                if(viewpointModel.nodes.hasOwnProperty(nodeid)){
+                    if(viewpointModel.nodes[nodeid].attributes.hasOwnProperty(nodeid+'[target]')) {
+                        target = viewpointModel.nodes[nodeid].attributes[nodeid + '[target]'].value.value;
+                    }
+                    if(viewpointModel.nodes[nodeid].attributes.hasOwnProperty('[condition]')){
+                        //TODO conditions here
+                    }
+                }
+                return {target: target,
+                    condition : conditions};
+
+            }
+
             var metamodel = {
                 attributes : {},
                 nodes : {},
@@ -204,6 +221,7 @@ define(['Util',
             var groupEdge,
                 groupEdgeId,
                 groupEdges;
+            var viewtypeAttrs;
 
             var _nodes = EntityManager.getNodes();
             for (nodeId in _nodes) {
@@ -239,6 +257,8 @@ define(['Util',
                                     }
                                 }
                             }
+                            if(node instanceof  ViewObjectNode)
+                                viewtypeAttrs = getViewTypeAttributes(node);
                             metamodel.nodes[nodeId] = {
                                 label : node.getLabel().getValue().getValue(),
                                 attributes : attributes,
@@ -249,7 +269,9 @@ define(['Util',
                                     customAnchors : "",
                                     defaultWidth : 0,
                                     defaultHeight : 0
-                                }
+                                },
+                                target: viewtypeAttrs.target,
+                                conditions: viewtypeAttrs.conditon
                             };
                         }
                     } else if (node instanceof RelationshipNode || node instanceof ViewRelationshipNode) {
@@ -377,6 +399,8 @@ define(['Util',
                                 targetTypes : targetTypes
                             });
                         }
+                        if(node instanceof  ViewRelationshipNode)
+                            viewtypeAttrs = getViewTypeAttributes(node);
 
                         metamodel.edges[nodeId] = {
                             label : node.getLabel().getValue().getValue(),
@@ -389,7 +413,9 @@ define(['Util',
                                 overlayRotate : true
                             },
                             relations : relations,
-                            attributes : attributes
+                            attributes : attributes,
+                            target: viewtypeAttrs.target,
+                            conditions: viewtypeAttrs.conditon
                         };
                     }
                 }

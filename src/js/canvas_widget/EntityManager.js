@@ -15,8 +15,6 @@ define([
 		'canvas_widget/GeneralisationEdge',
 		'canvas_widget/BiDirAssociationEdge',
 		'canvas_widget/UniDirAssociationEdge',
-		'viewcanvas_widget/ViewObjectNode',
-		'viewcanvas_widget/ViewRelationshipNode',
 		'text!templates/canvas_widget/circle_node.html',
 		'text!templates/canvas_widget/diamond_node.html',
 		'text!templates/canvas_widget/rectangle_node.html',
@@ -24,7 +22,7 @@ define([
 		'text!templates/canvas_widget/triangle_node.html',
 		'promise!Metamodel'
 	], /** @lends EntityManager */
-	function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, ModelAttributesNode, Edge, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNode, ViewRelationshipNode, circleNodeHtml, diamondNodeHtml, rectangleNodeHtml, roundedRectangleNodeHtml, triangleNodeHtml, metamodel) {
+	function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, ModelAttributesNode, Edge, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, circleNodeHtml, diamondNodeHtml, rectangleNodeHtml, roundedRectangleNodeHtml, triangleNodeHtml, metamodel) {
 
 	/**
 	 * Predefined node shapes, first is default
@@ -146,9 +144,6 @@ define([
 		nodeTypes[NodeShapeNode.TYPE] = NodeShapeNode;
 		nodeTypes[EdgeShapeNode.TYPE] = EdgeShapeNode;
 
-		//add view types
-		nodeTypes[ViewObjectNode.TYPE] = ViewObjectNode;
-		nodeTypes[ViewRelationshipNode.TYPE] = ViewRelationshipNode;
 	}
 
 	/**
@@ -1016,61 +1011,7 @@ define([
 					});
 				});
 				return deferred.promise();
-			},
-			/**
-			 * Stores current view in the ROLE Space
-			 * @param {string} viewId the identifier for the view
-			 * @returns {Promise}
-			 */
-			storeView : function (viewId) {
-				var resourceSpace = new openapp.oo.Resource(openapp.param.space());
-				var deferred = $.Deferred();
-				var data = this.viewToJSON(viewId);
-				resourceSpace.create({
-					relation : openapp.ns.role + "data",
-					type : CONFIG.NS.MY.VIEW,
-					representation : data,
-					callback : function (resp) {
-						deferred.resolve(resp);
-					}
-				});
-				return deferred.promise();
-			},
-			/**
-			 * Update a view representation in the ROLE Space
-			 * @param {string} uri The URI where the view is storeData
-			 * @param {string} viewId The Identifier of the view
-			 * @returns {Promise}
-			 */
-			updateView : function (uri, viewId) {
-				var that = this;
-				var deferred = $.Deferred();
-				var data = this.viewToJSON(viewId);
-				openapp.resource.del(uri, function (context) {
-					that.storeView(viewId).then(function (resp) {
-						deferred.resolve(resp);
-					});
-				});
-				return deferred.promise();
-			},
-			/**
-			 * Deletes the ModelAttribute
-			 */
-			deleteModelAttribute : function () {
-				_modelAttributesNode = null;
-			},
-			clearRecycleBin : function () {
-				_recycleBin = {
-					nodes : {},
-					edges : {}
-				}
-			},
-            clear : function(){
-                this.clearRecycleBin();
-                _nodes ={};
-                _edges = {};
-                this.deleteModelAttribute();
-            }
+			}
 		};
 	}
 	return new EntityManager();

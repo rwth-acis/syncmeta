@@ -7,30 +7,30 @@ requirejs([
     'operations/non_ot/ActivityOperation',
     'operations/non_ot/JoinOperation',
     'operations/non_ot/WidgetEnterOperation',
-    'canvas_widget/Canvas',
-    'canvas_widget/EntityManager',
-    'canvas_widget/NodeTool',
-    'canvas_widget/ObjectNodeTool',
-    'canvas_widget/AbstractClassNodeTool',
-    'canvas_widget/RelationshipNodeTool',
-    'canvas_widget/RelationshipGroupNodeTool',
-    'canvas_widget/EnumNodeTool',
-    'canvas_widget/NodeShapeNodeTool',
-    'canvas_widget/EdgeShapeNodeTool',
-    'canvas_widget/EdgeTool',
-    'canvas_widget/GeneralisationEdgeTool',
-    'canvas_widget/BiDirAssociationEdgeTool',
-    'canvas_widget/UniDirAssociationEdgeTool',
-    'canvas_widget/ObjectNode',
-    'canvas_widget/AbstractClassNode',
-    'canvas_widget/RelationshipNode',
-    'canvas_widget/RelationshipGroupNode',
-    'canvas_widget/EnumNode',
-    'canvas_widget/NodeShapeNode',
-    'canvas_widget/EdgeShapeNode',
-    'canvas_widget/GeneralisationEdge',
-    'canvas_widget/BiDirAssociationEdge',
-    'canvas_widget/UniDirAssociationEdge',
+    'viewcanvas_widget/Canvas',
+    'viewcanvas_widget/EntityManager',
+    'viewcanvas_widget/NodeTool',
+    'viewcanvas_widget/ObjectNodeTool',
+    'viewcanvas_widget/AbstractClassNodeTool',
+    'viewcanvas_widget/RelationshipNodeTool',
+    'viewcanvas_widget/RelationshipGroupNodeTool',
+    'viewcanvas_widget/EnumNodeTool',
+    'viewcanvas_widget/NodeShapeNodeTool',
+    'viewcanvas_widget/EdgeShapeNodeTool',
+    'viewcanvas_widget/EdgeTool',
+    'viewcanvas_widget/GeneralisationEdgeTool',
+    'viewcanvas_widget/BiDirAssociationEdgeTool',
+    'viewcanvas_widget/UniDirAssociationEdgeTool',
+    'viewcanvas_widget/ObjectNode',
+    'viewcanvas_widget/AbstractClassNode',
+    'viewcanvas_widget/RelationshipNode',
+    'viewcanvas_widget/RelationshipGroupNode',
+    'viewcanvas_widget/EnumNode',
+    'viewcanvas_widget/NodeShapeNode',
+    'viewcanvas_widget/EdgeShapeNode',
+    'viewcanvas_widget/GeneralisationEdge',
+    'viewcanvas_widget/BiDirAssociationEdge',
+    'viewcanvas_widget/UniDirAssociationEdge',
     'viewcanvas_widget/ViewObjectNodeTool',
     'viewcanvas_widget/ViewObjectNode',
     'viewcanvas_widget/ViewRelationshipNode',
@@ -160,7 +160,6 @@ requirejs([
 
                 $('#lblCurrentView').text(rep.data.id);
 				canvas.resetTool();
-
 			});
 		});
 	});
@@ -182,8 +181,11 @@ requirejs([
                 var viewpointLink = $('#ddmViewpointSelection').find('option:selected').attr('link');
                 openapp.resource.get(viewpointLink, function (context) {
                     openapp.resource.context(context).representation().get(function (viewpoint) {
-                        var viewGenerator = new ViewGenerator(viewpoint.data);
+                        var viewpoint = viewpoint.data;
+                        var viewGenerator = new ViewGenerator(viewpoint);
                         viewGenerator.apply().then(function(viewVLS) {
+                            EntityManager.initNodeTypes(viewpoint);
+                            EntityManager.initEdgeTypes(viewpoint);
                             JSONtoGraph(viewVLS);
                         })
                     })
@@ -350,7 +352,7 @@ requirejs([
 						canvas.setModelAttributesNode(modelAttributesNode);
 						modelAttributesNode.addToCanvas(canvas);
 					}*/
-					canvas.resetTool();
+					//canvas.resetTool();
 					$("#loading").hide();
                     canvas.get$canvas().hide();
 					GetViewList(CONFIG.NS.MY.VIEW, $('#ddmViewSelection'));

@@ -28,44 +28,52 @@ define(['viewcanvas_widget/ViewTypesUtil','promise!Metamodel'], function(ViewTyp
             for(var key in viewpoint.nodes){
                 if(viewpoint.nodes.hasOwnProperty(key)){
                     var metaNode = null;
-                    if(viewpoint.nodes[key].type === 'ViewObject'){
-                        metaNode = getTargetNodeFromMetaModel(key, viewpoint.nodes[key]);
+                    if(viewpoint.nodes[key].hasOwnProperty('target')){
+                        metaNode = getTargetNodeFromMetaModel(viewpoint.nodes[key]);
                         if(metaNode)
-                            filter('nodes', metaNode.label, Model);
+                            filter('nodes', metaNode.label, viewpoint.nodes[key].label, Model);
                     }
-                    else if(viewpoint.nodes[key].type == 'ViewRelationship'){
-                        metaNode = getTargetEdgeFromMetaModel(key, viewpoint.nodes[key]);
+                }
+            }
+            for(var key in viewpoint.edges){
+                if(viewpoint.edges.hasOwnProperty(key)){
+                    var metaNode = null;
+                    if(viewpoint.edges[key].hasOwnProperty('target')){
+                        metaNode = getTargetEdgeFromMetaModel(viewpoint.edges[key]);
                         if(metaNode)
-                            filter('edges', metaNode.label, Model);
+                            filter('edges', metaNode.label,viewpoint.edges[key].label, Model);
                     }
                 }
             }
         };
-        var filter = function(entityTypes, type, Model){
+        var filter = function(entityTypes, type, newType, Model){
             for(var key in Model[entityTypes]){
                 if(Model[entityTypes].hasOwnProperty(key)){
                     if(Model[entityTypes][key].type === type){
                         if(entityTypes === 'edges'){
-                            if(_view.nodes.hasOwnProperty(Model[entityTypes][key].source) && _view.nodes.hasOwnProperty(Model[entityTypes][key].target))
+                            if(_view.nodes.hasOwnProperty(Model[entityTypes][key].source) && _view.nodes.hasOwnProperty(Model[entityTypes][key].target)){
                                 that.getView()[entityTypes][key] = Model[entityTypes][key];
+                                that.getView()[entityTypes][key].type = newType;
+                            }
                         }
-                        else
+                        else {
+
                             that.getView()[entityTypes][key] = Model[entityTypes][key];
+                            that.getView()[entityTypes][key].type = newType;
+                        }
                     }
                 }
             }
         };
-        var getTargetId = function(key, node){
-            return node.attributes[key+'[target]'].value.value;
+
+        var getTargetNodeFromMetaModel = function(node){
+           return getTargetFromMetaModel('nodes',  node);
         };
-        var getTargetNodeFromMetaModel = function(key, node){
-           return getTargetFromMetaModel('nodes', key, node);
+        var getTargetEdgeFromMetaModel = function(node){
+            return getTargetFromMetaModel('edges',  node);
         };
-        var getTargetEdgeFromMetaModel = function(key, node){
-            return getTargetFromMetaModel('edges', key, node);
-        };
-        var getTargetFromMetaModel = function(type, key, node){
-            var id = getTargetId(key, node);
+        var getTargetFromMetaModel = function(type, node){
+            var id = node.target;
             if(Metamodel[type].hasOwnProperty(id))
                 return Metamodel[type][id];
             else return null;

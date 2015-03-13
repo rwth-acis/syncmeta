@@ -2,7 +2,7 @@ define([
     'require',
     'jqueryui',
     'lodash',
-    'canvas_widget/AbstractNode',
+    'viewcanvas_widget/AbstractNode',
 	'canvas_widget/SingleSelectionAttribute',
     'canvas_widget/KeySelectionValueSelectionValueListAttribute',
 	'viewcanvas_widget/ConditionListAttribute',
@@ -118,9 +118,9 @@ define([
         }
 
         this.setContextMenuItemCallback(function(){
-            var NodeShapeNode = require('canvas_widget/NodeShapeNode'),
-                BiDirAssociationEdge = require('canvas_widget/BiDirAssociationEdge'),
-                UniDirAssociationEdge = require('canvas_widget/UniDirAssociationEdge');
+            var NodeShapeNode = require('viewcanvas_widget/NodeShapeNode'),
+                BiDirAssociationEdge = require('viewcanvas_widget/BiDirAssociationEdge'),
+                UniDirAssociationEdge = require('viewcanvas_widget/UniDirAssociationEdge');
             return {
                 addShape: {
                     name: "Add Node Shape",
@@ -166,7 +166,7 @@ define([
                                     nodeId;
 
                                 //noinspection JSAccessibilityCheck
-                                nodeId = canvas.createNode(require('canvas_widget/AbstractClassNode').TYPE,appearance.left,appearance.top,appearance.width,appearance.height,that.getZIndex(),that.toJSON());
+                                nodeId = canvas.createNode(require('viewcanvas_widget/AbstractClassNode').TYPE,appearance.left,appearance.top,appearance.width,appearance.height,that.getZIndex(),that.toJSON());
                                 var edges = that.getOutgoingEdges(),
                                     edge,
                                     edgeId;
@@ -201,7 +201,7 @@ define([
                                     nodeId;
 
                                 //noinspection JSAccessibilityCheck
-                                nodeId = canvas.createNode(require('canvas_widget/RelationshipNode').TYPE,appearance.left,appearance.top,appearance.width,appearance.height,that.getZIndex(),that.toJSON());
+                                nodeId = canvas.createNode(require('viewcanvas_widget/RelationshipNode').TYPE,appearance.left,appearance.top,appearance.width,appearance.height,that.getZIndex(),that.toJSON());
                                 var edges = that.getOutgoingEdges(),
                                     edge,
                                     edgeId;
@@ -236,7 +236,7 @@ define([
                                     nodeId;
 
                                 //noinspection JSAccessibilityCheck
-                                nodeId = canvas.createNode(require('canvas_widget/RelationshipGroupNode').TYPE,appearance.left,appearance.top,appearance.width,appearance.height,that.getZIndex(),that.toJSON());
+                                nodeId = canvas.createNode(require('viewcanvas_widget/RelationshipGroupNode').TYPE,appearance.left,appearance.top,appearance.width,appearance.height,that.getZIndex(),that.toJSON());
                                 var edges = that.getOutgoingEdges(),
                                     edge,
                                     edgeId;
