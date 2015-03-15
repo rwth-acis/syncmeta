@@ -6,12 +6,14 @@ See SyncMeta in action in [Role-SDK](http://role-sandbox.eu/spaces/syncmeta).
 ## Build steps
 1. Make sure to have *npm*, *bower* and *grunt* installed
     * Use your favorite package manager or grab *npm* from [here][2]
-    * Use *npm* to install *bower* and *grunt*: ```npm install -g bower grunt```
+    * Use *npm* to install *bower*: ```npm install -g bower```
+    * Use *npm* to first install grunt-cli and then grunt itself: ```npm install -g grunt-cli grunt```
 2. Install development dependencies: ```npm install```
 3. Install dependencies: ```bower install```
 4. Copy *.localGruntConfig.json.sample* and name it *.localGruntConfig.json*
-5. Change *baseUrl* in *.localGruntConfig.json* to the deployment url
-6. Run ```grunt build``` to build the widgets.
+5. Copy *.dbis.secret.json.sample* and name it *.dbis.secret.json* (or update *Gruntfile.js* accordingly)
+6. Change *baseUrl* in *.localGruntConfig.json* to the deployment url
+7. Run ```grunt build``` to build the widgets.
 
 ## Library Documentation
 ### Widgets
