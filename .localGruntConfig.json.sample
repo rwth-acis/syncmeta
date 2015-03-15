@@ -1,0 +1,4 @@
+{
+    "use_for_commit_baseUrl" : "http://mari0.github.io/syncmeta/html",
+    "baseUrl" : "http://localhost:8081"
+}

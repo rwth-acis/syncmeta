@@ -86,6 +86,16 @@
 				$('#btnLoadViewpoint').click(function(){
 					LoadFileAndStoreToSpace(CONFIG.NS.MY.VIEWPOINT);
 				});
+				$('#btnDelAllView').click(function(){
+				    var space = new openapp.oo.Resource(openapp.param.space());
+                    space.getSubResources({
+                    	relation: openapp.ns.role + "data", type: CONFIG.NS.MY.VIEW,
+                    	onEach: function(item) {
+                    	    openapp.resource.del(item.uri);
+                    	}
+                    });
+				});
+
 			});
 	 });
 </script>
@@ -95,7 +105,7 @@
 	}
 </style>
 <div id="viewcontrol">
-<button id="btnRefresh">Refresh Lists</button>
+<button id="btnRefresh">Refresh Lists</button><button id="btnDelAllView">Delete all Views</button>
 <input type="file" id="btnImport" />
 <button id="btnLoadView">Load a View</button>
 <button id="btnLoadViewpoint">Load a Viewpoint</button>
