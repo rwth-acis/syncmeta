@@ -256,6 +256,7 @@ requirejs([
         if(metamodel) {
             operation = new InitModelTypesOperation(metamodel);
             iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
+            iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation.toNonOTOperation());
         }
     });
 

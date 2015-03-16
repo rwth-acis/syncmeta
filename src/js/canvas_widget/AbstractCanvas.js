@@ -91,6 +91,10 @@ define([],/** @lends AbstractCanvas */function () {
         this.getCurrentToolName = function(){
             return _currentToolName;
         };
+
+        this.removeTools = function(){
+            _tools = {};
+        }
     }
 
     return AbstractCanvas;

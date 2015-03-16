@@ -63,15 +63,7 @@ requirejs([
 	}
 
 	if (metamodel && metamodel.hasOwnProperty("edges")) {
-		//Add edge tools for the model editor
-		var edges = metamodel.edges,
-		edge;
-		for (var edgeId in edges) {
-			if (edges.hasOwnProperty(edgeId)) {
-				edge = edges[edgeId];
-				canvas.addTool(edge.label, new EdgeTool(edge.label, edge.relations));
-			}
-		}
+        _inInstance = true;
 	} else {
 		//add edge tools for the meta-model editor
 		canvas.addTool(GeneralisationEdge.TYPE, new GeneralisationEdgeTool());
@@ -180,6 +172,8 @@ requirejs([
             return;
         if(_inInstance){
             initViewpoint(selected).then(function(resp){
+                var operation = new  InitModelTypesOperation(resp.data);
+                iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.toNonOTOperation());
                 $('#lblCurrentView').attr('vplink', resp.uri);
                 EntityManager.initModelTypes(resp.data);
                 visualizeView(selected);
@@ -191,9 +185,14 @@ requirejs([
 	});
 	$('#btnAddViewpoint').click(function () {
 		var viewId = $('#txtNameViewpoint').val();
+        var $viewpointSelected = $('#ddmViewpointSelection').find('option:selected');
+        var viewpointLink = null;
+        if(_inInstance) {
+             viewpointLink = $viewpointSelected.attr('link');
+        }
         resetCanvas();
-        $('#lblCurrentView').text(viewId);
-		EntityManager.storeView(viewId).then(function (resp) {
+        $('#lblCurrentView').attr('vplink', viewpointLink).text(viewId);
+		EntityManager.storeView(viewId,viewpointLink).then(function (resp) {
 			var option = _.template(htmlOptionTpl);
             var $viewpointSelection = $('#ddmViewSelection');
             var $option = $(option({
@@ -201,10 +200,8 @@ requirejs([
                 val : viewId
             }));
 
-
             canvas.get$canvas().show();
             if(_inInstance) {
-                var viewpointLink = $('#ddmViewpointSelection').find('option:selected').attr('link');
                 $option.attr('vplink', viewpointLink);
                 openapp.resource.get(viewpointLink, function (context) {
                     openapp.resource.context(context).representation().get(function (vls) {
@@ -222,7 +219,6 @@ requirejs([
             }
             $viewpointSelection.append($option);
             HideCreateMenu();
-			//alert("Successfully stored");
 		});
 	});
 
@@ -250,10 +246,11 @@ requirejs([
             return $(v).text() === currentView;
         });
       	var uri = opt.attr('link');
+        var vpUri = opt.attr('vplink');
 		if (uri) {
 			$feedback.text("Saving...");
 			var viewId = opt.text();
-			EntityManager.updateView(uri, viewId).then(function (context) {
+			EntityManager.updateView(uri, viewId, vpUri).then(function (context) {
                 opt.attr('link', context.uri);
 				$feedback.text("Saved!");
 				setTimeout(function () {
@@ -297,15 +294,36 @@ requirejs([
                     return;
                 }
                 openapp.resource.context(context).representation().get(function (rep) {
-                    //EntityManager.initModelTypes(rep.data);
-                    //operation = new  InitModelTypesOperation(rep.data);
-                    //iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.toNonOTOperation());
-
+                    EntityManager.initModelTypes(rep.data);
+                    initTools(rep.data);
+                    operation = new  InitModelTypesOperation(rep.data);
+                    iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.toNonOTOperation());
+                    iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE,operation.toNonOTOperation());
                     });
                 });
         }
     });
+    var initTools = function(viewpoint){
+        if(viewpoint && viewpoint.hasOwnProperty("nodes")){
+            var nodes = viewpoint.nodes, node;
+            for(var nodeId in nodes){
+                if(nodes.hasOwnProperty(nodeId)){
+                    node = nodes[nodeId];
+                    canvas.addTool(node.label,new NodeTool(node.label,null,null,node.shape.defaultWidth,node.shape.defaultHeight));
+                }
+            }
+        }
 
+        if(viewpoint && viewpoint.hasOwnProperty("edges")){
+            var edges = viewpoint.edges, edge;
+            for(var edgeId in edges){
+                if(edges.hasOwnProperty(edgeId)){
+                    edge = edges[edgeId];
+                    canvas.addTool(edge.label,new EdgeTool(edge.label,edge.relations));
+                }
+            }
+        }
+    };
     var ShowViewCreateMenu = function(){
         $('#btnCreateViewpoint').hide();
         $('#ddmViewSelection').hide();
@@ -355,13 +373,16 @@ requirejs([
 			onEach : function (context) {
 				context.getRepresentation("rdfjson", function (representation) {
 					var option = _.template(htmlOptionTpl);
-                    $selection.append($(option({
-								uri : context.uri,
-								val : representation.id
-							})));
-				});
-			}
-		});
+                    var $option = $(option({
+                        uri : context.uri,
+                        val : representation.id
+                    }));
+                    if(representation.hasOwnProperty('viewpoint'))
+                        $option.attr('vplink',representation.viewpoint);
+                    $selection.append($option);
+                });
+            }
+        });
 	}
 	function JSONtoGraph(json) {
 		for (var nodeId in json.nodes) {

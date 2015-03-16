@@ -3,6 +3,9 @@ define([
     'iwcw',
     'operations/non_ot/ToolSelectOperation',
     'operations/non_ot/WidgetEnterOperation',
+    'operations/non_ot/InitModelTypesOperation',
+    'palette_widget/MoveTool',
+    'palette_widget/Separator',
     'palette_widget/NodeTool',
     'palette_widget/EdgeTool',
     'text!templates/canvas_widget/circle_node.html',
@@ -10,7 +13,7 @@ define([
     'text!templates/canvas_widget/rectangle_node.html',
     'text!templates/canvas_widget/rounded_rectangle_node.html',
     'text!templates/canvas_widget/triangle_node.html'
-],/** @lends Palette */function(_,IWCW,ToolSelectOperation,WidgetEnterOperation,NodeTool, EdgeTool, circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml) {
+],/** @lends Palette */function(_,IWCW,ToolSelectOperation,WidgetEnterOperation,InitModelTypesOperation,MoveTool, Separator,NodeTool, EdgeTool, circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml) {
 
     /**
      * Palette
@@ -41,6 +44,8 @@ define([
          * @private
          */
         var _currentToolName = null;
+
+        var _currentModel = 'base';
 
         /**
          * Inter widget communication wrapper
@@ -89,6 +94,32 @@ define([
                     _tools['ViewObject'].get$node().hide();
                     _tools['ViewRelationship'].get$node().hide();
                 }
+            }
+        };
+
+        var initModelTypesCallback = function(operation){
+            if(operation instanceof InitModelTypesOperation){
+                var vls = operation.getVLS();
+                var current = null;
+                if(vls.hasOwnProperty('id'))
+                    current = vls.id;
+                else
+                    current = 'base';
+                if(_currentModel === current)
+                    return;
+                else
+                    _currentModel = current;
+
+                if(!$.isEmptyObject(_tools)){
+                    _tools = {};
+                    $palette.empty();
+                }
+                that.addTool(new MoveTool());
+                that.addSeparator(new Separator());
+                that.initNodePalette(vls);
+                that.addSeparator(new Separator());
+                that.iniEdgePalette(vls);
+                _currentToolName = 'MoveTool';
             }
         };
 
@@ -142,8 +173,10 @@ define([
             if(_tools.hasOwnProperty(name)){
                 processToolSelection(name);
                 var operation = new ToolSelectOperation(name);
-                _iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.toNonOTOperation());
-                //_iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.VIEWCANVAS,operation.toNonOTOperation());
+                if(_currentModel === 'base')
+                    _iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.toNonOTOperation());
+                else
+                    _iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.VIEWCANVAS,operation.toNonOTOperation());
             }
         };
 
@@ -162,6 +195,7 @@ define([
         this.registerCallbacks = function(){
             _iwc.registerOnDataReceivedCallback(toolSelectionCallback);
             _iwc.registerOnDataReceivedCallback(enteredWidgetCallback);
+            _iwc.registerOnDataReceivedCallback(initModelTypesCallback);
         };
 
         /**
@@ -170,6 +204,7 @@ define([
         this.unregisterCallbacks = function(){
             _iwc.unregisterOnDataReceivedCallback(toolSelectionCallback);
             _iwc.unregisterOnDataReceivedCallback(enteredWidgetCallback);
+            _iwc.unregisterOnDataReceivedCallback(initModelTypesCallback);
         };
 
         if(_iwc){

@@ -323,9 +323,10 @@ define([
 					edges : edgesJSON
 				};
 			},
-			viewToJSON : function (viewId) {
+			viewToJSON : function (viewId, viewpointUri) {
 				var vls = this.graphToJSON();
 				vls['id'] = viewId;
+                vls['viewpoint'] = viewpointUri;
 				return vls;
 			},
 
@@ -929,10 +930,10 @@ define([
 			 * @param {string} viewId the identifier for the view
 			 * @returns {Promise}
 			 */
-			storeView : function (viewId) {
+			storeView : function (viewId,viewpointUri) {
 				var resourceSpace = new openapp.oo.Resource(openapp.param.space());
 				var deferred = $.Deferred();
-				var data = this.viewToJSON(viewId);
+				var data = this.viewToJSON(viewId, viewpointUri);
 				resourceSpace.create({
 					relation : openapp.ns.role + "data",
 					type : CONFIG.NS.MY.VIEW,
@@ -949,12 +950,11 @@ define([
 			 * @param {string} viewId The Identifier of the view
 			 * @returns {Promise}
 			 */
-			updateView : function (uri, viewId) {
+			updateView : function (uri, viewId, viewpointUri) {
 				var that = this;
 				var deferred = $.Deferred();
-				var data = this.viewToJSON(viewId);
 				openapp.resource.del(uri, function (context) {
-					that.storeView(viewId).then(function (resp) {
+					that.storeView(viewId, viewpointUri).then(function (resp) {
 						deferred.resolve(resp);
 					});
 				});
