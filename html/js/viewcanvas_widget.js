@@ -7,6 +7,7 @@ requirejs([
     'operations/non_ot/ActivityOperation',
     'operations/non_ot/JoinOperation',
     'operations/non_ot/WidgetEnterOperation',
+    'operations/non_ot/InitModelTypesOperation',
     'viewcanvas_widget/Canvas',
     'viewcanvas_widget/EntityManager',
     'viewcanvas_widget/NodeTool',
@@ -38,7 +39,7 @@ requirejs([
     'viewcanvas_widget/ViewGenerator',
     'text!templates/viewcanvas_widget/select_option.html',
     'promise!Metamodel'
-], function ($, _, jsPlumb, IWCOT, ToolSelectOperation, ActivityOperation, JoinOperation, WidgetEnterOperation, Canvas, EntityManager, NodeTool, ObjectNodeTool, AbstractClassNodeTool, RelationshipNodeTool, RelationshipGroupNodeTool, EnumNodeTool, NodeShapeNodeTool, EdgeShapeNodeTool, EdgeTool, GeneralisationEdgeTool, BiDirAssociationEdgeTool, UniDirAssociationEdgeTool, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNodeTool, ViewObjectNode, ViewRelationshipNode, ViewRelationshipNodeTool, ViewGenerator, htmlOptionTpl, metamodel) {
+], function ($, _, jsPlumb, IWCOT, ToolSelectOperation, ActivityOperation, JoinOperation, WidgetEnterOperation,InitModelTypesOperation, Canvas, EntityManager, NodeTool, ObjectNodeTool, AbstractClassNodeTool, RelationshipNodeTool, RelationshipGroupNodeTool, EnumNodeTool, NodeShapeNodeTool, EdgeShapeNodeTool, EdgeTool, GeneralisationEdgeTool, BiDirAssociationEdgeTool, UniDirAssociationEdgeTool, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNodeTool, ViewObjectNode, ViewRelationshipNode, ViewRelationshipNodeTool, ViewGenerator, htmlOptionTpl, metamodel) {
 
     var iwcot;
 	var canvas = new Canvas($("#canvas"), CONFIG.WIDGET.NAME.VIEWCANVAS);
@@ -142,26 +143,51 @@ requirejs([
 	$('#btnCancelCreateViewpoint').click(function () {
         HideCreateMenu();
 	});
+    var initViewpoint = function($optNode){
+       var deferred = $.Deferred();
+        openapp.resource.get($optNode.attr('vplink'), function (context) {
+            if(!context.uri){
+                $optNode.remove();
+                return;
+            }
+            openapp.resource.context(context).representation().get(function (rep) {
+                deferred.resolve(rep);
+            })
+        });
+        return deferred.promise();
+    };
+    var visualizeView = function($optNode){
+        openapp.resource.get($optNode.attr('link'), function (context) {
+            if (!context.uri) {
+                $optNode.remove();
+                return;
+            }
+            openapp.resource.context(context).representation().get(function (rep) {
+                if (canvas.get$node().is(':hidden'))
+                    canvas.get$canvas().show();
+                resetCanvas();
+
+                JSONtoGraph(rep.data);
+
+                $('#lblCurrentView').attr("link", rep.uri).text(rep.data.id);
+                canvas.resetTool();
+            });
+        });
+    };
 	$('#btnShowViewPoint').click(function () {
         var selected = $('#ddmViewSelection').find('option:selected');
         if (selected.length == 0 || selected.text() === $('#lblCurrentView').text())
             return;
-		openapp.resource.get(selected.attr('link'), function (context) {
-            if(!context.uri){
-                selected.remove();
-                return;
-            }
-			openapp.resource.context(context).representation().get(function (rep) {
-                if(canvas.get$node().is(':hidden'))
-                    canvas.get$canvas().show();
-				resetCanvas();
-
-				JSONtoGraph(rep.data);
-
-                $('#lblCurrentView').text(rep.data.id);
-				canvas.resetTool();
-			});
-		});
+        if(_inInstance){
+            initViewpoint(selected).then(function(resp){
+                $('#lblCurrentView').attr('vplink', resp.uri);
+                EntityManager.initModelTypes(resp.data);
+                visualizeView(selected);
+            })
+        }
+        else {
+            visualizeView(selected);
+        }
 	});
 	$('#btnAddViewpoint').click(function () {
 		var viewId = $('#txtNameViewpoint').val();
@@ -170,27 +196,31 @@ requirejs([
 		EntityManager.storeView(viewId).then(function (resp) {
 			var option = _.template(htmlOptionTpl);
             var $viewpointSelection = $('#ddmViewSelection');
-            $viewpointSelection.append($(option({
-						uri : resp.uri,
-						val : viewId
-					})));
-            $viewpointSelection.val(viewId);
+            var $option = $(option({
+                uri : resp.uri,
+                val : viewId
+            }));
+
 
             canvas.get$canvas().show();
             if(_inInstance) {
                 var viewpointLink = $('#ddmViewpointSelection').find('option:selected').attr('link');
+                $option.attr('vplink', viewpointLink);
                 openapp.resource.get(viewpointLink, function (context) {
-                    openapp.resource.context(context).representation().get(function (viewpoint) {
-                        var viewpoint = viewpoint.data;
+                    openapp.resource.context(context).representation().get(function (vls) {
+                        var viewpoint = vls.data;
+                        var operation = new InitModelTypesOperation(viewpoint);
+                        iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.toNonOTOperation());
                         var viewGenerator = new ViewGenerator(viewpoint);
-                        viewGenerator.apply().then(function(viewVLS) {
-                            EntityManager.initNodeTypes(viewpoint);
-                            EntityManager.initEdgeTypes(viewpoint);
-                            JSONtoGraph(viewVLS);
+                        viewGenerator.apply().then(function(view) {
+                            EntityManager.initModelTypes(viewpoint);
+                            JSONtoGraph(view);
+                            canvas.resetTool();
                         })
                     })
                 });
             }
+            $viewpointSelection.append($option);
             HideCreateMenu();
 			//alert("Successfully stored");
 		});
@@ -207,7 +237,7 @@ requirejs([
             openapp.resource.del(opt.attr('link'), function () {
                 $('#ddmViewSelection').find('option:selected').remove();
                 resetCanvas();
-                $('#lblCurrentView').attr('link', '').text('No view displayed');
+                $('#lblCurrentView').attr('vplink', '').text('No view displayed');
                 canvas.get$canvas().hide();
             });
         }
@@ -259,6 +289,21 @@ requirejs([
     $(document).on('mouseenter', function(){
         var operation = new WidgetEnterOperation(CONFIG.WIDGET.NAME.VIEWCANVAS);
         iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE,operation.toNonOTOperation());
+        var viewpointLink = $('#lblCurrentView').attr('vplink');
+        if(_inInstance && viewpointLink) {
+            openapp.resource.get(viewpointLink, function (context) {
+                if(!context.uri){
+                    selected.remove();
+                    return;
+                }
+                openapp.resource.context(context).representation().get(function (rep) {
+                    //EntityManager.initModelTypes(rep.data);
+                    //operation = new  InitModelTypesOperation(rep.data);
+                    //iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.toNonOTOperation());
+
+                    });
+                });
+        }
     });
 
     var ShowViewCreateMenu = function(){

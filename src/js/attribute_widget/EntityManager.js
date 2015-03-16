@@ -392,7 +392,42 @@ define([
 				} else {
 					return '';
 				}
-			}
+			},
+            initNodeTypes: function(viewpointVLS){
+                if(!$.isEmptyObject(nodeTypes))
+                    nodeTypes = {};
+
+                var nodes = viewpointVLS.nodes,
+                    node;
+
+               for (var nodeId in nodes) {
+                    if (nodes.hasOwnProperty(nodeId)) {
+                        node = nodes[nodeId];
+                        nodeTypes[node.label] = Node(node.label, node.shape.shape, node.shape.customShape, node.shape.customAnchors, node.shape.color, node.attributes);
+                    }
+                }
+
+            },
+            initEdgeTypes: function(viewpointVLS){
+                if(!$.isEmptyObject(edgeTypes)) {
+                    edgeTypes = {};
+                    relations ={};
+                }
+                var edges = viewpointVLS.edges,
+                    edge;
+                for (var edgeId in edges) {
+                    if (edges.hasOwnProperty(edgeId)) {
+                        edge = edges[edgeId];
+                        edgeTypes[edge.label] = Edge(edge.label, edge.shape.arrow, edge.shape.shape, edge.shape.color, edge.shape.overlay, edge.shape.overlayPosition, edge.shape.overlayRotate, edge.attributes);
+                        relations[edge.label] = edge.relations;
+                    }
+                }
+            },
+            initModelTypes : function(viewpointVLS){
+                this.initNodeTypes(viewpointVLS);
+                this.initEdgeTypes(viewpointVLS);
+            }
+
 		};
 	}
 

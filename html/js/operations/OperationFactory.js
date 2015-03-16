@@ -17,8 +17,9 @@ define([
     'operations/non_ot/ExportMetaModelOperation',
     'operations/non_ot/ExportImageOperation',
     'operations/non_ot/JoinOperation',
-    'operations/non_ot/WidgetEnterOperation'
-],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportImageOperation,JoinOperation,WidgetEnterOperation) {
+    'operations/non_ot/WidgetEnterOperation',
+    'operations/non_ot/InitModelTypesOperation'
+],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportImageOperation,JoinOperation,WidgetEnterOperation,InitModelTypesOperation) {
 
     /**
      * OperationFactory
@@ -70,6 +71,9 @@ define([
                         break;
                     case WidgetEnterOperation.TYPE:
                         resOperation = new WidgetEnterOperation(data.enteredWidgetName);
+                        break;
+                    case InitModelTypesOperation.TYPE:
+                        resOperation = new InitModelTypesOperation(data.vls);
                         break;
                 }
                 return resOperation;

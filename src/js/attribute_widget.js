@@ -8,8 +8,9 @@ requirejs([
     'iwcw',
     'attribute_widget/AttributeWrapper',
     'attribute_widget/EntityManager',
-    'operations/non_ot/JoinOperation'
-],function ($,IWCW,AttributeWrapper,EntityManager,JoinOperation) {
+    'operations/non_ot/JoinOperation',
+    'operations/non_ot/InitModelTypesOperation'
+],function ($,IWCW,AttributeWrapper,EntityManager,JoinOperation,InitModelTypesOperation) {
 
     var wrapper = new AttributeWrapper($("#wrapper"));
 
@@ -53,6 +54,12 @@ requirejs([
             }
 
             $("#loading").hide();
+        }
+        else if(operation instanceof InitModelTypesOperation){
+            if(operation.getVLS().length == 0)
+                return;
+            else
+                EntityManager.initModelTypes(operation.getVLS());
         }
     });
 

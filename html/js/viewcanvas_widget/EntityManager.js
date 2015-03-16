@@ -1083,6 +1083,10 @@ define([
                         relations[edge.label] = edge.relations;
                     }
                 }
+            },
+            initModelTypes : function(viewpointVLS){
+                this.initNodeTypes(viewpointVLS);
+                this.initEdgeTypes(viewpointVLS);
             }
         };
 	}

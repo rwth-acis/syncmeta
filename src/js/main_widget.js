@@ -11,6 +11,7 @@ requirejs([
     'operations/non_ot/ActivityOperation',
     'operations/non_ot/JoinOperation',
     'operations/non_ot/WidgetEnterOperation',
+    'operations/non_ot/InitModelTypesOperation',
     'canvas_widget/Canvas',
     'canvas_widget/EntityManager',
     'canvas_widget/NodeTool',
@@ -37,7 +38,7 @@ requirejs([
     'canvas_widget/UniDirAssociationEdge',
     'promise!Metamodel',
     'promise!Model'
-],function($,jsPlumb,IWCOT,ToolSelectOperation,ActivityOperation,JoinOperation,WidgetEnterOperation,Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge,metamodel,model) {
+],function($,jsPlumb,IWCOT,ToolSelectOperation,ActivityOperation,JoinOperation,WidgetEnterOperation,InitModelTypesOperation,Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge,metamodel,model) {
 
     var iwcot;
     var canvas;
@@ -252,6 +253,10 @@ requirejs([
     $(document).on('mouseenter', function(event){
         var operation = new WidgetEnterOperation(CONFIG.WIDGET.NAME.MAIN);
         iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE,operation.toNonOTOperation());
+        if(metamodel) {
+            operation = new InitModelTypesOperation(metamodel);
+            iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
+        }
     });
 
 
