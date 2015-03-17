@@ -374,6 +374,12 @@ define([
 							if (attr) {
 								attr.setValueFromJSON(json.attributes[attrId]);
 							}
+                            else{
+                                var newId = attrId.replace(/[^\[\]]*/, id);
+                                attr =  node.getAttribute(newId);
+                                if(attr)
+                                    attr.setValueFromJSON(json.attributes[attrId]);
+                            }
 						}
 					}
 				}

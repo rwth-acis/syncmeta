@@ -10,6 +10,7 @@ requirejs([
     'operations/non_ot/InitModelTypesOperation',
     'viewcanvas_widget/Canvas',
     'viewcanvas_widget/EntityManager',
+    'viewcanvas_widget/MoveTool',
     'viewcanvas_widget/NodeTool',
     'viewcanvas_widget/ObjectNodeTool',
     'viewcanvas_widget/AbstractClassNodeTool',
@@ -39,7 +40,7 @@ requirejs([
     'viewcanvas_widget/ViewGenerator',
     'text!templates/viewcanvas_widget/select_option.html',
     'promise!Metamodel'
-], function ($, _, jsPlumb, IWCOT, ToolSelectOperation, ActivityOperation, JoinOperation, WidgetEnterOperation,InitModelTypesOperation, Canvas, EntityManager, NodeTool, ObjectNodeTool, AbstractClassNodeTool, RelationshipNodeTool, RelationshipGroupNodeTool, EnumNodeTool, NodeShapeNodeTool, EdgeShapeNodeTool, EdgeTool, GeneralisationEdgeTool, BiDirAssociationEdgeTool, UniDirAssociationEdgeTool, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNodeTool, ViewObjectNode, ViewRelationshipNode, ViewRelationshipNodeTool, ViewGenerator, htmlOptionTpl, metamodel) {
+], function ($, _, jsPlumb, IWCOT, ToolSelectOperation, ActivityOperation, JoinOperation, WidgetEnterOperation,InitModelTypesOperation, Canvas, EntityManager, MoveTool, NodeTool, ObjectNodeTool, AbstractClassNodeTool, RelationshipNodeTool, RelationshipGroupNodeTool, EnumNodeTool, NodeShapeNodeTool, EdgeShapeNodeTool, EdgeTool, GeneralisationEdgeTool, BiDirAssociationEdgeTool, UniDirAssociationEdgeTool, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNodeTool, ViewObjectNode, ViewRelationshipNode, ViewRelationshipNodeTool, ViewGenerator, htmlOptionTpl, metamodel) {
 
     var iwcot;
 	var canvas = new Canvas($("#canvas"), CONFIG.WIDGET.NAME.VIEWCANVAS);
@@ -304,6 +305,8 @@ requirejs([
         }
     });
     var initTools = function(viewpoint){
+        //canvas.removeTools();
+        //canvas.addTool(MoveTool.TYPE, new MoveTool());
         if(viewpoint && viewpoint.hasOwnProperty("nodes")){
             var nodes = viewpoint.nodes, node;
             for(var nodeId in nodes){
@@ -347,7 +350,6 @@ requirejs([
             $('#ddmViewpointSelection').hide();
     };
     function resetCanvas() {
-		
 		var edges = EntityManager.getEdges();
 		for (edgeId in edges) {
 			if (edges.hasOwnProperty(edgeId)) {
@@ -385,7 +387,18 @@ requirejs([
         });
 	}
 	function JSONtoGraph(json) {
-		for (var nodeId in json.nodes) {
+        _.forOwn(json.nodes, function(value, key){
+            var  new_id =  canvas.createNode(value.type, value.left, value.top, value.width, value.height,value.zIndex, value);
+            for(var edgeId2 in json.edges){
+                if(json.edges.hasOwnProperty(edgeId2)){
+                    if(json.edges[edgeId2].source === key)
+                        json.edges[edgeId2].source = new_id;
+                    else if(json.edges[edgeId2].target === key)
+                        json.edges[edgeId2].target = new_id;
+                }
+            }
+        });
+		/*for (var nodeId in json.nodes) {
 			if (json.nodes.hasOwnProperty(nodeId))
             var  new_id =  canvas.createNode(json.nodes[nodeId].type, json.nodes[nodeId].left, json.nodes[nodeId].top, json.nodes[nodeId].width, json.nodes[nodeId].height,json.nodes[nodeId].zIndex, json.nodes[nodeId]);
             for(var edgeId2 in json.edges){
@@ -396,12 +409,17 @@ requirejs([
                         json.edges[edgeId2].target = new_id;
                 }
             }
-		}
+		}*/
+        /*
 		for (var edgeId in json.edges) {
 			if (json.edges.hasOwnProperty(edgeId))
 				canvas.createEdge(json.edges[edgeId].type,  json.edges[edgeId].source, json.edges[edgeId].target, json.edges[edgeId]);
 
-		}
+		}*/
+        _.forOwn(json.edges, function(value){
+            canvas.createEdge(value.type,  value.source,value.target,value);
+
+        });
 	}
 
 	iwcot.registerOnJoinOrLeaveCallback(function (operation) {

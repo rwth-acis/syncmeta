@@ -73,6 +73,8 @@ define([],/** @lends AbstractCanvas */function () {
             if(_tools.hasOwnProperty(name)){
                 _tools[name].mount();
             }
+            else
+                _tools['MoveTool'].mount();
             _currentToolName = name;
         };
 

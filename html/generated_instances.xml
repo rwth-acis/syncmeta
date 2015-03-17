@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- generated on Mon Mar 16 2015 21:07:38 -->
+<!-- generated on Tue Mar 17 2015 20:53:28 -->
 <Module>
   <ModulePrefs
     title="Generate Instance"
@@ -58,8 +58,8 @@
           timeout();
         })();
     </script>
-    <script src="http://mari0.github.io/syncmeta/html/js/config.js"></script>
-    <script src="http://mari0.github.io/syncmeta/html/js/lib/vendor/require.js"></script>    
+    <script src="http://localhost:8081/js/config.js"></script>
+    <script src="http://localhost:8081/js/lib/vendor/require.js"></script>    
     <script type="application/javascript">
     requirejs([
         'jqueryui',
@@ -225,19 +225,19 @@
             return $.when(getMetaModel(), getViewpoints()).then(function(metamodel, viewpoints){
                 return createSpace(spaceLabel,spaceTitle)
                     .then(function(spaceURI){
-                        return addWidgetToSpace(spaceURI,"http://mari0.github.io/syncmeta/html/activity.xml")
+                        return addWidgetToSpace(spaceURI,"http://localhost:8081/activity.xml")
                             .then(function(){
-                                return addWidgetToSpace(spaceURI,"http://mari0.github.io/syncmeta/html/widget.xml");
+                                return addWidgetToSpace(spaceURI,"http://localhost:8081/widget.xml");
                             }).then(function(){
-                                return addWidgetToSpace(spaceURI,"http://mari0.github.io/syncmeta/html/palette.xml");
+                                return addWidgetToSpace(spaceURI,"http://localhost:8081/palette.xml");
                             }).then(function(){
-                                return addWidgetToSpace(spaceURI,"http://mari0.github.io/syncmeta/html/attribute.xml");
+                                return addWidgetToSpace(spaceURI,"http://localhost:8081/attribute.xml");
                             }).then(function(){
-                                return addWidgetToSpace(spaceURI,"http://mari0.github.io/syncmeta/html/export.xml");
+                                return addWidgetToSpace(spaceURI,"http://localhost:8081/export.xml");
                             }).then(function(){
-                                return addWidgetToSpace(spaceURI,"http://mari0.github.io/syncmeta/html/imsld_export.xml");
+                                return addWidgetToSpace(spaceURI,"http://localhost:8081/imsld_export.xml");
                             }).then(function(){
-								return addWidgetToSpace(spaceURI, "http://mari0.github.io/syncmeta/html/viewcanvas.xml");
+								return addWidgetToSpace(spaceURI, "http://localhost:8081/viewcanvas.xml");
 							}).then(function(){
                                 return addMetamodelToSpace(spaceURI,metamodel, CONFIG.NS.MY.METAMODEL);
                             }).then(function(){
@@ -393,7 +393,7 @@
     /*noinspection CssUnusedSymbol*/
     .loading_button {
         /*noinspection CssUnknownTarget*/
-        background-image: url('http://mari0.github.io/syncmeta/html/img/loading_small.gif');
+        background-image: url('http://localhost:8081/img/loading_small.gif');
         background-repeat: no-repeat;
         background-position: right center;
         padding-right: 20px;
@@ -414,7 +414,7 @@
 <button id="reset">Reset</button>
 <p><strong>Generated instances:</strong>
 <ul id="list"></ul>
-    <script src="http://mari0.github.io/syncmeta/html/js/shared.js"></script>    
+    <script src="http://localhost:8081/js/shared.js"></script>    
     ]]>
   </Content>
 </Module>
