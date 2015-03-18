@@ -74,7 +74,8 @@ CONFIG = {
         NODE: "node",
         EDGE: "edge",
         ATTR: "attr",
-        VAL: "val"
+        VAL: "val",
+        VIEW: "view"
     },
     IWC: {
         FLAG: {

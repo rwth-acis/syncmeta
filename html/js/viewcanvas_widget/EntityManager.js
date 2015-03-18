@@ -131,6 +131,7 @@ define([
 			 * @param {number} width Width of node
 			 * @param {number} height Height of node
 			 * @param {number} zIndex Position of node on z-axis
+             * @param {object} json json representation of the node
 			 * @returns {canvas_widget.AbstractNode}
 			 */
 			//TODO: switch id and type
@@ -934,7 +935,8 @@ define([
 			/**
 			 * Stores current view in the ROLE Space
 			 * @param {string} viewId the identifier for the view
-			 * @returns {Promise}
+             * @param {string} viewpointUri uri of the viewpoint
+			 * @returns {object} jquery promise
 			 */
 			storeView : function (viewId,viewpointUri) {
 				var resourceSpace = new openapp.oo.Resource(openapp.param.space());
@@ -954,12 +956,13 @@ define([
 			 * Update a view representation in the ROLE Space
 			 * @param {string} uri The URI where the view is storeData
 			 * @param {string} viewId The Identifier of the view
-			 * @returns {Promise}
+             * @param {string} viewpointUri uri of the viewpoint
+			 * @returns {object} jquery promise
 			 */
 			updateView : function (uri, viewId, viewpointUri) {
 				var that = this;
 				var deferred = $.Deferred();
-				openapp.resource.del(uri, function (context) {
+				openapp.resource.del(uri, function () {
 					that.storeView(viewId, viewpointUri).then(function (resp) {
 						deferred.resolve(resp);
 					});

@@ -8,6 +8,7 @@ requirejs([
     'operations/non_ot/JoinOperation',
     'operations/non_ot/WidgetEnterOperation',
     'operations/non_ot/InitModelTypesOperation',
+    'viewcanvas_widget/ViewManager',
     'viewcanvas_widget/Canvas',
     'viewcanvas_widget/EntityManager',
     'viewcanvas_widget/MoveTool',
@@ -38,16 +39,19 @@ requirejs([
     'viewcanvas_widget/ViewRelationshipNode',
     'viewcanvas_widget/ViewRelationshipNodeTool',
     'viewcanvas_widget/ViewGenerator',
-    'text!templates/viewcanvas_widget/select_option.html',
     'promise!Metamodel'
-], function ($, _, jsPlumb, IWCOT, ToolSelectOperation, ActivityOperation, JoinOperation, WidgetEnterOperation,InitModelTypesOperation, Canvas, EntityManager, MoveTool, NodeTool, ObjectNodeTool, AbstractClassNodeTool, RelationshipNodeTool, RelationshipGroupNodeTool, EnumNodeTool, NodeShapeNodeTool, EdgeShapeNodeTool, EdgeTool, GeneralisationEdgeTool, BiDirAssociationEdgeTool, UniDirAssociationEdgeTool, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNodeTool, ViewObjectNode, ViewRelationshipNode, ViewRelationshipNodeTool, ViewGenerator, htmlOptionTpl, metamodel) {
+], function ($, _, jsPlumb, IWCOT, ToolSelectOperation, ActivityOperation, JoinOperation, WidgetEnterOperation,InitModelTypesOperation,ViewManager, Canvas, EntityManager, MoveTool, NodeTool, ObjectNodeTool, AbstractClassNodeTool, RelationshipNodeTool, RelationshipGroupNodeTool, EnumNodeTool, NodeShapeNodeTool, EdgeShapeNodeTool, EdgeTool, GeneralisationEdgeTool, BiDirAssociationEdgeTool, UniDirAssociationEdgeTool, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNodeTool, ViewObjectNode, ViewRelationshipNode, ViewRelationshipNodeTool, ViewGenerator, metamodel) {
 
     var iwcot;
 	var canvas = new Canvas($("#canvas"), CONFIG.WIDGET.NAME.VIEWCANVAS);
+
+    var viewManager = new ViewManager($('#ddmViewSelection'));
+
     var _inInstance = false;
 	//Add all tool to the canvas
 	if (metamodel && metamodel.hasOwnProperty("nodes")) {
 		_inInstance = true;
+
 	} else {
 		//add node tools for the meta-model editor
 		canvas.addTool(ObjectNode.TYPE, new ObjectNodeTool());
@@ -136,11 +140,11 @@ requirejs([
 	$('#btnCancelCreateViewpoint').click(function () {
         HideCreateMenu();
 	});
-    var initViewpoint = function($optNode){
+    var initViewpoint = function(viewId){
        var deferred = $.Deferred();
-        openapp.resource.get($optNode.attr('vplink'), function (context) {
+        openapp.resource.get(viewManager.getViewpointUri(viewId), function (context) {
             if(!context.uri){
-                $optNode.remove();
+                //$optNode.remove();
                 return;
             }
             openapp.resource.context(context).representation().get(function (rep) {
@@ -149,10 +153,10 @@ requirejs([
         });
         return deferred.promise();
     };
-    var visualizeView = function($optNode){
-        openapp.resource.get($optNode.attr('link'), function (context) {
+    var visualizeView = function(viewId){
+        openapp.resource.get(viewManager.getViewUri(viewId), function (context) {
             if (!context.uri) {
-                $optNode.remove();
+                viewManager.deleteView(viewId);
                 return;
             }
             openapp.resource.context(context).representation().get(function (rep) {
@@ -164,28 +168,36 @@ requirejs([
 
                 $('#lblCurrentView').attr("link", rep.uri).text(rep.data.id);
                 canvas.resetTool();
+                $("#loading").hide();
             });
         });
     };
 	$('#btnShowViewPoint').click(function () {
-        var selected = $('#ddmViewSelection').find('option:selected');
-        if (selected.length == 0 || selected.text() === $('#lblCurrentView').text())
+        $("#loading").show();
+        var selected = viewManager.getSelected$node();
+        var viewId = selected.attr('id');
+        if (selected.length == 0 || viewId === $('#lblCurrentView').text())
             return;
         if(_inInstance){
-            initViewpoint(selected).then(function(resp){
+            initViewpoint(viewId).then(function(resp){
                 var operation = new  InitModelTypesOperation(resp.data);
                 iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.toNonOTOperation());
                 $('#lblCurrentView').attr('vplink', resp.uri);
                 EntityManager.initModelTypes(resp.data);
-                visualizeView(selected);
+                visualizeView(viewId);
             })
         }
         else {
-            visualizeView(selected);
+            visualizeView(viewId);
         }
+
 	});
 	$('#btnAddViewpoint').click(function () {
 		var viewId = $('#txtNameViewpoint').val();
+        if(viewManager.existsView(viewId)){
+            alert('View already exists');
+            return;
+        }
         var $viewpointSelected = $('#ddmViewpointSelection').find('option:selected');
         var viewpointLink = null;
         if(_inInstance) {
@@ -193,24 +205,17 @@ requirejs([
         }
         resetCanvas();
         $('#lblCurrentView').attr('vplink', viewpointLink).text(viewId);
-		EntityManager.storeView(viewId,viewpointLink).then(function (resp) {
-			var option = _.template(htmlOptionTpl);
-            var $viewpointSelection = $('#ddmViewSelection');
-            var $option = $(option({
-                uri : resp.uri,
-                val : viewId
-            }));
-
+        EntityManager.storeView(viewId,viewpointLink).then(function (resp) {
+            viewManager.addView(viewId,resp.uri,viewpointLink);
             canvas.get$canvas().show();
-            if(_inInstance) {
-                $option.attr('vplink', viewpointLink);
+            if (_inInstance) {
                 openapp.resource.get(viewpointLink, function (context) {
                     openapp.resource.context(context).representation().get(function (vls) {
                         var viewpoint = vls.data;
                         var operation = new InitModelTypesOperation(viewpoint);
-                        iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.toNonOTOperation());
+                        iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
                         var viewGenerator = new ViewGenerator(viewpoint);
-                        viewGenerator.apply().then(function(view) {
+                        viewGenerator.apply().then(function (view) {
                             EntityManager.initModelTypes(viewpoint);
                             JSONtoGraph(view);
                             canvas.resetTool();
@@ -218,21 +223,20 @@ requirejs([
                     })
                 });
             }
-            $viewpointSelection.append($option);
             HideCreateMenu();
-		});
+        });
 	});
 
 	$('#btnDelViewPoint').click(function () {
-        var opt = $('#ddmViewSelection').find('option:selected');
-        if(opt.text() !== $('#lblCurrentView').text()) {
-            openapp.resource.del(opt.attr('link'), function () {
-                $('#ddmViewSelection').find('option:selected').remove();
+        var viewId = viewManager.getViewIdOfSelected();
+        if(viewId !== $('#lblCurrentView').text()) {
+            openapp.resource.del(viewManager.getViewUri(viewId), function () {
+                viewManager.deleteView(viewId);
             });
         }
 		else {
-            openapp.resource.del(opt.attr('link'), function () {
-                $('#ddmViewSelection').find('option:selected').remove();
+            openapp.resource.del(viewManager.getViewUri(viewId), function () {
+                viewManager.deleteView(viewId);
                 resetCanvas();
                 $('#lblCurrentView').attr('vplink', '').text('No view displayed');
                 canvas.get$canvas().hide();
@@ -243,16 +247,13 @@ requirejs([
 	var $feedback = $("#feedback");
 	$("#save").click(function () {
         var currentView = $('#lblCurrentView').text();
-        var opt =  $('#ddmViewSelection').find('option').filter(function(i,v){
-            return $(v).text() === currentView;
-        });
-      	var uri = opt.attr('link');
-        var vpUri = opt.attr('vplink');
-		if (uri) {
+        var viewUri =  viewManager.getViewUri(currentView);
+      	var vpUri = $('#lblCurrentView').attr('vplink');
+		if (viewUri) {
 			$feedback.text("Saving...");
-			var viewId = opt.text();
-			EntityManager.updateView(uri, viewId, vpUri).then(function (context) {
-                opt.attr('link', context.uri);
+
+			EntityManager.updateView(viewUri, currentView, vpUri).then(function (context) {
+               viewManager.updateView(currentView, context.uri);
 				$feedback.text("Saved!");
 				setTimeout(function () {
 					$feedback.text("");
@@ -366,26 +367,20 @@ requirejs([
 		}
 		EntityManager.clearRecycleBin();
 	}
-	function GetViewList(type, $selection) {
+	function GetViewList() {
 		var resourceSpace = new openapp.oo.Resource(openapp.param.space());
 		//noinspection JSUnusedGlobalSymbols
 		resourceSpace.getSubResources({
 			relation : openapp.ns.role + "data",
-			type : type,
+			type : CONFIG.NS.MY.VIEW,
 			onEach : function (context) {
 				context.getRepresentation("rdfjson", function (representation) {
-					var option = _.template(htmlOptionTpl);
-                    var $option = $(option({
-                        uri : context.uri,
-                        val : representation.id
-                    }));
-                    if(representation.hasOwnProperty('viewpoint'))
-                        $option.attr('vplink',representation.viewpoint);
-                    $selection.append($option);
+                    viewManager.addView(representation.id, context.uri, representation.viewpoint);
                 });
             }
         });
 	}
+
 	function JSONtoGraph(json) {
         _.forOwn(json.nodes, function(value, key){
             var  new_id =  canvas.createNode(value.type, value.left, value.top, value.width, value.height,value.zIndex, value);
@@ -418,7 +413,6 @@ requirejs([
 		}*/
         _.forOwn(json.edges, function(value){
             canvas.createEdge(value.type,  value.source,value.target,value);
-
         });
 	}
 
@@ -439,9 +433,9 @@ requirejs([
 					//canvas.resetTool();
 					$("#loading").hide();
                     canvas.get$canvas().hide();
-					GetViewList(CONFIG.NS.MY.VIEW, $('#ddmViewSelection'));
+					GetViewList();
                     if(_inInstance)
-                        GetViewList(CONFIG.NS.MY.VIEWPOINT, $('#ddmViewpointSelection'));
+                        ViewManager.GetViewpointList();
 
 				} else {
 					//model = operation.getData();
