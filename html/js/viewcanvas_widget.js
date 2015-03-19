@@ -280,9 +280,9 @@ requirejs([
         } else {
             saveTriggered = true;
         }
-    };*/
+    };
 
-	iwcot.registerOnHistoryChangedCallback(saveCallback);
+	iwcot.registerOnHistoryChangedCallback(saveCallback);*/
 	//End Autosave------------------------------------------------------
 
     $(document).on('mouseenter', function(){
