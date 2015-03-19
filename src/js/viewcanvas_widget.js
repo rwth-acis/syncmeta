@@ -375,7 +375,7 @@ requirejs([
 			type : CONFIG.NS.MY.VIEW,
 			onEach : function (context) {
 				context.getRepresentation("rdfjson", function (representation) {
-                    viewManager.addView(representation.id, context.uri, representation.viewpoint);
+                    viewManager.addViewLocal(representation.id, context.uri, representation.viewpoint);
                 });
             }
         });

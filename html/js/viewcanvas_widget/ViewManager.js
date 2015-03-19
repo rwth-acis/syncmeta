@@ -24,6 +24,15 @@ define([
                  processViewAddOperation(operation);
 
         };
+        this.addViewLocal = function(viewId, viewUri,viewpointUri){
+            if(!_viewList.hasOwnProperty(viewId)) {
+                _viewList[viewId] = {uri: viewUri, viewpointUri: viewpointUri};
+                var $option = $(ViewManager.optionTpl({
+                    id: viewId
+                }));
+                _$selection.append($option);
+            }
+        };
 
         this.deleteView = function(viewId){
             var operation = new ViewDeleteOperation(viewId);
@@ -46,7 +55,7 @@ define([
         var propagateViewAddOperation = function(operation){
             processViewAddOperation(operation);
         };
-        var processViewAddOperation = function(operation){
+        this.processViewAddOperation = function(operation){
             var viewId = operation.getViewId();
             if(!_viewList.hasOwnProperty(viewId)) {
                 var viewUri = operation.getViewUri();
