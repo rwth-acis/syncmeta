@@ -31,7 +31,7 @@ define([
 	 * @param {jQuery} $node jquery Selector of canvas node
 	 * @param {string} the name of the widget to generate a iwcot instance for. default is CONFIG.WIDGET.NAME.MAIN
 	 */
-	function Canvas($node, widgetName) {
+	function Canvas($node) {
 		var that = this;
 
 		AbstractCanvas.call(this, $node);
@@ -82,11 +82,7 @@ define([
 		 * Inter widget communication wrapper
 		 * @type {Object}
 		 */
-		var _iwcot;
-		if (widgetName) {
-			_iwcot = IWCOT.getInstance(widgetName);
-		} else
-			_iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.MAIN);
+		_iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.MAIN);
 
 		/**
 		 * Entity currently selected

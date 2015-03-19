@@ -20,21 +20,21 @@ define([
 
         this.addView = function(viewId, viewUri,viewpointUri){
             var operation = new ViewAddOperation(viewId, viewUri, viewpointUri);
-            _iwcot.sendRemoteOTOperation(CONFIG.WIDGET.NAME.VIEWCANVAS, operation);
-            return processViewAddOperation(operation);
+            if(_iwcot.sendRemoteOTOperation(operation))
+                 processViewAddOperation(operation);
 
         };
 
         this.deleteView = function(viewId){
             var operation = new ViewDeleteOperation(viewId);
-            _iwcot.sendRemoteOTOperation(CONFIG.WIDGET.NAME.VIEWCANVAS, operation);
-            processViewDeleteOperation(operation);
+            if(_iwcot.sendRemoteOTOperation(operation))
+                processViewDeleteOperation(operation);
         };
 
         this.updateView = function(viewId, viewUri){
           var operation = new ViewUpdateOperation(viewId, viewUri);
-            _iwcot.sendRemoteOTOperation(CONFIG.WIDGET.NAME.VIEWCANVAS, operation);
-            processViewUpdateOperation(operation);
+            if(_iwcot.sendRemoteOTOperation(operation))
+                 processViewUpdateOperation(operation);
         };
 
         var AddViewCallback = function(operation){
