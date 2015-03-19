@@ -94,7 +94,7 @@ define([
 
         var _type = CONFIG.WIDGET.NAME.VIEWCANVAS;
         this.getType = function(){
-          return _type;
+            return _type;
         };
 		/**
 		 * Offset of the DOM node representating the canvas
