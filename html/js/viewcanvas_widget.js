@@ -261,7 +261,7 @@ requirejs([
 			});
 		}
 	});
-
+    /*
     var readyToSave = true;
     var saveTriggered = false;
     var saveCallback = function () {
@@ -280,7 +280,7 @@ requirejs([
         } else {
             saveTriggered = true;
         }
-    };
+    };*/
 
 	iwcot.registerOnHistoryChangedCallback(saveCallback);
 	//End Autosave------------------------------------------------------

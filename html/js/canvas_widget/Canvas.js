@@ -83,7 +83,10 @@ define([
 		 * @type {Object}
 		 */
 		_iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.MAIN);
-
+        var _type = CONFIG.WIDGET.NAME.MAIN;
+        this.getType = function(){
+            return _type;
+        };
 		/**
 		 * Entity currently selected
 		 * @type {canvas_widget.AbstractNode|canvas_widget/AbstractEdge}
