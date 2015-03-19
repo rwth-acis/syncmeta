@@ -16,7 +16,7 @@ define([
 
         var optionTpl = _.template(optionHtml);
 
-        _iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.VIEWCANVAS);
+        var _iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.VIEWCANVAS);
 
         this.addView = function(viewId, viewUri,viewpointUri){
             var operation = new ViewAddOperation(viewId, viewUri, viewpointUri);
