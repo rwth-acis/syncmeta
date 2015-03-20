@@ -266,7 +266,15 @@ define([
          * @returns {operations.ot.EntityOperation}
          */
         var adjustOperation = function(operation, operationNew){
-            return operationNew.adjust(require('canvas_widget/EntityManager'),operation);
+            var EntityManager;
+            try{
+                EntityManager = require('canvas_widget/EntityManager');
+
+            }catch(e){
+                EntityManager = require('viewcanvas_widget/EntityManager');
+            }
+            return operationNew.adjust(EntityManager,operation);
+
         };
 
         /**
