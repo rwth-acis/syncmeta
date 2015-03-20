@@ -118,7 +118,8 @@ define([
                                                 value.width,
                                                 value.height,
                                                 value.zIndex,
-                                                value.json
+                                                value.json,
+                                                value.toCanvas
                                             );
                                             break;
                                         case CONFIG.OPERATION.TYPE.UPDATE:
