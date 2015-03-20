@@ -432,6 +432,12 @@ define([
             initModelTypes : function(viewpointVLS){
                 this.initNodeTypes(viewpointVLS);
                 this.initEdgeTypes(viewpointVLS);
+            },
+            clearBin :function(){
+                _recycleBin = {
+                    nodes : {},
+                    edges : {}
+                };
             }
 
 		};

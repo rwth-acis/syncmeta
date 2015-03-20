@@ -9,8 +9,9 @@ requirejs([
     'attribute_widget/AttributeWrapper',
     'attribute_widget/EntityManager',
     'operations/non_ot/JoinOperation',
-    'operations/non_ot/InitModelTypesOperation'
-],function ($,IWCW,AttributeWrapper,EntityManager,JoinOperation,InitModelTypesOperation) {
+    'operations/non_ot/InitModelTypesOperation',
+    'operations/non_ot/ViewInitOperation'
+],function ($,IWCW,AttributeWrapper,EntityManager,JoinOperation,InitModelTypesOperation,ViewInitOperation) {
 
     var wrapper = new AttributeWrapper($("#wrapper"));
 
@@ -55,11 +56,24 @@ requirejs([
 
             $("#loading").hide();
         }
-        else if(operation instanceof InitModelTypesOperation){
-            if(operation.getVLS().length == 0)
-                return;
-            else
-                EntityManager.initModelTypes(operation.getVLS());
+        else if(operation instanceof ViewInitOperation){
+            if(operation.getViewpoint())
+                EntityManager.initModelTypes(operation.getViewpoint());
+            EntityManager.clearBin();
+            var json = operation.getData();
+            var nodeId, edgeId;
+            for(nodeId in json.nodes){
+                if(json.nodes.hasOwnProperty(nodeId)){
+                    var node = EntityManager.createNodeFromJSON(json.nodes[nodeId].type,nodeId,json.nodes[nodeId].left,json.nodes[nodeId].top,json.nodes[nodeId].width,json.nodes[nodeId].height,json.nodes[nodeId]);
+                    node.addToWrapper(wrapper);
+                }
+            }
+            for(edgeId in json.edges){
+                if(json.edges.hasOwnProperty(edgeId)){
+                    var edge = EntityManager.createEdgeFromJSON(json.edges[edgeId].type,edgeId,json.edges[edgeId].source,json.edges[edgeId].target,json.edges[edgeId]);
+                    edge.addToWrapper(wrapper);
+                }
+            }
         }
     });
 

@@ -1,4 +1,4 @@
-define(['viewcanvas_widget/ViewTypesUtil','promise!Metamodel'], function(ViewTypesUtil, Metamodel){
+define(['Util','viewcanvas_widget/ViewTypesUtil','promise!Metamodel'], function(Util, ViewTypesUtil, Metamodel){
 
     function ViewGenerator(viewpoint) {
         var that = this;
@@ -49,17 +49,23 @@ define(['viewcanvas_widget/ViewTypesUtil','promise!Metamodel'], function(ViewTyp
         var filter = function(entityTypes, type, newType, Model){
             for(var key in Model[entityTypes]){
                 if(Model[entityTypes].hasOwnProperty(key)){
+                    var newKey =  Util.generateRandomId();
                     if(Model[entityTypes][key].type === type){
                         if(entityTypes === 'edges'){
                             if(_view.nodes.hasOwnProperty(Model[entityTypes][key].source) && _view.nodes.hasOwnProperty(Model[entityTypes][key].target)){
-                                that.getView()[entityTypes][key] = Model[entityTypes][key];
-                                that.getView()[entityTypes][key].type = newType;
+                                that.getView()[entityTypes][newKey] = Model[entityTypes][key];
+                                that.getView()[entityTypes][newKey].type = newType;
                             }
                         }
                         else {
-
-                            that.getView()[entityTypes][key] = Model[entityTypes][key];
-                            that.getView()[entityTypes][key].type = newType;
+                            that.getView()[entityTypes][newKey] = Model[entityTypes][key];
+                            that.getView()[entityTypes][newKey].type = newType;
+                            for(var edgeId in Model.edges){
+                                if(Model.edges[edgeId].source === key)
+                                    Model.edges[edgeId].source = newKey;
+                                else if(Model.edges[edgeId].target === key)
+                                    Model.edges[edgeId].target = newKey;
+                            }
                         }
                     }
                 }

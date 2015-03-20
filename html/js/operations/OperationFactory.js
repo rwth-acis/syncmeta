@@ -10,9 +10,6 @@ define([
     'operations/ot/AttributeAddOperation',
     'operations/ot/AttributeDeleteOperation',
     'operations/ot/ValueChangeOperation',
-    'operations/ot/ViewAddOperation',
-    'operations/ot/ViewDeleteOperation',
-    'operations/ot/ViewUpdateOperation',
     'operations/non_ot/EntitySelectOperation',
     'operations/non_ot/ToolSelectOperation',
     'operations/non_ot/ActivityOperation',
@@ -21,8 +18,9 @@ define([
     'operations/non_ot/ExportImageOperation',
     'operations/non_ot/JoinOperation',
     'operations/non_ot/WidgetEnterOperation',
-    'operations/non_ot/InitModelTypesOperation'
-],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,ViewAddOperation, ViewDeleteOperation,ViewUpdateOperation, EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportImageOperation,JoinOperation,WidgetEnterOperation,InitModelTypesOperation) {
+    'operations/non_ot/InitModelTypesOperation',
+    'operations/non_ot/ViewInitOperation'
+],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportImageOperation,JoinOperation,WidgetEnterOperation,InitModelTypesOperation,ViewInitOperation) {
 
     /**
      * OperationFactory
@@ -77,6 +75,9 @@ define([
                         break;
                     case InitModelTypesOperation.TYPE:
                         resOperation = new InitModelTypesOperation(data.vls);
+                        break;
+                    case ViewInitOperation.TYPE:
+                        resOperation = new ViewInitOperation(data.data, data.viewpoint);
                         break;
                 }
                 return resOperation;
@@ -217,23 +218,6 @@ define([
                                 operation.getType(),
                                 operation.getPosition()
                             );
-                            break;
-                        case CONFIG.ENTITY.VIEW:
-                            try {
-                                value = JSON.parse(operation.getValue());
-                            } catch (e){
-                                return null;
-                            }
-                            switch(operation.getType()){
-                                case CONFIG.OPERATION.TYPE.INSERT:
-                                    resOperation = new ViewAddOperation(value.viewId, value.viewUri, value.viewpointUri);
-                                    break;
-                                case CONFIG.OPERATION.TYPE.DELETE:
-                                    resOperation = new ViewDeleteOperation(value.viewId);
-                                    break;
-                                case CONFIG.OPERATION.TYPE.UPDATE:
-                                    resOperation = new ViewUpdateOperation(value.viewId, value.viewUri);
-                            }
                             break;
                     }
                 }
