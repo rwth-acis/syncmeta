@@ -55,7 +55,7 @@ define([
         var propagateViewAddOperation = function(operation){
             processViewAddOperation(operation);
         };
-        this.processViewAddOperation = function(operation){
+        var processViewAddOperation = function(operation){
             var viewId = operation.getViewId();
             if(!_viewList.hasOwnProperty(viewId)) {
                 var viewUri = operation.getViewUri();
