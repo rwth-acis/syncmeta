@@ -163,7 +163,6 @@ requirejs([
                 if (canvas.get$node().is(':hidden'))
                     canvas.get$canvas().show();
                 resetCanvas();
-                EntityManager.clearRecycleBin();
                 JSONtoGraph(rep.data,viewpoint);
 
                 $('#lblCurrentView').attr("link", rep.uri).text(rep.data.id);
@@ -173,6 +172,7 @@ requirejs([
         });
     };
 	$('#btnShowViewPoint').click(function () {
+        ViewManager.initViewList();
         var selected = ViewManager.getSelected$node();
         var viewId = selected.attr('id');
         if (selected.length == 0 || viewId === $('#lblCurrentView').text())
@@ -368,7 +368,7 @@ requirejs([
                 node.remove();
 			}
 		}
-		EntityManager.clearRecycleBin();
+		//EntityManager.clearRecycleBin();
 	}
 	function GetViewList() {
 		var resourceSpace = new openapp.oo.Resource(openapp.param.space());

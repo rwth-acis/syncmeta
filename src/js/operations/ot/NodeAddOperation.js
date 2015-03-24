@@ -21,12 +21,13 @@ define([
      * @param {object} json JSON representation of node
      * @constructor
      */
-    function NodeAddOperation(entityId,type,left,top,width,height,zIndex,json, toCanvas){
+    function NodeAddOperation(entityId,type,left,top,width,height,zIndex,json, toCanvas, viewId){
         var that = this;
 
         EntityOperation.call(this,EntityOperation.TYPES.NodeAddOperation,entityId,CONFIG.ENTITY.NODE);
 
         var _toCanvas = toCanvas;
+        var _viewId = viewId;
         /**
          * Type of node to add
          * @type {String}
@@ -91,7 +92,8 @@ define([
                     height: _height,
                     zIndex: _zIndex,
                     json: _json,
-                    toCanvas: _toCanvas
+                    toCanvas: _toCanvas,
+                    viewId:_viewId
                 }),
                 CONFIG.OPERATION.TYPE.INSERT,
                 CONFIG.IWC.POSITION.NODE.ADD
@@ -156,6 +158,9 @@ define([
 
         this.getToCanvas = function(){
             return _toCanvas;
+        };
+        this.getViewId = function(){
+          return _viewId;
         };
 
         /**

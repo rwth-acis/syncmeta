@@ -120,7 +120,8 @@ define([
                                                 value.height,
                                                 value.zIndex,
                                                 value.json,
-                                                value.toCanvas
+                                                value.toCanvas,
+                                                value.viewId
                                             );
                                             break;
                                         case CONFIG.OPERATION.TYPE.UPDATE:

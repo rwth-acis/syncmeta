@@ -50,7 +50,7 @@ define([
          * @type {canvas_widget.SingleValueAttribute}
          * @private
          */
-        var _label = new SingleValueAttribute(id+"[label]","Label",this);
+        var _label         = new SingleValueAttribute(id+"[label]","Label",this);
 
         /**
          * Appearance information of edge
@@ -431,8 +431,8 @@ define([
                         offsetCanvas;
 
                     offsetClick = $(e.target).offset();
-                   	offsetCanvas = that.getCanvas().get$node().offset();
-					
+                    offsetCanvas = that.getCanvas().get$node().offset();
+
 					if(_canvas.getSelectedEntity() === null || _canvas.getSelectedEntity() === that){
                         menuItems = _.extend(_contextMenuItemCallback(),{
                             connectTo: require('viewcanvas_widget/EntityManager').generateConnectToMenu(that),
@@ -934,9 +934,9 @@ define([
          * Remove the node
          */
         this.remove = function(){
-            this.removeFromCanvas();
-            //this.unregisterCallbacks();
+            this.unregisterCallbacks();
             require('viewcanvas_widget/EntityManager').deleteNode(this.getEntityId());
+            this.removeFromCanvas();
         };
 
         /**
