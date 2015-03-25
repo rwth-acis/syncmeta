@@ -253,7 +253,8 @@ requirejs([
 			$feedback.text("Saving...");
 
 			EntityManager.updateView(viewUri, currentView, vpUri).then(function (context) {
-                ViewManager.updateView(currentView, context.uri);
+               // ViewManager.updateView(currentView, context.uri);
+                ViewManager.initViewList();
 				$feedback.text("Saved!");
 				setTimeout(function () {
 					$feedback.text("");
@@ -262,6 +263,7 @@ requirejs([
 		}
 	});
 
+
     var readyToSave = true;
     var saveTriggered = false;
     var saveCallback = function () {
@@ -269,7 +271,7 @@ requirejs([
             readyToSave = false;
             setTimeout(function () {
                 $("#save").click();
-                ViewManager.initViewList();
+
             }, 500);
             setTimeout(function () {
                 readyToSave = true;

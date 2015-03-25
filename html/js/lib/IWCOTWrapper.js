@@ -517,8 +517,13 @@ define([
                                             clearInterval(_syncInterval);
                                             clearInterval(_purgeInterval);
                                             _ot = new OT(localID);
-                                            sendRemoteNonOTOperation(new JoinOperation(resOperation.getUser(),false,space.user[CONFIG.NS.PERSON.JABBERID],require('canvas_widget/EntityManager').graphToJSON()).toNonOTOperation());
-                                        },500);
+                                            try {
+                                                sendRemoteNonOTOperation(new JoinOperation(resOperation.getUser(), false, space.user[CONFIG.NS.PERSON.JABBERID], require('canvas_widget/EntityManager').graphToJSON()).toNonOTOperation());
+                                            }
+                                            catch(e){
+                                                //sendRemoteNonOTOperation(new JoinOperation(resOperation.getUser(), false, space.user[CONFIG.NS.PERSON.JABBERID], require('viewcanvas_widget/EntityManager').graphToJSON()).toNonOTOperation());
+                                            }
+                                            },500);
 
                                         //Unlock if no remote message is received within 5 seconds
                                         _joiningUsersTimeouts[resOperation.getUser()] = setTimeout(function(){

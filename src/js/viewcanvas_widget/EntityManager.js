@@ -367,6 +367,7 @@ define([
 			 */
 			createNodeFromJSON : function (type, id, left, top, width, height, zIndex, json) {
 				var node = this.createNode(type, id, left, top, width, height, zIndex, json);
+                node.get$node().find('.attributes').find('.list').empty();
 				if (node) {
 					node.getLabel().getValue().setValue(json.label.value.value);
 					for (var attrId in json.attributes) {

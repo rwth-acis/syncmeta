@@ -509,7 +509,7 @@ define([
 				if (entity)
 					entity.select();
 				_selectedEntity = entity;
-				var operation = new EntitySelectOperation(entity ? entity.getEntityId() : null);
+				var operation = new EntitySelectOperation(entity ? entity.getEntityId() : null, CONFIG.WIDGET.NAME.MAIN);
 				_iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
 				_iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, operation.toNonOTOperation());
 				_iwcot.sendRemoteNonOTOperation(operation.toNonOTOperation());

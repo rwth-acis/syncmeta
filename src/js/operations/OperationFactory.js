@@ -49,7 +49,7 @@ define([
 
                 switch(type){
                     case EntitySelectOperation.TYPE:
-                        resOperation = new EntitySelectOperation(data.selectedEntityId);
+                        resOperation = new EntitySelectOperation(data.selectedEntityId, data.destination);
                         resOperation.setNonOTOperation(operation);
                         break;
                     case ToolSelectOperation.TYPE:
