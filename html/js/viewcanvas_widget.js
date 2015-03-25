@@ -207,7 +207,7 @@ requirejs([
         resetCanvas();
         $('#lblCurrentView').attr('vplink', viewpointLink).text(viewId);
         EntityManager.storeView(viewId,viewpointLink).then(function (resp) {
-            ViewManager.addView(viewId,resp.uri,viewpointLink);
+            ViewManager.addView(viewId,resp.uri,viewpointLink, resp);
             canvas.get$canvas().show();
             if (_inInstance) {
                 openapp.resource.get(viewpointLink, function (context) {
@@ -252,9 +252,8 @@ requirejs([
 		if (viewUri) {
 			$feedback.text("Saving...");
 
-			EntityManager.updateView(viewUri, currentView, vpUri).then(function (context) {
-               // ViewManager.updateView(currentView, context.uri);
-                ViewManager.initViewList();
+			EntityManager.updateView(currentView,vpUri, ViewManager.getResource(currentView)).then(function (context) {
+               ViewManager.initViewList();
 				$feedback.text("Saved!");
 				setTimeout(function () {
 					$feedback.text("");

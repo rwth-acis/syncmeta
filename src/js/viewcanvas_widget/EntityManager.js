@@ -947,8 +947,8 @@ define([
 					relation : openapp.ns.role + "data",
 					type : CONFIG.NS.MY.VIEW,
 					representation : data,
-					callback : function (resp) {
-						deferred.resolve(resp);
+					callback : function (resource) {
+						deferred.resolve(resource);
 					}
 				});
 				return deferred.promise();
@@ -960,16 +960,14 @@ define([
              * @param {string} viewpointUri uri of the viewpoint
 			 * @returns {object} jquery promise
 			 */
-			updateView : function (uri, viewId, viewpointUri) {
-				var that = this;
-				var deferred = $.Deferred();
-				openapp.resource.del(uri, function () {
-					that.storeView(viewId, viewpointUri).then(function (resp) {
-						deferred.resolve(resp);
-					});
-				});
-				return deferred.promise();
-			},
+            updateView:function(viewId,viewpointUri, resource){
+                var deferred = $.Deferred();
+                var data = this.viewToJSON(viewId, viewpointUri);
+              resource.setRepresentation(data, 'application/json', function(){
+                  deferred.resolve();
+              });
+                return deferred.promise();
+            },
 			/**
 			 * Deletes the ModelAttribute
 			 */

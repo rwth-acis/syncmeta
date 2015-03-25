@@ -5,8 +5,9 @@ define([
 ], function($,_, optionHtml){
 
     function ViewManager(){
-        var _viewList = {};
+        var _viewResourceDictionary = {};
 
+        var _viewViewpointDictionary={};
         var _$selection = $('#ddmViewSelection');
 
         var optionTpl = _.template(optionHtml);
@@ -30,39 +31,41 @@ define([
                 });
             },
             existsView : function(viewId) {
-                return _viewList.hasOwnProperty(viewId);
+                return _viewResourceDictionary.hasOwnProperty(viewId);
             },
             getViewIdOfSelected : function(){
                 return this.getSelected$node().attr('id');
             },
-            getViewList : function(){
-                return _viewList;
+            getResourceDictionary : function(){
+                return _viewResourceDictionary;
             },
             getViewUri : function(viewId){
-                return _viewList.hasOwnProperty(viewId)? _viewList[viewId].uri : null;
+                return _viewResourceDictionary.hasOwnProperty(viewId)? _viewResourceDictionary[viewId].uri : null;
             },
             getViewpointUri : function(viewId){
-                return _viewList.hasOwnProperty(viewId)? _viewList[viewId].viewpointUri : null;
+                return _viewViewpointDictionary.hasOwnProperty(viewId)? _viewViewpointDictionary[viewId] : null;
             },
             getSelected$node : function(){
                 return  _$selection.find('option:selected');
             },
-            addView : function(viewId, viewUri,viewpointUri){
-                if(!_viewList.hasOwnProperty(viewId)){
-                    _viewList[viewId] = {uri: viewUri, viewpointUri: viewpointUri};
+            getResource : function(viewId){
+              if(_viewResourceDictionary.hasOwnProperty(viewId)){
+                  return _viewResourceDictionary[viewId];
+              }
+            },
+            addView : function(viewId, viewUri,viewpointUri, resource){
+                if(!_viewResourceDictionary.hasOwnProperty(viewId)){
+                    _viewResourceDictionary[viewId] = resource;
+                    _viewViewpointDictionary[viewId] = viewpointUri;
                     var $option = $(optionTpl({
                         id: viewId
                     }));
                     _$selection.append($option);
                 }
             },
-            updateView: function(viewId, viewUri){
-                if(_viewList.hasOwnProperty(viewId)){
-                    _viewList[viewId].uri = viewUri;
-                }
-            },
             deleteView: function(viewId){
-                delete _viewList[viewId];
+                delete _viewResourceDictionary[viewId];
+                delete _viewViewpointDictionary[viewId];
                 _$selection.find('#'+viewId).remove();
             },
             initViewList : function(){
@@ -73,10 +76,7 @@ define([
                     type: CONFIG.NS.MY.VIEW,
                     onEach: function (context) {
                         context.getRepresentation("rdfjson", function (data) {
-                            if(that.existsView(data.id))
-                                that.updateView(data.id, context.uri);
-                            else
-                                that.addView(data.id, context.uri, data.viewpoint);
+                            that.addView(data.id, context.uri, data.viewpoint, context);
                         });
                     }
                 });
