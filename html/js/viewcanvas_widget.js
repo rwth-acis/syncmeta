@@ -215,9 +215,11 @@ requirejs([
                         var viewpoint = vls.data;
                         var viewGenerator = new ViewGenerator(viewpoint);
                         viewGenerator.apply().then(function (view) {
+                            $("#loading").show();
                             EntityManager.initModelTypes(viewpoint);
                             JSONtoGraph(view, viewpoint);
                             canvas.resetTool();
+                            $("#loading").hide();
                         })
                     })
                 });

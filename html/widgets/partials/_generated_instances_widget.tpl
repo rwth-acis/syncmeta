@@ -172,9 +172,9 @@
                                 return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/attribute.xml");
                             }).then(function(){
                                 return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/export.xml");
-                            }).then(function(){
+                            })/*.then(function(){
                                 return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/imsld_export.xml");
-                            }).then(function(){
+                            })*/.then(function(){
 								return addWidgetToSpace(spaceURI, "<%= grunt.config('baseUrl') %>/viewcanvas.xml");
 							}).then(function(){
                                 return addMetamodelToSpace(spaceURI,metamodel, CONFIG.NS.MY.METAMODEL);

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- generated on Wed Mar 25 2015 20:07:54 -->
+<!-- generated on Thu Mar 26 2015 22:48:18 -->
 <Module>
   <ModulePrefs
     title="View Canvas"
@@ -58,6 +58,7 @@
           timeout();
         })();
     </script>
+    <script src="http://mari0.github.io/syncmeta/html/js/lib/parallel.js"></script>
     <script src="http://mari0.github.io/syncmeta/html/js/config.js"></script>
     <script src="http://mari0.github.io/syncmeta/html/js/lib/vendor/require.js"></script>    
     <link rel="stylesheet" type="text/css" href="http://mari0.github.io/syncmeta/html/css/vendor/jquery-ui.css">
