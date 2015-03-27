@@ -36,9 +36,6 @@ define([
             getViewIdOfSelected : function(){
                 return this.getSelected$node().attr('id');
             },
-            getResourceDictionary : function(){
-                return _viewResourceDictionary;
-            },
             getViewUri : function(viewId){
                 return _viewResourceDictionary.hasOwnProperty(viewId)? _viewResourceDictionary[viewId].uri : null;
             },

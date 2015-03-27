@@ -65,6 +65,8 @@ define([
                 for(attributeId in attributes){
                     if(attributes.hasOwnProperty(attributeId)){
                         attribute = attributes[attributeId];
+                        if(attribute.hasOwnProperty('visibility') && attribute.visibility === 'hide')
+                            continue;
                         switch(attribute.value){
                             case "boolean":
                                 attrObj[attributeId] = new BooleanAttribute(id+"["+attribute.key.toLowerCase()+"]",attribute.key,that);

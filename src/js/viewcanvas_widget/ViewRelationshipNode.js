@@ -116,10 +116,11 @@ function (require, $, jsPlumb, _, AbstractNode, SingleSelectionAttribute, KeySel
 				"integer" : "Integer",
 				"file" : "File"
 			}, {
-				"hidden" : "Hide",
-				"top" : "Top",
-				"center" : "Center",
-				"bottom" : "Bottom"
+				"hidden" : "Show",
+				"top" : "Show Top",
+				"center" : "Show Center",
+				"bottom" : "Show Bottom",
+                "hide": "Hide"
 			}));
 
 		

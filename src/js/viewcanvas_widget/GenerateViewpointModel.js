@@ -147,7 +147,7 @@ define(['Util',
                 for (attributeId in nodeAttributes) {
                     if (nodeAttributes.hasOwnProperty(attributeId)) {
                         attribute = nodeAttributes[attributeId];
-                        if (node instanceof RelationshipNode) {
+                        if (node instanceof RelationshipNode || node instanceof ViewRelationshipNode) {
                             obj = {};
                             obj[attributeId] = {
                                 key : attribute.getKey().getValue(),
@@ -158,9 +158,19 @@ define(['Util',
                         } else if (node instanceof EnumNode) {
                             obj = {};
                             obj[attributeId] = {
-                                value : attribute.getValue().getValue()
+                                value: attribute.getValue().getValue()
                             };
                             Util.merge(attributes, obj);
+                        }
+                        else if(node instanceof ViewObjectNode){
+                            obj = {};
+                            obj[attributeId] = {
+                                key : attribute.getKey().getValue(),
+                                value : attribute.getValue().getValue(),
+                                visibility: attribute.getValue2().getValue()
+                            };
+                            Util.merge(attributes, obj);
+
                         } else {
                             obj = {};
                             obj[attributeId] = {
@@ -177,18 +187,28 @@ define(['Util',
 
             function getViewTypeAttributes(node){
                 var target;
-                var conditions = [];
+                var conditions = {};
                 var nodeid = node.getEntityId();
                 if(viewpointModel.nodes.hasOwnProperty(nodeid)){
                     if(viewpointModel.nodes[nodeid].attributes.hasOwnProperty(nodeid+'[target]')) {
                         target = viewpointModel.nodes[nodeid].attributes[nodeid + '[target]'].value.value;
                     }
                     if(viewpointModel.nodes[nodeid].attributes.hasOwnProperty('[condition]')){
-                        //TODO conditions here
+                        var conditionsList = viewpointModel.nodes[nodeid].attributes['[condition]'].list;
+                        for(var condId in conditionsList){
+                            if(conditionsList.hasOwnProperty(condId)){
+                                conditions[condId] = {
+                                    property: conditionsList[condId].property.value,
+                                    operator: conditionsList[condId].operator.value,
+                                    value: conditionsList[condId].val.value,
+                                    conjunction: conditionsList[condId].operator2.value
+                                };
+                            }
+                        }
                     }
                 }
                 return {target: target,
-                    condition : conditions};
+                    conditions : conditions};
 
             }
 
@@ -274,7 +294,7 @@ define(['Util',
                                 viewtypeAttrs = getViewTypeAttributes(node);
                                 Util.merge( metamodel.nodes[nodeId], {
                                     target: viewtypeAttrs.target,
-                                    conditions: viewtypeAttrs.conditon
+                                    conditions: viewtypeAttrs.conditions
                                 });
                             }
                         }
@@ -422,7 +442,7 @@ define(['Util',
                             viewtypeAttrs = getViewTypeAttributes(node);
                             Util.merge( metamodel.edges[nodeId], {
                                 target: viewtypeAttrs.target,
-                                conditions: viewtypeAttrs.conditon
+                                conditions: viewtypeAttrs.conditions
                             });
                         }
                     }

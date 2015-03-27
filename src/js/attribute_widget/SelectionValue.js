@@ -89,7 +89,11 @@ define([
 							viewtypeAttribute.propagateAttributeAddOperation(operation);
 							var attr = viewtypeAttribute.getAttribute(id);
 							attr.getKey().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT, targetAttributes[key].getKey().getValue(), 0);
-							attributeList[id] = targetAttributes[key].getKey().getValue();
+							attr.getValue().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT,targetAttributes[key].getValue().getValue(), 0);
+                            if(viewtype.getType() === 'ViewRelationship')
+                                attr.getValue2().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT,targetAttributes[key].getValue2().getValue(), 0);
+
+                            attributeList[id] = targetAttributes[key].getKey().getValue();
 						}
 					}
 					
@@ -117,7 +121,7 @@ define([
 		 * @param value Char that was inserted or deleted
 		 * @param position Position the change took place
 		 */
-		var propagateValueChange = function (type, value, position) {
+		this.propagateValueChange = function (type, value, position) {
 			var operation = new ValueChangeOperation(that.getEntityId(), value, type, position);
 			propagateValueChangeOperation(operation);
 		};
@@ -143,7 +147,7 @@ define([
 		var init = function () {
 			_$node.off();
 			_$node.change(function () {
-				propagateValueChange(CONFIG.OPERATION.TYPE.UPDATE, $(this).val(), 0);
+				that.propagateValueChange(CONFIG.OPERATION.TYPE.UPDATE, $(this).val(), 0);
 			});
 		};
 

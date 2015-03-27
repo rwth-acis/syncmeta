@@ -102,12 +102,13 @@ define([
 				"boolean" : "Boolean",
 				"integer" : "Integer",
 				"file" : "File"
-			}, {
-				"hidden" : "Hide",
-				"top" : "Top",
-				"center" : "Center",
-				"bottom" : "Bottom"
-			}));
+        }, {
+            "hidden" : "Show",
+            "top" : "Show Top",
+            "center" : "Show Center",
+            "bottom" : "Show Bottom",
+            "hide": "Hide"
+        }));
 
 		_$node.find(".label").append(this.getLabel().get$node());
 
