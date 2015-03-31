@@ -76,6 +76,11 @@ define([
 		ViewTypesUtil.GetCurrentBaseModel().then(function(model){
 			var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes,['Object']);
 			var attribute = new SingleSelectionAttribute(id+"[target]", "Target", that, selectionValues);
+
+            var conjSelection = new SingleSelectionAttribute(id+'[conjunction]', 'Conjunction', that, LogicalConjunctions);
+            that.addAttribute(conjSelection);
+            that.get$node().find('.attributes').append(conjSelection.get$node());
+
             if(_fromResource){
                 var targetId = null;
                 for(var key in _fromResource.attributes){
@@ -103,7 +108,9 @@ define([
                 _fromResource = null;
             }
             that.addAttribute(attribute);
+
 			that.get$node().find('.attributes').prepend(attribute.get$node());
+
 		});
 		        
 		var attributeList = new KeySelectionValueSelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File"},{"show":"Visible","hide":"Hidden"});

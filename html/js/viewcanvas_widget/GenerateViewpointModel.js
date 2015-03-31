@@ -187,6 +187,7 @@ define(['Util',
 
             function getViewTypeAttributes(node){
                 var target;
+                var conjunction;
                 var conditions = {};
                 var nodeid = node.getEntityId();
                 if(viewpointModel.nodes.hasOwnProperty(nodeid)){
@@ -200,15 +201,19 @@ define(['Util',
                                 conditions[condId] = {
                                     property: conditionsList[condId].property.value,
                                     operator: conditionsList[condId].operator.value,
-                                    value: conditionsList[condId].val.value,
-                                    conjunction: conditionsList[condId].operator2.value
+                                    value: conditionsList[condId].val.value
+                                    //conjunction: conditionsList[condId].operator2.value
                                 };
                             }
                         }
                     }
+                    if(viewpointModel.nodes[nodeid].attributes.hasOwnProperty(nodeid+'[conjunction]')) {
+                        conjunction = viewpointModel.nodes[nodeid].attributes[nodeid + '[conjunction]'].value.value;
+                    }
                 }
                 return {target: target,
-                    conditions : conditions};
+                    conditions : conditions,
+                    conjunction: conjunction};
 
             }
 
@@ -292,10 +297,7 @@ define(['Util',
                             };
                             if(node instanceof  ViewObjectNode) {
                                 viewtypeAttrs = getViewTypeAttributes(node);
-                                Util.merge( metamodel.nodes[nodeId], {
-                                    target: viewtypeAttrs.target,
-                                    conditions: viewtypeAttrs.conditions
-                                });
+                                Util.merge( metamodel.nodes[nodeId], viewtypeAttrs);
                             }
                         }
                     } else if (node instanceof RelationshipNode || node instanceof ViewRelationshipNode) {
@@ -440,10 +442,7 @@ define(['Util',
                         };
                         if(node instanceof  ViewRelationshipNode){
                             viewtypeAttrs = getViewTypeAttributes(node);
-                            Util.merge( metamodel.edges[nodeId], {
-                                target: viewtypeAttrs.target,
-                                conditions: viewtypeAttrs.conditions
-                            });
+                            Util.merge( metamodel.edges[nodeId], viewtypeAttrs);
                         }
                     }
                 }

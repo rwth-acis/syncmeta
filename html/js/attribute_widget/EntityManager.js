@@ -299,6 +299,10 @@ define([
                                 attr =  node.getAttribute(newId);
                                 if(attr)
                                     attr.setValueFromJSON(json.attributes[attrId]);
+                                else{
+                                    var attributeList = node.getAttributes();
+                                    this.setAttributesByName(attributeList, json.attributes[attrId].name, json.attributes[attrId]);
+                                }
                             }
 						}
 					}
@@ -324,12 +328,24 @@ define([
 							var attr = edge.getAttribute(attrId);
 							if (attr) {
 								attr.setValueFromJSON(json.attributes[attrId]);
-							}
+							}else{
+                                var attributeList = edge.getAttributes();
+                                this.setAttributesByName(attributeList, json.attributes[attrId].name, json.attributes[attrId]);
+                            }
 						}
 					}
 				}
 				return edge;
 			},
+            setAttributesByName : function(attributeList, name, value){
+                for(var key in attributeList){
+                    if(attributeList.hasOwnProperty(key) && attributeList[key].getName() === name){
+                        attributeList[key].setValueFromJSON(value);
+                        break;
+                    }
+                }
+            },
+
 			/**
 			 * Generate the 'This node can be connected to..' hint for the passed node
 			 * @param {attribute_widget.AbstractNode} node

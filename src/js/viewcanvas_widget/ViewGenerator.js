@@ -54,6 +54,8 @@ define(['Util','viewcanvas_widget/ViewTypesUtil','promise!Metamodel'],
                 return $.when(createFilterWorker('nodes', Model), createFilterWorker('edges', Model)).then(function (nodes, edges) {
                     _view.nodes = nodes;
                     _view.edges = edges;
+                    _view.nodes = filterByConditions('nodes');
+                    _view.edges = filterByConditions('edges');
                     return fixReferenceWorker(_view).then(function (view) {
                         _view.edges = view.edges;
                         return _view;
@@ -131,6 +133,89 @@ define(['Util','viewcanvas_widget/ViewTypesUtil','promise!Metamodel'],
                     }
                 }
                 return entites;
+            }
+
+
+            function filterByConditions(entityType){
+                var entities =_viewpoint[entityType];
+                var filteredEntities = {};
+                for(var entityKey in entities){
+                    if(entities.hasOwnProperty(entityKey)) {
+                        var classType = entities[entityKey].label;
+                        var viewTypeEntities = getViewTypeEntities(entityType, classType);
+                        for (var nodeKey in viewTypeEntities) {
+                            if(viewTypeEntities.hasOwnProperty(nodeKey)){
+                                var result = applyConditions(viewTypeEntities[nodeKey], entities[entityKey]);
+                                if(result)
+                                    filteredEntities[nodeKey] = viewTypeEntities[nodeKey];
+                            }
+                        }
+                    }
+                }
+                return filteredEntities;
+            }
+            function getViewTypeEntities(entityType, classType){
+                var viewTypes = _view[entityType];
+                var entities ={};
+                for(var entityKey in viewTypes){
+                    if(viewTypes.hasOwnProperty(entityKey) && viewTypes[entityKey].type === classType){
+                        entities[entityKey] = viewTypes[entityKey];
+                    }
+                }
+                return entities;
+            }
+            function applyConditions(node, viewType){
+                var conditions = viewType.conditions;
+                for(var condKey in conditions){
+                    if(conditions.hasOwnProperty(condKey)){
+                        var condition = conditions[condKey];
+                       if(viewType.attributes.hasOwnProperty(condition.property)){
+                           var attrName = viewType.attributes[condition.property].key;
+                           var attrValue = getAttributeValue(node, attrName);
+                           var result= resolveCondition(attrValue, condition.operator, condition.value);
+                           if(result && viewType.conjunction === 'OR')
+                               return true;
+                           else if(!result && viewType.conjunction === 'AND')
+                               return false;
+                       }
+                    }
+                }
+                return true;
+            }
+            function getAttributeValue(node, attrName){
+                for(var attrKey in node.attributes){
+                    if(node.attributes.hasOwnProperty(attrKey) && node.attributes[attrKey].name === attrName)
+                        return node.attributes[attrKey].value.value;
+                }
+            }
+
+            function resolveCondition(attrValue, operator, value){
+                var val = null;
+                try{
+                    if(typeof val === 'boolean')
+                         val = value;
+                    else
+                        val = parseInt(value);
+                    if(isNaN(val))
+                        val = value;
+                }
+                catch(e){
+                    val = value;
+                }
+                switch(operator){
+                    case 'greater':
+                        return attrValue > val;
+                    case 'smaller':
+                        return attrValue < val;
+                    case 'equal':
+                        return attrValue === val;
+                    case 'greater_eq':
+                        return attrValue >= val;
+                    case 'smaller_eq':
+                        return attrValue <= val;
+                    case 'nequal':
+                        return attrValue != val;
+                }
             }
 
             /**

@@ -46,7 +46,7 @@ define([
          */
         var _options2 = options2;
 		
-		var _options3 = options3;
+		//var _options3 = options3;
 		
         /**
          * Value object of key
@@ -69,7 +69,7 @@ define([
          */
         var _value2 = new SelectionValue(id+"[operator]","Logical Operator",this,this.getRootSubjectEntity(),_options2);
 		
-		var _value3 = new SelectionValue(id+"[operator2]", "Logical Operator", this, this.getRootSubjectEntity(), _options3);
+		//var _value3 = new SelectionValue(id+"[operator2]", "Logical Operator", this, this.getRootSubjectEntity(), _options3);
         /**
          * jQuery object of the DOM node representing the attribute
          * @type {jQuery}
@@ -128,7 +128,8 @@ define([
         this.getValue2 = function(){
             return _value2;
         };
-		
+
+		/*
 		 this.setValue3 = function(value){
             _value3 = value;
         };
@@ -136,7 +137,8 @@ define([
 		this.getValue3 = function(){
             return _value3;
         };
-		
+		*/
+
         /**
          * Get jQuery object of the DOM node representing the attribute
          * @returns {jQuery}
@@ -153,7 +155,7 @@ define([
             _key.setValueFromJSON(json.val);
             _value.setValueFromJSON(json.property);
             _value2.setValueFromJSON(json.operator||{value: ""});
-			_value3.setValueFromJSON(json.operator2 || {value: ""});
+			//_value3.setValueFromJSON(json.operator2 || {value: ""});
         };
 		/**
          * Get JSON representation of the attribute
@@ -164,13 +166,13 @@ define([
             json.val = _key.toJSON();
             json.property = _value.toJSON();
             json.operator = _value2.toJSON();
-			json.operator2 = _value3.toJSON();
+			//json.operator2 = _value3.toJSON();
             return json;
         };
 		_$node.find(".val").append(_key.get$node());
         _$node.find(".property").append(_value.get$node());
         _$node.find(".operator").append(_value2.get$node());
-		_$node.find(".operator2").append(_value3.get$node());
+		//_$node.find(".operator2").append(_value3.get$node());
     }
 
     return ConditionPredicateAttribute;

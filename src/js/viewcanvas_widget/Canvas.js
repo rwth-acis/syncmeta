@@ -579,6 +579,8 @@ define([
 		 * @param {number} [zIndex] Position of node on z-axis
 		 * @param {object} [json] representation of node
          * @param {string} identifier the identifier of the node, if null a new id is generated
+         * @param {string} toCanvas the canvas the node is added to e.g. CONFIG.WIDGET.NAME.MAIN OR CONFIG.WIDGET.NAME.VIEWCANVAS
+         * @param {string} viewId  the viewId the node is added to
 		 * @return {number} id of new node
 		 */
 		this.createNode = function (type, left, top, width, height, zIndex, json, identifier, toCanvas, viewId) {
@@ -599,6 +601,7 @@ define([
 		 * @param {canvas_widget.AbstractNode} source Source node entity id
 		 * @param {canvas_widget.AbstractNode} target Target node entity id
 		 * @param {object} [json] representation of edge
+         * @param {string} identifier the identifier of the edge
 		 * @return {number} id of new edge
 		 */
 		this.createEdge = function (type, source, target, json, identifier) {

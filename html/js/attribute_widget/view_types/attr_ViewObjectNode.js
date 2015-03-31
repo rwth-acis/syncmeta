@@ -28,6 +28,7 @@ function ($, jsPlumb, _, AbstractNode, KeySelectionValueSelectionValueListAttrib
 	 * @param {number} top y-coordinate of node position
 	 * @param {number} width Width of node
 	 * @param {number} height Height of node
+     * @param {object} json the json representation
 	 */
 	function ViewObjectNode(id, left, top, width, height,json) {
 		var that = this;
@@ -70,6 +71,10 @@ function ($, jsPlumb, _, AbstractNode, KeySelectionValueSelectionValueListAttrib
 		ViewTypesUtil.GetCurrentBaseModel().then(function (model) {
 			var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes, ['Object']);
 			var attribute = new SingleSelectionAttribute(id+"[target]", "Target", that, selectionValues);
+
+            var conjSelection = new SingleSelectionAttribute(id+'[conjunction]', 'Conjunction', that, LogicalConjunctions);
+            that.addAttribute(conjSelection);
+            that.get$node().find('.attributes').append(conjSelection.get$node());
 
             if(_fromResource){
                 var targetId = null;

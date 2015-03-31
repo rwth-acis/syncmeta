@@ -81,6 +81,10 @@ function (require, $, jsPlumb, _, AbstractNode, SingleSelectionAttribute, KeySel
 			var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes, ['Relationship']);
             var attribute = new SingleSelectionAttribute(id+"[target]", "Target", that, selectionValues);
 
+            var conjSelection = new SingleSelectionAttribute(id+'[conjunction]', 'Conjunction', that, LogicalConjunctions);
+            that.addAttribute(conjSelection);
+            that.get$node().find('.attributes').append(conjSelection.get$node());
+
             if(_fromResource){
                 var targetId = null;
                 for(var key in _fromResource.attributes){
