@@ -257,28 +257,6 @@ define([
 			}
 		};
 
-		/**
-		 * Callback for a local Export Data Operation
-		 * @param {operations.non_ot.ExportMetaModelOperation} operation
-		 */
-		var localExportMetaModelCallback = function (operation) {
-			if (operation instanceof ExportMetaModelOperation) {
-				if (operation.getData() === null) {
-					operation.setData(EntityManager.generateMetaModel());
-					_iwcot.sendLocalNonOTOperation(operation.getRequestingComponent(), operation.toNonOTOperation());
-				} else {
-					var data = operation.getData();
-					var op = new ActivityOperation(
-							"EditorGenerateActivity",
-							"-1",
-							_iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
-							"..generated new Editor <a href=\"" + data.spaceURI + "\" target=\"_blank\">" + data.spaceTitle + "</a>", {}).toNonOTOperation();
-					_iwcot.sendRemoteNonOTOperation(op);
-					_iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, op);
-				}
-
-			}
-		};
 
 		/**
 		 * Callback for a local Export Data Operation
@@ -897,7 +875,6 @@ define([
 			_iwcot.registerOnRemoteDataReceivedCallback(remoteEdgeAddCallback);
 			_iwcot.registerOnLocalDataReceivedCallback(localToolSelectCallback);
 			_iwcot.registerOnLocalDataReceivedCallback(localExportDataCallback);
-			_iwcot.registerOnLocalDataReceivedCallback(localExportMetaModelCallback);
 			_iwcot.registerOnLocalDataReceivedCallback(localExportImageCallback);
 			_iwcot.registerOnHistoryChangedCallback(historyNodeAddCallback);
 			_iwcot.registerOnHistoryChangedCallback(historyEdgeAddCallback);
@@ -912,7 +889,6 @@ define([
 			_iwcot.unregisterOnRemoteDataReceivedCallback(remoteEdgeAddCallback);
 			_iwcot.unregisterOnLocalDataReceivedCallback(localToolSelectCallback);
 			_iwcot.unregisterOnLocalDataReceivedCallback(localExportDataCallback);
-			_iwcot.unregisterOnLocalDataReceivedCallback(localExportMetaModelCallback);
 			_iwcot.unregisterOnLocalDataReceivedCallback(localExportImageCallback);
 			_iwcot.unregisterOnHistoryChangedCallback(historyNodeAddCallback);
 			_iwcot.unregisterOnHistoryChangedCallback(historyEdgeAddCallback);
