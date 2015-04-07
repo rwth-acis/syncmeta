@@ -19,8 +19,9 @@ define([
     'operations/non_ot/JoinOperation',
     'operations/non_ot/WidgetEnterOperation',
     'operations/non_ot/InitModelTypesOperation',
-    'operations/non_ot/ViewInitOperation'
-],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportImageOperation,JoinOperation,WidgetEnterOperation,InitModelTypesOperation,ViewInitOperation) {
+    'operations/non_ot/ViewInitOperation',
+    'operations/non_ot/PerformCvgOperation'
+],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportImageOperation,JoinOperation,WidgetEnterOperation,InitModelTypesOperation,ViewInitOperation,PerformCvgOperation) {
 
     /**
      * OperationFactory
@@ -78,6 +79,9 @@ define([
                         break;
                     case ViewInitOperation.TYPE:
                         resOperation = new ViewInitOperation(data.data, data.viewpoint);
+                        break;
+                    case PerformCvgOperation.TYPE:
+                        resOperation = new PerformCvgOperation(data.json);
                         break;
                 }
                 return resOperation;

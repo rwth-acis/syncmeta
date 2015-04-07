@@ -54,15 +54,20 @@ define(['Util','viewcanvas_widget/ViewTypesUtil','promise!Metamodel'],
                 return $.when(createFilterWorker('nodes', Model), createFilterWorker('edges', Model)).then(function (nodes, edges) {
                     _view.nodes = nodes;
                     _view.edges = edges;
-                    _view.nodes = filterByConditions('nodes');
-                    _view.edges = filterByConditions('edges');
-                    return fixReferenceWorker(_view).then(function (view) {
-                        _view.edges = view.edges;
-                        return _view;
+                    return $.when(createFilterByConditionWorker('nodes'), createFilterByConditionWorker('edges')).then(function(nodes, edges){
+                        _view.nodes = nodes;
+                        _view.edges = edges;
+                        return fixReferenceWorker(_view).then(function (view) {
+                            _view.edges = view.edges;
+                            return _view;
+                        });
+                    }).fail(function (error) {
+                        console.log(error.message);
                     });
-                }).fail(function (nodesError, edgesError) {
-                    console.log(nodesError.message);
-                    console.log(edgesError.message);
+
+                }).fail(function (error) {
+                    console.log(error.message);
+
                 });
 
 
@@ -102,8 +107,7 @@ define(['Util','viewcanvas_widget/ViewTypesUtil','promise!Metamodel'],
                                 }
                             }
                         }
-                        data = entities;
-                        return data;
+                        return entities;
                     }).then(function (data) {
                         deferred.resolve(data);
                     }, function (e) {
@@ -135,17 +139,50 @@ define(['Util','viewcanvas_widget/ViewTypesUtil','promise!Metamodel'],
                 return entites;
             }
 
+            /**
+             * creates a web worker to filter nodes or edges by their attribute condition
+             * @param entityType can be nodes or edges
+             * @returns {promise} a jquery promise object
+             */
+            function createFilterByConditionWorker(entityType){
+                var deferred = $.Deferred();
+                var worker = new Parallel(undefined, {
+                    env:{
+                        entities:_view[entityType],
+                        viewTypes:_viewpoint[entityType]
+                    }
+                });
+                worker.require(filterByConditions)
+                    .require(getViewTypeEntities)
+                    .require(applyConditions)
+                    .require(getAttributeValue)
+                    .require(resolveCondition)
+                    .spawn(function(){
+                        return filterByConditions(global.env.viewTypes,global.env.entities);
+                    }).then(function(data){
+                        deferred.resolve(data);
+                    }, function(e){
+                        deferred.reject(e);
+                    });
+                return deferred.promise();
+        }
 
-            function filterByConditions(entityType){
-                var entities =_viewpoint[entityType];
+
+            /**
+             * filters node or edges entities by conditions defined on attributes
+             * @param {object} viewTypes the view types
+             * @param {object} viewEntities the instances of the view types
+             * @returns {object} a json object with the nodes/edges
+             */
+            function filterByConditions(viewTypes, viewEntities){
                 var filteredEntities = {};
-                for(var entityKey in entities){
-                    if(entities.hasOwnProperty(entityKey)) {
-                        var classType = entities[entityKey].label;
-                        var viewTypeEntities = getViewTypeEntities(entityType, classType);
+                for(var entityKey in viewTypes){
+                    if(viewTypes.hasOwnProperty(entityKey)) {
+                        var classType = viewTypes[entityKey].label;
+                        var viewTypeEntities = getViewTypeEntities(viewEntities, classType);
                         for (var nodeKey in viewTypeEntities) {
                             if(viewTypeEntities.hasOwnProperty(nodeKey)){
-                                var result = applyConditions(viewTypeEntities[nodeKey], entities[entityKey]);
+                                var result = applyConditions(viewTypeEntities[nodeKey], viewTypes[entityKey]);
                                 if(result)
                                     filteredEntities[nodeKey] = viewTypeEntities[nodeKey];
                             }
@@ -154,16 +191,29 @@ define(['Util','viewcanvas_widget/ViewTypesUtil','promise!Metamodel'],
                 }
                 return filteredEntities;
             }
-            function getViewTypeEntities(entityType, classType){
-                var viewTypes = _view[entityType];
+
+            /**
+             * returns the instances of a viewtype
+             * @param {string} viewEntities instances of the view types
+             * @param {string} classType the type of the view type
+             * @returns {object}
+             */
+            function getViewTypeEntities(viewEntities, classType){
                 var entities ={};
-                for(var entityKey in viewTypes){
-                    if(viewTypes.hasOwnProperty(entityKey) && viewTypes[entityKey].type === classType){
-                        entities[entityKey] = viewTypes[entityKey];
+                for(var entityKey in viewEntities){
+                    if(viewEntities.hasOwnProperty(entityKey) && viewEntities[entityKey].type === classType){
+                        entities[entityKey] = viewEntities[entityKey];
                     }
                 }
                 return entities;
             }
+
+            /**
+             * applies the conditions defined for a view type on a instance of the view type
+             * @param node the instance of the view type
+             * @param viewType the view type object
+             * @returns {boolean} true if the conditions are fulfilled else false
+             */
             function applyConditions(node, viewType){
                 var conditions = viewType.conditions;
                 for(var condKey in conditions){
@@ -182,6 +232,13 @@ define(['Util','viewcanvas_widget/ViewTypesUtil','promise!Metamodel'],
                 }
                 return true;
             }
+
+            /**
+             * get the attribute value for a node
+             * @param node the node
+             * @param attrName the attribute name
+             * @returns {*} the value of the attribute of the node object
+             */
             function getAttributeValue(node, attrName){
                 for(var attrKey in node.attributes){
                     if(node.attributes.hasOwnProperty(attrKey) && node.attributes[attrKey].name === attrName)
@@ -189,6 +246,13 @@ define(['Util','viewcanvas_widget/ViewTypesUtil','promise!Metamodel'],
                 }
             }
 
+            /**
+             * resolves a condition
+             * @param attrValue the attribute value from the instance of a view type
+             * @param {string} operator the operator defined in the view type definition
+             * @param {string} value the value defined in the view type definition
+             * @returns {boolean} true if the condition is true else false
+             */
             function resolveCondition(attrValue, operator, value){
                 var val = null;
                 try{

@@ -66,12 +66,16 @@ requirejs([
                 if(json.nodes.hasOwnProperty(nodeId)){
                     var node = EntityManager.createNodeFromJSON(json.nodes[nodeId].type,nodeId,json.nodes[nodeId].left,json.nodes[nodeId].top,json.nodes[nodeId].width,json.nodes[nodeId].height,json.nodes[nodeId]);
                     node.addToWrapper(wrapper);
+                    if(json.nodes[nodeId].attributes.hasOwnProperty(nodeId +'[target]'))
+                        EntityManager.addToMap(json.nodes[nodeId].attributes[nodeId +'[target]'].value.value, nodeId);
                 }
             }
             for(edgeId in json.edges){
                 if(json.edges.hasOwnProperty(edgeId)){
                     var edge = EntityManager.createEdgeFromJSON(json.edges[edgeId].type,edgeId,json.edges[edgeId].source,json.edges[edgeId].target,json.edges[edgeId]);
                     edge.addToWrapper(wrapper);
+                    if(json.edges[edgeId].attributes.hasOwnProperty(nodeId +'[target]'))
+                        EntityManager.addToMap(json.edges[edgeId].attributes[nodeId +'[target]'].value.value, edgeId);
                 }
             }
         }

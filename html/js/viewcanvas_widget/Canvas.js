@@ -11,14 +11,16 @@ define([
 		'operations/non_ot/ExportDataOperation',
 		'operations/non_ot/ExportMetaModelOperation',
 		'operations/non_ot/ExportImageOperation',
+        'operations/non_ot/PerformCvgOperation',
 		'canvas_widget/AbstractEntity',
 		'canvas_widget/ModelAttributesNode',
 		'viewcanvas_widget/EntityManager',
 		'canvas_widget/AbstractCanvas',
 		'viewcanvas_widget/MoveTool',
+        'viewcanvas_widget/ClosedViewGeneration',
 		'jquery.transformable'
 	], /** @lends Canvas */
-	function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelectOperation, EntitySelectOperation, ActivityOperation, ExportDataOperation, ExportMetaModelOperation, ExportImageOperation, AbstractEntity, ModelAttributesNode, EntityManager, AbstractCanvas, MoveTool) {
+	function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelectOperation, EntitySelectOperation, ActivityOperation, ExportDataOperation, ExportMetaModelOperation, ExportImageOperation, PerformCvgOperation, AbstractEntity, ModelAttributesNode, EntityManager, AbstractCanvas, MoveTool, CVG) {
 
 	Canvas.prototype = new AbstractCanvas();
 	Canvas.prototype.constructor = Canvas;
@@ -29,7 +31,6 @@ define([
 	 * @memberof canvas_widget
 	 * @constructor
 	 * @param {jQuery} $node jquery Selector of canvas node
-	 * @param {string} the name of the widget to generate a iwcot instance for. default is CONFIG.WIDGET.NAME.MAIN
 	 */
 	function Canvas($node) {
 		var that = this;
@@ -362,6 +363,8 @@ define([
 		this.get$node = function () {
 			return _$node;
 		};
+
+
 
 		/**
 		 * Set model attributes
@@ -898,6 +901,7 @@ define([
 			_iwcot.registerOnLocalDataReceivedCallback(localExportImageCallback);
 			_iwcot.registerOnHistoryChangedCallback(historyNodeAddCallback);
 			_iwcot.registerOnHistoryChangedCallback(historyEdgeAddCallback);
+            _iwcot.registerOnLocalDataReceivedCallback(CvgCallback);
 		};
 
 		/**
@@ -912,6 +916,7 @@ define([
 			_iwcot.unregisterOnLocalDataReceivedCallback(localExportImageCallback);
 			_iwcot.unregisterOnHistoryChangedCallback(historyNodeAddCallback);
 			_iwcot.unregisterOnHistoryChangedCallback(historyEdgeAddCallback);
+            _iwcot.unregisterOnLocalDataReceivedCallback(CvgCallback);
 		};
 
 		init();
@@ -919,7 +924,12 @@ define([
 		if (_iwcot) {
 			that.registerCallbacks();
 		}
-
+        function CvgCallback(operation){
+            if(operation instanceof PerformCvgOperation){
+                var json = operation.getJSON();
+                CVG(that, json);
+            }
+        }
 	}
 
 	return Canvas;

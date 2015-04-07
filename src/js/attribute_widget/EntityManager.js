@@ -96,6 +96,10 @@ define([
 		 * Edges of the graph
 		 * @type {{}}
 		 */
+
+        var _map ={};
+
+
 		var _edges = {};
 		/**
 		 * Deleted nodes and edges
@@ -454,6 +458,15 @@ define([
                     nodes : {},
                     edges : {}
                 };
+            },
+            addToMap : function(key, value){
+                _map[key] = value;
+            },
+            lookupMap:function(key){
+                return _map[key];
+            },
+            doesMapExists:function(key){
+                return _map.hasOwnProperty(key);
             }
 
 		};

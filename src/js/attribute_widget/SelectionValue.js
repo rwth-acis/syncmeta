@@ -8,9 +8,10 @@ define([
 		'operations/ot/ValueChangeOperation',
 		'viewcanvas_widget/LogicalOperator',
 		'viewcanvas_widget/LogicalConjunctions',
+        'attribute_widget/view_types/ClosedViewGeneration',
 		'text!templates/attribute_widget/selection_value.html'
 	], /** @lends SelectionValue */
-	function ($, jsPlumb, _, IWCW, Util, AbstractValue, ValueChangeOperation, LogicalOperator, LogicalConjunctions,selectionValueHtml) {
+	function ($, jsPlumb, _, IWCW, Util, AbstractValue, ValueChangeOperation, LogicalOperator, LogicalConjunctions, CVG,selectionValueHtml) {
 
 	SelectionValue.prototype = new AbstractValue();
 	SelectionValue.prototype.constructor = SelectionValue;
@@ -62,14 +63,16 @@ define([
 		var processValueChangeOperation = function (operation, fromCallback) {
 			that.setValue(operation.getValue());
 			if (!fromCallback) {
-				var EntityMangager = require('attribute_widget/EntityManager');
+				var EntityManager = require('attribute_widget/EntityManager');
+                var PerformCvgOperation = require('operations/non_ot/PerformCvgOperation');
 				var AttributeAddOperation = require('operations/ot/AttributeAddOperation');
 				var AttributeDeleteOperation = require('operations/ot/AttributeDeleteOperation');
 				var KeySelectionValueSelectionValueAttribute = require('attribute_widget/KeySelectionValueSelectionValueAttribute');
 				var ConditionListAttribute = require('attribute_widget/view_types/attr_ConditionListAttribute');
 				var ConditionPredicateAttribute = require('attribute_widget/view_types/attr_ConditionPredicateAttribute');
 
-				if (node = EntityMangager.find(operation.getValue())) {
+               var  node = EntityManager.find(operation.getValue());
+				if (node) {
 					var viewtype = that.getRootSubjectEntity();
 					var viewtypeAttribute = viewtype.getAttributes()["[attributes]"];
 					for (var key in viewtypeAttribute.getAttributes()) {
@@ -111,7 +114,12 @@ define([
 						viewtype.addAttribute(condAttr);
 						viewtype.get$node().find('.attributes').append(condAttr.get$node());
 					}
-				}
+                    EntityManager.addToMap(node.getEntityId(), that.getRootSubjectEntity().getEntityId())
+                    var res= CVG(node,that.getRootSubjectEntity());
+                    var performCvgOp = new PerformCvgOperation(res);
+                    _iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.VIEWCANVAS, performCvgOp.toNonOTOperation());
+
+                }
 			}
 		};
 
