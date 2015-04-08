@@ -25,12 +25,20 @@ define([
      * @param {number} top y-coordinate of node position
      * @param {number} width Width of node
      * @param {number} height Height of node
+     * @param {string} viewId the identifier of the view the node belongs to
      * @constructor
      */
-    function AbstractNode(id,type,left,top,width,height){
+    function AbstractNode(id,type,left,top,width,height, viewId){
         var that = this;
 
         AbstractEntity.call(this,id);
+
+        /**
+         * identifier of view the node belongs to
+         * @type {string}
+         * @private
+         */
+        var _viewId = viewId;
 
         /**
          * Type of node
@@ -131,6 +139,7 @@ define([
                 }
             }
             that.remove();
+
         };
 
         /**
@@ -245,6 +254,17 @@ define([
             _label = label;
         };
 
+        /**
+         * get the identifier of the view the node belongs to
+         * @returns {string}
+         */
+        this.getViewId = function(){
+            return _viewId;
+        };
+
+        this.setViewId = function(viewId){
+            _viewId = viewId;
+        };
         /**
          * Get edge label
          * @returns {attribute_widget.SingleValueAttribute}
@@ -435,7 +455,9 @@ define([
         this.remove = function(){
             this.removeFromWrapper();
             //this.unregisterCallbacks();
-            require('attribute_widget/EntityManager').deleteNode(this.getEntityId());
+            var EntityManager = require('attribute_widget/EntityManager');
+            EntityManager.deleteNode(this.getEntityId());
+            EntityManager.deleteFromMap(this.getViewId(), this.getEntityId())
         };
 
         /**

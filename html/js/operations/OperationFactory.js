@@ -177,7 +177,8 @@ define([
                                         value.type,
                                         value.source,
                                         value.target,
-                                        value.json
+                                        value.json,
+                                        value.viewId
                                     );
                                     break;
                                 case CONFIG.OPERATION.TYPE.UPDATE:

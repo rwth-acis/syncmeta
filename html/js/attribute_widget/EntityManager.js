@@ -459,14 +459,26 @@ define([
                     edges : {}
                 };
             },
-            addToMap : function(key, value){
-                _map[key] = value;
+            addToMap : function(view, key, value){
+                if(!_map.hasOwnProperty(view))
+                    _map[view] ={};
+                _map[view][key] = value;
             },
-            lookupMap:function(key){
-                return _map[key];
+            lookupMap:function(view,key){
+                return _map[view][key];
             },
-            doesMapExists:function(key){
-                return _map.hasOwnProperty(key);
+            doesMapExists:function(view,key){
+                return _map.hasOwnProperty(view) ? _map[view].hasOwnProperty(key) : false;
+            },
+            deleteFromMap:function(view,value){
+                if(_map.hasOwnProperty(view)){
+                    for(var key in _map[view]){
+                        if(_map[view].hasOwnProperty(key)){
+                            if(_map[view][key] === value)
+                                delete _map[view][key];
+                        }
+                    }
+                }
             }
 
 		};

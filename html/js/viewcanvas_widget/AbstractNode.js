@@ -38,6 +38,7 @@ define([
 
         AbstractEntity.call(this,id);
 
+
         /**
          * Type of node
          * @type {string}

@@ -4,7 +4,7 @@ module.exports = function (grunt) {
 
 	// Project configuration.
 	//noinspection JSUnusedGlobalSymbols
-	var localConfig = grunt.file.readJSON('.localGruntConfig.json')
+	var localConfig = grunt.file.readJSON('.localGruntConfig.json');
 		grunt.initConfig({
 
 			pkg : grunt.file.readJSON('package.json'),
@@ -404,7 +404,7 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-requirejs');
-	grunt.loadNpmTasks('grunt-contrib-watch');
+	//grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-ssh');
 	grunt.loadNpmTasks('grunt-amdcheck');
 	grunt.loadNpmTasks('grunt-jsdoc');

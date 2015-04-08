@@ -23,6 +23,7 @@ define(['lodash', 'Util'],
          */
         function getEdgeEndpoints(edge,baseId, viewTypeId, newId) {
             return {
+                origin: baseId,
                 source: edge.getSource().getEntityId()=== baseId ? viewTypeId: newId,
                 target: edge.getTarget().getEntityId() === baseId ? viewTypeId: newId,
                 type: edge.getType()
@@ -40,6 +41,7 @@ define(['lodash', 'Util'],
         function CVG(baseNode, viewType){
             var EntityManager = require('attribute_widget/EntityManager');
             var addToViewpoint = { nodes:{}, edges:{}};
+            var viewId = viewType.getViewId();
             var neighbors = baseNode.getNeighbors();
             //iterate over the neighbors of target of the view type element
             for(var neighborId in neighbors){
@@ -48,64 +50,69 @@ define(['lodash', 'Util'],
                     var newId = Util.generateRandomId();
                     //either the new id or the id found in the map
                     var refId = null;
+                    var newEdgeId = null;
                     var neighbor = neighbors[neighborId];
                     //node shapes, edge shapes and enums are connected by a bi-dir-association
-                    if(neighbor.getType()=== 'Node Shape' || neighbor.getType()=== 'Edge Shape' || neighbor.getType() === 'Enumeration' ) {
+                    if(neighbor.getType()=== 'Node Shape' || neighbor.getType()=== 'Edge Shape' ||
+                        neighbor.getType() === 'Enumeration' || neighbor.getType() === 'Abstract Class') {
                         //create the neighbor if he is not in the map dictionary
-                        if(!EntityManager.doesMapExists(neighborId)) {
+                        if(!EntityManager.doesMapExists(viewId, neighborId)){
                             addToViewpoint.nodes[newId] = neighborId;
-                            EntityManager.addToMap(neighborId, newId);
+                            EntityManager.addToMap(viewId,neighborId, newId);
                             refId = newId;
                         }
                         else
-                            refId = EntityManager.lookupMap(neighborId);
+                            refId = EntityManager.lookupMap(viewId, neighborId);
 
-                        addToViewpoint.edges[Util.generateRandomId()] = {
-                            type:'Bi-Dir-Association',
-                            source: viewType.getEntityId(),
-                            target:refId
-                        };
-                    }
-                    //abstract classes are connected by a generalisation edge to the view type object
-                    else if(neighbor.getType() === 'Abstract Class'){
-                        if(!EntityManager.doesMapExists(neighborId)) {
-                            addToViewpoint.nodes[newId] = neighborId;
-                            EntityManager.addToMap(neighborId, newId);
-                            refId = newId;
+                        var originalEdge = getEdgeBetween(baseNode, neighbor);
+                        if(!EntityManager.doesMapExists(viewId,originalEdge.getEntityId())){
+                            newEdgeId = Util.generateRandomId();
+                            EntityManager.addToMap(viewId, originalEdge.getEntityId(), newEdgeId);
+                            addToViewpoint.edges[newEdgeId] = {
+                                origin:originalEdge.getEntityId(),
+                                type: originalEdge.getType(),
+                                source: viewType.getEntityId(),
+                                target:refId
+                            };
                         }
-                        else
-                            refId = EntityManager.lookupMap(neighborId);
-
-                        addToViewpoint.edges[Util.generateRandomId()] = {
-                            type:'Generalisation',
-                            source: viewType.getEntityId(),
-                            target:refId
-                        };
                     }
                     else if((neighbor.getType() === 'Object' ||
                         neighbor.getType() === 'Relationship') &&
-                        EntityManager.doesMapExists(neighborId)){
+                        EntityManager.doesMapExists(viewId,neighborId)){
                         var edge1 =getEdgeBetween(baseNode, neighbor);
-                        addToViewpoint.edges[newId] = getEdgeEndpoints(edge1, baseNode.getEntityId(), viewType.getEntityId(), newId);
+                        if(!EntityManager.doesMapExists(viewId,edge1.getEntityId())) {
+                            addToViewpoint.edges[newEdgeId] = getEdgeEndpoints(edge1, baseNode.getEntityId(), viewType.getEntityId(), newId);
+                            EntityManager.addToMap(viewId,edge1.getEntityId(), newId);
+                        }
 
                     }else if(neighbor.getType() === 'Relation'){
                         var relationNeighbors = neighbor.getNeighbors();
                         for(var key in relationNeighbors){
-                            if(relationNeighbors.hasOwnProperty(key) && (relationNeighbors[key].getType() === 'Relationship' || relationNeighbors[key].getType() === 'Object')){
+                            if(relationNeighbors.hasOwnProperty(key) &&
+                                ((relationNeighbors[key].getType() === 'Relationship' && baseNode.getType() === 'Object')
+                                || (relationNeighbors[key].getType() === 'Object' && baseNode.getType() === 'Relationship'))){
                                 var relationshipId = relationNeighbors[key].getEntityId();
-                                if(EntityManager.doesMapExists(relationshipId)) {
-                                    if (!EntityManager.doesMapExists(neighborId)) {
+                                if(EntityManager.doesMapExists(viewId,relationshipId)) {
+                                    if (!EntityManager.doesMapExists(viewId,neighborId)) {
                                         addToViewpoint.nodes[newId] = neighborId;
-                                        EntityManager.addToMap(neighborId, newId);
+                                        EntityManager.addToMap(viewId,neighborId, newId);
                                         refId = newId;
                                     }
                                     else
-                                        refId = EntityManager.lookupMap(neighborId);
+                                        refId = EntityManager.lookupMap(viewId,neighborId);
 
                                     var edge2 = getEdgeBetween(baseNode, neighbor);
-                                    addToViewpoint.edges[Util.generateRandomId()] = getEdgeEndpoints(edge2, baseNode.getEntityId(), viewType.getEntityId(), refId);
+                                    if(!EntityManager.doesMapExists(viewId,edge2.getEntityId())) {
+                                        newEdgeId = Util.generateRandomId();
+                                        addToViewpoint.edges[newEdgeId] = getEdgeEndpoints(edge2, baseNode.getEntityId(), viewType.getEntityId(), refId);
+                                        EntityManager.addToMap(viewId, edge2.getEntityId(), newEdgeId);
+                                    }
                                     var edge3 = getEdgeBetween(neighbor, relationNeighbors[key]);
-                                    addToViewpoint.edges[Util.generateRandomId()] = getEdgeEndpoints(edge3, relationshipId, EntityManager.lookupMap(relationshipId), refId);
+                                    if(!EntityManager.doesMapExists(viewId,edge3.getEntityId())){
+                                        newEdgeId = Util.generateRandomId();
+                                        addToViewpoint.edges[newEdgeId] = getEdgeEndpoints(edge3, relationshipId, EntityManager.lookupMap(viewId,relationshipId), refId);
+                                        EntityManager.addToMap(viewId, edge3.getEntityId(), newEdgeId);
+                                    }
                                 }
                             }
                         }

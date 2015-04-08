@@ -19,6 +19,8 @@ define([
      * @param {number} height Height of node
      * @param {number} zIndex Position of node on z-axis
      * @param {object} json JSON representation of node
+     * @param {string} toCanvas the canvas widget, can be CONFIG.WIDGET.NAME.MAIN or CONFIG.WIDGET.NAME.VIEWCANVAS
+     * @param {string} viewId the identifier of the view
      * @constructor
      */
     function NodeAddOperation(entityId,type,left,top,width,height,zIndex,json, toCanvas, viewId){
@@ -26,7 +28,18 @@ define([
 
         EntityOperation.call(this,EntityOperation.TYPES.NodeAddOperation,entityId,CONFIG.ENTITY.NODE);
 
+        /**
+         * the canvas widget, can be CONFIG.WIDGET.NAME.MAIN or CONFIG.WIDGET.NAME.VIEWCANVAS
+         * @type {string}
+         * @private
+         */
         var _toCanvas = toCanvas;
+
+        /**
+         * the identifier of the view
+         * @type {string}
+         * @private
+         */
         var _viewId = viewId;
         /**
          * Type of node to add
@@ -156,9 +169,18 @@ define([
             return _json;
         };
 
+        /**
+         * the name of the canvas widget
+         * @returns {string}
+         */
         this.getToCanvas = function(){
             return _toCanvas;
         };
+
+        /**
+         * the identifier of the view
+         * @returns {string}
+         */
         this.getViewId = function(){
           return _viewId;
         };

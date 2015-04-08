@@ -438,7 +438,7 @@ define([
 			generateAddNodeMenu : function (canvas, left, top) {
 				function makeAddNodeCallback(nodeType, width, height) {
 					return function () {
-						canvas.createNode(nodeType, left, top, width, height);
+						canvas.createNode(nodeType, left, top, width, height, null, null, null, CONFIG.WIDGET.NAME.VIEWCANVAS, $('#lblCurrentView').text());
 					};
 				}
 

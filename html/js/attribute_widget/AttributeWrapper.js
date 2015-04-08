@@ -44,7 +44,7 @@ define([
          */
         var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE);
 
-        var _nodes = {};
+        //var _nodes = {};
 
         /**
          * Callback for a Entity Select Operation
@@ -69,6 +69,7 @@ define([
                 } else {
                     node = EntityManager.createNode(operation.getType(),operation.getEntityId(),operation.getLeft(),operation.getTop(),operation.getWidth(),operation.getHeight());
                 }
+                node.setViewId(operation.getViewId());
                 node.addToWrapper(that);
             }
         };
@@ -85,6 +86,7 @@ define([
                 } else {
                     edge = EntityManager.createEdge(operation.getType(),operation.getEntityId(),EntityManager.findNode(operation.getSource()),EntityManager.findNode(operation.getTarget()));
                 }
+                edge.setViewId(operation.getViewId());
                 edge.addToWrapper(that);
             }
         };

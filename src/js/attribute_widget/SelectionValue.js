@@ -59,6 +59,7 @@ define([
 		/**
 		 * Apply a Value Change Operation
 		 * @param {operations.ot.ValueChangeOperation} operation
+         * @param {bool} fromCallback determines if the method is called from the callback or not
 		 */
 		var processValueChangeOperation = function (operation, fromCallback) {
 			that.setValue(operation.getValue());
@@ -72,49 +73,57 @@ define([
 				var ConditionPredicateAttribute = require('attribute_widget/view_types/attr_ConditionPredicateAttribute');
 
                var  node = EntityManager.find(operation.getValue());
+                var op = null;
+                var attr = null;
 				if (node) {
-					var viewtype = that.getRootSubjectEntity();
-					var viewtypeAttribute = viewtype.getAttributes()["[attributes]"];
-					for (var key in viewtypeAttribute.getAttributes()) {
-						if (viewtypeAttribute.getAttributes().hasOwnProperty(key)) {
-							var attr = viewtypeAttribute.getAttributes()[key];
-							var operation = new AttributeDeleteOperation(attr.getEntityId(), attr.getSubjectEntityId(), attr.getRootSubjectEntity().getEntityId(), KeySelectionValueSelectionValueAttribute.TYPE);
-							attr.propagateAttributeDeleteOperation(operation);
+					var viewType = that.getRootSubjectEntity();
+					var viewTypeAttribute = viewType.getAttributes()["[attributes]"];
+                    var viewTypeAttrList = viewTypeAttribute.getAttributes();
+
+                    //delete the old all attributes of the old target
+					for (var key1 in viewTypeAttrList) {
+						if (viewTypeAttrList.hasOwnProperty(key1)) {
+							attr = viewTypeAttrList[key1];
+                            op = new AttributeDeleteOperation(attr.getEntityId(), attr.getSubjectEntityId(), attr.getRootSubjectEntity().getEntityId(), KeySelectionValueSelectionValueAttribute.TYPE);
+							attr.propagateAttributeDeleteOperation(op);
 						}
 					}
 					var attributeList = {};
+                    //the attributes of the new target
 					var targetAttributes = node.getAttributes()["[attributes]"].getAttributes();
-					for (var key in targetAttributes) {
-						if (targetAttributes.hasOwnProperty(key)) {
+                    //crate the attributes of the new target
+					for (var key2 in targetAttributes) {
+						if (targetAttributes.hasOwnProperty(key2)) {
 							var id = Util.generateRandomId();
 
-							var operation = new AttributeAddOperation(id, viewtypeAttribute.getEntityId(), viewtypeAttribute.getRootSubjectEntity().getEntityId(), KeySelectionValueSelectionValueAttribute.TYPE);
-							viewtypeAttribute.propagateAttributeAddOperation(operation);
-							var attr = viewtypeAttribute.getAttribute(id);
-							attr.getKey().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT, targetAttributes[key].getKey().getValue(), 0);
-							attr.getValue().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT,targetAttributes[key].getValue().getValue(), 0);
-                            if(viewtype.getType() === 'ViewRelationship')
-                                attr.getValue2().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT,targetAttributes[key].getValue2().getValue(), 0);
+                            op = new AttributeAddOperation(id, viewTypeAttribute.getEntityId(), viewTypeAttribute.getRootSubjectEntity().getEntityId(), KeySelectionValueSelectionValueAttribute.TYPE);
+							viewTypeAttribute.propagateAttributeAddOperation(op);
+							attr = viewTypeAttribute.getAttribute(id);
+							attr.getKey().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT, targetAttributes[key2].getKey().getValue(), 0);
+							attr.getValue().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT,targetAttributes[key2].getValue().getValue(), 0);
+                            if(viewType.getType() === 'ViewRelationship')
+                                attr.getValue2().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT,targetAttributes[key2].getValue2().getValue(), 0);
 
-                            attributeList[id] = targetAttributes[key].getKey().getValue();
+                            attributeList[id] = targetAttributes[key2].getKey().getValue();
 						}
 					}
 					
-					if (condListAttr = viewtype.getAttribute('[condition]')) {
+					if (condListAttr = viewType.getAttribute('[condition]')) {
 						condListAttr.setOptions(attributeList);
-						for (var key in viewtype.getAttribute('[condition]').getAttributes()) {
-							if (viewtype.getAttribute('[condition]').getAttributes().hasOwnProperty(key)) {
-								var attr = viewtype.getAttribute('[condition]').getAttributes()[key];
-								var operation = new AttributeDeleteOperation(attr.getEntityId(), attr.getSubjectEntityId(), attr.getRootSubjectEntity().getEntityId(), ConditionPredicateAttribute.TYPE);
-								attr.propagateAttributeDeleteOperation(operation);
+                        var attrList = condListAttr.getAttributes();
+						for (var key3 in attrList) {
+							if (attrList.hasOwnProperty(key3)) {
+								attr = attrList[key3];
+                                op = new AttributeDeleteOperation(attr.getEntityId(), attr.getSubjectEntityId(), attr.getRootSubjectEntity().getEntityId(), ConditionPredicateAttribute.TYPE);
+								attr.propagateAttributeDeleteOperation(op);
 							}
 						}
 					} else {
-						var condAttr = new ConditionListAttribute("[condition]", "Conditions", viewtype, attributeList, LogicalOperator, LogicalConjunctions);
-						viewtype.addAttribute(condAttr);
-						viewtype.get$node().find('.attributes').append(condAttr.get$node());
+						var condAttr = new ConditionListAttribute("[condition]", "Conditions", viewType, attributeList, LogicalOperator, LogicalConjunctions);
+						viewType.addAttribute(condAttr);
+						viewType.get$node().find('.attributes').append(condAttr.get$node());
 					}
-                    EntityManager.addToMap(node.getEntityId(), that.getRootSubjectEntity().getEntityId())
+                    EntityManager.addToMap(that.getRootSubjectEntity().getViewId(), node.getEntityId(), that.getRootSubjectEntity().getEntityId());
                     var res= CVG(node,that.getRootSubjectEntity());
                     var performCvgOp = new PerformCvgOperation(res);
                     _iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.VIEWCANVAS, performCvgOp.toNonOTOperation());

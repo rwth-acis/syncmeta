@@ -583,16 +583,17 @@ define([
 		 * @param {canvas_widget.AbstractNode} target Target node entity id
 		 * @param {object} [json] representation of edge
          * @param {string} identifier the identifier of the edge
+         * @param {string} viewId the identifier of the view
 		 * @return {number} id of new edge
 		 */
-		this.createEdge = function (type, source, target, json, identifier) {
+		this.createEdge = function (type, source, target, json, identifier, viewId) {
 			//if(source !== target){
 			var id = null;
             if(identifier)
                 id = identifier;
             else
                 id = Util.generateRandomId(24);
-			var operation = new EdgeAddOperation(id, type, source, target, json || null);
+			var operation = new EdgeAddOperation(id, type, source, target, json || null, viewId);
 
 			propagateEdgeAddOperation(operation);
 			return id;
