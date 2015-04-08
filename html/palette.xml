@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- generated on Wed Apr 08 2015 16:43:48 -->
+<!-- generated on Wed Apr 08 2015 18:03:55 -->
 <Module>
   <ModulePrefs
     title="Palette"
@@ -58,17 +58,17 @@
           timeout();
         })();
     </script>
-    <script src="http://localhost:8081/js/lib/parallel.js"></script>
-    <script src="http://localhost:8081/js/config.js"></script>
-    <script src="http://localhost:8081/js/lib/vendor/require.js"></script>    
-    <link rel="stylesheet" type="text/css" href="http://localhost:8081/css/vendor/jquery-ui.css">
-<link rel="stylesheet" type="text/css" href="http://localhost:8081/css/style.css">
-<link rel="stylesheet" type="text/css" href="http://localhost:8081/css/palette_widget.css">
-<script src="http://localhost:8081/js/palette_widget.js"></script>
+    <script src="http://mari0.github.io/syncmeta/html/js/lib/parallel.js"></script>
+    <script src="http://mari0.github.io/syncmeta/html/js/config.js"></script>
+    <script src="http://mari0.github.io/syncmeta/html/js/lib/vendor/require.js"></script>    
+    <link rel="stylesheet" type="text/css" href="http://mari0.github.io/syncmeta/html/css/vendor/jquery-ui.css">
+<link rel="stylesheet" type="text/css" href="http://mari0.github.io/syncmeta/html/css/style.css">
+<link rel="stylesheet" type="text/css" href="http://mari0.github.io/syncmeta/html/css/palette_widget.css">
+<script src="http://mari0.github.io/syncmeta/html/js/palette_widget.js"></script>
 <div id="palette"></div>
 <p id="info"></p>
 <div id="q"></div>
-    <script src="http://localhost:8081/js/shared.js"></script>    
+    <script src="http://mari0.github.io/syncmeta/html/js/shared.js"></script>    
     ]]>
   </Content>
 </Module>
