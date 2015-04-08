@@ -1,7 +1,6 @@
 # SyncMeta - Near real-time collaborative modeling framework
 ## General information
-For explanations, presentations and demos see the [SyncMeta homepage][1]. 
-See SyncMeta in action in [Role-SDK](http://role-sandbox.eu/spaces/syncmeta).
+For explanations, presentations, demos and links to modeling sandboxes and other stuff please visit the [SyncMeta homepage][1]. 
 
 ## Build steps
 1. Make sure to have *npm*, *bower* and *grunt* installed
@@ -27,7 +26,6 @@ See SyncMeta in action in [Role-SDK](http://role-sandbox.eu/spaces/syncmeta).
   * [Generate Instance widget](https://rwth-acis.github.io/syncmeta/html/generated_instances.xml) Generate a new SyncMeta instance.
   
 ### Deploy
-
 
 In order to deploy SyncMeta to [http://role-sandbox.eu/spaces/syncmeta](http://role-sandbox.eu/spaces/syncmeta), 
 you have to push your latest changes to the `gh-pages` github branch. 
