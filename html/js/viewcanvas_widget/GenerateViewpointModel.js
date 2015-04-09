@@ -370,10 +370,10 @@ define(['Util',
                                             groupEdge = groupEdges[groupEdgeId];
                                             groupSource = groupEdge.getSource();
                                             groupTarget = groupEdge.getTarget();
-                                            if ((groupEdge instanceof BiDirAssociationEdge &&
-                                                (groupTarget === neighbor && (groupNeighbor = groupSource)instanceof ObjectNode ||
-                                                groupTarget === neighbor && (groupNeighbor = groupSource)instanceof ViewObjectNode ||
-                                                groupSource === neighbor && (groupNeighbor = groupTarget)instanceof ObjectNode ||
+                                            if (groupEdge instanceof BiDirAssociationEdge &&
+                                                ((groupTarget === neighbor && (groupNeighbor = groupSource)instanceof ObjectNode ||
+                                                groupSource === neighbor && (groupNeighbor = groupTarget)instanceof ObjectNode) ||
+                                                (groupTarget === neighbor && (groupNeighbor = groupSource)instanceof ViewObjectNode ||
                                                 groupSource === neighbor && (groupNeighbor = groupTarget)instanceof ViewObjectNode))) {
 
                                                 groupConcreteTypes = getConcreteObjectNodeTypes(groupNeighbor);
@@ -384,7 +384,7 @@ define(['Util',
 
                                                 groupTargetTypes = groupTargetTypes.concat(getConcreteObjectNodeTypes(groupTarget));
 
-                                            } else if (groupEdge instanceof UniDirAssociationEdge && groupTarget === neighbor && (groupSource instanceof ObjectNode || groupTarget instanceof ViewObjectNode)) {
+                                            } else if (groupEdge instanceof UniDirAssociationEdge && groupTarget === neighbor && (groupSource instanceof ObjectNode || groupSource instanceof ViewObjectNode)) {
 
                                                 groupSourceTypes = groupSourceTypes.concat(getConcreteObjectNodeTypes(groupSource));
 

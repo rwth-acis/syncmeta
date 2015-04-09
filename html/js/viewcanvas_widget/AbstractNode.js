@@ -32,12 +32,14 @@ define([
      * @param {number} width Width of node
      * @param {number} height Height of node
      * @param {number} zIndex Position of node on z-axis
+     * @param {string} origin the identifier of the element in the base model
      */
-    function AbstractNode(id,type,left,top,width,height,zIndex){
+    function AbstractNode(id,type,left,top,width,height,zIndex, origin){
         var that = this;
 
         AbstractEntity.call(this,id);
 
+        var _origin = origin;
 
         /**
          * Type of node
@@ -695,6 +697,23 @@ define([
         };
 
         /**
+         * get the origin of the viewpoint element
+         * @returns {string}
+         */
+        this.getOrigin = function(){
+            return _origin;
+        };
+
+        /**
+         * set the origin
+         * origin is a identifier of a element of a base node
+         * @param origin
+         */
+        this.setOrigin = function(origin){
+            _origin = origin;
+        };
+
+        /**
          * Get jQuery object of DOM node representing the node
          * @returns {jQuery}
          * @private
@@ -959,7 +978,8 @@ define([
                 height: _appearance.height,
                 zIndex: _zIndex,
                 type: _type,
-                attributes: attr
+                attributes: attr,
+                origin :_origin
             };
         };
 

@@ -3,9 +3,10 @@ define([
     'operations/ot/NodeAddOperation',
     'operations/ot/EdgeAddOperation',
     'operations/non_ot/EntitySelectOperation',
+    'operations/non_ot/DeleteViewOperation',
     'attribute_widget/ModelAttributesNode',
     'attribute_widget/EntityManager'
-],/** @lends AttributeWrapper */function (IWCW,NodeAddOperation,EdgeAddOperation,EntitySelectOperation,ModelAttributesNode,EntityManager) {
+],/** @lends AttributeWrapper */function (IWCW,NodeAddOperation,EdgeAddOperation,EntitySelectOperation,DeleteViewOperation,ModelAttributesNode,EntityManager) {
 
     /**
      * AttributeWrapper
@@ -134,6 +135,7 @@ define([
             iwc.registerOnDataReceivedCallback(entitySelectCallback);
             iwc.registerOnDataReceivedCallback(nodeAddCallback);
             iwc.registerOnDataReceivedCallback(edgeAddCallback);
+            iwc.registerOnDataReceivedCallback(deleteViewCallback);
         };
 
 
@@ -144,10 +146,18 @@ define([
             iwc.unregisterOnDataReceivedCallback(entitySelectCallback);
             iwc.unregisterOnDataReceivedCallback(nodeAddCallback);
             iwc.unregisterOnDataReceivedCallback(edgeAddCallback);
+            iwc.unregisterOnDataReceivedCallback(deleteViewCallback);
+
         };
 
         if(iwc){
             that.registerCallbacks();
+        }
+
+        function deleteViewCallback(operation){
+            if(operation instanceof DeleteViewOperation){
+                EntityManager.deleteViewFromMap(operation.getViewId());
+            }
         }
 
         this.select(_modelAttributesNode);

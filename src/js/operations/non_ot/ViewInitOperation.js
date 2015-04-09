@@ -9,7 +9,8 @@ define([
      * @class operations.non_ot.ViewInitOperation
      * @memberof operations.non_ot
      * @constructor
-     * @param {string} data Name of the entered widget
+     * @param {object} data the view as json
+     * @param {object} viewpoint the viewpoint vls as json
      */
     function ViewInitOperation(data, viewpoint){
         /**

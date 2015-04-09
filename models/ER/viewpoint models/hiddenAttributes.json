@@ -1,0 +1,831 @@
+{
+    "attributes": {},
+    "nodes": {
+        "65cd1d6287f8470e9d1f544b": {
+            "label": {
+                "id": "65cd1d6287f8470e9d1f544b[label]",
+                "name": "Label",
+                "value": {
+                    "id": "65cd1d6287f8470e9d1f544b[label]",
+                    "name": "Label",
+                    "value": "Entity"
+                }
+            },
+            "left": 4362,
+            "top": 4380,
+            "width": 150,
+            "height": 100,
+            "zIndex": 16001,
+            "type": "ViewObject",
+            "attributes": {
+                "[attributes]": {
+                    "id": "[attributes]",
+                    "name": "Attributes",
+                    "type": "KeySelectionValueSelectionValueListAttribute",
+                    "list": {
+                        "e15279d3b2417ecfbfacf209": {
+                            "id": "e15279d3b2417ecfbfacf209",
+                            "name": "Attribute",
+                            "key": {
+                                "id": "e15279d3b2417ecfbfacf209[key]",
+                                "name": "",
+                                "value": "name"
+                            },
+                            "value": {
+                                "id": "e15279d3b2417ecfbfacf209[value]",
+                                "name": "",
+                                "value": "string"
+                            },
+                            "value2": {
+                                "id": "e15279d3b2417ecfbfacf209[value2]",
+                                "name": "",
+                                "value": "show"
+                            }
+                        },
+                        "57538ec1d2aef37426fc3061": {
+                            "id": "57538ec1d2aef37426fc3061",
+                            "name": "Attribute",
+                            "key": {
+                                "id": "57538ec1d2aef37426fc3061[key]",
+                                "name": "",
+                                "value": "title"
+                            },
+                            "value": {
+                                "id": "57538ec1d2aef37426fc3061[value]",
+                                "name": "",
+                                "value": "string"
+                            },
+                            "value2": {
+                                "id": "57538ec1d2aef37426fc3061[value2]",
+                                "name": "",
+                                "value": "show"
+                            }
+                        },
+                        "b0629f72250395060b2761c2": {
+                            "id": "b0629f72250395060b2761c2",
+                            "name": "Attribute",
+                            "key": {
+                                "id": "b0629f72250395060b2761c2[key]",
+                                "name": "",
+                                "value": "number"
+                            },
+                            "value": {
+                                "id": "b0629f72250395060b2761c2[value]",
+                                "name": "",
+                                "value": "integer"
+                            },
+                            "value2": {
+                                "id": "b0629f72250395060b2761c2[value2]",
+                                "name": "",
+                                "value": "show"
+                            }
+                        },
+                        "ae9426df6aa0971cf318120b": {
+                            "id": "ae9426df6aa0971cf318120b",
+                            "name": "Attribute",
+                            "key": {
+                                "id": "ae9426df6aa0971cf318120b[key]",
+                                "name": "",
+                                "value": "bool"
+                            },
+                            "value": {
+                                "id": "ae9426df6aa0971cf318120b[value]",
+                                "name": "",
+                                "value": "boolean"
+                            },
+                            "value2": {
+                                "id": "ae9426df6aa0971cf318120b[value2]",
+                                "name": "",
+                                "value": "show"
+                            }
+                        },
+                        "9d7407f485652c287daf2eaa": {
+                            "id": "9d7407f485652c287daf2eaa",
+                            "name": "Attribute",
+                            "key": {
+                                "id": "9d7407f485652c287daf2eaa[key]",
+                                "name": "",
+                                "value": "file"
+                            },
+                            "value": {
+                                "id": "9d7407f485652c287daf2eaa[value]",
+                                "name": "",
+                                "value": "file"
+                            },
+                            "value2": {
+                                "id": "9d7407f485652c287daf2eaa[value2]",
+                                "name": "",
+                                "value": "show"
+                            }
+                        }
+                    }
+                },
+                "65cd1d6287f8470e9d1f544b[conjunction]": {
+                    "id": "65cd1d6287f8470e9d1f544b[conjunction]",
+                    "name": "Conjunction",
+                    "value": {
+                        "id": "65cd1d6287f8470e9d1f544b[conjunction]",
+                        "name": "Conjunction",
+                        "value": "AND"
+                    }
+                },
+                "65cd1d6287f8470e9d1f544b[target]": {
+                    "id": "65cd1d6287f8470e9d1f544b[target]",
+                    "name": "Target",
+                    "value": {
+                        "id": "65cd1d6287f8470e9d1f544b[target]",
+                        "name": "Target",
+                        "value": "04e7ae49df1d781508efb73b"
+                    }
+                },
+                "[condition]": {
+                    "id": "[condition]",
+                    "name": "Conditions",
+                    "type": "ConditionListAttribute",
+                    "list": {}
+                }
+            }
+        },
+        "41be14e97d6907516cf08281": {
+            "label": {
+                "id": "41be14e97d6907516cf08281[label]",
+                "name": "Label",
+                "value": {
+                    "id": "41be14e97d6907516cf08281[label]",
+                    "name": "Label",
+                    "value": "EntityShape"
+                }
+            },
+            "left": 4126,
+            "top": 4218,
+            "width": 150,
+            "height": 150,
+            "zIndex": 16026,
+            "type": "Node Shape",
+            "attributes": {
+                "41be14e97d6907516cf08281[shape]": {
+                    "id": "41be14e97d6907516cf08281[shape]",
+                    "name": "Shape",
+                    "value": {
+                        "id": "41be14e97d6907516cf08281[shape]",
+                        "name": "Shape",
+                        "value": "rectangle"
+                    }
+                },
+                "41be14e97d6907516cf08281[color]": {
+                    "id": "41be14e97d6907516cf08281[color]",
+                    "name": "Color",
+                    "value": {
+                        "id": "41be14e97d6907516cf08281[color]",
+                        "name": "Color",
+                        "value": ""
+                    }
+                },
+                "41be14e97d6907516cf08281[defaultWidth]": {
+                    "id": "41be14e97d6907516cf08281[defaultWidth]",
+                    "name": "Default Width",
+                    "value": {
+                        "id": "41be14e97d6907516cf08281[defaultWidth]",
+                        "name": "Default Width",
+                        "value": 0
+                    }
+                },
+                "41be14e97d6907516cf08281[defaultHeight]": {
+                    "id": "41be14e97d6907516cf08281[defaultHeight]",
+                    "name": "Default Height",
+                    "value": {
+                        "id": "41be14e97d6907516cf08281[defaultHeight]",
+                        "name": "Default Height",
+                        "value": 0
+                    }
+                },
+                "41be14e97d6907516cf08281[customShape]": {
+                    "id": "41be14e97d6907516cf08281[customShape]",
+                    "name": "Custom Shape",
+                    "value": {
+                        "id": "41be14e97d6907516cf08281[customShape]",
+                        "name": "Custom Shape",
+                        "value": "<div class=\"custom_node\">\n    <div class=\"type\"><%= type %></div>\n    <svg xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"none\" viewBox=\"0 0 100 100\" class=\"fill_parent\">\n        <rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"rgb(255, 255, 255)\" stroke=\"black\" stroke-width=\"2\"></rect>\n    </svg>\n    <div class=\"fill_parent\">\n        <div style=\"position: absolute; left: 50%; top: 50%; -webkit-transform: translateY(-50%) translateX(-50%)\" class=\"name center\"></div>\n    </div>\n</div>"
+                    }
+                },
+                "41be14e97d6907516cf08281[customAnchors]": {
+                    "id": "41be14e97d6907516cf08281[customAnchors]",
+                    "name": "Custom Anchors",
+                    "value": {
+                        "id": "41be14e97d6907516cf08281[customAnchors]",
+                        "name": "Custom Anchors",
+                        "value": ""
+                    }
+                }
+            },
+            "origin": "f2dbe01e93ecc6929a0884e3"
+        },
+        "9a80e032628bb9b71696a439": {
+            "label": {
+                "id": "9a80e032628bb9b71696a439[label]",
+                "name": "Label",
+                "value": {
+                    "id": "9a80e032628bb9b71696a439[label]",
+                    "name": "Label",
+                    "value": "enum"
+                }
+            },
+            "left": 4047,
+            "top": 4427,
+            "width": 150,
+            "height": 100,
+            "zIndex": 16035,
+            "type": "Enumeration",
+            "attributes": {
+                "[attributes]": {
+                    "id": "[attributes]",
+                    "name": "Attributes",
+                    "type": "SingleValueListAttribute",
+                    "list": {
+                        "b4cd54b007d8ea36114d81d4": {
+                            "id": "b4cd54b007d8ea36114d81d4",
+                            "name": "b4cd54b007d8ea36114d81d4",
+                            "value": {
+                                "id": "b4cd54b007d8ea36114d81d4",
+                                "name": "b4cd54b007d8ea36114d81d4",
+                                "value": "first"
+                            }
+                        },
+                        "ae14baa2a6dd6f860271a6ed": {
+                            "id": "ae14baa2a6dd6f860271a6ed",
+                            "name": "ae14baa2a6dd6f860271a6ed",
+                            "value": {
+                                "id": "ae14baa2a6dd6f860271a6ed",
+                                "name": "ae14baa2a6dd6f860271a6ed",
+                                "value": "second"
+                            }
+                        },
+                        "e4d6d5484715a44b31d574e1": {
+                            "id": "e4d6d5484715a44b31d574e1",
+                            "name": "e4d6d5484715a44b31d574e1",
+                            "value": {
+                                "id": "e4d6d5484715a44b31d574e1",
+                                "name": "e4d6d5484715a44b31d574e1",
+                                "value": "thrid"
+                            }
+                        }
+                    }
+                }
+            },
+            "origin": "f35d0bc397d18f72991283f5"
+        },
+        "3142baa54f24ea10e6cb9cb3": {
+            "label": {
+                "id": "3142baa54f24ea10e6cb9cb3[label]",
+                "name": "Label",
+                "value": {
+                    "id": "3142baa54f24ea10e6cb9cb3[label]",
+                    "name": "Label",
+                    "value": "container"
+                }
+            },
+            "left": 4507,
+            "top": 4148,
+            "width": 150,
+            "height": 100,
+            "zIndex": 16034,
+            "type": "Abstract Class",
+            "attributes": {
+                "[attributes]": {
+                    "id": "[attributes]",
+                    "name": "Attributes",
+                    "type": "KeySelectionValueListAttribute",
+                    "list": {
+                        "99a086227f5acf22f0bf744e": {
+                            "id": "99a086227f5acf22f0bf744e",
+                            "name": "99a086227f5acf22f0bf744e",
+                            "key": {
+                                "id": "99a086227f5acf22f0bf744e[key]",
+                                "name": "",
+                                "value": "id"
+                            },
+                            "value": {
+                                "id": "99a086227f5acf22f0bf744e[value]",
+                                "name": "",
+                                "value": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "origin": "ee23af91bdf1cb8363d79a62"
+        },
+        "edae24842fc13742f4c7ef41": {
+            "label": {
+                "id": "edae24842fc13742f4c7ef41[label]",
+                "name": "Label",
+                "value": {
+                    "id": "edae24842fc13742f4c7ef41[label]",
+                    "name": "Label",
+                    "value": "Associations"
+                }
+            },
+            "left": 4304,
+            "top": 4782,
+            "width": 150,
+            "height": 100,
+            "zIndex": 16036,
+            "type": "ViewRelationship",
+            "attributes": {
+                "[attributes]": {
+                    "id": "[attributes]",
+                    "name": "Attributes",
+                    "type": "KeySelectionValueSelectionValueListAttribute",
+                    "list": {
+                        "648e9a9ba529887b89ed0549": {
+                            "id": "648e9a9ba529887b89ed0549",
+                            "name": "Attribute",
+                            "key": {
+                                "id": "648e9a9ba529887b89ed0549[key]",
+                                "name": "",
+                                "value": "name"
+                            },
+                            "value": {
+                                "id": "648e9a9ba529887b89ed0549[value]",
+                                "name": "",
+                                "value": "string"
+                            },
+                            "value2": {
+                                "id": "648e9a9ba529887b89ed0549[value2]",
+                                "name": "",
+                                "value": "center"
+                            }
+                        },
+                        "d38545c469d361649f5abd22": {
+                            "id": "d38545c469d361649f5abd22",
+                            "name": "Attribute",
+                            "key": {
+                                "id": "d38545c469d361649f5abd22[key]",
+                                "name": "",
+                                "value": "cardinality1"
+                            },
+                            "value": {
+                                "id": "d38545c469d361649f5abd22[value]",
+                                "name": "",
+                                "value": "string"
+                            },
+                            "value2": {
+                                "id": "d38545c469d361649f5abd22[value2]",
+                                "name": "",
+                                "value": "top"
+                            }
+                        },
+                        "d5da43317204d2e959bcb29e": {
+                            "id": "d5da43317204d2e959bcb29e",
+                            "name": "Attribute",
+                            "key": {
+                                "id": "d5da43317204d2e959bcb29e[key]",
+                                "name": "",
+                                "value": "bool"
+                            },
+                            "value": {
+                                "id": "d5da43317204d2e959bcb29e[value]",
+                                "name": "",
+                                "value": "boolean"
+                            },
+                            "value2": {
+                                "id": "d5da43317204d2e959bcb29e[value2]",
+                                "name": "",
+                                "value": "hidden"
+                            }
+                        },
+                        "8c30a89f1184a69a22a880d2": {
+                            "id": "8c30a89f1184a69a22a880d2",
+                            "name": "Attribute",
+                            "key": {
+                                "id": "8c30a89f1184a69a22a880d2[key]",
+                                "name": "",
+                                "value": "cardinality2"
+                            },
+                            "value": {
+                                "id": "8c30a89f1184a69a22a880d2[value]",
+                                "name": "",
+                                "value": "string"
+                            },
+                            "value2": {
+                                "id": "8c30a89f1184a69a22a880d2[value2]",
+                                "name": "",
+                                "value": "bottom"
+                            }
+                        }
+                    }
+                },
+                "edae24842fc13742f4c7ef41[conjunction]": {
+                    "id": "edae24842fc13742f4c7ef41[conjunction]",
+                    "name": "Conjunction",
+                    "value": {
+                        "id": "edae24842fc13742f4c7ef41[conjunction]",
+                        "name": "Conjunction",
+                        "value": "AND"
+                    }
+                },
+                "edae24842fc13742f4c7ef41[target]": {
+                    "id": "edae24842fc13742f4c7ef41[target]",
+                    "name": "Target",
+                    "value": {
+                        "id": "edae24842fc13742f4c7ef41[target]",
+                        "name": "Target",
+                        "value": "500ede69e2a7612a3d635d8e"
+                    }
+                },
+                "[condition]": {
+                    "id": "[condition]",
+                    "name": "Conditions",
+                    "type": "ConditionListAttribute",
+                    "list": {}
+                }
+            }
+        },
+        "a1689e41da2f24469035c012": {
+            "label": {
+                "id": "a1689e41da2f24469035c012[label]",
+                "name": "Label",
+                "value": {
+                    "id": "a1689e41da2f24469035c012[label]",
+                    "name": "Label",
+                    "value": "Associationshape"
+                }
+            },
+            "left": 4019,
+            "top": 4724,
+            "width": 150,
+            "height": 150,
+            "zIndex": 16030,
+            "type": "Edge Shape",
+            "attributes": {
+                "a1689e41da2f24469035c012[arrow]": {
+                    "id": "a1689e41da2f24469035c012[arrow]",
+                    "name": "Arrow",
+                    "value": {
+                        "id": "a1689e41da2f24469035c012[arrow]",
+                        "name": "Arrow",
+                        "value": "bidirassociation"
+                    }
+                },
+                "a1689e41da2f24469035c012[shape]": {
+                    "id": "a1689e41da2f24469035c012[shape]",
+                    "name": "Shape",
+                    "value": {
+                        "id": "a1689e41da2f24469035c012[shape]",
+                        "name": "Shape",
+                        "value": "straight"
+                    }
+                },
+                "a1689e41da2f24469035c012[color]": {
+                    "id": "a1689e41da2f24469035c012[color]",
+                    "name": "Color",
+                    "value": {
+                        "id": "a1689e41da2f24469035c012[color]",
+                        "name": "Color",
+                        "value": ""
+                    }
+                },
+                "a1689e41da2f24469035c012[overlay]": {
+                    "id": "a1689e41da2f24469035c012[overlay]",
+                    "name": "Overlay Text",
+                    "value": {
+                        "id": "a1689e41da2f24469035c012[overlay]",
+                        "name": "Overlay Text",
+                        "value": ""
+                    }
+                },
+                "a1689e41da2f24469035c012[overlayPosition]": {
+                    "id": "a1689e41da2f24469035c012[overlayPosition]",
+                    "name": "Overlay Position",
+                    "value": {
+                        "id": "a1689e41da2f24469035c012[overlayPosition]",
+                        "name": "Overlay Position",
+                        "value": "hidden"
+                    }
+                },
+                "a1689e41da2f24469035c012[overlayRotate]": {
+                    "id": "a1689e41da2f24469035c012[overlayRotate]",
+                    "name": "Autoflip Overlay",
+                    "value": {
+                        "id": "a1689e41da2f24469035c012[overlayRotate]",
+                        "name": "Autoflip Overlay",
+                        "value": true
+                    }
+                }
+            },
+            "origin": "2cf34ff72b170f14452267ee"
+        },
+        "56e1da2da43176ca1c137c86": {
+            "label": {
+                "id": "56e1da2da43176ca1c137c86[label]",
+                "name": "Label",
+                "value": {
+                    "id": "56e1da2da43176ca1c137c86[label]",
+                    "name": "Label",
+                    "value": "RelToEntity"
+                }
+            },
+            "left": 4275,
+            "top": 4610,
+            "width": 150,
+            "height": 100,
+            "zIndex": 16031,
+            "type": "Relation",
+            "attributes": {},
+            "origin": "47c4eb2aa588ec1a928d4c80"
+        },
+        "036d16d54e67f9d4511fb0e3": {
+            "label": {
+                "id": "036d16d54e67f9d4511fb0e3[label]",
+                "name": "Label",
+                "value": {
+                    "id": "036d16d54e67f9d4511fb0e3[label]",
+                    "name": "Label",
+                    "value": "Relationship"
+                }
+            },
+            "left": 4607,
+            "top": 4558,
+            "width": 150,
+            "height": 100,
+            "zIndex": 16037,
+            "type": "ViewObject",
+            "attributes": {
+                "[attributes]": {
+                    "id": "[attributes]",
+                    "name": "Attributes",
+                    "type": "KeySelectionValueSelectionValueListAttribute",
+                    "list": {
+                        "ff4144623b46fa9d4f233696": {
+                            "id": "ff4144623b46fa9d4f233696",
+                            "name": "Attribute",
+                            "key": {
+                                "id": "ff4144623b46fa9d4f233696[key]",
+                                "name": "",
+                                "value": "name"
+                            },
+                            "value": {
+                                "id": "ff4144623b46fa9d4f233696[value]",
+                                "name": "",
+                                "value": "string"
+                            },
+                            "value2": {
+                                "id": "ff4144623b46fa9d4f233696[value2]",
+                                "name": "",
+                                "value": "show"
+                            }
+                        },
+                        "99b9a9555ea2275accd9df6c": {
+                            "id": "99b9a9555ea2275accd9df6c",
+                            "name": "Attribute",
+                            "key": {
+                                "id": "99b9a9555ea2275accd9df6c[key]",
+                                "name": "",
+                                "value": "type"
+                            },
+                            "value": {
+                                "id": "99b9a9555ea2275accd9df6c[value]",
+                                "name": "",
+                                "value": "string"
+                            },
+                            "value2": {
+                                "id": "99b9a9555ea2275accd9df6c[value2]",
+                                "name": "",
+                                "value": "show"
+                            }
+                        }
+                    }
+                },
+                "036d16d54e67f9d4511fb0e3[conjunction]": {
+                    "id": "036d16d54e67f9d4511fb0e3[conjunction]",
+                    "name": "Conjunction",
+                    "value": {
+                        "id": "036d16d54e67f9d4511fb0e3[conjunction]",
+                        "name": "Conjunction",
+                        "value": "AND"
+                    }
+                },
+                "036d16d54e67f9d4511fb0e3[target]": {
+                    "id": "036d16d54e67f9d4511fb0e3[target]",
+                    "name": "Target",
+                    "value": {
+                        "id": "036d16d54e67f9d4511fb0e3[target]",
+                        "name": "Target",
+                        "value": "f8a371547fdf952414aa1c49"
+                    }
+                },
+                "[condition]": {
+                    "id": "[condition]",
+                    "name": "Conditions",
+                    "type": "ConditionListAttribute",
+                    "list": {}
+                }
+            }
+        },
+        "e335c34c95bcfc58cb15205c": {
+            "label": {
+                "id": "e335c34c95bcfc58cb15205c[label]",
+                "name": "Label",
+                "value": {
+                    "id": "e335c34c95bcfc58cb15205c[label]",
+                    "name": "Label",
+                    "value": "RelationshipShape"
+                }
+            },
+            "left": 4956,
+            "top": 4538,
+            "width": 150,
+            "height": 150,
+            "zIndex": 16028,
+            "type": "Node Shape",
+            "attributes": {
+                "e335c34c95bcfc58cb15205c[shape]": {
+                    "id": "e335c34c95bcfc58cb15205c[shape]",
+                    "name": "Shape",
+                    "value": {
+                        "id": "e335c34c95bcfc58cb15205c[shape]",
+                        "name": "Shape",
+                        "value": "diamond"
+                    }
+                },
+                "e335c34c95bcfc58cb15205c[color]": {
+                    "id": "e335c34c95bcfc58cb15205c[color]",
+                    "name": "Color",
+                    "value": {
+                        "id": "e335c34c95bcfc58cb15205c[color]",
+                        "name": "Color",
+                        "value": ""
+                    }
+                },
+                "e335c34c95bcfc58cb15205c[defaultWidth]": {
+                    "id": "e335c34c95bcfc58cb15205c[defaultWidth]",
+                    "name": "Default Width",
+                    "value": {
+                        "id": "e335c34c95bcfc58cb15205c[defaultWidth]",
+                        "name": "Default Width",
+                        "value": 0
+                    }
+                },
+                "e335c34c95bcfc58cb15205c[defaultHeight]": {
+                    "id": "e335c34c95bcfc58cb15205c[defaultHeight]",
+                    "name": "Default Height",
+                    "value": {
+                        "id": "e335c34c95bcfc58cb15205c[defaultHeight]",
+                        "name": "Default Height",
+                        "value": 0
+                    }
+                },
+                "e335c34c95bcfc58cb15205c[customShape]": {
+                    "id": "e335c34c95bcfc58cb15205c[customShape]",
+                    "name": "Custom Shape",
+                    "value": {
+                        "id": "e335c34c95bcfc58cb15205c[customShape]",
+                        "name": "Custom Shape",
+                        "value": "<div class=\"custom_node\">\n    <div class=\"type\"><%= type %></div>\n    <svg xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"none\" viewBox=\"0 0 100 60\" class=\"fill_parent\">\n          <path stroke=\"black\" stroke-width=\"1\" fill=\"rgb(255, 255, 255)\" d=\"M15,0 L85,0 L100,30 L85,60 L15,60 L0,30 L15,0\"></path>\n    </svg>\n    <div class=\"fill_parent\">\n        <div style=\"position: absolute; left: 50%; top: 50%; -webkit-transform: translateY(-50%) translateX(-50%)\" class=\"name center\"><div class=\"single_value_attribute\">\n</div></div>\n    </div>\n</div>"
+                    }
+                },
+                "e335c34c95bcfc58cb15205c[customAnchors]": {
+                    "id": "e335c34c95bcfc58cb15205c[customAnchors]",
+                    "name": "Custom Anchors",
+                    "value": {
+                        "id": "e335c34c95bcfc58cb15205c[customAnchors]",
+                        "name": "Custom Anchors",
+                        "value": ""
+                    }
+                }
+            },
+            "origin": "0a242c92e439989c97e4bade"
+        }
+    },
+    "edges": {
+        "2df8be18b7914167eba55819": {
+            "label": {
+                "id": "2df8be18b7914167eba55819[label]",
+                "name": "Label",
+                "value": {
+                    "id": "2df8be18b7914167eba55819[label]",
+                    "name": "Label",
+                    "value": ""
+                }
+            },
+            "source": "65cd1d6287f8470e9d1f544b",
+            "target": "41be14e97d6907516cf08281",
+            "attributes": {},
+            "type": "Bi-Dir-Association",
+            "origin": "8325e05bd931a658e78f20d8"
+        },
+        "caa1f5730e42d4db157d5814": {
+            "label": {
+                "id": "caa1f5730e42d4db157d5814[label]",
+                "name": "Label",
+                "value": {
+                    "id": "caa1f5730e42d4db157d5814[label]",
+                    "name": "Label",
+                    "value": ""
+                }
+            },
+            "source": "65cd1d6287f8470e9d1f544b",
+            "target": "9a80e032628bb9b71696a439",
+            "attributes": {},
+            "type": "Bi-Dir-Association",
+            "origin": "cb7d45070489f7ff861a9d25"
+        },
+        "080645df29ae304bac02d3bb": {
+            "label": {
+                "id": "080645df29ae304bac02d3bb[label]",
+                "name": "Label",
+                "value": {
+                    "id": "080645df29ae304bac02d3bb[label]",
+                    "name": "Label",
+                    "value": ""
+                }
+            },
+            "source": "65cd1d6287f8470e9d1f544b",
+            "target": "3142baa54f24ea10e6cb9cb3",
+            "attributes": {},
+            "type": "Generalisation",
+            "origin": "5e83f14848969e07df8e5604"
+        },
+        "b006fb215a1fec45b577093e": {
+            "label": {
+                "id": "b006fb215a1fec45b577093e[label]",
+                "name": "Label",
+                "value": {
+                    "id": "b006fb215a1fec45b577093e[label]",
+                    "name": "Label",
+                    "value": ""
+                }
+            },
+            "source": "edae24842fc13742f4c7ef41",
+            "target": "a1689e41da2f24469035c012",
+            "attributes": {},
+            "type": "Bi-Dir-Association",
+            "origin": "81f8c8c3caaf9ed7a95cb6c6"
+        },
+        "ac417b482041e45652469dab": {
+            "label": {
+                "id": "ac417b482041e45652469dab[label]",
+                "name": "Label",
+                "value": {
+                    "id": "ac417b482041e45652469dab[label]",
+                    "name": "Label",
+                    "value": ""
+                }
+            },
+            "source": "56e1da2da43176ca1c137c86",
+            "target": "edae24842fc13742f4c7ef41",
+            "attributes": {},
+            "type": "Generalisation",
+            "origin": "81f8c8c3caaf9ed7a95cb6c6"
+        },
+        "7f61dc5e0ec3bdde3dc1e5d0": {
+            "label": {
+                "id": "7f61dc5e0ec3bdde3dc1e5d0[label]",
+                "name": "Label",
+                "value": {
+                    "id": "7f61dc5e0ec3bdde3dc1e5d0[label]",
+                    "name": "Label",
+                    "value": ""
+                }
+            },
+            "source": "65cd1d6287f8470e9d1f544b",
+            "target": "56e1da2da43176ca1c137c86",
+            "attributes": {},
+            "type": "Uni-Dir-Association",
+            "origin": "81f8c8c3caaf9ed7a95cb6c6"
+        },
+        "694977547020a6cda0aa93c4": {
+            "label": {
+                "id": "694977547020a6cda0aa93c4[label]",
+                "name": "Label",
+                "value": {
+                    "id": "694977547020a6cda0aa93c4[label]",
+                    "name": "Label",
+                    "value": ""
+                }
+            },
+            "source": "036d16d54e67f9d4511fb0e3",
+            "target": "e335c34c95bcfc58cb15205c",
+            "attributes": {},
+            "type": "Bi-Dir-Association",
+            "origin": "bf242c83299a05b7d5b4e2e6"
+        },
+        "4cc7e7b40da91a9ccb52d7cc": {
+            "label": {
+                "id": "4cc7e7b40da91a9ccb52d7cc[label]",
+                "name": "Label",
+                "value": {
+                    "id": "4cc7e7b40da91a9ccb52d7cc[label]",
+                    "name": "Label",
+                    "value": ""
+                }
+            },
+            "source": "56e1da2da43176ca1c137c86",
+            "target": "036d16d54e67f9d4511fb0e3",
+            "attributes": {},
+            "type": "Uni-Dir-Association",
+            "origin": "bf242c83299a05b7d5b4e2e6"
+        }
+    },
+    "id": "hiddenAttributes"
+}

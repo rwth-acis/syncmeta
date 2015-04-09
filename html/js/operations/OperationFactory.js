@@ -20,8 +20,10 @@ define([
     'operations/non_ot/WidgetEnterOperation',
     'operations/non_ot/InitModelTypesOperation',
     'operations/non_ot/ViewInitOperation',
-    'operations/non_ot/PerformCvgOperation'
-],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportImageOperation,JoinOperation,WidgetEnterOperation,InitModelTypesOperation,ViewInitOperation,PerformCvgOperation) {
+    'operations/non_ot/PerformCvgOperation',
+    'operations/non_ot/DeleteCvgOperation',
+    'operations/non_ot/DeleteViewOperation'
+],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportImageOperation,JoinOperation,WidgetEnterOperation,InitModelTypesOperation,ViewInitOperation,PerformCvgOperation,DeleteCvgOperation,DeleteViewOperation) {
 
     /**
      * OperationFactory
@@ -82,6 +84,12 @@ define([
                         break;
                     case PerformCvgOperation.TYPE:
                         resOperation = new PerformCvgOperation(data.json);
+                        break;
+                    case DeleteCvgOperation.TYPE:
+                        resOperation = new DeleteCvgOperation(data.deleteList);
+                        break;
+                    case DeleteViewOperation.TYPE:
+                        resOperation = new DeleteViewOperation(data.viewId);
                         break;
                 }
                 return resOperation;

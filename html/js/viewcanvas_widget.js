@@ -9,6 +9,7 @@ requirejs([
     'operations/non_ot/WidgetEnterOperation',
     'operations/non_ot/InitModelTypesOperation',
     'operations/non_ot/ViewInitOperation',
+    'operations/non_ot/DeleteViewOperation',
     'viewcanvas_widget/ViewManager',
     'viewcanvas_widget/Canvas',
     'viewcanvas_widget/EntityManager',
@@ -41,7 +42,7 @@ requirejs([
     'viewcanvas_widget/ViewRelationshipNodeTool',
     'viewcanvas_widget/ViewGenerator',
     'promise!Metamodel'
-], function ($, _, jsPlumb, IWCOT, ToolSelectOperation, ActivityOperation, JoinOperation, WidgetEnterOperation,InitModelTypesOperation,ViewInitOperation,ViewManager, Canvas, EntityManager, MoveTool, NodeTool, ObjectNodeTool, AbstractClassNodeTool, RelationshipNodeTool, RelationshipGroupNodeTool, EnumNodeTool, NodeShapeNodeTool, EdgeShapeNodeTool, EdgeTool, GeneralisationEdgeTool, BiDirAssociationEdgeTool, UniDirAssociationEdgeTool, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNodeTool, ViewObjectNode, ViewRelationshipNode, ViewRelationshipNodeTool, ViewGenerator, metamodel) {
+], function ($, _, jsPlumb, IWCOT, ToolSelectOperation, ActivityOperation, JoinOperation, WidgetEnterOperation,InitModelTypesOperation,ViewInitOperation,DeleteViewOperation,ViewManager, Canvas, EntityManager, MoveTool, NodeTool, ObjectNodeTool, AbstractClassNodeTool, RelationshipNodeTool, RelationshipGroupNodeTool, EnumNodeTool, NodeShapeNodeTool, EdgeShapeNodeTool, EdgeTool, GeneralisationEdgeTool, BiDirAssociationEdgeTool, UniDirAssociationEdgeTool, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNodeTool, ViewObjectNode, ViewRelationshipNode, ViewRelationshipNodeTool, ViewGenerator, metamodel) {
 
     var iwcot;
 	var canvas = new Canvas($("#canvas"), CONFIG.WIDGET.NAME.VIEWCANVAS);
@@ -141,50 +142,37 @@ requirejs([
         HideCreateMenu();
 	});
     var initViewpoint = function(viewId){
-       var deferred = $.Deferred();
-        openapp.resource.get(ViewManager.getViewpointUri(viewId), function (context) {
-            if(!context.uri){
-                //$optNode.remove();
-                return;
-            }
-            openapp.resource.context(context).representation().get(function (rep) {
-                deferred.resolve(rep);
-            })
+        var deferred = $.Deferred();
+        ViewManager.getViewpointResourceFromViewId(viewId).getRepresentation('rdfjson',function(rep){
+            deferred.resolve(rep);
         });
         return deferred.promise();
     };
-    var visualizeView = function(viewId, viewpoint){
-        openapp.resource.get(ViewManager.getViewUri(viewId), function (context) {
-            if (!context.uri) {
-                ViewManager.deleteView(viewId);
-                return;
-            }
-            openapp.resource.context(context).representation().get(function (rep) {
-                if (canvas.get$node().is(':hidden'))
-                    canvas.get$canvas().show();
-                resetCanvas();
-                JSONtoGraph(rep.data,viewpoint);
+    var visualizeView = function(viewId, viewpointData){
+        ViewManager.getViewResource(viewId).getRepresentation('rdfjson', function(viewData){
+            if (canvas.get$node().is(':hidden'))
+                canvas.get$canvas().show();
+            resetCanvas();
+            JSONtoGraph(viewData,viewpointData);
 
-                $('#lblCurrentView').attr("link", rep.uri).text(rep.data.id);
-                canvas.resetTool();
-                $("#loading").hide();
-            });
+            $('#lblCurrentView').text(viewData.id);
+            canvas.resetTool();
+            $("#loading").hide();
         });
     };
 	$('#btnShowViewPoint').click(function () {
         ViewManager.initViewList();
-        var selected = ViewManager.getSelected$node();
-        var viewId = selected.attr('id');
-        if (selected.length == 0 || viewId === $('#lblCurrentView').text())
+        var viewId = ViewManager.getViewIdOfSelected();
+        if (viewId === $('#lblCurrentView').text())
             return;
         $("#loading").show();
         if(_inInstance){
-            initViewpoint(viewId).then(function(resp){
-                $('#lblCurrentView').attr('vplink', resp.uri);
-                EntityManager.initModelTypes(resp.data);
-                visualizeView(viewId, resp.data);
-                initTools(resp.data);
-                iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, new InitModelTypesOperation(resp.data).toNonOTOperation());
+            initViewpoint(viewId).then(function(viewpointData){
+                //$('#lblCurrentView').attr('vplink', resp.uri);
+                EntityManager.initModelTypes(viewpointData);
+                visualizeView(viewId, viewpointData);
+                initTools(viewpointData);
+                iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, new InitModelTypesOperation(viewpointData).toNonOTOperation());
 
             })
         }
@@ -200,27 +188,25 @@ requirejs([
             return;
         }
         var $viewpointSelected = $('#ddmViewpointSelection').find('option:selected');
-        var viewpointLink = null;
+        var viewpointId = null;
         if(_inInstance) {
-             viewpointLink = $viewpointSelected.attr('link');
+            viewpointId = $viewpointSelected.attr('id');
         }
         resetCanvas();
-        $('#lblCurrentView').attr('vplink', viewpointLink).text(viewId);
-        EntityManager.storeView(viewId,viewpointLink).then(function (resp) {
-            ViewManager.addView(viewId,resp.uri,viewpointLink, resp);
+        $('#lblCurrentView').attr('viewpointId', viewpointId).text(viewId);
+        EntityManager.storeView(viewId,viewpointId).then(function (resp) {
+            ViewManager.addView(viewId,resp.uri,viewpointId, resp);
             canvas.get$canvas().show();
             if (_inInstance) {
-                openapp.resource.get(viewpointLink, function (context) {
-                    openapp.resource.context(context).representation().get(function (vls) {
-                        var viewpoint = vls.data;
-                        var viewGenerator = new ViewGenerator(viewpoint);
-                        viewGenerator.apply().then(function (view) {
-                            $("#loading").show();
-                            EntityManager.initModelTypes(viewpoint);
-                            JSONtoGraph(view, viewpoint);
-                            canvas.resetTool();
-                            $("#loading").hide();
-                        })
+                ViewManager.getViewpointResource(viewpointId).getRepresentation('rdfjson', function(viewpointData){
+                    var viewGenerator = new ViewGenerator(viewpointData);
+                    viewGenerator.apply().then(function (view) {
+                        var $loading =  $("#loading");
+                        $loading.show();
+                        EntityManager.initModelTypes(viewpointData);
+                        JSONtoGraph(view, viewpointData);
+                        canvas.resetTool();
+                        $loading.hide();
                     })
                 });
             }
@@ -233,11 +219,13 @@ requirejs([
         if(viewId !== $('#lblCurrentView').text()) {
             openapp.resource.del(ViewManager.getViewUri(viewId), function () {
                 ViewManager.deleteView(viewId);
+                iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new DeleteViewOperation(viewId).toNonOTOperation());
             });
         }
 		else {
             openapp.resource.del(ViewManager.getViewUri(viewId), function () {
                 ViewManager.deleteView(viewId);
+                iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new DeleteViewOperation(viewId).toNonOTOperation());
                 resetCanvas();
                 $('#lblCurrentView').attr('vplink', '').text('No view displayed');
                 canvas.get$canvas().hide();
@@ -250,11 +238,11 @@ requirejs([
         var $currentView = $('#lblCurrentView');
         var currentView = $currentView.text();
         var viewUri =  ViewManager.getViewUri(currentView);
-      	var vpUri = $currentView.attr('vplink');
+      	var vpId = ViewManager.getViewpointId(currentView);
 		if (viewUri) {
 			$feedback.text("Saving...");
 
-			EntityManager.updateView(currentView,vpUri, ViewManager.getResource(currentView)).then(function (context) {
+			EntityManager.updateView(currentView,vpId, ViewManager.getResource(currentView)).then(function () {
                ViewManager.initViewList();
 				$feedback.text("Saved!");
 				setTimeout(function () {
@@ -292,23 +280,19 @@ requirejs([
     $(document).on('mouseenter', function(){
         var operation = new WidgetEnterOperation(CONFIG.WIDGET.NAME.VIEWCANVAS);
         iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE,operation.toNonOTOperation());
-        var viewpointLink = $('#lblCurrentView').attr('vplink');
-        if(_inInstance && viewpointLink) {
-            openapp.resource.get(viewpointLink, function (context) {
-                if(!context.uri){
-                    selected.remove();
-                    return;
-                }
-                openapp.resource.context(context).representation().get(function (rep) {
-                    EntityManager.initModelTypes(rep.data);
-                    initTools(rep.data);
-                    operation = new  InitModelTypesOperation(rep.data);
-                    iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.toNonOTOperation());
-                    iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE,operation.toNonOTOperation());
-                    });
-                });
+        var viewId = $('#lblCurrentView').text();
+        var resource = ViewManager.getViewpointResourceFromViewId(viewId);
+        if(_inInstance && resource) {
+            resource.getRepresentation('rdfjson', function (viewpointData) {
+                EntityManager.initModelTypes(viewpointData);
+                initTools(viewpointData);
+                operation = new InitModelTypesOperation(viewpointData);
+                iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
+                iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation.toNonOTOperation());
+            });
         }
     });
+
     var initTools = function(viewpoint){
         //canvas.removeTools();
         //canvas.addTool(MoveTool.TYPE, new MoveTool());
@@ -373,49 +357,27 @@ requirejs([
 		}
 		//EntityManager.clearRecycleBin();
 	}
-	function GetViewList() {
-		var resourceSpace = new openapp.oo.Resource(openapp.param.space());
-		//noinspection JSUnusedGlobalSymbols
-		resourceSpace.getSubResources({
-			relation : openapp.ns.role + "data",
-			type : CONFIG.NS.MY.VIEW,
-			onEach : function (context) {
-				context.getRepresentation("rdfjson", function (representation) {
-                    ViewManager.addView(representation.id, context.uri, representation.viewpoint);
-                });
-            }
-        });
-	}
 
 	function JSONtoGraph(json, viewpoint) {
-        /*_.forOwn(json.nodes, function(value, key){
-            var  new_id =  canvas.createNode(value.type, value.left, value.top, value.width, value.height,value.zIndex, value);
-            for(var edgeId2 in json.edges){
-                if(json.edges.hasOwnProperty(edgeId2)){
-                    if(json.edges[edgeId2].source === key)
-                        json.edges[edgeId2].source = new_id;
-                    else if(json.edges[edgeId2].target === key)
-                        json.edges[edgeId2].target = new_id;
-                }
-            }
-        });
-
-        _.forOwn(json.edges, function(value){
-            canvas.createEdge(value.type,  value.source,value.target,value);
-        });*/
         var operation = new ViewInitOperation(json, viewpoint);
         iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
         var nodeId, edgeId;
         for(nodeId in json.nodes){
             if(json.nodes.hasOwnProperty(nodeId)){
-                var node = EntityManager.createNodeFromJSON(json.nodes[nodeId].type,nodeId,json.nodes[nodeId].left,json.nodes[nodeId].top,json.nodes[nodeId].width,json.nodes[nodeId].height,json.nodes[nodeId].zIndex,json.nodes[nodeId]);
+                var jNode = json.nodes[nodeId];
+                var node = EntityManager.createNodeFromJSON(jNode.type,nodeId,jNode.left,jNode.top,jNode.width,jNode.height,jNode.zIndex,jNode);
+                if(jNode.hasOwnProperty('origin'))
+                    node.setOrigin(jNode.origin);
                 node.draw();
                 node.addToCanvas(canvas);
             }
         }
         for(edgeId in json.edges){
             if(json.edges.hasOwnProperty(edgeId)){
-                var edge = EntityManager.createEdgeFromJSON(json.edges[edgeId].type,edgeId,json.edges[edgeId].source,json.edges[edgeId].target,json.edges[edgeId]);
+                var jEdge = json.edges[edgeId];
+                var edge = EntityManager.createEdgeFromJSON(jEdge.type,edgeId,jEdge.source,jEdge.target,jEdge);
+                if(jEdge.hasOwnProperty('origin'))
+                    edge.setOrigin(jEdge.origin);
                 edge.connect();
                 edge.addToCanvas(canvas);
             }
@@ -423,28 +385,15 @@ requirejs([
 	}
 
 	iwcot.registerOnJoinOrLeaveCallback(function (operation) {
-		//var activityOperation;
 		if (operation instanceof JoinOperation) {
-
 			if (operation.getUser() === iwcot.getUser()[CONFIG.NS.PERSON.JABBERID]) {
 				if (operation.isDone()) {
-					//operation.setData(model);
-					iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
-					//JSONtoGraph(model);
-					/*if (canvas.getModelAttributesNode() === null) {
-						var modelAttributesNode = EntityManager.createModelAttributesNode();
-						canvas.setModelAttributesNode(modelAttributesNode);
-						modelAttributesNode.addToCanvas(canvas);
-					}*/
-					//canvas.resetTool();
 					$("#loading").hide();
                     canvas.get$canvas().hide();
                     ViewManager.initViewList();
                     if(_inInstance)
                         ViewManager.GetViewpointList();
 
-				} else {
-					//model = operation.getData();
 				}
 			}
 		}

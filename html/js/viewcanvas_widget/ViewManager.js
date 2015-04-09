@@ -18,11 +18,18 @@ define([
         var _viewResourceDictionary = {};
 
         /**
-         * conisits of the viewpoint identifier as key and the viewpoint uri as value
+         * consists of the viewpoint identifier as key and the viewpoint identifier as value
          * @type {object}
          * @private
          */
         var _viewViewpointDictionary={};
+
+        /**
+         * consists of the viewpoint id as value and the openapp.oo.Resource object as value
+         * @type {object}
+         * @private
+         */
+        var _viewpointResourceDictionary={};
 
         /**
          * represent a reference to the view selection html element
@@ -48,11 +55,13 @@ define([
                     relation: openapp.ns.role + "data",
                     type: CONFIG.NS.MY.VIEWPOINT,
                     onEach: function (context) {
-                        context.getRepresentation("rdfjson", function (representation) {
+                        context.getRepresentation("rdfjson", function (rep) {
                             var $option = $(optionTpl({
-                                id: representation.id
+                                id: rep.id
                             }));
-                            $option.attr('link', context.uri);
+                            //$option.attr('link', context.uri);
+                            _viewpointResourceDictionary[rep.id] = context;
+
                             $selection.append($option);
                         });
                     }
@@ -77,6 +86,21 @@ define([
             },
 
             /**
+             * returns the viewpoint role space resource object for a identifier of a view
+             * @param viewId the identifier of the view
+             * @returns {object} the resource object
+             */
+            getViewpointResourceFromViewId:function(viewId){
+                if(_viewViewpointDictionary.hasOwnProperty(viewId)){
+                    var viewpointId = _viewViewpointDictionary[viewId];
+                    if(_viewpointResourceDictionary.hasOwnProperty(viewpointId)){
+                        return _viewpointResourceDictionary[viewpointId];
+                    }
+                }
+                return null;
+            },
+
+            /**
              * gets the view uri for a viewId
              * @param viewId the view identifier of the view
              * @returns {string} the uri of the resource in the role space
@@ -86,12 +110,30 @@ define([
             },
 
             /**
-             * gets the viewpoint uri for a viewId
+             * returns the view role space resource object for a identifier of a view
+             * @param viewId the identifier of the view
+             * @returns {object} the resource object
+             */
+            getViewResource:function(viewId){
+                return _viewResourceDictionary.hasOwnProperty(viewId)? _viewResourceDictionary[viewId] : null;
+            },
+
+            /**
+             * gets the identifier of a viewpoint for a viewId
              * @param {string} viewId the viewpoint identifier
              * @returns {string} the uri of the resource in the role space
              */
-            getViewpointUri : function(viewId){
+            getViewpointId : function(viewId){
                 return _viewViewpointDictionary.hasOwnProperty(viewId)? _viewViewpointDictionary[viewId] : null;
+            },
+
+            /**
+             * returns the viewpoint resource object for a viewpoint id
+             * @param viewpointId
+             * @returns {object} the openapp.oo.resource object
+             */
+            getViewpointResource:function(viewpointId){
+                return _viewpointResourceDictionary.hasOwnProperty(viewpointId) ? _viewpointResourceDictionary[viewpointId] : null;
             },
 
             /**
@@ -117,13 +159,13 @@ define([
              * adds a view to the ViewManager
              * @param {string} viewId the view identifier
              * @param {string} viewUri pointing to the view in the role space
-             * @param {string} viewpointUri the viewpoint uri which is used to generate the view. for the meta model editor this is null
+             * @param {string} viewpointId the viewpoint identifier which is used to generate the view. for the meta model editor this is null
              * @param {object} resource the openapp.oo.resource object
              */
-            addView : function(viewId, viewUri,viewpointUri, resource){
+            addView : function(viewId, viewUri,viewpointId, resource){
                 if(!_viewResourceDictionary.hasOwnProperty(viewId)){
                     _viewResourceDictionary[viewId] = resource;
-                    _viewViewpointDictionary[viewId] = viewpointUri;
+                    _viewViewpointDictionary[viewId] = viewpointId;
                     var $option = $(optionTpl({
                         id: viewId
                     }));

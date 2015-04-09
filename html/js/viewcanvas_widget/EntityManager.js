@@ -324,10 +324,10 @@ define([
 					edges : edgesJSON
 				};
 			},
-			viewToJSON : function (viewId, viewpointUri) {
+			viewToJSON : function (viewId, viewpointId) {
 				var vls = this.graphToJSON();
 				vls['id'] = viewId;
-                vls['viewpoint'] = viewpointUri;
+                vls['viewpoint'] = viewpointId;
 				return vls;
 			},
 
@@ -952,13 +952,13 @@ define([
 			/**
 			 * Stores current view in the ROLE Space
 			 * @param {string} viewId the identifier for the view
-             * @param {string} viewpointUri uri of the viewpoint
+             * @param {string} viewpointId Id of the viewpoint
 			 * @returns {object} jquery promise
 			 */
-			storeView : function (viewId,viewpointUri) {
+			storeView : function (viewId,viewpointId) {
 				var resourceSpace = new openapp.oo.Resource(openapp.param.space());
 				var deferred = $.Deferred();
-				var data = this.viewToJSON(viewId, viewpointUri);
+				var data = this.viewToJSON(viewId, viewpointId);
 				resourceSpace.create({
 					relation : openapp.ns.role + "data",
 					type : CONFIG.NS.MY.VIEW,
@@ -971,14 +971,15 @@ define([
 			},
 			/**
 			 * Update a view representation in the ROLE Space
-			 * @param {string} uri The URI where the view is storeData
+			 * @param {string} viewId The view identifier
 			 * @param {string} viewId The Identifier of the view
-             * @param {string} viewpointUri uri of the viewpoint
+             * @param {string} viewpointId id of the viewpoint
+             * @param {object} resource openapp.oo.resource of the the view
 			 * @returns {object} jquery promise
 			 */
-            updateView:function(viewId,viewpointUri, resource){
+            updateView:function(viewId,viewpointId, resource){
                 var deferred = $.Deferred();
-                var data = this.viewToJSON(viewId, viewpointUri);
+                var data = this.viewToJSON(viewId, viewpointId);
               resource.setRepresentation(data, 'application/json', function(){
                   deferred.resolve();
               });

@@ -1,0 +1,157 @@
+{
+    "attributes": {},
+    "nodes": {
+        "04e7ae49df1d781508efb73b": {
+            "label": "Entity",
+            "attributes": {
+                "99a086227f5acf22f0bf744e": {
+                    "key": "id",
+                    "value": "string"
+                },
+                "25b32db6b17d143ba323ed4b": {
+                    "key": "name",
+                    "value": "string"
+                },
+                "8a89ade41b89396d2e76a596": {
+                    "key": "title",
+                    "value": "string"
+                },
+                "27692c1f55c4cb3c5be4a150": {
+                    "key": "number",
+                    "value": "integer"
+                },
+                "5571f55670a43db27d3b879e": {
+                    "key": "bool",
+                    "value": "boolean"
+                },
+                "ff8249f22dd79d6d94dd86ab": {
+                    "key": "file",
+                    "value": "file"
+                }
+            },
+            "shape": {
+                "shape": "rectangle",
+                "color": "",
+                "defaultWidth": 0,
+                "defaultHeight": 0,
+                "customShape": "<div class=\"custom_node\">\n    <div class=\"type\"><%= type %></div>\n    <svg xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"none\" viewBox=\"0 0 100 100\" class=\"fill_parent\">\n        <rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"rgb(255, 255, 255)\" stroke=\"black\" stroke-width=\"2\"></rect>\n    </svg>\n    <div class=\"fill_parent\">\n        <div style=\"position: absolute; left: 50%; top: 50%; -webkit-transform: translateY(-50%) translateX(-50%)\" class=\"name center\"></div>\n    </div>\n</div>",
+                "customAnchors": ""
+            }
+        },
+        "341241a62f9027912d90f610": {
+            "label": "Attribute",
+            "attributes": {
+                "99a086227f5acf22f0bf744e": {
+                    "key": "id",
+                    "value": "string"
+                },
+                "fe973414d7d112592c5d0707": {
+                    "key": "name",
+                    "value": "string"
+                }
+            },
+            "shape": {
+                "shape": "circle",
+                "color": "",
+                "defaultWidth": 0,
+                "defaultHeight": 0,
+                "customShape": "<div class=\"custom_node\">\n    <div class=\"type\"><%= type %></div>\n    <svg xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"none\" viewBox=\"0 0 100 100\" class=\"fill_parent\">\n        <circle cx=\"50\" cy=\"50\" r=\"50\" fill=\"rgb(250, 250, 255)\" stroke=\"black\" stroke-width=\"2\"></circle>\n    </svg>\n    <div class=\"fill_parent\">\n        <div style=\"position: absolute; left: 50%; top: 50%; -webkit-transform: translateY(-50%) translateX(-50%)\" class=\"name center\"></div>\n    </div>\n</div>",
+                "customAnchors": ""
+            }
+        },
+        "f8a371547fdf952414aa1c49": {
+            "label": "Relationship",
+            "attributes": {
+                "2d2c9dc30206d7b11192479e": {
+                    "key": "name",
+                    "value": "string"
+                },
+                "b9db940d9dfe7cd9d29a6fc9": {
+                    "key": "type",
+                    "value": "string"
+                }
+            },
+            "shape": {
+                "shape": "diamond",
+                "color": "",
+                "defaultWidth": 0,
+                "defaultHeight": 0,
+                "customShape": "<div class=\"custom_node\">\n    <div class=\"type\"><%= type %></div>\n    <svg xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"none\" viewBox=\"0 0 100 60\" class=\"fill_parent\">\n          <path stroke=\"black\" stroke-width=\"1\" fill=\"rgb(255, 255, 255)\" d=\"M15,0 L85,0 L100,30 L85,60 L15,60 L0,30 L15,0\"></path>\n    </svg>\n    <div class=\"fill_parent\">\n        <div style=\"position: absolute; left: 50%; top: 50%; -webkit-transform: translateY(-50%) translateX(-50%)\" class=\"name center\"><div class=\"single_value_attribute\">\n</div></div>\n    </div>\n</div>",
+                "customAnchors": ""
+            }
+        }
+    },
+    "edges": {
+        "500ede69e2a7612a3d635d8e": {
+            "label": "Associations",
+            "shape": {
+                "arrow": "bidirassociation",
+                "shape": "straight",
+                "color": "",
+                "overlay": "",
+                "overlayPosition": "hidden",
+                "overlayRotate": true
+            },
+            "relations": [
+                {
+                    "sourceTypes": [
+                        "Entity"
+                    ],
+                    "targetTypes": [
+                        "Relationship"
+                    ]
+                }
+            ],
+            "attributes": {
+                "5fd772dd84adc6e1992dcf76": {
+                    "key": "name",
+                    "value": "string",
+                    "position": "center"
+                },
+                "ea07c35831bf5e6d77f534c8": {
+                    "key": "cardinality1",
+                    "value": "integer",
+                    "position": "top"
+                },
+                "6dd94292b57adaea4cab305c": {
+                    "key": "bool",
+                    "value": "boolean",
+                    "position": "hidden"
+                },
+                "8e8902eb160b758af63afe8b": {
+                    "key": "cardinality2",
+                    "value": "integer",
+                    "position": "bottom"
+                }
+            }
+        },
+        "3520c0aa91845e752078e71f": {
+            "label": "AttrAssociation",
+            "shape": {
+                "arrow": "unidirassociation",
+                "shape": "straight",
+                "color": "",
+                "overlay": "",
+                "overlayPosition": "hidden",
+                "overlayRotate": true
+            },
+            "relations": [
+                {
+                    "sourceTypes": [
+                        "Entity"
+                    ],
+                    "targetTypes": [
+                        "Attribute"
+                    ]
+                }
+            ],
+            "attributes": {
+                "02726929c758f810e75cde8d": {
+                    "key": "name",
+                    "value": "string",
+                    "position": "center"
+                }
+            }
+        }
+    }
+}

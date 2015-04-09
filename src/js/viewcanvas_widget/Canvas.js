@@ -12,6 +12,7 @@ define([
 		'operations/non_ot/ExportMetaModelOperation',
 		'operations/non_ot/ExportImageOperation',
         'operations/non_ot/PerformCvgOperation',
+        'operations/non_ot/DeleteCvgOperation',
 		'canvas_widget/AbstractEntity',
 		'canvas_widget/ModelAttributesNode',
 		'viewcanvas_widget/EntityManager',
@@ -20,7 +21,7 @@ define([
         'viewcanvas_widget/ClosedViewGeneration',
 		'jquery.transformable'
 	], /** @lends Canvas */
-	function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelectOperation, EntitySelectOperation, ActivityOperation, ExportDataOperation, ExportMetaModelOperation, ExportImageOperation, PerformCvgOperation, AbstractEntity, ModelAttributesNode, EntityManager, AbstractCanvas, MoveTool, CVG) {
+	function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelectOperation, EntitySelectOperation, ActivityOperation, ExportDataOperation, ExportMetaModelOperation, ExportImageOperation, PerformCvgOperation, DeleteCvgOperation, AbstractEntity, ModelAttributesNode, EntityManager, AbstractCanvas, MoveTool, CVG) {
 
 	Canvas.prototype = new AbstractCanvas();
 	Canvas.prototype.constructor = Canvas;
@@ -880,6 +881,7 @@ define([
 			_iwcot.registerOnHistoryChangedCallback(historyNodeAddCallback);
 			_iwcot.registerOnHistoryChangedCallback(historyEdgeAddCallback);
             _iwcot.registerOnLocalDataReceivedCallback(CvgCallback);
+            _iwcot.registerOnLocalDataReceivedCallback(DeleteCvgCallback);
 		};
 
 		/**
@@ -894,6 +896,7 @@ define([
 			_iwcot.unregisterOnHistoryChangedCallback(historyNodeAddCallback);
 			_iwcot.unregisterOnHistoryChangedCallback(historyEdgeAddCallback);
             _iwcot.unregisterOnLocalDataReceivedCallback(CvgCallback);
+            _iwcot.unregisterOnLocalDataReceivedCallback(DeleteCvgCallback);
 		};
 
 		init();
@@ -905,6 +908,16 @@ define([
             if(operation instanceof PerformCvgOperation){
                 var json = operation.getJSON();
                 CVG(that, json);
+            }
+        }
+
+        function DeleteCvgCallback(operation){
+            if(operation instanceof DeleteCvgOperation){
+                var deleteList = operation.getDeleteList();
+                for(var i=0;i<deleteList.length;i++){
+                    var node = EntityManager.findNode(deleteList[i]);
+                    node.triggerDeletion();
+                }
             }
         }
 	}

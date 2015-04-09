@@ -25,11 +25,15 @@ define([
      * @param {canvas_widget.AbstractNode} source Source node
      * @param {canvas_widget.AbstractNode} target Target node
      * @param {boolean} [overlayRotate] Flag if edge overlay should be flipped automatically to avoid being upside down
+     * @param {string} origin the identifier of the element in the base model
      */
-    function AbstractEdge(id,type,source,target,overlayRotate){
+    function AbstractEdge(id,type,source,target,overlayRotate, origin){
         var that = this;
 
         AbstractEntity.call(this,id);
+
+        var _origin = origin;
+
 
         /**
          * Type of edge
@@ -370,6 +374,23 @@ define([
         };
 
         /**
+         * get the origin of the viewpoint element
+         * @returns {string}
+         */
+        this.getOrigin = function(){
+            return _origin;
+        };
+
+        /**
+         * set the origin
+         * origin is a identifier of a element of a base node
+         * @param origin
+         */
+        this.setOrigin = function(origin){
+            _origin = origin;
+        };
+
+        /**
          * Get jQuery object of DOM node representing the edge's overlay
          * @returns {jQuery}
          */
@@ -612,7 +633,8 @@ define([
                 source: source.getEntityId(),
                 target: target.getEntityId(),
                 attributes: attr,
-                type: _type
+                type: _type,
+                origin:_origin
             };
         };
 

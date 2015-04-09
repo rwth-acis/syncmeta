@@ -1,25 +1,23 @@
 define([
     'operations/non_ot/NonOTOperation'
-],/** @lends ViewInitOperation */function(NonOTOperation) {
+],/** @lends DeleteCvgOperation */function(NonOTOperation) {
 
-    ViewInitOperation.TYPE = "ViewInitOperation";
+    DeleteViewOperation.TYPE = "DeleteViewOperation";
 
     /**
-     * ViewInitOperation
-     * @class operations.non_ot.ViewInitOperation
+     * DeleteCvgOperation
+     * @class operations.non_ot.DeleteViewOperation
      * @memberof operations.non_ot
      * @constructor
-     * @param {object} data the view as json
-     * @param {object} viewpoint the viewpoint vls as json
+     * @param {string} viewId identifier of the view
      */
-    function ViewInitOperation(data, viewpoint){
+    function DeleteViewOperation(viewId){
         /**
          * Name of selected tool
          * @type {string}
          */
-        var _data = data;
+        var _viewId = viewId;
 
-        var _viewpoint = viewpoint;
         /**
          * Corresponding NonOtOperation
          * @type {operations.non_ot.NonOTOperation}
@@ -28,16 +26,13 @@ define([
         var nonOTOperation = null;
 
         /**
-         * Get name of selected tool
+         * Get the list with node ids to delete
          * @returns {string}
          */
-        this.getData = function(){
-            return _data;
+        this.getViewId = function(){
+            return _viewId;
         };
 
-        this.getViewpoint= function(){
-            return _viewpoint;
-        };
         /**
          * Convert operation to NonOTOperation
          * @returns {operations.non_ot.NonOTOperation}
@@ -45,15 +40,15 @@ define([
         this.toNonOTOperation = function(){
             if(nonOTOperation === null){
                 nonOTOperation = new NonOTOperation(
-                    ViewInitOperation.TYPE,
-                    JSON.stringify({data: _data, viewpoint:_viewpoint})
+                    DeleteViewOperation.TYPE,
+                    JSON.stringify({viewId: _viewId})
                 );
             }
             return nonOTOperation;
         };
     }
 
-    return ViewInitOperation;
+    return DeleteViewOperation;
 
 });
 

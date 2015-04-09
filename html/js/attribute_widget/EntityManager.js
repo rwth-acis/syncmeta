@@ -479,6 +479,11 @@ define([
                         }
                     }
                 }
+            },
+            deleteViewFromMap:function(viewId){
+                if(_map.hasOwnProperty(viewId))
+                    delete _map[viewId];
+
             }
 
 		};
