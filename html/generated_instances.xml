@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- generated on Thu Apr 09 2015 21:37:45 -->
+<!-- generated on Fri Apr 10 2015 13:29:46 -->
 <Module>
   <ModulePrefs
     title="Generate Instance"
@@ -78,7 +78,7 @@
         function generateSpace(spaceLabel,spaceTitle){
 
             function createSpace(spaceLabel,spaceTitle){
-                var url = "http://127.0.0.1:8073/spaces/" + spaceLabel;
+                var url = "http://role-sandbox.eu/spaces/" + spaceLabel;
                 var deferred = $.Deferred();
                 var innerDeferred = $.Deferred();
 
@@ -96,7 +96,7 @@
                 //Create space
                 innerDeferred.then(function(){
                     openapp.resource.post(
-                            "http://127.0.0.1:8073/spaces",
+                            "http://role-sandbox.eu/spaces",
                             function(data){
                                 deferred.resolve(data.uri);
                             },{
@@ -320,7 +320,7 @@
                 clearTimeout(timeout);
                 timeout = setTimeout(function(){
                     $this.addClass('loading_button');
-                    var url = "http://127.0.0.1:8073/spaces/" + $this.val().replace(/[^a-zA-Z]/g,"").toLowerCase();
+                    var url = "http://role-sandbox.eu/spaces/" + $this.val().replace(/[^a-zA-Z]/g,"").toLowerCase();
                     openapp.resource.get(url,function(data){
                         if(data.uri === url){ //Space already exists
                             if(data.data[data.subject['http://purl.org/openapp/owner'][0].value]['http://www.w3.org/2002/07/owl#sameAs'][0].value === openapp.param.user()){
@@ -402,7 +402,7 @@
 </style>
 <p><strong>Editor space url:</strong>
     <br/>
-    <span id="space_link_input">http://127.0.0.1:8073/<input size="16" type="text" id="space_label" /></span>
+    <span id="space_link_input">http://role-sandbox.eu/<input size="16" type="text" id="space_label" /></span>
     <span id="space_link_text" style="display: none"><a id="space_link" target="_blank" href="#"></a></span>
     <br/>
     <span id="space_link_comment" style="color: #FF3333; display: none">Space already exists, will be overwritten!</span>

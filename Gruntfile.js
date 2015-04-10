@@ -10,9 +10,8 @@ module.exports = function (grunt) {
 			pkg : grunt.file.readJSON('package.json'),
 
 			baseUrl : localConfig.baseUrl,
-			roleSandboxUrl : "http://127.0.0.1:8073",
-
-			bowerdir : grunt.file.readJSON('.bowerrc')['directory'],
+			roleSandboxUrl : localConfig.roleSandboxUrl,
+            bowerdir : grunt.file.readJSON('.bowerrc')['directory'],
 			distdir : 'html',
 			srcdir : 'src',
 
