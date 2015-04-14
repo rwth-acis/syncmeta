@@ -219,6 +219,7 @@ define([
 			 * @param {number} width Width of node
 			 * @param {number} height Height of node
 			 * @param {number} zIndex Position of node on z-axis
+             * @param {object} json the json representation
 			 * @returns {canvas_widget.AbstractNode}
 			 */
 			//TODO: switch id and type
@@ -410,11 +411,6 @@ define([
 					nodes : nodesJSON,
 					edges : edgesJSON
 				};
-			},
-			viewToJSON : function (viewId) {
-				var vls = this.graphToJSON();
-				vls['id'] = viewId;
-				return vls;
 			},
 
 			/**

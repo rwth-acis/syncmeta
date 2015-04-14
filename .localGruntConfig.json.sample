@@ -1,4 +1,7 @@
 {
     "baseUrl" : "http://mari0.github.io/syncmeta/html",
-    "roleSandboxUrl": "http://role-sandbox.eu"
+    "roleSandboxUrl": "http://role-sandbox.eu",
+
+    "baseUrl_local" : "http://localhost:8081",
+    "roleSandboxUrl_local":"http://127.0.0.1:8073"
 }

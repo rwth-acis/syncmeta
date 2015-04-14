@@ -927,7 +927,23 @@ define([
         this.unhighlight = function(){
             _$node.css({border: ""});
             _$node.find('.user_highlight').remove();
-            Util.delay(100).then(function(){_.each(require('canvas_widget/EntityManager').getEdges(),function(e){e.setZIndex();});});
+            Util.delay(100).then(function(){
+                var EntityManager = null;
+                try{
+                    EntityManager = require('canvas_widget/EntityManager');
+                    _.each(EntityManager.getEdges(),function(e){
+                        e.setZIndex();
+                    });
+                }
+                catch(error){
+                    require(['canvas_widget/EntityManager'], function(EntityManager){
+                        _.each(EntityManager.getEdges(),function(e){
+                            e.setZIndex();
+                        });
+                    });
+                }
+
+            });
         };
 
         /**
