@@ -98,6 +98,7 @@ define([
         this.getType = function(){
             return _type;
         };
+
 		/**
 		 * Offset of the DOM node representating the canvas
 		 * @type {{left: number, top: number, right: number, bottom: number}}
