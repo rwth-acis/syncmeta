@@ -43,6 +43,8 @@ define([
     function IWCOTWrapper(componentName,localID){
         var that = this;
 
+        var _componentName = componentName;
+
         /**
          * Set if local and remote messages should be buffered
          * @type {boolean}
@@ -736,6 +738,9 @@ define([
 
         //noinspection JSUnusedGlobalSymbols
         return {
+            getComponentName:function(){
+                return _componentName;
+            },
             /**
              * Connect the iwc client
              * @memberof IWCOTWrapper
