@@ -712,25 +712,26 @@ define([
             });
         };
 
-        _joiningState = IWCOT.JOIN_STATE.NOT_JOINED;
-        _joiningTimeoutCallback = function(){
-            var i,
-                numOfCallbacks;
+        if(_componentName === CONFIG.WIDGET.NAME.VIEWCANVAS) {
+            _joiningState = IWCOT.JOIN_STATE.NOT_JOINED;
+            _joiningTimeoutCallback = function () {
+                var i,
+                    numOfCallbacks;
 
-            console.log("JOINING LOG: NO USER OUT THERE: JOINING COMPLETED");
+                console.log("JOINING LOG: NO USER OUT THERE: JOINING COMPLETED");
 
-            _joiningState = IWCOT.JOIN_STATE.COMPLETED;
+                _joiningState = IWCOT.JOIN_STATE.COMPLETED;
 
-            for(i = 0, numOfCallbacks = _onJoinOrLeaveCallbacks.length; i < numOfCallbacks; i++){
-                if(typeof _onJoinOrLeaveCallbacks[i] === 'function'){
-                    _onJoinOrLeaveCallbacks[i](new JoinOperation(space.user[CONFIG.NS.PERSON.JABBERID],true,space.user[CONFIG.NS.PERSON.JABBERID],{},_componentName));
+                for (i = 0, numOfCallbacks = _onJoinOrLeaveCallbacks.length; i < numOfCallbacks; i++) {
+                    if (typeof _onJoinOrLeaveCallbacks[i] === 'function') {
+                        _onJoinOrLeaveCallbacks[i](new JoinOperation(space.user[CONFIG.NS.PERSON.JABBERID], true, space.user[CONFIG.NS.PERSON.JABBERID], {}, _componentName));
+                    }
                 }
-            }
-        };
-        _joiningTimeout = setTimeout(_joiningTimeoutCallback,5000);
-        console.log("JOINING LOG: LOCAL USER TRIES TO JOIN");
-        sendRemoteNonOTOperation(new JoinOperation(space.user[CONFIG.NS.PERSON.JABBERID],false,space.user[CONFIG.NS.PERSON.JABBERID],{},_componentName).toNonOTOperation());
-
+            };
+            _joiningTimeout = setTimeout(_joiningTimeoutCallback, 5000);
+            console.log("JOINING LOG: LOCAL USER TRIES TO JOIN");
+            sendRemoteNonOTOperation(new JoinOperation(space.user[CONFIG.NS.PERSON.JABBERID], false, space.user[CONFIG.NS.PERSON.JABBERID], {}, _componentName).toNonOTOperation());
+        }
         //var sendBufferTimer = new IWCOT.PausableInterval(sendBufferedMessages,INTERVAL_SEND);
         if(BUFFER_ENABLED) setInterval(sendBufferedLocalMessages,INTERVAL_SEND_LOCAL);
 
