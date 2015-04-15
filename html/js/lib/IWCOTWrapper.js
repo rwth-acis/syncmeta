@@ -686,18 +686,20 @@ define([
             }
 
             if(intent.flags.indexOf(CONFIG.IWC.FLAG.PUBLISH_GLOBAL) !== -1){
-                switch(intent.action){
-                    case CONFIG.IWC.ACTION.SYNC:
-                        _ot.syncInbound(payload.site,payload.sites);
-                        break;
-                    case CONFIG.IWC.ACTION.DATA:
-                        handleRemoteMessage(payload);
-                        break;
-                    case CONFIG.IWC.ACTION.DATA_ARRAY:
-                        for(i = 0, numOfMessages = payload.length; i < numOfMessages; i++){
-                            handleRemoteMessage(payload[i]);
-                        }
-                        break;
+                if(intent.sender === _componentName) {
+                    switch (intent.action) {
+                        case CONFIG.IWC.ACTION.SYNC:
+                            _ot.syncInbound(payload.site, payload.sites);
+                            break;
+                        case CONFIG.IWC.ACTION.DATA:
+                            handleRemoteMessage(payload);
+                            break;
+                        case CONFIG.IWC.ACTION.DATA_ARRAY:
+                            for (i = 0, numOfMessages = payload.length; i < numOfMessages; i++) {
+                                handleRemoteMessage(payload[i]);
+                            }
+                            break;
+                    }
                 }
             }
         };

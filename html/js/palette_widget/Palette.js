@@ -47,6 +47,8 @@ define([
 
         var _currentModel = 'base';
 
+        var _lastWidget = CONFIG.WIDGET.NAME.MAIN;
+
         /**
          * Inter widget communication wrapper
          * @type {Object}
@@ -88,11 +90,13 @@ define([
                     _separators[1].get$node().show();
                     _tools['ViewObject'].get$node().show();
                     _tools['ViewRelationship'].get$node().show();
+                    _lastWidget = CONFIG.WIDGET.NAME.VIEWCANVAS;
                 }
                 else if(operation.getEnteredWidgetName() === CONFIG.WIDGET.NAME.MAIN &&  _tools.hasOwnProperty('ViewObject') && _tools.hasOwnProperty('ViewRelationship')) {
                     _separators[1].get$node().hide();
                     _tools['ViewObject'].get$node().hide();
                     _tools['ViewRelationship'].get$node().hide();
+                    _lastWidget = CONFIG.WIDGET.NAME.MAIN;
                 }
             }
         };
@@ -173,9 +177,9 @@ define([
             if(_tools.hasOwnProperty(name)){
                 processToolSelection(name);
                 var operation = new ToolSelectOperation(name);
-                if(_currentModel === 'base')
+                if(_currentModel === 'base' || _lastWidget === CONFIG.WIDGET.NAME.MAIN)
                     _iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.toNonOTOperation());
-                else
+                else if(_lastWidget ==CONFIG.WIDGET.NAME.VIEWCANVAS || _currentModel != 'base')
                     _iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.VIEWCANVAS,operation.toNonOTOperation());
             }
         };
