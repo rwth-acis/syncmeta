@@ -93,7 +93,7 @@ define([
          * @type {Object}
          * @private
          */
-        var _iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.VIEWCANVAS);
+        var _iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.MAIN);
 
         /**
          * Attributes of node

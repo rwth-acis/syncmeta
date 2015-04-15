@@ -48,7 +48,7 @@ define([
          * Inter widget communication wrapper
          * @type {Object}
          */
-        var _iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.VIEWCANVAS);
+        var _iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.MAIN);
 
         /**
          * Apply an Attribute Add Operation
