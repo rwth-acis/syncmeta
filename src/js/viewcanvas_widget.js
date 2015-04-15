@@ -384,7 +384,13 @@ requirejs([
         }
 	}
 
-	iwcot.registerOnJoinOrLeaveCallback(function (operation) {
+
+    ViewManager.initViewList();
+    if(_inInstance)
+        ViewManager.GetViewpointList();
+    $("#loading").hide();
+
+    /*iwcot.registerOnJoinOrLeaveCallback(function (operation) {
 		if (operation instanceof JoinOperation) {
 			if (operation.getUser() === iwcot.getUser()[CONFIG.NS.PERSON.JABBERID]
                 && operation.getComponent() === CONFIG.WIDGET.NAME.VIEWCANVAS) {
@@ -398,5 +404,5 @@ requirejs([
 				}
 			}
 		}
-	});
+	});*/
 });
