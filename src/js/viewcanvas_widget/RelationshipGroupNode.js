@@ -4,9 +4,9 @@ define([
     'jsplumb',
     'lodash',
     'viewcanvas_widget/AbstractNode',
-    'canvas_widget/KeySelectionValueListAttribute',
-    'canvas_widget/BooleanAttribute',
-    'canvas_widget/SingleMultiLineValueAttribute',
+    'viewcanvas_widget/KeySelectionValueListAttribute',
+    'viewcanvas_widget/BooleanAttribute',
+    'viewcanvas_widget/SingleMultiLineValueAttribute',
     'text!templates/canvas_widget/relationship_group_node.html'
 ],/** @lends RelationshipGroupNode */function(require,$,jsPlumb,_,AbstractNode,KeySelectionValueListAttribute,BooleanAttribute,SingleMultiLineValueAttribute,relationshipGroupNodeHtml) {
 

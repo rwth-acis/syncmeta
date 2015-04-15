@@ -12,7 +12,7 @@ define([
     'operations/non_ot/ActivityOperation',
     'operations/non_ot/EntitySelectOperation',
     'canvas_widget/AbstractEntity',
-    'canvas_widget/SingleValueAttribute',
+    'viewcanvas_widget/SingleValueAttribute',
     'text!templates/canvas_widget/abstract_node.html',
     'jquery.transformable'
 ],/** @lends AbstractNode */function(require,$,jsPlumb,_,Util,IWCOT,NodeDeleteOperation,NodeMoveOperation,NodeMoveZOperation,NodeResizeOperation,ActivityOperation,EntitySelectOperation,AbstractEntity,SingleValueAttribute,abstractNodeHtml) {
@@ -1047,7 +1047,7 @@ define([
                     drag = false;
                     _$node.draggable("option","grid",ev.ctrlKey ? [20,20] : '');
                 },
-                drag: function(ev,ui){
+                drag: function(ev){
                     // ui.position.left = Math.round(ui.position.left  / _canvas.getZoom());
                     // ui.position.top = Math.round(ui.position.top / _canvas.getZoom());
 

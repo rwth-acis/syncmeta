@@ -3,9 +3,9 @@ define([
     'jsplumb',
     'lodash',
     'viewcanvas_widget/AbstractNode',
-    'canvas_widget/SingleValueListAttribute',
-    'canvas_widget/BooleanAttribute',
-    'canvas_widget/SingleMultiLineValueAttribute',
+    'viewcanvas_widget/SingleValueListAttribute',
+    'viewcanvas_widget/BooleanAttribute',
+    'viewcanvas_widget/SingleMultiLineValueAttribute',
     'text!templates/canvas_widget/enum_node.html'
 ],/** @lends EnumNode */function($,jsPlumb,_,AbstractNode,SingleValueListAttribute,BooleanAttribute,SingleMultiLineValueAttribute,enumNodeHtml) {
 

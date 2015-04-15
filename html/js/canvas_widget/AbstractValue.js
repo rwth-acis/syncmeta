@@ -1,17 +1,9 @@
-define([
-    'jqueryui',
-    'jsplumb',
-    'lodash',
-    'iwcotw',
-    'canvas_widget/AbstractAttribute',
-    'operations/ot/ValueChangeOperation',
-    'text!templates/canvas_widget/abstract_value.html'
-],/** @lends AbstractValue */function($,jsPlumb,_,IWCOT,AbstractAttribute,ValueChangeOperation,abstractValueHtml) {
+define([],/** @lends AbstractValue */function() {
 
     /**
      * AbstractValue
      * @class canvas_widget.AbstractValue
-     * @memberof canvas_widget
+     * @member of canvas_widget
      * @constructor
      * @param {string} id Entity identifier
      * @param {string} name Name of attribute
@@ -57,13 +49,6 @@ define([
             return _id;
         };
 
-        /**
-         * Get value
-         * @returns {string}
-         */
-        this.getValue = function(){
-            return _value;
-        };
 
         /**
          * Get name of value

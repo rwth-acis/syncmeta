@@ -4,8 +4,8 @@ define([
     'Util',
     'operations/ot/AttributeDeleteOperation',
     'canvas_widget/AbstractAttribute',
-    'canvas_widget/Value',
-    'canvas_widget/SelectionValue',
+    'viewcanvas_widget/Value',
+    'viewcanvas_widget/SelectionValue',
     'text!templates/viewcanvas_widget/condition_predicate.html'
 ],/** @lends ConditionPredicateAttribute */ function($,_,Util,AttributeDeleteOperation,AbstractAttribute,Value,SelectionValue,condition_predicateHtml) {
 
@@ -25,8 +25,7 @@ define([
      * @param {Object} options2 Selection options
      * @constructor
      */
-    function ConditionPredicateAttribute(id,name,subjectEntity,options,options2,options3){
-        var that = this;
+    function ConditionPredicateAttribute(id,name,subjectEntity,options,options2){
 
         AbstractAttribute.call(this,id,name,subjectEntity);
 

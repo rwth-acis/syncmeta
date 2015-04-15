@@ -4,9 +4,9 @@ define([
     'jsplumb',
     'lodash',
     'viewcanvas_widget/AbstractNode',
-    'canvas_widget/SingleValueAttribute',
-    'canvas_widget/SingleSelectionAttribute',
-    'canvas_widget/KeySelectionValueListAttribute',
+    'viewcanvas_widget/SingleValueAttribute',
+    'viewcanvas_widget/SingleSelectionAttribute',
+    'viewcanvas_widget/KeySelectionValueListAttribute',
     'text!templates/canvas_widget/object_node.html'
 ],/** @lends ObjectNode */function(require,$,jsPlumb,_,AbstractNode,SingleValueAttribute,SingleSelectionAttribute,KeySelectionValueListAttribute,objectNodeHtml) {
 

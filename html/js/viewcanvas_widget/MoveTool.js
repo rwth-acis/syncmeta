@@ -24,7 +24,6 @@ define([
          * Mount the tool on canvas
          */
         this.mount = function(){
-            var that = this;
 
             AbstractCanvasTool.prototype.mount.call(this);
 

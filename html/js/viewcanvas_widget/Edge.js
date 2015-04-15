@@ -3,11 +3,11 @@ define([
     'jqueryui',
     'jsplumb',
     'lodash',
-    'canvas_widget/BooleanAttribute',
-    'canvas_widget/IntegerAttribute',
-    'canvas_widget/FileAttribute',
-    'canvas_widget/SingleValueAttribute',
-    'canvas_widget/SingleSelectionAttribute',
+    'viewcanvas_widget/BooleanAttribute',
+    'viewcanvas_widget/IntegerAttribute',
+    'viewcanvas_widget/FileAttribute',
+    'viewcanvas_widget/SingleValueAttribute',
+    'viewcanvas_widget/SingleSelectionAttribute',
     'viewcanvas_widget/AbstractEdge'
 ],/** @lends makeEdge */function(require,$,jsPlumb,_,BooleanAttribute,IntegerAttribute,FileAttribute,SingleValueAttribute,SingleSelectionAttribute,AbstractEdge) {
 

@@ -3,11 +3,11 @@ define([
     'jsplumb',
     'lodash',
     'viewcanvas_widget/AbstractNode',
-    'canvas_widget/SingleSelectionAttribute',
-    'canvas_widget/SingleValueAttribute',
-    'canvas_widget/SingleColorValueAttribute',
-    'canvas_widget/SingleMultiLineValueAttribute',
-    'canvas_widget/BooleanAttribute',
+    'viewcanvas_widget/SingleSelectionAttribute',
+    'viewcanvas_widget/SingleValueAttribute',
+    'viewcanvas_widget/SingleColorValueAttribute',
+    'viewcanvas_widget/SingleMultiLineValueAttribute',
+    'viewcanvas_widget/BooleanAttribute',
     'text!templates/canvas_widget/edge_shape_node.html'
 ],/** @lends EdgeShapeNode */function($,jsPlumb,_,AbstractNode,SingleSelectionAttribute,SingleValueAttribute,SingleColorValueAttribute,SingleMultiLineValueAttribute,BooleanAttribute,edgeShapeNodeHtml) {
 

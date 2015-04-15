@@ -8,7 +8,7 @@ define([
     'operations/non_ot/ActivityOperation',
     'operations/non_ot/EntitySelectOperation',
     'canvas_widget/AbstractEntity',
-    'canvas_widget/SingleValueAttribute',
+    'viewcanvas_widget/SingleValueAttribute',
     'text!templates/canvas_widget/abstract_edge.html'
 ],/** @lends AbstractEdge */function (require,$,jsPlumb,_,IWCOT,EdgeDeleteOperation,ActivityOperation,EntitySelectOperation,AbstractEntity,SingleValueAttribute,abstractEdgeHtml) {
 

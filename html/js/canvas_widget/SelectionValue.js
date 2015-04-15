@@ -7,11 +7,9 @@ define([
 		'canvas_widget/AbstractAttribute',
 		'operations/ot/ValueChangeOperation',
 		'operations/non_ot/ActivityOperation',
-		'viewcanvas_widget/LogicalOperator',
-		'viewcanvas_widget/LogicalConjunctions',
 		'text!templates/canvas_widget/selection_value.html'
 	], /** @lends SelectionValue */
-	function ($, jsPlumb, _, IWCOT, AbstractValue, AbstractAttribute, ValueChangeOperation, ActivityOperation,LogicalOperator, LogicalConjunctions,selectionValueHtml) {
+	function ($, jsPlumb, _, IWCOT, AbstractValue, AbstractAttribute, ValueChangeOperation, ActivityOperation,selectionValueHtml) {
 
 	SelectionValue.prototype = new AbstractValue();
 	SelectionValue.prototype.constructor = SelectionValue;
@@ -75,26 +73,6 @@ define([
 		 * @param {operations.ot.ValueChangeOperation} operation
 		 */
 		var processValueChangeOperation = function (operation) {
-			if (that.getRootSubjectEntity().getEntityId() + '[target]' === operation.getEntityId()) {
-				var ConditionListAttribute = require('viewcanvas_widget/ConditionListAttribute');
-				var attrList = that.getRootSubjectEntity().getAttribute('[attributes]').getAttributes();
-				var targetAttrList = {};
-				for (var key in attrList) {
-					if (attrList.hasOwnProperty(key)) {
-						targetAttrList[key] = attrList[key].getKey().getValue();
-					}
-				}
-				if(condAttrList = that.getRootSubjectEntity().getAttribute('[condition]')){
-					condAttrList.setOptions(targetAttrList);
-				}
-				else{
-					var cla = new ConditionListAttribute("[condition]", "Conditions", that.getRootSubjectEntity(), targetAttrList, LogicalOperator, LogicalConjunctions);
-					that.getRootSubjectEntity().addAttribute(cla);
-					that.getRootSubjectEntity().get$node().find('.attributes').append(cla.get$node());
-				}
-				
-				
-			}
 			that.setValue(operation.getValue());
 		};
 

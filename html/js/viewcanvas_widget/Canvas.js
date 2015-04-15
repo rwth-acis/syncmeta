@@ -14,7 +14,7 @@ define([
         'operations/non_ot/PerformCvgOperation',
         'operations/non_ot/DeleteCvgOperation',
 		'canvas_widget/AbstractEntity',
-		'canvas_widget/ModelAttributesNode',
+		'viewcanvas_widget/ModelAttributesNode',
 		'viewcanvas_widget/EntityManager',
 		'canvas_widget/AbstractCanvas',
 		'viewcanvas_widget/MoveTool',

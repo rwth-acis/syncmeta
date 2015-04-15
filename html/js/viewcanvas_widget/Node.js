@@ -3,11 +3,11 @@ define([
     'jsplumb',
     'lodash',
     'viewcanvas_widget/AbstractNode',
-    'canvas_widget/BooleanAttribute',
-    'canvas_widget/IntegerAttribute',
-    'canvas_widget/FileAttribute',
-    'canvas_widget/SingleSelectionAttribute',
-    'canvas_widget/SingleValueAttribute'
+    'viewcanvas_widget/BooleanAttribute',
+    'viewcanvas_widget/IntegerAttribute',
+    'viewcanvas_widget/FileAttribute',
+    'viewcanvas_widget/SingleSelectionAttribute',
+    'viewcanvas_widget/SingleValueAttribute'
 ],/** @lends makeNode */function($,jsPlumb,_,AbstractNode,BooleanAttribute,IntegerAttribute,FileAttribute,SingleSelectionAttribute,SingleValueAttribute) {
 
     /**

@@ -3,11 +3,11 @@ define([
     'jsplumb',
     'lodash',
     'viewcanvas_widget/AbstractNode',
-    'canvas_widget/SingleSelectionAttribute',
-    'canvas_widget/SingleValueAttribute',
-    'canvas_widget/IntegerAttribute',
-    'canvas_widget/SingleColorValueAttribute',
-    'canvas_widget/SingleMultiLineValueAttribute',
+    'viewcanvas_widget/SingleSelectionAttribute',
+    'viewcanvas_widget/SingleValueAttribute',
+    'viewcanvas_widget/IntegerAttribute',
+    'viewcanvas_widget/SingleColorValueAttribute',
+    'viewcanvas_widget/SingleMultiLineValueAttribute',
     'text!templates/canvas_widget/node_shape_node.html'
 ],/** @lends NodeShapeNode */function($,jsPlumb,_,AbstractNode,SingleSelectionAttribute,SingleValueAttribute,IntegerAttribute,SingleColorValueAttribute,SingleMultiLineValueAttribute,nodeShapeNodeHtml) {
 

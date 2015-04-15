@@ -4,8 +4,8 @@ define([
     'jsplumb',
     'lodash',
     'viewcanvas_widget/AbstractNode',
-    'canvas_widget/SingleSelectionAttribute',
-    'canvas_widget/KeySelectionValueSelectionValueListAttribute',
+    'viewcanvas_widget/SingleSelectionAttribute',
+    'viewcanvas_widget/KeySelectionValueSelectionValueListAttribute',
     'text!templates/canvas_widget/relationship_node.html'
 ],/** @lends RelationshipNode */function(require,$,jsPlumb,_,AbstractNode,SingleSelectionAttribute,KeySelectionValueSelectionValueListAttribute,relationshipNodeHtml) {
 

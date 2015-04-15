@@ -10,7 +10,7 @@ define([
 		'viewcanvas_widget/EnumNode',
 		'viewcanvas_widget/NodeShapeNode',
 		'viewcanvas_widget/EdgeShapeNode',
-		'canvas_widget/ModelAttributesNode',
+		'viewcanvas_widget/ModelAttributesNode',
 		'viewcanvas_widget/Edge',
 		'viewcanvas_widget/GeneralisationEdge',
 		'viewcanvas_widget/BiDirAssociationEdge',
