@@ -71,7 +71,7 @@ define([
                         resOperation = new ExportImageOperation(data.requestingComponent,data.data);
                         break;
                     case JoinOperation.TYPE:
-                        resOperation = new JoinOperation(data.user,data.done,data.sender,data.data);
+                        resOperation = new JoinOperation(data.user,data.done,data.sender,data.data,data.component);
                         break;
                     case WidgetEnterOperation.TYPE:
                         resOperation = new WidgetEnterOperation(data.enteredWidgetName);

@@ -264,7 +264,8 @@ requirejs([
     iwcot.registerOnJoinOrLeaveCallback(function(operation){
         var activityOperation;
         if(operation instanceof JoinOperation){
-            if(operation.getUser() === iwcot.getUser()[CONFIG.NS.PERSON.JABBERID]){
+            if(operation.getUser() === iwcot.getUser()[CONFIG.NS.PERSON.JABBERID]
+            && operation.getComponent() === CONFIG.WIDGET.NAME.MAIN){
                 if(operation.isDone()){
                     operation.setData(model);
                     iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.toNonOTOperation());

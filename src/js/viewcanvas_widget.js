@@ -46,7 +46,7 @@ requirejs([
 
     var iwcot;
 	var canvas = new Canvas($("#canvas"), CONFIG.WIDGET.NAME.VIEWCANVAS);
-
+    canvas.get$canvas().hide();
 
     var _inInstance = false;
 	//Add all tool to the canvas
@@ -386,10 +386,11 @@ requirejs([
 
 	iwcot.registerOnJoinOrLeaveCallback(function (operation) {
 		if (operation instanceof JoinOperation) {
-			if (operation.getUser() === iwcot.getUser()[CONFIG.NS.PERSON.JABBERID]) {
+			if (operation.getUser() === iwcot.getUser()[CONFIG.NS.PERSON.JABBERID]
+                && operation.getComponent() === CONFIG.WIDGET.NAME.VIEWCANVAS) {
 				if (operation.isDone()) {
 					$("#loading").hide();
-                    canvas.get$canvas().hide();
+
                     ViewManager.initViewList();
                     if(_inInstance)
                         ViewManager.GetViewpointList();
