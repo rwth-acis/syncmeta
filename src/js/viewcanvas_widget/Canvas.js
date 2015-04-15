@@ -216,7 +216,7 @@ define([
 		 * @param {operations.ot.EdgeAddOperation} operation
 		 */
 		var remoteEdgeAddCallback = function (operation) {
-			if (operation instanceof EdgeAddOperation) {
+			if (operation instanceof EdgeAddOperation && operation.getViewId()) {
 				var sourceNode = EntityManager.findNode(operation.getSource());
 				var targetNode = EntityManager.findNode(operation.getTarget());
 
