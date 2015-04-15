@@ -85,7 +85,7 @@ define([
 		 * @type {Object}
 		 */
 
-		var _iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.MAIN);
+		var _iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.VIEWCANVAS);
 
 		/**
 		 * Entity currently selected

@@ -54,7 +54,7 @@ define([
 		 * @type {Object}
 		 * @private
 		 */
-		var _iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.MAIN);
+		var _iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.VIEWCANVAS);
 
 		/**
 		 * Get chain of entities the attribute is assigned to

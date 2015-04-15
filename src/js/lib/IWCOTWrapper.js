@@ -502,7 +502,7 @@ define([
                         operation.setSender(sender);
                         resOperation = OperationFactory.createOperationFromNonOTOperation(operation);
 
-                        if(resOperation instanceof JoinOperation){
+                        if(resOperation instanceof JoinOperation && _componentName === CONFIG.WIDGET.NAME.MAIN){
 
                             // First step
                             if(!resOperation.isDone()){
