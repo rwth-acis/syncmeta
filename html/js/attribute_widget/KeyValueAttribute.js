@@ -155,12 +155,13 @@ define([
         _$node.find(".ui-icon-close").click(function(){
             var operation = new AttributeDeleteOperation(that.getEntityId(),that.getSubjectEntityId(),that.getRootSubjectEntity().getEntityId(),KeyValueAttribute.TYPE);
             if(that.getRootSubjectEntity().getViewId()){
-                _iwc.disableBuffer();
+                _iwc.setBufferedMessagesReceiver(CONFIG.WIDGET.NAME.VIEWCANVAS);
                 propagateAttributeDeleteOperation(operation, CONFIG.WIDGET.NAME.VIEWCANVAS);
-                _iwc.enableBuffer();
             }
-            else
+            else {
+                _iwc.setBufferedMessagesReceiver(CONFIG.WIDGET.NAME.MAIN);
                 propagateAttributeDeleteOperation(operation, CONFIG.WIDGET.NAME.MAIN);
+            }
         });
 
         if(iwc){

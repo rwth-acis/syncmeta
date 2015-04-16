@@ -85,7 +85,8 @@ define([
                 var op = null;
                 var attr = null;
                 if (node) {
-
+                    _iwc.enableBuffer();
+                    _iwc.setBufferedMessagesReceiver(CONFIG.WIDGET.NAME.VIEWCANVAS);
                     var viewTypeAttribute = viewType.getAttributes()["[attributes]"];
                     var viewTypeAttrList = viewTypeAttribute.getAttributes();
 
@@ -94,7 +95,7 @@ define([
                         if (viewTypeAttrList.hasOwnProperty(key1)) {
                             attr = viewTypeAttrList[key1];
                             op = new AttributeDeleteOperation(attr.getEntityId(), attr.getSubjectEntityId(), attr.getRootSubjectEntity().getEntityId(), KeySelectionValueSelectionValueAttribute.TYPE);
-                            attr.propagateAttributeDeleteOperation(op);
+                            attr.propagateAttributeDeleteOperation(op, CONFIG.WIDGET.NAME.VIEWCANVAS);
                         }
                     }
                     var attributeList = {};
@@ -106,7 +107,8 @@ define([
                             var id = Util.generateRandomId();
 
                             op = new AttributeAddOperation(id, viewTypeAttribute.getEntityId(), viewTypeAttribute.getRootSubjectEntity().getEntityId(), KeySelectionValueSelectionValueAttribute.TYPE);
-                            viewTypeAttribute.propagateAttributeAddOperation(op);
+
+                            viewTypeAttribute.propagateAttributeAddOperation(op, CONFIG.WIDGET.NAME.VIEWCANVAS);
                             attr = viewTypeAttribute.getAttribute(id);
                             attr.getKey().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT, targetAttributes[key2].getKey().getValue(), 0);
                             attr.getValue().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT,targetAttributes[key2].getValue().getValue(), 0);
@@ -124,7 +126,7 @@ define([
                             if (attrList.hasOwnProperty(key3)) {
                                 attr = attrList[key3];
                                 op = new AttributeDeleteOperation(attr.getEntityId(), attr.getSubjectEntityId(), attr.getRootSubjectEntity().getEntityId(), ConditionPredicateAttribute.TYPE);
-                                attr.propagateAttributeDeleteOperation(op);
+                                attr.propagateAttributeDeleteOperation(op, CONFIG.WIDGET.NAME.VIEWCANVAS);
                             }
                         }
                     } else {
@@ -141,6 +143,7 @@ define([
                     var performCvgOp = new PerformCvgOperation(res);
                     _iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.VIEWCANVAS, performCvgOp.toNonOTOperation());
 
+
                 }
             }
         };
@@ -154,12 +157,14 @@ define([
 		this.propagateValueChange = function (type, value, position) {
 			var operation = new ValueChangeOperation(that.getEntityId(), value, type, position);
             if(that.getRootSubjectEntity().getViewId()) {
-                _iwc.disableBuffer();
+                _iwc.setBufferedMessagesReceiver(CONFIG.WIDGET.NAME.VIEWCANVAS);
                 propagateValueChangeOperation(operation, CONFIG.WIDGET.NAME.VIEWCANVAS);
-                _iwc.enableBuffer();
             }
-            else
+            else {
+                _iwc.resetBufferedMessagesReceiver();
                 propagateValueChangeOperation(operation, CONFIG.WIDGET.NAME.MAIN);
+
+            }
 		};
 		/**
 		 * Propagate a Value Change Operation to the remote users and the local widgets
@@ -168,7 +173,7 @@ define([
 		 */
 		var propagateValueChangeOperation = function (operation, component) {
 			processValueChangeOperation(operation);
-			_iwc.sendLocalOTOperation(component, operation.getOTOperation());
+            _iwc.sendLocalOTOperation(component, operation.getOTOperation());
 		};
 
 		/**

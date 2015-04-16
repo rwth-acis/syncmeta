@@ -24,6 +24,8 @@ define([
      */
     function IWCWrapper(componentName){
 
+        var _bufferedMessagesReceiver = CONFIG.WIDGET.NAME.MAIN;
+
         /**
          * Set if local messages should be buffered
          * @type {boolean}
@@ -123,7 +125,7 @@ define([
             var data = _messageBuffer.splice(0,_messageBuffer.length);
             //sendBufferTimer.pause();
             if(data.length == 1){
-                intent = encapsulateMessage(CONFIG.WIDGET.NAME.MAIN,CONFIG.IWC.FLAG.PUBLISH_LOCAL, CONFIG.IWC.ACTION.DATA, data[0]);
+                intent = encapsulateMessage(_bufferedMessagesReceiver,CONFIG.IWC.FLAG.PUBLISH_LOCAL, CONFIG.IWC.ACTION.DATA, data[0]);
                 if (IIWC.util.validateIntent(intent)) {
 
                     console.log("=== " + intent.flags.toString().replace(/PUBLISH_/g,"") + " INTENT TRANSMITTED AT COMPONENT " + componentName + " ===");
@@ -132,7 +134,7 @@ define([
                     _iwc.publish(intent);
                 }
             } else if(data.length > 1){
-                intent = encapsulateMessage(CONFIG.WIDGET.NAME.MAIN,CONFIG.IWC.FLAG.PUBLISH_LOCAL, CONFIG.IWC.ACTION.DATA_ARRAY, data);
+                intent = encapsulateMessage(_bufferedMessagesReceiver,CONFIG.IWC.FLAG.PUBLISH_LOCAL, CONFIG.IWC.ACTION.DATA_ARRAY, data);
                 if (IIWC.util.validateIntent(intent)) {
 
                     console.log("=== " + intent.flags.toString().replace(/PUBLISH_/g,"") + " INTENT TRANSMITTED AT COMPONENT " + componentName + " ===");
@@ -331,6 +333,12 @@ define([
             },
             enableBuffer:function(){
                 BUFFER_ENABLED = true;
+            },
+            setBufferedMessagesReceiver: function(componentName){
+                _bufferedMessagesReceiver = componentName;
+            },
+            resetBufferedMessagesReceiver: function(){
+                _bufferedMessagesReceiver = CONFIG.WIDGET.NAME.MAIN;
             }
         };
     }

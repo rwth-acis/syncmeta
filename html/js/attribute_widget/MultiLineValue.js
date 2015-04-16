@@ -136,12 +136,13 @@ define([
         var propagateValueChange = function(type,value,position){
             var operation = new ValueChangeOperation(that.getEntityId(),value,type,position);
             if(that.getRootSubjectEntity().getViewId()) {
-                iwc.disableBuffer();
+                iwc.setBufferedMessagesReceiver(CONFIG.WIDGET.NAME.VIEWCANVAS);
                 propagateValueChangeOperation(operation, CONFIG.WIDGET.NAME.VIEWCANVAS);
-                iwc.enableBuffer();
             }
-            else
+            else {
+                iwc.resetBufferedMessagesReceiver();
                 propagateValueChangeOperation(operation, CONFIG.WIDGET.NAME.MAIN);
+            }
         };
 
         /**

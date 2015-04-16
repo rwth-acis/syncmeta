@@ -200,12 +200,13 @@ define([
         _$node.find(".ui-icon-close").click(function(){
             var operation = new AttributeDeleteOperation(that.getEntityId(),that.getSubjectEntityId(),that.getRootSubjectEntity().getEntityId(),KeySelectionValueSelectionValueAttribute.TYPE);
             if(that.getRootSubjectEntity().getViewId()) {
-                _iwc.disableBuffer();
+                _iwc.setBufferedMessagesReceiver(CONFIG.WIDGET.NAME.VIEWCANVAS);
                 that.propagateAttributeDeleteOperation(operation, CONFIG.WIDGET.NAME.VIEWCANVAS);
-                _iwc.enableBuffer();
             }
-            else
+            else {
+                _iwc.setBufferedMessagesReceiver(CONFIG.WIDGET.NAME.MAIN);
                 that.propagateAttributeDeleteOperation(operation, CONFIG.WIDGET.NAME.MAIN);
+            }
         });
 
         if(_iwc){

@@ -73,10 +73,11 @@ define([
         /**
          * Propagate an Attribute Add Operation to the remote users and the local widgets
          * @param {operations.ot.AttributeAddOperation} operation
+         * @param {string} component the name of the receiver
          */
-        var propagateAttributeAddOperation = function(operation){
+        var propagateAttributeAddOperation = function(operation, component){
 			processAttributeAddOperation(operation);
-            iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.getOTOperation());
+            iwc.sendLocalOTOperation(component,operation.getOTOperation());
         };
 
         /**
@@ -198,7 +199,15 @@ define([
         _$node.find(".ui-icon-plus").click(function(){
             var id = Util.generateRandomId();
             var operation = new AttributeAddOperation(id,that.getEntityId(),that.getRootSubjectEntity().getEntityId(),SingleValueAttribute.TYPE);
-            propagateAttributeAddOperation(operation);
+            if(that.getRootSubjectEntity().getViewId()) {
+                iwc.setBufferedMessagesReceiver(CONFIG.WIDGET.NAME.VIEWCANVAS);
+                propagateAttributeAddOperation(operation. CONFIG.NAME.WIDGET.VIEWCANVAS);
+            }
+            else{
+                iwc.setBufferedMessagesReceiver(CONFIG.WIDGET.NAME.MAIN);
+                propagateAttributeAddOperation(operation, CONFIG.WIDGET.NAME.MAIN);
+
+            }
         });
 
         if(iwc){

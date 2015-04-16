@@ -65,12 +65,14 @@
         var propagateValueChange = function(type,value,position){
             var operation = new ValueChangeOperation(that.getEntityId(),value,type,position);
             if(that.getRootSubjectEntity().getViewId()) {
-                _iwc.disableBuffer();
+                _iwc.setBufferedMessagesReceiver(CONFIG.WIDGET.NAME.VIEWCANVAS);
                 propagateValueChangeOperation(operation, CONFIG.WIDGET.NAME.VIEWCANVAS);
-                _iwc.enableBuffer();
             }
-            else
+            else {
+                _iwc.resetBufferedMessagesReceiver();
                 propagateValueChangeOperation(operation, CONFIG.WIDGET.NAME.MAIN);
+
+            }
         };
         /**
          * Propagate a Value Change Operation to the remote users and the local widgets

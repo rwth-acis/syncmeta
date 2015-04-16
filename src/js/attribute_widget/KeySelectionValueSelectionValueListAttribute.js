@@ -217,12 +217,14 @@ define([
             var id = Util.generateRandomId();
             var operation = new AttributeAddOperation(id,that.getEntityId(),that.getRootSubjectEntity().getEntityId(),KeySelectionValueSelectionValueAttribute.TYPE);
             if(that.getRootSubjectEntity().getViewId()) {
-                iwc.disableBuffer();
+                iwc.setBufferedMessagesReceiver(CONFIG.WIDGET.NAME.VIEWCANVAS);
                 that.propagateAttributeAddOperation(operation, CONFIG.WIDGET.NAME.VIEWCANVAS);
-                iwc.enableBuffer();
+
             }
-            else
+            else {
+                iwc.setBufferedMessagesReceiver(CONFIG.WIDGET.NAME.MAIN);
                 that.propagateAttributeAddOperation(operation, CONFIG.WIDGET.NAME.MAIN);
+            }
 
         });
 

@@ -220,9 +220,8 @@ define([
         _$node.find(".ui-icon-plus").click(function(){
             var id = Util.generateRandomId();
             var operation = new AttributeAddOperation(id,that.getEntityId(),that.getRootSubjectEntity().getEntityId(),ConditionPredicateAttribute.TYPE);
-            iwc.disableBuffer();
             propagateAttributeAddOperation(operation, CONFIG.WIDGET.NAME.VIEWCANVAS);
-            iwc.enableBuffer();
+
         });
 
         if(iwc){
