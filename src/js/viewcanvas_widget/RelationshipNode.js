@@ -93,7 +93,7 @@ define([
 
                         //noinspection JSAccessibilityCheck
                         nodeId = canvas.createNode(EdgeShapeNode.TYPE,appearance.left + appearance.width + 50,appearance.top,150,100);
-                        canvas.createEdge(BiDirAssociationEdge.TYPE,that.getEntityId(),nodeId);
+                        canvas.createEdge(BiDirAssociationEdge.TYPE,that.getEntityId(),nodeId, null, null, $('#lblCurrentView').text());
                     },
                     disabled: function() {
                         var edges = that.getEdges(),
@@ -136,7 +136,7 @@ define([
                                 for(edgeId in edges){
                                     if(edges.hasOwnProperty(edgeId)){
                                         edge = edges[edgeId];
-                                        canvas.createEdge(edge.getType(),nodeId,edge.getTarget().getEntityId(),edge.toJSON());
+                                        canvas.createEdge(edge.getType(),nodeId,edge.getTarget().getEntityId(),edge.toJSON(), null,$('#lblCurrentView').text());
                                     }
                                 }
 
@@ -146,7 +146,7 @@ define([
                                     if(edges.hasOwnProperty(edgeId)){
                                         edge = edges[edgeId];
                                         if(edge.getSource() !== edge.getTarget()){
-                                            canvas.createEdge(edge.getType(),edge.getSource().getEntityId(),nodeId,edge.toJSON());
+                                            canvas.createEdge(edge.getType(),edge.getSource().getEntityId(),nodeId,edge.toJSON(), null, $('#lblCurrentView').text());
                                         }
                                     }
                                 }
@@ -171,7 +171,7 @@ define([
                                 for(edgeId in edges){
                                     if(edges.hasOwnProperty(edgeId)){
                                         edge = edges[edgeId];
-                                        canvas.createEdge(edge.getType(),nodeId,edge.getTarget().getEntityId(),edge.toJSON());
+                                        canvas.createEdge(edge.getType(),nodeId,edge.getTarget().getEntityId(),edge.toJSON(), null, $('#lblCurrentView').text());
                                     }
                                 }
 
@@ -181,7 +181,7 @@ define([
                                     if(edges.hasOwnProperty(edgeId)){
                                         edge = edges[edgeId];
                                         if(edge.getSource() !== edge.getTarget()){
-                                            canvas.createEdge(edge.getType(),edge.getSource().getEntityId(),nodeId,edge.toJSON());
+                                            canvas.createEdge(edge.getType(),edge.getSource().getEntityId(),nodeId,edge.toJSON(), null, $('#lblCurrentView').text());
                                         }
                                     }
                                 }
@@ -206,7 +206,7 @@ define([
                                 for(edgeId in edges){
                                     if(edges.hasOwnProperty(edgeId)){
                                         edge = edges[edgeId];
-                                        canvas.createEdge(edge.getType(),nodeId,edge.getTarget().getEntityId(),edge.toJSON());
+                                        canvas.createEdge(edge.getType(),nodeId,edge.getTarget().getEntityId(),edge.toJSON(), null, $('#lblCurrentView').text());
                                     }
                                 }
 
@@ -216,7 +216,7 @@ define([
                                     if(edges.hasOwnProperty(edgeId)){
                                         edge = edges[edgeId];
                                         if(edge.getSource() !== edge.getTarget()){
-                                            canvas.createEdge(edge.getType(),edge.getSource().getEntityId(),nodeId,edge.toJSON());
+                                            canvas.createEdge(edge.getType(),edge.getSource().getEntityId(),nodeId,edge.toJSON(), null, $('#lblCurrentView').text());
                                         }
                                     }
                                 }

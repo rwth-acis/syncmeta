@@ -140,6 +140,7 @@ function (require, $, jsPlumb, _, AbstractNode, SingleSelectionAttribute, KeySel
 			var EdgeShapeNode = require('viewcanvas_widget/EdgeShapeNode'),
 			BiDirAssociationEdge = require('viewcanvas_widget/BiDirAssociationEdge'),
 			UniDirAssociationEdge = require('viewcanvas_widget/UniDirAssociationEdge');
+            var viewId = $('#lblCurrentView').text();
 			return {
 				addShape : {
 					name : "Add Edge Shape",
@@ -150,7 +151,7 @@ function (require, $, jsPlumb, _, AbstractNode, SingleSelectionAttribute, KeySel
 
 						//noinspection JSAccessibilityCheck
 						nodeId = canvas.createNode(EdgeShapeNode.TYPE, appearance.left + appearance.width + 50, appearance.top, 150, 100);
-						canvas.createEdge(BiDirAssociationEdge.TYPE, that.getEntityId(), nodeId);
+						canvas.createEdge(BiDirAssociationEdge.TYPE, that.getEntityId(), nodeId, null, null, viewId);
 					},
 					disabled : function () {
 						var edges = that.getEdges(),
@@ -193,7 +194,7 @@ function (require, $, jsPlumb, _, AbstractNode, SingleSelectionAttribute, KeySel
 								for (edgeId in edges) {
 									if (edges.hasOwnProperty(edgeId)) {
 										edge = edges[edgeId];
-										canvas.createEdge(edge.getType(), nodeId, edge.getTarget().getEntityId(), edge.toJSON());
+										canvas.createEdge(edge.getType(), nodeId, edge.getTarget().getEntityId(), edge.toJSON(), null, viewId);
 									}
 								}
 
@@ -203,7 +204,7 @@ function (require, $, jsPlumb, _, AbstractNode, SingleSelectionAttribute, KeySel
 									if (edges.hasOwnProperty(edgeId)) {
 										edge = edges[edgeId];
 										if (edge.getSource() !== edge.getTarget()) {
-											canvas.createEdge(edge.getType(), edge.getSource().getEntityId(), nodeId, edge.toJSON());
+											canvas.createEdge(edge.getType(), edge.getSource().getEntityId(), nodeId, edge.toJSON(), null, viewId);
 										}
 									}
 								}
@@ -228,7 +229,7 @@ function (require, $, jsPlumb, _, AbstractNode, SingleSelectionAttribute, KeySel
 								for (edgeId in edges) {
 									if (edges.hasOwnProperty(edgeId)) {
 										edge = edges[edgeId];
-										canvas.createEdge(edge.getType(), nodeId, edge.getTarget().getEntityId(), edge.toJSON());
+										canvas.createEdge(edge.getType(), nodeId, edge.getTarget().getEntityId(), edge.toJSON(), null, viewId);
 									}
 								}
 
@@ -238,7 +239,7 @@ function (require, $, jsPlumb, _, AbstractNode, SingleSelectionAttribute, KeySel
 									if (edges.hasOwnProperty(edgeId)) {
 										edge = edges[edgeId];
 										if (edge.getSource() !== edge.getTarget()) {
-											canvas.createEdge(edge.getType(), edge.getSource().getEntityId(), nodeId, edge.toJSON());
+											canvas.createEdge(edge.getType(), edge.getSource().getEntityId(), nodeId, edge.toJSON(), null, viewId);
 										}
 									}
 								}
@@ -263,7 +264,7 @@ function (require, $, jsPlumb, _, AbstractNode, SingleSelectionAttribute, KeySel
 								for (edgeId in edges) {
 									if (edges.hasOwnProperty(edgeId)) {
 										edge = edges[edgeId];
-										canvas.createEdge(edge.getType(), nodeId, edge.getTarget().getEntityId(), edge.toJSON());
+										canvas.createEdge(edge.getType(), nodeId, edge.getTarget().getEntityId(), edge.toJSON(), null, viewId);
 									}
 								}
 
@@ -273,7 +274,7 @@ function (require, $, jsPlumb, _, AbstractNode, SingleSelectionAttribute, KeySel
 									if (edges.hasOwnProperty(edgeId)) {
 										edge = edges[edgeId];
 										if (edge.getSource() !== edge.getTarget()) {
-											canvas.createEdge(edge.getType(), edge.getSource().getEntityId(), nodeId, edge.toJSON());
+											canvas.createEdge(edge.getType(), edge.getSource().getEntityId(), nodeId, edge.toJSON(), null, viewId);
 										}
 									}
 								}
