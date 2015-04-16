@@ -686,7 +686,7 @@ define([
             }
 
             if(intent.flags.indexOf(CONFIG.IWC.FLAG.PUBLISH_GLOBAL) !== -1){
-                if(intent.sender === _componentName) {
+                if(intent.sender.indexOf(_componentName) != -1) {
                     switch (intent.action) {
                         case CONFIG.IWC.ACTION.SYNC:
                             _ot.syncInbound(payload.site, payload.sites);
