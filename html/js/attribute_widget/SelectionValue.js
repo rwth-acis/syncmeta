@@ -8,7 +8,7 @@ define([
 		'operations/ot/ValueChangeOperation',
 		'viewcanvas_widget/LogicalOperator',
 		'viewcanvas_widget/LogicalConjunctions',
-        'attribute_widget/view_types/ClosedViewGeneration',
+        'attribute_widget/ClosedViewGeneration',
 		'text!templates/attribute_widget/selection_value.html'
 	], /** @lends SelectionValue */
 	function ($, jsPlumb, _, IWCW, Util, AbstractValue, ValueChangeOperation, LogicalOperator, LogicalConjunctions, CVG,selectionValueHtml) {
@@ -70,8 +70,8 @@ define([
 				var AttributeAddOperation = require('operations/ot/AttributeAddOperation');
 				var AttributeDeleteOperation = require('operations/ot/AttributeDeleteOperation');
 				var KeySelectionValueSelectionValueAttribute = require('attribute_widget/KeySelectionValueSelectionValueAttribute');
-				var ConditionListAttribute = require('attribute_widget/view_types/attr_ConditionListAttribute');
-                var ConditionPredicateAttribute = require('attribute_widget/view_types/attr_ConditionPredicateAttribute');
+				var ConditionListAttribute = require('attribute_widget/ConditionListAttribute');
+                var ConditionPredicateAttribute = require('attribute_widget/ConditionPredicateAttribute');
 
                 var viewType = that.getRootSubjectEntity();
                 var deleteCvgOp = null;
@@ -153,15 +153,22 @@ define([
 		 */
 		this.propagateValueChange = function (type, value, position) {
 			var operation = new ValueChangeOperation(that.getEntityId(), value, type, position);
-			propagateValueChangeOperation(operation);
+            if(that.getRootSubjectEntity().getViewId()) {
+                _iwc.disableBuffer();
+                propagateValueChangeOperation(operation, CONFIG.WIDGET.NAME.VIEWCANVAS);
+                _iwc.enableBuffer();
+            }
+            else
+                propagateValueChangeOperation(operation, CONFIG.WIDGET.NAME.MAIN);
 		};
 		/**
 		 * Propagate a Value Change Operation to the remote users and the local widgets
 		 * @param {operations.ot.ValueChangeOperation} operation
+         * @param {string} component the receiver
 		 */
-		var propagateValueChangeOperation = function (operation) {
+		var propagateValueChangeOperation = function (operation, component) {
 			processValueChangeOperation(operation);
-			_iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN, operation.getOTOperation());
+			_iwc.sendLocalOTOperation(component, operation.getOTOperation());
 		};
 
 		/**

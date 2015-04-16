@@ -177,10 +177,13 @@ define([
             if(_tools.hasOwnProperty(name)){
                 processToolSelection(name);
                 var operation = new ToolSelectOperation(name);
-                if(_currentModel === 'base' || _lastWidget === CONFIG.WIDGET.NAME.MAIN)
+                if(_currentModel === 'base' && _lastWidget === CONFIG.WIDGET.NAME.MAIN)
                     _iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.toNonOTOperation());
-                else if(_lastWidget ==CONFIG.WIDGET.NAME.VIEWCANVAS || _currentModel != 'base')
-                    _iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.VIEWCANVAS,operation.toNonOTOperation());
+                else if(_lastWidget ==CONFIG.WIDGET.NAME.VIEWCANVAS || _currentModel != 'base') {
+                    _iwc.disableBuffer();
+                    _iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.VIEWCANVAS, operation.toNonOTOperation());
+                    _iwc.enableBuffer();
+                }
             }
         };
 

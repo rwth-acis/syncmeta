@@ -64,15 +64,22 @@
          */
         var propagateValueChange = function(type,value,position){
             var operation = new ValueChangeOperation(that.getEntityId(),value,type,position);
-            propagateValueChangeOperation(operation);
+            if(that.getRootSubjectEntity().getViewId()) {
+                _iwc.disableBuffer();
+                propagateValueChangeOperation(operation, CONFIG.WIDGET.NAME.VIEWCANVAS);
+                _iwc.enableBuffer();
+            }
+            else
+                propagateValueChangeOperation(operation, CONFIG.WIDGET.NAME.MAIN);
         };
         /**
          * Propagate a Value Change Operation to the remote users and the local widgets
          * @param {operations.ot.ValueChangeOperation} operation
+         * @param {string} component the name of the receiver
          */
-        var propagateValueChangeOperation = function(operation){
+        var propagateValueChangeOperation = function(operation, component){
             processValueChangeOperation(operation);
-            _iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.getOTOperation());
+            _iwc.sendLocalOTOperation(component,operation.getOTOperation());
         };
 
         /**

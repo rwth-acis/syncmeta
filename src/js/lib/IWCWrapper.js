@@ -325,6 +325,12 @@ define([
                         }
                     }
                 }
+            },
+            disableBuffer : function(){
+                BUFFER_ENABLED = false;
+            },
+            enableBuffer:function(){
+                BUFFER_ENABLED = true;
             }
         };
     }

@@ -58,7 +58,7 @@ define([
         /**
          * jQuery object of DOM node representing the attribute
          * @type {jQuery}
-         * @private
+         * @public
          */
         this.get$node = function(){
             return _$node;

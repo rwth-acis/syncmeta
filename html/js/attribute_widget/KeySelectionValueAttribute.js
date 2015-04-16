@@ -70,10 +70,11 @@ define([
         /**
          * Propagate an Attribute Delete Operation to the remote users and the local widgets
          * @param {operations.ot.AttributeDeleteOperation} operation
+         * @param {string} component one of the canvas widgets
          */
-        var propagateAttributeDeleteOperation = function(operation){
+        var propagateAttributeDeleteOperation = function(operation, component){
             processAttributeDeleteOperation(operation);
-            _iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.getOTOperation());
+            _iwc.sendLocalOTOperation(component,operation.getOTOperation());
         };
 
         /**
@@ -163,19 +164,20 @@ define([
         _$node.find(".value").append(_value.get$node());
         _$node.find(".ui-icon-close").click(function(){
             var operation = new AttributeDeleteOperation(that.getEntityId(),that.getSubjectEntityId(),that.getRootSubjectEntity().getEntityId(),KeySelectionValueAttribute.TYPE);
-            propagateAttributeDeleteOperation(operation);
+            if(that.getRootSubjectEntity().getViewId()) {
+                _iwc.disableBuffer();
+                propagateAttributeDeleteOperation(operation, CONFIG.WIDGET.NAME.VIEWCANVAS);
+                _iwc.enableBuffer();
+            }
+            else
+                propagateAttributeDeleteOperation(operation, CONFIG.WIDGET.NAME.MAIN);
         });
 
         if(_iwc){
             that.registerCallbacks();
         }
 		
-		this.toKeySelectionValueSelectionValueAttribute = function(subjectEntity, options2){
-			var KeySelectionValueSelectionValueAttribute = require('attribute_widget/KeySelectionValueSelectionValueAttribute');
-			var ksva = new KeySelectionValueSelectionValueAttribute(Util.generateRandomId(), that.getName(), subjectEntity, _options, options2);
-			ksva.getKey().setValue(that.getKey().getValue());
-			return ksva;
-		}
+
     }
 
     return KeySelectionValueAttribute;

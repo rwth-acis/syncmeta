@@ -7,7 +7,7 @@ define([
     'attribute_widget/AbstractAttribute',
     'attribute_widget/Value',
     'attribute_widget/SelectionValue',
-    'text!templates/attribute_widget/view_types/condition_predicate.html'
+    'text!templates/attribute_widget/condition_predicate.html'
 ],/** @lends ConditionPredicateAttribute */ function($,_,IWCW,Util,AttributeDeleteOperation,AbstractAttribute,Value,SelectionValue,condition_predicateHtml) {
 
     ConditionPredicateAttribute.TYPE = "ConditionPredicateAttribute";
@@ -26,7 +26,7 @@ define([
      * @param {Object} options2 Selection options
      * @constructor
      */
-    function ConditionPredicateAttribute(id,name,subjectEntity,options,options2,options3){
+    function ConditionPredicateAttribute(id,name,subjectEntity,options,options2/*, options3*/){
         var that = this;
 
         AbstractAttribute.call(this,id,name,subjectEntity);
@@ -92,7 +92,9 @@ define([
          */
         this.propagateAttributeDeleteOperation = function(operation){
             processAttributeDeleteOperation(operation);
+            _iwc.disableBuffer();
             _iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.VIEWCANVAS,operation.getOTOperation());
+            _iwc.enableBuffer();
         };
 
         /**

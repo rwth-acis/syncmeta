@@ -1,55 +1,54 @@
 define([
     'jqueryui',
-    'jsplumb',
     'lodash',
     'attribute_widget/AbstractNode',
     'attribute_widget/KeySelectionValueSelectionValueListAttribute',
     'attribute_widget/SingleSelectionAttribute',
-    'attribute_widget/view_types/attr_ConditionListAttribute',
+    'attribute_widget/ConditionListAttribute',
     'viewcanvas_widget/ViewTypesUtil',
     'viewcanvas_widget/LogicalOperator',
     'viewcanvas_widget/LogicalConjunctions',
-    'text!templates/attribute_widget/object_node.html'
-], /** @lends ViewObjectNode */
-function ($, jsPlumb, _, AbstractNode, KeySelectionValueSelectionValueListAttribute, SingleSelectionAttribute, ConditionListAttribute, ViewTypesUtil, LogicalOperator, LogicalConjunctions, objectNodeHtml) {
+    'text!templates/attribute_widget/relationship_node.html'
+], /** @lends ViewRelationshipNode */
+	function ($, _, AbstractNode, KeySelectionValueSelectionValueListAttribute, SingleSelectionAttribute, ConditionListAttribute, ViewTypesUtil,LogicalOperator,LogicalConjunctions, relationshipNodeHtml) {
 
-    ViewObjectNode.TYPE = "ViewObject";
+	ViewRelationshipNode.TYPE = "ViewRelationship";
 
-    ViewObjectNode.prototype = new AbstractNode();
-    ViewObjectNode.prototype.constructor = ViewObjectNode;
+	ViewRelationshipNode.prototype = new AbstractNode();
+	ViewRelationshipNode.prototype.constructor = ViewRelationshipNode;
 	/**
-	 * ViewObjectNode
-	 * @class attribute_widget.ViewObjectNode
+	 * ViewRelationshipNode
+	 * @class attribute_widget.ViewRelationshipNode
 	 * @memberof attribute_widget
 	 * @extends attribute_widget.AbstractNode
-	 * @constructor
 	 * @param {string} id Entity identifier of node
 	 * @param {number} left x-coordinate of node position
 	 * @param {number} top y-coordinate of node position
 	 * @param {number} width Width of node
 	 * @param {number} height Height of node
-     * @param {object} json the json representation
+     * @param {object} json the json representation form the role resource
+	 * @constructor
 	 */
-	function ViewObjectNode(id, left, top, width, height,json) {
+	function ViewRelationshipNode(id, left, top, width, height,json) {
 		var that = this;
 
         var _fromResource = json;
 
-		AbstractNode.call(this, id, ViewObjectNode.TYPE, left, top, width, height);
+		AbstractNode.call(this, id, ViewRelationshipNode.TYPE, left, top, width, height);
 
 		/**
 		 * jQuery object of node template
 		 * @type {jQuery}
 		 * @private
 		 */
-		var _$template = $(_.template(objectNodeHtml, {}));
+		var $template = $(_.template(relationshipNodeHtml, {}));
 
 		/**
 		 * jQuery object of DOM node representing the node
 		 * @type {jQuery}
 		 * @private
 		 */
-		var _$node = AbstractNode.prototype.get$node.call(this).append(_$template);
+		var _$node = AbstractNode.prototype.get$node.call(this).append($template);
 
 		/**
 		 * jQuery object of DOM node representing the attributes
@@ -64,13 +63,10 @@ function ($, jsPlumb, _, AbstractNode, KeySelectionValueSelectionValueListAttrib
 		 * @private
 		 */
 		var _attributes = this.getAttributes();
-
-		//var EntityMangager = require('attribute_widget/EntityManager');
-		//var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList(EntityMangager.getNodesByType('Object'));
-		//this.addAttribute(new SingleSelectionAttribute("[target]", "Target", this, selectionValues));
+		//this.addAttribute(new SingleSelectionAttribute("[target]", "Target", this, {"class1":"Class1", "class2":"Class2"}));
 		ViewTypesUtil.GetCurrentBaseModel().then(function (model) {
-			var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes, ['Object']);
-			var attribute = new SingleSelectionAttribute(id+"[target]", "Target", that, selectionValues);
+			var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes, ['Relationship']);
+            var attribute = new SingleSelectionAttribute(id+"[target]", "Target", that, selectionValues);
 
             var conjSelection = new SingleSelectionAttribute(id+'[conjunction]', 'Conjunction', that, LogicalConjunctions);
             that.addAttribute(conjSelection);
@@ -89,9 +85,9 @@ function ($, jsPlumb, _, AbstractNode, KeySelectionValueSelectionValueListAttrib
                     if(conditonList = _fromResource.attributes["[condition]"]){
                         var attrList = that.getAttribute('[attributes]').getAttributes();
                         var targetAttrList = {};
-                        for (var key in attrList) {
-                            if (attrList.hasOwnProperty(key)) {
-                                targetAttrList[key] = attrList[key].getKey().getValue();
+                        for (var attrKey in attrList) {
+                            if (attrList.hasOwnProperty(attrKey)) {
+                                targetAttrList[attrKey] = attrList[attrKey].getKey().getValue();
                             }
                         }
                         var cla = new ConditionListAttribute("[condition]", "Conditions", that, targetAttrList, LogicalOperator, LogicalConjunctions);
@@ -106,16 +102,18 @@ function ($, jsPlumb, _, AbstractNode, KeySelectionValueSelectionValueListAttrib
 			that.get$node().find('.attributes').prepend(attribute.get$node());
 		});
 
-		var attributeList = new KeySelectionValueSelectionValueListAttribute("[attributes]", "Attributes", this, {
+		this.addAttribute(new KeySelectionValueSelectionValueListAttribute("[attributes]", "Attributes", this, {
 				"string" : "String",
 				"boolean" : "Boolean",
 				"integer" : "Integer",
 				"file" : "File"
-			}, {
-				"show" : "Visible",
-				"hide" : "Hidden"
-			});
-		this.addAttribute(attributeList);
+        }, {
+            "hidden" : "Show",
+            "top" : "Show Top",
+            "center" : "Show Center",
+            "bottom" : "Show Bottom",
+            "hide": "Hide"
+        }));
 
 		_$node.find(".label").append(this.getLabel().get$node());
 
@@ -126,6 +124,6 @@ function ($, jsPlumb, _, AbstractNode, KeySelectionValueSelectionValueListAttrib
 		}
 	}
 
-	return ViewObjectNode;
+	return ViewRelationshipNode;
 
 });

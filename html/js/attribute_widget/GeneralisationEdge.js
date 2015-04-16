@@ -8,8 +8,8 @@ define([
     'attribute_widget/RelationshipNode',
     'attribute_widget/RelationshipGroupNode',
     'attribute_widget/EnumNode',
-	'attribute_widget/view_types/attr_ViewObjectNode',
-	'attribute_widget/view_types/attr_ViewRelationshipNode'
+	'attribute_widget/ViewObjectNode',
+	'attribute_widget/ViewRelationshipNode'
 ],/** @lends GeneralisationEdge */function($,jsPlumb,_,AbstractEdge,AbstractClassNode,ObjectNode,RelationshipNode,RelationshipGroupNode,EnumNode,ViewObjectNode,ViewRelationshipNode) {
 
     GeneralisationEdge.TYPE = "Generalisation";

@@ -127,7 +127,13 @@ define([
         _$node.find(".value").append(_value.get$node());
         _$node.find(".ui-icon-close").click(function(){
             var operation = new AttributeDeleteOperation(that.getEntityId(),that.getSubjectEntityId(),that.getRootSubjectEntity().getEntityId(),ListSingleValueAttribute.TYPE);
-            propagateAttributeDeleteOperation(operation);
+            if(that.getRootSubjectEntity().getViewId()){
+                _iwc.disableBuffer();
+                propagateAttributeDeleteOperation(operation, CONFIG.WIDGET.NAME.VIEWCANVAS);
+                _iwc.enableBuffer();
+            }
+            else
+                propagateAttributeDeleteOperation(operation, CONFIG.WIDGET.NAME.MAIN);
         });
 
         if(_iwc){

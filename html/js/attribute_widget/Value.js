@@ -120,9 +120,10 @@ define([
         /**
          * Propagate a Value Change Operation to the remote users and the local widgets
          * @param {operations.ot.ValueChangeOperation} operation
+         * @param {string} component the receiver
          */
-        var propagateValueChangeOperation = function(operation){
-            iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.getOTOperation());
+        var propagateValueChangeOperation = function(operation, component){
+            iwc.sendLocalOTOperation(component,operation.getOTOperation());
         };
 
         /**
@@ -134,7 +135,13 @@ define([
         this.propagateValueChange = function(type,value,position){
             var operation = new ValueChangeOperation(that.getEntityId(),value,type,position);
             processValueChangeOperation(operation);
-            propagateValueChangeOperation(operation);
+            if(that.getRootSubjectEntity().getViewId()) {
+                iwc.disableBuffer();
+                propagateValueChangeOperation(operation, CONFIG.WIDGET.NAME.VIEWCANVAS);
+                iwc.enableBuffer();
+            }
+            else
+                propagateValueChangeOperation(operation, CONFIG.WIDGET.NAME.MAIN);
         };
 
         /**

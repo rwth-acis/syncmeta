@@ -6,7 +6,7 @@ define([
     'operations/ot/AttributeAddOperation',
     'operations/ot/AttributeDeleteOperation',
     'attribute_widget/AbstractAttribute',
-    'attribute_widget/view_types/attr_ConditionPredicateAttribute',
+    'attribute_widget/ConditionPredicateAttribute',
     'text!templates/attribute_widget/list_attribute.html'
 ],function($,_,IWCW,Util,AttributeAddOperation,AttributeDeleteOperation,AbstractAttribute,ConditionPredicateAttribute,listAttributeHtml) {
 
@@ -24,7 +24,7 @@ define([
      * @param {Object} options Selection options
      * @param {Object} options2 Selection options
      */
-    function ConditionListAttribute(id,name,subjectEntity,options,options2,options3){
+    function ConditionListAttribute(id,name,subjectEntity,options,options2/*,options3*/){
         var that = this;
 
         AbstractAttribute.call(this,id,name,subjectEntity);
@@ -43,7 +43,7 @@ define([
          */
         var _options2 = options2;
 		
-		var _options3 = options3;
+		//var _options3 = options3;
         /**
          * List of attributes
          * @type {Object}
@@ -69,7 +69,7 @@ define([
          * @param {operations.ot.AttributeDeleteOperation} operation
          */
         var processAttributeAddOperation = function(operation){
-            var attribute = new ConditionPredicateAttribute(operation.getEntityId(),"Attribute",that,_options,_options2,_options3);
+            var attribute = new ConditionPredicateAttribute(operation.getEntityId(),"Attribute",that,_options,_options2);
             that.addAttribute(attribute);
             _$node.find('.list .operator2').show();
 			_$node.find(".list").append(attribute.get$node());
@@ -100,10 +100,11 @@ define([
         /**
          * Propagate an Attribute Add Operation to the remote users and the local widgets
          * @param {operations.ot.AttributeDeleteOperation} operation
+         * @param {string} component the name of the receiver
          */
-        var propagateAttributeAddOperation = function(operation){
+        var propagateAttributeAddOperation = function(operation,component){
 			processAttributeAddOperation(operation);
-            iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.getOTOperation());
+            iwc.sendLocalOTOperation(component,operation.getOTOperation());
         };
 
         /**
@@ -175,7 +176,7 @@ define([
 
 		this.setOptions = function(options){
 			_options = options;
-		}
+		};
 		
         /**
          * Set attribute list by its JSON representation
@@ -219,7 +220,9 @@ define([
         _$node.find(".ui-icon-plus").click(function(){
             var id = Util.generateRandomId();
             var operation = new AttributeAddOperation(id,that.getEntityId(),that.getRootSubjectEntity().getEntityId(),ConditionPredicateAttribute.TYPE);
-            propagateAttributeAddOperation(operation);
+            iwc.disableBuffer();
+            propagateAttributeAddOperation(operation, CONFIG.WIDGET.NAME.VIEWCANVAS);
+            iwc.enableBuffer();
         });
 
         if(iwc){

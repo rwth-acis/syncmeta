@@ -91,10 +91,10 @@
                 <File name="src\js\attribute_widget\UniDirAssociationEdge.js" />
                 <File name="src\js\attribute_widget\Value.js" />
                 <Folder name="view_types">
-                    <File name="src\js\attribute_widget\view_types\attr_ViewObjectNode.js" />
-                    <File name="src\js\attribute_widget\view_types\attr_ViewRelationshipNode.js" />
-                    <File name="src\js\attribute_widget\view_types\attr_ConditionPredicateAttribute.js" />
-                    <File name="src\js\attribute_widget\view_types\attr_ConditionListAttribute.js" />
+                    <File name="src\js\attribute_widget\view_types\ViewObjectNode.js" />
+                    <File name="src\js\attribute_widget\view_types\ViewRelationshipNode.js" />
+                    <File name="src\js\attribute_widget\view_types\ConditionPredicateAttribute.js" />
+                    <File name="src\js\attribute_widget\view_types\ConditionListAttribute.js" />
                 </Folder>
             </Folder>
             <Folder name="canvas_widget">

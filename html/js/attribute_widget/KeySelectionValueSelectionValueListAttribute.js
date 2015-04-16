@@ -99,10 +99,11 @@ define([
         /**
          * Propagate an Attribute Add Operation to the remote users and the local widgets
          * @param {operations.ot.AttributeDeleteOperation} operation
+         * @param {string} component the component
          */
-        this.propagateAttributeAddOperation = function(operation){
+        this.propagateAttributeAddOperation = function(operation, component){
 			processAttributeAddOperation(operation);
-            iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.getOTOperation());
+            iwc.sendLocalOTOperation(component,operation.getOTOperation());
         };
 
         /**
@@ -148,14 +149,7 @@ define([
             }
         };
 		
-		this.deleteAllAttributesFromCanvas=function(){
-			for(var key in _list){
-				if(_list.hasOwnProperty(key)){
-					_list[key].get$node().remove();
-					delete _list[key];
-				}
-			}
-		}
+
         /**
          * Get attribute list
          * @returns {Object}
@@ -222,7 +216,14 @@ define([
         _$node.find(".ui-icon-plus").click(function(){
             var id = Util.generateRandomId();
             var operation = new AttributeAddOperation(id,that.getEntityId(),that.getRootSubjectEntity().getEntityId(),KeySelectionValueSelectionValueAttribute.TYPE);
-            that.propagateAttributeAddOperation(operation);
+            if(that.getRootSubjectEntity().getViewId()) {
+                iwc.disableBuffer();
+                that.propagateAttributeAddOperation(operation, CONFIG.WIDGET.NAME.VIEWCANVAS);
+                iwc.enableBuffer();
+            }
+            else
+                that.propagateAttributeAddOperation(operation, CONFIG.WIDGET.NAME.MAIN);
+
         });
 
         if(iwc){

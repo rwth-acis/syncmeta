@@ -712,7 +712,7 @@ define([
             });
         };
 
-        if(_componentName === CONFIG.WIDGET.NAME.VIEWCANVAS) {
+        if(_componentName === CONFIG.WIDGET.NAME.MAIN) {
             _joiningState = IWCOT.JOIN_STATE.NOT_JOINED;
             _joiningTimeoutCallback = function () {
                 var i,

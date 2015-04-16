@@ -4,7 +4,7 @@ define(['lodash', 'Util'],
         /**
          * get the edges between two nodes
          * @param node1 the first node
-         * @param node2 the second ndoe
+         * @param node2 the second node
          * @returns {object} the Edge object
          */
         function getEdgeBetween(node1, node2){

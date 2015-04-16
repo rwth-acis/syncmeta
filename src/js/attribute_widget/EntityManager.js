@@ -13,8 +13,8 @@ define([
 		'attribute_widget/GeneralisationEdge',
 		'attribute_widget/BiDirAssociationEdge',
 		'attribute_widget/UniDirAssociationEdge',
-		'attribute_widget/view_types/attr_ViewObjectNode',
-		'attribute_widget/view_types/attr_ViewRelationshipNode',
+		'attribute_widget/ViewObjectNode',
+		'attribute_widget/ViewRelationshipNode',
 		'promise!Metamodel'
 	], /** @lends EntityManager */
 	function (_, Node, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, ModelAttributesNode, Edge, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNode, ViewRelationshipNode, metamodel) {
@@ -120,6 +120,7 @@ define([
 			 * @param {number} top y-coordinate of node position
 			 * @param {number} width Width of node
 			 * @param {number} height Height of node
+             * @param {object} json  the json representation of the node
 			 * @returns {attribute_widget.AbstractNode}
 			 */
 			//TODO: switch id and type
