@@ -108,7 +108,7 @@ define([
             jsPlumb.bind("connection", function(info,originalEvent) {
                 if(typeof originalEvent !== 'undefined'){ //Was the connection established using Drag'n Drop?
                     jsPlumb.detach(info.connection,{fireEvent: false});
-                    that.getCanvas().createEdge(that.getName(),info.sourceId,info.targetId, null, $('#lblCurrentView').text());
+                    that.getCanvas().createEdge(that.getName(),info.sourceId,info.targetId, null, null, $('#lblCurrentView').text());
                     //that.canvas.callListeners(CONFIG.CANVAS.LISTENERS.EDGEADD,that.name,info.sourceId,info.targetId);
                 }
                 return true;
