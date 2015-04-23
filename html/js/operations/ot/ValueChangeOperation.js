@@ -219,8 +219,11 @@ define([
         };
     }
 
-    ValueChangeOperation.getOperationDescription = function(valueKey,entityType,entityName){
-        return ".. changed " + valueKey + " of " + entityType + (entityName ? " " : "") + entityName;
+    ValueChangeOperation.getOperationDescription = function(valueKey,entityType,entityName,viewId){
+        if(!viewId)
+            return ".. changed " + valueKey + " of " + entityType + (entityName ? " " : "") + entityName;
+        else
+            return ".. changed " + valueKey + " of " + entityType + (entityName ? " " : "") + entityName + " in View " + viewId;
     };
 
     return ValueChangeOperation;

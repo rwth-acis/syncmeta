@@ -108,11 +108,13 @@ define([
         };
     }
 
-    NodeResizeOperation.getOperationDescription = function(nodeType,nodeLabel){
-        if(!nodeLabel){
+    NodeResizeOperation.getOperationDescription = function(nodeType,nodeLabel, viewId){
+        if(!nodeLabel && !viewId){
             return "..resized " + nodeType;
-        } else {
+        } else if(!viewId) {
             return "..resized " + nodeType + " " + nodeLabel;
+        }else{
+            return "..resized " + nodeType + " " + nodeLabel + " in View " + viewId;
         }
     };
 

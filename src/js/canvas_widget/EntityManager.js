@@ -180,6 +180,7 @@ define([
 	 * @constructor
 	 */
 	function EntityManager() {
+        var _highlightedEntityByView = null;
 		/**
 		 * Model attributes node
 		 * @type {canvas_widget.ModelAttributesNode}
@@ -263,6 +264,15 @@ define([
 				}
 				return null;
 			},
+            /**
+             * Find node or edge by id
+             * @memberof attribute_widget.EntityManager#
+             * @param {string} id Entity id
+             * @returns {*}
+             */
+            find : function (id) {
+                return this.findNode(id) || this.findEdge(id);
+            },
 			/**
 			 * Delete node by id
 			 * @memberof canvas_widget.EntityManager#
@@ -1007,7 +1017,12 @@ define([
 					});
 				});
 				return deferred.promise();
-			}
+			},
+            setHighlightedEntity: function (entity) {
+                if(_highlightedEntityByView)
+                    _highlightedEntityByView.unhighlight();
+                _highlightedEntityByView = entity;
+            }
 		};
 	}
 	return new EntityManager();

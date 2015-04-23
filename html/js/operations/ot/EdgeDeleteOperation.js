@@ -164,11 +164,14 @@ define([
 
     }
 
-    EdgeDeleteOperation.getOperationDescription = function(edgeType,edgeLabel){
-        if(!edgeLabel){
+    EdgeDeleteOperation.getOperationDescription = function(edgeType,edgeLabel, viewId){
+        if(!edgeLabel && !viewId){
             return "..deleted " + edgeType;
-        } else {
+        } else if(!viewId) {
             return "..deleted " + edgeType + " " + edgeLabel;
+        }
+        else{
+            return "..deleted " + edgeType + " " + edgeLabel + "in View " + viewId;
         }
     };
 

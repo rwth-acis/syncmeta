@@ -11,6 +11,7 @@ define([
 		'operations/non_ot/ExportDataOperation',
 		'operations/non_ot/ExportMetaModelOperation',
 		'operations/non_ot/ExportImageOperation',
+        'operations/non_ot/HighlightOperation',
 		'canvas_widget/AbstractEntity',
 		'canvas_widget/ModelAttributesNode',
 		'canvas_widget/EntityManager',
@@ -18,7 +19,7 @@ define([
 		'canvas_widget/MoveTool',
 		'jquery.transformable'
 	], /** @lends Canvas */
-	function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelectOperation, EntitySelectOperation, ActivityOperation, ExportDataOperation, ExportMetaModelOperation, ExportImageOperation, AbstractEntity, ModelAttributesNode, EntityManager, AbstractCanvas, MoveTool) {
+	function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelectOperation, EntitySelectOperation, ActivityOperation, ExportDataOperation, ExportMetaModelOperation, ExportImageOperation,HighlightOperation, AbstractEntity, ModelAttributesNode, EntityManager, AbstractCanvas, MoveTool) {
 
 	Canvas.prototype = new AbstractCanvas();
 	Canvas.prototype.constructor = Canvas;
@@ -891,6 +892,7 @@ define([
 			_iwcot.registerOnLocalDataReceivedCallback(localExportDataCallback);
 			_iwcot.registerOnLocalDataReceivedCallback(localExportMetaModelCallback);
 			_iwcot.registerOnLocalDataReceivedCallback(localExportImageCallback);
+            _iwcot.registerOnLocalDataReceivedCallback(localHighlightCallback);
 			_iwcot.registerOnHistoryChangedCallback(historyNodeAddCallback);
 			_iwcot.registerOnHistoryChangedCallback(historyEdgeAddCallback);
 		};
@@ -905,6 +907,7 @@ define([
 			_iwcot.unregisterOnLocalDataReceivedCallback(localExportDataCallback);
 			_iwcot.unregisterOnLocalDataReceivedCallback(localExportMetaModelCallback);
 			_iwcot.unregisterOnLocalDataReceivedCallback(localExportImageCallback);
+            _iwcot.unregisterOnLocalDataReceivedCallback(localHighlightCallback);
 			_iwcot.unregisterOnHistoryChangedCallback(historyNodeAddCallback);
 			_iwcot.unregisterOnHistoryChangedCallback(historyEdgeAddCallback);
 		};
@@ -914,6 +917,22 @@ define([
 		if (_iwcot) {
 			that.registerCallbacks();
 		}
+
+        function localHighlightCallback(operation){
+            if(operation instanceof  HighlightOperation){
+                var entityId = operation.getEntityId();
+                if(entityId) {
+                    var entity = EntityManager.find(operation.getEntityId());
+                    EntityManager.setHighlightedEntity(entity);
+                    var viewId = operation.getViewId();
+                    entity.highlight("#FFF804", viewId);
+                }
+                else
+                    EntityManager.setHighlightedEntity(null);
+
+            }
+        }
+
 
 	}
 

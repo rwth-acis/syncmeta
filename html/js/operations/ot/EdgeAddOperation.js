@@ -160,11 +160,13 @@ define([
         };
     }
 
-    EdgeAddOperation.getOperationDescription = function(edgeType,edgeLabel,sourceNodeType,sourceNodeLabel,targetNodeType,targetNodeLabel){
-        if(!edgeLabel){
+    EdgeAddOperation.getOperationDescription = function(edgeType,edgeLabel,sourceNodeType,sourceNodeLabel,targetNodeType,targetNodeLabel,viewId){
+        if(!edgeLabel && !viewId){
             return "..created a new " + edgeType + " between " + sourceNodeType + " " + sourceNodeLabel + " and " + targetNodeType + " " + targetNodeLabel;
-        } else {
+        } else if(!viewId) {
             return "..created " + edgeType + " " + edgeLabel + " between " + sourceNodeType + " " + sourceNodeLabel + " and " + targetNodeType + " " + targetNodeLabel;
+        }else{
+            return "..created " + edgeType + " " + edgeLabel + " between " + sourceNodeType + " " + sourceNodeLabel + " and " + targetNodeType + " " + targetNodeLabel + " in View " + viewId;
         }
     };
 

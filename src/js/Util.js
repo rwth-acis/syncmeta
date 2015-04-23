@@ -97,14 +97,14 @@ define(['jqueryui'],/** @lends Util */function($) {
     };
 
     var COLORS = [
-        "#8AFFC8",
-        "#8A9FFF",
-        "#FF8A8A",
-        "#FFC08A",
-        "#FF8AD2",
-        "#8AEBFF",
-        "#C68AFF",
-        "#8EFF8A"
+        "#8AFFC8", //türkis
+        "#8A9FFF", //light blue
+        "#FF8A8A", //Rot
+        "#FFC08A", //Orange
+        "#FF8AD2", //Pink
+        "#8AEBFF", //Blue
+        "#C68AFF", //Lila
+        "#8EFF8A" //green
     ];
 
     /**

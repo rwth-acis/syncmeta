@@ -157,7 +157,7 @@ define([
                     "ValueChangeActivity",
                     that.getEntityId(),
                     _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
-                    ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(),that.getRootSubjectEntity().getType(),that.getRootSubjectEntity().getLabel().getValue().getValue()),
+                    ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(),that.getRootSubjectEntity().getType(),that.getRootSubjectEntity().getLabel().getValue().getValue(),$('#lblCurrentView').text()),
                     {
                         value: calcNewValue(operation),
                         subjectEntityName: that.getSubjectEntity().getName(),
@@ -191,7 +191,7 @@ define([
                     "ValueChangeActivity",
                     that.getEntityId(),
                     operation.getOTOperation().getSender(),
-                    ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(),that.getRootSubjectEntity().getType(),that.getRootSubjectEntity().getLabel().getValue().getValue()),
+                    ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(),that.getRootSubjectEntity().getType(),that.getRootSubjectEntity().getLabel().getValue().getValue(),$('#lblCurrentView').text()),
                     {
                         value: calcNewValue(operation),
                         subjectEntityName: that.getSubjectEntity().getName(),

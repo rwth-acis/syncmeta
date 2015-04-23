@@ -236,12 +236,14 @@ define([
         };
     }
 
-    NodeDeleteOperation.getOperationDescription = function(nodeType,nodeLabel){
-        if(!nodeLabel){
+    NodeDeleteOperation.getOperationDescription = function(nodeType,nodeLabel,viewId){
+        if(!nodeLabel && !viewId){
             return "..deleted " + nodeType;
-        } else {
+        } else if(!viewId) {
             return "..deleted " + nodeType + " " + nodeLabel;
         }
+        else
+            return "..deleted " + nodeType + " " + nodeLabel + " in View " + viewId;
     };
 
     return NodeDeleteOperation;

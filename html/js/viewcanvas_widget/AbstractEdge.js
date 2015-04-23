@@ -141,7 +141,7 @@ define([
                     "EdgeDeleteActivity",
                     operation.getEntityId(),
                     _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
-                    EdgeDeleteOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
+                    EdgeDeleteOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue(), $('#lblCurrentView').text()),
                     {}
                 ).toNonOTOperation());
             }
@@ -184,7 +184,7 @@ define([
                     "EdgeDeleteActivity",
                     operation.getEntityId(),
                     operation.getOTOperation().getSender(),
-                    EdgeDeleteOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
+                    EdgeDeleteOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue(),$('#lblCurrentView').text()),
                     {}
                 ).toNonOTOperation());
                 processEdgeDeleteOperation(operation);

@@ -184,7 +184,7 @@ define([
          */
         this.setValueFromJSON = function(json){
             _.forEach(json.list,function(val,key){
-                var attribute = new ConditionPredicateAttribute(key,key,that,_options,_options2,_options3);
+                var attribute = new ConditionPredicateAttribute(key,key,that,_options,_options2);
                 attribute.setValueFromJSON(json.list[key]);
                 if(attr = that.getAttribute(attribute.getEntityId())){
                     that.deleteAttribute(attr.getEntityId());

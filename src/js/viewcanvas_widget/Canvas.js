@@ -13,6 +13,7 @@ define([
 		'operations/non_ot/ExportImageOperation',
         'operations/non_ot/PerformCvgOperation',
         'operations/non_ot/DeleteCvgOperation',
+        'operations/non_ot/HighlightOperation',
 		'canvas_widget/AbstractEntity',
 		'viewcanvas_widget/ModelAttributesNode',
 		'viewcanvas_widget/EntityManager',
@@ -21,7 +22,7 @@ define([
         'viewcanvas_widget/ClosedViewGeneration',
 		'jquery.transformable'
 	], /** @lends Canvas */
-	function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelectOperation, EntitySelectOperation, ActivityOperation, ExportDataOperation, ExportMetaModelOperation, ExportImageOperation, PerformCvgOperation, DeleteCvgOperation, AbstractEntity, ModelAttributesNode, EntityManager, AbstractCanvas, MoveTool, CVG) {
+	function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelectOperation, EntitySelectOperation, ActivityOperation, ExportDataOperation, ExportMetaModelOperation, ExportImageOperation, PerformCvgOperation, DeleteCvgOperation,HighlightOperation, AbstractEntity, ModelAttributesNode, EntityManager, AbstractCanvas, MoveTool, CVG) {
 
 	Canvas.prototype = new AbstractCanvas();
 	Canvas.prototype.constructor = Canvas;
@@ -100,7 +101,7 @@ define([
         };
 
 		/**
-		 * Offset of the DOM node representating the canvas
+		 * Offset of the DOM node representing the canvas
 		 * @type {{left: number, top: number, right: number, bottom: number}}
 		 */
 		var canvasOffset = _$node.offset();
@@ -142,7 +143,7 @@ define([
 						"NodeAddActivity",
 						operation.getEntityId(),
 						_iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
-						NodeAddOperation.getOperationDescription(operation.getType()), {
+						NodeAddOperation.getOperationDescription(operation.getType(), null, operation.getViewId()), {
 						nodeType : operation.getType()
 					}).toNonOTOperation());
 			}
@@ -181,7 +182,7 @@ define([
 						"EdgeAddActivity",
 						operation.getEntityId(),
 						_iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
-						EdgeAddOperation.getOperationDescription(operation.getType(), "", sourceNode.getLabel().getValue().getValue(), sourceNode.getType(), targetNode.getType(), targetNode.getLabel().getValue().getValue()), {
+						EdgeAddOperation.getOperationDescription(operation.getType(), "", sourceNode.getLabel().getValue().getValue(), sourceNode.getType(), targetNode.getType(), targetNode.getLabel().getValue().getValue(),$('#lblCurrentView').text()), {
 						nodeType : operation.getType(),
 						sourceNodeId : operation.getSource(),
 						sourceNodeLabel : sourceNode.getLabel().getValue().getValue(),
@@ -204,7 +205,7 @@ define([
 						"NodeAddActivity",
 						operation.getEntityId(),
 						operation.getOTOperation().getSender(),
-						NodeAddOperation.getOperationDescription(operation.getType()), {
+						NodeAddOperation.getOperationDescription(operation.getType(), null, operation.getViewId()), {
 						nodeType : operation.getType()
 					}).toNonOTOperation());
 				processNodeAddOperation(operation);
@@ -225,7 +226,7 @@ define([
 						"EdgeAddActivity",
 						operation.getEntityId(),
 						operation.getOTOperation().getSender(),
-						EdgeAddOperation.getOperationDescription(operation.getType(), "", sourceNode.getLabel().getValue().getValue(), sourceNode.getType(), targetNode.getLabel().getValue().getValue(), targetNode.getType()), {
+						EdgeAddOperation.getOperationDescription(operation.getType(), "", sourceNode.getLabel().getValue().getValue(), sourceNode.getType(), targetNode.getLabel().getValue().getValue(), targetNode.getType(),$('#lblCurrentView').text()), {
 						nodeType : operation.getType(),
 						sourceNodeId : operation.getSource(),
 						sourceNodeLabel : sourceNode.getLabel().getValue().getValue(),
@@ -498,6 +499,25 @@ define([
 				_iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
 				_iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, operation.toNonOTOperation());
 				_iwcot.sendRemoteNonOTOperation(operation.toNonOTOperation());
+
+                //highlight Origin node in main canvas
+                var highlightOp;
+                if(entity) {
+                    var entityId;
+                     entityId = entity.getOrigin();
+                    if (!entityId && (entity.getType() === 'ViewObject' || entity.getType() === 'ViewRelationship'))
+                        entityId = entity.getAttribute(entity.getEntityId() + '[target]').getValue().getValue();
+
+                    if (entityId) {
+                        highlightOp = new HighlightOperation(entityId, $('#lblCurrentView').text());
+                        _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN, highlightOp.toNonOTOperation());
+                    }
+                }
+                else{
+                    highlightOp = new HighlightOperation(null, null);
+                    _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN, highlightOp.toNonOTOperation());
+                }
+
 				//this.callListeners(CONFIG.CANVAS.LISTENERS.NODESELECT,entity ? entity.getEntityId() :null);
 			}
 		};

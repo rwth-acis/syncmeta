@@ -22,8 +22,10 @@ define([
     'operations/non_ot/ViewInitOperation',
     'operations/non_ot/PerformCvgOperation',
     'operations/non_ot/DeleteCvgOperation',
-    'operations/non_ot/DeleteViewOperation'
-],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportImageOperation,JoinOperation,WidgetEnterOperation,InitModelTypesOperation,ViewInitOperation,PerformCvgOperation,DeleteCvgOperation,DeleteViewOperation) {
+    'operations/non_ot/DeleteViewOperation',
+    'operations/non_ot/HighlightOperation'
+
+],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportImageOperation,JoinOperation,WidgetEnterOperation,InitModelTypesOperation,ViewInitOperation,PerformCvgOperation,DeleteCvgOperation,DeleteViewOperation,HighlightOperation) {
 
     /**
      * OperationFactory
@@ -90,6 +92,9 @@ define([
                         break;
                     case DeleteViewOperation.TYPE:
                         resOperation = new DeleteViewOperation(data.viewId);
+                        break;
+                    case HighlightOperation.TYPE:
+                        resOperation = new HighlightOperation(data.entityId, data.viewId);
                         break;
                 }
                 return resOperation;

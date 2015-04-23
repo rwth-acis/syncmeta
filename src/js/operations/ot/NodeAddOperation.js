@@ -231,12 +231,13 @@ define([
         };
     }
 
-    NodeAddOperation.getOperationDescription = function(nodeType,nodeLabel){
-        if(!nodeLabel){
+    NodeAddOperation.getOperationDescription = function(nodeType,nodeLabel,viewId){
+        if(!nodeLabel && !viewId){
             return "..created a new " + nodeType;
-        } else {
+        } else if(!viewId){
             return "..created " + nodeType + " " + nodeLabel;
-        }
+        }else
+            return ".. created " + nodeType + " " + nodeLabel + " in View " + viewId;
     };
 
     return NodeAddOperation;

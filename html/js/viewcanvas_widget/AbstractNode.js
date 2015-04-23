@@ -185,7 +185,7 @@ define([
                     "NodeMoveActivity",
                     operation.getEntityId(),
                     _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
-                    NodeMoveOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
+                    NodeMoveOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue(),$('#lblCurrentView').text()),
                     {nodeType: that.getType()}
                 ).toNonOTOperation());
             }
@@ -203,7 +203,7 @@ define([
                     "NodeMoveActivity",
                     operation.getEntityId(),
                     _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
-                    NodeMoveOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
+                    NodeMoveOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue(),$('#lblCurrentView').text()),
                     {nodeType: that.getType()}
                 ).toNonOTOperation());
             }
@@ -229,7 +229,7 @@ define([
                     "NodeResizeActivity",
                     operation.getEntityId(),
                     _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
-                    NodeResizeOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
+                    NodeResizeOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue(), $('#lblCurrentView').text()),
                     {nodeType: that.getType()}
                 ).toNonOTOperation());
             }
@@ -266,7 +266,7 @@ define([
                     "NodeDeleteActivity",
                     operation.getEntityId(),
                     _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
-                    NodeDeleteOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
+                    NodeDeleteOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue(),$('#lblCurrentView').text()),
                     {}
                 ).toNonOTOperation());
             }
@@ -318,7 +318,7 @@ define([
                     "NodeMoveActivity",
                     operation.getEntityId(),
                     operation.getOTOperation().getSender(),
-                    NodeMoveOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
+                    NodeMoveOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue(),$('#lblCurrentView').text()),
                     {nodeType: that.getType()}
                 ).toNonOTOperation());
                 processNodeMoveOperation(operation);
@@ -336,7 +336,7 @@ define([
                     "NodeMoveActivity",
                     operation.getEntityId(),
                     operation.getOTOperation().getSender(),
-                    NodeMoveOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
+                    NodeMoveOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue(),$('#lblCurrentView').text()),
                     {nodeType: that.getType()}
                 ).toNonOTOperation());
                 processNodeMoveZOperation(operation);
@@ -354,7 +354,7 @@ define([
                     "NodeResizeActivity",
                     operation.getEntityId(),
                     operation.getOTOperation().getSender(),
-                    NodeResizeOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
+                    NodeResizeOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue(),$('#lblCurrentView').text()),
                     {nodeType: that.getType()}
                 ).toNonOTOperation());
                 processNodeResizeOperation(operation);
@@ -372,7 +372,7 @@ define([
                     "NodeDeleteActivity",
                     operation.getEntityId(),
                     operation.getOTOperation().getSender(),
-                    NodeDeleteOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
+                    NodeDeleteOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue(),$('#lblCurrentView').text()),
                     {}
                 ).toNonOTOperation());
                 processNodeDeleteOperation(operation);

@@ -90,11 +90,14 @@ define([
         };
     }
 
-    NodeMoveZOperation.getOperationDescription = function(nodeType,nodeLabel){
-        if(!nodeLabel){
+    NodeMoveZOperation.getOperationDescription = function(nodeType,nodeLabel,viewId){
+        if(!nodeLabel && !viewId){
             return "..moved " + nodeType;
-        } else {
+        } else if(!viewId) {
             return "..moved " + nodeType + " " + nodeLabel;
+        }
+        else{
+            return "..moved " + nodeType  + " " + nodeLabel + " in View " + viewId;
         }
     };
 
