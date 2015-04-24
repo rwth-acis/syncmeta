@@ -126,9 +126,9 @@ define([
                     //if from callback is true, attributeList is null. Initialize it
                     if(!attributeList){
                         attributeList = {};
-                        for(var key in viewTypeAttribute){
-                            if(viewTypeAttribute.hasOwnProperty(key)){
-                                attributeList[key] = viewTypeAttribute[key].getKey().getValue();
+                        for(var k in viewTypeAttrList){
+                            if(viewTypeAttrList.hasOwnProperty(k)){
+                                attributeList[k] = viewTypeAttrList[k].getKey().getValue();
                             }
                         }
                     }
