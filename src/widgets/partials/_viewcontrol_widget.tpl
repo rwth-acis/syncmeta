@@ -1,8 +1,14 @@
 <link rel="stylesheet" type="text/css" href="<%= grunt.config('baseUrl') %>/css/vendor/jquery-ui.css">
 <link rel="stylesheet" type="text/css" href="<%= grunt.config('baseUrl') %>/css/style.css">
 <script type="application/javascript">
-	 requirejs(['jqueryui','lodash'],function($,_){
+	 requirejs(['jqueryui',
+	 'lodash',
+	 'iwcw',
+	 'operations/non_ot/UpdateViewListOperation'],
+		function($,_,IWC,UpdateViewListOperation){
 			$(function(){
+				var iwc  = IWC.getInstance("VIEWCONTROL");
+				iwc.disableBuffer();
 				var GetList = function(type, appendTo, tpl){	
 					var space = new openapp.oo.Resource(openapp.param.space());
 					space.getSubResources({
@@ -65,6 +71,8 @@
 							representation: data,
 							callback: function(subres){
 								$('#btnRefresh').click();
+								var operation = new UpdateViewListOperation();
+								iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.VIEWCANVAS, operation.toNonOTOperation());
 							}
 						}); 
 					});

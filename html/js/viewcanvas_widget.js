@@ -52,6 +52,8 @@ requirejs([
 	//Add all tool to the canvas
 	if (metamodel && metamodel.hasOwnProperty("nodes")) {
 		_inInstance = true;
+        $("#btnCreateViewpoint").hide();
+        $('#btnDelViewPoint').hide();
 
 	} else {
 		//add node tools for the meta-model editor
@@ -135,12 +137,6 @@ requirejs([
 		canvas.setZoom(canvas.getZoom() - 0.1);
 	});
 
-	$("#btnCreateViewpoint").click(function () {
-        ShowViewCreateMenu();
-	});
-	$('#btnCancelCreateViewpoint').click(function () {
-        HideCreateMenu();
-	});
     var initViewpoint = function(viewId){
         var deferred = $.Deferred();
         ViewManager.getViewpointResourceFromViewId(viewId).getRepresentation('rdfjson',function(rep){
@@ -167,71 +163,103 @@ requirejs([
             return;
         $("#loading").show();
         if(_inInstance){
-            initViewpoint(viewId).then(function(viewpointData){
-                //$('#lblCurrentView').attr('vplink', resp.uri);
-                EntityManager.initModelTypes(viewpointData);
-                visualizeView(viewId, viewpointData);
-                initTools(viewpointData);
-                iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, new InitModelTypesOperation(viewpointData).toNonOTOperation());
+            if(ViewManager.getViewResource(viewId) != null) {
+                initViewpoint(viewId).then(function (viewpointData) {
+                    //$('#lblCurrentView').attr('vplink', resp.uri);
+                    EntityManager.initModelTypes(viewpointData);
+                    visualizeView(viewId, viewpointData);
+                    initTools(viewpointData);
+                    iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, new InitModelTypesOperation(viewpointData).toNonOTOperation());
 
-            })
+                })
+            }
+            else{
+                resetCanvas();
+                $('#lblCurrentView').attr('viewpointId', viewId).text(viewId);
+                EntityManager.storeView(viewId, viewId).then(function (resp) {
+                    ViewManager.updateView(viewId, viewId, resp);
+                    canvas.get$canvas().show();
+                    ViewManager.getViewpointResource(viewId).getRepresentation('rdfjson', function (viewpointData) {
+                        var viewGenerator = new ViewGenerator(viewpointData);
+                        viewGenerator.apply().then(function (view) {
+                            var $loading = $("#loading");
+                            $loading.show();
+                            EntityManager.initModelTypes(viewpointData);
+                            JSONtoGraph(view, viewpointData);
+                            canvas.resetTool();
+                            $loading.hide();
+                            $("#save").click();
+                        })
+                    });
+                });
+            }
         }
         else {
             visualizeView(viewId);
         }
 
 	});
-	$('#btnAddViewpoint').click(function () {
-		var viewId = $('#txtNameViewpoint').val();
-        if(ViewManager.existsView(viewId)){
-            alert('View already exists');
-            return;
-        }
-        var $viewpointSelected = $('#ddmViewpointSelection').find('option:selected');
-        var viewpointId = null;
-        if(_inInstance) {
-            viewpointId = $viewpointSelected.attr('id');
-        }
-        resetCanvas();
-        $('#lblCurrentView').attr('viewpointId', viewpointId).text(viewId);
-        EntityManager.storeView(viewId,viewpointId).then(function (resp) {
-            ViewManager.addView(viewId,resp.uri,viewpointId, resp);
-            canvas.get$canvas().show();
-            if (_inInstance) {
-                ViewManager.getViewpointResource(viewpointId).getRepresentation('rdfjson', function(viewpointData){
-                    var viewGenerator = new ViewGenerator(viewpointData);
-                    viewGenerator.apply().then(function (view) {
-                        var $loading =  $("#loading");
-                        $loading.show();
-                        EntityManager.initModelTypes(viewpointData);
-                        JSONtoGraph(view, viewpointData);
-                        canvas.resetTool();
-                        $loading.hide();
-                    })
-                });
-            }
+
+    if(!_inInstance) {
+        $("#btnCreateViewpoint").click(function () {
+            ShowViewCreateMenu();
+        });
+        $('#btnCancelCreateViewpoint').click(function () {
             HideCreateMenu();
         });
-	});
+        $('#btnAddViewpoint').click(function () {
+            var viewId = $('#txtNameViewpoint').val();
+            if (ViewManager.existsView(viewId)) {
+                alert('View already exists');
+                return;
+            }
+            var $viewpointSelected = $('#ddmViewpointSelection').find('option:selected');
+            var viewpointId = null;
+            if (_inInstance) {
+                viewpointId = $viewpointSelected.attr('id');
+            }
+            resetCanvas();
+            $('#lblCurrentView').attr('viewpointId', viewpointId).text(viewId);
+            EntityManager.storeView(viewId, viewpointId).then(function (resp) {
+                ViewManager.addView(viewId, viewpointId, resp);
+                canvas.get$canvas().show();
+                if (_inInstance) {
+                    ViewManager.getViewpointResource(viewpointId).getRepresentation('rdfjson', function (viewpointData) {
+                        var viewGenerator = new ViewGenerator(viewpointData);
+                        viewGenerator.apply().then(function (view) {
+                            var $loading = $("#loading");
+                            $loading.show();
+                            EntityManager.initModelTypes(viewpointData);
+                            JSONtoGraph(view, viewpointData);
+                            canvas.resetTool();
+                            $loading.hide();
+                            $("#save").click();
+                        })
+                    });
+                }
+                HideCreateMenu();
+            });
+        });
 
-	$('#btnDelViewPoint').click(function () {
-        var viewId = ViewManager.getViewIdOfSelected();
-        if(viewId !== $('#lblCurrentView').text()) {
-            openapp.resource.del(ViewManager.getViewUri(viewId), function () {
-                ViewManager.deleteView(viewId);
-                iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new DeleteViewOperation(viewId).toNonOTOperation());
-            });
-        }
-		else {
-            openapp.resource.del(ViewManager.getViewUri(viewId), function () {
-                ViewManager.deleteView(viewId);
-                iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new DeleteViewOperation(viewId).toNonOTOperation());
-                resetCanvas();
-                $('#lblCurrentView').attr('vplink', '').text('No view displayed');
-                canvas.get$canvas().hide();
-            });
-        }
-	});
+        $('#btnDelViewPoint').click(function () {
+            var viewId = ViewManager.getViewIdOfSelected();
+            if (viewId !== $('#lblCurrentView').text()) {
+                openapp.resource.del(ViewManager.getViewUri(viewId), function () {
+                    ViewManager.deleteView(viewId);
+                    iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new DeleteViewOperation(viewId).toNonOTOperation());
+                });
+            }
+            else {
+                openapp.resource.del(ViewManager.getViewUri(viewId), function () {
+                    ViewManager.deleteView(viewId);
+                    iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new DeleteViewOperation(viewId).toNonOTOperation());
+                    resetCanvas();
+                    $('#lblCurrentView').attr('vplink', '').text('No view displayed');
+                    canvas.get$canvas().hide();
+                });
+            }
+        });
+    }
 	//Start Autosave---------------------------
 	var $feedback = $("#feedback");
 	$("#save").click(function () {
@@ -384,10 +412,10 @@ requirejs([
         }
 	}
 
-
     ViewManager.initViewList();
     if(_inInstance)
         ViewManager.GetViewpointList();
+
     $("#loading").hide();
 
     /*iwcot.registerOnJoinOrLeaveCallback(function (operation) {

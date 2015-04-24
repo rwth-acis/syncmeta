@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- generated on Thu Apr 23 2015 14:23:12 -->
+<!-- generated on Fri Apr 24 2015 13:15:56 -->
 <Module>
   <ModulePrefs
     title="View Control"
@@ -58,14 +58,20 @@
           timeout();
         })();
     </script>
-    <script src="http://localhost:8081/js/lib/parallel.js"></script>
-    <script src="http://localhost:8081/js/config.js"></script>
-    <script src="http://localhost:8081/js/lib/vendor/require.js"></script>    
-    <link rel="stylesheet" type="text/css" href="http://localhost:8081/css/vendor/jquery-ui.css">
-<link rel="stylesheet" type="text/css" href="http://localhost:8081/css/style.css">
+    <script src="http://mari0.github.io/syncmeta/html/js/lib/parallel.js"></script>
+    <script src="http://mari0.github.io/syncmeta/html/js/config.js"></script>
+    <script src="http://mari0.github.io/syncmeta/html/js/lib/vendor/require.js"></script>    
+    <link rel="stylesheet" type="text/css" href="http://mari0.github.io/syncmeta/html/css/vendor/jquery-ui.css">
+<link rel="stylesheet" type="text/css" href="http://mari0.github.io/syncmeta/html/css/style.css">
 <script type="application/javascript">
-	 requirejs(['jqueryui','lodash'],function($,_){
+	 requirejs(['jqueryui',
+	 'lodash',
+	 'iwcw',
+	 'operations/non_ot/UpdateViewListOperation'],
+		function($,_,IWC,UpdateViewListOperation){
 			$(function(){
+				var iwc  = IWC.getInstance("VIEWCONTROL");
+				iwc.disableBuffer();
 				var GetList = function(type, appendTo, tpl){	
 					var space = new openapp.oo.Resource(openapp.param.space());
 					space.getSubResources({
@@ -128,6 +134,8 @@
 							representation: data,
 							callback: function(subres){
 								$('#btnRefresh').click();
+								var operation = new UpdateViewListOperation();
+								iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.VIEWCANVAS, operation.toNonOTOperation());
 							}
 						}); 
 					});
@@ -181,7 +189,7 @@
 		<table id="viewpointlist"></table>
 	</div>
 </div>
-    <script src="http://localhost:8081/js/shared.js"></script>    
+    <script src="http://mari0.github.io/syncmeta/html/js/shared.js"></script>    
     ]]>
   </Content>
 </Module>

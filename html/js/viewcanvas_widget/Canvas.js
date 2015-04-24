@@ -14,6 +14,7 @@ define([
         'operations/non_ot/PerformCvgOperation',
         'operations/non_ot/DeleteCvgOperation',
         'operations/non_ot/HighlightOperation',
+        'operations/non_ot/UpdateViewListOperation',
 		'canvas_widget/AbstractEntity',
 		'viewcanvas_widget/ModelAttributesNode',
 		'viewcanvas_widget/EntityManager',
@@ -22,7 +23,7 @@ define([
         'viewcanvas_widget/ClosedViewGeneration',
 		'jquery.transformable'
 	], /** @lends Canvas */
-	function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelectOperation, EntitySelectOperation, ActivityOperation, ExportDataOperation, ExportMetaModelOperation, ExportImageOperation, PerformCvgOperation, DeleteCvgOperation,HighlightOperation, AbstractEntity, ModelAttributesNode, EntityManager, AbstractCanvas, MoveTool, CVG) {
+	function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelectOperation, EntitySelectOperation, ActivityOperation, ExportDataOperation, ExportMetaModelOperation, ExportImageOperation, PerformCvgOperation, DeleteCvgOperation,HighlightOperation, UpdateViewListOperation,AbstractEntity, ModelAttributesNode, EntityManager, AbstractCanvas, MoveTool, CVG) {
 
 	Canvas.prototype = new AbstractCanvas();
 	Canvas.prototype.constructor = Canvas;
@@ -903,6 +904,7 @@ define([
 			_iwcot.registerOnHistoryChangedCallback(historyEdgeAddCallback);
             _iwcot.registerOnLocalDataReceivedCallback(CvgCallback);
             _iwcot.registerOnLocalDataReceivedCallback(DeleteCvgCallback);
+            _iwcot.registerOnLocalDataReceivedCallback(UpdateViewListCallback);
 		};
 
 		/**
@@ -918,6 +920,7 @@ define([
 			_iwcot.unregisterOnHistoryChangedCallback(historyEdgeAddCallback);
             _iwcot.unregisterOnLocalDataReceivedCallback(CvgCallback);
             _iwcot.unregisterOnLocalDataReceivedCallback(DeleteCvgCallback);
+            _iwcot.unregisterOnLocalDataReceivedCallback(UpdateViewListCallback);
 		};
 
 		init();
@@ -941,6 +944,13 @@ define([
                 }
             }
         }
+         function UpdateViewListCallback(operation){
+             if(operation instanceof UpdateViewListOperation){
+                 require('viewcanvas_widget/ViewManager').initViewList();
+             }
+         }
+
+
 	}
 
 	return Canvas;

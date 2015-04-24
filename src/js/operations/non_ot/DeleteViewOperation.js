@@ -1,11 +1,11 @@
 define([
     'operations/non_ot/NonOTOperation'
-],/** @lends DeleteCvgOperation */function(NonOTOperation) {
+],/** @lends DeleteViewOperation */function(NonOTOperation) {
 
     DeleteViewOperation.TYPE = "DeleteViewOperation";
 
     /**
-     * DeleteCvgOperation
+     * DeleteViewOperation
      * @class operations.non_ot.DeleteViewOperation
      * @memberof operations.non_ot
      * @constructor

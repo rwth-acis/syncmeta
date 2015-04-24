@@ -49,6 +49,7 @@ define([
              * initialize the viewpoint selection list of the generic editor instance
              */
             GetViewpointList : function() {
+                var that = this;
                 var resourceSpace = new openapp.oo.Resource(openapp.param.space());
                 var $selection = $('#ddmViewpointSelection');
                 resourceSpace.getSubResources({
@@ -61,8 +62,10 @@ define([
                             }));
                             //$option.attr('link', context.uri);
                             _viewpointResourceDictionary[rep.id] = context;
-
+                            if(that.getViewResource(rep.id) === null)
+                                that.addView(rep.id, rep.id, null);
                             $selection.append($option);
+
                         });
                     }
                 });
@@ -158,11 +161,10 @@ define([
             /**
              * adds a view to the ViewManager
              * @param {string} viewId the view identifier
-             * @param {string} viewUri pointing to the view in the role space
              * @param {string} viewpointId the viewpoint identifier which is used to generate the view. for the meta model editor this is null
              * @param {object} resource the openapp.oo.resource object
              */
-            addView : function(viewId, viewUri,viewpointId, resource){
+            addView : function(viewId, viewpointId, resource){
                 if(!_viewResourceDictionary.hasOwnProperty(viewId)){
                     _viewResourceDictionary[viewId] = resource;
                     _viewViewpointDictionary[viewId] = viewpointId;
@@ -170,9 +172,16 @@ define([
                         id: viewId
                     }));
                     _$selection.append($option);
+                    return true;
+                }
+                else return false;
+            },
+            updateView: function(viewId, viewpointId, resource){
+                if(_viewResourceDictionary.hasOwnProperty(viewId)){
+                    _viewResourceDictionary[viewId] = resource;
+                    _viewViewpointDictionary[viewId] = viewpointId;
                 }
             },
-
             /**
              * deletes a view from the view manager
              * @param {string} viewId the identifier of the view
@@ -194,7 +203,9 @@ define([
                     type: CONFIG.NS.MY.VIEW,
                     onEach: function (context) {
                         context.getRepresentation("rdfjson", function (data) {
-                            that.addView(data.id, context.uri, data.viewpoint, context);
+                            var successful = that.addView(data.id, data.viewpoint, context);
+                            if(!successful)
+                                that.updateView(data.id, data.viewpoint, context)
                         });
                     }
                 });
