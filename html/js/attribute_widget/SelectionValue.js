@@ -63,7 +63,7 @@ define([
 		 */
 		var processValueChangeOperation = function (operation, fromCallback) {
 			that.setValue(operation.getValue());
-			if (!fromCallback && operation.getEntityId() === that.getRootSubjectEntity().getEntityId()+'[target]') {
+			if (operation.getEntityId() === that.getRootSubjectEntity().getEntityId()+'[target]') {
 				var EntityManager = require('attribute_widget/EntityManager');
                 var DeleteCvgOperation = require('operations/non_ot/DeleteCvgOperation');
                 var PerformCvgOperation = require('operations/non_ot/PerformCvgOperation');
