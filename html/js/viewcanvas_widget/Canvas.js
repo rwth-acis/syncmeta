@@ -506,8 +506,11 @@ define([
                 if(entity) {
                     var entityId;
                      entityId = entity.getOrigin();
-                    if (!entityId && (entity.getType() === 'ViewObject' || entity.getType() === 'ViewRelationship'))
-                        entityId = entity.getAttribute(entity.getEntityId() + '[target]').getValue().getValue();
+                    if (!entityId && (entity.getType() === 'ViewObject' || entity.getType() === 'ViewRelationship')) {
+                        var attr = entity.getAttribute(entity.getEntityId() + '[target]');
+                        if(attr)
+                            entityId = attr.getValue().getValue();
+                    }
 
                     if (entityId) {
                         highlightOp = new HighlightOperation(entityId, $('#lblCurrentView').text());

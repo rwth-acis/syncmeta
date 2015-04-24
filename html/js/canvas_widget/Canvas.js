@@ -923,9 +923,11 @@ define([
                 var entityId = operation.getEntityId();
                 if(entityId) {
                     var entity = EntityManager.find(operation.getEntityId());
-                    EntityManager.setHighlightedEntity(entity);
-                    var viewId = operation.getViewId();
-                    entity.highlight("#FFF804", viewId);
+                    if(entity) {
+                        EntityManager.setHighlightedEntity(entity);
+                        var viewId = operation.getViewId();
+                        entity.highlight("#FFF804", viewId);
+                    }
                 }
                 else
                     EntityManager.setHighlightedEntity(null);

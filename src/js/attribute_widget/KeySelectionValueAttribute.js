@@ -91,7 +91,7 @@ define([
          * @param {operations.ot.AttributeDeleteOperation} operation
          */
         var attributeDeleteCallback = function(operation){
-            if(operation instanceof AttributeDeleteOperation && operation.getEntityId() === that.getEntity()){
+            if(operation instanceof AttributeDeleteOperation && operation.getEntityId() === that.getEntityId()){
                 processAttributeDeleteOperation(operation);
             }
         };
@@ -165,11 +165,11 @@ define([
         _$node.find(".ui-icon-close").click(function(){
             var operation = new AttributeDeleteOperation(that.getEntityId(),that.getSubjectEntityId(),that.getRootSubjectEntity().getEntityId(),KeySelectionValueAttribute.TYPE);
             if(that.getRootSubjectEntity().getViewId()) {
-                iwc.setBufferedMessagesReceiver(CONFIG.WIDGET.NAME.VIEWCANVAS);
+                _iwc.setBufferedMessagesReceiver(CONFIG.WIDGET.NAME.VIEWCANVAS);
                 propagateAttributeDeleteOperation(operation, CONFIG.WIDGET.NAME.VIEWCANVAS);
             }
             else {
-                iwc.setBufferedMessagesReceiver(CONFIG.WIDGET.NAME.MAIN);
+                _iwc.setBufferedMessagesReceiver(CONFIG.WIDGET.NAME.MAIN);
                 propagateAttributeDeleteOperation(operation, CONFIG.WIDGET.NAME.MAIN);
             }
         });
