@@ -63,7 +63,7 @@ define([
 		 */
 		var processValueChangeOperation = function (operation, fromCallback) {
 			that.setValue(operation.getValue());
-			if (operation.getEntityId() === that.getRootSubjectEntity().getEntityId()+'[target]') {
+			if (!fromCallback && operation.getEntityId() === that.getRootSubjectEntity().getEntityId()+'[target]') {
 				var EntityManager = require('attribute_widget/EntityManager');
                 var DeleteCvgOperation = require('operations/non_ot/DeleteCvgOperation');
                 var PerformCvgOperation = require('operations/non_ot/PerformCvgOperation');
@@ -90,35 +90,36 @@ define([
                     var viewTypeAttribute = viewType.getAttributes()["[attributes]"];
                     var viewTypeAttrList = viewTypeAttribute.getAttributes();
 
-                    //delete the old all attributes of the old target
-                    for (var key1 in viewTypeAttrList) {
-                        if (viewTypeAttrList.hasOwnProperty(key1)) {
-                            attr = viewTypeAttrList[key1];
-                            op = new AttributeDeleteOperation(attr.getEntityId(), attr.getSubjectEntityId(), attr.getRootSubjectEntity().getEntityId(), KeySelectionValueSelectionValueAttribute.TYPE);
-                            attr.propagateAttributeDeleteOperation(op, CONFIG.WIDGET.NAME.VIEWCANVAS);
+                    if(!fromCallback) {
+                        //delete the old all attributes of the old target
+                        for (var key1 in viewTypeAttrList) {
+                            if (viewTypeAttrList.hasOwnProperty(key1)) {
+                                attr = viewTypeAttrList[key1];
+                                op = new AttributeDeleteOperation(attr.getEntityId(), attr.getSubjectEntityId(), attr.getRootSubjectEntity().getEntityId(), KeySelectionValueSelectionValueAttribute.TYPE);
+                                attr.propagateAttributeDeleteOperation(op, CONFIG.WIDGET.NAME.VIEWCANVAS);
+                            }
+                        }
+                        var attributeList = {};
+                        //the attributes of the new target
+                        var targetAttributes = node.getAttributes()["[attributes]"].getAttributes();
+                        //crate the attributes of the new target
+                        for (var key2 in targetAttributes) {
+                            if (targetAttributes.hasOwnProperty(key2)) {
+                                var id = Util.generateRandomId();
+
+                                op = new AttributeAddOperation(id, viewTypeAttribute.getEntityId(), viewTypeAttribute.getRootSubjectEntity().getEntityId(), KeySelectionValueSelectionValueAttribute.TYPE);
+
+                                viewTypeAttribute.propagateAttributeAddOperation(op, CONFIG.WIDGET.NAME.VIEWCANVAS);
+                                attr = viewTypeAttribute.getAttribute(id);
+                                attr.getKey().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT, targetAttributes[key2].getKey().getValue(), 0);
+                                attr.getValue().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT, targetAttributes[key2].getValue().getValue(), 0);
+                                if (viewType.getType() === 'ViewRelationship')
+                                    attr.getValue2().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT, targetAttributes[key2].getValue2().getValue(), 0);
+
+                                attributeList[id] = targetAttributes[key2].getKey().getValue();
+                            }
                         }
                     }
-                    var attributeList = {};
-                    //the attributes of the new target
-                    var targetAttributes = node.getAttributes()["[attributes]"].getAttributes();
-                    //crate the attributes of the new target
-                    for (var key2 in targetAttributes) {
-                        if (targetAttributes.hasOwnProperty(key2)) {
-                            var id = Util.generateRandomId();
-
-                            op = new AttributeAddOperation(id, viewTypeAttribute.getEntityId(), viewTypeAttribute.getRootSubjectEntity().getEntityId(), KeySelectionValueSelectionValueAttribute.TYPE);
-
-                            viewTypeAttribute.propagateAttributeAddOperation(op, CONFIG.WIDGET.NAME.VIEWCANVAS);
-                            attr = viewTypeAttribute.getAttribute(id);
-                            attr.getKey().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT, targetAttributes[key2].getKey().getValue(), 0);
-                            attr.getValue().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT,targetAttributes[key2].getValue().getValue(), 0);
-                            if(viewType.getType() === 'ViewRelationship')
-                                attr.getValue2().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT,targetAttributes[key2].getValue2().getValue(), 0);
-
-                            attributeList[id] = targetAttributes[key2].getKey().getValue();
-                        }
-                    }
-					
                     if (condListAttr = viewType.getAttribute('[condition]')) {
                         condListAttr.setOptions(attributeList);
                         var attrList = condListAttr.getAttributes();
@@ -130,6 +131,7 @@ define([
                             }
                         }
                     } else {
+
                         var condAttr = new ConditionListAttribute("[condition]", "Conditions", viewType, attributeList, LogicalOperator, LogicalConjunctions);
                         viewType.addAttribute(condAttr);
                         viewType.get$node().find('.attributes').append(condAttr.get$node());
