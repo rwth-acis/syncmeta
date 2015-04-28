@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- generated on Fri Apr 24 2015 18:13:50 -->
+<!-- generated on Tue Apr 28 2015 20:22:46 -->
 <Module>
   <ModulePrefs
     title="View Control"
     description=""
     author="Stephan Erdtmann"
     author_email="erdtmann@dbis.rwth-aachen.de"
-    width="100"
-    height="300">
+    width="200"
+    height="600">
 
     <Require feature="opensocial-0.8" ></Require>
     <Require feature="openapp" ></Require>
@@ -67,11 +67,17 @@
 	 requirejs(['jqueryui',
 	 'lodash',
 	 'iwcw',
-	 'operations/non_ot/UpdateViewListOperation'],
-		function($,_,IWC,UpdateViewListOperation){
-			$(function(){
+	 'operations/non_ot/UpdateViewListOperation',
+	 'viewcanvas_widget/GenerateViewpointModel'],
+		function($,_,IWC,UpdateViewListOperation,GenerateViewpointModel){
+				
+			
 				var iwc  = IWC.getInstance("VIEWCONTROL");
 				iwc.disableBuffer();
+				
+				var _viewList = {};
+				var _viewpointList = {};
+				
 				var GetList = function(type, appendTo, tpl){	
 					var space = new openapp.oo.Resource(openapp.param.space());
 					space.getSubResources({
@@ -93,6 +99,22 @@
 											});
 										});
 									});
+									$viewEntry.find('.del').click(function(event){
+										var resource_uri = $(event.target).parents('tr').find('.lblviewname').attr('uri');
+										openapp.resource.del(resource_uri);
+										$('#btnRefresh').click();
+										
+									});
+									$viewEntry.find('.ToSpace').click(function(event){
+										var resource_uri = $(event.target).parents('tr').find('.lblviewname').attr('uri');
+										openapp.resource.get(resource_uri,function(context){
+											openapp.resource.context(context).representation().get(function (rep) {
+												var viewpointmodel = GenerateViewpointModel(rep.data);
+												var spaceUri = $('#space_link_input_view').text() + "spaces/"+ $('#space_label_view').val();
+												addMetamodelToSpace(spaceUri, viewpointmodel, CONFIG.NS.MY.VIEWPOINT);
+											})
+										});
+									})
 									$(appendTo).append($viewEntry);	
 								});
 							});
@@ -100,7 +122,7 @@
 					}); 
 				}						
 				var GetListEntryTemplate = function(){
-					var templateString = '<tr><td class="lblviewname" uri=<<= uri >>><<= name >></td><td><button class="json">JSON</button></td></tr>'.replace(/<</g,"<"+"%").replace(/>>/g,"%"+">");
+					var templateString = '<tr><td class="lblviewname" uri=<<= uri >>><<= name >></td><td><button class="json">JSON</button></td><td><button class="del">Del</button></td><td><button class="ToSpace">Add To Space</button></td></tr>'.replace(/<</g,"<"+"%").replace(/>>/g,"%"+">");
 					return tpl = _.template(templateString);
 				}
 				var getFileContent = function($node){
@@ -140,34 +162,60 @@
 						}); 
 					});
 			}
-				GetList(CONFIG.NS.MY.VIEW, '#viewlist', GetListEntryTemplate());
-				GetList(CONFIG.NS.MY.VIEWPOINT, '#viewpointlist', GetListEntryTemplate());
+			
+		GetList(CONFIG.NS.MY.VIEW, '#viewlist', GetListEntryTemplate());
+		GetList(CONFIG.NS.MY.VIEWPOINT, '#viewpointlist', GetListEntryTemplate());
+			
+		$('#btnRefresh').click(function(){
+			var tpl = GetListEntryTemplate();
+			$('#viewlist').empty();
+			$('#viewpointlist').empty();
+			GetList(CONFIG.NS.MY.VIEW, '#viewlist', tpl);
+			GetList(CONFIG.NS.MY.VIEWPOINT, '#viewpointlist', tpl);
+			var operation = new UpdateViewListOperation();
+			iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.VIEWCANVAS, operation.toNonOTOperation());
+		});
 				
-				$('#btnRefresh').click(function(){
-					var tpl = GetListEntryTemplate();
-					$('#viewlist').empty();
-					$('#viewpointlist').empty();
-					GetList(CONFIG.NS.MY.VIEW, '#viewlist', tpl);
-					GetList(CONFIG.NS.MY.VIEWPOINT, '#viewpointlist', tpl);
-				})
+		$('#btnLoadView').click(function(){
+			LoadFileAndStoreToSpace(CONFIG.NS.MY.VIEW);
+		});
 				
-				$('#btnLoadView').click(function(){
-					LoadFileAndStoreToSpace(CONFIG.NS.MY.VIEW);
-				});
-				$('#btnLoadViewpoint').click(function(){
-					LoadFileAndStoreToSpace(CONFIG.NS.MY.VIEWPOINT);
-				});
-				$('#btnDelAllView').click(function(){
-				    var space = new openapp.oo.Resource(openapp.param.space());
-                    space.getSubResources({
-                    	relation: openapp.ns.role + "data", type: CONFIG.NS.MY.VIEW,
-                    	onEach: function(item) {
-                    	    openapp.resource.del(item.uri);
-                    	}
-                    });
-				});
-
-			});
+		$('#btnLoadViewpoint').click(function(){
+			LoadFileAndStoreToSpace(CONFIG.NS.MY.VIEWPOINT);
+		});
+				
+		$('#btnDelAllView').click(function(){
+		    var space = new openapp.oo.Resource(openapp.param.space());
+            space.getSubResources({
+            	relation: openapp.ns.role + "data", type: CONFIG.NS.MY.VIEW,
+               	onEach: function(item) {
+                   	    openapp.resource.del(item.uri);
+                   	}
+            });
+		});
+		
+	  function addMetamodelToSpace(spaceURI,metamodel, type){
+                var deferred = $.Deferred();
+                var deferred2 = $.Deferred();
+                openapp.resource.post(
+                        spaceURI,
+                        function(data){
+                            deferred.resolve(data.uri);
+                        },{
+                            "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate":"http://purl.org/role/terms/data",
+                            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type":type
+                        });
+                deferred.promise().then(function(dataURI){
+                    openapp.resource.put(
+                            dataURI,
+                            function(resp){
+                                deferred2.resolve();
+                            },{
+                                "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate":"http://purl.org/openapp/representation"
+                            },JSON.stringify(metamodel));
+                });
+                return deferred2.promise();
+            }
 	 });
 </script>
 <style>
@@ -176,18 +224,23 @@
 	}
 </style>
 <div id="viewcontrol">
+<p><strong>Editor space url:</strong>
+    <br/>
+    <span id="space_link_input_view">http://role-sandbox.eu/<input size="16" type="text" id="space_label_view" /></span>
+    <br/>
+</p>
 <button id="btnRefresh">Refresh Lists</button><button id="btnDelAllView">Delete all Views</button>
 <input type="file" id="btnImport" />
 <button id="btnLoadView">Load a View</button>
 <button id="btnLoadViewpoint">Load a Viewpoint</button>
-	<div>
-		<strong>View List</strong>
-		<table id="viewlist"></table>
-	</div>
-	<div>
-		<strong>Viewpoint List</strong>
-		<table id="viewpointlist"></table>
-	</div>
+<p>
+<strong>View List</strong>
+<table id="viewlist"></table>
+</p>
+<p>
+<strong>Viewpoint List</strong>
+<table id="viewpointlist"></table>
+</p>	
 </div>
     <script src="http://mari0.github.io/syncmeta/html/js/shared.js"></script>    
     ]]>

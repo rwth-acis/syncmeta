@@ -286,8 +286,8 @@ module.exports = function (grunt) {
 							meta : {
 								title : "View Control",
 								description : "",
-								width : "100",
-								height : "300"
+								width : "200",
+								height : "600"
 							},
 							bodyPartial : '_viewcontrol_widget.tpl'
 						}

@@ -908,9 +908,10 @@ define([
             _iwcot.registerOnLocalDataReceivedCallback(CvgCallback);
             _iwcot.registerOnLocalDataReceivedCallback(DeleteCvgCallback);
             _iwcot.registerOnLocalDataReceivedCallback(UpdateViewListCallback);
+            _iwcot.registerOnRemoteDataReceivedCallback(UpdateViewListCallback);
 		};
 
-		/**
+	    /**
 		 * Unregister inter widget communication callbacks
 		 */
 		this.unregisterCallbacks = function () {
@@ -924,6 +925,7 @@ define([
             _iwcot.unregisterOnLocalDataReceivedCallback(CvgCallback);
             _iwcot.unregisterOnLocalDataReceivedCallback(DeleteCvgCallback);
             _iwcot.unregisterOnLocalDataReceivedCallback(UpdateViewListCallback);
+            _iwcot.unregisterOnRemoteDataReceivedCallback(UpdateViewListCallback);
 		};
 
 		init();

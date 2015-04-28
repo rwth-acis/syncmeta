@@ -271,7 +271,7 @@ requirejs([
 			$feedback.text("Saving...");
 
 			EntityManager.updateView(currentView,vpId, ViewManager.getResource(currentView)).then(function () {
-               ViewManager.initViewList();
+               //ViewManager.initViewList();
 				$feedback.text("Saved!");
 				setTimeout(function () {
 					$feedback.text("");
