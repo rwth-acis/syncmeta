@@ -121,9 +121,12 @@ define([
 		 */
 		var processNodeAddOperation = function (operation) {
 			var node;
-			if (operation.getJSON()) {
-				node = EntityManager.createNodeFromJSON(operation.getType(), operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex(), operation.getJSON());
-			} else {
+            var json = operation.getJSON();
+			if (json) {
+				node = EntityManager.createNodeFromJSON(operation.getType(), operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex(), json);
+			    if(json.hasOwnProperty('origin'))
+                    node.setOrigin(json.origin);
+            } else {
 				node = EntityManager.createNode(operation.getType(), operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex());
 			}
 
@@ -156,9 +159,11 @@ define([
 		 */
 		var processEdgeAddOperation = function (operation) {
 			var edge;
-
-			if (operation.getJSON()) {
-				edge = EntityManager.createEdgeFromJSON(operation.getType(), operation.getEntityId(), operation.getSource(), operation.getTarget(), operation.getJSON());
+            var json = operation.getJSON();
+			if (json) {
+				edge = EntityManager.createEdgeFromJSON(operation.getType(), operation.getEntityId(), operation.getSource(), operation.getTarget(), json);
+                if(json.hasOwnProperty('origin'))
+                    edge.setOrigin(json.origin);
 			} else {
 				edge = EntityManager.createEdge(operation.getType(), operation.getEntityId(), EntityManager.findNode(operation.getSource()), EntityManager.findNode(operation.getTarget()));
 			}
@@ -907,8 +912,8 @@ define([
 			_iwcot.registerOnHistoryChangedCallback(historyEdgeAddCallback);
             _iwcot.registerOnLocalDataReceivedCallback(CvgCallback);
             _iwcot.registerOnLocalDataReceivedCallback(DeleteCvgCallback);
-            _iwcot.registerOnLocalDataReceivedCallback(UpdateViewListCallback);
-            _iwcot.registerOnRemoteDataReceivedCallback(UpdateViewListCallback);
+            _iwcot.registerOnLocalDataReceivedCallback(localUpdateViewListCallback);
+            _iwcot.registerOnRemoteDataReceivedCallback(remoteUpdateViewListCallback);
 		};
 
 	    /**
@@ -924,8 +929,8 @@ define([
 			_iwcot.unregisterOnHistoryChangedCallback(historyEdgeAddCallback);
             _iwcot.unregisterOnLocalDataReceivedCallback(CvgCallback);
             _iwcot.unregisterOnLocalDataReceivedCallback(DeleteCvgCallback);
-            _iwcot.unregisterOnLocalDataReceivedCallback(UpdateViewListCallback);
-            _iwcot.unregisterOnRemoteDataReceivedCallback(UpdateViewListCallback);
+            _iwcot.unregisterOnLocalDataReceivedCallback(localUpdateViewListCallback);
+            _iwcot.unregisterOnRemoteDataReceivedCallback(remoteUpdateViewListCallback);
 		};
 
 		init();
@@ -949,12 +954,18 @@ define([
                 }
             }
         }
-         function UpdateViewListCallback(operation){
+         function localUpdateViewListCallback(operation){
              if(operation instanceof UpdateViewListOperation){
                  require('viewcanvas_widget/ViewManager').initViewList();
                  _iwcot.sendRemoteNonOTOperation(operation.toNonOTOperation());
              }
          }
+
+        function remoteUpdateViewListCallback(operation){
+            if(operation instanceof UpdateViewListOperation) {
+                require('viewcanvas_widget/ViewManager').initViewList();
+            }
+        }
 
 
 	}

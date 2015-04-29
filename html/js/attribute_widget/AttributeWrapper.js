@@ -66,7 +66,9 @@ define([
 
             if(operation instanceof NodeAddOperation){
                 if(operation.getJSON()){
+                    var json = operation.getJSON();
                     node = EntityManager.createNodeFromJSON(operation.getType(),operation.getEntityId(),operation.getLeft(),operation.getTop(),operation.getWidth(),operation.getHeight(),operation.getJSON());
+                    EntityManager.addToMapIfNotExists(operation.getViewId(), json.origin,operation.getEntityId())
                 } else {
                     node = EntityManager.createNode(operation.getType(),operation.getEntityId(),operation.getLeft(),operation.getTop(),operation.getWidth(),operation.getHeight());
                 }
@@ -83,7 +85,11 @@ define([
             var edge;
             if(operation instanceof EdgeAddOperation){
                 if(operation.getJSON()){
-                    edge = EntityManager.createEdgeFromJSON(operation.getType(),operation.getEntityId(),operation.getSource(),operation.getTarget(),operation.getJSON());
+                    var json = operation.getJSON();
+                    edge = EntityManager.createEdgeFromJSON(operation.getType(),operation.getEntityId(),operation.getSource(),operation.getTarget(),json);
+                    if(json.hasOwnProperty('origin'))
+                        EntityManager.addToMapIfNotExists(operation.getViewId(), json.origin, operation.getEntityId());
+
                 } else {
                     edge = EntityManager.createEdge(operation.getType(),operation.getEntityId(),EntityManager.findNode(operation.getSource()),EntityManager.findNode(operation.getTarget()));
                 }

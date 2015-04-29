@@ -471,6 +471,12 @@ define([
             doesMapExists:function(view,key){
                 return _map.hasOwnProperty(view) ? _map[view].hasOwnProperty(key) : false;
             },
+            addToMapIfNotExists:function(view,key,value){
+                if(!_map.hasOwnProperty(view))
+                    _map[view] ={};
+                if(!_map[view].hasOwnProperty(key))
+                    _map[view][key] = value;
+            },
             deleteFromMap:function(view,value){
                 if(_map.hasOwnProperty(view)){
                     for(var key in _map[view]){
@@ -486,6 +492,7 @@ define([
                     delete _map[viewId];
 
             }
+
 
 		};
 	}
