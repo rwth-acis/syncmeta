@@ -5,18 +5,26 @@ define([
     PerformCvgOperation.TYPE = "PerformCvgOperation";
 
     /**
-     * WidgetEnterOperation
-     * @class operations.non_ot.WidgetEnterOperation
+     * PerformCvgOperation
+     * @class operations.non_ot.PerformCvgOperation
      * @memberof operations.non_ot
      * @constructor
-     * @param {string} json the json
+     * @param {object} json the json
+     * @param {object} map the mapping of the nodes/edges to propagate the remote users
      */
-    function PerformCvgOperation(json){
+    function PerformCvgOperation(json, map){
         /**
-         * Name of selected tool
+         * the json with nodes and edges to add to the viewpoint
          * @type {string}
          */
         var _json = json;
+
+        /**
+         * the mapping of nodes/edges
+         * @type {Object}
+         * @private
+         */
+        var _map = map;
 
         /**
          * Corresponding NonOtOperation
@@ -41,7 +49,7 @@ define([
             if(nonOTOperation === null){
                 nonOTOperation = new NonOTOperation(
                     PerformCvgOperation.TYPE,
-                    JSON.stringify({json: _json})
+                    JSON.stringify({json: _json, map:_map})
                 );
             }
             return nonOTOperation;

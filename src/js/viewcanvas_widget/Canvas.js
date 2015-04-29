@@ -952,7 +952,7 @@ define([
          function UpdateViewListCallback(operation){
              if(operation instanceof UpdateViewListOperation){
                  require('viewcanvas_widget/ViewManager').initViewList();
-                 _iwcot.sendRemoteNonOTOperation(operation);
+                 _iwcot.sendRemoteNonOTOperation(operation.toNonOTOperation());
              }
          }
 

@@ -49,7 +49,6 @@ define([
 
         /**
          * Get JabberId of the user who issued this activity
-         * @param sender
          */
         this.getSender = function(){
             return _sender;

@@ -86,7 +86,7 @@ define([
                         resOperation = new ViewInitOperation(data.data, data.viewpoint);
                         break;
                     case PerformCvgOperation.TYPE:
-                        resOperation = new PerformCvgOperation(data.json);
+                        resOperation = new PerformCvgOperation(data.json, data.map);
                         break;
                     case DeleteCvgOperation.TYPE:
                         resOperation = new DeleteCvgOperation(data.deleteList);
