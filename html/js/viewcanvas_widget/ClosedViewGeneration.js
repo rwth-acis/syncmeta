@@ -10,6 +10,7 @@ define(['lodash', 'Util', 'viewcanvas_widget/ViewTypesUtil', 'viewcanvas_widget/
                    if(_json.nodes.hasOwnProperty(nodeKey) && baseModel.nodes.hasOwnProperty(_json.nodes[nodeKey])){
                        origin = _json.nodes[nodeKey];
                        var node = baseModel.nodes[origin];
+                       node['origin'] = origin;
                        _canvas.createNode(node.type, node.left, node.top, node.width, node.height, node.zIndex, node, nodeKey, CONFIG.WIDGET.NAME.VIEWCANVAS, $('#lblCurrentView').text());
                        var viewTypeNode  = EntityManager.findNode(nodeKey);
                        if(viewTypeNode)
@@ -26,6 +27,7 @@ define(['lodash', 'Util', 'viewcanvas_widget/ViewTypesUtil', 'viewcanvas_widget/
                             edgeJson = baseModel.edges[_json.edges[edgeKey].origin];
                             origin = _json.edges[edgeKey].origin;
                         }
+                        edgeJson['origin'] = origin;
                         _canvas.createEdge(edge.type, edge.source, edge.target, edgeJson, edgeKey, $('#lblCurrentView').text());
                         var viewTypeEdge  = EntityManager.findEdge(edgeKey);
                         if(viewTypeEdge && origin)
