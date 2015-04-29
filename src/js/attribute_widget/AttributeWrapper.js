@@ -62,11 +62,10 @@ define([
          * @param {operations.ot.NodeAddOperation} operation
          */
         var nodeAddCallback = function(operation){
-            var node;
-
             if(operation instanceof NodeAddOperation){
-                if(operation.getJSON()){
-                    var json = operation.getJSON();
+                var node;
+                var json = operation.getJSON();
+                if(json){
                     node = EntityManager.createNodeFromJSON(operation.getType(),operation.getEntityId(),operation.getLeft(),operation.getTop(),operation.getWidth(),operation.getHeight(),operation.getJSON());
                     EntityManager.addToMapIfNotExists(operation.getViewId(), json.origin,operation.getEntityId())
                 } else {
@@ -82,10 +81,10 @@ define([
          * @param {operations.ot.EdgeAddOperation} operation
          */
         var edgeAddCallback = function(operation){
-            var edge;
             if(operation instanceof EdgeAddOperation){
-                if(operation.getJSON()){
-                    var json = operation.getJSON();
+                var edge;
+                var json = operation.getJSON();
+                if(json){
                     edge = EntityManager.createEdgeFromJSON(operation.getType(),operation.getEntityId(),operation.getSource(),operation.getTarget(),json);
                     if(json.hasOwnProperty('origin'))
                         EntityManager.addToMapIfNotExists(operation.getViewId(), json.origin, operation.getEntityId());

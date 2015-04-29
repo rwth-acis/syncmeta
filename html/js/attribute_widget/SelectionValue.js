@@ -157,6 +157,10 @@ define([
                         var performCvgOp = new PerformCvgOperation(res);
                         _iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.VIEWCANVAS, performCvgOp.toNonOTOperation());
                     }
+                    else{
+                        EntityManager.addToMapIfNotExists(viewType.getViewId(), node.getEntityId(), viewType.getEntityId());
+                    }
+
 
                 }
             }
