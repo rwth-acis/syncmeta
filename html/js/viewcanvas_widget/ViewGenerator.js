@@ -45,6 +45,46 @@ define(['Util','viewcanvas_widget/ViewTypesUtil','promise!Metamodel'],
                 });
             };
 
+
+            this.mergeViews = function(oldView, newView){
+                var oldNodes = oldView.nodes;
+                for(var oldKey in oldNodes){
+                    if(oldNodes.hasOwnProperty(oldKey)){
+                        if(!oldNodes[oldKey].hasOwnProperty('origin')){
+                            newView.nodes[oldKey] =  oldNodes[oldKey];
+                        }
+                    }
+                }
+
+                var oldEdges = oldView.edges;
+                for(var oldEdgeKey in oldEdges){
+                    if(oldEdges.hasOwnProperty(oldEdgeKey)){
+                        var oldEdge = oldEdges[oldEdgeKey];
+                        if(!oldEdge.hasOwnProperty('origin')){
+                            if(!oldNodes.hasOwnProperty(oldEdge.source))
+                               oldEdge.source = lookForNewKey(newView.nodes, oldNodes[oldEdge.source]);
+
+                            if(!oldNodes.hasOwnProperty(oldEdge.target))
+                                oldEdge.target = lookForNewKey(newView.nodes, oldNodes[oldEdge.target]);
+                            newView.edges[oldEdgeKey] = oldEdge;
+                        }
+                    }
+                }
+
+                return newView;
+            };
+
+            function lookForNewKey(newNodes,origin){
+                for(var key in newNodes){
+                    if(newNodes.hasOwnProperty(key)){
+                        if(newNodes[key].origin === origin){
+                            return key;
+                        }
+                    }
+                }
+            }
+
+
             /**
              * Main filter methods. Starts workers to compute views.
              * @param Model - the base model the view

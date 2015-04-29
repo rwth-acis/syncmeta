@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- generated on Wed Apr 29 2015 17:35:45 -->
+<!-- generated on Wed Apr 29 2015 21:55:38 -->
 <Module>
   <ModulePrefs
     title="View Canvas"
@@ -90,6 +90,7 @@
   <button id="btnCancelCreateViewpoint" style="display: none;"><img width="20px" height="20px" src="http://mari0.github.io/syncmeta/html/img/times1.png" /></button>
   <select id="ddmViewSelection"></select>
    <button id="btnShowViewPoint">Show</button>
+   <button id="btnRefreshView" style="display: none;">Refresh</button>
   <button id="btnDelViewPoint"><img width="20px" height="20px" src="http://mari0.github.io/syncmeta/html/img/times1.png" /></button>
   <p id="lblCurrentView">No view selected!</p>
 </div>

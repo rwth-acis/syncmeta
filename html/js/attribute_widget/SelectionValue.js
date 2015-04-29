@@ -158,7 +158,7 @@ define([
                         _iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.VIEWCANVAS, performCvgOp.toNonOTOperation());
                     }
                     else{
-                        EntityManager.addToMapIfNotExists(viewType.getViewId(), node.getEntityId(), viewType.getEntityId());
+                        EntityManager.addToMap(viewType.getViewId(), node.getEntityId(), viewType.getEntityId());
                     }
 
 

@@ -27,6 +27,7 @@
   <button id="btnCancelCreateViewpoint" style="display: none;"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/times1.png" /></button>
   <select id="ddmViewSelection"></select>
    <button id="btnShowViewPoint">Show</button>
+   <button id="btnRefreshView" style="display: none;">Refresh</button>
   <button id="btnDelViewPoint"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/times1.png" /></button>
   <p id="lblCurrentView">No view selected!</p>
 </div>

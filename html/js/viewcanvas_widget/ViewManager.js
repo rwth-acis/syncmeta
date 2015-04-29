@@ -122,6 +122,18 @@ define([
             },
 
             /**
+             * the data for a specific view
+             * @param viewId the identifier of the view
+             * @returns {*} a jquery promise object
+             */
+            getViewData:function(viewId){
+                var deferred = $.Deferred();
+                this.getViewResource(viewId).getRepresentation('rdfjson', function(viewData){
+                    deferred.resolve(viewData);
+                });
+                return deferred.promise();
+            },
+            /**
              * gets the identifier of a viewpoint for a viewId
              * @param {string} viewId the viewpoint identifier
              * @returns {string} the uri of the resource in the role space

@@ -10,6 +10,7 @@ requirejs([
     'operations/non_ot/InitModelTypesOperation',
     'operations/non_ot/ViewInitOperation',
     'operations/non_ot/DeleteViewOperation',
+    'operations/non_ot/UpdateViewListOperation',
     'viewcanvas_widget/ViewManager',
     'viewcanvas_widget/Canvas',
     'viewcanvas_widget/EntityManager',
@@ -42,7 +43,7 @@ requirejs([
     'viewcanvas_widget/ViewRelationshipNodeTool',
     'viewcanvas_widget/ViewGenerator',
     'promise!Metamodel'
-], function ($, _, jsPlumb, IWCOT, ToolSelectOperation, ActivityOperation, JoinOperation, WidgetEnterOperation,InitModelTypesOperation,ViewInitOperation,DeleteViewOperation,ViewManager, Canvas, EntityManager, MoveTool, NodeTool, ObjectNodeTool, AbstractClassNodeTool, RelationshipNodeTool, RelationshipGroupNodeTool, EnumNodeTool, NodeShapeNodeTool, EdgeShapeNodeTool, EdgeTool, GeneralisationEdgeTool, BiDirAssociationEdgeTool, UniDirAssociationEdgeTool, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNodeTool, ViewObjectNode, ViewRelationshipNode, ViewRelationshipNodeTool, ViewGenerator, metamodel) {
+], function ($, _, jsPlumb, IWCOT, ToolSelectOperation, ActivityOperation, JoinOperation, WidgetEnterOperation,InitModelTypesOperation,ViewInitOperation,DeleteViewOperation,UpdateViewListOperation,ViewManager, Canvas, EntityManager, MoveTool, NodeTool, ObjectNodeTool, AbstractClassNodeTool, RelationshipNodeTool, RelationshipGroupNodeTool, EnumNodeTool, NodeShapeNodeTool, EdgeShapeNodeTool, EdgeTool, GeneralisationEdgeTool, BiDirAssociationEdgeTool, UniDirAssociationEdgeTool, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNodeTool, ViewObjectNode, ViewRelationshipNode, ViewRelationshipNodeTool, ViewGenerator, metamodel) {
 
     var iwcot;
 	var canvas = new Canvas($("#canvas"), CONFIG.WIDGET.NAME.VIEWCANVAS);
@@ -157,7 +158,7 @@ requirejs([
         });
     };
 	$('#btnShowViewPoint').click(function () {
-        ViewManager.initViewList();
+        //ViewManager.initViewList();
         var viewId = ViewManager.getViewIdOfSelected();
         if (viewId === $('#lblCurrentView').text())
             return;
@@ -222,6 +223,8 @@ requirejs([
             $('#lblCurrentView').attr('viewpointId', viewpointId).text(viewId);
             EntityManager.storeView(viewId, viewpointId).then(function (resp) {
                 ViewManager.addView(viewId, viewpointId, resp);
+                var operation = new UpdateViewListOperation();
+                iwcot.sendRemoteNonOTOperation(operation.toNonOTOperation());
                 canvas.get$canvas().show();
                 if (_inInstance) {
                     ViewManager.getViewpointResource(viewpointId).getRepresentation('rdfjson', function (viewpointData) {
@@ -250,16 +253,50 @@ requirejs([
                 });
             }
             else {
-                openapp.resource.del(ViewManager.getViewUri(viewId), function () {
-                    ViewManager.deleteView(viewId);
-                    iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new DeleteViewOperation(viewId).toNonOTOperation());
-                    resetCanvas();
-                    $('#lblCurrentView').attr('vplink', '').text('No view displayed');
-                    canvas.get$canvas().hide();
-                });
+                $('#lblCurrentView').attr('vplink', '').text('No view displayed');
+                DeleteView(viewId);
             }
         });
     }
+    else{
+        var $refreshButton = $('#btnRefreshView');
+        $refreshButton.show();
+        $refreshButton.click(function() {
+            var viewId = $('#lblCurrentView').text();
+            var $loading = $("#loading");
+            $loading.show();
+
+            ViewManager.getViewpointResource(viewId).getRepresentation('rdfjson', function (viewpointData) {
+                var viewGenerator = new ViewGenerator(viewpointData);
+                $.when(viewGenerator.apply(), ViewManager.getViewData(viewId)).then(function (newView, oldView) {
+                    DeleteView(viewId).then(function () {
+                        EntityManager.storeView(viewId, viewId).then(function (resp) {
+                            ViewManager.addView(viewId, viewId, resp);
+                            canvas.get$canvas().show();
+                            EntityManager.initModelTypes(viewpointData);
+                            var update = viewGenerator.mergeViews(oldView, newView);
+                            JSONtoGraph(update, viewpointData);
+                            canvas.resetTool();
+                            $loading.hide();
+                            $("#save").click();
+                        });
+                    });
+                });
+            });
+        });
+    }
+    function DeleteView(viewId){
+        var deferred = $.Deferred();
+        openapp.resource.del(ViewManager.getViewUri(viewId), function () {
+            ViewManager.deleteView(viewId);
+            iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new DeleteViewOperation(viewId).toNonOTOperation());
+            resetCanvas();
+            canvas.get$canvas().hide();
+            deferred.resolve();
+        });
+        return deferred.promise();
+    }
+
 	//Start Autosave---------------------------
 	var $feedback = $("#feedback");
 	$("#save").click(function () {
@@ -269,7 +306,6 @@ requirejs([
       	var vpId = ViewManager.getViewpointId(currentView);
 		if (viewUri) {
 			$feedback.text("Saving...");
-
 			EntityManager.updateView(currentView,vpId, ViewManager.getResource(currentView)).then(function () {
                //ViewManager.initViewList();
 				$feedback.text("Saved!");
