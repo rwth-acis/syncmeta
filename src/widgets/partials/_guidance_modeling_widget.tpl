@@ -2,7 +2,7 @@
 <link rel="stylesheet" type="text/css" href="<%= grunt.config('baseUrl') %>/css/vendor/jquery.contextMenu.css">
 <link rel="stylesheet" type="text/css" href="<%= grunt.config('baseUrl') %>/css/style.css">
 <link rel="stylesheet" type="text/css" href="<%= grunt.config('baseUrl') %>/css/main_widget.css">
-<script type="text/javascript">var guidance_modeling = false;</script>
+<script type="text/javascript">var guidance_modeling = true;</script>
 <script src="<%= grunt.config('baseUrl') %>/js/main_widget.js"></script>
 <div id="loading" class="loading"></div>
 <div class="button_bar left">

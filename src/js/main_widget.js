@@ -44,7 +44,17 @@ requirejs([
     iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.MAIN);
     canvas = new Canvas($("#canvas"));
 
-    if(metamodel && metamodel.hasOwnProperty("nodes")){
+    //When guidance_modeling is true then create guidance modeling node tools
+    if(guidance_modeling){
+        console.log("Check activity!!!");
+        act = openapp.param.get("http://purl.org/role/terms/activity");
+        openapp.resource.get(act, function(resource){
+            console.log("Got resource!!!!");
+            console.log(resource.data[resource.uri]["http://purl.org/dc/terms/title"][0].value);
+        });
+    }
+    //Otherwise if a metamodel is given create tools based on the metamodel
+    else if(metamodel && metamodel.hasOwnProperty("nodes")){
         var nodes = metamodel.nodes, node;
         for(var nodeId in nodes){
             if(nodes.hasOwnProperty(nodeId)){
@@ -52,7 +62,9 @@ requirejs([
                 canvas.addTool(node.label,new NodeTool(node.label,null,null,node.shape.defaultWidth,node.shape.defaultHeight));
             }
         }
-    } else {
+    }
+    //When no metamodel is given create node tools for metamodeling
+    else {
         canvas.addTool(ObjectNode.TYPE,new ObjectNodeTool());
         canvas.addTool(AbstractClassNode.TYPE,new AbstractClassNodeTool());
         canvas.addTool(RelationshipNode.TYPE,new RelationshipNodeTool());
@@ -61,7 +73,13 @@ requirejs([
         canvas.addTool(NodeShapeNode.TYPE,new NodeShapeNodeTool());
         canvas.addTool(EdgeShapeNode.TYPE,new EdgeShapeNodeTool());
     }
-    if(metamodel && metamodel.hasOwnProperty("edges")){
+
+    //When guidance_modeling is true create guidance modeling edge tools
+    if(guidance_modeling){
+        console.log("Create guidance modeling edge tools");
+    }
+    //Otherwise if a metamodel is given create edge tools based on the metamodel
+    else if(metamodel && metamodel.hasOwnProperty("edges")){
         var edges = metamodel.edges, edge;
         for(var edgeId in edges){
             if(edges.hasOwnProperty(edgeId)){
@@ -69,7 +87,9 @@ requirejs([
                 canvas.addTool(edge.label,new EdgeTool(edge.label,edge.relations));
             }
         }
-    } else {
+    }
+    //When no metamodel is given create edge tools for metamodeling
+    else {
         canvas.addTool(GeneralisationEdge.TYPE,new GeneralisationEdgeTool());
         canvas.addTool(BiDirAssociationEdge.TYPE,new BiDirAssociationEdgeTool());
         canvas.addTool(UniDirAssociationEdge.TYPE,new UniDirAssociationEdgeTool());
