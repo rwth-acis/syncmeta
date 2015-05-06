@@ -35,8 +35,9 @@ requirejs([
     'canvas_widget/BiDirAssociationEdge',
     'canvas_widget/UniDirAssociationEdge',
     'promise!Metamodel',
-    'promise!Model'
-],function($,jsPlumb,IWCOT,ToolSelectOperation,ActivityOperation,JoinOperation,Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge,metamodel,model) {
+    'promise!Model',
+    'promise!Guidancemodel'
+],function($,jsPlumb,IWCOT,ToolSelectOperation,ActivityOperation,JoinOperation,Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge,metamodel,model, guidancemodel) {
 
     var iwcot;
     var canvas;
@@ -44,14 +45,9 @@ requirejs([
     iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.MAIN);
     canvas = new Canvas($("#canvas"));
 
-    //When guidance_modeling is true then create guidance modeling node tools
-    if(guidance_modeling){
-        console.log("Check activity!!!");
-        act = openapp.param.get("http://purl.org/role/terms/activity");
-        openapp.resource.get(act, function(resource){
-            console.log("Got resource!!!!");
-            console.log(resource.data[resource.uri]["http://purl.org/dc/terms/title"][0].value);
-        });
+    if(guidancemodel){
+        console.log("Guidance modeling!!!");
+        console.log(guidancemodel);
     }
     //Otherwise if a metamodel is given create tools based on the metamodel
     else if(metamodel && metamodel.hasOwnProperty("nodes")){
@@ -75,7 +71,7 @@ requirejs([
     }
 
     //When guidance_modeling is true create guidance modeling edge tools
-    if(guidance_modeling){
+    if(guidancemodel){
         console.log("Create guidance modeling edge tools");
     }
     //Otherwise if a metamodel is given create edge tools based on the metamodel

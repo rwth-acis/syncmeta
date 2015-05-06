@@ -228,25 +228,7 @@ module.exports = function(grunt) {
                 files: {
                     'html/imsld_export.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
                 }
-            },
-
-            guidance_modeling_widget: {
-                options: {
-                    data: {
-                        meta: {
-                            title: "Canvas",
-                            description: "",
-                            width: "560",
-                            height: "400"
-                        },
-                        bodyPartial: '_guidance_modeling_widget.tpl'
-                    }
-                },
-                files: {
-                    'html/guidance_modeling_widget.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
-                }
             }
-
         },
 
         requirejs: {
