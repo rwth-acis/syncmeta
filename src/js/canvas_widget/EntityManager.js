@@ -914,8 +914,6 @@ define([
                 var data = this.graphToJSON();
 
                 var type = guidancemodel ? CONFIG.NS.MY.GUIDANCEMODEL : CONFIG.NS.MY.MODEL;
-                console.log("TYPE:");
-                console.log(type);
 
                 //noinspection JSUnusedGlobalSymbols
                 resourceSpace.getSubResources({

@@ -25,8 +25,9 @@ requirejs([
     'text!templates/canvas_widget/rectangle_node.html',
     'text!templates/canvas_widget/rounded_rectangle_node.html',
     'text!templates/canvas_widget/triangle_node.html',
-    'promise!Metamodel'
-],function ($,Palette,MoveTool,Separator,NodeTool,ObjectNodeTool,AbstractClassNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,GeneralisationEdgeTool,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,metamodel) {
+    'promise!Metamodel',
+    'promise!Guidancemodel'
+],function ($,Palette,MoveTool,Separator,NodeTool,ObjectNodeTool,AbstractClassNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,GeneralisationEdgeTool,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,metamodel, guidancemodel) {
 
     /**
      * Predefined node shapes, first is default
@@ -50,7 +51,13 @@ requirejs([
 
     palette.addTool(new MoveTool());
     palette.addSeparator(new Separator());
-    if(metamodel && metamodel.hasOwnProperty("nodes")){
+
+    //Create node tools for guidance modeling based on guidance model (if in guidance modeling editor)
+    if(guidancemodel){
+        console.log("Create guidance modeling node tools");
+    }
+    //Create node tools for modeling based on a metamodel (if a metamodel exists)
+    else if(metamodel && metamodel.hasOwnProperty("nodes")){
         var nodes = metamodel.nodes,
             node,
             shape,
@@ -92,7 +99,9 @@ requirejs([
                 palette.addTool(new NodeTool(node.label,node.label,null,$shape));
             }
         }
-    } else {
+    }
+    //Create node tools for metamodeling
+    else {
         palette.addTool(new AbstractClassNodeTool());
         palette.addTool(new ObjectNodeTool());
         palette.addTool(new RelationshipNodeTool());
@@ -102,7 +111,13 @@ requirejs([
         palette.addTool(new EdgeShapeNodeTool());
     }
     palette.addSeparator(new Separator());
-    if(metamodel && metamodel.hasOwnProperty("edges")){
+
+    //Create edge tools for guidance modeling (if in guidance model editor)
+    if(guidancemodel){
+        console.log("Create guidance modeling edge tools")
+    }
+    //Create edge tools for modeling (based on metamodel)
+    else if(metamodel && metamodel.hasOwnProperty("edges")){
         var edges = metamodel.edges, edge;
         for(var edgeId in edges){
             if(edges.hasOwnProperty(edgeId)){
@@ -110,7 +125,9 @@ requirejs([
                 palette.addTool(new EdgeTool(edge.label,edge.label,null,edge.shape.arrow+".png",edge.shape.color));
             }
         }
-    } else {
+    }
+    //Create edge tools for metamodeling
+    else {
         palette.addTool(new BiDirAssociationEdgeTool());
         palette.addTool(new UniDirAssociationEdgeTool());
         palette.addTool(new GeneralisationEdgeTool());
