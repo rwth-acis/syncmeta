@@ -20,6 +20,7 @@ requirejs([
     'palette_widget/BiDirAssociationEdgeTool',
     'palette_widget/UniDirAssociationEdgeTool',
     'palette_widget/GeneralisationEdgeTool',
+    'palette_widget/guidance_modeling_tools/ObjectGuidanceTool',
     'text!templates/canvas_widget/circle_node.html',
     'text!templates/canvas_widget/diamond_node.html',
     'text!templates/canvas_widget/rectangle_node.html',
@@ -27,7 +28,7 @@ requirejs([
     'text!templates/canvas_widget/triangle_node.html',
     'promise!Metamodel',
     'promise!Guidancemodel'
-],function ($,Palette,MoveTool,Separator,NodeTool,ObjectNodeTool,AbstractClassNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,GeneralisationEdgeTool,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,metamodel, guidancemodel) {
+],function ($,Palette,MoveTool,Separator,NodeTool,ObjectNodeTool,AbstractClassNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,GeneralisationEdgeTool,ObjectGuidanceTool,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,metamodel, guidancemodel) {
 
     /**
      * Predefined node shapes, first is default
@@ -55,6 +56,7 @@ requirejs([
     //Create node tools for guidance modeling based on guidance model (if in guidance modeling editor)
     if(guidancemodel){
         console.log("Create guidance modeling node tools");
+        palette.addTool(new ObjectGuidanceTool());
     }
     //Create node tools for modeling based on a metamodel (if a metamodel exists)
     else if(metamodel && metamodel.hasOwnProperty("nodes")){
