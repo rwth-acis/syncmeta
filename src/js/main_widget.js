@@ -45,9 +45,11 @@ requirejs([
     iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.MAIN);
     canvas = new Canvas($("#canvas"));
 
-    if(guidancemodel){
+    //If we are in guidance modeling mode then set the model to the guidance model
+    if(guidancemodel && guidancemodel.hasOwnProperty("nodes")){
         console.log("Guidance modeling!!!");
         console.log(guidancemodel);
+        model = guidancemodel;
     }
     //Otherwise if a metamodel is given create tools based on the metamodel
     else if(metamodel && metamodel.hasOwnProperty("nodes")){
@@ -71,7 +73,7 @@ requirejs([
     }
 
     //When guidance_modeling is true create guidance modeling edge tools
-    if(guidancemodel){
+    if(guidancemodel && guidancemodel.hasOwnProperty("edges")){
         console.log("Create guidance modeling edge tools");
     }
     //Otherwise if a metamodel is given create edge tools based on the metamodel

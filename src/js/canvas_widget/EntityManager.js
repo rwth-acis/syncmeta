@@ -20,8 +20,9 @@ define([
     'text!templates/canvas_widget/rectangle_node.html',
     'text!templates/canvas_widget/rounded_rectangle_node.html',
     'text!templates/canvas_widget/triangle_node.html',
-    'promise!Metamodel'
-],/** @lends EntityManager */function(_,Util,AbstractEntity,Node,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,ModelAttributesNode,Edge,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,metamodel) {
+    'promise!Metamodel',
+    'promise!Guidancemodel'
+],/** @lends EntityManager */function(_,Util,AbstractEntity,Node,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,ModelAttributesNode,Edge,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,metamodel, guidancemodel) {
 
     /**
      * Predefined node shapes, first is default
@@ -911,10 +912,15 @@ define([
                 var innerDeferred = $.Deferred();
 
                 var data = this.graphToJSON();
+
+                var type = guidancemodel ? CONFIG.NS.MY.GUIDANCEMODEL : CONFIG.NS.MY.MODEL;
+                console.log("TYPE:");
+                console.log(type);
+
                 //noinspection JSUnusedGlobalSymbols
                 resourceSpace.getSubResources({
                     relation: openapp.ns.role + "data",
-                    type: CONFIG.NS.MY.MODEL,
+                    type: type,
                     onEach: function(doc) {
                         doc.del();
                     },
@@ -925,7 +931,7 @@ define([
                 innerDeferred.then(function(){
                     resourceSpace.create({
                         relation: openapp.ns.role + "data",
-                        type: CONFIG.NS.MY.MODEL,
+                        type: type,
                         representation: data,
                         callback: function(){
                             deferred.resolve();
