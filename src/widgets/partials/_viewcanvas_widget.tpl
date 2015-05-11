@@ -11,7 +11,7 @@
 	<button id="save"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/save.png" /></button>
 	 <span id="feedback"></span>
 </div>
-<div>
+<div class="button_bar right">
   <button id="showtype"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/hidetype.png" /></button>
   <button id="hidetype"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/showtype.png" /></button>
   <button id="zoomin"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/zoomin.png" /></button>
@@ -19,7 +19,7 @@
   <button id="undo"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/undo.png" /></button>
   <button id="redo"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/redo.png" /></button>
 </div>
-<div>
+<div class="button_bar left">
  <button id="btnCreateViewpoint"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/add196.png" /></button>
   <input id="txtNameViewpoint" type="text" placeholder="name"  style="display: none;">
    <select id="ddmViewpointSelection" style="display: none;"></select>
@@ -29,7 +29,10 @@
    <button id="btnShowViewPoint">Show</button>
    <button id="btnRefreshView" style="display: none;">Refresh</button>
   <button id="btnDelViewPoint"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/times1.png" /></button>
-  <p id="lblCurrentView">No view selected!</p>
+
+</div>
+<div class="button_bar right">
+Current View: <strong><p id="lblCurrentView">No view!</p></strong>
 </div>
 <div id="canvas-frame">
   <div id="canvas">

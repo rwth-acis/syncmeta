@@ -152,6 +152,9 @@ define([
             operation.setRemote(false);
             processValueChangeOperation(operation);
             operation.setRemote(true);
+
+
+
             if(_iwcot.sendRemoteOTOperation(operation)){
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "ValueChangeActivity",
@@ -166,6 +169,18 @@ define([
                     }
                 ).toNonOTOperation());
             }
+
+            propagateValueChangeToMainCanvas(operation);
+        };
+
+        var propagateValueChangeToMainCanvas = function(operation){
+            //propagate change to main canvas
+            var originId = that.getRootSubjectEntity().getOrigin();
+            if(originId){
+                var newId = operation.getEntityId().replace(/[^\[\]]*/, originId);
+                var mainOp = new ValueChangeOperation(newId,operation.getValue(), operation.getType(), operation.getPosition(),true);
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN, mainOp.getOTOperation());
+            }
         };
 
         /**
@@ -176,6 +191,7 @@ define([
          */
         var propagateValueChange = function(type,value,position){
             var operation = new ValueChangeOperation(that.getEntityId(),value,type,position);
+            operation.setRemote(false);
             propagateValueChangeOperation(operation);
             _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
         };

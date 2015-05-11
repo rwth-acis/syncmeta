@@ -484,7 +484,7 @@ define([
                         time = new Date().getTime();
                         console.log("OT is stable: " + _ot.isStable());
                         remoteOp = _ot.remoteEvent(time,data);
-                        operation = new OTOperation(data.name,remoteOp.value,remoteOp.type,remoteOp.position);
+                        operation = new OTOperation(data.name,remoteOp.value,remoteOp.type,remoteOp.position, remoteOp.fromView);
                         operation.setSender(sender);
                         resOperation = OperationFactory.createOperationFromOTOperation(operation);
                         if(resOperation instanceof ValueChangeOperation){
@@ -633,7 +633,7 @@ define([
                 sender = payload.sender;
                 switch (type){
                     case PAYLOAD_DATA_TYPE.OT_OPERATION:
-                        operation = new OTOperation(data.name,data.value,data.type,data.position);
+                        operation = new OTOperation(data.name,data.value,data.type,data.position, data.fromView);
                         operation.setSender(sender);
                         resOperation = OperationFactory.createOperationFromOTOperation(operation);
                         for(i = 0, numOfCallbacks = _onLocalDataReceivedCallbacks.length; i < numOfCallbacks; i++){

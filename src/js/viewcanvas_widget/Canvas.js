@@ -151,7 +151,15 @@ define([
 						nodeType : operation.getType()
 					}).toNonOTOperation());
 			}
+            propagateNodeAddToMainCanvas(operation);
 		};
+
+        var propagateNodeAddToMainCanvas = function(operation){
+            //propagate change to main canvas
+               var mainOp = new ValueChangeOperation(newId,operation.getValue(), operation.getType(), operation.getPosition(),true);
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN, mainOp.getOTOperation());
+
+        };
 
 		/**
 		 * Apply an Edge Add Operation
@@ -938,6 +946,7 @@ define([
 		if (_iwcot) {
 			that.registerCallbacks();
 		}
+
         function CvgCallback(operation){
             if(operation instanceof PerformCvgOperation){
                 var json = operation.getJSON();
@@ -966,6 +975,7 @@ define([
                 require('viewcanvas_widget/ViewManager').initViewList();
             }
         }
+
 
 
 	}

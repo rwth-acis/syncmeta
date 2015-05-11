@@ -153,18 +153,23 @@ define([
             processValueChangeOperation(operation);
             operation.setRemote(true);
             if(_iwcot.sendRemoteOTOperation(operation)){
-                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
-                    "ValueChangeActivity",
-                    that.getEntityId(),
-                    _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
-                    ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(),that.getRootSubjectEntity().getType(),that.getRootSubjectEntity().getLabel().getValue().getValue()),
-                    {
-                        value: calcNewValue(operation),
-                        subjectEntityName: that.getSubjectEntity().getName(),
-                        rootSubjectEntityType: that.getRootSubjectEntity().getType(),
-                        rootSubjectEntityId: that.getRootSubjectEntity().getEntityId()
-                    }
-                ).toNonOTOperation());
+                if(!operation.getFromView()) {
+                    _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
+                        "ValueChangeActivity",
+                        that.getEntityId(),
+                        _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
+                        ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(), that.getRootSubjectEntity().getType(), that.getRootSubjectEntity().getLabel().getValue().getValue()),
+                        {
+                            value: calcNewValue(operation),
+                            subjectEntityName: that.getSubjectEntity().getName(),
+                            rootSubjectEntityType: that.getRootSubjectEntity().getType(),
+                            rootSubjectEntityId: that.getRootSubjectEntity().getEntityId()
+                        }
+                    ).toNonOTOperation());
+                }
+            }
+            if(operation.getFromView()){
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
             }
         };
 

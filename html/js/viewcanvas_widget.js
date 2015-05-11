@@ -179,12 +179,12 @@ requirejs([
                 $('#lblCurrentView').attr('viewpointId', viewId).text(viewId);
                 EntityManager.storeView(viewId, viewId).then(function (resp) {
                     ViewManager.updateView(viewId, viewId, resp);
-                    canvas.get$canvas().show();
                     ViewManager.getViewpointResource(viewId).getRepresentation('rdfjson', function (viewpointData) {
                         var viewGenerator = new ViewGenerator(viewpointData);
                         viewGenerator.apply().then(function (view) {
                             var $loading = $("#loading");
                             $loading.show();
+                            canvas.get$canvas().show();
                             EntityManager.initModelTypes(viewpointData);
                             JSONtoGraph(view, viewpointData);
                             canvas.resetTool();

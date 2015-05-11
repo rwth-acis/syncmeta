@@ -19,13 +19,14 @@ define([
      * @param {string} type Type of operation
      * @param {number} position Position of operation
      */
-    function OTOperation(name,value,type,position){
+    function OTOperation(name,value,type,position,fromView){
         /**
          * JabberId of the user who issued this activity
          * @type {string}
          * @private
          */
         var _sender = null;
+
 
         /**
          * Operation details
@@ -36,7 +37,8 @@ define([
             name: name,
             value: value,
             type: type,
-            position: position
+            position: position,
+            fromView: fromView
         };
 
         /**
@@ -84,6 +86,10 @@ define([
          */
         this.getPosition = function(){
             return _operation.position;
+        };
+
+        this.getFromView = function(){
+            return _operation.fromView;
         };
 
         /**

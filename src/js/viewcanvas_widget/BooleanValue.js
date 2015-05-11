@@ -93,6 +93,17 @@ define([
                     }
                 ).toNonOTOperation());
             }
+            propagateValueChangeToMainCanvas(operation);
+        };
+
+        var propagateValueChangeToMainCanvas = function(operation){
+            //propagate change to main canvas
+            var originId = that.getRootSubjectEntity().getOrigin();
+            if(originId){
+                var newId = operation.getEntityId().replace(/[^\[\]]*/, originId);
+                var mainOp = new ValueChangeOperation(newId,operation.getValue(), operation.getType(), operation.getPosition(),true);
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN, mainOp.getOTOperation());
+            }
         };
 
         /**

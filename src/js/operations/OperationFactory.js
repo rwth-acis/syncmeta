@@ -239,7 +239,8 @@ define([
                                 entityId,
                                 operation.getValue(),
                                 operation.getType(),
-                                operation.getPosition()
+                                operation.getPosition(),
+                                operation.getFromView()
                             );
                             break;
                     }
