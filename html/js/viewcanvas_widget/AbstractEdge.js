@@ -145,6 +145,18 @@ define([
                     {}
                 ).toNonOTOperation());
             }
+            if(CONFIG.INSTANCE_FLAG)
+                propagateEdgeDeleteToMainCanvas(operation);
+        };
+
+        var propagateEdgeDeleteToMainCanvas = function(operation){
+            //propagate change to main canvas
+            var EntityManager = require('viewcanvas_widget/EntityManager');
+            var originType = EntityManager.getTargetType($('#lblCurrentView').text(),operation.getType());
+            if(originType) {
+                var mainOp = new EdgeDeleteOperation(that.getOrigin(), originType, that.getSource().getOrigin(), that.getTarget().getOrigin(), operation.getJSON());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN, mainOp.getOTOperation());
+            }
         };
 
         /**
@@ -222,9 +234,6 @@ define([
             return $e;
         };
 
-        var initToolEvents = function(){
-
-        };
 
         /**
          * Default paint style of edge
@@ -714,8 +723,6 @@ define([
             _iwcot.unregisterOnRemoteDataReceivedCallback(remoteEdgeDeleteCallback);
             _iwcot.unregisterOnHistoryChangedCallback(historyEdgeDeleteCallback);
         };
-
-        initToolEvents();
 
         if(_iwcot){
             that.registerCallbacks();

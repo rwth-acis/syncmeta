@@ -169,8 +169,8 @@ define([
                     }
                 ).toNonOTOperation());
             }
-
-            propagateValueChangeToMainCanvas(operation);
+            if(CONFIG.INSTANCE_FLAG)
+                propagateValueChangeToMainCanvas(operation);
         };
 
         var propagateValueChangeToMainCanvas = function(operation){

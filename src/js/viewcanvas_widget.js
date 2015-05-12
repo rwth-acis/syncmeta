@@ -53,6 +53,7 @@ requirejs([
 	//Add all tool to the canvas
 	if (metamodel && metamodel.hasOwnProperty("nodes")) {
 		_inInstance = true;
+        CONFIG.INSTANCE_FLAG = true;
         $("#btnCreateViewpoint").hide();
         $('#btnDelViewPoint').hide();
 
@@ -168,6 +169,7 @@ requirejs([
                 initViewpoint(viewId).then(function (viewpointData) {
                     //$('#lblCurrentView').attr('vplink', resp.uri);
                     EntityManager.initModelTypes(viewpointData);
+                    EntityManager.initViewTypeMap(viewpointData, metamodel);
                     visualizeView(viewId, viewpointData);
                     initTools(viewpointData);
                     iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, new InitModelTypesOperation(viewpointData).toNonOTOperation());
@@ -186,6 +188,7 @@ requirejs([
                             $loading.show();
                             canvas.get$canvas().show();
                             EntityManager.initModelTypes(viewpointData);
+                            EntityManager.initViewTypeMap(viewpointData, metamodel);
                             JSONtoGraph(view, viewpointData);
                             canvas.resetTool();
                             $loading.hide();

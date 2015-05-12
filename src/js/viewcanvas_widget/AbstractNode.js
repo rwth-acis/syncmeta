@@ -270,7 +270,20 @@ define([
                     {}
                 ).toNonOTOperation());
             }
+            if(CONFIG.INSTANCE_FLAG)
+                propagateNodeDeleteToMainCanvas(operation);
         };
+
+        var propagateNodeDeleteToMainCanvas = function(operation){
+            //propagate change to main canvas
+            var EntityManager = require('viewcanvas_widget/EntityManager');
+            var originType = EntityManager.getTargetType($('#lblCurrentView').text(),operation.getType());
+            if(originType) {
+                var mainOp = new NodeDeleteOperation(that.getOrigin(), originType, operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex(), operation.getJSON());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN, mainOp.getOTOperation());
+            }
+        };
+
 
         /**
          * Callback for a remote Entity Select Operation
@@ -1183,6 +1196,7 @@ define([
         };
 
         init();
+
 
         if(_iwcot){
             that.registerCallbacks();

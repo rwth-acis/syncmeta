@@ -151,14 +151,20 @@ define([
 						nodeType : operation.getType()
 					}).toNonOTOperation());
 			}
-            propagateNodeAddToMainCanvas(operation);
+            if(CONFIG.INSTANCE_FLAG)
+                propagateNodeAddToMainCanvas(operation);
 		};
 
         var propagateNodeAddToMainCanvas = function(operation){
             //propagate change to main canvas
-               var mainOp = new ValueChangeOperation(newId,operation.getValue(), operation.getType(), operation.getPosition(),true);
+            var originId= Util.generateRandomId();
+            var originType = EntityManager.getTargetType($('#lblCurrentView').text(),operation.getType());
+            if(originType) {
+                var mainOp = new NodeAddOperation(originId, originType, operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex(), operation.getJSON());
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN, mainOp.getOTOperation());
-
+                var viewNode = EntityManager.findNode(operation.getEntityId());
+                viewNode.setOrigin(originId);
+            }
         };
 
 		/**
@@ -206,7 +212,23 @@ define([
 						targetNodeType : targetNode.getType()
 					}).toNonOTOperation());
 			}
+            if(CONFIG.INSTANCE_FLAG)
+                propagateEdgeAddToMainCanvas(operation);
 		};
+
+        var propagateEdgeAddToMainCanvas = function(operation){
+            //propagate change to main canvas
+            var originId= Util.generateRandomId();
+            var originType = EntityManager.getTargetType($('#lblCurrentView').text(),operation.getType());
+            var viewEdge = EntityManager.findEdge(operation.getEntityId());
+            var sourceOrigin = viewEdge.getSource().getOrigin();
+            var targetOrigin = viewEdge.getTarget().getOrigin();
+            if(originType && sourceOrigin && targetOrigin) {
+                var mainOp = new EdgeAddOperation(originId, originType, sourceOrigin ,targetOrigin, operation.getJSON());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN, mainOp.getOTOperation());
+                viewEdge.setOrigin(originId);
+            }
+        };
 
 		/**
 		 * Callback for a remote Node Add Operation

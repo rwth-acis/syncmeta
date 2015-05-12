@@ -93,7 +93,8 @@ define([
                     }
                 ).toNonOTOperation());
             }
-            propagateValueChangeToMainCanvas(operation);
+            if(CONFIG.INSTANCE_FLAG)
+                propagateValueChangeToMainCanvas(operation);
 
         };
 

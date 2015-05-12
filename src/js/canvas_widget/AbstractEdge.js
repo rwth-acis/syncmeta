@@ -143,6 +143,8 @@ define([
             }
         };
 
+
+
         /**
          * Callback for a remote Entity Select Operation
          * @param {operations.non_ot.EntitySelectOperation} operation
@@ -218,9 +220,6 @@ define([
             return $e;
         };
 
-        var initToolEvents = function(){
-
-        };
 
         /**
          * Default paint style of edge
@@ -682,6 +681,8 @@ define([
             _iwcot.registerOnRemoteDataReceivedCallback(remoteEntitySelectCallback);
             _iwcot.registerOnRemoteDataReceivedCallback(remoteEdgeDeleteCallback);
             _iwcot.registerOnHistoryChangedCallback(historyEdgeDeleteCallback);
+
+            _iwcot.registerOnLocalDataReceivedCallback(localEdgeDeleteCallback);
         };
 
         /**
@@ -691,9 +692,15 @@ define([
             _iwcot.unregisterOnRemoteDataReceivedCallback(remoteEntitySelectCallback);
             _iwcot.unregisterOnRemoteDataReceivedCallback(remoteEdgeDeleteCallback);
             _iwcot.unregisterOnHistoryChangedCallback(historyEdgeDeleteCallback);
+
+            _iwcot.unregisterOnLocalDataReceivedCallback(localEdgeDeleteCallback);
         };
 
-        initToolEvents();
+        function localEdgeDeleteCallback(operation){
+            if(operation instanceof EdgeDeleteOperation && that.getEntityId() === operation.getEntityId()){
+                that.triggerDeletion();
+            }
+        }
 
         if(_iwcot){
             that.registerCallbacks();

@@ -92,6 +92,9 @@ define([
 	 * @constructor
 	 */
 	function EntityManager() {
+
+        var _viewTypeMap = {};
+
 		/**
 		 * Model attributes node
 		 * @type {canvas_widget.ModelAttributesNode}
@@ -1112,6 +1115,34 @@ define([
             initModelTypes : function(viewpointVLS){
                 this.initNodeTypes(viewpointVLS);
                 this.initEdgeTypes(viewpointVLS);
+            },
+            initViewTypeMap:function(vvs, vls){
+                if(!vvs || !vls || !vvs.id)
+                    return;
+                var vt;
+                _viewTypeMap[vvs.id] ={};
+                for(var vtKey in vvs.nodes){
+                    if(vvs.nodes.hasOwnProperty(vtKey) && vvs.nodes[vtKey].hasOwnProperty('target')){
+                        vt = vvs.nodes[vtKey];
+                        if(vls.nodes.hasOwnProperty(vt.target))
+                            _viewTypeMap[vvs.id][vt.label] = vls.nodes[vt.target].label;
+                    }
+                }
+                for(var vtKey2 in vvs.edges){
+                    if(vvs.edges.hasOwnProperty(vtKey2) && vvs.edges[vtKey2].hasOwnProperty('target')){
+                        vt = vvs.edges[vtKey2];
+                        if(vls.edges.hasOwnProperty(vt.target))
+                            _viewTypeMap[vvs.id][vt.label] = vls.edges[vt.target].label;
+                    }
+                }
+            },
+            getTargetType:function(viewId, viewType){
+                if(_viewTypeMap.hasOwnProperty(viewId)){
+                    if(_viewTypeMap[viewId].hasOwnProperty(viewType)){
+                        return _viewTypeMap[viewId][viewType];
+                    }
+                }
+                return null;
             }
         };
 	}

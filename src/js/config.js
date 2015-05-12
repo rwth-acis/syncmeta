@@ -61,6 +61,7 @@ var require = {
 };
 
 CONFIG = {
+    INSTANCE_FLAG:false,
     WIDGET: {
         NAME: {
             MAIN: "MAIN",

@@ -580,14 +580,14 @@ define([
          * @param {string} identifier the identifier of the node, if null a new id is generated
 		 * @return {number} id of new node
 		 */
-		this.createNode = function (type, left, top, width, height, zIndex, json, identifier, toCanvas) {
+		this.createNode = function (type, left, top, width, height, zIndex, json, identifier) {
             var id;
             if(identifier)
                 id = identifier;
             else
 			 id= Util.generateRandomId(24);
 			zIndex = zIndex || AbstractEntity.maxZIndex + 1;
-			var operation = new NodeAddOperation(id, type, left, top, width, height, zIndex, json || null, toCanvas);
+			var operation = new NodeAddOperation(id, type, left, top, width, height, zIndex, json || null, identifier);
 			propagateNodeAddOperation(operation);
 			return id;
 		};
@@ -598,6 +598,7 @@ define([
 		 * @param {canvas_widget.AbstractNode} source Source node entity id
 		 * @param {canvas_widget.AbstractNode} target Target node entity id
 		 * @param {object} [json] representation of edge
+         * @param {string} identifier the identifier of the edge
 		 * @return {number} id of new edge
 		 */
 		this.createEdge = function (type, source, target, json, identifier) {
@@ -895,6 +896,9 @@ define([
             _iwcot.registerOnLocalDataReceivedCallback(localHighlightCallback);
 			_iwcot.registerOnHistoryChangedCallback(historyNodeAddCallback);
 			_iwcot.registerOnHistoryChangedCallback(historyEdgeAddCallback);
+
+            _iwcot.registerOnLocalDataReceivedCallback(localNodeAddCallback);
+            _iwcot.registerOnLocalDataReceivedCallback(localEdgeAddCallback);
 		};
 
 		/**
@@ -910,6 +914,9 @@ define([
             _iwcot.unregisterOnLocalDataReceivedCallback(localHighlightCallback);
 			_iwcot.unregisterOnHistoryChangedCallback(historyNodeAddCallback);
 			_iwcot.unregisterOnHistoryChangedCallback(historyEdgeAddCallback);
+
+            _iwcot.unregisterOnLocalDataReceivedCallback(localNodeAddCallback);
+            _iwcot.unregisterOnLocalDataReceivedCallback(localEdgeAddCallback);
 		};
 
 		init();
@@ -935,7 +942,17 @@ define([
             }
         }
 
+        function localNodeAddCallback(operation){
+            if(operation instanceof NodeAddOperation){
+                that.createNode(operation.getType(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(),operation.getZIndex(),operation.getJSON(),operation.getEntityId());
+            }
+        }
 
+        function localEdgeAddCallback(operation){
+            if(operation instanceof EdgeAddOperation){
+                that.createEdge(operation.getType(),operation.getSource(),operation.getTarget(),operation.getJSON(),operation.getEntityId());
+            }
+        }
 	}
 
 	return Canvas;
