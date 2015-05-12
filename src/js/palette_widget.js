@@ -5,6 +5,9 @@
 
 requirejs([
     'jqueryui',
+    'Util',
+    'iwcw',
+    'operations/non_ot/ExportMetaModelOperation',
     'palette_widget/Palette',
     'palette_widget/MoveTool',
     'palette_widget/Separator',
@@ -26,10 +29,13 @@ requirejs([
     'text!templates/canvas_widget/rectangle_node.html',
     'text!templates/canvas_widget/rounded_rectangle_node.html',
     'text!templates/canvas_widget/triangle_node.html',
+    'promise!Model',
     'promise!Metamodel',
     'promise!Guidancemodel'
-],function ($,Palette,MoveTool,Separator,NodeTool,ObjectNodeTool,AbstractClassNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,GeneralisationEdgeTool,ObjectGuidanceTool,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,metamodel, guidancemodel) {
+],function ($,Util,IWCW,ExportMetaModelOperation,Palette,MoveTool,Separator,NodeTool,ObjectNodeTool,AbstractClassNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,GeneralisationEdgeTool,ObjectGuidanceTool,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,model,metamodel,guidancemodel) {
 
+    var componentName = "palette"+Util.generateRandomId();
+    var iwc = IWCW.getInstance(componentName);
     /**
      * Predefined node shapes, first is default
      * @type {{circle: *, diamond: *, rectangle: *, triangle: *}}
@@ -53,9 +59,15 @@ requirejs([
     palette.addTool(new MoveTool());
     palette.addSeparator(new Separator());
 
-    //Create node tools for guidance modeling based on guidance model (if in guidance modeling editor)
-    if(guidancemodel){
+    //Create node tools for guidance modeling based on metamodel (if in guidance modeling editor)
+    if(guidancemodel.isGuidanceEditor()){
         console.log("Create guidance modeling node tools");
+        
+        var nodes = guidancemodel.metamodel.nodes;
+        for(var nodeId in nodes){
+            var node = nodes[nodeId];
+            palette.addTool(new NodeTool(node.label,node.label));
+        }
         palette.addTool(new ObjectGuidanceTool());
     }
     //Create node tools for modeling based on a metamodel (if a metamodel exists)
@@ -115,7 +127,7 @@ requirejs([
     palette.addSeparator(new Separator());
 
     //Create edge tools for guidance modeling (if in guidance model editor)
-    if(guidancemodel){
+    if(guidancemodel.isGuidanceEditor()){
         console.log("Create guidance modeling edge tools")
     }
     //Create edge tools for modeling (based on metamodel)

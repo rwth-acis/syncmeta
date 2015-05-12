@@ -46,10 +46,10 @@ requirejs([
     canvas = new Canvas($("#canvas"));
 
     //If we are in guidance modeling mode then set the model to the guidance model
-    if(guidancemodel && guidancemodel.hasOwnProperty("nodes")){
+    if(guidancemodel.isGuidanceEditor()){
         console.log("Guidance modeling!!!");
         console.log(guidancemodel);
-        model = guidancemodel;
+        model = guidancemodel.guidancemodel;
     }
     //Otherwise if a metamodel is given create tools based on the metamodel
     else if(metamodel && metamodel.hasOwnProperty("nodes")){
@@ -73,7 +73,7 @@ requirejs([
     }
 
     //When guidance_modeling is true create guidance modeling edge tools
-    if(guidancemodel && guidancemodel.hasOwnProperty("edges")){
+    if(guidancemodel.isGuidanceEditor()){
         console.log("Create guidance modeling edge tools");
     }
     //Otherwise if a metamodel is given create edge tools based on the metamodel

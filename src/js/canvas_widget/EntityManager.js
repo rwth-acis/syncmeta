@@ -908,35 +908,60 @@ define([
             storeData: function(){
                 var resourceSpace = new openapp.oo.Resource(openapp.param.space());
 
-                var deferred = $.Deferred();
-                var innerDeferred = $.Deferred();
-
                 var data = this.graphToJSON();
 
-                var type = guidancemodel ? CONFIG.NS.MY.GUIDANCEMODEL : CONFIG.NS.MY.MODEL;
+                var resourcesToSave = [];
+                var promises = [];
 
-                //noinspection JSUnusedGlobalSymbols
-                resourceSpace.getSubResources({
-                    relation: openapp.ns.role + "data",
-                    type: type,
-                    onEach: function(doc) {
-                        doc.del();
-                    },
-                    onAll: function(){
-                        innerDeferred.resolve();
-                    }
-                });
-                innerDeferred.then(function(){
-                    resourceSpace.create({
+                //In the guidance model editor update the guidance model
+                if(guidancemodel.isGuidanceEditor()){
+                    guidancemodel.guidancemodel = data;
+                    resourcesToSave.push({'typeName': CONFIG.NS.MY.GUIDANCEMODEL, 'representation': guidancemodel});
+                }
+                //In the metamodel editor update the metamodel needed for the guidance editor
+                else if(!metamodel.hasOwnProperty('nodes')){
+                    guidancemodel.metamodel = this.generateMetaModel();
+                    resourcesToSave.push({'typeName': CONFIG.NS.MY.GUIDANCEMODEL, 'representation': guidancemodel});
+                    resourcesToSave.push({'typeName': CONFIG.NS.MY.MODEL, 'representation': data})
+                }
+                //In the model editor just update the model
+                else{
+                    resourcesToSave.push({'typeName': CONFIG.NS.MY.MODEL, 'representation': data})
+                }
+
+                var recreateResource = function(type, representation){
+                    var deferred = $.Deferred();
+                    var innerDeferred = $.Deferred();
+                    //noinspection JSUnusedGlobalSymbols
+                    resourceSpace.getSubResources({
                         relation: openapp.ns.role + "data",
                         type: type,
-                        representation: data,
-                        callback: function(){
-                            deferred.resolve();
+                        onEach: function(doc) {
+                            doc.del();
+                        },
+                        onAll: function(){
+                            innerDeferred.resolve();
                         }
                     });
-                });
-                return deferred.promise();
+                    innerDeferred.then(function(){
+                        resourceSpace.create({
+                            relation: openapp.ns.role + "data",
+                            type: type,
+                            representation: representation,
+                            callback: function(){
+                                deferred.resolve();
+                            }
+                        });
+                    });
+                    return deferred.promise();  
+                };
+
+                for(var i=0; i < resourcesToSave.length; i++){
+                    var item = resourcesToSave[i];
+                    promises.push(recreateResource(item.typeName, item.representation));
+                }
+                
+                return $.when.apply($, promises);
             }
         };
     }
