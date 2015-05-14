@@ -66,7 +66,8 @@ requirejs([
         var nodes = guidancemodel.metamodel.nodes;
         for(var nodeId in nodes){
             var node = nodes[nodeId];
-            palette.addTool(new NodeTool(node.label,node.label));
+            var label = node.label + " Context";
+            palette.addTool(new NodeTool(label, label));
         }
         palette.addTool(new ObjectGuidanceTool());
     }

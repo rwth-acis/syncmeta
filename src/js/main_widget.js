@@ -49,6 +49,14 @@ requirejs([
     if(guidancemodel.isGuidanceEditor()){
         console.log("Guidance modeling!!!");
         console.log(guidancemodel);
+        var nodes = guidancemodel.metamodel.nodes;
+        for(var nodeId in nodes){
+            if(nodes.hasOwnProperty(nodeId)){
+                node = nodes[nodeId];
+                var label = node.label + " Context";
+                canvas.addTool(label,new NodeTool(label,null,null,node.shape.defaultWidth,node.shape.defaultHeight))
+            }
+        }
         model = guidancemodel.guidancemodel;
     }
     //Otherwise if a metamodel is given create tools based on the metamodel

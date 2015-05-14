@@ -110,8 +110,10 @@ define([
         var processNodeAddOperation = function(operation){
             var node;
             if(operation.getJSON()){
+                console.log("JSON!")
                 node = EntityManager.createNodeFromJSON(operation.getType(),operation.getEntityId(),operation.getLeft(),operation.getTop(),operation.getWidth(),operation.getHeight(),operation.getZIndex(),operation.getJSON());
             } else {
+                console.log("NO JSON!")
                 node = EntityManager.createNode(operation.getType(),operation.getEntityId(),operation.getLeft(),operation.getTop(),operation.getWidth(),operation.getHeight(),operation.getZIndex());
             }
 

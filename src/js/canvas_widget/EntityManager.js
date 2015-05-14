@@ -15,6 +15,7 @@ define([
     'canvas_widget/GeneralisationEdge',
     'canvas_widget/BiDirAssociationEdge',
     'canvas_widget/UniDirAssociationEdge',
+    'canvas_widget/guidance_modeling/context_node',
     'text!templates/canvas_widget/circle_node.html',
     'text!templates/canvas_widget/diamond_node.html',
     'text!templates/canvas_widget/rectangle_node.html',
@@ -22,7 +23,7 @@ define([
     'text!templates/canvas_widget/triangle_node.html',
     'promise!Metamodel',
     'promise!Guidancemodel'
-],/** @lends EntityManager */function(_,Util,AbstractEntity,Node,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,ModelAttributesNode,Edge,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,metamodel, guidancemodel) {
+],/** @lends EntityManager */function(_,Util,AbstractEntity,Node,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,ModelAttributesNode,Edge,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge,ContextNode,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,metamodel, guidancemodel) {
 
     /**
      * Predefined node shapes, first is default
@@ -48,7 +49,22 @@ define([
      */
     var nodeTypes = {};
 
-    if(metamodel && metamodel.hasOwnProperty("nodes")){
+    //Create nodes for guidance modeling (based on metamodel)
+    if(guidancemodel.isGuidanceEditor()){
+        var nodes = guidancemodel.metamodel.nodes;
+        for(var nodeId in nodes){
+            if(nodes.hasOwnProperty(nodeId)){
+                var node = nodes[nodeId];
+                var label = node.label + " Context";
+                nodeTypes[label] = ContextNode(label);
+                nodeTypes[label].TYPE = label;
+                nodeTypes[label].DEFAULT_WIDTH = 150;
+                nodeTypes[label].DEFAULT_HEIGHT = 100;
+            }
+        }
+    }
+    //Create nodes based on metamodel (if it exists)
+    else if(metamodel && metamodel.hasOwnProperty("nodes")){
         var nodes = metamodel.nodes,
             node,
             shape,
@@ -104,7 +120,9 @@ define([
                 nodeTypes[node.label].DEFAULT_HEIGHT = node.shape.defaultHeight;
             }
         }
-    } else {
+    }
+    //Create nodes for metamodeling
+    else {
         nodeTypes[ObjectNode.TYPE] = ObjectNode;
         nodeTypes[AbstractClassNode.TYPE] = AbstractClassNode;
         nodeTypes[RelationshipNode.TYPE] = RelationshipNode;
