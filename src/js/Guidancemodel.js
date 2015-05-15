@@ -20,6 +20,7 @@ define([
             guidancemodeling.isGuidanceEditor = function(){
                 return activityName == "Guidance modeling";
             };
+
             //Get the guidance model
             resourceSpace.getSubResources({
                 relation: openapp.ns.role + "data",

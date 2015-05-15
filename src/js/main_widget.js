@@ -45,18 +45,27 @@ requirejs([
     iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.MAIN);
     canvas = new Canvas($("#canvas"));
 
-    //If we are in guidance modeling mode then set the model to the guidance model
+    //For guidancemodeling create the guidancemodelint tools based on the metamodel
     if(guidancemodel.isGuidanceEditor()){
         console.log("Guidance modeling!!!");
         console.log(guidancemodel);
         var nodes = guidancemodel.metamodel.nodes;
         for(var nodeId in nodes){
             if(nodes.hasOwnProperty(nodeId)){
-                node = nodes[nodeId];
+                var node = nodes[nodeId];
                 var label = node.label + " Context";
                 canvas.addTool(label,new NodeTool(label,null,null,node.shape.defaultWidth,node.shape.defaultHeight))
             }
         }
+        var edges = guidancemodel.metamodel.edges;
+        for(var edgeId in edges){
+            if(edges.hasOwnProperty(edgeId)){
+                var edge = edges[edgeId];
+                var label = edge.label + " Context";
+                canvas.addTool(label,new NodeTool(label,null,null,150,100))
+            }
+        }
+        //Set the model which is shown by the editor to the guidancemodel
         model = guidancemodel.guidancemodel;
     }
     //Otherwise if a metamodel is given create tools based on the metamodel
@@ -83,6 +92,7 @@ requirejs([
     //When guidance_modeling is true create guidance modeling edge tools
     if(guidancemodel.isGuidanceEditor()){
         console.log("Create guidance modeling edge tools");
+        canvas.addTool(UniDirAssociationEdge.TYPE,new EdgeTool(UniDirAssociationEdge.TYPE,EntityManager.getRelations()[UniDirAssociationEdge.TYPE]));
     }
     //Otherwise if a metamodel is given create edge tools based on the metamodel
     else if(metamodel && metamodel.hasOwnProperty("edges")){
@@ -102,6 +112,8 @@ requirejs([
     }
 
     function JSONtoGraph(json){
+        console.log("JSON!!!");
+        console.log(json);
         var modelAttributesNode;
         var nodeId, edgeId;
         if(json.attributes){

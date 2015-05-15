@@ -49,8 +49,12 @@ define([
      */
     var nodeTypes = {};
 
+    var objectContextTypes = {};
+    var relationshipContextTypes = {};
+
     //Create nodes for guidance modeling (based on metamodel)
     if(guidancemodel.isGuidanceEditor()){
+        //Create context nodes for objects
         var nodes = guidancemodel.metamodel.nodes;
         for(var nodeId in nodes){
             if(nodes.hasOwnProperty(nodeId)){
@@ -60,6 +64,22 @@ define([
                 nodeTypes[label].TYPE = label;
                 nodeTypes[label].DEFAULT_WIDTH = 150;
                 nodeTypes[label].DEFAULT_HEIGHT = 100;
+
+                objectContextTypes[label] = nodeTypes[label];
+            }
+        }
+        //Create context nodes for relationships
+        var edges = guidancemodel.metamodel.edges;
+        for(var edgeId in edges){
+            if(edges.hasOwnProperty(edgeId)){
+                var edge = edges[edgeId];
+                var label = edge.label + " Context";
+                nodeTypes[label] = ContextNode(label);
+                nodeTypes[label].TYPE = label;
+                nodeTypes[label].DEFAULT_WIDTH = 150;
+                nodeTypes[label].DEFAULT_HEIGHT = 100;
+
+                relationshipContextTypes[label] = nodeTypes[label];
             }
         }
     }
@@ -139,7 +159,24 @@ define([
     var edgeTypes = {};
     var relations = {};
 
-    if(metamodel && metamodel.hasOwnProperty("edges")){
+    //Create edge types for guidance modeling
+    if(guidancemodel.isGuidanceEditor()){
+        //Ceate the uni-directional association
+        edgeTypes[UniDirAssociationEdge.TYPE] =  UniDirAssociationEdge;
+        var relationsForContextNodes = [];
+        for(var nodeId in objectContextTypes){
+            var node = objectContextTypes[nodeId];
+            var relation = {sourceTypes: [node.TYPE], targetTypes: []};
+            for(var edgeId in relationshipContextTypes){
+                var edge = relationshipContextTypes[edgeId];
+                relation.targetTypes.push(edge.TYPE);
+                relationsForContextNodes.push(relation);
+            }
+        }
+        relations[UniDirAssociationEdge.TYPE] = relationsForContextNodes;
+    }
+    //Create edge types for modeling based on metamodel
+    else if(metamodel && metamodel.hasOwnProperty("edges")){
         var edges = metamodel.edges, edge;
         for(var edgeId in edges){
             if(edges.hasOwnProperty(edgeId)){
@@ -148,7 +185,9 @@ define([
                 relations[edge.label] = edge.relations;
             }
         }
-    } else {
+    }
+    //Create edge types for metamodeling
+    else {
         edgeTypes[GeneralisationEdge.TYPE] =  GeneralisationEdge;
         edgeTypes[BiDirAssociationEdge.TYPE] =  BiDirAssociationEdge;
         edgeTypes[UniDirAssociationEdge.TYPE] =  UniDirAssociationEdge;
@@ -980,6 +1019,9 @@ define([
                 }
                 
                 return $.when.apply($, promises);
+            },
+            getRelations: function(){
+                return relations;
             }
         };
     }

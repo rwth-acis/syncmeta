@@ -8,7 +8,8 @@ define([
 ],/** @lends ContextNode */function(require,$,jsPlumb,_,Node,contextNodeHtml) {
     function ContextNode(type){
         var $shape = $(_.template(contextNodeHtml,{type: type}));
-        return Node(type, $shape, {}, {});
+        var anchors = [ "Perimeter", { shape:"Rectangle", anchorCount: 10} ];
+        return Node(type, $shape, anchors, {});
     };
 
     return ContextNode;

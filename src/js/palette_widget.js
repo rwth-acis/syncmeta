@@ -65,9 +65,19 @@ requirejs([
         
         var nodes = guidancemodel.metamodel.nodes;
         for(var nodeId in nodes){
-            var node = nodes[nodeId];
-            var label = node.label + " Context";
-            palette.addTool(new NodeTool(label, label));
+            if(nodes.hasOwnProperty(nodeId)){
+                var node = nodes[nodeId];
+                var label = node.label + " Context";
+                palette.addTool(new NodeTool(label, label));
+            }
+        }
+        var edges = guidancemodel.metamodel.edges;
+        for(var edgeId in edges){
+            if(edges.hasOwnProperty(edgeId)){
+                var edge = edges[edgeId];
+                var label = edge.label + " Context";
+                palette.addTool(new NodeTool(label, label));
+            }
         }
         palette.addTool(new ObjectGuidanceTool());
     }
@@ -130,6 +140,7 @@ requirejs([
     //Create edge tools for guidance modeling (if in guidance model editor)
     if(guidancemodel.isGuidanceEditor()){
         console.log("Create guidance modeling edge tools")
+        palette.addTool(new UniDirAssociationEdgeTool());
     }
     //Create edge tools for modeling (based on metamodel)
     else if(metamodel && metamodel.hasOwnProperty("edges")){
