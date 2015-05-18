@@ -189,14 +189,19 @@ define([
                 relation.targetTypes.push(edge.TYPE);
             }
 
-            //Between object context nodes and object tool nodes
             var index = node.TYPE.indexOf(" Context");
             var subType = node.TYPE.substring(0, index);
             for(var objectToolNodeId in objectToolTypes){
                 var objectToolNode = objectToolTypes[objectToolNodeId];
-                if(objectToolNode.TYPE.indexOf(subType) == 0)
-                    relation.targetTypes.push(objectToolNode.TYPE)
+                //Between object context nodes and object tool nodes
+                if(objectToolNode.TYPE.indexOf(subType) == 0){
+                    relation.targetTypes.push(objectToolNode.TYPE);
+                    var objectToolRelation = {sourceTypes: [objectToolNode.TYPE], targetTypes: []};
+                    objectToolRelation.targetTypes.push(node.TYPE);
+                    relationsForContextNodes.push(objectToolRelation);
+                }
             }
+
             relationsForContextNodes.push(relation);
         }
         relations[UniDirAssociationEdge.TYPE] = relationsForContextNodes;
