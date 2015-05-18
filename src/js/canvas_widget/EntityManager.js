@@ -52,6 +52,7 @@ define([
 
     var objectContextTypes = {};
     var relationshipContextTypes = {};
+    var objectToolTypes = {};
 
     //Create nodes for guidance modeling (based on metamodel)
     if(guidancemodel.isGuidanceEditor()){
@@ -93,6 +94,8 @@ define([
                 nodeTypes[label].TYPE = label;
                 nodeTypes[label].DEFAULT_WIDTH = 150;
                 nodeTypes[label].DEFAULT_HEIGHT = 100;
+
+                objectToolTypes[label] = nodeTypes[label];
             }
         }
     }
@@ -180,11 +183,21 @@ define([
         for(var nodeId in objectContextTypes){
             var node = objectContextTypes[nodeId];
             var relation = {sourceTypes: [node.TYPE], targetTypes: []};
+            // Between object context nodes and relationship context nodes
             for(var edgeId in relationshipContextTypes){
                 var edge = relationshipContextTypes[edgeId];
                 relation.targetTypes.push(edge.TYPE);
-                relationsForContextNodes.push(relation);
             }
+
+            //Between object context nodes and object tool nodes
+            var index = node.TYPE.indexOf(" Context");
+            var subType = node.TYPE.substring(0, index);
+            for(var objectToolNodeId in objectToolTypes){
+                var objectToolNode = objectToolTypes[objectToolNodeId];
+                if(objectToolNode.TYPE.indexOf(subType) == 0)
+                    relation.targetTypes.push(objectToolNode.TYPE)
+            }
+            relationsForContextNodes.push(relation);
         }
         relations[UniDirAssociationEdge.TYPE] = relationsForContextNodes;
     }
