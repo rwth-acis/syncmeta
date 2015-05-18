@@ -69,6 +69,8 @@ requirejs([
                 var node = nodes[nodeId];
                 var label = node.label + " Context";
                 palette.addTool(new NodeTool(label, label));
+                label = node.label + " Tool";
+                palette.addTool(new NodeTool(label, label));
             }
         }
         var edges = guidancemodel.metamodel.edges;
@@ -79,7 +81,6 @@ requirejs([
                 palette.addTool(new NodeTool(label, label));
             }
         }
-        palette.addTool(new ObjectGuidanceTool());
     }
     //Create node tools for modeling based on a metamodel (if a metamodel exists)
     else if(metamodel && metamodel.hasOwnProperty("nodes")){

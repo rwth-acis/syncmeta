@@ -16,6 +16,7 @@ define([
     'canvas_widget/BiDirAssociationEdge',
     'canvas_widget/UniDirAssociationEdge',
     'canvas_widget/guidance_modeling/context_node',
+    'canvas_widget/guidance_modeling/object_tool_node',
     'text!templates/canvas_widget/circle_node.html',
     'text!templates/canvas_widget/diamond_node.html',
     'text!templates/canvas_widget/rectangle_node.html',
@@ -23,7 +24,7 @@ define([
     'text!templates/canvas_widget/triangle_node.html',
     'promise!Metamodel',
     'promise!Guidancemodel'
-],/** @lends EntityManager */function(_,Util,AbstractEntity,Node,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,ModelAttributesNode,Edge,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge,ContextNode,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,metamodel, guidancemodel) {
+],/** @lends EntityManager */function(_,Util,AbstractEntity,Node,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,ModelAttributesNode,Edge,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge,ContextNode,ObjectToolNode,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,metamodel, guidancemodel) {
 
     /**
      * Predefined node shapes, first is default
@@ -80,6 +81,18 @@ define([
                 nodeTypes[label].DEFAULT_HEIGHT = 100;
 
                 relationshipContextTypes[label] = nodeTypes[label];
+            }
+        }
+
+        //Create object guidance tool node
+        for(var nodeId in nodes){
+            if(nodes.hasOwnProperty(nodeId)){
+                var node = nodes[nodeId];
+                var label = node.label + " Tool";
+                nodeTypes[label] = ObjectToolNode(label);
+                nodeTypes[label].TYPE = label;
+                nodeTypes[label].DEFAULT_WIDTH = 150;
+                nodeTypes[label].DEFAULT_HEIGHT = 100;
             }
         }
     }

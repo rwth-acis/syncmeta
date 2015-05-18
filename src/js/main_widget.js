@@ -55,6 +55,8 @@ requirejs([
                 var node = nodes[nodeId];
                 var label = node.label + " Context";
                 canvas.addTool(label,new NodeTool(label,null,null,node.shape.defaultWidth,node.shape.defaultHeight))
+                label = node.label + " Tool";
+                canvas.addTool(label,new NodeTool(label,null,null,node.shape.defaultWidth,node.shape.defaultHeight))
             }
         }
         var edges = guidancemodel.metamodel.edges;
