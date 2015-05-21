@@ -944,7 +944,7 @@ define([
 
         function localNodeAddCallback(operation){
             if(operation instanceof NodeAddOperation){
-                that.createNode(operation.getType(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(),operation.getZIndex(),operation.getJSON(),operation.getEntityId());
+                that.createNode(operation.getType(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(),operation.getZIndex(),operation.getJSON(),operation.getEntityId(), CONFIG.WIDGET.NAME.MAIN);
             }
         }
 

@@ -245,8 +245,8 @@ define([
 						nodeType : operation.getType()
 					}).toNonOTOperation());
 				processNodeAddOperation(operation);
-                if(CONFIG.INSTANCE_FLAG)
-                    propagateNodeAddToMainCanvas(operation);
+                //if(CONFIG.INSTANCE_FLAG)
+                  //  propagateNodeAddToMainCanvas(operation);
 			}
 		};
 
@@ -274,8 +274,8 @@ define([
 						targetNodeType : targetNode.getType()
 					}).toNonOTOperation());
 				processEdgeAddOperation(operation);
-                if(CONFIG.INSTANCE_FLAG)
-                    propagateNodeAddToMainCanvas(operation);
+                //if(CONFIG.INSTANCE_FLAG)
+                  //  propagateEdgeAddToMainCanvas(operation);
 
 			}
 		};
