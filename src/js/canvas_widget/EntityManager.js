@@ -182,6 +182,7 @@ define([
         //Ceate the uni-directional association
         edgeTypes[UniDirAssociationEdge.TYPE] =  UniDirAssociationEdge;
         var relationsForContextNodes = [];
+        //Outgoing for object context nodes
         for(var nodeId in objectContextTypes){
             var node = objectContextTypes[nodeId];
             var relation = {sourceTypes: [node.TYPE], targetTypes: []};
@@ -213,6 +214,7 @@ define([
             relationsForContextNodes.push(relation);
         }
 
+        //Outgoing for relationship context nodes
         for(var edgeId in relationshipContextTypes){
             var relationshipContext = relationshipContextTypes[edgeId];
             var relation = {sourceTypes: [relationshipContext.TYPE], targetTypes: []};
@@ -227,6 +229,39 @@ define([
                     if($.inArray(subTypeObjectContext, edge.relations[i].targetTypes) > -1){
                         relation.targetTypes.push(objectContext.TYPE);
                     }
+                }
+            }
+            relationsForContextNodes.push(relation);
+        }
+
+        //Outgoing for object tool nodes
+        for(var objectToolId in objectToolTypes){
+            var objectTool = objectToolTypes[objectToolId];
+            var relation = {sourceTypes: [objectTool.TYPE], targetTypes: []};
+            var subTypeObjectTool = objectTool.TYPE.substring(0, objectTool.TYPE.indexOf(" Tool"));
+
+            for(var edgeId in guidancemodel.metamodel.edges){
+                var edge = guidancemodel.metamodel.edges[edgeId];
+                for(var i = 0; i < edge.relations.length; i++){
+                    console.log("Check if inArray: " + subTypeObjectTool);
+                    console.log(edge.relations[i].sourceTypes);
+                    
+                    //Between object tools and relationship contexts
+                    if(($.inArray(subTypeObjectTool, edge.relations[i].sourceTypes) > -1) ||
+                        ($.inArray(subTypeObjectTool, edge.relations[i].targetTypes) > -1)){
+                        relation.targetTypes.push(edge.label + " Context");
+
+                        //Between object tools and object contexts
+                        for(var objectContextId in objectContextTypes){
+                            var objectContext = objectContextTypes[objectContextId];
+                            var subTypeObjectContext = objectContext.TYPE.substring(0, objectContext.TYPE.indexOf(" Context"));
+                            if(($.inArray(subTypeObjectContext, edge.relations[i].sourceTypes) > -1)||
+                               ($.inArray(subTypeObjectContext, edge.relations[i].targetTypes) > -1)){
+                                relation.targetTypes.push(objectContext.TYPE);
+                            }
+                        }
+                    }
+
                 }
             }
             relationsForContextNodes.push(relation);
