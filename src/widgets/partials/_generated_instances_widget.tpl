@@ -83,6 +83,29 @@
                 return deferred2.promise();
             }
 
+            function addGuidancemodelToSpace(spaceURI, guidancemodel){
+                var deferred = $.Deferred();
+                var deferred2 = $.Deferred();
+                openapp.resource.post(
+                        spaceURI,
+                        function(data){
+                            deferred.resolve(data.uri);
+                        },{
+                            "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate":"http://purl.org/role/terms/data",
+                            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type":"my:ns:guidancemodel"
+                        });
+                deferred.promise().then(function(dataURI){
+                    openapp.resource.put(
+                            dataURI,
+                            function(){
+                                deferred2.resolve();
+                            },{
+                                "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate":"http://purl.org/openapp/representation"
+                            },JSON.stringify(guidancemodel));
+                });
+                return deferred2.promise();
+            }
+
             function storeGeneratedInstanceMeta(spaceURI,spaceTitle){
                 var resourceSpace = new openapp.oo.Resource(openapp.param.space()),
                         deferred = $.Deferred(),
@@ -142,9 +165,35 @@
                 return deferred.promise();
             }
 
+            function getGuidanceModel(){
+                var resourceSpace = new openapp.oo.Resource(openapp.param.space());
+                var deferred = $.Deferred();
+                var guidancemodeling = {};
+
+                resourceSpace.getSubResources({
+                    relation: openapp.ns.role + "data",
+                    type: CONFIG.NS.MY.GUIDANCEMODEL,
+                    onAll: function(data) {
+                        if(data === null || data.length === 0){
+                            deferred.resolve(guidancemodeling);
+                        } else {
+                            data[0].getRepresentation("rdfjson",function(representation){
+                                if(representation){
+                                    guidancemodeling.guidancemodel = representation.guidancemodel;
+                                    guidancemodeling.metamodel = representation.metamodel;
+                                }
+                                deferred.resolve(guidancemodeling);
+                            });
+                        }
+                    }
+                });
+
+                return deferred.promise();
+            }
+
             return getMetaModel().then(function(metamodel){
-                return createSpace(spaceLabel,spaceTitle)
-                    .then(function(spaceURI){
+                return getGuidanceModel().then(function(guidancemodel){
+                    return createSpace(spaceLabel,spaceTitle).then(function(spaceURI){
                         return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/activity.xml")
                             .then(function(){
                                 return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/widget.xml");
@@ -157,6 +206,8 @@
                             }).then(function(){
                                 return addMetamodelToSpace(spaceURI,metamodel);
                             }).then(function(){
+                                return addGuidancemodelToSpace(spaceURI, guidancemodel);
+                            }).then(function(){
                                 return storeGeneratedInstanceMeta(spaceURI,spaceTitle);
                             }).then(function(){
 
@@ -166,6 +217,7 @@
                                 };
                             });
                     });
+                });
             });
 
         }
