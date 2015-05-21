@@ -53,6 +53,7 @@ define([
     var objectContextTypes = {};
     var relationshipContextTypes = {};
     var objectToolTypes = {};
+    var edgesByLabel = {};
 
     //Create nodes for guidance modeling (based on metamodel)
     if(guidancemodel.isGuidanceEditor()){
@@ -82,6 +83,7 @@ define([
                 nodeTypes[label].DEFAULT_HEIGHT = 100;
 
                 relationshipContextTypes[label] = nodeTypes[label];
+                edgesByLabel[edge.label] = edge;
             }
         }
 
@@ -183,27 +185,53 @@ define([
         for(var nodeId in objectContextTypes){
             var node = objectContextTypes[nodeId];
             var relation = {sourceTypes: [node.TYPE], targetTypes: []};
+            var index = node.TYPE.indexOf(" Context");
+            var subTypeObjectContext = node.TYPE.substring(0, index);
+
             // Between object context nodes and relationship context nodes
             for(var edgeId in relationshipContextTypes){
-                var edge = relationshipContextTypes[edgeId];
-                relation.targetTypes.push(edge.TYPE);
+                var edgeContext = relationshipContextTypes[edgeId];
+                var subTypeRelationshipContext = edgeContext.TYPE.substring(0, edgeContext.TYPE.indexOf(" Context"));
+                var edge = edgesByLabel[subTypeRelationshipContext];
+                for(var i = 0;  i < edge.relations.length; i++){
+                    if($.inArray(subTypeObjectContext, edge.relations[i].sourceTypes) > -1){
+                        relation.targetTypes.push(edgeContext.TYPE);
+                    }
+                }
             }
 
-            var index = node.TYPE.indexOf(" Context");
-            var subType = node.TYPE.substring(0, index);
             for(var objectToolNodeId in objectToolTypes){
                 var objectToolNode = objectToolTypes[objectToolNodeId];
                 //Between object context nodes and object tool nodes
-                if(objectToolNode.TYPE.indexOf(subType) == 0){
+                if(objectToolNode.TYPE.indexOf(subTypeObjectContext) == 0){
                     relation.targetTypes.push(objectToolNode.TYPE);
                     var objectToolRelation = {sourceTypes: [objectToolNode.TYPE], targetTypes: []};
                     objectToolRelation.targetTypes.push(node.TYPE);
                     relationsForContextNodes.push(objectToolRelation);
                 }
             }
-
             relationsForContextNodes.push(relation);
         }
+
+        for(var edgeId in relationshipContextTypes){
+            var relationshipContext = relationshipContextTypes[edgeId];
+            var relation = {sourceTypes: [relationshipContext.TYPE], targetTypes: []};
+            var subTypeRelationshipContext = relationshipContext.TYPE.substring(0, relationshipContext.TYPE.indexOf(" Context"));
+
+            //Between relationship context nodes and object context nodes
+            for(var nodeId in objectContextTypes){
+                var objectContext = objectContextTypes[nodeId];
+                var subTypeObjectContext = objectContext.TYPE.substring(0, objectContext.TYPE.indexOf(" Context"));
+                var edge = edgesByLabel[subTypeRelationshipContext];
+                for(var i = 0;  i < edge.relations.length; i++){
+                    if($.inArray(subTypeObjectContext, edge.relations[i].targetTypes) > -1){
+                        relation.targetTypes.push(objectContext.TYPE);
+                    }
+                }
+            }
+            relationsForContextNodes.push(relation);
+        }
+
         relations[UniDirAssociationEdge.TYPE] = relationsForContextNodes;
     }
     //Create edge types for modeling based on metamodel
