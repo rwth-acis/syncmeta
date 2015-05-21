@@ -580,14 +580,14 @@ define([
          * @param {string} identifier the identifier of the node, if null a new id is generated
 		 * @return {number} id of new node
 		 */
-		this.createNode = function (type, left, top, width, height, zIndex, json, identifier) {
+		this.createNode = function (type, left, top, width, height, zIndex, json, identifier, toCanvas) {
             var id;
             if(identifier)
                 id = identifier;
             else
 			 id= Util.generateRandomId(24);
 			zIndex = zIndex || AbstractEntity.maxZIndex + 1;
-			var operation = new NodeAddOperation(id, type, left, top, width, height, zIndex, json || null, identifier);
+			var operation = new NodeAddOperation(id, type, left, top, width, height, zIndex, json || null, toCanvas, identifier);
 			propagateNodeAddOperation(operation);
 			return id;
 		};
