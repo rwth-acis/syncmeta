@@ -129,7 +129,8 @@ define([
             } else {
 				node = EntityManager.createNode(operation.getType(), operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex());
 			}
-
+            if(originId = operation.getOrigin())
+                node.setOrigin(originId);
 			node.draw();
 			node.addToCanvas(that);
 			that.remountCurrentTool();
@@ -141,6 +142,8 @@ define([
 		 */
 		var propagateNodeAddOperation = function (operation) {
 			processNodeAddOperation(operation);
+            var originId= Util.generateRandomId();
+            operation.setOrigin(originId);
 			if (_iwcot.sendRemoteOTOperation(operation)) {
 				_iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
 				_iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
@@ -152,12 +155,11 @@ define([
 					}).toNonOTOperation());
 			}
             if(CONFIG.INSTANCE_FLAG)
-                propagateNodeAddToMainCanvas(operation);
+                propagateNodeAddToMainCanvas(originId,operation);
 		};
 
-        var propagateNodeAddToMainCanvas = function(operation){
+        var propagateNodeAddToMainCanvas = function(originId,operation){
             //propagate change to main canvas
-            var originId= Util.generateRandomId();
             var originType = EntityManager.getTargetType($('#lblCurrentView').text(),operation.getType());
             if(originType) {
                 var mainOp = new NodeAddOperation(originId, originType, operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex(), operation.getJSON());
@@ -181,6 +183,8 @@ define([
 			} else {
 				edge = EntityManager.createEdge(operation.getType(), operation.getEntityId(), EntityManager.findNode(operation.getSource()), EntityManager.findNode(operation.getTarget()));
 			}
+            if(originId = operation.getOrigin())
+                edge.setOrigin(originId);
 
 			edge.connect();
 			edge.addToCanvas(that);
@@ -194,7 +198,8 @@ define([
 		var propagateEdgeAddOperation = function (operation) {
 			var sourceNode = EntityManager.findNode(operation.getSource());
 			var targetNode = EntityManager.findNode(operation.getTarget());
-
+            var originId= Util.generateRandomId();
+            operation.setOrigin(originId);
 			processEdgeAddOperation(operation);
 			if (_iwcot.sendRemoteOTOperation(operation)) {
 				_iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
@@ -213,12 +218,11 @@ define([
 					}).toNonOTOperation());
 			}
             if(CONFIG.INSTANCE_FLAG)
-                propagateEdgeAddToMainCanvas(operation);
+                propagateEdgeAddToMainCanvas(originId,operation);
 		};
 
-        var propagateEdgeAddToMainCanvas = function(operation){
+        var propagateEdgeAddToMainCanvas = function(originId,operation){
             //propagate change to main canvas
-            var originId= Util.generateRandomId();
             var originType = EntityManager.getTargetType($('#lblCurrentView').text(),operation.getType());
             var viewEdge = EntityManager.findEdge(operation.getEntityId());
             var sourceOrigin = viewEdge.getSource().getOrigin();

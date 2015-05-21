@@ -23,8 +23,18 @@ define([
      * @param {string} viewId the identifier of the view
      * @constructor
      */
-    function NodeAddOperation(entityId,type,left,top,width,height,zIndex,json, toCanvas, viewId){
+    function NodeAddOperation(entityId,type,left,top,width,height,zIndex,json, toCanvas, viewId,origin){
         var that = this;
+
+        var _origin = origin;
+
+        this.getOrigin = function(){
+            return _origin;
+        };
+
+        this.setOrigin = function(origin){
+            _origin = origin;
+        };
 
         EntityOperation.call(this,EntityOperation.TYPES.NodeAddOperation,entityId,CONFIG.ENTITY.NODE);
 
@@ -106,7 +116,8 @@ define([
                     zIndex: _zIndex,
                     json: _json,
                     toCanvas: _toCanvas,
-                    viewId:_viewId
+                    viewId:_viewId,
+                    origin:_origin
                 }),
                 CONFIG.OPERATION.TYPE.INSERT,
                 CONFIG.IWC.POSITION.NODE.ADD

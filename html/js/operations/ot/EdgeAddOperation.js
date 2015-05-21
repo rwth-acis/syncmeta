@@ -19,8 +19,18 @@ define([
      * @param {string} viewId the identifier of the view
      * @constructor
      */
-    function EdgeAddOperation(entityId,type,source,target,json, viewId){
+    function EdgeAddOperation(entityId,type,source,target,json, viewId,origin){
         var that = this;
+
+        var _origin = origin;
+
+        this.getOrigin = function(){
+          return _origin;
+        };
+
+        this.setOrigin = function(origin){
+            _origin = origin;
+        };
 
         EntityOperation.call(this,EntityOperation.TYPES.EdgeAddOperation,entityId,CONFIG.ENTITY.EDGE);
 
@@ -71,7 +81,8 @@ define([
                     source: _source,
                     target: _target,
                     json: _json,
-                    viewId: _viewId
+                    viewId: _viewId,
+                    origin:_origin
                 }),
                 CONFIG.OPERATION.TYPE.INSERT,
                 CONFIG.IWC.POSITION.EDGE.ADD
