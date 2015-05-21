@@ -389,6 +389,8 @@ define([
                     {}
                 ).toNonOTOperation());
                 processNodeDeleteOperation(operation);
+                if(CONFIG.INSTANCE_FLAG)
+                    propagateNodeDeleteToMainCanvas(operation);
             }
         };
 

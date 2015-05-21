@@ -200,6 +200,8 @@ define([
                     {}
                 ).toNonOTOperation());
                 processEdgeDeleteOperation(operation);
+                if(CONFIG.INSTANCE_FLAG)
+                    propagateEdgeDeleteToMainCanvas(operation);
             }
         };
 

@@ -216,6 +216,8 @@ define([
                     }
                 ).toNonOTOperation());
                 processValueChangeOperation(operation);
+                if(CONFIG.INSTANCE_FLAG)
+                    propagateValueChangeToMainCanvas(operation);
             }
         };
 

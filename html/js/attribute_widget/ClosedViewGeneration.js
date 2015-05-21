@@ -1,5 +1,4 @@
 define(['lodash', 'Util'],
-
     function(_, Util){
 
         /**
@@ -87,7 +86,7 @@ define(['lodash', 'Util'],
          */
         function CVG(baseNode, viewType){
             var EntityManager = require('attribute_widget/EntityManager');
-            var addToViewpoint = { nodes:{}, edges:{}};
+            var addToViewpoint = { nodes:{}, edges:{}}; // CVG-done
             var viewId = viewType.getViewId();
             var neighbors = baseNode.getNeighbors();
             //iterate over the neighbors of target of the view type element
@@ -157,6 +156,7 @@ define(['lodash', 'Util'],
                     }else if(neighbor.getType() === 'Relation'){
                         var relationNeighbors = neighbor.getNeighbors();
                         for(var key in relationNeighbors){
+                            //TODO wtf
                             if(relationNeighbors.hasOwnProperty(key) &&
                                 ((relationNeighbors[key].getType() === 'Relationship' && baseNode.getType() === 'Object')
                                 || (relationNeighbors[key].getType() === 'Object' && baseNode.getType() === 'Relationship'))){

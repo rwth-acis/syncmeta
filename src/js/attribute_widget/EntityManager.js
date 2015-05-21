@@ -82,6 +82,9 @@ define([
 	 * @constructor
 	 */
 	function EntityManager() {
+        var viewNodeTypes={};
+        var viewEdgeTypes={};
+
 		/**
 		 * Model attributes node
 		 * @type {attribute_widget.ModelAttributesNode}
@@ -124,7 +127,7 @@ define([
 			 * @returns {attribute_widget.AbstractNode}
 			 */
 			//TODO: switch id and type
-			createNode : function (type, id, left, top, width, height,json) {
+			createNode : function (type, id, left, top, width, height,json, viewId) {
 				var node;
 				if (_recycleBin.nodes.hasOwnProperty(id)) {
 					node = _recycleBin.nodes[id];
@@ -132,8 +135,13 @@ define([
 					_nodes[id] = node;
 					return node;
 				}
-				if (nodeTypes.hasOwnProperty(type)) {
-					node = new nodeTypes[type](id, left, top, width, height,json);
+				if (nodeTypes.hasOwnProperty(type) || viewNodeTypes.hasOwnProperty(type)) {
+                    if(viewId) {
+                        node = new viewNodeTypes[type](id, left, top, width, height, json);
+                        node.setViewId(viewId);
+                    }
+                    else
+					    node = new nodeTypes[type](id, left, top, width, height,json);
 					_nodes[id] = node;				
 					return node;
 				}
@@ -207,7 +215,7 @@ define([
 			 * @returns {attribute_widget.AbstractEdge}
 			 */
 			//TODO: switch id and type
-			createEdge : function (type, id, source, target) {
+			createEdge : function (type, id, source, target,viewId) {
 				var edge;
 				if (_recycleBin.edges.hasOwnProperty(id)) {
 					edge = _recycleBin.edges[id];
@@ -215,11 +223,18 @@ define([
 					_edges[id] = edge;
 					return edge;
 				}
-				if (edgeTypes.hasOwnProperty(type)) {
-					edge = new edgeTypes[type](id, source, target);
+				if (edgeTypes.hasOwnProperty(type) || viewEdgeTypes.hasOwnProperty(type)) {
+                    if(viewId) {
+                        edge = new viewEdgeTypes[type](id, source, target);
+                        edge.setViewId(viewId);
+                    }
+                    else
+					    edge = new edgeTypes[type](id, source, target);
+
 					source.addOutgoingEdge(edge);
 					target.addIngoingEdge(edge);
 					_edges[id] = edge;
+
 					return edge;
 				}
 				return null;
@@ -289,8 +304,8 @@ define([
 			 * @param {object} json JSON representation
 			 * @returns {attribute_widget.AbstractNode}
 			 */
-			createNodeFromJSON : function (type, id, left, top, width, height, json) {
-				var node = this.createNode(type, id, left, top, width, height, json);
+			createNodeFromJSON : function (type, id, left, top, width, height, json, viewId) {
+				var node = this.createNode(type, id, left, top, width, height, json, viewId);
 				if (node) {
 					node.getLabel().getValue().setValue(json.label.value.value);
 					for (var attrId in json.attributes) {
@@ -324,8 +339,8 @@ define([
 			 * @param {object} json JSON representation
 			 * @returns {attribute_widget.AbstractEdge}
 			 */
-			createEdgeFromJSON : function (type, id, sourceId, targetId, json) {
-				var edge = this.createEdge(type, id, this.findNode(sourceId), this.findNode(targetId));
+			createEdgeFromJSON : function (type, id, sourceId, targetId, json, viewId) {
+				var edge = this.createEdge(type, id, this.findNode(sourceId), this.findNode(targetId), viewId);
 				if (edge) {
 					edge.getLabel().getValue().setValue(json.label.value.value);
 					for (var attrId in json.attributes) {
@@ -421,8 +436,8 @@ define([
 				}
 			},
             initNodeTypes: function(viewpointVLS){
-                if(!$.isEmptyObject(nodeTypes))
-                    nodeTypes = {};
+                if(!$.isEmptyObject(viewNodeTypes))
+                    viewNodeTypes = {};
 
                 var nodes = viewpointVLS.nodes,
                     node;
@@ -430,14 +445,14 @@ define([
                for (var nodeId in nodes) {
                     if (nodes.hasOwnProperty(nodeId)) {
                         node = nodes[nodeId];
-                        nodeTypes[node.label] = Node(node.label, node.shape.shape, node.shape.customShape, node.shape.customAnchors, node.shape.color, node.attributes);
+                        viewNodeTypes[node.label] = Node(node.label, node.shape.shape, node.shape.customShape, node.shape.customAnchors, node.shape.color, node.attributes);
                     }
                 }
 
             },
             initEdgeTypes: function(viewpointVLS){
-                if(!$.isEmptyObject(edgeTypes)) {
-                    edgeTypes = {};
+                if(!$.isEmptyObject(viewEdgeTypes)) {
+                    viewEdgeTypes = {};
                     relations ={};
                 }
                 var edges = viewpointVLS.edges,
@@ -445,7 +460,7 @@ define([
                 for (var edgeId in edges) {
                     if (edges.hasOwnProperty(edgeId)) {
                         edge = edges[edgeId];
-                        edgeTypes[edge.label] = Edge(edge.label, edge.shape.arrow, edge.shape.shape, edge.shape.color, edge.shape.overlay, edge.shape.overlayPosition, edge.shape.overlayRotate, edge.attributes);
+                        viewEdgeTypes[edge.label] = Edge(edge.label, edge.shape.arrow, edge.shape.shape, edge.shape.color, edge.shape.overlay, edge.shape.overlayPosition, edge.shape.overlayRotate, edge.attributes);
                         relations[edge.label] = edge.relations;
                     }
                 }

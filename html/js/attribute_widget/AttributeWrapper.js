@@ -65,13 +65,13 @@ define([
             if(operation instanceof NodeAddOperation){
                 var node;
                 var json = operation.getJSON();
+                var viewId = operation.getViewId();
                 if(json){
-                    node = EntityManager.createNodeFromJSON(operation.getType(),operation.getEntityId(),operation.getLeft(),operation.getTop(),operation.getWidth(),operation.getHeight(),operation.getJSON());
+                    node = EntityManager.createNodeFromJSON(operation.getType(),operation.getEntityId(),operation.getLeft(),operation.getTop(),operation.getWidth(),operation.getHeight(),operation.getJSON(),viewId);
                     EntityManager.addToMapIfNotExists(operation.getViewId(), json.origin,operation.getEntityId())
                 } else {
-                    node = EntityManager.createNode(operation.getType(),operation.getEntityId(),operation.getLeft(),operation.getTop(),operation.getWidth(),operation.getHeight());
+                    node = EntityManager.createNode(operation.getType(),operation.getEntityId(),operation.getLeft(),operation.getTop(),operation.getWidth(),operation.getHeight(),null,viewId);
                 }
-                node.setViewId(operation.getViewId());
                 node.addToWrapper(that);
             }
         };
@@ -84,15 +84,15 @@ define([
             if(operation instanceof EdgeAddOperation){
                 var edge;
                 var json = operation.getJSON();
+                var viewId = operation.getViewId();
                 if(json){
-                    edge = EntityManager.createEdgeFromJSON(operation.getType(),operation.getEntityId(),operation.getSource(),operation.getTarget(),json);
+                    edge = EntityManager.createEdgeFromJSON(operation.getType(),operation.getEntityId(),operation.getSource(),operation.getTarget(),json,viewId);
                     if(json.hasOwnProperty('origin'))
                         EntityManager.addToMapIfNotExists(operation.getViewId(), json.origin, operation.getEntityId());
 
                 } else {
-                    edge = EntityManager.createEdge(operation.getType(),operation.getEntityId(),EntityManager.findNode(operation.getSource()),EntityManager.findNode(operation.getTarget()));
+                    edge = EntityManager.createEdge(operation.getType(),operation.getEntityId(),EntityManager.findNode(operation.getSource()),EntityManager.findNode(operation.getTarget()),null,viewId);
                 }
-                edge.setViewId(operation.getViewId());
                 edge.addToWrapper(that);
             }
         };
