@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- generated on Fri May 22 2015 23:57:24 -->
+<!-- generated on Sat May 23 2015 00:01:54 -->
 <Module>
   <ModulePrefs
     title="Debug"
@@ -14,14 +14,14 @@
     <Require feature="dynamic-height"></Require>
 	
 	<OAuth>
--      <Service name="openapp" xmlns:openapp="http://www.role-project.eu/xml/openapp/opensocialext/"
--               openapp:service="http://purl.org/role/terms/spaceService"
--               openapp:permitReadAppend="http://purl.org/role/terms/data">
--        <Request method="" url=""></Request>
--        <Authorization url=""></Authorization>
--        <Access method="" url=""></Access>
--      </Service>
--    </OAuth>
+      <Service name="openapp" xmlns:openapp="http://www.role-project.eu/xml/openapp/opensocialext/"
+               openapp:service="http://purl.org/role/terms/spaceService"
+               openapp:permitReadAppend="http://purl.org/role/terms/data">
+        <Request method="" url=""></Request>
+        <Authorization url=""></Authorization>
+        <Access method="" url=""></Access>
+      </Service>
+    </OAuth>
 	
   </ModulePrefs>
   <Content type="html">
