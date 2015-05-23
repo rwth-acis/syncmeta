@@ -663,7 +663,7 @@ define([
                 id = identifier;
             else
                 id = Util.generateRandomId(24);
-			var operation = new EdgeAddOperation(id, type, source, target, json || null, viewId);
+			var operation = new EdgeAddOperation(id, type, source, target, json || null, null, viewId);
 
 			propagateEdgeAddOperation(operation);
 			return id;

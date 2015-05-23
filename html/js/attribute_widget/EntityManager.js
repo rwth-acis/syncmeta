@@ -26,6 +26,7 @@ define([
 	var nodeTypes = {};
 
 	if (metamodel && metamodel.hasOwnProperty("nodes")) {
+        CONFIG.INSTANCE_FLAG = true;
 		var nodes = metamodel.nodes,
 		node;
 		for (var nodeId in nodes) {
@@ -136,7 +137,7 @@ define([
 					return node;
 				}
 				if (nodeTypes.hasOwnProperty(type) || viewNodeTypes.hasOwnProperty(type)) {
-                    if(viewId) {
+                    if(viewId && CONFIG.INSTANCE_FLAG) {
                         node = new viewNodeTypes[type](id, left, top, width, height, json);
                         node.setViewId(viewId);
                     }
@@ -224,7 +225,7 @@ define([
 					return edge;
 				}
 				if (edgeTypes.hasOwnProperty(type) || viewEdgeTypes.hasOwnProperty(type)) {
-                    if(viewId) {
+                    if(viewId && CONFIG.INSTANCE_FLAG) {
                         edge = new viewEdgeTypes[type](id, source, target);
                         edge.setViewId(viewId);
                     }
