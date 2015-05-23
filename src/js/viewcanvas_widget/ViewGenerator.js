@@ -45,7 +45,13 @@ define(['Util','viewcanvas_widget/ViewTypesUtil','promise!Metamodel'],
                 });
             };
 
-
+            /**
+             * merges a newly computed view with a old one
+             * @param oldView the old json representation of the view
+             * @param newView the newly computed json representation of a view
+             * @returns {Object} a json representation of the resulting view
+             */
+            //TODO create a web worker for this process
             this.mergeViews = function(oldView, newView){
                 var oldNodes = oldView.nodes;
                 for(var oldKey in oldNodes){
@@ -74,6 +80,12 @@ define(['Util','viewcanvas_widget/ViewTypesUtil','promise!Metamodel'],
                 return newView;
             };
 
+            /**
+             * helper function for the mergeViews function
+             * @param newNodes
+             * @param origin
+             * @returns {string} the new key
+             */
             function lookForNewKey(newNodes,origin){
                 for(var key in newNodes){
                     if(newNodes.hasOwnProperty(key)){

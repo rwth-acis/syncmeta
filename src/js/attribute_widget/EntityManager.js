@@ -236,7 +236,7 @@ define([
                     else {
                         edge = new edgeTypes[type](id, source, target);
                         if(viewId)
-                            node.setViewId(viewId);
+                            edge.setViewId(viewId);
                     }
 
 					source.addOutgoingEdge(edge);
@@ -365,6 +365,12 @@ define([
 				}
 				return edge;
 			},
+            /**
+             * Sets a attribute by its name
+             * @param attributeList the attribute list
+             * @param name the name of attribute in the attribute list
+             * @param value the value
+             */
             setAttributesByName : function(attributeList, name, value){
                 for(var key in attributeList){
                     if(attributeList.hasOwnProperty(key) && attributeList[key].getName() === name){
@@ -373,7 +379,6 @@ define([
                     }
                 }
             },
-
 			/**
 			 * Generate the 'This node can be connected to..' hint for the passed node
 			 * @param {attribute_widget.AbstractNode} node
@@ -443,6 +448,10 @@ define([
 					return '';
 				}
 			},
+            /**
+             * initializes the view node types
+             * @param viewpointVLS the vvs
+             */
             initNodeTypes: function(viewpointVLS){
                 if(!$.isEmptyObject(viewNodeTypes))
                     viewNodeTypes = {};
@@ -458,6 +467,10 @@ define([
                 }
 
             },
+            /**
+             * initializes the view edge types
+             * @param viewpointVLS the vvs
+             */
             initEdgeTypes: function(viewpointVLS){
                 if(!$.isEmptyObject(viewEdgeTypes)) {
                     viewEdgeTypes = {};
@@ -473,16 +486,24 @@ define([
                     }
                 }
             },
+            /**
+             * initializes both the viewNodeTypes- and the viewEdgeTypes Object
+             * @param viewpointVLS the vvs
+             */
             initModelTypes : function(viewpointVLS){
                 this.initNodeTypes(viewpointVLS);
                 this.initEdgeTypes(viewpointVLS);
             },
+            /**
+             * clears the recycle bin
+             */
             clearBin :function(){
                 _recycleBin = {
                     nodes : {},
                     edges : {}
                 };
             },
+            //CVG map functions
             addToMap : function(view, key, value){
                 if(!_map.hasOwnProperty(view))
                     _map[view] ={};

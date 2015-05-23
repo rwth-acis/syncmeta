@@ -93,6 +93,12 @@ define([
 	 */
 	function EntityManager() {
 
+        /**
+         * a Dictionary consisting of the view type class name as key
+         * and the name of the reference class as value.
+         * @type {object}
+         * @private
+         */
         var _viewTypeMap = {};
 
 		/**
@@ -327,13 +333,18 @@ define([
 					edges : edgesJSON
 				};
 			},
-			viewToJSON : function (viewId, viewpointId) {
+            /**
+             * generates the json representation of a view
+             * @param viewId the unique name of the view
+             * @param viewpointId the unique name of the viewpoint
+             * @returns {Object}
+             */
+            viewToJSON : function (viewId, viewpointId) {
 				var vls = this.graphToJSON();
 				vls['id'] = viewId;
                 vls['viewpoint'] = viewpointId;
 				return vls;
 			},
-
 			/**
 			 * Create model attributes node by its JSON representation
 			 * @memberof canvas_widget.EntityManager#
@@ -422,6 +433,12 @@ define([
 				}
 				return edge;
 			},
+            /**
+             * Sets a attribute by its name
+             * @param attributeList the attribute list
+             * @param name the name of attribute in the attribute list
+             * @param value the value
+             */
             setAttributesByName : function(attributeList, name, value){
                 for(var key in attributeList){
                     if(attributeList.hasOwnProperty(key) && attributeList[key].getName() === name){
@@ -430,7 +447,6 @@ define([
                     }
                 }
             },
-
 			/**
 			 * Generate the 'Add node..' context menu options
 			 * @param canvas Canvas to add node to
@@ -994,18 +1010,28 @@ define([
 			deleteModelAttribute : function () {
 				_modelAttributesNode = null;
 			},
-			clearRecycleBin : function () {
+            /**
+             * clears the recycle bin
+             */
+            clearRecycleBin : function () {
 				_recycleBin = {
 					nodes : {},
 					edges : {}
 				}
 			},
+            /**
+             * resets the EntityManager
+             */
             clear : function(){
                 this.clearRecycleBin();
                 _nodes ={};
                 _edges = {};
                 this.deleteModelAttribute();
             },
+            /**
+             * initializes the view node types
+             * @param viewpointVLS the vvs
+             */
             initNodeTypes: function(viewpointVLS){
                 if(!$.isEmptyObject(nodeTypes))
                     nodeTypes = {};
@@ -1097,6 +1123,10 @@ define([
                     }
                 }
             },
+            /**
+             * initializes the view edge types
+             * @param viewpointVLS the vvs
+             */
             initEdgeTypes: function(viewpointVLS){
                 if(!$.isEmptyObject(edgeTypes)) {
                     edgeTypes = {};
@@ -1112,10 +1142,20 @@ define([
                     }
                 }
             },
+            /**
+             * initializes both the viewNodeTypes- and the viewEdgeTypes Object
+             * @param viewpointVLS the vvs
+             */
             initModelTypes : function(viewpointVLS){
                 this.initNodeTypes(viewpointVLS);
                 this.initEdgeTypes(viewpointVLS);
             },
+            /**
+             * initializes the ViewTypeMap
+             * its called after the generation of each view
+             * @param {object} vvs the vvs
+             * @param {object} vls the vls
+             */
             initViewTypeMap:function(vvs, vls){
                 if(!vvs || !vls || !vvs.id)
                     return;
@@ -1136,6 +1176,12 @@ define([
                     }
                 }
             },
+            /**
+             * returns a value for a viewId and viewType
+             * @param {string} viewId the unique name of the view
+             * @param {string} viewType the name of the view type class
+             * @returns {*}
+             */
             getTargetType:function(viewId, viewType){
                 if(_viewTypeMap.hasOwnProperty(viewId)){
                     if(_viewTypeMap[viewId].hasOwnProperty(viewType)){

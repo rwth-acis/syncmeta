@@ -187,6 +187,7 @@ requirejs([
                             var $loading = $("#loading");
                             $loading.show();
                             canvas.get$canvas().show();
+                            view['id'] = viewId;
                             EntityManager.initModelTypes(viewpointData);
                             EntityManager.initViewTypeMap(viewpointData, metamodel);
                             JSONtoGraph(view, viewpointData);
@@ -278,6 +279,7 @@ requirejs([
                             canvas.get$canvas().show();
                             EntityManager.initModelTypes(viewpointData);
                             var update = viewGenerator.mergeViews(oldView, newView);
+                            update['id'] = viewId;
                             JSONtoGraph(update, viewpointData);
                             canvas.resetTool();
                             $loading.hide();

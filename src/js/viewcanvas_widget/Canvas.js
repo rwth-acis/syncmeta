@@ -86,7 +86,6 @@ define([
 		 * Inter widget communication wrapper
 		 * @type {Object}
 		 */
-
 		var _iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.VIEWCANVAS);
 
 		/**
@@ -97,6 +96,11 @@ define([
 		var _selectedEntity = null;
 
         var _type = CONFIG.WIDGET.NAME.VIEWCANVAS;
+
+        /**
+         * return the type of the canvas e.g CONFIG.WIDGET.NAME.VIEWCANVAS or CONFIG.WIDGET.NAME.MAIN
+         * @returns {CONFIG.WIDGET.NAME.VIEWCANVAS|*}
+         */
         this.getType = function(){
             return _type;
         };
@@ -158,6 +162,11 @@ define([
                 propagateNodeAddToMainCanvas(originId,operation);
 		};
 
+        /**
+         * propagates a NodeAddOperation to the main canvas widget
+         * @param {string} originId the identifier of the node in the main canvas
+         * @param operation
+         */
         var propagateNodeAddToMainCanvas = function(originId,operation){
             //propagate change to main canvas
             var originType = EntityManager.getTargetType($('#lblCurrentView').text(),operation.getType());
@@ -221,6 +230,11 @@ define([
                 propagateEdgeAddToMainCanvas(originId,operation);
 		};
 
+        /**
+         * propagates the EdgeAddOperation to the main canvas
+         * @param originId the identifier of the edge in the main canvas
+         * @param {operation.ot.EdgeAddOperation} operation
+         */
         var propagateEdgeAddToMainCanvas = function(originId,operation){
             //propagate change to main canvas
             var originType = EntityManager.getTargetType($('#lblCurrentView').text(),operation.getType());
@@ -389,8 +403,6 @@ define([
 		this.get$node = function () {
 			return _$node;
 		};
-
-
 
 		/**
 		 * Set model attributes
@@ -978,6 +990,12 @@ define([
 			that.registerCallbacks();
 		}
 
+        /**
+         * visualizes the results of a CVG operation.
+         * CVG is computed on the attribute widget
+         * @param {operation.non_ot.PerformCvgOperation} operation
+         * @constructor
+         */
         function CvgCallback(operation){
             if(operation instanceof PerformCvgOperation){
                 var json = operation.getJSON();
@@ -985,6 +1003,11 @@ define([
             }
         }
 
+        /**
+         * Deletes the result of a CVG result on the canvas
+         * @param {operation.non_ot.DeleteCvgOperation} operation
+         * @constructor
+         */
         function DeleteCvgCallback(operation){
             if(operation instanceof DeleteCvgOperation){
                 var deleteList = operation.getDeleteList();
@@ -994,23 +1017,30 @@ define([
                 }
             }
         }
-         function localUpdateViewListCallback(operation){
+
+        /**
+         * Transmitted by the viewcontrol widget to the viewcanvas
+         * local callback updates the view lists of the ViewManager
+         * @param {operation.non_ot.UpdateViewListOperation}operation
+         */
+        function localUpdateViewListCallback(operation){
              if(operation instanceof UpdateViewListOperation){
                  require('viewcanvas_widget/ViewManager').initViewList();
                  _iwcot.sendRemoteNonOTOperation(operation.toNonOTOperation());
              }
          }
 
+        /**
+         * remote callback to update the view list via ViewManager
+         * @param {operation.non_ot.UpdateViewListOperation} operation
+         */
         function remoteUpdateViewListCallback(operation){
             if(operation instanceof UpdateViewListOperation) {
                 require('viewcanvas_widget/ViewManager').initViewList();
             }
         }
 
-
-
 	}
-
 	return Canvas;
 
 });

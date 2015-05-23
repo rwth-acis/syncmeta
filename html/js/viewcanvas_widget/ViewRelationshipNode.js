@@ -32,7 +32,9 @@ function (require, $, jsPlumb, _, AbstractNode, SingleSelectionAttribute, KeySel
 	 * @param {number} width Width of node
 	 * @param {number} height Height of node
 	 * @param {number} zIndex Position of node on z-axis
-	 */
+     * @param {object} json indicates if the ViewObjectNode is created from a json
+
+     */
 	function ViewRelationshipNode(id, left, top, width, height, zIndex,json) {
 		var that = this;
 

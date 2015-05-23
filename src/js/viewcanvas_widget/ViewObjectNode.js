@@ -30,6 +30,7 @@ define([
      * @param {number} width Width of node
      * @param {number} height Height of node
      * @param {number} zIndex Position of node on z-axis
+     * @param {object} jsonFromResource the ViewObjectNode is created from a json
      */
     function ViewObjectNode(id,left,top,width,height,zIndex, jsonFromResource){
         var that = this;
