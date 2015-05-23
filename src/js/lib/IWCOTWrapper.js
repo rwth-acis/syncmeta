@@ -519,12 +519,8 @@ define([
                                             clearInterval(_syncInterval);
                                             clearInterval(_purgeInterval);
                                             _ot = new OT(localID);
-                                            try {
-                                                sendRemoteNonOTOperation(new JoinOperation(resOperation.getUser(), false, space.user[CONFIG.NS.PERSON.JABBERID], require('canvas_widget/EntityManager').graphToJSON(),_componentName).toNonOTOperation());
-                                            }
-                                            catch(e){
-                                                //sendRemoteNonOTOperation(new JoinOperation(resOperation.getUser(), false, space.user[CONFIG.NS.PERSON.JABBERID], require('viewcanvas_widget/EntityManager').graphToJSON()).toNonOTOperation());
-                                            }
+                                            sendRemoteNonOTOperation(new JoinOperation(resOperation.getUser(), false, space.user[CONFIG.NS.PERSON.JABBERID], require('canvas_widget/EntityManager').graphToJSON(),_componentName).toNonOTOperation());
+
                                             },500);
 
                                         //Unlock if no remote message is received within 5 seconds
@@ -655,7 +651,7 @@ define([
                 }
             }
 
-            if((intent.sender === "" || intent.sender === componentName) && intent.flags.indexOf(CONFIG.IWC.FLAG.PUBLISH_GLOBAL) !== -1) return;
+            if(intent.sender === "" && intent.flags.indexOf(CONFIG.IWC.FLAG.PUBLISH_GLOBAL) !== -1) return;
 
             if(typeof senderTimes === "undefined"){
                 senderTimes = _times[intent.sender || "me"] = [];
