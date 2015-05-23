@@ -651,7 +651,7 @@ define([
                 }
             }
 
-            if(intent.sender === "" && intent.flags.indexOf(CONFIG.IWC.FLAG.PUBLISH_GLOBAL) !== -1) return;
+            if((intent.sender === "" || intent.sender === componentName)&& intent.flags.indexOf(CONFIG.IWC.FLAG.PUBLISH_GLOBAL) !== -1) return;
 
             if(typeof senderTimes === "undefined"){
                 senderTimes = _times[intent.sender || "me"] = [];
