@@ -141,8 +141,12 @@ define([
                         node = new viewNodeTypes[type](id, left, top, width, height, json);
                         node.setViewId(viewId);
                     }
-                    else
-					    node = new nodeTypes[type](id, left, top, width, height,json);
+                    else {
+                        node = new nodeTypes[type](id, left, top, width, height, json);
+                        if (viewId)
+                            node.setViewId(viewId);
+                    }
+
 					_nodes[id] = node;				
 					return node;
 				}
@@ -229,8 +233,11 @@ define([
                         edge = new viewEdgeTypes[type](id, source, target);
                         edge.setViewId(viewId);
                     }
-                    else
-					    edge = new edgeTypes[type](id, source, target);
+                    else {
+                        edge = new edgeTypes[type](id, source, target);
+                        if(viewId)
+                            node.setViewId(viewId);
+                    }
 
 					source.addOutgoingEdge(edge);
 					target.addIngoingEdge(edge);

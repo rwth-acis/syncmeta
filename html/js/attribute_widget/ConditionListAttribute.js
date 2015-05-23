@@ -104,6 +104,7 @@ define([
          */
         var propagateAttributeAddOperation = function(operation,component){
 			processAttributeAddOperation(operation);
+            iwc.setBufferedMessagesReceiver(CONFIG.WIDGET.NAME.VIEWCANVAS);
             iwc.sendLocalOTOperation(component,operation.getOTOperation());
         };
 
