@@ -578,6 +578,7 @@ define([
 		 * @param {number} [zIndex] Position of node on z-axis
 		 * @param {object} [json] representation of node
          * @param {string} identifier the identifier of the node, if null a new id is generated
+         * @param {string} toCanvas the destination for the NodeAddOperation
 		 * @return {number} id of new node
 		 */
 		this.createNode = function (type, left, top, width, height, zIndex, json, identifier, toCanvas) {
@@ -587,7 +588,7 @@ define([
             else
 			 id= Util.generateRandomId(24);
 			zIndex = zIndex || AbstractEntity.maxZIndex + 1;
-			var operation = new NodeAddOperation(id, type, left, top, width, height, zIndex, json || null, toCanvas, identifier);
+			var operation = new NodeAddOperation(id, type, left, top, width, height, zIndex, json || null, toCanvas);
 			propagateNodeAddOperation(operation);
 			return id;
 		};
@@ -638,7 +639,11 @@ define([
 			ctx.fill();
 
 			_.each(_.sortBy($.makeArray(_$node.contents()), function (e) {
-					return $(e).css('zIndex');
+                    try{
+                        return $(e).css('zIndex');
+                    }catch(e){
+                        return null;
+                    }
 				}), function (e) {
 				var $this = $(e);
 				if ($this.attr('id') !== 'modelAttributes') {

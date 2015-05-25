@@ -21,6 +21,7 @@ define([
      * @param {object} json JSON representation of node
      * @param {string} toCanvas the canvas widget, can be CONFIG.WIDGET.NAME.MAIN or CONFIG.WIDGET.NAME.VIEWCANVAS
      * @param {string} viewId the identifier of the view
+     * @param {string} origin the identifier of the reference node
      * @constructor
      */
     function NodeAddOperation(entityId,type,left,top,width,height,zIndex,json, toCanvas, viewId,origin){
