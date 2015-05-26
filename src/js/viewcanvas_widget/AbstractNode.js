@@ -189,6 +189,13 @@ define([
                     {nodeType: that.getType()}
                 ).toNonOTOperation());
             }
+            if(CONFIG.INSTANCE_FLAG)
+                propagateNodeMoveToMainCanvas(operation);
+        };
+
+        var propagateNodeMoveToMainCanvas = function(operation){
+            var mainOp = new NodeMoveOperation(that.getOrigin(), operation.getOffsetX(), operation.getOffsetY());
+            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN, mainOp.getOTOperation());
         };
 
         /**
@@ -336,6 +343,8 @@ define([
                 ).toNonOTOperation());
                 processNodeMoveOperation(operation);
             }
+            if(CONFIG.INSTANCE_FLAG)
+                propagateNodeMoveToMainCanvas(operation);
         };
 
         /**
