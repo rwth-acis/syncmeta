@@ -1189,7 +1189,7 @@ define([
 
         function localNodeMoveCallback(operation){
             if(operation instanceof NodeMoveOperation && operation.getEntityId() === that.getEntityId()) {
-                propagateNodeMoveOperation(operation);
+                processNodeMoveOperation(operation);
             }
         }
         init();
