@@ -1159,7 +1159,7 @@ define([
             _iwcot.registerOnHistoryChangedCallback(historyNodeDeleteCallback);
 
             _iwcot.registerOnLocalDataReceivedCallback(localNodeDeleteCallback);
-            _iwcot.registerOnLocalDataReceivedCallback(localNodeMoveCallback);
+            //_iwcot.registerOnLocalDataReceivedCallback(localNodeMoveCallback);
 
         };
 
@@ -1178,7 +1178,7 @@ define([
             _iwcot.unregisterOnHistoryChangedCallback(historyNodeDeleteCallback);
 
             _iwcot.unregisterOnLocalDataReceivedCallback(localNodeDeleteCallback);
-            _iwcot.unregisterOnLocalDataReceivedCallback(localNodeMoveCallback);
+            //_iwcot.unregisterOnLocalDataReceivedCallback(localNodeMoveCallback);
         };
 
         function localNodeDeleteCallback(operation){
@@ -1187,11 +1187,12 @@ define([
             }
         }
 
+        /*
         function localNodeMoveCallback(operation){
             if(operation instanceof NodeMoveOperation && operation.getEntityId() === that.getEntityId()) {
-                processNodeMoveOperation(operation);
+                propagateNodeMoveOperation(operation);
             }
-        }
+        }*/
         init();
 
         if(_iwcot){
