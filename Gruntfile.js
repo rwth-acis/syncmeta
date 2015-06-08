@@ -229,7 +229,6 @@ module.exports = function(grunt) {
                     'html/imsld_export.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
                 }
             }
-
         },
 
         requirejs: {
