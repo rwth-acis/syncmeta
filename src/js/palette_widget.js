@@ -5,6 +5,9 @@
 
 requirejs([
     'jqueryui',
+    'Util',
+    'iwcw',
+    'operations/non_ot/ExportMetaModelOperation',
     'palette_widget/Palette',
     'palette_widget/MoveTool',
     'palette_widget/Separator',
@@ -20,14 +23,19 @@ requirejs([
     'palette_widget/BiDirAssociationEdgeTool',
     'palette_widget/UniDirAssociationEdgeTool',
     'palette_widget/GeneralisationEdgeTool',
+    'palette_widget/guidance_modeling_tools/ObjectGuidanceTool',
     'text!templates/canvas_widget/circle_node.html',
     'text!templates/canvas_widget/diamond_node.html',
     'text!templates/canvas_widget/rectangle_node.html',
     'text!templates/canvas_widget/rounded_rectangle_node.html',
     'text!templates/canvas_widget/triangle_node.html',
-    'promise!Metamodel'
-],function ($,Palette,MoveTool,Separator,NodeTool,ObjectNodeTool,AbstractClassNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,GeneralisationEdgeTool,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,metamodel) {
+    'promise!Model',
+    'promise!Metamodel',
+    'promise!Guidancemodel'
+],function ($,Util,IWCW,ExportMetaModelOperation,Palette,MoveTool,Separator,NodeTool,ObjectNodeTool,AbstractClassNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,GeneralisationEdgeTool,ObjectGuidanceTool,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,model,metamodel,guidancemodel) {
 
+    var componentName = "palette"+Util.generateRandomId();
+    var iwc = IWCW.getInstance(componentName);
     /**
      * Predefined node shapes, first is default
      * @type {{circle: *, diamond: *, rectangle: *, triangle: *}}
@@ -50,7 +58,32 @@ requirejs([
 
     palette.addTool(new MoveTool());
     palette.addSeparator(new Separator());
-    if(metamodel && metamodel.hasOwnProperty("nodes")){
+
+    //Create node tools for guidance modeling based on metamodel (if in guidance modeling editor)
+    if(guidancemodel.isGuidanceEditor()){
+        console.log("Create guidance modeling node tools");
+        
+        var nodes = guidancemodel.metamodel.nodes;
+        for(var nodeId in nodes){
+            if(nodes.hasOwnProperty(nodeId)){
+                var node = nodes[nodeId];
+                var label = node.label + " Context";
+                palette.addTool(new NodeTool(label, label));
+                label = node.label + " Tool";
+                palette.addTool(new NodeTool(label, label));
+            }
+        }
+        var edges = guidancemodel.metamodel.edges;
+        for(var edgeId in edges){
+            if(edges.hasOwnProperty(edgeId)){
+                var edge = edges[edgeId];
+                var label = edge.label + " Context";
+                palette.addTool(new NodeTool(label, label));
+            }
+        }
+    }
+    //Create node tools for modeling based on a metamodel (if a metamodel exists)
+    else if(metamodel && metamodel.hasOwnProperty("nodes")){
         var nodes = metamodel.nodes,
             node,
             shape,
@@ -92,7 +125,9 @@ requirejs([
                 palette.addTool(new NodeTool(node.label,node.label,null,$shape));
             }
         }
-    } else {
+    }
+    //Create node tools for metamodeling
+    else {
         palette.addTool(new AbstractClassNodeTool());
         palette.addTool(new ObjectNodeTool());
         palette.addTool(new RelationshipNodeTool());
@@ -102,7 +137,14 @@ requirejs([
         palette.addTool(new EdgeShapeNodeTool());
     }
     palette.addSeparator(new Separator());
-    if(metamodel && metamodel.hasOwnProperty("edges")){
+
+    //Create edge tools for guidance modeling (if in guidance model editor)
+    if(guidancemodel.isGuidanceEditor()){
+        console.log("Create guidance modeling edge tools")
+        palette.addTool(new UniDirAssociationEdgeTool());
+    }
+    //Create edge tools for modeling (based on metamodel)
+    else if(metamodel && metamodel.hasOwnProperty("edges")){
         var edges = metamodel.edges, edge;
         for(var edgeId in edges){
             if(edges.hasOwnProperty(edgeId)){
@@ -110,7 +152,9 @@ requirejs([
                 palette.addTool(new EdgeTool(edge.label,edge.label,null,edge.shape.arrow+".png",edge.shape.color));
             }
         }
-    } else {
+    }
+    //Create edge tools for metamodeling
+    else {
         palette.addTool(new BiDirAssociationEdgeTool());
         palette.addTool(new UniDirAssociationEdgeTool());
         palette.addTool(new GeneralisationEdgeTool());

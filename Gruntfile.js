@@ -246,7 +246,6 @@ module.exports = function(grunt) {
                     'html/guidance.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
                 }
             }
-
         },
 
         requirejs: {

@@ -164,7 +164,8 @@ CONFIG = {
         MY: {
             MODEL: "my:ns:model",
             METAMODEL: "my:ns:metamodel",
-            INSTANCE: "my:ns:instance"
+            INSTANCE: "my:ns:instance",
+            GUIDANCEMODEL: "my:ns:guidancemodel"
         }
     }
 };
