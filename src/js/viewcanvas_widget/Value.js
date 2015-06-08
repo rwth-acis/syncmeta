@@ -153,8 +153,6 @@ define([
             processValueChangeOperation(operation);
             operation.setRemote(true);
 
-
-
             if(_iwcot.sendRemoteOTOperation(operation)){
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "ValueChangeActivity",

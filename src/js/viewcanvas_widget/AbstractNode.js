@@ -189,14 +189,14 @@ define([
                     {nodeType: that.getType()}
                 ).toNonOTOperation());
             }
-            //if(CONFIG.INSTANCE_FLAG)
-            //    propagateNodeMoveToMainCanvas(operation);
+            if(CONFIG.INSTANCE_FLAG)
+                propagateNodeMoveToMainCanvas(operation);
         };
 
-        /*var propagateNodeMoveToMainCanvas = function(operation){
+        var propagateNodeMoveToMainCanvas = function(operation){
             var mainOp = new NodeMoveOperation(that.getOrigin(), operation.getOffsetX(), operation.getOffsetY());
             _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN, mainOp.getOTOperation());
-        };*/
+        };
 
         /**
          * Propagate a Node Move Z Operation to the remote users and the local widgets
@@ -240,6 +240,13 @@ define([
                     {nodeType: that.getType()}
                 ).toNonOTOperation());
             }
+            if(CONFIG.INSTANCE_FLAG)
+                propagateNodeResizeOperationToMainCanvas(operation);
+        };
+
+        var propagateNodeResizeOperationToMainCanvas = function(operation){
+            var mainOp = new NodeResizeOperation(that.getOrigin(), operation.getOffsetX(), operation.getOffsetY());
+            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN, mainOp.getOTOperation());
         };
 
         //noinspection JSUnusedLocalSymbols
