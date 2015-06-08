@@ -228,6 +228,23 @@ module.exports = function(grunt) {
                 files: {
                     'html/imsld_export.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
                 }
+            },
+
+            guidance_widget: {
+                options: {
+                    data: {
+                        meta: {
+                            title: "Guidance widget",
+                            description: "",
+                            width: "120",
+                            height: "60"
+                        },
+                        bodyPartial: '_guidance_widget.tpl'
+                    }
+                },
+                files: {
+                    'html/guidance.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
+                }
             }
 
         },
