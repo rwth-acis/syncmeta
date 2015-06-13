@@ -1113,7 +1113,7 @@ $(document).ready(function() {
 	jQuery.fn.transformable.resize=function(e,ui) {
 		e.stopPropagation();
 		var t=$(this);
-		var axis=t.data('ui-resizable').axis;
+		var axis=t.data('ui-resizable').axis; 
 		var startoff=t.data('startoff');
 		var off=t.tOffset();
 		if (!startoff) return;
