@@ -1113,7 +1113,7 @@ $(document).ready(function() {
 	jQuery.fn.transformable.resize=function(e,ui) {
 		e.stopPropagation();
 		var t=$(this);
-		var axis=t.data('resizable').axis;
+		var axis=t.data('ui-resizable').axis;
 		var startoff=t.data('startoff');
 		var off=t.tOffset();
 		if (!startoff) return;
@@ -1587,7 +1587,7 @@ $(document).ready(function() {
 					{ x: off.left, y: off.top+h } ]; //bottom,left
 			var innercorners;
 			if(options===true) {
-				var bw=t.borderWidth('all');
+				var bw=borderWidth(t, 'all');
 				var iw=t.innerWidth(), ih=t.innerHeight();
 				innercorners=[
 					{ x: off.left+bw.left,    y: off.top+bw.top    }, //top,left
