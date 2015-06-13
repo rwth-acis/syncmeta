@@ -1,1 +1,0 @@
-define('text!templates/canvas_widget/model_attributes_node.html',[],function () { return '<div class="abstract_class_node">\n    <div class="label"></div>\n    <div class="attributes"></div>\n</div>';});
