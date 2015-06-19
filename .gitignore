@@ -6,3 +6,5 @@ doc/
 .localGruntConfig.json
 html/
 /.project
+.codio
+.settings
