@@ -1,0 +1,8 @@
+Authors ordered by first contribution.
+
+Stephan Erdtmann <erdtmann@dbis.rwth-aachen.de>
+Michael Derntl <derntl@dbis.rwth-aachen.de>
+Andre Tebart <tebart@dbis.rwth-aachen.de>
+Petru Nicolaescu <nicolaescu@dbis.rwth-aachen.de>
+Kevin Jahns <kevin.jahns@rwth-aachen.de>
+Peter de Lange <lange@dbis.rwth-aachen.de>

@@ -5,3 +5,4 @@ doc/
 .dbis.secret.json
 .localGruntConfig.json
 html/
+/.project
