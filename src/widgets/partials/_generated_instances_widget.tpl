@@ -4,8 +4,9 @@
         'lodash',
         'Util',
         'iwcw',
-        'operations/non_ot/ExportMetaModelOperation'
-    ],function($,_,Util,IWCW,ExportMetaModelOperation){
+        'operations/non_ot/ExportMetaModelOperation',
+        'operations/non_ot/ExportGuidanceRulesOperation',
+    ],function($,_,Util,IWCW,ExportMetaModelOperation, ExportGuidanceRulesOperation){
 
         var componentName = "export"+Util.generateRandomId();
 
@@ -83,7 +84,7 @@
                 return deferred2.promise();
             }
 
-            function addGuidancemodelToSpace(spaceURI, guidancemodel){
+            function addGuidanceRulesToSpace(spaceURI, guidanceRules){
                 var deferred = $.Deferred();
                 var deferred2 = $.Deferred();
                 openapp.resource.post(
@@ -92,7 +93,7 @@
                             deferred.resolve(data.uri);
                         },{
                             "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate":"http://purl.org/role/terms/data",
-                            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type":"my:ns:guidancemodel"
+                            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type":"my:ns:guidancerules"
                         });
                 deferred.promise().then(function(dataURI){
                     openapp.resource.put(
@@ -101,7 +102,7 @@
                                 deferred2.resolve();
                             },{
                                 "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate":"http://purl.org/openapp/representation"
-                            },JSON.stringify(guidancemodel));
+                            },JSON.stringify(guidanceRules));
                 });
                 return deferred2.promise();
             }
@@ -165,34 +166,20 @@
                 return deferred.promise();
             }
 
-            function getGuidanceModel(){
-                var resourceSpace = new openapp.oo.Resource(openapp.param.space());
+            function getGuidanceRules(){
                 var deferred = $.Deferred();
-                var guidancemodeling = {};
-
-                resourceSpace.getSubResources({
-                    relation: openapp.ns.role + "data",
-                    type: CONFIG.NS.MY.GUIDANCEMODEL,
-                    onAll: function(data) {
-                        if(data === null || data.length === 0){
-                            deferred.resolve(guidancemodeling);
-                        } else {
-                            data[0].getRepresentation("rdfjson",function(representation){
-                                if(representation){
-                                    guidancemodeling.guidancemodel = representation.guidancemodel;
-                                    guidancemodeling.metamodel = representation.metamodel;
-                                }
-                                deferred.resolve(guidancemodeling);
-                            });
-                        }
+                iwc.registerOnDataReceivedCallback(function(operation){
+                    if(operation instanceof ExportGuidanceRulesOperation){
+                        deferred.resolve(operation.getData());
                     }
                 });
-
+                var operation = new ExportGuidanceRulesOperation(componentName,null);
+                iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.toNonOTOperation());
                 return deferred.promise();
             }
 
             return getMetaModel().then(function(metamodel){
-                return getGuidanceModel().then(function(guidancemodel){
+                return getGuidanceRules().then(function(guidanceRules){
                     return createSpace(spaceLabel,spaceTitle).then(function(spaceURI){
                         return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/activity.xml")
                             .then(function(){
@@ -204,9 +191,11 @@
                             }).then(function(){
                                 return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/export.xml");
                             }).then(function(){
+                                return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/guidance.xml");
+                            }).then(function(){
                                 return addMetamodelToSpace(spaceURI,metamodel);
                             }).then(function(){
-                                return addGuidancemodelToSpace(spaceURI, guidancemodel);
+                                return addGuidanceRulesToSpace(spaceURI, guidanceRules);
                             }).then(function(){
                                 return storeGeneratedInstanceMeta(spaceURI,spaceTitle);
                             }).then(function(){

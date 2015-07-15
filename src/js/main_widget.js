@@ -45,7 +45,7 @@ requirejs([
     iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.MAIN);
     canvas = new Canvas($("#canvas"));
 
-    //For guidancemodeling create the guidancemodelint tools based on the metamodel
+    //For guidancemodeling create the guidancemodeling tools based on the metamodel
     if(guidancemodel.isGuidanceEditor()){
         console.log("Guidance modeling!!!");
         console.log(guidancemodel);
@@ -53,9 +53,9 @@ requirejs([
         for(var nodeId in nodes){
             if(nodes.hasOwnProperty(nodeId)){
                 var node = nodes[nodeId];
-                var label = node.label + " Context";
+                var label = guidancemodel.getObjectContextLabelForType(node.label);
                 canvas.addTool(label,new NodeTool(label,null,null,node.shape.defaultWidth,node.shape.defaultHeight))
-                label = node.label + " Tool";
+                label = guidancemodel.getObjectToolLabelForType(node.label);
                 canvas.addTool(label,new NodeTool(label,null,null,node.shape.defaultWidth,node.shape.defaultHeight))
             }
         }
@@ -63,7 +63,7 @@ requirejs([
         for(var edgeId in edges){
             if(edges.hasOwnProperty(edgeId)){
                 var edge = edges[edgeId];
-                var label = edge.label + " Context";
+                var label = guidancemodel.getRelationshipContextLabelForType(edge.label);
                 canvas.addTool(label,new NodeTool(label,null,null,150,100))
             }
         }

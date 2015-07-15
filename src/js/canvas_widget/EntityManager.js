@@ -50,10 +50,14 @@ define([
      */
     var nodeTypes = {};
 
+    /**
+     * Guidance modeling specific objects
+     */
     var objectContextTypes = {};
     var relationshipContextTypes = {};
     var objectToolTypes = {};
     var edgesByLabel = {};
+    var objectToolNodeTypes = {};
 
     //Create nodes for guidance modeling (based on metamodel)
     if(guidancemodel.isGuidanceEditor()){
@@ -62,7 +66,7 @@ define([
         for(var nodeId in nodes){
             if(nodes.hasOwnProperty(nodeId)){
                 var node = nodes[nodeId];
-                var label = node.label + " Context";
+                var label = guidancemodel.getObjectContextLabelForType(node.label);
                 nodeTypes[label] = ContextNode(label);
                 nodeTypes[label].TYPE = label;
                 nodeTypes[label].DEFAULT_WIDTH = 150;
@@ -76,7 +80,7 @@ define([
         for(var edgeId in edges){
             if(edges.hasOwnProperty(edgeId)){
                 var edge = edges[edgeId];
-                var label = edge.label + " Context";
+                var label = guidancemodel.getRelationshipContextLabelForType(edge.label);
                 nodeTypes[label] = ContextNode(label);
                 nodeTypes[label].TYPE = label;
                 nodeTypes[label].DEFAULT_WIDTH = 150;
@@ -91,7 +95,7 @@ define([
         for(var nodeId in nodes){
             if(nodes.hasOwnProperty(nodeId)){
                 var node = nodes[nodeId];
-                var label = node.label + " Tool";
+                var label = guidancemodel.getObjectToolLabelForType(node.label);
                 nodeTypes[label] = ObjectToolNode(label);
                 nodeTypes[label].TYPE = label;
                 nodeTypes[label].DEFAULT_WIDTH = 150;
@@ -110,6 +114,7 @@ define([
             anchors,
             $shape;
 
+        // Start creating nodes based on metamodel
         for(var nodeId in nodes){
             if(nodes.hasOwnProperty(nodeId)){
                 node = nodes[nodeId];
@@ -157,7 +162,20 @@ define([
                 nodeTypes[node.label].DEFAULT_WIDTH = node.shape.defaultWidth;
                 nodeTypes[node.label].DEFAULT_HEIGHT = node.shape.defaultHeight;
             }
+
+
         }
+        //End creating nodes based on metamodel
+
+        //Start creating nodes based on guidancemodel
+        nodes = guidancemodel.guidancemodel.nodes;
+        for(var nodeId in nodes){
+            if(nodes.hasOwnProperty(nodeId)){
+                node = nodes[nodeId];
+                console.log(node.label);
+            }
+        }
+        //End creating nodes based on guidancemodel
     }
     //Create nodes for metamodeling
     else {
@@ -186,13 +204,12 @@ define([
         for(var nodeId in objectContextTypes){
             var node = objectContextTypes[nodeId];
             var relation = {sourceTypes: [node.TYPE], targetTypes: []};
-            var index = node.TYPE.indexOf(" Context");
-            var subTypeObjectContext = node.TYPE.substring(0, index);
+            var subTypeObjectContext = guidancemodel.getObjectTypeForObjectContextType(node.TYPE);
 
             // Between object context nodes and relationship context nodes
             for(var edgeId in relationshipContextTypes){
                 var edgeContext = relationshipContextTypes[edgeId];
-                var subTypeRelationshipContext = edgeContext.TYPE.substring(0, edgeContext.TYPE.indexOf(" Context"));
+                var subTypeRelationshipContext = guidancemodel.getRelationshipTypeForRelationshipContextType(edgeContext.TYPE);
                 var edge = edgesByLabel[subTypeRelationshipContext];
                 for(var i = 0;  i < edge.relations.length; i++){
                     if($.inArray(subTypeObjectContext, edge.relations[i].sourceTypes) > -1){
@@ -218,12 +235,12 @@ define([
         for(var edgeId in relationshipContextTypes){
             var relationshipContext = relationshipContextTypes[edgeId];
             var relation = {sourceTypes: [relationshipContext.TYPE], targetTypes: []};
-            var subTypeRelationshipContext = relationshipContext.TYPE.substring(0, relationshipContext.TYPE.indexOf(" Context"));
+            var subTypeRelationshipContext = guidancemodel.getRelationshipTypeForRelationshipContextType(relationshipContext.TYPE);
 
             //Between relationship context nodes and object context nodes
             for(var nodeId in objectContextTypes){
                 var objectContext = objectContextTypes[nodeId];
-                var subTypeObjectContext = objectContext.TYPE.substring(0, objectContext.TYPE.indexOf(" Context"));
+                var subTypeObjectContext = guidancemodel.getObjectTypeForObjectContextType(objectContext.TYPE);
                 var edge = edgesByLabel[subTypeRelationshipContext];
                 for(var i = 0;  i < edge.relations.length; i++){
                     if($.inArray(subTypeObjectContext, edge.relations[i].targetTypes) > -1){
@@ -238,7 +255,7 @@ define([
         for(var objectToolId in objectToolTypes){
             var objectTool = objectToolTypes[objectToolId];
             var relation = {sourceTypes: [objectTool.TYPE], targetTypes: []};
-            var subTypeObjectTool = objectTool.TYPE.substring(0, objectTool.TYPE.indexOf(" Tool"));
+            var subTypeObjectTool = guidancemodel.getObjectTypeForObjectToolType(objectTool.TYPE);
 
             for(var edgeId in guidancemodel.metamodel.edges){
                 var edge = guidancemodel.metamodel.edges[edgeId];
@@ -249,12 +266,12 @@ define([
                     //Between object tools and relationship contexts
                     if(($.inArray(subTypeObjectTool, edge.relations[i].sourceTypes) > -1) ||
                         ($.inArray(subTypeObjectTool, edge.relations[i].targetTypes) > -1)){
-                        relation.targetTypes.push(edge.label + " Context");
+                        relation.targetTypes.push(guidancemodel.getRelationshipContextLabelForType(edge.label));
 
                         //Between object tools and object contexts
                         for(var objectContextId in objectContextTypes){
                             var objectContext = objectContextTypes[objectContextId];
-                            var subTypeObjectContext = objectContext.TYPE.substring(0, objectContext.TYPE.indexOf(" Context"));
+                            var subTypeObjectContext = guidancemodel.getObjectTypeForObjectContextType(objectContext.TYPE);
                             if(($.inArray(subTypeObjectContext, edge.relations[i].sourceTypes) > -1)||
                                ($.inArray(subTypeObjectContext, edge.relations[i].targetTypes) > -1)){
                                 relation.targetTypes.push(objectContext.TYPE);
@@ -356,6 +373,12 @@ define([
                     return node;
                 }
                 return null;
+            },
+            createObjectToolNode: function(id, objectNodeId){
+                var type = ObjectToolNode(type);
+                var objectNodeAppearance = this.findNode(objectNodeId).getAppearance();
+                var node = new type(id, objectNodeAppearance.left, objectNodeAppearance.top + objectNodeAppearance.height, 50, 50, AbstractEntity.maxZIndex + 100);
+                return node;
             },
             /**
              * Create model Attributes node
@@ -721,6 +744,48 @@ define([
                         return _.size(connectionItems) === 0;
                     })(connectionItems)
                 };
+            },
+            generateGuidanceRules: function(){
+                console.log("Generating guidance rules");
+                var guidanceRules = {objectToolRules: []};
+                var nodes = guidancemodel.guidancemodel.nodes;
+                var edges = guidancemodel.guidancemodel.edges;
+                for(var nodeId in nodes){
+                    var node = nodes[nodeId];
+                    var type = node.type;
+
+                    if(guidancemodel.isObjectToolType(type)){
+                        var srcObjectType = guidancemodel.getObjectTypeForObjectToolType(type);
+                        var destObjectType = null;
+                        var relationshipType = null;
+                        var relevantEdges = [];
+                        var edgeId;
+                        for(edgeId in edges){
+                            if(edges[edgeId].source == nodeId)
+                                relevantEdges.push(edges[edgeId]);
+                        }
+                        for(var i = 0; i < relevantEdges.length; i++){
+                            var edge = relevantEdges[i];
+                            var target = nodes[edge.target];
+                            if(guidancemodel.isObjectContextType(target.type)){
+                                destObjectType = guidancemodel.getObjectTypeForObjectContextType(target.type);
+                            }
+                            else if(guidancemodel.isRelationshipContextType(target.type)){
+                                relationshipType = guidancemodel.getRelationshipTypeForRelationshipContextType(target.type);
+                            }
+                        }
+                        if(destObjectType !== null && relationshipType !== null){
+                            var objectToolRule = {
+                                srcObjectType: srcObjectType,
+                                destObjectType: destObjectType,
+                                relationshipType: relationshipType
+                            };
+                            guidanceRules.objectToolRules.push(objectToolRule);
+                        }
+                    };
+                }
+                console.log(guidanceRules);
+                return guidanceRules;
             },
             /**
              * Generate the JSON Representation of the meta-model for a new editr instance based on the current graph

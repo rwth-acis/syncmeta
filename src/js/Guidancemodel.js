@@ -21,6 +21,45 @@ define([
                 return activityName == "Guidance modeling";
             };
 
+            guidancemodeling.getObjectContextLabelForType = function(type){
+                return type + " Object Context";
+            };
+
+            guidancemodeling.getObjectTypeForObjectContextType = function(type){
+                var i = type.lastIndexOf(" Object Context");
+                return type.substring(0, i);
+            };
+
+            guidancemodeling.isObjectContextType = function(type){
+                return type.indexOf(" Object Context", type.length - " Object Context".length) !== -1;
+            };
+
+            guidancemodeling.getRelationshipContextLabelForType = function(type){
+                return type + " Relationship Context";
+            };
+
+            guidancemodeling.getRelationshipTypeForRelationshipContextType = function(type){
+                var i = type.lastIndexOf(" Relationship Context");
+                return type.substring(0, i);
+            };
+
+            guidancemodeling.isRelationshipContextType = function(type){
+                return type.indexOf(" Relationship Context", type.length - " Relationship Context".length) !== -1;
+            };
+
+            guidancemodeling.getObjectToolLabelForType = function(type){
+                return type + " Tool";
+            };
+
+            guidancemodeling.getObjectTypeForObjectToolType = function(type){
+                var i = type.lastIndexOf(" Tool");
+                return type.substring(0, i);
+            };
+
+            guidancemodeling.isObjectToolType = function(type){
+                return type.indexOf(" Tool", type.length - " Tool".length) !== -1;
+            };
+
             //Get the guidance model
             resourceSpace.getSubResources({
                 relation: openapp.ns.role + "data",

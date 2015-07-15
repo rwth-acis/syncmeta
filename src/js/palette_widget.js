@@ -67,9 +67,9 @@ requirejs([
         for(var nodeId in nodes){
             if(nodes.hasOwnProperty(nodeId)){
                 var node = nodes[nodeId];
-                var label = node.label + " Context";
+                var label = guidancemodel.getObjectContextLabelForType(node.label);
                 palette.addTool(new NodeTool(label, label));
-                label = node.label + " Tool";
+                label = guidancemodel.getObjectToolLabelForType(node.label);
                 palette.addTool(new NodeTool(label, label));
             }
         }
@@ -77,7 +77,7 @@ requirejs([
         for(var edgeId in edges){
             if(edges.hasOwnProperty(edgeId)){
                 var edge = edges[edgeId];
-                var label = edge.label + " Context";
+                var label = guidancemodel.getRelationshipContextLabelForType(edge.label);
                 palette.addTool(new NodeTool(label, label));
             }
         }

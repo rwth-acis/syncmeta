@@ -10,14 +10,16 @@ define([
     'operations/non_ot/ActivityOperation',
     'operations/non_ot/ExportDataOperation',
     'operations/non_ot/ExportMetaModelOperation',
+    'operations/non_ot/ExportGuidanceRulesOperation',
     'operations/non_ot/ExportImageOperation',
+    'operations/non_ot/ShowToolGuidanceOperation',
     'canvas_widget/AbstractEntity',
     'canvas_widget/ModelAttributesNode',
     'canvas_widget/EntityManager',
     'canvas_widget/AbstractCanvas',
     'canvas_widget/MoveTool',
     'jquery.transformable'
-],/** @lends Canvas */function($,jsPlumb,IWCOT,Util,NodeAddOperation,EdgeAddOperation,ToolSelectOperation,EntitySelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportImageOperation,AbstractEntity,ModelAttributesNode,EntityManager,AbstractCanvas,MoveTool) {
+],/** @lends Canvas */function($,jsPlumb,IWCOT,Util,NodeAddOperation,EdgeAddOperation,ToolSelectOperation,EntitySelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportImageOperation,ShowToolGuidanceOperation,AbstractEntity,ModelAttributesNode,EntityManager,AbstractCanvas,MoveTool) {
 
     Canvas.prototype = new AbstractCanvas();
     Canvas.prototype.constructor = Canvas;
@@ -110,10 +112,8 @@ define([
         var processNodeAddOperation = function(operation){
             var node;
             if(operation.getJSON()){
-                console.log("JSON!")
                 node = EntityManager.createNodeFromJSON(operation.getType(),operation.getEntityId(),operation.getLeft(),operation.getTop(),operation.getWidth(),operation.getHeight(),operation.getZIndex(),operation.getJSON());
             } else {
-                console.log("NO JSON!")
                 node = EntityManager.createNode(operation.getType(),operation.getEntityId(),operation.getLeft(),operation.getTop(),operation.getWidth(),operation.getHeight(),operation.getZIndex());
             }
 
@@ -244,6 +244,20 @@ define([
             }
         };
 
+        var localShowToolGuidanceCallback = function(operation){
+            if(operation instanceof ShowToolGuidanceOperation){
+                processShowToolGuidanceOperation(operation);
+            }
+        };
+
+        var processShowToolGuidanceOperation = function(operation){
+            var id = Util.generateRandomId(24);
+            var node;
+            node = EntityManager.createObjectToolNode(id, operation.getNodeId());
+            node.draw();
+            node.addToCanvas(that);
+        };
+
         /**
          * Callback for a local Export Data Operation
          * @param {operations.non_ot.ExportDataOperation} operation
@@ -275,6 +289,18 @@ define([
                     ).toNonOTOperation();
                     _iwcot.sendRemoteNonOTOperation(op);
                     _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,op);
+                }
+
+            }
+        };
+
+        var localExportGuidanceRulesCallback = function(operation){
+            if(operation instanceof ExportGuidanceRulesOperation){
+                if(operation.getData() === null){
+                    operation.setData(EntityManager.generateGuidanceRules());
+                    _iwcot.sendLocalNonOTOperation(operation.getRequestingComponent(),operation.toNonOTOperation());
+                } else {
+                    //Do nothing here
                 }
 
             }
@@ -490,6 +516,7 @@ define([
                 var operation = new EntitySelectOperation(entity ? entity.getEntityId() : null);
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.toNonOTOperation());
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,operation.toNonOTOperation());
+                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.toNonOTOperation());
                 _iwcot.sendRemoteNonOTOperation(operation.toNonOTOperation());
                 //this.callListeners(CONFIG.CANVAS.LISTENERS.NODESELECT,entity ? entity.getEntityId() :null);
             }
@@ -860,7 +887,9 @@ define([
             _iwcot.registerOnLocalDataReceivedCallback(localToolSelectCallback);
             _iwcot.registerOnLocalDataReceivedCallback(localExportDataCallback);
             _iwcot.registerOnLocalDataReceivedCallback(localExportMetaModelCallback);
+            _iwcot.registerOnLocalDataReceivedCallback(localExportGuidanceRulesCallback);
             _iwcot.registerOnLocalDataReceivedCallback(localExportImageCallback);
+            _iwcot.registerOnLocalDataReceivedCallback(localShowToolGuidanceCallback);
             _iwcot.registerOnHistoryChangedCallback(historyNodeAddCallback);
             _iwcot.registerOnHistoryChangedCallback(historyEdgeAddCallback);
         };
@@ -875,7 +904,9 @@ define([
             _iwcot.unregisterOnLocalDataReceivedCallback(localToolSelectCallback);
             _iwcot.unregisterOnLocalDataReceivedCallback(localExportDataCallback);
             _iwcot.unregisterOnLocalDataReceivedCallback(localExportMetaModelCallback);
+            _iwcot.unregisterOnLocalDataReceivedCallback(localExportGuidanceRulesCallback);
             _iwcot.unregisterOnLocalDataReceivedCallback(localExportImageCallback);
+            _iwcot.registerOnLocalDataReceivedCallback(localShowToolGuidanceCallback);
             _iwcot.unregisterOnHistoryChangedCallback(historyNodeAddCallback);
             _iwcot.unregisterOnHistoryChangedCallback(historyEdgeAddCallback);
         };

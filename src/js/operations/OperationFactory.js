@@ -15,9 +15,11 @@ define([
     'operations/non_ot/ActivityOperation',
     'operations/non_ot/ExportDataOperation',
     'operations/non_ot/ExportMetaModelOperation',
+    'operations/non_ot/ExportGuidanceRulesOperation',
     'operations/non_ot/ExportImageOperation',
-    'operations/non_ot/JoinOperation'
-],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportImageOperation,JoinOperation) {
+    'operations/non_ot/JoinOperation',
+    'operations/non_ot/ShowToolGuidanceOperation'
+],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportImageOperation,JoinOperation, ShowToolGuidanceOperation) {
 
     /**
      * OperationFactory
@@ -61,11 +63,17 @@ define([
                     case ExportMetaModelOperation.TYPE:
                         resOperation = new ExportMetaModelOperation(data.requestingComponent,data.data);
                         break;
+                    case ExportGuidanceRulesOperation.TYPE:
+                        resOperation = new ExportGuidanceRulesOperation(data.requestingComponent,data.data);
+                        break;
                     case ExportImageOperation.TYPE:
                         resOperation = new ExportImageOperation(data.requestingComponent,data.data);
                         break;
                     case JoinOperation.TYPE:
                         resOperation = new JoinOperation(data.user,data.done,data.sender,data.data);
+                        break;
+                    case ShowToolGuidanceOperation.TYPE:
+                        resOperation = new ShowToolGuidanceOperation(data.nodeId, data.toolType);
                         break;
                 }
                 return resOperation;

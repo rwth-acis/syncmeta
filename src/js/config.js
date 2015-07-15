@@ -65,7 +65,8 @@ CONFIG = {
             MAIN: "MAIN",
             PALETTE: "PALETTE",
             ATTRIBUTE: "ATTRIBUTE",
-            ACTIVITY: "ACTIVITY"
+            ACTIVITY: "ACTIVITY",
+            GUIDANCE: "GUIDANCE"
         }
     },
     ENTITY: {
