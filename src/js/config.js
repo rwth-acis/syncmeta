@@ -166,7 +166,8 @@ CONFIG = {
             MODEL: "my:ns:model",
             METAMODEL: "my:ns:metamodel",
             INSTANCE: "my:ns:instance",
-            GUIDANCEMODEL: "my:ns:guidancemodel"
+            GUIDANCEMODEL: "my:ns:guidancemodel",
+            GUIDANCERULES: "my:ns:guidancerules"
         }
     }
 };

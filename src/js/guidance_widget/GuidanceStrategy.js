@@ -1,11 +1,15 @@
-define(['iwcw','operations/non_ot/ShowToolGuidanceOperation'
-],function(IWCW ,ShowToolGuidanceOperation) {
+define(['iwcw','operations/non_ot/ShowObjectGuidanceOperation'
+],function(IWCW ,ShowObjectGuidanceOperation) {
 
-    function GuidanceStrategy(){
+    function GuidanceStrategy(guidanceRules){
         var _iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.GUIDANCE);
-        this.establishContext = function(selectedEntityId){
-            var operation = new ShowToolGuidanceOperation(selectedEntityId, "BLUB: EntityType");
-            console.log("Sending show tool guidance operation.");
+        var _guidanceRules = guidanceRules;
+        this.establishContext = function(objectId, objectType){
+            var relevantRules = _guidanceRules.objectToolRules.filter(function(rule){
+                return rule.srcObjectType == objectType;
+            });
+
+            var operation = new ShowObjectGuidanceOperation(objectId, relevantRules);
             _iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.toNonOTOperation());
         };
 

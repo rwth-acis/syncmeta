@@ -159,6 +159,7 @@ define([
 
                 nodeTypes[node.label] = Node(node.label,$shape,anchors,node.attributes);
                 nodeTypes[node.label].TYPE = node.label;
+                nodeTypes[node.label].SHAPE = $shape;
                 nodeTypes[node.label].DEFAULT_WIDTH = node.shape.defaultWidth;
                 nodeTypes[node.label].DEFAULT_HEIGHT = node.shape.defaultHeight;
             }
@@ -374,12 +375,6 @@ define([
                 }
                 return null;
             },
-            createObjectToolNode: function(id, objectNodeId){
-                var type = ObjectToolNode(type);
-                var objectNodeAppearance = this.findNode(objectNodeId).getAppearance();
-                var node = new type(id, objectNodeAppearance.left, objectNodeAppearance.top + objectNodeAppearance.height, 50, 50, AbstractEntity.maxZIndex + 100);
-                return node;
-            },
             /**
              * Create model Attributes node
              * @returns {canvas_widget.ModelAttributesNode}
@@ -402,6 +397,9 @@ define([
                     return _nodes[id];
                 }
                 return null;
+            },
+            getNodeType: function(type){
+                return nodeTypes[type];
             },
             /**
              * Delete node by id

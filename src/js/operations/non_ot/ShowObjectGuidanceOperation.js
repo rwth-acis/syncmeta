@@ -2,7 +2,7 @@ define([
     'operations/non_ot/NonOTOperation'
 ],/** @lends ToolGuidanceOperation */function(NonOTOperation) {
 
-    ShowToolGuidanceOperation.TYPE = "ShowToolGuidanceOperation";
+    ShowObjectGuidanceOperation.TYPE = "ShowObjectGuidanceOperation";
 
     /**
      * ToolGuidanceOperation
@@ -11,7 +11,7 @@ define([
      * @constructor
      * @param {string} toolName Name of selected tool
      */
-    function ShowToolGuidanceOperation(nodeId, toolType){
+    function ShowObjectGuidanceOperation(objectId, objectGuidanceRules){
 
         /**
          * Corresponding NonOtOperation
@@ -19,15 +19,15 @@ define([
          * @private
          */
         var nonOTOperation = null;
-        var _nodeId = nodeId;
-        var _toolType = toolType;
+        var _objectId = objectId;
+        var _objectGuidanceRules = objectGuidanceRules;
 
-        this.getNodeId = function(){
-            return _nodeId;
+        this.getObjectId = function(){
+            return _objectId;
         };
 
-        this.getToolType = function(){
-            return _toolType;
+        this.getObjectGuidanceRules = function(){
+            return _objectGuidanceRules;
         }
 
         /**
@@ -37,14 +37,14 @@ define([
         this.toNonOTOperation = function(){
             if(nonOTOperation === null){
                 nonOTOperation = new NonOTOperation(
-                    ShowToolGuidanceOperation.TYPE,
-                    JSON.stringify({nodeId: nodeId, toolType: toolType})
+                    ShowObjectGuidanceOperation.TYPE,
+                    JSON.stringify({objectId: objectId, objectGuidanceRules: objectGuidanceRules})
                 );
             }
             return nonOTOperation;
         };
     }
 
-    return ShowToolGuidanceOperation;
+    return ShowObjectGuidanceOperation;
 
 });

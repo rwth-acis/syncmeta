@@ -12,14 +12,15 @@ define([
     'operations/non_ot/ExportMetaModelOperation',
     'operations/non_ot/ExportGuidanceRulesOperation',
     'operations/non_ot/ExportImageOperation',
-    'operations/non_ot/ShowToolGuidanceOperation',
+    'operations/non_ot/ShowObjectGuidanceOperation',
     'canvas_widget/AbstractEntity',
     'canvas_widget/ModelAttributesNode',
     'canvas_widget/EntityManager',
     'canvas_widget/AbstractCanvas',
     'canvas_widget/MoveTool',
+    'canvas_widget/guidance_modeling/ObjectGuidance',
     'jquery.transformable'
-],/** @lends Canvas */function($,jsPlumb,IWCOT,Util,NodeAddOperation,EdgeAddOperation,ToolSelectOperation,EntitySelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportImageOperation,ShowToolGuidanceOperation,AbstractEntity,ModelAttributesNode,EntityManager,AbstractCanvas,MoveTool) {
+],/** @lends Canvas */function($,jsPlumb,IWCOT,Util,NodeAddOperation,EdgeAddOperation,ToolSelectOperation,EntitySelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportImageOperation,ShowObjectGuidanceOperation,AbstractEntity,ModelAttributesNode,EntityManager,AbstractCanvas,MoveTool,ObjectGuidance) {
 
     Canvas.prototype = new AbstractCanvas();
     Canvas.prototype.constructor = Canvas;
@@ -245,17 +246,34 @@ define([
         };
 
         var localShowToolGuidanceCallback = function(operation){
-            if(operation instanceof ShowToolGuidanceOperation){
-                processShowToolGuidanceOperation(operation);
+            if(operation instanceof ShowObjectGuidanceOperation){
+                processShowObjectGuidanceOperation(operation);
             }
         };
 
-        var processShowToolGuidanceOperation = function(operation){
-            var id = Util.generateRandomId(24);
-            var node;
-            node = EntityManager.createObjectToolNode(id, operation.getNodeId());
-            node.draw();
-            node.addToCanvas(that);
+        var processShowObjectGuidanceOperation = function(operation){
+            var srcObject = EntityManager.findNode(operation.getObjectId());
+            if(srcObject === null)
+                return;
+            var rules = operation.getObjectGuidanceRules();
+            var appearance = srcObject.getAppearance();
+            var fixedWidth = 50;
+            var verticalMargin = 40;
+            var horizontalMargin = 10;
+            var left = appearance.left + appearance.width / 2;
+            left -= (rules.length - 1) * (fixedWidth + horizontalMargin) / 2 + fixedWidth / 2;
+            var top = appearance.top + appearance.height + verticalMargin;
+            for(var i = 0; i < rules.length; i++){
+                var rule = rules[i];
+                var id = Util.generateRandomId(24);
+                var $shape = EntityManager.getNodeType(rule.destObjectType).SHAPE.clone();
+                var height = EntityManager.getNodeType(rule.destObjectType).DEFAULT_HEIGHT * (fixedWidth / EntityManager.getNodeType(rule.destObjectType).DEFAULT_WIDTH);
+                var objectGuidance = new ObjectGuidance(id, $shape, left, top, fixedWidth, height);
+                objectGuidance.addToCanvas(that);
+                objectGuidance.draw();
+                jsPlumb.connect({source: srcObject.get$node(), target: objectGuidance.get$node()});
+                left += fixedWidth + horizontalMargin;
+            }
         };
 
         /**
@@ -513,7 +531,7 @@ define([
                 if(_selectedEntity) _selectedEntity.unselect();
                 if(entity) entity.select();
                 _selectedEntity = entity;
-                var operation = new EntitySelectOperation(entity ? entity.getEntityId() : null);
+                var operation = new EntitySelectOperation(entity ? entity.getEntityId() : null, entity ? entity.getType() : null);
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.toNonOTOperation());
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,operation.toNonOTOperation());
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.toNonOTOperation());

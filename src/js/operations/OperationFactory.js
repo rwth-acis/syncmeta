@@ -18,8 +18,8 @@ define([
     'operations/non_ot/ExportGuidanceRulesOperation',
     'operations/non_ot/ExportImageOperation',
     'operations/non_ot/JoinOperation',
-    'operations/non_ot/ShowToolGuidanceOperation'
-],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportImageOperation,JoinOperation, ShowToolGuidanceOperation) {
+    'operations/non_ot/ShowObjectGuidanceOperation'
+],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportImageOperation,JoinOperation, ShowObjectGuidanceOperation) {
 
     /**
      * OperationFactory
@@ -48,7 +48,7 @@ define([
 
                 switch(type){
                     case EntitySelectOperation.TYPE:
-                        resOperation = new EntitySelectOperation(data.selectedEntityId);
+                        resOperation = new EntitySelectOperation(data.selectedEntityId, data.selectedEntityType);
                         resOperation.setNonOTOperation(operation);
                         break;
                     case ToolSelectOperation.TYPE:
@@ -72,8 +72,8 @@ define([
                     case JoinOperation.TYPE:
                         resOperation = new JoinOperation(data.user,data.done,data.sender,data.data);
                         break;
-                    case ShowToolGuidanceOperation.TYPE:
-                        resOperation = new ShowToolGuidanceOperation(data.nodeId, data.toolType);
+                    case ShowObjectGuidanceOperation.TYPE:
+                        resOperation = new ShowObjectGuidanceOperation(data.objectId, data.objectGuidanceRules);
                         break;
                 }
                 return resOperation;

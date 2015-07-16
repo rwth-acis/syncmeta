@@ -25,6 +25,7 @@ define([
 
         Node.prototype = new AbstractNode();
         Node.prototype.constructor = Node;
+
         /**
          * Node
          * @class canvas_widget.Node
