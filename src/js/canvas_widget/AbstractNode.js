@@ -958,6 +958,7 @@ define([
             .resizable({
                 containment: "parent",
                 start: function(ev/*,ui*/){
+                    _canvas.hideObjectGuidance();
                     $sizePreview.show();
                     _$node.css({opacity:0.5});
                     _$node.append($sizePreview);
@@ -965,6 +966,7 @@ define([
                     _$node.resizable("option","grid",ev.ctrlKey ? [20,20] : '');
                 },
                 resize:function(ev,ui){
+                    _canvas.hideObjectGuidance();
                     $sizePreview.text(Math.round(ui.size.width) + "x" + Math.round(ui.size.height));
                     repaint();
                     _$node.resizable("option","aspectRatio",ev.shiftKey);
@@ -982,7 +984,10 @@ define([
                     //that.canvas.callListeners(CONFIG.CANVAS.LISTENERS.NODERESIZE,id,offsetX,offsetY);
                     _$node.resizable("option","aspectRatio",false);
                     _$node.resizable("option","grid",'');
-                    $(event.toElement).one('click',function(ev){ev.stopImmediatePropagation();});
+                    //$(ev.toElement).one('click',function(ev){ev.stopImmediatePropagation();});
+                    that.draw();
+                    repaint();
+                    _canvas.showObjectGuidance();
                 }
             })
 
@@ -990,12 +995,12 @@ define([
             .draggable({
                 containment: "parent",
                 start: function(ev,ui){
-                    console.log("dragStart");
                     originalPos.top = ui.position.top;
                     originalPos.left = ui.position.left;
                     //ui.position.top = 0;
                     //ui.position.left = 0;
                     _canvas.select(that);
+                    _canvas.hideObjectGuidance();
                     _$node.css({opacity:0.5});
                     _$node.resizable("disable");
                     drag = false;
@@ -1007,6 +1012,7 @@ define([
 
                     if(drag) repaint();
                     drag = true;
+                    _canvas.hideObjectGuidance();
                     _$node.draggable("option","grid",ev.ctrlKey ? [20,20] : '');
                 },
                 stop: function(ev,ui){
@@ -1021,7 +1027,8 @@ define([
                     //that.canvas.callListeners(CONFIG.CANVAS.LISTENERS.NODEMOVE,id,offsetX,offsetY);
                     //Avoid node selection on drag stop
                     _$node.draggable("option","grid",'');
-                    $(event.toElement).one('click',function(ev){ev.stopImmediatePropagation();});
+                    _canvas.showObjectGuidance();
+                    $(ev.toElement).one('click',function(ev){ev.stopImmediatePropagation();});
                 }
             })
 

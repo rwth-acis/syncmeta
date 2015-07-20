@@ -98,6 +98,9 @@ define([
          */
         var canvasOffset = _$node.offset();
 
+        var _objectGuidanceOperation = null;
+        var _objectGuidanceInstances = [];
+
         /**
          * Apply a Tool Select Operation
          * @param {ToolSelectOperation} operation
@@ -252,28 +255,8 @@ define([
         };
 
         var processShowObjectGuidanceOperation = function(operation){
-            var srcObject = EntityManager.findNode(operation.getObjectId());
-            if(srcObject === null)
-                return;
-            var rules = operation.getObjectGuidanceRules();
-            var appearance = srcObject.getAppearance();
-            var fixedWidth = 50;
-            var verticalMargin = 40;
-            var horizontalMargin = 10;
-            var left = appearance.left + appearance.width / 2;
-            left -= (rules.length - 1) * (fixedWidth + horizontalMargin) / 2 + fixedWidth / 2;
-            var top = appearance.top + appearance.height + verticalMargin;
-            for(var i = 0; i < rules.length; i++){
-                var rule = rules[i];
-                var id = Util.generateRandomId(24);
-                var $shape = EntityManager.getNodeType(rule.destObjectType).SHAPE.clone();
-                var height = EntityManager.getNodeType(rule.destObjectType).DEFAULT_HEIGHT * (fixedWidth / EntityManager.getNodeType(rule.destObjectType).DEFAULT_WIDTH);
-                var objectGuidance = new ObjectGuidance(id, $shape, left, top, fixedWidth, height);
-                objectGuidance.addToCanvas(that);
-                objectGuidance.draw();
-                jsPlumb.connect({source: srcObject.get$node(), target: objectGuidance.get$node()});
-                left += fixedWidth + horizontalMargin;
-            }
+            _objectGuidanceOperation = operation;
+            that.showObjectGuidance();
         };
 
         /**
@@ -406,6 +389,50 @@ define([
             return _$node;
         };
 
+        this.showObjectGuidance = function(){
+            if(_objectGuidanceOperation === null)
+                return;
+            this.hideObjectGuidance();
+            _objectGuidanceInstances = [];
+            var operation = _objectGuidanceOperation;
+            var srcObject = EntityManager.findNode(operation.getObjectId());
+            if(srcObject === null)
+                return;
+            var rules = operation.getObjectGuidanceRules();
+            var appearance = srcObject.getAppearance();
+            var fixedWidth = 50;
+            var verticalMargin = 40;
+            var horizontalMargin = 10;
+            var left = appearance.left + appearance.width / 2;
+            left -= (rules.length - 1) * (fixedWidth + horizontalMargin) / 2 + fixedWidth / 2;
+            var top = appearance.top + appearance.height + verticalMargin;
+            for(var i = 0; i < rules.length; i++){
+                var rule = rules[i];
+                var id = Util.generateRandomId(24);
+                var $shape = EntityManager.getNodeType(rule.destObjectType).SHAPE.clone();
+                var height = EntityManager.getNodeType(rule.destObjectType).DEFAULT_HEIGHT * (fixedWidth / EntityManager.getNodeType(rule.destObjectType).DEFAULT_WIDTH);
+                var objectGuidance = new ObjectGuidance(id, $shape, left, top, fixedWidth, height, operation.getObjectId(), rule);
+                _objectGuidanceInstances.push(objectGuidance);
+                objectGuidance.addToCanvas(that);
+                objectGuidance.draw();
+                jsPlumb.connect({
+                    source: srcObject.get$node(),
+                    target: objectGuidance.get$node(),
+                    anchors: ["Bottom", "Top"],
+                    connector: "Straight",
+                    endpoint: "Blank",
+                    paintStyle: {lineWidth: 3, strokeStyle : "#456", dashstyle:"1 1"}
+                });
+                left += fixedWidth + horizontalMargin;
+            }
+        };
+
+        this.hideObjectGuidance = function(){
+            for(var i = 0; i < _objectGuidanceInstances.length; i++){
+                jsPlumb.remove(_objectGuidanceInstances[i].get$node());
+            }
+        };
+
         /**
          * Set model attributes
          * @param {canvas_widget.ModelAttributesNode} node
@@ -528,6 +555,7 @@ define([
          */
         this.select = function(entity){
             if(_selectedEntity != entity){
+                this.hideObjectGuidance();
                 if(_selectedEntity) _selectedEntity.unselect();
                 if(entity) entity.select();
                 _selectedEntity = entity;
@@ -589,7 +617,6 @@ define([
             this.mountTool(MoveTool.TYPE);
             //this.callListeners(CONFIG.CANVAS.LISTENERS.RESET);
         };
-
         
         /**
          * Create a new node and draw it on the canvas
