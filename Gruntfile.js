@@ -334,8 +334,8 @@ module.exports = function(grunt) {
     // Whenever the "test" task is run, first clean the "tmp" dir, then run this
     // plugin's task(s), then test the result.
     grunt.registerTask('build', ['clean','requirejs','copy:lib','copy:main','buildwidgets']);
-    grunt.registerTask('deploy', 'Deploy to dbis.rwth-aachen.de', function(){
-        grunt.config.set('baseUrl', "http://dbis.rwth-aachen.de/~<%= sshconfig.dbis.username %>/syncmeta");
+    grunt.registerTask('deploy', 'Deploy', function(){
+        grunt.config.set('baseUrl', localConfig.deployUrl);
         grunt.config.set('roleSandboxUrl', "http://role-sandbox.eu");
         grunt.task.run(['clean','requirejs','copy:lib','copy:main','buildwidgets'/*,'sftp'*/]);
     });

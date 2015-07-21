@@ -370,11 +370,11 @@ define([
                     //ui.position.top = Math.round(ui.position.top / _zoom);
                 }
             });
-            _$node.transformable({
-                rotatable: false,
-                skewable: false,
-                scalable: false
-            });
+            // _$node.transformable({
+            //     rotatable: false,
+            //     skewable: false,
+            //     scalable: false
+            // });
             _$node.mousewheel(function(event){
                 that.setZoom(that.getZoom()+0.1*event.deltaY);
                 event.preventDefault();

@@ -7,15 +7,15 @@ requirejs([
     'require',
     'iwcw',
     'operations/non_ot/EntitySelectOperation',
-    'guidance_widget/GuidanceStrategy',
+    'guidance_widget/AvoidConflictsStrategy',
     'promise!GuidanceRules'
-],function (require, IWCW, EntitySelectOperation, GuidanceStrategy, GuidanceRules) {
+],function (require, IWCW, EntitySelectOperation, AvoidConflictsStrategy, GuidanceRules) {
     var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ACTIVITY);
-    var guidanceStrategy = new GuidanceStrategy(GuidanceRules);
+    var guidanceStrategy = new AvoidConflictsStrategy(GuidanceRules);
 
     var operationCallback = function(operation){
         if(operation instanceof EntitySelectOperation){
-            guidanceStrategy.establishContext(operation.getSelectedEntityId(), operation.getSelectedEntityType());
+            guidanceStrategy.onEntitySelect(operation.getSelectedEntityId(), operation.getSelectedEntityType());
         }
     };
 

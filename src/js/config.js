@@ -30,6 +30,9 @@ var require = {
         },
         jszip: {
             exports: "JSZip"
+        },
+        classjs: {
+            exports: "Class"
         }
     },
     paths: {
@@ -55,7 +58,8 @@ var require = {
         templates: "../templates",
         mfexport: "lib/MFExport",
         swfobject: "lib/vendor/swfobject/swfobject",
-        jszip: "lib/vendor/jszip"
+        jszip: "lib/vendor/jszip",
+        classjs: "lib/Class"
     }
 };
 

@@ -1,26 +1,22 @@
-define(['iwcw','operations/non_ot/ShowObjectGuidanceOperation'
+define(['iwcw','operations/non_ot/ShowObjectGuidanceOperation', 'classjs'
 ],function(IWCW ,ShowObjectGuidanceOperation) {
 
-    function GuidanceStrategy(guidanceRules){
-        var _iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.GUIDANCE);
-        var _guidanceRules = guidanceRules;
-        this.establishContext = function(objectId, objectType){
-            var relevantRules = _guidanceRules.objectToolRules.filter(function(rule){
-                return rule.srcObjectType == objectType;
-            });
-
-            var operation = new ShowObjectGuidanceOperation(objectId, relevantRules);
-            _iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.toNonOTOperation());
-        };
-
-        this.onGuidanceFollowed = function(){
-
-        };
-
-        this.onGuidanceRejected = function(){
-
-        };
-    }
+    var GuidanceStrategy = Class.extend({
+        init: function(guidanceRules){
+            this.guidanceRules = guidanceRules;
+            this.iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.GUIDANCE);
+        },
+        showObjectGuidance: function(objectId, guidanceRules){
+            var operation = new ShowObjectGuidanceOperation(objectId, guidanceRules);
+            this.iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.toNonOTOperation());
+        },
+        onEntitySelect: function(entityId, entityType){
+            //Override in child class to react to entity selection events
+        },
+        onUserJoin: function(user){
+            //Override in child class to react to user join events   
+        }
+    });
 
     return GuidanceStrategy;
 
