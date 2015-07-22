@@ -59,31 +59,12 @@ requirejs([
     palette.addTool(new MoveTool());
     palette.addSeparator(new Separator());
 
-    //Create node tools for guidance modeling based on metamodel (if in guidance modeling editor)
+    //Set the metamodel to the guidance metamodel in the guidance editor
     if(guidancemodel.isGuidanceEditor()){
-        console.log("Create guidance modeling node tools");
-        
-        var nodes = guidancemodel.metamodel.nodes;
-        for(var nodeId in nodes){
-            if(nodes.hasOwnProperty(nodeId)){
-                var node = nodes[nodeId];
-                var label = guidancemodel.getObjectContextLabelForType(node.label);
-                palette.addTool(new NodeTool(label, label));
-                label = guidancemodel.getObjectToolLabelForType(node.label);
-                palette.addTool(new NodeTool(label, label));
-            }
-        }
-        var edges = guidancemodel.metamodel.edges;
-        for(var edgeId in edges){
-            if(edges.hasOwnProperty(edgeId)){
-                var edge = edges[edgeId];
-                var label = guidancemodel.getRelationshipContextLabelForType(edge.label);
-                palette.addTool(new NodeTool(label, label));
-            }
-        }
+        metamodel = guidancemodel.guidancemetamodel;
     }
     //Create node tools for modeling based on a metamodel (if a metamodel exists)
-    else if(metamodel && metamodel.hasOwnProperty("nodes")){
+    if(metamodel && metamodel.hasOwnProperty("nodes")){
         var nodes = metamodel.nodes,
             node,
             shape,
@@ -138,13 +119,8 @@ requirejs([
     }
     palette.addSeparator(new Separator());
 
-    //Create edge tools for guidance modeling (if in guidance model editor)
-    if(guidancemodel.isGuidanceEditor()){
-        console.log("Create guidance modeling edge tools")
-        palette.addTool(new UniDirAssociationEdgeTool());
-    }
     //Create edge tools for modeling (based on metamodel)
-    else if(metamodel && metamodel.hasOwnProperty("edges")){
+    if(metamodel && metamodel.hasOwnProperty("edges")){
         var edges = metamodel.edges, edge;
         for(var edgeId in edges){
             if(edges.hasOwnProperty(edgeId)){

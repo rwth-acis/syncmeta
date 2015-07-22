@@ -22,7 +22,7 @@ requirejs([
             modelAttributesNode = EntityManager.createModelAttributesNodeFromJSON(json.attributes);
             wrapper.setModelAttributesNode(modelAttributesNode);
             modelAttributesNode.addToWrapper(wrapper);
-            wrapper.select(modelAttributesNode);    
+            wrapper.select(modelAttributesNode);
         }
         for(nodeId in json.nodes){
             if(json.nodes.hasOwnProperty(nodeId)){

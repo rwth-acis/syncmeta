@@ -59,54 +59,12 @@ define([
     var edgesByLabel = {};
     var objectToolNodeTypes = {};
 
-    //Create nodes for guidance modeling (based on metamodel)
+    //For guidance modeling set the metamodel to the guidance metamodel
     if(guidancemodel.isGuidanceEditor()){
-        //Create context nodes for objects
-        var nodes = guidancemodel.metamodel.nodes;
-        for(var nodeId in nodes){
-            if(nodes.hasOwnProperty(nodeId)){
-                var node = nodes[nodeId];
-                var label = guidancemodel.getObjectContextLabelForType(node.label);
-                nodeTypes[label] = ContextNode(label);
-                nodeTypes[label].TYPE = label;
-                nodeTypes[label].DEFAULT_WIDTH = 150;
-                nodeTypes[label].DEFAULT_HEIGHT = 100;
-
-                objectContextTypes[label] = nodeTypes[label];
-            }
-        }
-        //Create context nodes for relationships
-        var edges = guidancemodel.metamodel.edges;
-        for(var edgeId in edges){
-            if(edges.hasOwnProperty(edgeId)){
-                var edge = edges[edgeId];
-                var label = guidancemodel.getRelationshipContextLabelForType(edge.label);
-                nodeTypes[label] = ContextNode(label);
-                nodeTypes[label].TYPE = label;
-                nodeTypes[label].DEFAULT_WIDTH = 150;
-                nodeTypes[label].DEFAULT_HEIGHT = 100;
-
-                relationshipContextTypes[label] = nodeTypes[label];
-                edgesByLabel[edge.label] = edge;
-            }
-        }
-
-        //Create object guidance tool node
-        for(var nodeId in nodes){
-            if(nodes.hasOwnProperty(nodeId)){
-                var node = nodes[nodeId];
-                var label = guidancemodel.getObjectToolLabelForType(node.label);
-                nodeTypes[label] = ObjectToolNode(label);
-                nodeTypes[label].TYPE = label;
-                nodeTypes[label].DEFAULT_WIDTH = 150;
-                nodeTypes[label].DEFAULT_HEIGHT = 100;
-
-                objectToolTypes[label] = nodeTypes[label];
-            }
-        }
+        metamodel = guidancemodel.guidancemetamodel;
     }
     //Create nodes based on metamodel (if it exists)
-    else if(metamodel && metamodel.hasOwnProperty("nodes")){
+    if(metamodel && metamodel.hasOwnProperty("nodes")){
         var nodes = metamodel.nodes,
             node,
             shape,
@@ -167,16 +125,6 @@ define([
 
         }
         //End creating nodes based on metamodel
-
-        //Start creating nodes based on guidancemodel
-        nodes = guidancemodel.guidancemodel.nodes;
-        for(var nodeId in nodes){
-            if(nodes.hasOwnProperty(nodeId)){
-                node = nodes[nodeId];
-                console.log(node.label);
-            }
-        }
-        //End creating nodes based on guidancemodel
     }
     //Create nodes for metamodeling
     else {
@@ -196,99 +144,8 @@ define([
     var edgeTypes = {};
     var relations = {};
 
-    //Create edge types for guidance modeling
-    if(guidancemodel.isGuidanceEditor()){
-        //Ceate the uni-directional association
-        edgeTypes[UniDirAssociationEdge.TYPE] =  UniDirAssociationEdge;
-        var relationsForContextNodes = [];
-        //Outgoing for object context nodes
-        for(var nodeId in objectContextTypes){
-            var node = objectContextTypes[nodeId];
-            var relation = {sourceTypes: [node.TYPE], targetTypes: []};
-            var subTypeObjectContext = guidancemodel.getObjectTypeForObjectContextType(node.TYPE);
-
-            // Between object context nodes and relationship context nodes
-            for(var edgeId in relationshipContextTypes){
-                var edgeContext = relationshipContextTypes[edgeId];
-                var subTypeRelationshipContext = guidancemodel.getRelationshipTypeForRelationshipContextType(edgeContext.TYPE);
-                var edge = edgesByLabel[subTypeRelationshipContext];
-                for(var i = 0;  i < edge.relations.length; i++){
-                    if($.inArray(subTypeObjectContext, edge.relations[i].sourceTypes) > -1){
-                        relation.targetTypes.push(edgeContext.TYPE);
-                    }
-                }
-            }
-
-            for(var objectToolNodeId in objectToolTypes){
-                var objectToolNode = objectToolTypes[objectToolNodeId];
-                //Between object context nodes and object tool nodes
-                if(objectToolNode.TYPE.indexOf(subTypeObjectContext) == 0){
-                    relation.targetTypes.push(objectToolNode.TYPE);
-                    var objectToolRelation = {sourceTypes: [objectToolNode.TYPE], targetTypes: []};
-                    objectToolRelation.targetTypes.push(node.TYPE);
-                    relationsForContextNodes.push(objectToolRelation);
-                }
-            }
-            relationsForContextNodes.push(relation);
-        }
-
-        //Outgoing for relationship context nodes
-        for(var edgeId in relationshipContextTypes){
-            var relationshipContext = relationshipContextTypes[edgeId];
-            var relation = {sourceTypes: [relationshipContext.TYPE], targetTypes: []};
-            var subTypeRelationshipContext = guidancemodel.getRelationshipTypeForRelationshipContextType(relationshipContext.TYPE);
-
-            //Between relationship context nodes and object context nodes
-            for(var nodeId in objectContextTypes){
-                var objectContext = objectContextTypes[nodeId];
-                var subTypeObjectContext = guidancemodel.getObjectTypeForObjectContextType(objectContext.TYPE);
-                var edge = edgesByLabel[subTypeRelationshipContext];
-                for(var i = 0;  i < edge.relations.length; i++){
-                    if($.inArray(subTypeObjectContext, edge.relations[i].targetTypes) > -1){
-                        relation.targetTypes.push(objectContext.TYPE);
-                    }
-                }
-            }
-            relationsForContextNodes.push(relation);
-        }
-
-        //Outgoing for object tool nodes
-        for(var objectToolId in objectToolTypes){
-            var objectTool = objectToolTypes[objectToolId];
-            var relation = {sourceTypes: [objectTool.TYPE], targetTypes: []};
-            var subTypeObjectTool = guidancemodel.getObjectTypeForObjectToolType(objectTool.TYPE);
-
-            for(var edgeId in guidancemodel.metamodel.edges){
-                var edge = guidancemodel.metamodel.edges[edgeId];
-                for(var i = 0; i < edge.relations.length; i++){
-                    console.log("Check if inArray: " + subTypeObjectTool);
-                    console.log(edge.relations[i].sourceTypes);
-                    
-                    //Between object tools and relationship contexts
-                    if(($.inArray(subTypeObjectTool, edge.relations[i].sourceTypes) > -1) ||
-                        ($.inArray(subTypeObjectTool, edge.relations[i].targetTypes) > -1)){
-                        relation.targetTypes.push(guidancemodel.getRelationshipContextLabelForType(edge.label));
-
-                        //Between object tools and object contexts
-                        for(var objectContextId in objectContextTypes){
-                            var objectContext = objectContextTypes[objectContextId];
-                            var subTypeObjectContext = guidancemodel.getObjectTypeForObjectContextType(objectContext.TYPE);
-                            if(($.inArray(subTypeObjectContext, edge.relations[i].sourceTypes) > -1)||
-                               ($.inArray(subTypeObjectContext, edge.relations[i].targetTypes) > -1)){
-                                relation.targetTypes.push(objectContext.TYPE);
-                            }
-                        }
-                    }
-
-                }
-            }
-            relationsForContextNodes.push(relation);
-        }
-
-        relations[UniDirAssociationEdge.TYPE] = relationsForContextNodes;
-    }
     //Create edge types for modeling based on metamodel
-    else if(metamodel && metamodel.hasOwnProperty("edges")){
+    if(metamodel && metamodel.hasOwnProperty("edges")){
         var edges = metamodel.edges, edge;
         for(var edgeId in edges){
             if(edges.hasOwnProperty(edgeId)){
@@ -380,6 +237,7 @@ define([
              * @returns {canvas_widget.ModelAttributesNode}
              */
             createModelAttributesNode: function(){
+                console.log(metamodel);
                 if(_modelAttributesNode === null) {
                     _modelAttributesNode = new ModelAttributesNode("modelAttributes",metamodel.attributes);
                     return _modelAttributesNode;
@@ -743,6 +601,208 @@ define([
                     })(connectionItems)
                 };
             },
+            generateGuidanceMetamodel: function(){
+                var metamodel = this.generateMetaModel();
+                //Create guidance metamodel
+                var guidanceMetamodel = {
+                    attributes: {},
+                    nodes: {},
+                    edges: {}
+                };
+
+                var objectGuidanceNodes = {};
+                var objectContextNodes = {};
+                var relationshipContextNodes = {};
+                var edgesByLabel = {};
+
+                //Create context nodes for objects
+                var nodes = metamodel.nodes;
+                for(var nodeId in nodes){
+                    if(nodes.hasOwnProperty(nodeId)){
+                        var node = nodes[nodeId];
+                        var label = guidancemodel.getObjectContextLabelForType(node.label);
+
+                        var id = Util.generateRandomId();
+                        guidanceMetamodel.nodes[id] = {
+                            label: label,
+                            attributes: {},
+                            shape: {
+                                shape: "rectangle",
+                                color: "",
+                                defaultWidth: 0,
+                                defaultHeight: 0,
+                                customShape: "",
+                                customAnchors: ""
+                            }
+                        };
+
+                        objectContextNodes[id] = guidanceMetamodel.nodes[id];
+                    }
+                }
+                //Create context nodes for relationships
+                var edges = metamodel.edges;
+                for(var edgeId in edges){
+                    if(edges.hasOwnProperty(edgeId)){
+                        var edge = edges[edgeId];
+                        var label = guidancemodel.getRelationshipContextLabelForType(edge.label);
+
+                        edgesByLabel[edge.label] = edge;
+
+                        var id = Util.generateRandomId();
+                        guidanceMetamodel.nodes[id] = {
+                            label: label,
+                            attributes: {},
+                            shape: {
+                                shape: "rectangle",
+                                color: "",
+                                defaultWidth: 0,
+                                defaultHeight: 0,
+                                customShape: "",
+                                customAnchors: ""
+                            }
+                        };
+
+                        relationshipContextNodes[id] = guidanceMetamodel.nodes[id];
+                    }
+                }
+
+                //Create object guidance nodes
+                for(var nodeId in nodes){
+                    if(nodes.hasOwnProperty(nodeId)){
+                        var node = nodes[nodeId];
+                        var label = guidancemodel.getObjectToolLabelForType(node.label);
+
+                        var id = Util.generateRandomId();
+                        guidanceMetamodel.nodes[id] = {
+                            label: label,
+                            shape: {
+                                shape: "diamond",
+                                color: "",
+                                defaultWidth: 0,
+                                defaultHeight: 0,
+                                customShape: "",
+                                customAnchors: ""
+                            },
+                            attributes: {
+                            }
+                        };
+
+                        //Add the label attribute
+                        guidanceMetamodel.nodes[id].attributes[Util.generateRandomId()] = {
+                            key: "label",
+                            value: "string"
+                        };
+
+                        objectGuidanceNodes[id] = guidanceMetamodel.nodes[id];
+                    }
+                }
+
+                //Ceate the uni-directional association
+                var relationsForContextNodes = [];
+                //Outgoing for object context nodes
+                for(var nodeId in objectContextNodes){
+                    var node = objectContextNodes[nodeId];
+                    var relation = {sourceTypes: [node.label], targetTypes: []};
+                    var subTypeObjectContext = guidancemodel.getObjectTypeForObjectContextType(node.label);
+
+                    // Between object context nodes and relationship context nodes
+                    for(var edgeId in relationshipContextNodes){
+                        var edgeContext = relationshipContextNodes[edgeId];
+                        console.log(edgeContext);
+                        var subTypeRelationshipContext = guidancemodel.getRelationshipTypeForRelationshipContextType(edgeContext.label);
+                        var edge = edgesByLabel[subTypeRelationshipContext];
+                        console.log(edge);
+                        for(var i = 0;  i < edge.relations.length; i++){
+                            if($.inArray(subTypeObjectContext, edge.relations[i].sourceTypes) > -1){
+                                relation.targetTypes.push(edgeContext.label);
+                            }
+                        }
+                    }
+
+                    for(var objectToolNodeId in objectGuidanceNodes){
+                        var objectToolNode = objectGuidanceNodes[objectToolNodeId];
+                        //Between object context nodes and object tool nodes
+                        if(objectToolNode.label.indexOf(subTypeObjectContext) == 0){
+                            relation.targetTypes.push(objectToolNode.label);
+                            var objectToolRelation = {sourceTypes: [objectToolNode.label], targetTypes: []};
+                            objectToolRelation.targetTypes.push(node.label);
+                            relationsForContextNodes.push(objectToolRelation);
+                        }
+                    }
+                    relationsForContextNodes.push(relation);
+                }
+
+                //Outgoing for relationship context nodes
+                for(var edgeId in relationshipContextNodes){
+                    var relationshipContext = relationshipContextNodes[edgeId];
+                    var relation = {sourceTypes: [relationshipContext.label], targetTypes: []};
+                    var subTypeRelationshipContext = guidancemodel.getRelationshipTypeForRelationshipContextType(relationshipContext.label);
+
+                    //Between relationship context nodes and object context nodes
+                    for(var nodeId in objectContextNodes){
+                        var objectContext = objectContextNodes[nodeId];
+                        var subTypeObjectContext = guidancemodel.getObjectTypeForObjectContextType(objectContext.label);
+                        var edge = edgesByLabel[subTypeRelationshipContext];
+                        for(var i = 0;  i < edge.relations.length; i++){
+                            if($.inArray(subTypeObjectContext, edge.relations[i].targetTypes) > -1){
+                                relation.targetTypes.push(objectContext.label);
+                            }
+                        }
+                    }
+                    relationsForContextNodes.push(relation);
+                }
+
+                //Outgoing for object tool nodes
+                for(var objectToolId in objectGuidanceNodes){
+                    var objectTool = objectGuidanceNodes[objectToolId];
+                    var relation = {sourceTypes: [objectTool.label], targetTypes: []};
+                    var subTypeObjectTool = guidancemodel.getObjectTypeForObjectToolType(objectTool.label);
+
+                    for(var edgeId in metamodel.edges){
+                        var edge = metamodel.edges[edgeId];
+                        for(var i = 0; i < edge.relations.length; i++){
+                            //Between object tools and relationship contexts
+                            if(($.inArray(subTypeObjectTool, edge.relations[i].sourceTypes) > -1) ||
+                                ($.inArray(subTypeObjectTool, edge.relations[i].targetTypes) > -1)){
+                                relation.targetTypes.push(guidancemodel.getRelationshipContextLabelForType(edge.label));
+
+                                //Between object tools and object contexts
+                                for(var objectContextId in objectContextNodes){
+                                    var objectContext = objectContextNodes[objectContextId];
+                                    var subTypeObjectContext = guidancemodel.getObjectTypeForObjectContextType(objectContext.label);
+                                    if(($.inArray(subTypeObjectContext, edge.relations[i].sourceTypes) > -1)||
+                                       ($.inArray(subTypeObjectContext, edge.relations[i].targetTypes) > -1)){
+                                        relation.targetTypes.push(objectContext.label);
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                    relationsForContextNodes.push(relation);
+                }
+
+                relations[UniDirAssociationEdge.TYPE] = relationsForContextNodes;
+
+                var id = Util.generateRandomId();
+                guidanceMetamodel.edges[id] = {
+                    label: "Uni-Dir-Association",
+                    shape: {
+                        arrow: "unidirassociation",
+                        shape: "straight",
+                        color: "",
+                        overlay: "",
+                        overlayPosition: "hidden",
+                        overlayRotate: true
+                    },
+                    relations: relationsForContextNodes
+                };
+
+                console.log("Guidance metamodel");
+                console.log(guidanceMetamodel);
+
+                return guidanceMetamodel;
+            },
             generateGuidanceRules: function(){
                 console.log("Generating guidance rules");
                 var guidanceRules = {objectToolRules: []};
@@ -757,6 +817,12 @@ define([
                         var destObjectType = null;
                         var relationshipType = null;
                         var relevantEdges = [];
+                        var label = "";
+                        //Get the label attribute
+                        for(var attributeId in node.attributes){
+                            if(node.attributes[attributeId].name == "label")
+                                label = node.attributes[attributeId].value.value;
+                        }
                         var edgeId;
                         for(edgeId in edges){
                             if(edges[edgeId].source == nodeId)
@@ -776,13 +842,13 @@ define([
                             var objectToolRule = {
                                 srcObjectType: srcObjectType,
                                 destObjectType: destObjectType,
-                                relationshipType: relationshipType
+                                relationshipType: relationshipType,
+                                label: label
                             };
                             guidanceRules.objectToolRules.push(objectToolRule);
                         }
                     };
                 }
-                console.log(guidanceRules);
                 return guidanceRules;
             },
             /**
@@ -1132,9 +1198,10 @@ define([
                     guidancemodel.guidancemodel = data;
                     resourcesToSave.push({'typeName': CONFIG.NS.MY.GUIDANCEMODEL, 'representation': guidancemodel});
                 }
-                //In the metamodel editor update the metamodel needed for the guidance editor
+                //In the metamodel editor create the guidance metamodel needed for the guidance editor
                 else if(!metamodel.hasOwnProperty('nodes')){
                     guidancemodel.metamodel = this.generateMetaModel();
+                    guidancemodel.guidancemetamodel = this.generateGuidanceMetamodel();
                     resourcesToSave.push({'typeName': CONFIG.NS.MY.GUIDANCEMODEL, 'representation': guidancemodel});
                     resourcesToSave.push({'typeName': CONFIG.NS.MY.MODEL, 'representation': data})
                 }

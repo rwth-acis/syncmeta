@@ -14,8 +14,9 @@ define([
     'attribute_widget/BiDirAssociationEdge',
     'attribute_widget/UniDirAssociationEdge',
     'attribute_widget/SingleValueAttribute',
-    'promise!Metamodel'
-],/** @lends EntityManager */function(_,Node,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,ModelAttributesNode,Edge,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge,SingleValueAttribute,metamodel) {
+    'promise!Metamodel',
+    'promise!Guidancemodel'
+],/** @lends EntityManager */function(_,Node,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,ModelAttributesNode,Edge,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge,SingleValueAttribute,metamodel,guidancemodel) {
 
     /**
      * Different node types
@@ -23,6 +24,11 @@ define([
      */
     var nodeTypes = {};
 
+    //Set the metamodel to the guidance metamodel for guidance modeling
+    if(guidancemodel.isGuidanceEditor()){
+        metamodel = guidancemodel.guidancemetamodel;
+    }
+    // Create nodes for modeling (based on metamodel)
     if(metamodel && metamodel.hasOwnProperty("nodes")){
         var nodes = metamodel.nodes, node;
         for(var nodeId in nodes){
@@ -31,7 +37,9 @@ define([
                 nodeTypes[node.label] = Node(node.label,node.shape.shape,node.shape.customShape,node.shape.customAnchors,node.shape.color,node.attributes);
             }
         }
-    } else {
+    }
+    //Create nodes for metamodeling
+    else {
         nodeTypes[ObjectNode.TYPE] = ObjectNode;
         nodeTypes[AbstractClassNode.TYPE] = AbstractClassNode;
         nodeTypes[RelationshipNode.TYPE] = RelationshipNode;

@@ -12,6 +12,7 @@ define([
         
         var _isSelected = false;
 
+        console.log(height);
         var _appearance = {
             left: left,
             top: top,
@@ -25,10 +26,16 @@ define([
         .click(function(event) {
             console.log("click");
             _isSelected = !_isSelected;
-            var nodeId = _canvas.createNode(_objectGuidanceRule.destObjectType, _appearance.left, _appearance.top, 100, 100);
+            var nodeId = _canvas.createNode(_objectGuidanceRule.destObjectType, _appearance.left, _appearance.top, width, height);
             _canvas.createEdge(_objectGuidanceRule.relationshipType, _srcObjectId, nodeId);
             _canvas.hideObjectGuidance();
             event.stopPropagation();
+        });
+
+        _$node.find(".label").append(_objectGuidanceRule.label);
+        _$node.find(".label").css({
+            "font-size": "60%",
+            "text-align": "center"
         });
 
         this.get$node = function(){

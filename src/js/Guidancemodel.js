@@ -72,6 +72,7 @@ define([
                             if(representation){
                                 guidancemodeling.guidancemodel = representation.guidancemodel;
                                 guidancemodeling.metamodel = representation.metamodel;
+                                guidancemodeling.guidancemetamodel = representation.guidancemetamodel;
                             }
                             deferred.resolve(guidancemodeling);
                         });

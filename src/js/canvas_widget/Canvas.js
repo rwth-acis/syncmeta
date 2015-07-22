@@ -400,7 +400,7 @@ define([
                 return;
             var rules = operation.getObjectGuidanceRules();
             var appearance = srcObject.getAppearance();
-            var fixedWidth = 50;
+            var fixedWidth = 100;
             var verticalMargin = 40;
             var horizontalMargin = 10;
             var left = appearance.left + appearance.width / 2;
@@ -410,7 +410,9 @@ define([
                 var rule = rules[i];
                 var id = Util.generateRandomId(24);
                 var $shape = EntityManager.getNodeType(rule.destObjectType).SHAPE.clone();
-                var height = EntityManager.getNodeType(rule.destObjectType).DEFAULT_HEIGHT * (fixedWidth / EntityManager.getNodeType(rule.destObjectType).DEFAULT_WIDTH);
+                var defaultWidth = EntityManager.getNodeType(rule.destObjectType).DEFAULT_WIDTH || 100;
+                var defaultHeight = EntityManager.getNodeType(rule.destObjectType).DEFAULT_HEIGHT || 50;
+                var height = defaultHeight * (fixedWidth / defaultWidth);
                 var objectGuidance = new ObjectGuidance(id, $shape, left, top, fixedWidth, height, operation.getObjectId(), rule);
                 _objectGuidanceInstances.push(objectGuidance);
                 objectGuidance.addToCanvas(that);
