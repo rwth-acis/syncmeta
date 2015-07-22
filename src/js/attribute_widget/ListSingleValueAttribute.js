@@ -53,6 +53,7 @@ define([
          * @param {operations.ot.AttributeDeleteOperation} operation
          */
         var propagateAttributeDeleteOperation = function(operation){
+			processAttributeDeleteOperation(operation);
             _iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.getOTOperation());
         };
 
@@ -112,14 +113,14 @@ define([
          * Register inter widget communication callbacks
          */
         this.registerCallbacks = function(){
-            iwc.registerOnDataReceivedCallback(attributeDeleteCallback);
+            _iwc.registerOnDataReceivedCallback(attributeDeleteCallback);
         };
 
         /**
          * Unregister inter widget communication callbacks
          */
         this.unregisterCallbacks = function(){
-            iwc.unregisterOnDataReceivedCallback(attributeDeleteCallback);
+            _iwc.unregisterOnDataReceivedCallback(attributeDeleteCallback);
         };
 
         _$node.find(".name").text(this.getName());
@@ -129,7 +130,7 @@ define([
             propagateAttributeDeleteOperation(operation);
         });
 
-        if(iwc){
+        if(_iwc){
             that.registerCallbacks();
         }
     }

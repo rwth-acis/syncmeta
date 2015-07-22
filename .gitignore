@@ -8,3 +8,5 @@ html/
 /.project
 .codio
 .settings
+
+npm-debug.log
