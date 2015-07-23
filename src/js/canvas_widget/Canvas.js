@@ -122,7 +122,7 @@ define([
             }
 
             if(isRemote){
-                var senderJabberId = operation.getNonOTOperation().getSender();
+                var senderJabberId = operation.getOTOperation().getSender();
                 color = _iwcot.getUserColor(senderJabberId);
                 node.refreshTraceAwareness(_iwcot.getUserColor(senderJabberId));
             }
