@@ -14,8 +14,9 @@ define([
     'canvas_widget/AbstractEntity',
     'canvas_widget/SingleValueAttribute',
     'text!templates/canvas_widget/abstract_node.html',
+    'text!templates/canvas_widget/awareness_trace.html',
     'jquery.transformable'
-],/** @lends AbstractNode */function(require,$,jsPlumb,_,Util,IWCOT,NodeDeleteOperation,NodeMoveOperation,NodeMoveZOperation,NodeResizeOperation,ActivityOperation,EntitySelectOperation,AbstractEntity,SingleValueAttribute,abstractNodeHtml) {
+],/** @lends AbstractNode */function(require,$,jsPlumb,_,Util,IWCOT,NodeDeleteOperation,NodeMoveOperation,NodeMoveZOperation,NodeResizeOperation,ActivityOperation,EntitySelectOperation,AbstractEntity,SingleValueAttribute,abstractNodeHtml,awarenessTraceHtml) {
 
     AbstractNode.prototype = new AbstractEntity();
     AbstractNode.prototype.constructor = AbstractNode;
@@ -84,6 +85,18 @@ define([
          * @private
          */
         var _$node = $(_.template(abstractNodeHtml,{id: id}));
+
+        var _$awarenessTrace = $(_.template(awarenessTraceHtml, {id: id + "_awareness"}));
+
+        var _awarenessTimer = setInterval(function(){
+            var opacity = _$awarenessTrace.css("opacity");
+            opacity -= 0.1;
+            if(opacity < 0)
+                opacity = 0;
+            _$awarenessTrace.css({
+                opacity: opacity
+            });
+        }, 3000);
 
         /**
          * Inter widget communication wrapper
@@ -176,6 +189,7 @@ define([
          */
         var propagateNodeMoveOperation = function(operation){
             processNodeMoveOperation(operation);
+            hideTraceAwareness();
             if(_iwcot.sendRemoteOTOperation(operation)){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
@@ -194,6 +208,7 @@ define([
          */
         var propagateNodeMoveZOperation = function(operation){
             processNodeMoveZOperation(operation);
+            hideTraceAwareness();
             if(_iwcot.sendRemoteOTOperation(operation)){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
@@ -220,6 +235,7 @@ define([
          */
         var propagateNodeResizeOperation = function(operation){
             processNodeResizeOperation(operation);
+            hideTraceAwareness();
             if(_iwcot.sendRemoteOTOperation(operation)){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
@@ -304,6 +320,19 @@ define([
             }
         };
 
+        var refreshTraceAwareness = function(color){
+            _$awarenessTrace.css({
+                opacity: 1,
+                fill: color
+            });
+        };
+
+        var hideTraceAwareness = function(){
+            _$awarenessTrace.css({
+                opacity: 0
+            });
+        };
+
         /**
          * Callback for a remote Node Move Operation
          * @param {operations.ot.NodeMoveOperation} operation
@@ -318,6 +347,8 @@ define([
                     NodeMoveOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
                     {nodeType: that.getType()}
                 ).toNonOTOperation());
+                color = _iwcot.getUserColor(operation.getOTOperation().getSender());
+                refreshTraceAwareness(color);
                 processNodeMoveOperation(operation);
             }
         };
@@ -336,6 +367,8 @@ define([
                     NodeMoveOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
                     {nodeType: that.getType()}
                 ).toNonOTOperation());
+                color = _iwcot.getUserColor(operation.getOTOperation().getSender());
+                refreshTraceAwareness(color);
                 processNodeMoveZOperation(operation);
             }
         };
@@ -354,6 +387,8 @@ define([
                     NodeResizeOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
                     {nodeType: that.getType()}
                 ).toNonOTOperation());
+                color = _iwcot.getUserColor(operation.getOTOperation().getSender());
+                refreshTraceAwareness(color);
                 processNodeResizeOperation(operation);
             }
         };
@@ -570,12 +605,17 @@ define([
             return _zIndex;
         };
 
+        this.refreshTraceAwareness = function(color){
+            refreshTraceAwareness(color);
+        };
+
         /**
          * Adds node to canvas
          * @param {canvas_widget.AbstractCanvas} canvas
          */
         this.addToCanvas = function(canvas){
             _canvas = canvas;
+            canvas.get$canvas().append(_$awarenessTrace);
             canvas.get$canvas().append(_$node);
         };
 
@@ -593,6 +633,7 @@ define([
         this.removeFromCanvas = function(){
             _canvas = null;
             _$node.remove();
+            _$awarenessTrace.remove();
         };
 
         /**
@@ -683,6 +724,12 @@ define([
          */
         this._draw = function(){
             //noinspection JSAccessibilityCheck
+            _$awarenessTrace.css({
+                left: _appearance.left + _appearance.width/2,
+                top: _appearance.top + _appearance.height/2,
+                width: _appearance.width,
+                height: _appearance.height
+            });
             _$node.css({
                 left: _appearance.left,
                 top: _appearance.top,
@@ -909,6 +956,7 @@ define([
          * Remove the node
          */
         this.remove = function(){
+            clearInterval(_awarenessTimer);
             this.removeFromCanvas();
             //this.unregisterCallbacks();
             require('canvas_widget/EntityManager').deleteNode(this.getEntityId());

@@ -113,7 +113,7 @@ define([
          * Apply a Node Add Operation
          * @param {operations.ot.NodeAddOperation} operation
          */
-        var processNodeAddOperation = function(operation){
+        var processNodeAddOperation = function(operation, isRemote){
             var node;
             if(operation.getJSON()){
                 node = EntityManager.createNodeFromJSON(operation.getType(),operation.getEntityId(),operation.getLeft(),operation.getTop(),operation.getWidth(),operation.getHeight(),operation.getZIndex(),operation.getJSON());
@@ -121,6 +121,11 @@ define([
                 node = EntityManager.createNode(operation.getType(),operation.getEntityId(),operation.getLeft(),operation.getTop(),operation.getWidth(),operation.getHeight(),operation.getZIndex());
             }
 
+            if(isRemote){
+                var senderJabberId = operation.getNonOTOperation().getSender();
+                color = _iwcot.getUserColor(senderJabberId);
+                node.refreshTraceAwareness(_iwcot.getUserColor(senderJabberId));
+            }
             node.draw();
             node.addToCanvas(that);
             that.remountCurrentTool();
@@ -205,7 +210,7 @@ define([
                     NodeAddOperation.getOperationDescription(operation.getType()),
                     {nodeType: operation.getType()}
                 ).toNonOTOperation());
-                processNodeAddOperation(operation);
+                processNodeAddOperation(operation, true);
             }
         };
 
