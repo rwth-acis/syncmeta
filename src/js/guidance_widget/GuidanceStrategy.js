@@ -2,8 +2,9 @@ define(['iwcw','operations/non_ot/ShowObjectGuidanceOperation', 'classjs'
 ],function(IWCW ,ShowObjectGuidanceOperation) {
 
     var GuidanceStrategy = Class.extend({
-        init: function(guidanceRules){
+        init: function(guidanceRules, space){
             this.guidanceRules = guidanceRules;
+            this.space = space;
             this.iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.GUIDANCE);
         },
         showObjectGuidance: function(objectId, guidanceRules){
@@ -15,8 +16,13 @@ define(['iwcw','operations/non_ot/ShowObjectGuidanceOperation', 'classjs'
         },
         onUserJoin: function(user){
             //Override in child class to react to user join events   
+        },
+        onGuidanceFollowed: function(user, rule){
+            //Override in child class to react to guidance followed events
         }
     });
+
+    GuidanceStrategy.NAME = "Guidance Strategy";
 
     return GuidanceStrategy;
 

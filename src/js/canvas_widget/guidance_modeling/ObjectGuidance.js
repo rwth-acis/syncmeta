@@ -1,18 +1,19 @@
 define([
+    'iwcotw',
     'jqueryui',
     'lodash',
+    'operations/non_ot/ObjectGuidanceFollowedOperation',
     'text!templates/canvas_widget/abstract_node.html'
-],/** @lends ContextNode */function($,_,abstractNodeHtml) {
+],/** @lends ContextNode */function(IWCOTW, $,_,ObjectGuidanceFollowedOperation,abstractNodeHtml) {
     function ObjectGuidance(id, $shape, left, top, width, height, srcObjectId, objectGuidanceRule){
+        var _iwc = IWCOTW.getInstance(CONFIG.WIDGET.NAME.MAIN);
+
         var _$node = $(_.template(abstractNodeHtml,{id: id})).append($shape.clone());
         var _canvas;
 
         var _srcObjectId = srcObjectId;
         var _objectGuidanceRule = objectGuidanceRule;
-        
-        var _isSelected = false;
 
-        console.log(height);
         var _appearance = {
             left: left,
             top: top,
@@ -24,13 +25,35 @@ define([
 
         _$node
         .click(function(event) {
-            console.log("click");
-            _isSelected = !_isSelected;
             var nodeId = _canvas.createNode(_objectGuidanceRule.destObjectType, _appearance.left, _appearance.top, width, height);
             _canvas.createEdge(_objectGuidanceRule.relationshipType, _srcObjectId, nodeId);
             _canvas.hideObjectGuidance();
+
+            var operation = new ObjectGuidanceFollowedOperation(_srcObjectId, _objectGuidanceRule);
+            operation.toNonOTOperation();
+            processObjectGuidanceFollowedOperation(operation);
+            propagateObjectGuidanceFollowedOperation(operation);
             event.stopPropagation();
         });
+
+        var propagateObjectGuidanceFollowedOperation = function(operation){
+            _iwc.sendRemoteNonOTOperation(operation.getNonOTOperation());
+        };
+
+        var processObjectGuidanceFollowedOperation = function(operation){
+            _iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getNonOTOperation());
+        };
+
+        var onObjectGuidanceFollowedCallback = function(operation){
+            if(operation instanceof ObjectGuidanceFollowedOperation)
+                processObjectGuidanceFollowedOperation(operation)
+        };
+
+        var registerCallbacks = function(){
+            _iwc.registerOnRemoteDataReceivedCallback(onObjectGuidanceFollowedCallback)
+        };
+
+        registerCallbacks();
 
         _$node.find(".label").append(_objectGuidanceRule.label);
         _$node.find(".label").css({

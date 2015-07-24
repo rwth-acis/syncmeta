@@ -18,8 +18,9 @@ define([
     'operations/non_ot/ExportGuidanceRulesOperation',
     'operations/non_ot/ExportImageOperation',
     'operations/non_ot/JoinOperation',
-    'operations/non_ot/ShowObjectGuidanceOperation'
-],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportImageOperation,JoinOperation, ShowObjectGuidanceOperation) {
+    'operations/non_ot/ShowObjectGuidanceOperation',
+    'operations/non_ot/ObjectGuidanceFollowedOperation'
+],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportImageOperation,JoinOperation, ShowObjectGuidanceOperation, ObjectGuidanceFollowedOperation) {
 
     /**
      * OperationFactory
@@ -74,6 +75,10 @@ define([
                         break;
                     case ShowObjectGuidanceOperation.TYPE:
                         resOperation = new ShowObjectGuidanceOperation(data.objectId, data.objectGuidanceRules);
+                        break;
+                    case ObjectGuidanceFollowedOperation.TYPE:
+                        resOperation = new ObjectGuidanceFollowedOperation(data.objectId, data.objectGuidanceRule);
+                        resOperation.setNonOTOperation(operation)
                         break;
                 }
                 return resOperation;
