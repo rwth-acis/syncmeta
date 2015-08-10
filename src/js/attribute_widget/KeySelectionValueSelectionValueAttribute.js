@@ -183,14 +183,14 @@ define([
          * Register inter widget communication callbacks
          */
         this.registerCallbacks = function(){
-            iwc.registerOnDataReceivedCallback(attributeDeleteCallback);
+           _iwc.registerOnDataReceivedCallback(attributeDeleteCallback);
         };
 
         /**
          * Unregister inter widget communication callbacks
          */
         this.unregisterCallbacks = function(){
-            iwc.unregisterOnDataReceivedCallback(attributeDeleteCallback);
+           _iwc.unregisterOnDataReceivedCallback(attributeDeleteCallback);
         };
 
         _$node.find(".key").append(_key.get$node());
@@ -201,7 +201,7 @@ define([
             propagateAttributeDeleteOperation(operation);
         });
 
-        if(iwc){
+        if(_iwc){
             that.registerCallbacks();
         }
     }

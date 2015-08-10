@@ -15,7 +15,7 @@ define([
     'canvas_widget/SingleValueAttribute',
     'text!templates/canvas_widget/abstract_node.html',
     'text!templates/canvas_widget/awareness_trace.html',
-    'jquery.transformable'
+    'jquery.transformable-PATCHED'
 ],/** @lends AbstractNode */function(require,$,jsPlumb,_,Util,IWCOT,NodeDeleteOperation,NodeMoveOperation,NodeMoveZOperation,NodeResizeOperation,ActivityOperation,EntitySelectOperation,AbstractEntity,SingleValueAttribute,abstractNodeHtml,awarenessTraceHtml) {
 
     AbstractNode.prototype = new AbstractEntity();

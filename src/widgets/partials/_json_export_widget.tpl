@@ -1,5 +1,5 @@
 <script type="application/javascript">
-    requirejs(['jqueryui','mfexport'],function($,MFExport){
+  requirejs(['jqueryui','mfexport','ildeApi', 'lodash'], function($,MFExport,ILDE,_){
         $("#json").click(function(){
             var $this = $(this).addClass('loading_button');
             MFExport.getJSON(function(data,title){
@@ -20,8 +20,10 @@
                 $this.removeClass('loading_button');
             });
         });
-    });
+  });
 </script>
+
+
 <style>
     /*noinspection CssUnknownTarget,CssUnusedSymbol*/
     .loading_button {

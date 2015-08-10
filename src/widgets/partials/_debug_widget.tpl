@@ -95,8 +95,6 @@
                     if(modelUris.length > 0){
                         _.map(modelUris,function(uri){
                             openapp.resource.del(uri,function(){
-                                $exportModel.prop('disabled', true);
-                                $deleteModel.prop('disabled', true);
                                 feedback("Done!");
                             });
                         });

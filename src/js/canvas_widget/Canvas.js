@@ -19,9 +19,8 @@ define([
     'canvas_widget/AbstractCanvas',
     'canvas_widget/MoveTool',
     'canvas_widget/guidance_modeling/ObjectGuidance',
-    'jquery.transformable'
+    'jquery.transformable-PATCHED'
 ],/** @lends Canvas */function($,jsPlumb,IWCOT,Util,NodeAddOperation,EdgeAddOperation,ToolSelectOperation,EntitySelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportImageOperation,ShowObjectGuidanceOperation,AbstractEntity,ModelAttributesNode,EntityManager,AbstractCanvas,MoveTool,ObjectGuidance) {
-
     Canvas.prototype = new AbstractCanvas();
     Canvas.prototype.constructor = Canvas;
     /**
@@ -375,11 +374,14 @@ define([
                     //ui.position.top = Math.round(ui.position.top / _zoom);
                 }
             });
-            // _$node.transformable({
-            //     rotatable: false,
-            //     skewable: false,
-            //     scalable: false
-            // });
+
+            if(_$node.transformable != null){ // since recently, this method doesnt exist anymore.  BUGFIX
+                _$node.transformable({
+                    rotatable: false,
+                    skewable: false,
+                    scalable: false
+                });
+            }
             _$node.mousewheel(function(event){
                 that.setZoom(that.getZoom()+0.1*event.deltaY);
                 event.preventDefault();

@@ -10,7 +10,7 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON('package.json'),
 
         baseUrl: localConfig.baseUrl,
-        roleSandboxUrl: "http://127.0.0.1:8073",
+        roleSandboxUrl: "http://role-sandbox.eu",
 
         bowerdir: grunt.file.readJSON('.bowerrc')['directory'],
         distdir: 'html',
@@ -219,8 +219,8 @@ module.exports = function(grunt) {
                         meta: {
                             title: "IMS LD Export",
                             description: "",
-                            width: "120",
-                            height: "60"
+                            width: "320",
+                            height: "310"
                         },
                         bodyPartial: '_imsld_export_widget.tpl'
                     }
