@@ -632,6 +632,29 @@ define([
 
                 guidanceMetamodel.nodes[Util.generateRandomId()] = initialNode;
 
+                //Create final node
+                var finalNode = {
+                    label: "Final node",
+                    shape: {
+                        shape: "circle",
+                        color: "black",
+                        defaultWidth: 0,
+                        defaultHeight: 0,
+                        customShape: "",
+                        customAnchors: ""
+                    },
+                    attributes: {
+                    }
+                };
+
+                //Add a label attribute to the initial node
+                finalNode.attributes[Util.generateRandomId()] = {
+                    key: "label",
+                    value: "string"
+                };
+
+                guidanceMetamodel.nodes[Util.generateRandomId()] = finalNode;
+
                 var objectGuidanceNodes = {};
                 var objectContextNodes = {};
                 var relationshipContextNodes = {};
