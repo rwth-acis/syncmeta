@@ -237,7 +237,6 @@ define([
              * @returns {canvas_widget.ModelAttributesNode}
              */
             createModelAttributesNode: function(){
-                console.log(metamodel);
                 if(_modelAttributesNode === null) {
                     _modelAttributesNode = new ModelAttributesNode("modelAttributes",metamodel.attributes);
                     return _modelAttributesNode;
@@ -610,6 +609,29 @@ define([
                     edges: {}
                 };
 
+                //Create initial node
+                var initialNode = {
+                    label: "Initial node",
+                    shape: {
+                        shape: "circle",
+                        color: "yellow",
+                        defaultWidth: 0,
+                        defaultHeight: 0,
+                        customShape: "",
+                        customAnchors: ""
+                    },
+                    attributes: {
+                    }
+                };
+
+                //Add a label attribute to the initial node
+                initialNode.attributes[Util.generateRandomId()] = {
+                    key: "label",
+                    value: "string"
+                };
+
+                guidanceMetamodel.nodes[Util.generateRandomId()] = initialNode;
+
                 var objectGuidanceNodes = {};
                 var objectContextNodes = {};
                 var relationshipContextNodes = {};
@@ -708,10 +730,8 @@ define([
                     // Between object context nodes and relationship context nodes
                     for(var edgeId in relationshipContextNodes){
                         var edgeContext = relationshipContextNodes[edgeId];
-                        console.log(edgeContext);
                         var subTypeRelationshipContext = guidancemodel.getRelationshipTypeForRelationshipContextType(edgeContext.label);
                         var edge = edgesByLabel[subTypeRelationshipContext];
-                        console.log(edge);
                         for(var i = 0;  i < edge.relations.length; i++){
                             if($.inArray(subTypeObjectContext, edge.relations[i].sourceTypes) > -1){
                                 relation.targetTypes.push(edgeContext.label);
@@ -798,13 +818,9 @@ define([
                     relations: relationsForContextNodes
                 };
 
-                console.log("Guidance metamodel");
-                console.log(guidanceMetamodel);
-
                 return guidanceMetamodel;
             },
             generateGuidanceRules: function(){
-                console.log("Generating guidance rules");
                 var guidanceRules = {objectToolRules: []};
                 var nodes = guidancemodel.guidancemodel.nodes;
                 var edges = guidancemodel.guidancemodel.edges;

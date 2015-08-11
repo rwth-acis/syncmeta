@@ -45,33 +45,14 @@ requirejs([
     iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.MAIN);
     canvas = new Canvas($("#canvas"));
 
-    //For guidancemodeling create the guidancemodeling tools based on the metamodel
     if(guidancemodel.isGuidanceEditor()){
-        console.log("Guidance modeling!!!");
-        console.log(guidancemodel);
-        var nodes = guidancemodel.metamodel.nodes;
-        for(var nodeId in nodes){
-            if(nodes.hasOwnProperty(nodeId)){
-                var node = nodes[nodeId];
-                var label = guidancemodel.getObjectContextLabelForType(node.label);
-                canvas.addTool(label,new NodeTool(label,null,null,node.shape.defaultWidth,node.shape.defaultHeight))
-                label = guidancemodel.getObjectToolLabelForType(node.label);
-                canvas.addTool(label,new NodeTool(label,null,null,node.shape.defaultWidth,node.shape.defaultHeight))
-            }
-        }
-        var edges = guidancemodel.metamodel.edges;
-        for(var edgeId in edges){
-            if(edges.hasOwnProperty(edgeId)){
-                var edge = edges[edgeId];
-                var label = guidancemodel.getRelationshipContextLabelForType(edge.label);
-                canvas.addTool(label,new NodeTool(label,null,null,150,100))
-            }
-        }
         //Set the model which is shown by the editor to the guidancemodel
         model = guidancemodel.guidancemodel;
+        //Set the metamodel to the guidance metamodel
+        metamodel = guidancemodel.guidancemetamodel;
     }
     //Otherwise if a metamodel is given create tools based on the metamodel
-    else if(metamodel && metamodel.hasOwnProperty("nodes")){
+    if(metamodel && metamodel.hasOwnProperty("nodes")){
         var nodes = metamodel.nodes, node;
         for(var nodeId in nodes){
             if(nodes.hasOwnProperty(nodeId)){
@@ -91,13 +72,8 @@ requirejs([
         canvas.addTool(EdgeShapeNode.TYPE,new EdgeShapeNodeTool());
     }
 
-    //When guidance_modeling is true create guidance modeling edge tools
-    if(guidancemodel.isGuidanceEditor()){
-        console.log("Create guidance modeling edge tools");
-        canvas.addTool(UniDirAssociationEdge.TYPE,new EdgeTool(UniDirAssociationEdge.TYPE,EntityManager.getRelations()[UniDirAssociationEdge.TYPE]));
-    }
     //Otherwise if a metamodel is given create edge tools based on the metamodel
-    else if(metamodel && metamodel.hasOwnProperty("edges")){
+    if(metamodel && metamodel.hasOwnProperty("edges")){
         var edges = metamodel.edges, edge;
         for(var edgeId in edges){
             if(edges.hasOwnProperty(edgeId)){
