@@ -673,7 +673,27 @@ define([
                 guidanceMetamodel.nodes[Util.generateRandomId()] = mergeNode;
 
                 //Create 'call activity node'
-                
+                var callActivityNode = {
+                    label: "Call activity",
+                    shape: {
+                        shape: "rounded_rectangle",
+                        color: "",
+                        defaultWidth: 0,
+                        defaultHeight: 0,
+                        customShape: "",
+                        customAnchors: ""
+                    },
+                    attributes: {
+                    }
+                };
+
+                //Add a label attribute to the call activity node
+                callActivityNode.attributes[Util.generateRandomId()] = {
+                    key: "label",
+                    value: "string"
+                };
+
+                guidanceMetamodel.nodes[Util.generateRandomId()] = callActivityNode;
 
                 //Create 'create object nodes'
                 var createObjectNodes = {};
