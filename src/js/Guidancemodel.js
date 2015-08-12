@@ -21,6 +21,10 @@ define([
                 return activityName == "Guidance modeling";
             };
 
+            guidancemodeling.getCreateObjectNodeLabelForType = function(type){
+                return "Create " + type;
+            };
+
             guidancemodeling.getObjectContextLabelForType = function(type){
                 return type + " Object Context";
             };
