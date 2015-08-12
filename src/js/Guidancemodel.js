@@ -29,6 +29,10 @@ define([
                 return "Create " + type + " relationship";
             };
 
+            guidancemodeling.getEntityNodeLabelForType = function(type){
+                return type + " entity";
+            };
+
             guidancemodeling.getObjectContextLabelForType = function(type){
                 return type + " Object Context";
             };

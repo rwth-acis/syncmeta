@@ -672,15 +672,20 @@ define([
 
                 guidanceMetamodel.nodes[Util.generateRandomId()] = mergeNode;
 
+                //Create 'call activity node'
+                
+
                 //Create 'create object nodes'
                 var createObjectNodes = {};
+                var entityNodes = {};
 
                 var nodes = metamodel.nodes;
                 for(var nodeId in nodes){
                     if(nodes.hasOwnProperty(nodeId)){
                         var node = nodes[nodeId];
+                        
+                        //Generate the 'create object node'
                         var label = guidancemodel.getCreateObjectNodeLabelForType(node.label);
-
                         var id = Util.generateRandomId();
                         guidanceMetamodel.nodes[id] = {
                             label: label,
@@ -696,6 +701,24 @@ define([
                         };
 
                         createObjectNodes[id] = guidanceMetamodel.nodes[id];
+
+                        //Generate the 'entity node'
+                        label = guidancemodel.getEntityNodeLabelForType(node.label);
+                        id = Util.generateRandomId();
+                        guidanceMetamodel.nodes[id] = {
+                            label: label,
+                            attributes: {},
+                            shape: {
+                                shape: "rectangle",
+                                color: "blue",
+                                defaultWidth: 0,
+                                defaultHeight: 0,
+                                customShape: "",
+                                customAnchors: ""
+                            }
+                        };
+
+                        entityNodes[id] = guidanceMetamodel.nodes[id];
                     }
                 }
 
@@ -707,6 +730,7 @@ define([
                 for(var edgeId in edges){
                     if(edges.hasOwnProperty(edgeId)){
                         var edge = edges[edgeId];
+                        //Generate 'create relationship node'
                         var label = guidancemodel.getCreateRelationshipNodeLabelForType(edge.label);
 
                         edgesByLabel[edge.label] = edge;
@@ -726,6 +750,25 @@ define([
                         };
 
                         createRelationshipNodes[id] = guidanceMetamodel.nodes[id];
+
+                        //Generate 'entity node'
+                        label = guidancemodel.getEntityNodeLabelForType(edge.label);
+
+                        var id = Util.generateRandomId();
+                        guidanceMetamodel.nodes[id] = {
+                            label: label,
+                            attributes: {},
+                            shape: {
+                                shape: "rectangle",
+                                color: "blue",
+                                defaultWidth: 0,
+                                defaultHeight: 0,
+                                customShape: "",
+                                customAnchors: ""
+                            }
+                        };
+
+                        entityNodes[id] = guidanceMetamodel.nodes[id];
                     }
                 }
 
