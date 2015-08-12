@@ -673,9 +673,8 @@ define([
                 guidanceMetamodel.nodes[Util.generateRandomId()] = mergeNode;
 
                 //Create 'create object nodes'
-                createObjectNodes = {};
+                var createObjectNodes = {};
 
-                //Create context nodes for objects
                 var nodes = metamodel.nodes;
                 for(var nodeId in nodes){
                     if(nodes.hasOwnProperty(nodeId)){
@@ -697,6 +696,36 @@ define([
                         };
 
                         createObjectNodes[id] = guidanceMetamodel.nodes[id];
+                    }
+                }
+
+                //Create 'create relationship nodes'
+                var createRelationshipNodes = {};
+                var edgesByLabel = {};
+
+                var edges = metamodel.edges;
+                for(var edgeId in edges){
+                    if(edges.hasOwnProperty(edgeId)){
+                        var edge = edges[edgeId];
+                        var label = guidancemodel.getCreateRelationshipNodeLabelForType(edge.label);
+
+                        edgesByLabel[edge.label] = edge;
+
+                        var id = Util.generateRandomId();
+                        guidanceMetamodel.nodes[id] = {
+                            label: label,
+                            attributes: {},
+                            shape: {
+                                shape: "rounded_rectangle",
+                                color: "",
+                                defaultWidth: 0,
+                                defaultHeight: 0,
+                                customShape: "",
+                                customAnchors: ""
+                            }
+                        };
+
+                        createRelationshipNodes[id] = guidanceMetamodel.nodes[id];
                     }
                 }
 

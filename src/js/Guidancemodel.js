@@ -22,7 +22,11 @@ define([
             };
 
             guidancemodeling.getCreateObjectNodeLabelForType = function(type){
-                return "Create " + type;
+                return "Create " + type + " object";
+            };
+
+            guidancemodeling.getCreateRelationshipNodeLabelForType = function(type){
+                return "Create " + type + " relationship";
             };
 
             guidancemodeling.getObjectContextLabelForType = function(type){
