@@ -297,6 +297,15 @@ module.exports = function(grunt) {
                     }
                 ]
             }
+        },
+        connect : {
+            server : {
+                options : {
+                    port : 8081,
+                    base : 'html',
+                    keepalive:true
+                }
+            }
         }
 
     });
@@ -314,6 +323,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-amdcheck');
     grunt.loadNpmTasks('grunt-jsdoc');
     //grunt.loadNpmTasks('grunt-contrib-nodeunit');
+    grunt.loadNpmTasks('grunt-contrib-connect');
 
     // Whenever the "test" task is run, first clean the "tmp" dir, then run this
     // plugin's task(s), then test the result.
@@ -323,5 +333,6 @@ module.exports = function(grunt) {
         grunt.config.set('roleSandboxUrl', "http://role-sandbox.eu");
         grunt.task.run(['clean','requirejs','copy:lib','copy:main','buildwidgets'/*,'sftp'*/]);
     });
+    grunt.registerTask('serve',['clean', 'requirejs', 'copy:lib', 'copy:main', 'buildwidgets','connect']);
 
 };
