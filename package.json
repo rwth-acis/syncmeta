@@ -16,6 +16,7 @@
     "grunt-contrib-watch": "~0.5.3",
     "grunt-ssh": "~0.7.0",
     "grunt-jsdoc": "~0.5.1",
-    "grunt-amdcheck": "^0.2.1"
+    "grunt-amdcheck": "^0.2.1",
+    "grunt-contrib-connect": "^0.9.0"
   }
 }

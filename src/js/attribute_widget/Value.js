@@ -99,7 +99,7 @@ define([
                     }
                     break;
             }
-            _$node.val(value).blur();
+            _$node.val(value);
             _$node[0].selectionStart = newSelectionStart;
             _$node[0].selectionEnd = newSelectionEnd;
         };
