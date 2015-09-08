@@ -73,10 +73,10 @@ define([
      * @param attributes
      * @returns {Edge}
      */
-    function makeEdge(type,arrowType,shapeType,color,overlay,overlayPosition,overlayRotate,attributes){
+    function makeEdge(type,arrowType,shapeType,color,dashstyle,overlay,overlayPosition,overlayRotate,attributes){
         var shape = shapes.hasOwnProperty(shapeType) ? shapes[shapeType] : _.values(shapes)[0];
         color = color ? $colorTestElement.css('color','#aaaaaa').css('color',color).css('color') : '#aaaaaa';
-
+        dashstyle = dashstyle || "";
         Edge.prototype = new AbstractEdge();
         Edge.prototype.constructor = Edge;
         /**
@@ -216,7 +216,8 @@ define([
                     target: target.get$node(),
                     paintStyle:{
                         strokeStyle: color,
-                        lineWidth: 2
+                        lineWidth: 2,
+                        dashstyle: dashstyle
                     },
                     endpoint: "Blank",
                     anchors: [source.getAnchorOptions(), target.getAnchorOptions()],

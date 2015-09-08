@@ -69,6 +69,7 @@ define([
                 for(attributeId in attributes){
                     if(attributes.hasOwnProperty(attributeId)){
                         attribute = attributes[attributeId];
+                        var key = attribute.key.toLowerCase();
                         switch(attribute.value){
                             case "boolean":
                                 attrObj[attributeId] = new BooleanAttribute(id+"["+attribute.key.toLowerCase()+"]",attribute.key,that);
@@ -78,6 +79,7 @@ define([
                                 //TODO: Add option to set identifier attribute in metamodel
                                 if(attribute.key.toLowerCase() === 'title' || attribute.key.toLowerCase() === "name"){
                                     that.setLabel(attrObj[attributeId]);
+                                    key = "label";
                                 }
                                 break;
                             case "integer":
@@ -91,7 +93,7 @@ define([
                                     attrObj[attributeId] = new SingleSelectionAttribute(id+"["+attribute.key.toLowerCase()+"]",attribute.key,that,attribute.options);
                                 }
                         }
-                        _$node.find("."+attribute.key.toLowerCase()).append(attrObj[attributeId].get$node());
+                        _$node.find("."+key).append(attrObj[attributeId].get$node());
                     }
                 }
                 that.setAttributes(attrObj);

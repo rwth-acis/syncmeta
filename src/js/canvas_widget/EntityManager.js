@@ -22,9 +22,10 @@ define([
     'text!templates/canvas_widget/rectangle_node.html',
     'text!templates/canvas_widget/rounded_rectangle_node.html',
     'text!templates/canvas_widget/triangle_node.html',
+    'text!templates/guidance_modeling/set_property_node.html',
     'promise!Metamodel',
     'promise!Guidancemodel'
-],/** @lends EntityManager */function(_,Util,AbstractEntity,Node,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,ModelAttributesNode,Edge,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge,ContextNode,ObjectToolNode,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,metamodel, guidancemodel) {
+],/** @lends EntityManager */function(_,Util,AbstractEntity,Node,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,ModelAttributesNode,Edge,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge,ContextNode,ObjectToolNode,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,setPropertyNodeHtml,metamodel, guidancemodel) {
 
     /**
      * Predefined node shapes, first is default
@@ -150,7 +151,7 @@ define([
         for(var edgeId in edges){
             if(edges.hasOwnProperty(edgeId)){
                 edge = edges[edgeId];
-                edgeTypes[edge.label] = Edge(edge.label,edge.shape.arrow,edge.shape.shape,edge.shape.color,edge.shape.overlay,edge.shape.overlayPosition,edge.shape.overlayRotate,edge.attributes);
+                edgeTypes[edge.label] = Edge(edge.label,edge.shape.arrow,edge.shape.shape,edge.shape.color,edge.shape.dashstyle,edge.shape.overlay,edge.shape.overlayPosition,edge.shape.overlayRotate,edge.attributes);
                 relations[edge.label] = edge.relations;
             }
         }
@@ -602,6 +603,9 @@ define([
             },
             generateGuidanceMetamodel: function(){
                 var metamodel = this.generateMetaModel();
+                var actionNodes = [];
+                var actionNodeLabels = [];
+                var createEntityNodeLabels = [];
                 //Create guidance metamodel
                 var guidanceMetamodel = {
                     attributes: {},
@@ -611,7 +615,7 @@ define([
 
                 //Create initial node
                 var initialNode = {
-                    label: "Initial node",
+                    label: guidancemodel.INITIAL_NODE_LABEL,
                     shape: {
                         shape: "circle",
                         color: "yellow",
@@ -626,7 +630,7 @@ define([
 
                 //Add a label attribute to the initial node
                 initialNode.attributes[Util.generateRandomId()] = {
-                    key: "label",
+                    key: "name",
                     value: "string"
                 };
 
@@ -634,7 +638,7 @@ define([
 
                 //Create final node
                 var finalNode = {
-                    label: "Final node",
+                    label: guidancemodel.ACTIVITY_FINAL_NODE_LABEL,
                     shape: {
                         shape: "circle",
                         color: "black",
@@ -647,17 +651,11 @@ define([
                     }
                 };
 
-                //Add a label attribute to the final node
-                finalNode.attributes[Util.generateRandomId()] = {
-                    key: "label",
-                    value: "string"
-                };
-
                 guidanceMetamodel.nodes[Util.generateRandomId()] = finalNode;
 
                 //Create merge node
                 var mergeNode = {
-                    label: "Merge node",
+                    label: guidancemodel.MERGE_NODE_LABEL,
                     shape: {
                         shape: "diamond",
                         color: "yellow",
@@ -674,7 +672,7 @@ define([
 
                 //Create 'call activity node'
                 var callActivityNode = {
-                    label: "Call activity",
+                    label: guidancemodel.CALL_ACTIVITY_NODE_LABEL,
                     shape: {
                         shape: "rounded_rectangle",
                         color: "",
@@ -687,25 +685,52 @@ define([
                     }
                 };
 
+                actionNodeLabels.push(guidancemodel.CALL_ACTIVITY_NODE_LABEL);
+
                 //Add a label attribute to the call activity node
                 callActivityNode.attributes[Util.generateRandomId()] = {
-                    key: "label",
+                    key: "name",
                     value: "string"
                 };
 
                 guidanceMetamodel.nodes[Util.generateRandomId()] = callActivityNode;
 
+                //Create concurrency node
+                var concurrencyNode = {
+                    label: guidancemodel.CONCURRENCY_NODE_LABEL,
+                    shape: {
+                        shape: "rectangle",
+                        color: "black",
+                        defaultWidth: 10,
+                        defaultHeight: 200,
+                        customShape: "",
+                        customAnchors: ""
+                    },
+                    attributes: {
+                    }
+                };
+
+                guidanceMetamodel.nodes[Util.generateRandomId()] = concurrencyNode;
+
                 //Create 'create object nodes'
+                var createObjectNodeLabels = [];
                 var createObjectNodes = {};
                 var entityNodes = {};
+
+                var flowEdgeRelations = [];
 
                 var nodes = metamodel.nodes;
                 for(var nodeId in nodes){
                     if(nodes.hasOwnProperty(nodeId)){
                         var node = nodes[nodeId];
                         
+                        var createObjectNodeToEntityNodeRelation = {sourceTypes: [], targetTypes: []};
                         //Generate the 'create object node'
                         var label = guidancemodel.getCreateObjectNodeLabelForType(node.label);
+                        createObjectNodeToEntityNodeRelation.sourceTypes.push(label);
+                        actionNodeLabels.push(label);
+                        createEntityNodeLabels.push(label);
+                        createObjectNodeLabels.push(label);
                         var id = Util.generateRandomId();
                         guidanceMetamodel.nodes[id] = {
                             label: label,
@@ -723,10 +748,11 @@ define([
                         createObjectNodes[id] = guidanceMetamodel.nodes[id];
 
                         //Generate the 'entity node'
-                        label = guidancemodel.getEntityNodeLabelForType(node.label);
+                        var entitylabel = guidancemodel.getEntityNodeLabelForType(node.label);
+                        createObjectNodeToEntityNodeRelation.targetTypes.push(label);
                         id = Util.generateRandomId();
                         guidanceMetamodel.nodes[id] = {
-                            label: label,
+                            label: entitylabel,
                             attributes: {},
                             shape: {
                                 shape: "rectangle",
@@ -738,7 +764,66 @@ define([
                             }
                         };
 
+                        //Generate the 'set property node'
+                        setPropertyLabel = guidancemodel.getSetPropertyNodeLabelForType(node.label);
+                        actionNodeLabels.push(setPropertyLabel);
+                        id = Util.generateRandomId();
+                        guidanceMetamodel.nodes[id] = {
+                            label: setPropertyLabel,
+                            attributes: {},
+                            shape: {
+                                shape: "",
+                                defaultWidth: 0,
+                                defaultHeight: 0,
+                                customShape: _.template(setPropertyNodeHtml, {type: setPropertyLabel, color: "white"}),
+                                customAnchors: ""
+                            }
+                        };
+
+                        console.log("Custom shape");
+                        console.log(_.template(setPropertyNodeHtml, {type: setPropertyLabel, color: "white"}));
+
+                        var options = {};
+                        for(var attributeId in node.attributes){
+                            var attribute = node.attributes[attributeId];
+                            options[attribute.key] = attribute.key;
+                        }
+
+                        guidanceMetamodel.nodes[id].attributes[Util.generateRandomId()] = {
+                            key: "Property",
+                            value: "Value",
+                            options: options
+                        };
+
                         entityNodes[id] = guidanceMetamodel.nodes[id];
+                        
+                        //Define the 'create object node' to 'entity node' relation
+                        flowEdgeRelations.push({
+                            sourceTypes: [label],
+                            targetTypes: [entitylabel]
+                        });
+
+                        //Define the 'entity node' to 'set property node' relation
+                        flowEdgeRelations.push({
+                            sourceTypes: [entitylabel],
+                            targetTypes: [setPropertyLabel]
+                        });
+
+                        //Define the 'entity node' to 'create relationship node' relation
+                        for(var edgeId in metamodel.edges){
+                            var edge = metamodel.edges[edgeId];
+                            for(var relationId in edge.relations){
+                                var relation = edge.relations[relationId];
+                                if((relation.sourceTypes.indexOf(node.label) > -1) ||
+                                   (relation.targetTypes.indexOf(node.label) > -1)){
+                                    flowEdgeRelations.push({
+                                        sourceTypes: [entitylabel],
+                                        targetTypes: guidancemodel.getCreateRelationshipNodeLabelForType(edge.label)
+                                    });
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -752,7 +837,8 @@ define([
                         var edge = edges[edgeId];
                         //Generate 'create relationship node'
                         var label = guidancemodel.getCreateRelationshipNodeLabelForType(edge.label);
-
+                        actionNodeLabels.push(label);
+                        createEntityNodeLabels.push(label);
                         edgesByLabel[edge.label] = edge;
 
                         var id = Util.generateRandomId();
@@ -792,191 +878,59 @@ define([
                     }
                 }
 
-                // var objectGuidanceNodes = {};
-                // var objectContextNodes = {};
-                // var relationshipContextNodes = {};
-                // var edgesByLabel = {};
+                //Create the flow edge
 
-                // //Create context nodes for objects
-                // var nodes = metamodel.nodes;
-                // for(var nodeId in nodes){
-                //     if(nodes.hasOwnProperty(nodeId)){
-                //         var node = nodes[nodeId];
-                //         var label = guidancemodel.getObjectContextLabelForType(node.label);
+                //Relations between all action nodes
+                flowEdgeRelations = flowEdgeRelations.concat({
+                    sourceTypes: actionNodeLabels,
+                    targetTypes: actionNodeLabels.concat([guidancemodel.MERGE_NODE_LABEL, guidancemodel.ACTIVITY_FINAL_NODE_LABEL, guidancemodel.CONCURRENCY_NODE_LABEL])
+                });
 
-                //         var id = Util.generateRandomId();
-                //         guidanceMetamodel.nodes[id] = {
-                //             label: label,
-                //             attributes: {},
-                //             shape: {
-                //                 shape: "rectangle",
-                //                 color: "",
-                //                 defaultWidth: 0,
-                //                 defaultHeight: 0,
-                //                 customShape: "",
-                //                 customAnchors: ""
-                //             }
-                //         };
+                //Relations for the initial node
+                flowEdgeRelations = flowEdgeRelations.concat({
+                    sourceTypes: [guidancemodel.INITIAL_NODE_LABEL],
+                    targetTypes: [guidancemodel.CALL_ACTIVITY_NODE_LABEL, guidancemodel.MERGE_NODE_LABEL, guidancemodel.CONCURRENCY_NODE_LABEL].concat(createEntityNodeLabels)
+                });
 
-                //         objectContextNodes[id] = guidanceMetamodel.nodes[id];
-                //     }
-                // }
-                // //Create context nodes for relationships
-                // var edges = metamodel.edges;
-                // for(var edgeId in edges){
-                //     if(edges.hasOwnProperty(edgeId)){
-                //         var edge = edges[edgeId];
-                //         var label = guidancemodel.getRelationshipContextLabelForType(edge.label);
+                //Relations for the merge node
+                flowEdgeRelations = flowEdgeRelations.concat({
+                    sourceTypes: [guidancemodel.MERGE_NODE_LABEL],
+                    targetTypes: [guidancemodel.ACTIVITY_FINAL_NODE_LABEL, guidancemodel.MERGE_NODE_LABEL, guidancemodel.CONCURRENCY_NODE_LABEL].concat(actionNodeLabels)
+                });
 
-                //         edgesByLabel[edge.label] = edge;
+                //Relations for the concurrency node
+                flowEdgeRelations = flowEdgeRelations.concat({
+                    sourceTypes: [guidancemodel.CONCURRENCY_NODE_LABEL],
+                    targetTypes: [guidancemodel.ACTIVITY_FINAL_NODE_LABEL, guidancemodel.MERGE_NODE_LABEL].concat(actionNodeLabels)
+                });
 
-                //         var id = Util.generateRandomId();
-                //         guidanceMetamodel.nodes[id] = {
-                //             label: label,
-                //             attributes: {},
-                //             shape: {
-                //                 shape: "rectangle",
-                //                 color: "",
-                //                 defaultWidth: 0,
-                //                 defaultHeight: 0,
-                //                 customShape: "",
-                //                 customAnchors: ""
-                //             }
-                //         };
+                guidanceMetamodel.edges[Util.generateRandomId()] = {
+                    label: "Flow edge",
+                    shape: {
+                        arrow: "unidirassociation",
+                        shape: "straight",
+                        color: "",
+                        overlay: "",
+                        overlayPosition: "top",
+                        overlayRotate: true
+                    },
+                    relations: flowEdgeRelations
+                };
 
-                //         relationshipContextNodes[id] = guidanceMetamodel.nodes[id];
-                //     }
-                // }
-
-                // //Create object guidance nodes
-                // for(var nodeId in nodes){
-                //     if(nodes.hasOwnProperty(nodeId)){
-                //         var node = nodes[nodeId];
-                //         var label = guidancemodel.getObjectToolLabelForType(node.label);
-
-                //         var id = Util.generateRandomId();
-                //         guidanceMetamodel.nodes[id] = {
-                //             label: label,
-                //             shape: {
-                //                 shape: "diamond",
-                //                 color: "",
-                //                 defaultWidth: 0,
-                //                 defaultHeight: 0,
-                //                 customShape: "",
-                //                 customAnchors: ""
-                //             },
-                //             attributes: {
-                //             }
-                //         };
-
-                //         //Add the label attribute
-                //         guidanceMetamodel.nodes[id].attributes[Util.generateRandomId()] = {
-                //             key: "label",
-                //             value: "string"
-                //         };
-
-                //         objectGuidanceNodes[id] = guidanceMetamodel.nodes[id];
-                //     }
-                // }
-
-                // //Ceate the uni-directional association
-                // var relationsForContextNodes = [];
-                // //Outgoing for object context nodes
-                // for(var nodeId in objectContextNodes){
-                //     var node = objectContextNodes[nodeId];
-                //     var relation = {sourceTypes: [node.label], targetTypes: []};
-                //     var subTypeObjectContext = guidancemodel.getObjectTypeForObjectContextType(node.label);
-
-                //     // Between object context nodes and relationship context nodes
-                //     for(var edgeId in relationshipContextNodes){
-                //         var edgeContext = relationshipContextNodes[edgeId];
-                //         var subTypeRelationshipContext = guidancemodel.getRelationshipTypeForRelationshipContextType(edgeContext.label);
-                //         var edge = edgesByLabel[subTypeRelationshipContext];
-                //         for(var i = 0;  i < edge.relations.length; i++){
-                //             if($.inArray(subTypeObjectContext, edge.relations[i].sourceTypes) > -1){
-                //                 relation.targetTypes.push(edgeContext.label);
-                //             }
-                //         }
-                //     }
-
-                //     for(var objectToolNodeId in objectGuidanceNodes){
-                //         var objectToolNode = objectGuidanceNodes[objectToolNodeId];
-                //         //Between object context nodes and object tool nodes
-                //         if(objectToolNode.label.indexOf(subTypeObjectContext) == 0){
-                //             relation.targetTypes.push(objectToolNode.label);
-                //             var objectToolRelation = {sourceTypes: [objectToolNode.label], targetTypes: []};
-                //             objectToolRelation.targetTypes.push(node.label);
-                //             relationsForContextNodes.push(objectToolRelation);
-                //         }
-                //     }
-                //     relationsForContextNodes.push(relation);
-                // }
-
-                // //Outgoing for relationship context nodes
-                // for(var edgeId in relationshipContextNodes){
-                //     var relationshipContext = relationshipContextNodes[edgeId];
-                //     var relation = {sourceTypes: [relationshipContext.label], targetTypes: []};
-                //     var subTypeRelationshipContext = guidancemodel.getRelationshipTypeForRelationshipContextType(relationshipContext.label);
-
-                //     //Between relationship context nodes and object context nodes
-                //     for(var nodeId in objectContextNodes){
-                //         var objectContext = objectContextNodes[nodeId];
-                //         var subTypeObjectContext = guidancemodel.getObjectTypeForObjectContextType(objectContext.label);
-                //         var edge = edgesByLabel[subTypeRelationshipContext];
-                //         for(var i = 0;  i < edge.relations.length; i++){
-                //             if($.inArray(subTypeObjectContext, edge.relations[i].targetTypes) > -1){
-                //                 relation.targetTypes.push(objectContext.label);
-                //             }
-                //         }
-                //     }
-                //     relationsForContextNodes.push(relation);
-                // }
-
-                // //Outgoing for object tool nodes
-                // for(var objectToolId in objectGuidanceNodes){
-                //     var objectTool = objectGuidanceNodes[objectToolId];
-                //     var relation = {sourceTypes: [objectTool.label], targetTypes: []};
-                //     var subTypeObjectTool = guidancemodel.getObjectTypeForObjectToolType(objectTool.label);
-
-                //     for(var edgeId in metamodel.edges){
-                //         var edge = metamodel.edges[edgeId];
-                //         for(var i = 0; i < edge.relations.length; i++){
-                //             //Between object tools and relationship contexts
-                //             if(($.inArray(subTypeObjectTool, edge.relations[i].sourceTypes) > -1) ||
-                //                 ($.inArray(subTypeObjectTool, edge.relations[i].targetTypes) > -1)){
-                //                 relation.targetTypes.push(guidancemodel.getRelationshipContextLabelForType(edge.label));
-
-                //                 //Between object tools and object contexts
-                //                 for(var objectContextId in objectContextNodes){
-                //                     var objectContext = objectContextNodes[objectContextId];
-                //                     var subTypeObjectContext = guidancemodel.getObjectTypeForObjectContextType(objectContext.label);
-                //                     if(($.inArray(subTypeObjectContext, edge.relations[i].sourceTypes) > -1)||
-                //                        ($.inArray(subTypeObjectContext, edge.relations[i].targetTypes) > -1)){
-                //                         relation.targetTypes.push(objectContext.label);
-                //                     }
-                //                 }
-                //             }
-
-                //         }
-                //     }
-                //     relationsForContextNodes.push(relation);
-                // }
-
-                // relations[UniDirAssociationEdge.TYPE] = relationsForContextNodes;
-
-                // var id = Util.generateRandomId();
-                // guidanceMetamodel.edges[id] = {
-                //     label: "Uni-Dir-Association",
-                //     shape: {
-                //         arrow: "unidirassociation",
-                //         shape: "straight",
-                //         color: "",
-                //         overlay: "",
-                //         overlayPosition: "hidden",
-                //         overlayRotate: true
-                //     },
-                //     relations: relationsForContextNodes
-                // };
+                //Create the association edge
+                guidanceMetamodel.edges[Util.generateRandomId()] = {
+                    label: "Association edge",
+                    shape: {
+                        arrow: "unidirassociation",
+                        shape: "straight",
+                        color: "",
+                        dashstyle: "4 2",
+                        overlay: "",
+                        overlayPosition: "hidden",
+                        overlayRotate: true
+                    },
+                    relations: [{sourceTypes: [guidancemodel.CALL_ACTIVITY_NODE_LABEL], targetTypes: [guidancemodel.INITIAL_NODE_LABEL]}]
+                };
 
                 return guidanceMetamodel;
             },
@@ -1032,7 +986,7 @@ define([
              * @returns {{nodes: {}, edges: {}}} JSON representation of meta model
              */
             generateMetaModel: function(){
-
+                console.log("Generate metamodel!");
                 /**
                  * Determine the type of the concrete classes (ObjectNodes) of the class diagram contained in the sub graph rooted by the passed node
                  * @param node Node to start with
@@ -1079,6 +1033,8 @@ define([
                  * @returns {object}
                  */
                 function getNodeAttributes(node,visitedNodes){
+                    console.log("GetNodeAttributes!");
+
                     var nodeAttributes, attributeId, attribute;
                     var edgeId, edge, outgoingEdges;
                     var source, target;
@@ -1100,6 +1056,11 @@ define([
                             source = edge.getSource();
                             target = edge.getTarget();
 
+                            if(target instanceof EnumNode)
+                                console.log("Target is EnumNode!");
+                            if(source instanceof EnumNode)
+                                console.log("Source is EnumNode!");
+
                             //Does the node inherit attributes from a parent node?
                             if( (edge instanceof GeneralisationEdge && target instanceof AbstractClassNode) ||
                                 (edge instanceof GeneralisationEdge && node instanceof ObjectNode && target instanceof ObjectNode) ||
@@ -1113,7 +1074,7 @@ define([
                                     source === node && (neighbor = target) instanceof EnumNode)) ||
 
                                 (edge instanceof UniDirAssociationEdge && (neighbor = target) instanceof EnumNode) ){
-
+                                console.log("Enum node found!!!");
                                 options = {};
                                 nodeAttributes = {};
                                 Util.merge(nodeAttributes,getNodeAttributes(neighbor,[]));

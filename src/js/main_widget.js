@@ -90,8 +90,6 @@ requirejs([
     }
 
     function JSONtoGraph(json){
-        console.log("JSON!!!");
-        console.log(json);
         var modelAttributesNode;
         var nodeId, edgeId;
         if(json.attributes){

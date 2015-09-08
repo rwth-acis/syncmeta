@@ -37,7 +37,8 @@ define([
 
             function makeNeighborhoodFilter(nodeId){
                 return function(n){
-                    return n.getEntityId() !== nodeId && !n.getNeighbors().hasOwnProperty(nodeId);
+                    return true;
+                    //return n.getEntityId() !== nodeId && !n.getNeighbors().hasOwnProperty(nodeId);
                 };
             }
 

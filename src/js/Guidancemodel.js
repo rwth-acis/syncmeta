@@ -17,6 +17,12 @@ define([
         var act = openapp.param.get("http://purl.org/role/terms/activity");
         openapp.resource.get(act, function(resource){
             var activityName = resource.data[resource.uri]["http://purl.org/dc/terms/title"][0].value;
+            guidancemodeling.INITIAL_NODE_LABEL = "Initial node";
+            guidancemodeling.MERGE_NODE_LABEL = "Merge node";
+            guidancemodeling.CALL_ACTIVITY_NODE_LABEL = "Call activity node";
+            guidancemodeling.ACTIVITY_FINAL_NODE_LABEL = "Activity final node";
+            guidancemodeling.CONCURRENCY_NODE_LABEL = "Concurrency node";
+
             guidancemodeling.isGuidanceEditor = function(){
                 return activityName == "Guidance modeling";
             };
@@ -27,6 +33,10 @@ define([
 
             guidancemodeling.getCreateRelationshipNodeLabelForType = function(type){
                 return "Create " + type + " relationship";
+            };
+
+            guidancemodeling.getSetPropertyNodeLabelForType = function(type){
+                return "Set property for " + type + " object";
             };
 
             guidancemodeling.getEntityNodeLabelForType = function(type){
