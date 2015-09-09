@@ -1,0 +1,100 @@
+define([
+    'jqueryui',
+    'jsplumb',
+    'lodash',
+    'attribute_widget/BooleanAttribute',
+    'attribute_widget/IntegerAttribute',
+    'attribute_widget/FileAttribute',
+    'attribute_widget/SingleSelectionAttribute',
+    'attribute_widget/SingleValueAttribute',
+    'attribute_widget/AbstractEdge'
+],/** @lends Edge */function($,jsPlumb,_,BooleanAttribute,IntegerAttribute,FileAttribute,SingleSelectionAttribute,SingleValueAttribute,AbstractEdge) {
+
+    //noinspection JSUnusedLocalSymbols
+    /**
+     * makeEdge
+     * @class attribute_widget.makeEdge
+     * @memberof attribute_widget
+     * @constructor
+     * @param {string} type Type of edge
+     * @param arrowType
+     * @param shapeType
+     * @param color
+     * @param overlay
+     * @param overlayPosition
+     * @param overlayRotate
+     * @param attributes
+     * @returns {Edge}
+     */
+    function makeEdge(type,arrowType,shapeType,color,overlay,overlayPosition,overlayRotate,attributes){
+        Edge.prototype = new AbstractEdge();
+        Edge.prototype.constructor = Edge;
+        /**
+         * Edge
+         * @class attribute_widget.Edge
+         * @extends attribute_widget.AbstractEdge
+         * @param {string} id Entity identifier of edge
+         * @param {attribute_widget.AbstractNode} source Source node
+         * @param {attribute_widget.AbstractNode} target Target node
+         * @constructor
+         */
+        function Edge(id,source,target){
+            var that = this;
+
+            AbstractEdge.call(this,type,id,source,target);
+
+            /**
+             * jQuery object of DOM node representing the node
+             * @type {jQuery}
+             * @private
+             */
+            var _$node = AbstractEdge.prototype.get$node.call(this);
+
+            var init = function(){
+                var attribute, attributeId, attrObj = {};
+                for(attributeId in attributes){
+                    if(attributes.hasOwnProperty(attributeId)){
+                        attribute = attributes[attributeId];
+                        if(attribute.hasOwnProperty('position') && attribute.position === 'hide')
+                            continue;
+                        switch(attribute.value){
+                            case "boolean":
+                                attrObj[attributeId] = new BooleanAttribute(id+"["+attribute.key.toLowerCase()+"]",attribute.key,that);
+                                break;
+                            case "string":
+                                attrObj[attributeId] = new SingleValueAttribute(id+"["+attribute.key.toLowerCase()+"]",attribute.key,that);
+                                break;
+                            case "integer":
+                                attrObj[attributeId] = new IntegerAttribute(id+"["+attribute.key.toLowerCase()+"]",attribute.key,that);
+                                break;
+                            case "file":
+                                attrObj[attributeId] = new FileAttribute(id+"["+attribute.key.toLowerCase()+"]",attribute.key,that);
+                                break;
+                            default:
+                                if(attribute.options){
+                                    attrObj[attributeId] = new SingleSelectionAttribute(id+"["+attribute.key.toLowerCase()+"]",attribute.key,that,attribute.options);
+                                }
+                        }
+                    }
+                }
+                that.setAttributes(attrObj);
+
+                //_$node.find(".label").append(that.getLabel().get$node());
+
+                var $attributeNode = _$node.find(".attributes");
+                for(var attributeKey in attrObj){
+                    if(attrObj.hasOwnProperty(attributeKey)){
+                        $attributeNode.append(attrObj[attributeKey].get$node());
+                    }
+                }
+            };
+
+            init();
+
+        }
+        return Edge;
+    }
+
+    return makeEdge;
+
+});

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- generated on Wed Sep 09 2015 14:56:37 -->
+<Module>
+  <ModulePrefs
+    title="View Canvas"
+    description=""
+    author="Stephan Erdtmann"
+    author_email="erdtmann@dbis.rwth-aachen.de"
+    width="560"
+    height="400">
+
+    <Require feature="opensocial-0.8" ></Require>
+    <Require feature="openapp" ></Require>
+    <Require feature="dynamic-height"></Require>
+	
+	<OAuth>
+      <Service name="openapp" xmlns:openapp="http://www.role-project.eu/xml/openapp/opensocialext/"
+               openapp:service="http://purl.org/role/terms/spaceService"
+               openapp:permitReadAppend="http://purl.org/role/terms/data">
+        <Request method="" url=""></Request>
+        <Authorization url=""></Authorization>
+        <Access method="" url=""></Access>
+      </Service>
+    </OAuth>
+	
+  </ModulePrefs>
+  <Content type="html">
+    <![CDATA[
+    <script type="application/javascript">
+        (function(){
+          var cnt = 30; // 5 attempts per second => 6 seconds
+          var timeout = function(){
+              var btn = document.getElementById("oauthPersonalizeButton");
+              var wrapper = document.getElementById("oauthPersonalize");
+              if(wrapper && wrapper.offsetParent !== null && btn && btn.onclick){
+                  var win = null;
+                  var openWindow = window.open;
+                  window.open = function(){return win = openWindow.apply(window,arguments);};
+                  btn.onclick.call(btn);
+                  if(win){
+                      win.onload = function(){
+                          win.document.getElementsByTagName("form")[0].submit();
+                          setTimeout(function(){
+                              window.location.reload();
+                              if(win){
+                                  win.close();
+                              }
+                          },1000);
+                      };
+                  }
+              } else {
+                  if(cnt > 0){
+                      cnt -= 1;
+                      setTimeout(timeout,200);
+                  }
+              }
+          };
+          timeout();
+        })();
+    </script>
+    <script src="http://localhost:8081/js/lib/parallel.js"></script>
+    <script src="http://localhost:8081/js/config.js"></script>
+    <script src="http://localhost:8081/js/lib/vendor/require.js"></script>    
+    <link rel="stylesheet" type="text/css" href="http://localhost:8081/css/vendor/jquery-ui.css">
+<link rel="stylesheet" type="text/css" href="http://localhost:8081/css/vendor/jquery.contextMenu.css">
+<link rel="stylesheet" type="text/css" href="http://localhost:8081/css/style.css">
+<link rel="stylesheet" type="text/css" href="http://localhost:8081/css/main_widget.css">
+<link rel="stylesheet" type="text/css" href="http://localhost:8081/css/viewcanvas_widget.css">
+<script src="http://localhost:8081/js/viewcanvas_widget.js"></script>
+<script type="application/javascript">
+</script>
+<div id="loading" class="loading"></div>
+<div class="button_bar left">
+	<button id="save"><img width="20px" height="20px" src="http://localhost:8081/img/save.png" /></button>
+	 <span id="feedback"></span>
+</div>
+<div class="button_bar right">
+  <button id="showtype"><img width="20px" height="20px" src="http://localhost:8081/img/hidetype.png" /></button>
+  <button id="hidetype"><img width="20px" height="20px" src="http://localhost:8081/img/showtype.png" /></button>
+  <button id="zoomin"><img width="20px" height="20px" src="http://localhost:8081/img/zoomin.png" /></button>
+  <button id="zoomout"><img width="20px" height="20px" src="http://localhost:8081/img/zoomout.png" /></button>
+  <button id="undo"><img width="20px" height="20px" src="http://localhost:8081/img/undo.png" /></button>
+  <button id="redo"><img width="20px" height="20px" src="http://localhost:8081/img/redo.png" /></button>
+</div>
+<div class="button_bar left">
+ <button id="btnCreateViewpoint"><img width="20px" height="20px" src="http://localhost:8081/img/add196.png" /></button>
+  <input id="txtNameViewpoint" type="text" placeholder="name"  style="display: none;">
+   <select id="ddmViewpointSelection" style="display: none;"></select>
+  <button id="btnAddViewpoint" style="display: none;"><img width="20px" height="20px" src="http://localhost:8081/img/checked21.png" /></button>
+  <button id="btnCancelCreateViewpoint" style="display: none;"><img width="20px" height="20px" src="http://localhost:8081/img/times1.png" /></button>
+  <select id="ddmViewSelection"></select>
+   <button id="btnShowViewPoint">Show</button>
+   <button id="btnRefreshView" style="display: none;">Refresh</button>
+  <button id="btnDelViewPoint"><img width="20px" height="20px" src="http://localhost:8081/img/times1.png" /></button>
+
+</div>
+<div class="button_bar right">
+Current View: <strong><p id="lblCurrentView">No view!</p></strong>
+</div>
+<div id="canvas-frame">
+  <div id="canvas">
+  </div>
+</div>
+<div id="q"></div>	
+    <script src="http://localhost:8081/js/shared.js"></script>    
+    ]]>
+  </Content>
+</Module>

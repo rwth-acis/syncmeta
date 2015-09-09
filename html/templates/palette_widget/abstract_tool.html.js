@@ -1,0 +1,1 @@
+define('text!templates/palette_widget/abstract_tool.html',[],function () { return '<button><div style="display: table; zoom: .1; width: 120px; height: 120px; float: left; margin: 20px 40px 20px 0" class="icon"><img style="background-color: <%= color %>" width="120px" height="120px" src="<%= icon %>" /></div> <%= label %></button>';});
