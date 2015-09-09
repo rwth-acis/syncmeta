@@ -493,7 +493,7 @@ define([
 			_$node.transformable('destroy');
 
 			//Unbind Node and Edge Events
-			this.select(null);
+			//this.select(null);
 
 			//Disable Canvas Rightclick Menu
 			_$node.unbind("contextmenu");
