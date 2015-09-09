@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- generated on Wed Sep 09 2015 14:56:37 -->
+<!-- generated on Wed Sep 09 2015 15:08:36 -->
 <Module>
   <ModulePrefs
     title="View Control"
@@ -58,11 +58,11 @@
           timeout();
         })();
     </script>
-    <script src="http://localhost:8081/js/lib/parallel.js"></script>
-    <script src="http://localhost:8081/js/config.js"></script>
-    <script src="http://localhost:8081/js/lib/vendor/require.js"></script>    
-    <link rel="stylesheet" type="text/css" href="http://localhost:8081/css/vendor/jquery-ui.css">
-<link rel="stylesheet" type="text/css" href="http://localhost:8081/css/style.css">
+    <script src="http://mari0.github.io/syncmeta/html/js/lib/parallel.js"></script>
+    <script src="http://mari0.github.io/syncmeta/html/js/config.js"></script>
+    <script src="http://mari0.github.io/syncmeta/html/js/lib/vendor/require.js"></script>    
+    <link rel="stylesheet" type="text/css" href="http://mari0.github.io/syncmeta/html/css/vendor/jquery-ui.css">
+<link rel="stylesheet" type="text/css" href="http://mari0.github.io/syncmeta/html/css/style.css">
 <script type="application/javascript">
 	 requirejs(['jqueryui',
 	 'lodash',
@@ -226,7 +226,7 @@
 <div id="viewcontrol">
 <p><strong>Editor space url:</strong>
     <br/>
-    <span id="space_link_input_view">http://127.0.0.1:8073/<input size="16" type="text" id="space_label_view" /></span>
+    <span id="space_link_input_view">http://role-sandbox.eu/<input size="16" type="text" id="space_label_view" /></span>
     <br/>
 </p>
 <button id="btnRefresh">Refresh Lists</button><button id="btnDelAllView">Delete all Views</button>
@@ -242,7 +242,7 @@
 <table id="viewpointlist"></table>
 </p>	
 </div>
-    <script src="http://localhost:8081/js/shared.js"></script>    
+    <script src="http://mari0.github.io/syncmeta/html/js/shared.js"></script>    
     ]]>
   </Content>
 </Module>
