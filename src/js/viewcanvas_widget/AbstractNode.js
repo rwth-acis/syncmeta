@@ -14,7 +14,7 @@ define([
     'canvas_widget/AbstractEntity',
     'viewcanvas_widget/SingleValueAttribute',
     'text!templates/canvas_widget/abstract_node.html',
-    'jquery.transformable'
+    'jquery.transformable-PATCHED'
 ],/** @lends AbstractNode */function(require,$,jsPlumb,_,Util,IWCOT,NodeDeleteOperation,NodeMoveOperation,NodeMoveZOperation,NodeResizeOperation,ActivityOperation,EntitySelectOperation,AbstractEntity,SingleValueAttribute,abstractNodeHtml) {
 
     AbstractNode.prototype = new AbstractEntity();

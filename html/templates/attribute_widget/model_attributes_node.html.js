@@ -1,1 +1,0 @@
-define('text!templates/attribute_widget/model_attributes_node.html',[],function () { return '<div class="default_node">\r\n    <div class="type">Model Attributes</div>\r\n    <div class="label"></div>\r\n    <div class="attributes"></div>\r\n</div>';});

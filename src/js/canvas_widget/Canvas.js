@@ -17,7 +17,7 @@ define([
 		'canvas_widget/EntityManager',
 		'canvas_widget/AbstractCanvas',
 		'canvas_widget/MoveTool',
-		'jquery.transformable'
+		'jquery.transformable-PATCHED'
 	], /** @lends Canvas */
 	function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelectOperation, EntitySelectOperation, ActivityOperation, ExportDataOperation, ExportMetaModelOperation, ExportImageOperation,HighlightOperation, AbstractEntity, ModelAttributesNode, EntityManager, AbstractCanvas, MoveTool) {
 

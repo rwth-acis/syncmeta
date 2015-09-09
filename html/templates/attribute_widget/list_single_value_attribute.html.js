@@ -1,1 +1,0 @@
-define('text!templates/attribute_widget/list_single_value_attribute.html',[],function () { return '<div class="single_value_attribute">\r\n    <div class="name"></div>\r\n    <div class="value"></div>\r\n    <span class="ui-icon ui-icon-close"></span>\r\n</div>';});

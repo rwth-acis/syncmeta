@@ -123,303 +123,302 @@ module.exports = function (grunt) {
 			},
 
 			buildwidgets : {
-				options : {
-					partials : '<%= srcdir %>/widgets/partials'
-				},
+                options: {
+                    partials: '<%= srcdir %>/widgets/partials'
+                },
 
-				main_widget : {
-					options : {
-						data : {
-							meta : {
-								title : "Canvas",
-								description : "",
-								width : "560",
-								height : "400"
-							},
-							bodyPartial : '_main_widget.tpl'
-						}
-					},
-					files : {
-						'html/widget.xml' : ['<%= srcdir %>/widgets/widget.xml.tpl']
-					}
-				},
+                main_widget: {
+                    options: {
+                        data: {
+                            meta: {
+                                title: "Canvas",
+                                description: "",
+                                width: "560",
+                                height: "400"
+                            },
+                            bodyPartial: '_main_widget.tpl'
+                        }
+                    },
+                    files: {
+                        'html/widget.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
+                    }
+                },
 
-				palette_widget : {
-					options : {
-						data : {
-							meta : {
-								title : "Palette",
-								description : "",
-								width : "160",
-								height : "450"
-							},
-							bodyPartial : '_palette_widget.tpl'
-						}
-					},
-					files : {
-						'html/palette.xml' : ['<%= srcdir %>/widgets/widget.xml.tpl']
-					}
-				},
+                palette_widget: {
+                    options: {
+                        data: {
+                            meta: {
+                                title: "Palette",
+                                description: "",
+                                width: "160",
+                                height: "450"
+                            },
+                            bodyPartial: '_palette_widget.tpl'
+                        }
+                    },
+                    files: {
+                        'html/palette.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
+                    }
+                },
 
-				attribute_widget : {
-					options : {
-						data : {
-							meta : {
-								title : "Property Browser",
-								description : "",
-								width : "560",
-								height : "350"
-							},
-							bodyPartial : '_attribute_widget.tpl'
-						}
-					},
-					files : {
-						'html/attribute.xml' : ['<%= srcdir %>/widgets/widget.xml.tpl']
-					}
-				},
+                attribute_widget: {
+                    options: {
+                        data: {
+                            meta: {
+                                title: "Property Browser",
+                                description: "",
+                                width: "560",
+                                height: "350"
+                            },
+                            bodyPartial: '_attribute_widget.tpl'
+                        }
+                    },
+                    files: {
+                        'html/attribute.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
+                    }
+                },
 
-				activity_widget : {
-					options : {
-						data : {
-							meta : {
-								title : "User Activity",
-								description : "",
-								width : "120",
-								height : "400"
-							},
-							bodyPartial : '_activity_widget.tpl'
-						}
-					},
-					files : {
-						'html/activity.xml' : ['<%= srcdir %>/widgets/widget.xml.tpl']
-					}
-				},
+                activity_widget: {
+                    options: {
+                        data: {
+                            meta: {
+                                title: "User Activity",
+                                description: "",
+                                width: "120",
+                                height: "400"
+                            },
+                            bodyPartial: '_activity_widget.tpl'
+                        }
+                    },
+                    files: {
+                        'html/activity.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
+                    }
+                },
 
-				json_export_widget : {
-					options : {
-						data : {
-							meta : {
-								title : "Export",
-								description : "",
-								width : "120",
-								height : "100"
-							},
-							bodyPartial : '_json_export_widget.tpl'
-						}
-					},
-					files : {
-						'html/export.xml' : ['<%= srcdir %>/widgets/widget.xml.tpl']
-					}
-				},
+                json_export_widget: {
+                    options: {
+                        data: {
+                            meta: {
+                                title: "Export",
+                                description: "",
+                                width: "120",
+                                height: "100"
+                            },
+                            bodyPartial: '_json_export_widget.tpl'
+                        }
+                    },
+                    files: {
+                        'html/export.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
+                    }
+                },
 
-				debug_widget : {
-					options : {
-						data : {
-							meta : {
-								title : "Debug",
-								description : "",
-								width : "100",
-								height : "300"
-							},
-							bodyPartial : '_debug_widget.tpl'
-						}
-					},
-					files : {
-						'html/debug.xml' : ['<%= srcdir %>/widgets/widget.xml.tpl']
-					}
-				},
+                debug_widget: {
+                    options: {
+                        data: {
+                            meta: {
+                                title: "Debug",
+                                description: "",
+                                width: "100",
+                                height: "300"
+                            },
+                            bodyPartial: '_debug_widget.tpl'
+                        }
+                    },
+                    files: {
+                        'html/debug.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
+                    }
+                },
 
-				instance_list_widget : {
-					options : {
-						data : {
-							meta : {
-								title : "Instances",
-								description : "",
-								width : "200",
-								height : "300"
-							},
-							bodyPartial : '_instance_list_widget.tpl'
-						}
-					},
-					files : {
-						'html/instances.xml' : ['<%= srcdir %>/widgets/widget.xml.tpl']
-					}
-				},
+                instance_list_widget: {
+                    options: {
+                        data: {
+                            meta: {
+                                title: "Instances",
+                                description: "",
+                                width: "200",
+                                height: "300"
+                            },
+                            bodyPartial: '_instance_list_widget.tpl'
+                        }
+                    },
+                    files: {
+                        'html/instances.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
+                    }
+                },
 
-				generated_instances_widget : {
-					options : {
-						data : {
-							meta : {
-								title : "Generate Instance",
-								description : "",
-								width : "300",
-								height : "300"
-							},
-							bodyPartial : '_generated_instances_widget.tpl'
-						}
-					},
-					files : {
-						'html/generated_instances.xml' : ['<%= srcdir %>/widgets/widget.xml.tpl']
-					}
-				},
+                generated_instances_widget: {
+                    options: {
+                        data: {
+                            meta: {
+                                title: "Generate Instance",
+                                description: "",
+                                width: "300",
+                                height: "300"
+                            },
+                            bodyPartial: '_generated_instances_widget.tpl'
+                        }
+                    },
+                    files: {
+                        'html/generated_instances.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
+                    }
+                },
 
-				imsld_export_widget : {
-					options : {
-						data : {
-							meta : {
-								title : "IMS LD Export",
-								description : "",
-								width : "320",
-								height : "310"
-							},
-							bodyPartial : '_imsld_export_widget.tpl'
-						}
-					},
-					files : {
-						'html/imsld_export.xml' : ['<%= srcdir %>/widgets/widget.xml.tpl']
-					}
-				},
+                imsld_export_widget: {
+                    options: {
+                        data: {
+                            meta: {
+                                title: "IMS LD Export",
+                                description: "",
+                                width: "320",
+                                height: "310"
+                            },
+                            bodyPartial: '_imsld_export_widget.tpl'
+                        }
+                    },
+                    files: {
+                        'html/imsld_export.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
+                    }
+                },
 
-				viewcontrol_widget : {
-					options : {
-						data : {
-							meta : {
-								title : "View Control",
-								description : "",
-								width : "200",
-								height : "600"
-							},
-							bodyPartial : '_viewcontrol_widget.tpl'
-						}
-					},
-					files : {
-						'html/viewcontrol.xml' : ['<%= srcdir %>/widgets/widget.xml.tpl']
-					}
+                viewcontrol_widget: {
+                    options: {
+                        data: {
+                            meta: {
+                                title: "View Control",
+                                description: "",
+                                width: "200",
+                                height: "600"
+                            },
+                            bodyPartial: '_viewcontrol_widget.tpl'
+                        }
+                    },
+                    files: {
+                        'html/viewcontrol.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
+                    }
 
-				},
-				viewcanvas_widget : {
-					options : {
-						data : {
-							meta : {
-								title : "View Canvas",
-								description : "",
-								width : "560",
-								height : "400"
-							},
-							bodyPartial : '_viewcanvas_widget.tpl'
-						}
-					},
-					files : {
-						'html/viewcanvas.xml' : ['<%= srcdir %>/widgets/widget.xml.tpl']
-					}
+                },
+                viewcanvas_widget: {
+                    options: {
+                        data: {
+                            meta: {
+                                title: "View Canvas",
+                                description: "",
+                                width: "560",
+                                height: "400"
+                            },
+                            bodyPartial: '_viewcanvas_widget.tpl'
+                        }
+                    },
+                    files: {
+                        'html/viewcanvas.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
+                    }
+                }
+            },
 
-				}
+            requirejs: {
+                compile: {
+                    options: {
+                        baseUrl: "<%= srcdir %>",
+                        dir: "html",
+                        optimizeAllPluginResources: true,
+                        optimize: "none",
+                        modules: [{
+                            name: 'templates/templates'
+                        }],
+                        paths: {
+                            text: "../components/requirejs-text/text"
+                        }
+                    }
+                }
+            },
+            sshconfig: {
+                "dbis": grunt.file.readJSON('.dbis.secret.json')
+            },
+            sftp: {
+                deploy: {
+                    files: {
+                        "./": "<%= distdir %>/**"
+                    },
+                    options: {
+                        config: "dbis",
+                        path: '/home/<%= sshconfig.dbis.username %>/public_html/syncmeta/',
+                        host: '<%= sshconfig.dbis.host %>',
+                        username: '<%= sshconfig.dbis.username %>',
+                        password: '<%= sshconfig.dbis.password %>',
+                        srcBasePath: "html/",
+                        createDirectories: true
+                    }
+                }
+            },
+            jsdoc : {
+                dist : {
+                    src: [
+                        '<%= srcdir %>/**/*.js',
+                        'README.md'
+                    ],
+                    options: {
+                        destination: 'doc',
+                        configure: 'jsdoc.conf.json'
+                    }
+                }
+            },
+            jshint: {
+                all: ['<%= srcdir %>/**/*.js','!<%= srcdir %>/js/lib/iwc.js']
+            },
+            amdcheck: {
+                dev: {
+                    options: {
+                        excepts: [],
+                        exceptsPaths: [],
+                        removeUnusedDependencies: false,
+                        logUnusedDependencyNames: true
+                    },
+                    files: [
+                        {
+                            src: ['<%= srcdir %>/**/*.js'],
+                            dest: 'build/'
+                        }
+                    ]
+                }
+            },
+            connect : {
+                server : {
+                    options : {
+                        port : 8081,
+                        base : 'html',
+                        keepalive:true
+                    }
+                }
+            }
 
-			},
+        });
 
-			requirejs : {
-				compile : {
-					options : {
-						baseUrl : "<%= srcdir %>",
-						dir : "html",
-						optimizeAllPluginResources : true,
-						optimize : "none",
-						modules : [{
-								name : 'templates/templates'
-							}
-						],
-						paths : {
-							text : "../components/requirejs-text/text"
-						}
-					}
-				}
-			},
-			sshconfig : {
-				"dbis" : grunt.file.readJSON('.dbis.secret.json')
-			},
-			sftp : {
-				deploy : {
-					files : {
-						"./" : "<%= distdir %>/**"
-					},
-					options : {
-						config : "dbis",
-						path : '/home/<%= sshconfig.dbis.username %>/public_html/syncmeta/',
-						host : '<%= sshconfig.dbis.host %>',
-						username : '<%= sshconfig.dbis.username %>',
-						password : '<%= sshconfig.dbis.password %>',
-						srcBasePath : "html/",
-						createDirectories : true
-					}
-				}
-			},
-			jsdoc : {
-				dist : {
-					src : [
-						'<%= srcdir %>/**/*.js',
-						'README.md'
-					],
-					options : {
-						destination : 'doc',
-						configure : 'jsdoc.conf.json'
-					}
-				}
-			},
-			jshint : {
-				all : ['<%= srcdir %>/**/*.js', '!<%= srcdir %>/js/lib/iwc.js']
-			},
-			amdcheck : {
-				dev : {
-					options : {
-						excepts : [],
-						exceptsPaths : [],
-						removeUnusedDependencies : false,
-						logUnusedDependencyNames : true
-					},
-					files : [{
-							src : ['<%= srcdir %>/**/*.js'],
-							dest : 'build/'
-						}
-					]
-				}
-			},
-			connect : {
-				server : {
-					options : {
-						port : 8081,
-						base : 'html',
-						keepalive:true
-					}
-				}
-			}
+    // Actually load this plugin's task(s).
+    grunt.loadTasks('tasks');
 
-		});
 
-	// Actually load this plugin's task(s).
-	grunt.loadTasks('tasks');
+    // These plugins provide necessary tasks.
+    grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-contrib-requirejs');
+    //grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-ssh');
+    grunt.loadNpmTasks('grunt-amdcheck');
+    grunt.loadNpmTasks('grunt-jsdoc');
+    grunt.loadNpmTasks('grunt-contrib-connect');
+    //grunt.loadNpmTasks('grunt-contrib-nodeunit');
 
-	// These plugins provide necessary tasks.
-	grunt.loadNpmTasks('grunt-contrib-clean');
-	grunt.loadNpmTasks('grunt-contrib-copy');
-	grunt.loadNpmTasks('grunt-contrib-jshint');
-	grunt.loadNpmTasks('grunt-contrib-requirejs');
-	//grunt.loadNpmTasks('grunt-contrib-watch');
-	grunt.loadNpmTasks('grunt-ssh');
-	grunt.loadNpmTasks('grunt-amdcheck');
-	grunt.loadNpmTasks('grunt-jsdoc');
-	grunt.loadNpmTasks('grunt-contrib-connect');
-	//grunt.loadNpmTasks('grunt-contrib-nodeunit');
-
-	// Whenever the "test" task is run, first clean the "tmp" dir, then run this
-	// plugin's task(s), then test the result.
-	grunt.registerTask('build', ['clean', 'requirejs', 'copy:lib', 'copy:main', 'buildwidgets']);
-	grunt.registerTask('deploy', 'Deploy to dbis.rwth-aachen.de', function () {
-		/*grunt.config.set('baseUrl', "http://dbis.rwth-aachen.de/~<%= sshconfig.dbis.username %>/syncmeta");*/
-		grunt.config.set('roleSandboxUrl', "http://role-sandbox.eu");
-		grunt.task.run(['clean', 'requirejs', 'copy:lib', 'copy:main', 'buildwidgets' /*,'sftp'*/
-			]);
-	});
+    // Whenever the "test" task is run, first clean the "tmp" dir, then run this
+    // plugin's task(s), then test the result.
+    grunt.registerTask('build', ['clean', 'requirejs', 'copy:lib', 'copy:main', 'buildwidgets']);
+    grunt.registerTask('deploy', 'Deploy to dbis.rwth-aachen.de', function () {
+        /*grunt.config.set('baseUrl', "http://dbis.rwth-aachen.de/~<%= sshconfig.dbis.username %>/syncmeta");*/
+        grunt.config.set('roleSandboxUrl', "http://role-sandbox.eu");
+        grunt.task.run(['clean', 'requirejs', 'copy:lib', 'copy:main', 'buildwidgets' /*,'sftp'*/
+        ]);
+    });
 	
-	grunt.registerTask('server',['connect']);
-	grunt.registerTask('run',['clean', 'requirejs', 'copy:lib', 'copy:main', 'buildwidgets','connect']);
+    grunt.registerTask('server',['connect']);
+    grunt.registerTask('run',['clean', 'requirejs', 'copy:lib', 'copy:main', 'buildwidgets','connect']);
 };

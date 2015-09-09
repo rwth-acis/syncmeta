@@ -1,1 +1,0 @@
-define('text!templates/attribute_widget/selection_value.html',[],function () { return '<select class="val">\r\n    <% _.each(options,function(option,key){ %>\r\n    <option value="<%= key %>"><%= option %></option>\r\n    <% }); %>\r\n</select>';});

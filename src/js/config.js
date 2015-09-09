@@ -22,7 +22,7 @@ var require = {
         'jquery.transform': {
             deps: ["jquery"]
         },
-        'jquery.transformable': {
+        'jquery.transformable-PATCHED': {
             deps: ["jquery", "jquery.transform", "jqueryui", "jquerymigrate"]
         },
         swfobject: {
@@ -42,7 +42,7 @@ var require = {
         'jquery.autoGrowInput': 'lib/jquery/jquery.autoGrowInput',
         'jquery.mousewheel': 'lib/vendor/jquery.mousewheel',
         'jquery.transform': 'lib/jquery.transform',
-        'jquery.transformable': 'lib/jquery.transformable',
+        'jquery.transformable-PATCHED': 'lib/jquery.transformable-PATCHED',
         org: "lib/vendor/org",
         coweb: "lib/vendor/coweb",
         ot: "lib/vendor/coweb/jsoe/OTEngine",

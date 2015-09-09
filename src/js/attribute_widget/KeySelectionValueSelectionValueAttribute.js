@@ -184,14 +184,14 @@ define([
          * Register inter widget communication callbacks
          */
         this.registerCallbacks = function(){
-            _iwc.registerOnDataReceivedCallback(attributeDeleteCallback);
+           _iwc.registerOnDataReceivedCallback(attributeDeleteCallback);
         };
 
         /**
          * Unregister inter widget communication callbacks
          */
         this.unregisterCallbacks = function(){
-            _iwc.unregisterOnDataReceivedCallback(attributeDeleteCallback);
+           _iwc.unregisterOnDataReceivedCallback(attributeDeleteCallback);
         };
 
         _$node.find(".key").append(_key.get$node());

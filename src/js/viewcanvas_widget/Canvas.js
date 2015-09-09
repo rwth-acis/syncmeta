@@ -21,7 +21,7 @@ define([
 		'canvas_widget/AbstractCanvas',
 		'viewcanvas_widget/MoveTool',
         'viewcanvas_widget/ClosedViewGeneration',
-		'jquery.transformable'
+		'jquery.transformable-PATCHED'
 	], /** @lends Canvas */
 	function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelectOperation, EntitySelectOperation, ActivityOperation, ExportDataOperation, ExportMetaModelOperation, ExportImageOperation, PerformCvgOperation, DeleteCvgOperation,HighlightOperation, UpdateViewListOperation,AbstractEntity, ModelAttributesNode, EntityManager, AbstractCanvas, MoveTool, CVG) {
 

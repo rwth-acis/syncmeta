@@ -1,1 +1,0 @@
-define('text!templates/attribute_widget/abstract_edge.html',[],function () { return '<div id="<%= id %>" class="node">\r\n    <div class="default_node">\r\n        <div class="type"><%= type %></div>\r\n        <div class="label"></div>\r\n        <div class="attributes"></div>\r\n    </div>\r\n</div>';});
