@@ -273,755 +273,711 @@ define([
             find : function (id) {
                 return this.findNode(id) || this.findEdge(id);
             },
-			/**
-			 * Delete node by id
-			 * @memberof canvas_widget.EntityManager#
-			 * @param {string} id Entity id
-			 */
-			deleteNode : function (id) {
-				if (_nodes.hasOwnProperty(id)) {
-					_recycleBin.nodes[id] = _nodes[id];
-					delete _nodes[id];
-				}
-			},
-			/**
-			 * Get all nodes
-			 * @memberof canvas_widget.EntityManager#
-			 * @returns {object}
-			 */
-			getNodes : function () {
-				return _nodes;
-			},
-			/**
-			 * Get nodes by type
-			 * @memberof canvas_widget.EntityManager#
-			 * @param {string|string[]} type Entity type
-			 * @returns {object}
-			 */
-			getNodesByType : function (type) {
-				var nodeId,
-				node,
-				nodesByType = {};
+            /**
+             * Delete node by id
+             * @memberof canvas_widget.EntityManager#
+             * @param {string} id Entity id
+             */
+            deleteNode: function(id){
+                if(_nodes.hasOwnProperty(id)){
+                    _recycleBin.nodes[id] = _nodes[id];
+                    delete _nodes[id];
+                }
+            },
+            /**
+             * Get all nodes
+             * @memberof canvas_widget.EntityManager#
+             * @returns {object}
+             */
+            getNodes: function(){
+                return _nodes;
+            },
+            /**
+             * Get nodes by type
+             * @memberof canvas_widget.EntityManager#
+             * @param {string|string[]} type Entity type
+             * @returns {object}
+             */
+            getNodesByType: function(type){
+                var nodeId,
+                    node,
+                    nodesByType = {};
 
 				if (typeof type === 'string') {
 					type = [type];
 				}
 
-				for (nodeId in _nodes) {
-					if (_nodes.hasOwnProperty(nodeId)) {
-						node = _nodes[nodeId];
-						if (type.indexOf(node.getType()) !== -1) {
-							nodesByType[nodeId] = node;
-						}
-					}
-				}
-				return nodesByType;
-			},
-			/**
-			 * Create a new edge
-			 * @memberof canvas_widget.EntityManager#
-			 * @param {string} type Type of edge
-			 * @param {string} id Entity identifier of edge
-			 * @param {canvas_widget.AbstractNode} source Source node
-			 * @param {canvas_widget.AbstractNode} target Target node
-			 * @returns {canvas_widget.AbstractEdge}
-			 */
-			//TODO: switch id and type
-			createEdge : function (type, id, source, target) {
-				var edge;
-				//noinspection JSAccessibilityCheck
-				if (_recycleBin.edges.hasOwnProperty(id)) {
-					//noinspection JSAccessibilityCheck
-					edge = _recycleBin.edges[id];
-					//noinspection JSAccessibilityCheck
-					delete _recycleBin.edges[id];
-					_edges[id] = edge;
-					return edge;
-				}
-				if (edgeTypes.hasOwnProperty(type)) {
-					edge = new edgeTypes[type](id, source, target);
-					source.addOutgoingEdge(edge);
-					target.addIngoingEdge(edge);
-					_edges[id] = edge;
-					return edge;
-				}
-				return null;
-			},
-			/**
-			 * Find edge by id
-			 * @memberof canvas_widget.EntityManager#
-			 * @param {string} id Entity id
-			 * @returns {*}
-			 */
-			findEdge : function (id) {
-				if (_edges.hasOwnProperty(id)) {
-					return _edges[id];
-				}
-				return null;
-			},
-			/**
-			 * Delete edge by id
-			 * @memberof canvas_widget.EntityManager#
-			 * @param {string} id Entity id
-			 */
-			deleteEdge : function (id) {
-				if (_edges.hasOwnProperty(id)) {
-					//noinspection JSAccessibilityCheck
-					_recycleBin.edges[id] = _edges[id];
-					delete _edges[id];
-				}
-			},
-			/**
-			 * Get all edges
-			 * @memberof canvas_widget.EntityManager#
-			 * @returns {object}
-			 */
-			getEdges : function () {
-				return _edges;
-			},
-			/**
-			 * Get edges by type
-			 * @memberof canvas_widget.EntityManager#
-			 * @param {string} type Entity type
-			 * @returns {object}
-			 */
-			getEdgesByType : function (type) {
-				var edgeId,
-				edge,
-				edgesByType = {};
-
-				for (edgeId in _edges) {
-					if (_edges.hasOwnProperty(edgeId)) {
-						edge = _edges[edgeId];
-						if (edge.getType() === type) {
-							edgesByType[edgeId] = edge;
-						}
-					}
-				}
-				return edgesByType;
-			},
-			/**
-			 * Get JSON representation of whole graph
-			 * @memberof canvas_widget.EntityManager#
-			 * @returns {object}
-			 */
-			graphToJSON : function () {
-				var attributesJSON;
-				var nodesJSON = {};
-				var edgesJSON = {};
-				attributesJSON = _modelAttributesNode ? _modelAttributesNode.toJSON() : {};
-				_.forEach(_nodes, function (val, key) {
-					nodesJSON[key] = val.toJSON();
-				});
-				_.forEach(_edges, function (val, key) {
-					edgesJSON[key] = val.toJSON();
-				});
-				return {
-					attributes : attributesJSON,
-					nodes : nodesJSON,
-					edges : edgesJSON
-				};
-			},
-
-			/**
-			 * Create model attributes node by its JSON representation
-			 * @memberof canvas_widget.EntityManager#
-			 * @param {object} json JSON representation
-			 * @returns {canvas_widget.AbstractNode}
-			 */
-			createModelAttributesNodeFromJSON : function (json) {
-				var node = this.createModelAttributesNode();
-				if (node) {
-					node.getLabel().getValue().setValue(json.label.value.value);
-					for (var attrId in json.attributes) {
-						if (json.attributes.hasOwnProperty(attrId)) {
-							var attr = node.getAttribute(attrId);
-							if (attr) {
-								attr.setValueFromJSON(json.attributes[attrId]);
-							}
-						}
-					}
-				}
-				return node;
-			},
-			/**
-			 * Create a new node by its JSON representation
-			 * @memberof canvas_widget.EntityManager#
-			 * @param {string} type Type of node
-			 * @param {string} id Entity identifier of node
-			 * @param {number} left x-coordinate of node position
-			 * @param {number} top y-coordinate of node position
-			 * @param {number} width Width of node
-			 * @param {number} height Height of node
-			 * @param {object} json JSON representation
-			 * @param {number} zIndex Position of node on z-axis
-			 * @returns {canvas_widget.AbstractNode}
-			 */
-			createNodeFromJSON : function (type, id, left, top, width, height, zIndex, json) {
-				var node = this.createNode(type, id, left, top, width, height, zIndex, json);
-				if (node) {
-					node.getLabel().getValue().setValue(json.label.value.value);
-					for (var attrId in json.attributes) {
-						if (json.attributes.hasOwnProperty(attrId)) {
-							var attr = node.getAttribute(attrId);
-							if (attr) {
-								attr.setValueFromJSON(json.attributes[attrId]);
-							}
-						}
-					}
-				}
-				return node;
-			},
-			/**
-			 * Create a new node by its JSON representation
-			 * @memberof canvas_widget.EntityManager#
-			 * @param {string} type Type of edge
-			 * @param {string} id Entity identifier of edge
-			 * @param {canvas_widget.AbstractNode} source Source node entity id
-			 * @param {canvas_widget.AbstractNode} target Target node entity id
-			 * @param {object} json JSON representation
-			 * @returns {canvas_widget.AbstractEdge}
-			 */
-			createEdgeFromJSON : function (type, id, source, target, json) {
-				var edge = this.createEdge(type, id, this.findNode(source), this.findNode(target));
-				if (edge) {
-					edge.getLabel().getValue().setValue(json.label.value.value);
-					for (var attrId in json.attributes) {
-						if (json.attributes.hasOwnProperty(attrId)) {
-							var attr = edge.getAttribute(attrId);
-							if (attr) {
-								attr.setValueFromJSON(json.attributes[attrId]);
-							}
-						}
-					}
-				}
-				return edge;
-			},
-			/**
-			 * Generate the 'Add node..' context menu options
-			 * @param canvas Canvas to add node to
-			 * @param left Position of node on x-axis
-			 * @param top Position of node on <-axis
-			 * @returns {object} Menu items
-			 */
-			generateAddNodeMenu : function (canvas, left, top) {
-				function makeAddNodeCallback(nodeType, width, height) {
-					return function () {
-						canvas.createNode(nodeType, left, top, width, height, null, null,null,CONFIG.WIDGET.NAME.MAIN);
-					};
-				}
-
-				var items = {},
-				nodeType;
-
-				for (nodeType in nodeTypes) {
-					if (nodeTypes.hasOwnProperty(nodeType)) {
-						items[nodeType] = {
-							name : '..' + nodeType,
-							callback : makeAddNodeCallback(nodeType, nodeTypes[nodeType].DEFAULT_WIDTH, nodeTypes[nodeType].DEFAULT_HEIGHT)
-						};
-					}
-				}
-				return items;
-			},
-			/**
-			 * Generate the 'Connect to..' context menu options for the passed node
-			 * @param {canvas_widget.AbstractNode} node
-			 */
-			generateConnectToMenu : function (node) {
-
-				function makeTargetNodeCallback(connectionType, targetNodeId) {
-					return function (/*key, opt*/
-					) {
-						node.getCanvas().createEdge(connectionType, node.getEntityId(), targetNodeId);
-					};
-				}
-
-				var connectionType,
-				sourceNodeTypes,
-				targetNodeTypes,
-				targetNodeType,
-
-				connectionItems,
-				targetNodeTypeItems,
-				targetNodeItems,
-
-				i,
-				numOfRelations,
-				j,
-				numOfTargetTypes,
-				existsLinkableTargetNode,
-				targetNodes,
-				targetNodeId,
-				targetNode,
-
-				targetAppearance,
-				sourceAppearance = node.getAppearance();
-
-				connectionItems = {};
-				for (connectionType in relations) {
-					if (relations.hasOwnProperty(connectionType)) {
-						targetNodeTypeItems = {};
-						for (i = 0, numOfRelations = relations[connectionType].length; i < numOfRelations; i++) {
-							sourceNodeTypes = relations[connectionType][i].sourceTypes;
-							targetNodeTypes = relations[connectionType][i].targetTypes;
-							if (sourceNodeTypes.indexOf(node.getType()) !== -1) {
-								for (j = 0, numOfTargetTypes = targetNodeTypes.length; j < numOfTargetTypes; j++) {
-									targetNodeType = targetNodeTypes[j];
-									targetNodeItems = {};
-									targetNodes = this.getNodesByType(targetNodeType);
-									existsLinkableTargetNode = false;
-									for (targetNodeId in targetNodes) {
-										if (targetNodes.hasOwnProperty(targetNodeId)) {
-											targetNode = targetNodes[targetNodeId];
-											if (targetNode === node)
-												continue;
-											targetAppearance = targetNode.getAppearance();
-											if (!targetNode.getNeighbors().hasOwnProperty(node.getEntityId())) {
-												targetNodeItems[connectionType + targetNodeType + i + targetNodeId] = {
-													name : '..' + (targetNode.getLabel().getValue().getValue() || targetNode.getType()),
-													callback : makeTargetNodeCallback(connectionType, targetNodeId),
-													distanceSquare : Math.pow(targetAppearance.left - sourceAppearance.left, 2) + Math.pow(targetAppearance.top - sourceAppearance.top, 2),
-													targetNodeId : connectionType + targetNodeType + i + targetNodeId
-												};
-											}
-										}
-									}
-									if (_.size(targetNodeItems) > 0) {
-										var targetNodeItemsTmp = _.sortBy(targetNodeItems, 'distanceSquare');
-										targetNodeItems = {};
-										for (var k = 0, numOfItems = targetNodeItemsTmp.length; k < numOfItems; k++) {
-											targetNodeItems[k + targetNodeItemsTmp[k].targetNodeId] = targetNodeItemsTmp[k];
-										}
-										targetNodeTypeItems[connectionType + targetNodeType + i] = {
-											name : '..to ' + targetNodeType + "..",
-											items : targetNodeItems
-										};
-									}
-								}
-							}
-						}
-						if (_.size(targetNodeTypeItems) > 0) {
-							connectionItems[connectionType] = {
-								name : '..with ' + connectionType + '..',
-								items : targetNodeTypeItems
-							};
-						}
-					}
-				}
-
-				return {
-					name : 'Connect..',
-					items : connectionItems,
-					disabled : (function (connectionItems) {
-						return _.size(connectionItems) === 0;
-					})(connectionItems)
-				};
-			},
-			/**
-			 * Generate the JSON Representation of the meta-model for a new editr instance based on the current graph
-			 * @returns {{nodes: {}, edges: {}}} JSON representation of meta model
-			 */
-			generateMetaModel : function () {
-
-				/**
-				 * Determine the type of the concrete classes (ObjectNodes) of the class diagram contained in the sub graph rooted by the passed node
-				 * @param node Node to start with
-				 * @param [visitedNodes] List of node that already have been visited
-				 * @returns {object}
-				 */
-				function getConcreteObjectNodeTypes(node, visitedNodes) {
-					var edgeId,
-					edge,
-					ingoingEdges,
-					source,
-					type,
-					classTypes = [];
-
-					if (!visitedNodes)
-						visitedNodes = [];
-
-					if (visitedNodes.indexOf(node) !== -1)
-						return [];
-
-					visitedNodes.push(node);
-
-					type = node.getLabel().getValue().getValue();
-					if (node instanceof ObjectNode && classTypes.indexOf(type) === -1) {
-						classTypes.push(type);
-					}
-
-					ingoingEdges = node.getIngoingEdges();
-					for (edgeId in ingoingEdges) {
-						if (ingoingEdges.hasOwnProperty(edgeId)) {
-							edge = ingoingEdges[edgeId];
-							source = edge.getSource();
-							if (edge instanceof GeneralisationEdge && source instanceof ObjectNode ||
-								edge instanceof GeneralisationEdge && source instanceof AbstractClassNode) {
-								classTypes = classTypes.concat(getConcreteObjectNodeTypes(source, visitedNodes));
-							}
-						}
-					}
-					return classTypes;
-				}
-
-				/**
-				 * Determine the attributes of the passed node by traversing the underlying class diagram
-				 * @param node Node to start with
-				 * @param [visitedNodes] List of node that already have been visited
-				 * @returns {object}
-				 */
-				function getNodeAttributes(node, visitedNodes) {
-					var nodeAttributes,
-					attributeId,
-					attribute;
-					var edgeId,
-					edge,
-					outgoingEdges;
-					var source,
-					target;
-					var neighbor,
-					options;
-					var attributes = {};
-					var obj = {};
-
-					if (!visitedNodes)
-						visitedNodes = [];
-
-					if (visitedNodes.indexOf(node) !== -1)
-						return {};
-
-					visitedNodes.push(node);
-
-					//Traverse outgoing edges to check for inheritance and linked enums
-					outgoingEdges = node.getOutgoingEdges();
-					for (edgeId in outgoingEdges) {
-						if (outgoingEdges.hasOwnProperty(edgeId)) {
-							edge = outgoingEdges[edgeId];
-							source = edge.getSource();
-							target = edge.getTarget();
-
-							//Does the node inherit attributes from a parent node?
-							if ((edge instanceof GeneralisationEdge && target instanceof AbstractClassNode) ||
-								(edge instanceof GeneralisationEdge && node instanceof ObjectNode && target instanceof ObjectNode) ||
-								(edge instanceof GeneralisationEdge && node instanceof RelationshipNode && target instanceof RelationshipNode) ||
-								(edge instanceof GeneralisationEdge && node instanceof EnumNode && target instanceof EnumNode)) {
-								Util.merge(attributes, getNodeAttributes(target, visitedNodes));
-
-								//Is there an enum linked to the node
-							} else if ((edge instanceof BiDirAssociationEdge &&
-									(target === node && (neighbor = source)instanceof EnumNode ||
-										source === node && (neighbor = target)instanceof EnumNode)) ||
-
-								(edge instanceof UniDirAssociationEdge && (neighbor = target)instanceof EnumNode)) {
-
-								options = {};
-								nodeAttributes = {};
-								Util.merge(nodeAttributes, getNodeAttributes(neighbor, []));
-								for (attributeId in nodeAttributes) {
-									if (nodeAttributes.hasOwnProperty(attributeId)) {
-										attribute = nodeAttributes[attributeId];
-										options[attribute.value] = attribute.value;
-									}
-								}
-								obj = {};
-								obj[neighbor.getEntityId()] = {
-									key : edge.getLabel().getValue().getValue(),
-									value : neighbor.getLabel().getValue().getValue(),
-									options : options
-								};
-								Util.merge(attributes, obj);
-							}
-						}
-					}
-					//Compute node attributes
-					nodeAttributes = node.getAttribute("[attributes]").getAttributes();
-					for (attributeId in nodeAttributes) {
-						if (nodeAttributes.hasOwnProperty(attributeId)) {
-							attribute = nodeAttributes[attributeId];
-							if (node instanceof RelationshipNode) {
-								obj = {};
-								obj[attributeId] = {
-									key : attribute.getKey().getValue(),
-									value : attribute.getValue().getValue(),
-									position : attribute.getValue2().getValue()
-								};
-								Util.merge(attributes, obj);
-							} else if (node instanceof EnumNode) {
-								obj = {};
-								obj[attributeId] = {
-									value : attribute.getValue().getValue()
-								};
-								Util.merge(attributes, obj);
-							} else {
-								obj = {};
-								obj[attributeId] = {
-									key : attribute.getKey().getValue(),
-									value : attribute.getValue().getValue()
-								};
-								Util.merge(attributes, obj);
-							}
-
-						}
-					}
-					return attributes;
-				}
-
-				var metamodel = {
-					attributes : {},
-					nodes : {},
-					edges : {}
-				};
-
-				var nodeId,
-				node;
-				var attributes;
-				var edge,
-				edgeId,
-				edges;
-				var source,
-				target;
-				var neighbor;
-				var groupSource,
-				groupTarget;
-				var groupNeighbor;
-				var shape;
-				var sourceTypes,
-				targetTypes,
-				concreteTypes;
-				var groupSourceTypes,
-				groupTargetTypes,
-				groupConcreteTypes;
-				var relations;
-				var groupEdge,
-				groupEdgeId,
-				groupEdges;
-
-				for (nodeId in _nodes) {
-					if (_nodes.hasOwnProperty(nodeId)) {
-						node = _nodes[nodeId];
-						if (node instanceof ObjectNode) {
-							if (node.getLabel().getValue().getValue() === "Model Attributes") {
-								attributes = getNodeAttributes(node);
-								metamodel.attributes = attributes;
-							} else {
-								attributes = getNodeAttributes(node);
-								edges = node.getEdges();
-								shape = null;
-								for (edgeId in edges) {
-									if (edges.hasOwnProperty(edgeId)) {
-										edge = edges[edgeId];
-										source = edge.getSource();
-										target = edge.getTarget();
-										if ((edge instanceof BiDirAssociationEdge &&
-												(target === node && (neighbor = source)instanceof NodeShapeNode ||
-													source === node && (neighbor = target)instanceof NodeShapeNode)) ||
-
-											(edge instanceof UniDirAssociationEdge && (neighbor = target)instanceof NodeShapeNode)) {
-
-											shape = {
-												shape : neighbor.getAttribute(neighbor.getEntityId() + "[shape]").getValue().getValue(),
-												color : neighbor.getAttribute(neighbor.getEntityId() + "[color]").getValue().getValue(),
-												defaultWidth : parseInt(neighbor.getAttribute(neighbor.getEntityId() + "[defaultWidth]").getValue().getValue()),
-												defaultHeight : parseInt(neighbor.getAttribute(neighbor.getEntityId() + "[defaultHeight]").getValue().getValue()),
-												customShape : neighbor.getAttribute(neighbor.getEntityId() + "[customShape]").getValue().getValue(),
-												customAnchors : neighbor.getAttribute(neighbor.getEntityId() + "[customAnchors]").getValue().getValue()
-											};
-										}
-									}
-								}
-								metamodel.nodes[nodeId] = {
-									label : node.getLabel().getValue().getValue(),
-									attributes : attributes,
-									shape : shape || {
-										shape : "rectangle",
-										color : "white",
-										customShape : "",
-										customAnchors : "",
-										defaultWidth : 0,
-										defaultHeight : 0
-									}
-								};
-							}
-						} else if (node instanceof RelationshipNode) {
-							attributes = getNodeAttributes(node);
-							edges = node.getEdges();
-							sourceTypes = [];
-							targetTypes = [];
-							relations = [];
-							shape = null;
-							for (edgeId in edges) {
-								if (edges.hasOwnProperty(edgeId)) {
-									edge = edges[edgeId];
-									source = edge.getSource();
-									target = edge.getTarget();
-									if ((edge instanceof BiDirAssociationEdge &&
-											(target === node && (neighbor = source)instanceof ObjectNode ||
-												source === node && (neighbor = target)instanceof ObjectNode))) {
-
-										concreteTypes = getConcreteObjectNodeTypes(neighbor);
-										sourceTypes = sourceTypes.concat(concreteTypes);
-										targetTypes = targetTypes.concat(concreteTypes);
-
-									} else if (edge instanceof UniDirAssociationEdge && source === node && target instanceof ObjectNode) {
-
-										targetTypes = targetTypes.concat(getConcreteObjectNodeTypes(target));
-
-									} else if (edge instanceof UniDirAssociationEdge && target === node && source instanceof ObjectNode) {
-
-										sourceTypes = sourceTypes.concat(getConcreteObjectNodeTypes(source));
-
-									} else if ((edge instanceof BiDirAssociationEdge &&
-											(target === node && (neighbor = source)instanceof AbstractClassNode ||
-												source === node && (neighbor = target)instanceof AbstractClassNode))) {
-
-										concreteTypes = getConcreteObjectNodeTypes(neighbor);
-										sourceTypes = sourceTypes.concat(concreteTypes);
-										targetTypes = targetTypes.concat(concreteTypes);
-
-									} else if (edge instanceof UniDirAssociationEdge && source === node && target instanceof AbstractClassNode) {
-
-										targetTypes = targetTypes.concat(getConcreteObjectNodeTypes(target));
-
-									} else if (edge instanceof UniDirAssociationEdge && target === node && source instanceof AbstractClassNode) {
-
-										sourceTypes = sourceTypes.concat(getConcreteObjectNodeTypes(source));
-
-									} else if ((edge instanceof BiDirAssociationEdge &&
-											(target === node && (neighbor = source)instanceof EdgeShapeNode ||
-												source === node && (neighbor = target)instanceof EdgeShapeNode)) ||
-
-										(edge instanceof UniDirAssociationEdge && source === node && (neighbor = target)instanceof EdgeShapeNode)) {
-
-										shape = {
-											arrow : neighbor.getAttribute(neighbor.getEntityId() + "[arrow]").getValue().getValue(),
-											shape : neighbor.getAttribute(neighbor.getEntityId() + "[shape]").getValue().getValue(),
-											color : neighbor.getAttribute(neighbor.getEntityId() + "[color]").getValue().getValue(),
-											overlay : neighbor.getAttribute(neighbor.getEntityId() + "[overlay]").getValue().getValue(),
-											overlayPosition : neighbor.getAttribute(neighbor.getEntityId() + "[overlayPosition]").getValue().getValue(),
-											overlayRotate : neighbor.getAttribute(neighbor.getEntityId() + "[overlayRotate]").getValue().getValue()
-										};
-									} else if ((edge instanceof GeneralisationEdge && target === node && (neighbor = source)instanceof RelationshipGroupNode)) {
-
-										groupEdges = neighbor.getEdges();
-										groupSourceTypes = [];
-										groupTargetTypes = [];
-										for (groupEdgeId in groupEdges) {
-											if (groupEdges.hasOwnProperty(groupEdgeId)) {
-												groupEdge = groupEdges[groupEdgeId];
-												groupSource = groupEdge.getSource();
-												groupTarget = groupEdge.getTarget();
-												if ((groupEdge instanceof BiDirAssociationEdge &&
-														(groupTarget === neighbor && (groupNeighbor = groupSource)instanceof ObjectNode ||
-															groupSource === neighbor && (groupNeighbor = groupTarget)instanceof ObjectNode))) {
-
-													groupConcreteTypes = getConcreteObjectNodeTypes(groupNeighbor);
-													groupSourceTypes = groupSourceTypes.concat(groupConcreteTypes);
-													groupTargetTypes = groupTargetTypes.concat(groupConcreteTypes);
-
-												} else if (groupEdge instanceof UniDirAssociationEdge && groupSource === neighbor && groupTarget instanceof ObjectNode) {
-
-													groupTargetTypes = groupTargetTypes.concat(getConcreteObjectNodeTypes(groupTarget));
-
-												} else if (groupEdge instanceof UniDirAssociationEdge && groupTarget === neighbor && groupSource instanceof ObjectNode) {
-
-													groupSourceTypes = groupSourceTypes.concat(getConcreteObjectNodeTypes(groupSource));
-
-												} else if ((groupEdge instanceof BiDirAssociationEdge &&
-														(groupTarget === neighbor && (groupNeighbor = groupSource)instanceof AbstractClassNode ||
-															groupSource === neighbor && (groupNeighbor = groupTarget)instanceof AbstractClassNode))) {
-
-													groupConcreteTypes = getConcreteObjectNodeTypes(groupNeighbor);
-													groupSourceTypes = groupSourceTypes.concat(groupConcreteTypes);
-													groupTargetTypes = groupTargetTypes.concat(groupConcreteTypes);
-
-												} else if (groupEdge instanceof UniDirAssociationEdge && groupSource === neighbor && groupTarget instanceof AbstractClassNode) {
-
-													groupTargetTypes = groupTargetTypes.concat(getConcreteObjectNodeTypes(groupTarget));
-
-												} else if (groupEdge instanceof UniDirAssociationEdge && groupTarget === neighbor && groupSource instanceof AbstractClassNode) {
-
-													groupSourceTypes = groupSourceTypes.concat(getConcreteObjectNodeTypes(groupSource));
-
-												}
-											}
-										}
-
-										if (groupSourceTypes.length > 0 && groupTargetTypes.length > 0) {
-											relations.push({
-												sourceTypes : groupSourceTypes,
-												targetTypes : groupTargetTypes
-											});
-										}
-
-									}
-								}
-							}
-
-							if (sourceTypes.length > 0 && targetTypes.length > 0) {
-								relations.push({
-									sourceTypes : sourceTypes,
-									targetTypes : targetTypes
-								});
-							}
-
-							metamodel.edges[nodeId] = {
-								label : node.getLabel().getValue().getValue(),
-								shape : shape || {
-									arrow : "bidirassociation",
-									shape : "straight",
-									color : "black",
-									overlay : "",
-									overlayPosition : "top",
-									overlayRotate : true
-								},
-								relations : relations,
-								attributes : attributes
-							};
-						}
-					}
-				}
-				return metamodel;
-			},
-			/**
-			 * Store current graph representation in the ROLE space
-			 * @returns {Deferred}
-			 */
-			storeData : function () {
-
-				var resourceSpace = new openapp.oo.Resource(openapp.param.space());
-
-				var deferred = $.Deferred();
-				var innerDeferred = $.Deferred();
-
-				var data = this.graphToJSON();
-				//noinspection JSUnusedGlobalSymbols
-				resourceSpace.getSubResources({
-					relation : openapp.ns.role + "data",
-					type : CONFIG.NS.MY.MODEL,
-					onEach : function (doc) {
-						doc.del();
-					},
-					onAll : function () {
-						innerDeferred.resolve();
-					}
-				});
-				innerDeferred.then(function () {
-					resourceSpace.create({
-						relation : openapp.ns.role + "data",
-						type : CONFIG.NS.MY.MODEL,
-						representation : data,
-						callback : function () {
-							deferred.resolve();
-						}
-					});
-				});
-				return deferred.promise();
-			},
-            setHighlightedEntity: function (entity) {
-                if(_highlightedEntityByView)
-                    _highlightedEntityByView.unhighlight();
-                _highlightedEntityByView = entity;
+                for(nodeId in _nodes){
+                    if(_nodes.hasOwnProperty(nodeId)){
+                        node = _nodes[nodeId];
+                        if(type.indexOf(node.getType()) !== -1){
+                            nodesByType[nodeId] = node;
+                        }
+                    }
+                }
+                return nodesByType;
+            },
+            /**
+             * Create a new edge
+             * @memberof canvas_widget.EntityManager#
+             * @param {string} type Type of edge
+             * @param {string} id Entity identifier of edge
+             * @param {canvas_widget.AbstractNode} source Source node
+             * @param {canvas_widget.AbstractNode} target Target node
+             * @returns {canvas_widget.AbstractEdge}
+             */
+            //TODO: switch id and type
+            createEdge: function(type,id,source,target){
+                var edge;
+                //noinspection JSAccessibilityCheck
+                if(_recycleBin.edges.hasOwnProperty(id)){
+                    //noinspection JSAccessibilityCheck
+                    edge = _recycleBin.edges[id];
+                    //noinspection JSAccessibilityCheck
+                    delete _recycleBin.edges[id];
+                    _edges[id] = edge;
+                    return edge;
+                }
+                if(edgeTypes.hasOwnProperty(type)){
+                    edge = new edgeTypes[type](id,source,target);
+                    source.addOutgoingEdge(edge);
+                    target.addIngoingEdge(edge);
+                    _edges[id] = edge;
+                    return edge;
+                }
+                return null;
+            },
+            /**
+             * Find edge by id
+             * @memberof canvas_widget.EntityManager#
+             * @param {string} id Entity id
+             * @returns {*}
+             */
+            findEdge: function(id){
+                if(_edges.hasOwnProperty(id)){
+                    return _edges[id];
+                }
+                return null;
+            },
+            /**
+             * Delete edge by id
+             * @memberof canvas_widget.EntityManager#
+             * @param {string} id Entity id
+             */
+            deleteEdge: function(id){
+                if(_edges.hasOwnProperty(id)){
+                    //noinspection JSAccessibilityCheck
+                    _recycleBin.edges[id] = _edges[id];
+                    delete _edges[id];
+                }
+            },
+            /**
+             * Get all edges
+             * @memberof canvas_widget.EntityManager#
+             * @returns {object}
+             */
+            getEdges: function(){
+                return _edges;
+            },
+            /**
+             * Get edges by type
+             * @memberof canvas_widget.EntityManager#
+             * @param {string} type Entity type
+             * @returns {object}
+             */
+            getEdgesByType: function(type){
+                var edgeId,
+                    edge,
+                    edgesByType = {};
+
+                for(edgeId in _edges){
+                    if(_edges.hasOwnProperty(edgeId)){
+                        edge = _edges[edgeId];
+                        if(edge.getType() === type){
+                            edgesByType[edgeId] = edge;
+                        }
+                    }
+                }
+                return edgesByType;
+            },
+            /**
+             * Get JSON representation of whole graph
+             * @memberof canvas_widget.EntityManager#
+             * @returns {object}
+             */
+            graphToJSON: function(){
+                var attributesJSON;
+                var nodesJSON = {};
+                var edgesJSON = {};
+                attributesJSON = _modelAttributesNode ? _modelAttributesNode.toJSON() : {};
+                _.forEach(_nodes,function(val,key){
+                    nodesJSON[key] = val.toJSON();
+                });
+                _.forEach(_edges,function(val,key){
+                    edgesJSON[key] = val.toJSON();
+                });
+                return {
+                    attributes: attributesJSON,
+                    nodes: nodesJSON,
+                    edges: edgesJSON
+                };
+            },
+            /**
+             * Create model attributes node by its JSON representation
+             * @memberof canvas_widget.EntityManager#
+             * @param {object} json JSON representation
+             * @returns {canvas_widget.AbstractNode}
+             */
+            createModelAttributesNodeFromJSON: function(json){
+                var node = this.createModelAttributesNode();
+                if(node){
+                    node.getLabel().getValue().setValue(json.label.value.value);
+                    for(var attrId in json.attributes){
+                        if(json.attributes.hasOwnProperty(attrId)){
+                            var attr = node.getAttribute(attrId);
+                            if(attr){
+                                attr.setValueFromJSON(json.attributes[attrId]);
+                            }
+                        }
+                    }
+                }
+                return node;
+            },
+            /**
+             * Create a new node by its JSON representation
+             * @memberof canvas_widget.EntityManager#
+             * @param {string} type Type of node
+             * @param {string} id Entity identifier of node
+             * @param {number} left x-coordinate of node position
+             * @param {number} top y-coordinate of node position
+             * @param {number} width Width of node
+             * @param {number} height Height of node
+             * @param {object} json JSON representation
+             * @param {number} zIndex Position of node on z-axis
+             * @returns {canvas_widget.AbstractNode}
+             */
+            createNodeFromJSON: function(type,id,left,top,width,height,zIndex,json){
+                var node = this.createNode(type,id,left,top,width,height,zIndex);
+                if(node){
+                    node.getLabel().getValue().setValue(json.label.value.value);
+                    for(var attrId in json.attributes){
+                        if(json.attributes.hasOwnProperty(attrId)){
+                            var attr = node.getAttribute(attrId);
+                            if(attr){
+                                attr.setValueFromJSON(json.attributes[attrId]);
+                            }
+                        }
+                    }
+                }
+                return node;
+            },
+            /**
+             * Create a new node by its JSON representation
+             * @memberof canvas_widget.EntityManager#
+             * @param {string} type Type of edge
+             * @param {string} id Entity identifier of edge
+             * @param {canvas_widget.AbstractNode} source Source node entity id
+             * @param {canvas_widget.AbstractNode} target Target node entity id
+             * @param {object} json JSON representation
+             * @returns {canvas_widget.AbstractEdge}
+             */
+            createEdgeFromJSON: function(type,id,source,target,json){
+                var edge = this.createEdge(type,id,this.findNode(source),this.findNode(target));
+                if(edge){
+                    edge.getLabel().getValue().setValue(json.label.value.value);
+                    for(var attrId in json.attributes){
+                        if(json.attributes.hasOwnProperty(attrId)){
+                            var attr = edge.getAttribute(attrId);
+                            if(attr){
+                                attr.setValueFromJSON(json.attributes[attrId]);
+                            }
+                        }
+                    }
+                }
+                return edge;
+            },
+            /**
+             * Generate the 'Add node..' context menu options
+             * @param canvas Canvas to add node to
+             * @param left Position of node on x-axis
+             * @param top Position of node on <-axis
+             * @returns {object} Menu items
+             */
+            generateAddNodeMenu: function(canvas,left,top){
+                function makeAddNodeCallback(nodeType,width,height){
+                    return function(){
+                        canvas.createNode(nodeType,left,top,width,height);
+                    };
+                }
+
+                var items = {},
+                    nodeType;
+
+                for(nodeType in nodeTypes){
+                    if(nodeTypes.hasOwnProperty(nodeType)){
+                        items[nodeType] = {
+                            name: '..' + nodeType,
+                            callback: makeAddNodeCallback(nodeType,nodeTypes[nodeType].DEFAULT_WIDTH,nodeTypes[nodeType].DEFAULT_HEIGHT)
+                        };
+                    }
+                }
+                return items;
+            },
+            /**
+             * Generate the 'Connect to..' context menu options for the passed node
+             * @param {canvas_widget.AbstractNode} node
+             */
+            generateConnectToMenu: function(node){
+
+                function makeTargetNodeCallback(connectionType,targetNodeId){
+                    return function(/*key, opt*/){
+                        node.getCanvas().createEdge(connectionType,node.getEntityId(),targetNodeId);
+                    };
+                }
+
+                var connectionType,
+                    sourceNodeTypes,
+                    targetNodeTypes,
+                    targetNodeType,
+
+                    connectionItems,
+                    targetNodeTypeItems,
+                    targetNodeItems,
+
+                    i,
+                    numOfRelations,
+                    j,
+                    numOfTargetTypes,
+                    existsLinkableTargetNode,
+                    targetNodes,
+                    targetNodeId,
+                    targetNode,
+
+                    targetAppearance,
+                    sourceAppearance = node.getAppearance();
+
+                connectionItems = {};
+                for(connectionType in relations){
+                    if(relations.hasOwnProperty(connectionType)){
+                        targetNodeTypeItems = {};
+                        for(i = 0, numOfRelations = relations[connectionType].length; i < numOfRelations; i++){
+                            sourceNodeTypes = relations[connectionType][i].sourceTypes;
+                            targetNodeTypes = relations[connectionType][i].targetTypes;
+                            if(sourceNodeTypes.indexOf(node.getType()) !== -1){
+                                for(j = 0, numOfTargetTypes = targetNodeTypes.length; j < numOfTargetTypes; j++){
+                                    targetNodeType = targetNodeTypes[j];
+                                    targetNodeItems = {};
+                                    targetNodes = this.getNodesByType(targetNodeType);
+                                    existsLinkableTargetNode = false;
+                                    for(targetNodeId in targetNodes){
+                                        if(targetNodes.hasOwnProperty(targetNodeId)){
+                                            targetNode = targetNodes[targetNodeId];
+                                            if(targetNode === node) continue;
+                                            targetAppearance = targetNode.getAppearance();
+                                            if(!targetNode.getNeighbors().hasOwnProperty(node.getEntityId())){
+                                                targetNodeItems[connectionType+targetNodeType+i+targetNodeId] = {
+                                                    name: '..' + (targetNode.getLabel().getValue().getValue() || targetNode.getType()),
+                                                    callback: makeTargetNodeCallback(connectionType,targetNodeId),
+                                                    distanceSquare: Math.pow(targetAppearance.left-sourceAppearance.left,2) + Math.pow(targetAppearance.top-sourceAppearance.top,2),
+                                                    targetNodeId: connectionType+targetNodeType+i+targetNodeId
+                                                };
+                                            }
+                                        }
+                                    }
+                                    if(_.size(targetNodeItems) > 0){
+                                        var targetNodeItemsTmp = _.sortBy(targetNodeItems,'distanceSquare');
+                                        targetNodeItems = {};
+                                        for(var k = 0, numOfItems = targetNodeItemsTmp.length; k < numOfItems; k++){
+                                            targetNodeItems[k+targetNodeItemsTmp[k].targetNodeId] = targetNodeItemsTmp[k];
+                                        }
+                                        targetNodeTypeItems[connectionType+targetNodeType+i] = {
+                                            name: '..to ' + targetNodeType + "..",
+                                            items: targetNodeItems
+                                        };
+                                    }
+                                }
+                            }
+                        }
+                        if(_.size(targetNodeTypeItems) > 0){
+                            connectionItems[connectionType] = {
+                                name: '..with ' + connectionType + '..',
+                                items: targetNodeTypeItems
+                            };
+                        }
+                    }
+                }
+
+                return {
+                    name: 'Connect..',
+                    items: connectionItems,
+                    disabled: (function(connectionItems){
+                        return _.size(connectionItems) === 0;
+                    })(connectionItems)
+                };
+            },
+            /**
+             * Generate the JSON Representation of the meta-model for a new editr instance based on the current graph
+             * @returns {{nodes: {}, edges: {}}} JSON representation of meta model
+             */
+            generateMetaModel: function(){
+
+                /**
+                 * Determine the type of the concrete classes (ObjectNodes) of the class diagram contained in the sub graph rooted by the passed node
+                 * @param node Node to start with
+                 * @param [visitedNodes] List of node that already have been visited
+                 * @returns {object}
+                 */
+                function getConcreteObjectNodeTypes(node,visitedNodes){
+                    var edgeId,
+                        edge,
+                        ingoingEdges,
+                        source,
+                        type,
+                        classTypes = [];
+
+                    if(!visitedNodes) visitedNodes = [];
+
+                    if(visitedNodes.indexOf(node) !== -1) return [];
+
+                    visitedNodes.push(node);
+
+                    type = node.getLabel().getValue().getValue();
+                    if(node instanceof ObjectNode && classTypes.indexOf(type) === -1){
+                        classTypes.push(type);
+                    }
+
+                    ingoingEdges = node.getIngoingEdges();
+                    for(edgeId in ingoingEdges){
+                        if(ingoingEdges.hasOwnProperty(edgeId)){
+                            edge = ingoingEdges[edgeId];
+                            source = edge.getSource();
+                            if(edge instanceof GeneralisationEdge && source instanceof ObjectNode ||
+                                edge instanceof GeneralisationEdge && source instanceof AbstractClassNode){
+                                classTypes = classTypes.concat(getConcreteObjectNodeTypes(source,visitedNodes));
+                            }
+                        }
+                    }
+                    return classTypes;
+                }
+
+                /**
+                 * Determine the attributes of the passed node by traversing the underlying class diagram
+                 * @param node Node to start with
+                 * @param [visitedNodes] List of node that already have been visited
+                 * @returns {object}
+                 */
+                function getNodeAttributes(node,visitedNodes){
+                    var nodeAttributes, attributeId, attribute;
+                    var edgeId, edge, edges;
+                    var source, target;
+                    var neighbor, options;
+                    var attributes = {};
+                    var obj = {};
+
+                    if(!visitedNodes) visitedNodes = [];
+
+                    if(visitedNodes.indexOf(node) !== -1) return {};
+
+                    visitedNodes.push(node);
+
+                    //Traverse edges to check for inheritance and linked enums
+                    edges = node.getEdges();
+                    for(edgeId in edges){
+                        if(edges.hasOwnProperty(edgeId)){
+                            edge = edges[edgeId];
+                            source = edge.getSource();
+                            target = edge.getTarget();
+
+                            //Does the node inherit attributes from a parent node?
+                            if( (edge instanceof GeneralisationEdge && target instanceof AbstractClassNode) ||
+                                (edge instanceof GeneralisationEdge && node instanceof ObjectNode && target instanceof ObjectNode) ||
+                                (edge instanceof GeneralisationEdge && node instanceof RelationshipNode && target instanceof RelationshipNode) ||
+                                (edge instanceof GeneralisationEdge && node instanceof EnumNode && target instanceof EnumNode)){
+                                Util.merge(attributes,getNodeAttributes(target,visitedNodes));
+
+                                //Is there an enum linked to the node
+                            } else if( (edge instanceof BiDirAssociationEdge &&
+                                (target === node && (neighbor = source) instanceof EnumNode ||
+                                    source === node && (neighbor = target) instanceof EnumNode)) ||
+
+                                (edge instanceof UniDirAssociationEdge && (neighbor = target) instanceof EnumNode) ){
+
+                                options = {};
+                                nodeAttributes = {};
+                                Util.merge(nodeAttributes,getNodeAttributes(neighbor,[]));
+                                for(attributeId in nodeAttributes){
+                                    if(nodeAttributes.hasOwnProperty(attributeId)){
+                                        attribute = nodeAttributes[attributeId];
+                                        options[attribute.value] = attribute.value;
+                                    }
+                                }
+                                obj = {};
+                                obj[neighbor.getEntityId()] = {
+                                    key: edge.getLabel().getValue().getValue(),
+                                    value: neighbor.getLabel().getValue().getValue(),
+                                    options: options
+                                };
+                                Util.merge(attributes,obj);
+                            }
+                        }
+                    }
+                    //Compute node attributes
+                    nodeAttributes = node.getAttribute("[attributes]").getAttributes();
+                    for(attributeId in nodeAttributes){
+                        if(nodeAttributes.hasOwnProperty(attributeId)){
+                            attribute = nodeAttributes[attributeId];
+                            if(node instanceof RelationshipNode){
+                                obj = {};
+                                obj[attributeId] = {
+                                    key: attribute.getKey().getValue(),
+                                    value: attribute.getValue().getValue(),
+                                    position: attribute.getValue2().getValue()
+                                };
+                                Util.merge(attributes,obj);
+                            } else if (node instanceof EnumNode){
+                                obj = {};
+                                obj[attributeId] = {
+                                    value: attribute.getValue().getValue()
+                                };
+                                Util.merge(attributes,obj);
+                            } else {
+                                obj = {};
+                                obj[attributeId] = {
+                                    key: attribute.getKey().getValue(),
+                                    value: attribute.getValue().getValue()
+                                };
+                                Util.merge(attributes,obj);
+                            }
+
+                        }
+                    }
+                    return attributes;
+                }
+
+                var metamodel = {
+                    attributes: {},
+                    nodes: {},
+                    edges: {}
+                };
+
+                var nodeId, node;
+                var attributes;
+                var edge, edgeId, edges;
+                var source, target;
+                var neighbor;
+                var groupSource, groupTarget;
+                var groupNeighbor;
+                var shape;
+                var sourceTypes, targetTypes, concreteTypes;
+                var groupSourceTypes, groupTargetTypes, groupConcreteTypes;
+                var relations;
+                var groupEdge,groupEdgeId,groupEdges;
+
+                for(nodeId in _nodes){
+                    if(_nodes.hasOwnProperty(nodeId)){
+                        node = _nodes[nodeId];
+                        if(node instanceof ObjectNode){
+                            if(node.getLabel().getValue().getValue() === "Model Attributes"){
+                                attributes = getNodeAttributes(node);
+                                metamodel.attributes = attributes;
+                            } else {
+                                attributes = getNodeAttributes(node);
+                                edges = node.getEdges();
+                                shape = null;
+                                for(edgeId in edges){
+                                    if(edges.hasOwnProperty(edgeId)){
+                                        edge = edges[edgeId];
+                                        source = edge.getSource();
+                                        target = edge.getTarget();
+                                        if( (edge instanceof BiDirAssociationEdge &&
+                                            (target === node && (neighbor = source) instanceof NodeShapeNode ||
+                                                source === node && (neighbor = target) instanceof NodeShapeNode)) ||
+
+                                            (edge instanceof UniDirAssociationEdge && (neighbor = target) instanceof NodeShapeNode) ){
+
+                                            shape = {
+                                                shape: neighbor.getAttribute(neighbor.getEntityId()+"[shape]").getValue().getValue(),
+                                                color: neighbor.getAttribute(neighbor.getEntityId()+"[color]").getValue().getValue(),
+                                                defaultWidth: parseInt(neighbor.getAttribute(neighbor.getEntityId()+"[defaultWidth]").getValue().getValue()),
+                                                defaultHeight: parseInt(neighbor.getAttribute(neighbor.getEntityId()+"[defaultHeight]").getValue().getValue()),
+                                                customShape: neighbor.getAttribute(neighbor.getEntityId()+"[customShape]").getValue().getValue(),
+                                                customAnchors: neighbor.getAttribute(neighbor.getEntityId()+"[customAnchors]").getValue().getValue()
+                                            };
+                                        }
+                                    }
+                                }
+                                metamodel.nodes[nodeId] = {
+                                    label: node.getLabel().getValue().getValue(),
+                                    attributes: attributes,
+                                    shape: shape || {shape: "rectangle", color: "white", customShape: "", customAnchors: "", defaultWidth: 0, defaultHeight: 0}
+                                };
+                            }
+                        } else if(node instanceof RelationshipNode){
+                            attributes = getNodeAttributes(node);
+                            edges = node.getEdges();
+                            sourceTypes = [];
+                            targetTypes = [];
+                            relations = [];
+                            shape = null;
+                            for(edgeId in edges){
+                                if(edges.hasOwnProperty(edgeId)){
+                                    edge = edges[edgeId];
+                                    source = edge.getSource();
+                                    target = edge.getTarget();
+                                    if( (edge instanceof BiDirAssociationEdge &&
+                                        (target === node && (neighbor = source) instanceof ObjectNode ||
+                                            source === node && (neighbor = target) instanceof ObjectNode))){
+
+                                        concreteTypes = getConcreteObjectNodeTypes(neighbor);
+                                        sourceTypes = sourceTypes.concat(concreteTypes);
+                                        targetTypes = targetTypes.concat(concreteTypes);
+
+                                    } else if(edge instanceof UniDirAssociationEdge && source === node && target instanceof ObjectNode){
+
+                                        targetTypes = targetTypes.concat(getConcreteObjectNodeTypes(target));
+
+                                    } else if(edge instanceof UniDirAssociationEdge && target === node && source instanceof ObjectNode){
+
+                                        sourceTypes = sourceTypes.concat(getConcreteObjectNodeTypes(source));
+
+                                    } else if( (edge instanceof BiDirAssociationEdge &&
+                                        (target === node && (neighbor = source) instanceof AbstractClassNode ||
+                                            source === node && (neighbor = target) instanceof AbstractClassNode))){
+
+                                        concreteTypes = getConcreteObjectNodeTypes(neighbor);
+                                        sourceTypes = sourceTypes.concat(concreteTypes);
+                                        targetTypes = targetTypes.concat(concreteTypes);
+
+                                    } else if(edge instanceof UniDirAssociationEdge && source === node && target instanceof AbstractClassNode){
+
+                                        targetTypes = targetTypes.concat(getConcreteObjectNodeTypes(target));
+
+                                    } else if(edge instanceof UniDirAssociationEdge && target === node && source instanceof AbstractClassNode){
+
+                                        sourceTypes = sourceTypes.concat(getConcreteObjectNodeTypes(source));
+
+                                    } else if( (edge instanceof BiDirAssociationEdge &&
+                                        (target === node && (neighbor = source) instanceof EdgeShapeNode ||
+                                            source === node && (neighbor = target) instanceof EdgeShapeNode)) ||
+
+                                        (edge instanceof UniDirAssociationEdge && source === node && (neighbor = target) instanceof EdgeShapeNode) ){
+
+                                        shape = {
+                                            arrow: neighbor.getAttribute(neighbor.getEntityId()+"[arrow]").getValue().getValue(),
+                                            shape: neighbor.getAttribute(neighbor.getEntityId()+"[shape]").getValue().getValue(),
+                                            color: neighbor.getAttribute(neighbor.getEntityId()+"[color]").getValue().getValue(),
+                                            overlay: neighbor.getAttribute(neighbor.getEntityId()+"[overlay]").getValue().getValue(),
+                                            overlayPosition: neighbor.getAttribute(neighbor.getEntityId()+"[overlayPosition]").getValue().getValue(),
+                                            overlayRotate: neighbor.getAttribute(neighbor.getEntityId()+"[overlayRotate]").getValue().getValue()
+                                        };
+                                    } else if( (edge instanceof GeneralisationEdge && target === node && (neighbor = source) instanceof RelationshipGroupNode) ){
+
+                                        groupEdges = neighbor.getEdges();
+                                        groupSourceTypes = [];
+                                        groupTargetTypes = [];
+                                        for(groupEdgeId in groupEdges){
+                                            if(groupEdges.hasOwnProperty(groupEdgeId)){
+                                                groupEdge = groupEdges[groupEdgeId];
+                                                groupSource = groupEdge.getSource();
+                                                groupTarget = groupEdge.getTarget();
+                                                if( (groupEdge instanceof BiDirAssociationEdge &&
+                                                    (groupTarget === neighbor && (groupNeighbor = groupSource) instanceof ObjectNode ||
+                                                        groupSource === neighbor && (groupNeighbor = groupTarget) instanceof ObjectNode))){
+
+                                                    groupConcreteTypes = getConcreteObjectNodeTypes(groupNeighbor);
+                                                    groupSourceTypes = groupSourceTypes.concat(groupConcreteTypes);
+                                                    groupTargetTypes = groupTargetTypes.concat(groupConcreteTypes);
+
+                                                } else if(groupEdge instanceof UniDirAssociationEdge && groupSource === neighbor && groupTarget instanceof ObjectNode){
+
+                                                    groupTargetTypes = groupTargetTypes.concat(getConcreteObjectNodeTypes(groupTarget));
+
+                                                } else if(groupEdge instanceof UniDirAssociationEdge && groupTarget === neighbor && groupSource instanceof ObjectNode){
+
+                                                    groupSourceTypes = groupSourceTypes.concat(getConcreteObjectNodeTypes(groupSource));
+
+                                                } else if( (groupEdge instanceof BiDirAssociationEdge &&
+                                                    (groupTarget === neighbor && (groupNeighbor = groupSource) instanceof AbstractClassNode ||
+                                                        groupSource === neighbor && (groupNeighbor = groupTarget) instanceof AbstractClassNode))){
+
+                                                    groupConcreteTypes = getConcreteObjectNodeTypes(groupNeighbor);
+                                                    groupSourceTypes = groupSourceTypes.concat(groupConcreteTypes);
+                                                    groupTargetTypes = groupTargetTypes.concat(groupConcreteTypes);
+
+                                                } else if(groupEdge instanceof UniDirAssociationEdge && groupSource === neighbor && groupTarget instanceof AbstractClassNode){
+
+                                                    groupTargetTypes = groupTargetTypes.concat(getConcreteObjectNodeTypes(groupTarget));
+
+                                                } else if(groupEdge instanceof UniDirAssociationEdge && groupTarget === neighbor && groupSource instanceof AbstractClassNode){
+
+                                                    groupSourceTypes = groupSourceTypes.concat(getConcreteObjectNodeTypes(groupSource));
+
+                                                }
+                                            }
+                                        }
+
+                                        if(groupSourceTypes.length > 0 && groupTargetTypes.length > 0){
+                                            relations.push({
+                                                sourceTypes: groupSourceTypes,
+                                                targetTypes: groupTargetTypes
+                                            });
+                                        }
+
+                                    }
+                                }
+                            }
+
+                            if(sourceTypes.length > 0 && targetTypes.length > 0){
+                                relations.push({
+                                    sourceTypes: sourceTypes,
+                                    targetTypes: targetTypes
+                                });
+                            }
+
+                            metamodel.edges[nodeId] = {
+                                label: node.getLabel().getValue().getValue(),
+                                shape: shape || {arrow: "bidirassociation", shape: "straight", color: "black", overlay: "", overlayPosition: "top", overlayRotate: true},
+                                relations: relations,
+                                attributes: attributes
+                            };
+                        }
+                    }
+                }
+                return metamodel;
+            },
+            /**
+             * Store current graph representation in the ROLE space
+             * @returns {Deferred}
+             */
+            storeData: function(){
+                var resourceSpace = new openapp.oo.Resource(openapp.param.space());
+
+                var deferred = $.Deferred();
+                var innerDeferred = $.Deferred();
+
+                var data = this.graphToJSON();
+                //noinspection JSUnusedGlobalSymbols
+                resourceSpace.getSubResources({
+                    relation: openapp.ns.role + "data",
+                    type: CONFIG.NS.MY.MODEL,
+                    onEach: function(doc) {
+                        doc.del();
+                    },
+                    onAll: function(){
+                        innerDeferred.resolve();
+                    }
+                });
+                innerDeferred.then(function(){
+                    resourceSpace.create({
+                        relation: openapp.ns.role + "data",
+                        type: CONFIG.NS.MY.MODEL,
+                        representation: data,
+                        callback: function(){
+                            deferred.resolve();
+                        }
+                    });
+                });
+                return deferred.promise();
             }
 		};
 	}

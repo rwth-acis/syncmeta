@@ -2,10 +2,10 @@
 
 module.exports = function (grunt) {
 
-	// Project configuration.
-	//noinspection JSUnusedGlobalSymbols
-	var localConfig = grunt.file.readJSON('.localGruntConfig.json');
-		grunt.initConfig({
+    // Project configuration.
+    //noinspection JSUnusedGlobalSymbols
+    var localConfig = grunt.file.readJSON('.localGruntConfig.json');
+    grunt.initConfig({
 
 			pkg : grunt.file.readJSON('package.json'),
 
