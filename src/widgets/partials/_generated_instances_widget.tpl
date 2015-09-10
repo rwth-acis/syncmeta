@@ -6,7 +6,8 @@
         'iwcw',
         'operations/non_ot/ExportMetaModelOperation',
         'operations/non_ot/ExportGuidanceRulesOperation',
-    ],function($,_,Util,IWCW,ExportMetaModelOperation, ExportGuidanceRulesOperation){
+        'operations/non_ot/ExportLogicalGuidanceRepresentationOperation',
+    ],function($,_,Util,IWCW,ExportMetaModelOperation, ExportGuidanceRulesOperation, ExportLogicalGuidanceRepresentationOperation){
 
         var componentName = "export"+Util.generateRandomId();
 
@@ -107,6 +108,29 @@
                 return deferred2.promise();
             }
 
+            function addLogicalGuidanceRepresentationToSpace(spaceURI, logicalGuidanceRepresentation){
+                var deferred = $.Deferred();
+                var deferred2 = $.Deferred();
+                openapp.resource.post(
+                        spaceURI,
+                        function(data){
+                            deferred.resolve(data.uri);
+                        },{
+                            "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate":"http://purl.org/role/terms/data",
+                            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type":"my:ns:logicalguidancerepresentation"
+                        });
+                deferred.promise().then(function(dataURI){
+                    openapp.resource.put(
+                            dataURI,
+                            function(){
+                                deferred2.resolve();
+                            },{
+                                "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate":"http://purl.org/openapp/representation"
+                            },JSON.stringify(logicalGuidanceRepresentation));
+                });
+                return deferred2.promise();
+            }
+
             function storeGeneratedInstanceMeta(spaceURI,spaceTitle){
                 var resourceSpace = new openapp.oo.Resource(openapp.param.space()),
                         deferred = $.Deferred(),
@@ -178,8 +202,20 @@
                 return deferred.promise();
             }
 
+            function getLogicalGuidanceRepresentation(){
+                var deferred = $.Deferred();
+                iwc.registerOnDataReceivedCallback(function(operation){
+                    if(operation instanceof ExportLogicalGuidanceRepresentationOperation){
+                        deferred.resolve(operation.getData());
+                    }
+                });
+                var operation = new ExportLogicalGuidanceRepresentationOperation(componentName,null);
+                iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.toNonOTOperation());
+                return deferred.promise();
+            }
+
             return getMetaModel().then(function(metamodel){
-                return getGuidanceRules().then(function(guidanceRules){
+                return getLogicalGuidanceRepresentation().then(function(logicalGuidanceRepresentation){
                     return createSpace(spaceLabel,spaceTitle).then(function(spaceURI){
                         return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/activity.xml")
                             .then(function(){
@@ -197,7 +233,7 @@
                             }).then(function(){
                                 return addMetamodelToSpace(spaceURI,metamodel);
                             }).then(function(){
-                                return addGuidanceRulesToSpace(spaceURI, guidanceRules);
+                                return addLogicalGuidanceRepresentationToSpace(spaceURI, logicalGuidanceRepresentation);
                             }).then(function(){
                                 return storeGeneratedInstanceMeta(spaceURI,spaceTitle);
                             }).then(function(){

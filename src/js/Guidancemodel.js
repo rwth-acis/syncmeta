@@ -31,6 +31,14 @@ define([
                 return "Create " + type + " object";
             };
 
+            guidancemodeling.isCreateObjectNodeLabel = function(label){
+                var match = /Create (.*?) object/.exec(label);
+                if(match)
+                    return match[1];
+                else
+                    return "";
+            };
+
             guidancemodeling.getCreateRelationshipNodeLabelForType = function(type){
                 return "Create " + type + " relationship";
             };
@@ -41,6 +49,14 @@ define([
 
             guidancemodeling.getEntityNodeLabelForType = function(type){
                 return type + " entity";
+            };
+
+            guidancemodeling.isEntityNodeLabel = function(label){
+                var match = /(.*?) entity/.exec(label);
+                if(match)
+                    return match[1];
+                else
+                    return "";
             };
 
             guidancemodeling.getObjectContextLabelForType = function(type){

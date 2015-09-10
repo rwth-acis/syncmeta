@@ -16,11 +16,12 @@ define([
     'operations/non_ot/ExportDataOperation',
     'operations/non_ot/ExportMetaModelOperation',
     'operations/non_ot/ExportGuidanceRulesOperation',
+    'operations/non_ot/ExportLogicalGuidanceRepresentationOperation',
     'operations/non_ot/ExportImageOperation',
     'operations/non_ot/JoinOperation',
     'operations/non_ot/ShowObjectGuidanceOperation',
     'operations/non_ot/ObjectGuidanceFollowedOperation'
-],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportImageOperation,JoinOperation, ShowObjectGuidanceOperation, ObjectGuidanceFollowedOperation) {
+],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,JoinOperation, ShowObjectGuidanceOperation, ObjectGuidanceFollowedOperation) {
 
     /**
      * OperationFactory
@@ -66,6 +67,9 @@ define([
                         break;
                     case ExportGuidanceRulesOperation.TYPE:
                         resOperation = new ExportGuidanceRulesOperation(data.requestingComponent,data.data);
+                        break;
+                    case ExportLogicalGuidanceRepresentationOperation.TYPE:
+                        resOperation = new ExportLogicalGuidanceRepresentationOperation(data.requestingComponent,data.data);
                         break;
                     case ExportImageOperation.TYPE:
                         resOperation = new ExportImageOperation(data.requestingComponent,data.data);

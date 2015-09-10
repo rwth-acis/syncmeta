@@ -11,6 +11,7 @@ define([
     'operations/non_ot/ExportDataOperation',
     'operations/non_ot/ExportMetaModelOperation',
     'operations/non_ot/ExportGuidanceRulesOperation',
+    'operations/non_ot/ExportLogicalGuidanceRepresentationOperation',
     'operations/non_ot/ExportImageOperation',
     'operations/non_ot/ShowObjectGuidanceOperation',
     'canvas_widget/AbstractEntity',
@@ -20,7 +21,7 @@ define([
     'canvas_widget/MoveTool',
     'canvas_widget/guidance_modeling/ObjectGuidance',
     'jquery.transformable-PATCHED'
-],/** @lends Canvas */function($,jsPlumb,IWCOT,Util,NodeAddOperation,EdgeAddOperation,ToolSelectOperation,EntitySelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportImageOperation,ShowObjectGuidanceOperation,AbstractEntity,ModelAttributesNode,EntityManager,AbstractCanvas,MoveTool,ObjectGuidance) {
+],/** @lends Canvas */function($,jsPlumb,IWCOT,Util,NodeAddOperation,EdgeAddOperation,ToolSelectOperation,EntitySelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,ShowObjectGuidanceOperation,AbstractEntity,ModelAttributesNode,EntityManager,AbstractCanvas,MoveTool,ObjectGuidance) {
     Canvas.prototype = new AbstractCanvas();
     Canvas.prototype.constructor = Canvas;
     /**
@@ -303,6 +304,18 @@ define([
             if(operation instanceof ExportGuidanceRulesOperation){
                 if(operation.getData() === null){
                     operation.setData(EntityManager.generateGuidanceRules());
+                    _iwcot.sendLocalNonOTOperation(operation.getRequestingComponent(),operation.toNonOTOperation());
+                } else {
+                    //Do nothing here
+                }
+
+            }
+        };
+
+        var localExportLogicalGuidanceRepresentationCallback = function(operation){
+            if(operation instanceof ExportLogicalGuidanceRepresentationOperation){
+                if(operation.getData() === null){
+                    operation.setData(EntityManager.generateLogicalGuidanceRepresentation());
                     _iwcot.sendLocalNonOTOperation(operation.getRequestingComponent(),operation.toNonOTOperation());
                 } else {
                     //Do nothing here
@@ -942,6 +955,7 @@ define([
             _iwcot.registerOnLocalDataReceivedCallback(localExportDataCallback);
             _iwcot.registerOnLocalDataReceivedCallback(localExportMetaModelCallback);
             _iwcot.registerOnLocalDataReceivedCallback(localExportGuidanceRulesCallback);
+            _iwcot.registerOnLocalDataReceivedCallback(localExportLogicalGuidanceRepresentationCallback);
             _iwcot.registerOnLocalDataReceivedCallback(localExportImageCallback);
             _iwcot.registerOnLocalDataReceivedCallback(localShowToolGuidanceCallback);
             _iwcot.registerOnHistoryChangedCallback(historyNodeAddCallback);
@@ -959,6 +973,7 @@ define([
             _iwcot.unregisterOnLocalDataReceivedCallback(localExportDataCallback);
             _iwcot.unregisterOnLocalDataReceivedCallback(localExportMetaModelCallback);
             _iwcot.unregisterOnLocalDataReceivedCallback(localExportGuidanceRulesCallback);
+            _iwcot.unregisterOnLocalDataReceivedCallback(localExportLogicalGuidanceRepresentationCallback);
             _iwcot.unregisterOnLocalDataReceivedCallback(localExportImageCallback);
             _iwcot.registerOnLocalDataReceivedCallback(localShowToolGuidanceCallback);
             _iwcot.unregisterOnHistoryChangedCallback(historyNodeAddCallback);

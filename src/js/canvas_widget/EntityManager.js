@@ -934,6 +934,71 @@ define([
 
                 return guidanceMetamodel;
             },
+            generateLogicalGuidanceRepresentation: function(){
+                var logicalGuidanceRepresentation = [];
+                var nodes = guidancemodel.guidancemodel.nodes;
+                var edges = guidancemodel.guidancemodel.edges;
+                //Returns successor node which belong to the action flow (everything except entity nodes)
+                var getFlowSuccessors = function(nodeId){
+                    var targets = [];
+                    for(var edgeId in edges){
+                        var edge = edges[edgeId];
+                        if(edge.source == nodeId){
+                            var targetType = nodes[edge.target].type
+                            if(!(targetType = guidancemodel.isEntityNodeLabel(targetType)))
+                                targets.push(edge.target);
+                        }
+                    }
+                    return targets;
+                }
+
+                var getEntitySuccessor = function(nodeId){
+                    var targets = [];
+                    for(var edgeId in edges){
+                        var edge = edges[edgeId];
+                        if(edge.source == nodeId){
+                            var targetType = nodes[edge.target].type
+                            if(targetType = guidancemodel.isEntityNodeLabel(targetType))
+                                return edge.target;
+                        }
+                    }
+                    return "";
+                }
+
+                var getAttributeValue = function(node, attributeName){
+                    for(var attributeId in node.attributes){
+                        var attribute = node.attributes[attributeId];
+                        if(attribute.name == attributeName)
+                            return attribute.value.value;
+                    }
+                    return "";
+                }
+
+                for(var nodeId in nodes){
+                    var node = nodes[nodeId];
+                    var type = node.type;
+
+                    if(type == guidancemodel.INITIAL_NODE_LABEL){
+                        logicalGuidanceRepresentation.push({
+                            "id": nodeId,
+                            "type": "INITIAL_NODE",
+                            "name": getAttributeValue(node, "name"),
+                            "successors": getFlowSuccessors(nodeId)
+                        });
+                    }
+                    else if (type = guidancemodel.isCreateObjectNodeLabel(type)){
+                        logicalGuidanceRepresentation.push({
+                            "id": nodeId,
+                            "type": "CREATE_OBJECT_ACTION",
+                            "objectType": type,
+                            "createdObjectId": getEntitySuccessor(nodeId),
+                            "successors": getFlowSuccessors(nodeId)
+                        });
+                    }
+                }
+
+                return logicalGuidanceRepresentation;
+            },
             generateGuidanceRules: function(){
                 var guidanceRules = {objectToolRules: []};
                 var nodes = guidancemodel.guidancemodel.nodes;
