@@ -1008,15 +1008,21 @@ define([
                 //Returns successor node which belong to the action flow (everything except entity nodes)
                 var getFlowSuccessors = function(nodeId){
                     var targets = [];
+                    var labels = [];
                     for(var edgeId in edges){
                         var edge = edges[edgeId];
                         if(edge.source == nodeId){
                             var targetType = nodes[edge.target].type
-                            if(!(targetType = guidancemodel.isEntityNodeLabel(targetType)))
+                            if(!(targetType = guidancemodel.isEntityNodeLabel(targetType))){
                                 targets.push(edge.target);
+                                labels.push(edge.label.value.value);
+                            }
                         }
                     }
-                    return targets;
+                    return {
+                        targets: targets,
+                        labels: labels
+                    };
                 }
 
                 var getEntitySuccessor = function(nodeId){
@@ -1092,14 +1098,23 @@ define([
                             "id": nodeId,
                             "type": "INITIAL_NODE",
                             "name": getAttributeValue(node, "name"),
-                            "successors": getFlowSuccessors(nodeId)
+                            "successors": getFlowSuccessors(nodeId).targets
                         });
                     }
                     else if(type == guidancemodel.MERGE_NODE_LABEL){
+                        var successors = getFlowSuccessors(nodeId);
                         logicalGuidanceRepresentation.push({
                             "id": nodeId,
                             "type": "MERGE_NODE",
-                            "successors": getFlowSuccessors(nodeId)
+                            "successors": successors.targets,
+                            "successorLabels": successors.labels
+                        });
+                    }
+                    else if(type == guidancemodel.CONCURRENCY_NODE_LABEL){
+                        logicalGuidanceRepresentation.push({
+                            "id": nodeId,
+                            "type": "CONCURRENCY_NODE",
+                            "successors": getFlowSuccessors(nodeId).targets
                         });
                     }
                     else if(type == guidancemodel.ACTIVITY_FINAL_NODE_LABEL){
@@ -1114,7 +1129,7 @@ define([
                             "type": "CREATE_OBJECT_ACTION",
                             "objectType": subType,
                             "createdObjectId": getEntitySuccessor(nodeId),
-                            "successors": getFlowSuccessors(nodeId)
+                            "successors": getFlowSuccessors(nodeId).targets
                         });
                     }
                     else if (subType = guidancemodel.isCreateRelationshipNodeLabel(type)){
@@ -1126,7 +1141,7 @@ define([
                             "createdRelationshipId": getEntitySuccessor(nodeId),
                             "sourceObjectId": entities["Source"],
                             "targetObjectId": entities["Target"],
-                            "successors": getFlowSuccessors(nodeId)
+                            "successors": getFlowSuccessors(nodeId).targets
                         });
                     }
                     else if (subType = guidancemodel.isSetPropertyNodeLabel(type)){
@@ -1136,7 +1151,7 @@ define([
                             "entityType": subType,
                             "propertyName": getAttributeValue(node, "Property"),
                             "sourceObjectId": getEntityPredecessorForSetPropertyAction(nodeId),
-                            "successors": getFlowSuccessors(nodeId)
+                            "successors": getFlowSuccessors(nodeId).targets
                         });
                     }
                     else if (type == guidancemodel.CALL_ACTIVITY_NODE_LABEL){
@@ -1144,7 +1159,7 @@ define([
                             "id": nodeId,
                             "type": "CALL_ACTIVITY_ACTION",
                             "initialNodeId": getInitialNodeForCallActivityAction(nodeId),
-                            "successors": getFlowSuccessors(nodeId)
+                            "successors": getFlowSuccessors(nodeId).targets
                         });
                     }
                 }
