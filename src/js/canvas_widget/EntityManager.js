@@ -116,7 +116,7 @@ define([
                 color = node.shape.color ? $colorTestElement.css('color','#FFFFFF').css('color',node.shape.color).css('color') : '#FFFFFF';
                 $shape = $(_.template(shape,{color: color, type: node.label}));
 
-                nodeTypes[node.label] = Node(node.label,$shape,anchors,node.attributes);
+                nodeTypes[node.label] = Node(node.label,$shape,anchors,node.attributes, node.jsplumb);
                 nodeTypes[node.label].TYPE = node.label;
                 nodeTypes[node.label].SHAPE = $shape;
                 nodeTypes[node.label].DEFAULT_WIDTH = node.shape.defaultWidth;
@@ -718,6 +718,7 @@ define([
                 var entityNodes = {};
 
                 var flowEdgeRelations = [];
+                var dataFlowEdgeRelations = [];
 
                 var nodes = metamodel.nodes;
                 for(var nodeId in nodes){
@@ -780,9 +781,6 @@ define([
                             }
                         };
 
-                        console.log("Custom shape");
-                        console.log(_.template(setPropertyNodeHtml, {type: setPropertyLabel, color: "white"}));
-
                         var options = {};
                         for(var attributeId in node.attributes){
                             var attribute = node.attributes[attributeId];
@@ -798,13 +796,13 @@ define([
                         entityNodes[id] = guidanceMetamodel.nodes[id];
                         
                         //Define the 'create object node' to 'entity node' relation
-                        flowEdgeRelations.push({
+                        dataFlowEdgeRelations.push({
                             sourceTypes: [label],
                             targetTypes: [entitylabel]
                         });
 
                         //Define the 'entity node' to 'set property node' relation
-                        flowEdgeRelations.push({
+                        dataFlowEdgeRelations.push({
                             sourceTypes: [entitylabel],
                             targetTypes: [setPropertyLabel]
                         });
@@ -816,7 +814,7 @@ define([
                                 var relation = edge.relations[relationId];
                                 if((relation.sourceTypes.indexOf(node.label) > -1) ||
                                    (relation.targetTypes.indexOf(node.label) > -1)){
-                                    flowEdgeRelations.push({
+                                    dataFlowEdgeRelations.push({
                                         sourceTypes: [entitylabel],
                                         targetTypes: guidancemodel.getCreateRelationshipNodeLabelForType(edge.label)
                                     });
@@ -858,11 +856,11 @@ define([
                         createRelationshipNodes[id] = guidanceMetamodel.nodes[id];
 
                         //Generate 'entity node'
-                        label = guidancemodel.getEntityNodeLabelForType(edge.label);
+                        var entitylabel = guidancemodel.getEntityNodeLabelForType(edge.label);
 
                         var id = Util.generateRandomId();
                         guidanceMetamodel.nodes[id] = {
-                            label: label,
+                            label: entitylabel,
                             attributes: {},
                             shape: {
                                 shape: "rectangle",
@@ -875,6 +873,49 @@ define([
                         };
 
                         entityNodes[id] = guidanceMetamodel.nodes[id];
+
+                        //Generate the 'set property node'
+                        if(Object.keys(edge.attributes).length > 0){
+                            var setPropertyLabel = guidancemodel.getSetPropertyNodeLabelForType(edge.label);
+                            actionNodeLabels.push(setPropertyLabel);
+                            id = Util.generateRandomId();
+                            guidanceMetamodel.nodes[id] = {
+                                label: setPropertyLabel,
+                                attributes: {},
+                                shape: {
+                                    shape: "",
+                                    defaultWidth: 0,
+                                    defaultHeight: 0,
+                                    customShape: _.template(setPropertyNodeHtml, {type: setPropertyLabel, color: "white"}),
+                                    customAnchors: ""
+                                }
+                            };
+
+                            var options = {};
+                            for(var attributeId in edge.attributes){
+                                var attribute = edge.attributes[attributeId];
+                                options[attribute.key] = attribute.key;
+                            }
+
+                            guidanceMetamodel.nodes[id].attributes[Util.generateRandomId()] = {
+                                key: "Property",
+                                value: "Value",
+                                options: options
+                            };
+                        }
+
+                        //Define the 'create relationship node' to 'entity node' relation
+                        dataFlowEdgeRelations.push({
+                            sourceTypes: [label],
+                            targetTypes: [entitylabel]
+                        });
+
+                        //Define the 'entity node' to 'set property node' relation
+                        dataFlowEdgeRelations.push({
+                            sourceTypes: [entitylabel],
+                            targetTypes: [setPropertyLabel]
+                        });
+                        
                     }
                 }
 
@@ -904,8 +945,9 @@ define([
                     targetTypes: [guidancemodel.ACTIVITY_FINAL_NODE_LABEL, guidancemodel.MERGE_NODE_LABEL].concat(actionNodeLabels)
                 });
 
+                //Create the action flow edge
                 guidanceMetamodel.edges[Util.generateRandomId()] = {
-                    label: "Flow edge",
+                    label: "Action flow edge",
                     shape: {
                         arrow: "unidirassociation",
                         shape: "straight",
@@ -916,6 +958,31 @@ define([
                     },
                     relations: flowEdgeRelations
                 };
+
+                //Create the data flow edge
+                var dataFlowEdge = {
+                    label: "Data flow edge",
+                    shape: {
+                        arrow: "unidirassociation",
+                        shape: "straight",
+                        color: "blue",
+                        overlay: "",
+                        overlayPosition: "top",
+                        overlayRotate: true
+                    },
+                    attributes: {},
+                    relations: dataFlowEdgeRelations
+                };
+
+                dataFlowEdge.attributes[Util.generateRandomId()] = {
+                    key: "Destination",
+                    value: "Value",
+                    options: {
+                        "Source": "Source",
+                        "Target": "Target"
+                    }
+                };
+                guidanceMetamodel.edges[Util.generateRandomId()] = dataFlowEdge;
 
                 //Create the association edge
                 guidanceMetamodel.edges[Util.generateRandomId()] = {
@@ -965,6 +1032,47 @@ define([
                     return "";
                 }
 
+                var getEntityPredecessorsForCreateRelationshipAction = function(nodeId){
+                    var entities = {
+                        "Source": "",
+                        "Target": ""
+                    };
+                    for(var edgeId in edges){
+                        var edge = edges[edgeId];
+                        if(edge.target == nodeId){
+                            var sourceType = nodes[edge.source].type
+                            if(sourceType = guidancemodel.isEntityNodeLabel(sourceType)){
+                                var destination = getAttributeValue(edge, "Destination");
+                                entities[destination] = edge.source;
+                            }
+                        }
+                    }
+                    return entities;
+                };
+
+                var getEntityPredecessorForSetPropertyAction = function(nodeId){
+                    for(var edgeId in edges){
+                        var edge = edges[edgeId];
+                        if(edge.target == nodeId){
+                            var sourceType = nodes[edge.source].type
+                            if(sourceType = guidancemodel.isEntityNodeLabel(sourceType)){
+                                return edge.source;
+                            }
+                        }
+                    }
+                    return "";
+                };
+
+                var getInitialNodeForCallActivityAction = function(nodeId){
+                    for(var edgeId in edges){
+                        var edge = edges[edgeId];
+                        if(edge.source == nodeId && edge.type == "Association edge"){
+                            return edge.target;
+                        }
+                    }
+                    return "";
+                };
+
                 var getAttributeValue = function(node, attributeName){
                     for(var attributeId in node.attributes){
                         var attribute = node.attributes[attributeId];
@@ -977,6 +1085,7 @@ define([
                 for(var nodeId in nodes){
                     var node = nodes[nodeId];
                     var type = node.type;
+                    var subType = "";
 
                     if(type == guidancemodel.INITIAL_NODE_LABEL){
                         logicalGuidanceRepresentation.push({
@@ -986,17 +1095,61 @@ define([
                             "successors": getFlowSuccessors(nodeId)
                         });
                     }
-                    else if (type = guidancemodel.isCreateObjectNodeLabel(type)){
+                    else if(type == guidancemodel.MERGE_NODE_LABEL){
+                        logicalGuidanceRepresentation.push({
+                            "id": nodeId,
+                            "type": "MERGE_NODE",
+                            "successors": getFlowSuccessors(nodeId)
+                        });
+                    }
+                    else if(type == guidancemodel.ACTIVITY_FINAL_NODE_LABEL){
+                        logicalGuidanceRepresentation.push({
+                            "id": nodeId,
+                            "type": "ACTIVITY_FINAL_NODE"
+                        });
+                    }
+                    else if (subType = guidancemodel.isCreateObjectNodeLabel(type)){
                         logicalGuidanceRepresentation.push({
                             "id": nodeId,
                             "type": "CREATE_OBJECT_ACTION",
-                            "objectType": type,
+                            "objectType": subType,
                             "createdObjectId": getEntitySuccessor(nodeId),
+                            "successors": getFlowSuccessors(nodeId)
+                        });
+                    }
+                    else if (subType = guidancemodel.isCreateRelationshipNodeLabel(type)){
+                        var entities = getEntityPredecessorsForCreateRelationshipAction(nodeId);
+                        logicalGuidanceRepresentation.push({
+                            "id": nodeId,
+                            "type": "CREATE_RELATIONSHIP_ACTION",
+                            "relationshipType": subType,
+                            "createdRelationshipId": getEntitySuccessor(nodeId),
+                            "sourceObjectId": entities["Source"],
+                            "targetObjectId": entities["Target"],
+                            "successors": getFlowSuccessors(nodeId)
+                        });
+                    }
+                    else if (subType = guidancemodel.isSetPropertyNodeLabel(type)){
+                        logicalGuidanceRepresentation.push({
+                            "id": nodeId,
+                            "type": "SET_PROPERTY_ACTION",
+                            "entityType": subType,
+                            "propertyName": getAttributeValue(node, "Property"),
+                            "sourceObjectId": getEntityPredecessorForSetPropertyAction(nodeId),
+                            "successors": getFlowSuccessors(nodeId)
+                        });
+                    }
+                    else if (type == guidancemodel.CALL_ACTIVITY_NODE_LABEL){
+                        logicalGuidanceRepresentation.push({
+                            "id": nodeId,
+                            "type": "CALL_ACTIVITY_ACTION",
+                            "initialNodeId": getInitialNodeForCallActivityAction(nodeId),
                             "successors": getFlowSuccessors(nodeId)
                         });
                     }
                 }
 
+                console.log(logicalGuidanceRepresentation);
                 return logicalGuidanceRepresentation;
             },
             generateGuidanceRules: function(){

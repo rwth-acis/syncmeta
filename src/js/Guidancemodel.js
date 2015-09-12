@@ -33,6 +33,7 @@ define([
 
             guidancemodeling.isCreateObjectNodeLabel = function(label){
                 var match = /Create (.*?) object/.exec(label);
+                console.log(match);
                 if(match)
                     return match[1];
                 else
@@ -43,8 +44,26 @@ define([
                 return "Create " + type + " relationship";
             };
 
+            guidancemodeling.isCreateRelationshipNodeLabel = function(label){
+                var match = /Create (.*?) relationship/.exec(label);
+                if(match)
+                    return match[1];
+                else
+                    return "";
+            };
+
             guidancemodeling.getSetPropertyNodeLabelForType = function(type){
-                return "Set property for " + type + " object";
+                return "Set property for " + type;
+            };
+
+            guidancemodeling.isSetPropertyNodeLabel = function(label){
+                var match = /Set property for (.*)/.exec(label);
+                console.log("Match");
+                console.log(match);
+                if(match)
+                    return match[1];
+                else
+                    return "";
             };
 
             guidancemodeling.getEntityNodeLabelForType = function(type){

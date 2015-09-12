@@ -21,7 +21,7 @@ define([
      * @param attributes
      * @returns {Node}
      */
-    function makeNode(type,$shape,anchors,attributes){
+    function makeNode(type,$shape,anchors,attributes, jsplumb){
 
         Node.prototype = new AbstractNode();
         Node.prototype.constructor = Node;
@@ -124,6 +124,9 @@ define([
                         console.log("element is ", info.element, "maxConnections is", info.maxConnections);
                     }
                 });
+
+                if(jsplumb)
+                    jsPlumb.addEndpoint(_$node, jsplumb.endpoint, {uuid: id + "_eps1"});
             };
 
             /**
@@ -142,6 +145,9 @@ define([
                         console.log("user tried to drop connection", info.connection, "on element", info.element, "with max connections", info.maxConnections);
                     }
                 });
+
+                if(jsplumb)
+                    jsPlumb.addEndpoint(_$node, jsplumb.endpoint, {uuid: id + "_ept1"});
             };
 
             /**
