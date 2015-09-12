@@ -236,8 +236,8 @@ module.exports = function(grunt) {
                         meta: {
                             title: "Guidance widget",
                             description: "",
-                            width: "120",
-                            height: "60"
+                            width: "300",
+                            height: "500"
                         },
                         bodyPartial: '_guidance_widget.tpl'
                     }

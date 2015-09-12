@@ -12,15 +12,15 @@ requirejs([
     'operations/non_ot/ObjectGuidanceFollowedOperation',
     'guidance_widget/NoStrategy',
     'guidance_widget/AvoidConflictsStrategy',
-    'promise!GuidanceRules',
+    'promise!LogicalGuidanceDefinition',
     'promise!Space'
-],function ($, _, require, IWCW, EntitySelectOperation, ObjectGuidanceFollowedOperation, NoStrategy, AvoidConflictsStrategy, GuidanceRules, Space) {
+],function ($, _, require, IWCW, EntitySelectOperation, ObjectGuidanceFollowedOperation, NoStrategy, AvoidConflictsStrategy, LogicalGuidanceDefinition, Space) {
     var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.GUIDANCE);
     var strategies = [
         NoStrategy,
         AvoidConflictsStrategy
     ];
-    var selectedStrategy = new strategies[0](GuidanceRules, Space);
+    var selectedStrategy = new strategies[0](LogicalGuidanceDefinition, Space);
 
     var $strategies = $("<div class='strategies'><select></select></div>");
     $('#guidance').append($strategies);
@@ -33,7 +33,7 @@ requirejs([
     }
     $strategies.find("select").change(function(){
         var index = $(this).val();
-        selectedStrategy = new strategies[index](GuidanceRules, Space);
+        selectedStrategy = new strategies[index](LogicalGuidanceDefinition, Space);
     });
 
     var operationCallback = function(operation){

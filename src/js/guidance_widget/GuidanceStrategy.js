@@ -1,14 +1,22 @@
-define(['iwcw','operations/non_ot/ShowObjectGuidanceOperation', 'classjs'
-],function(IWCW ,ShowObjectGuidanceOperation) {
+define([
+    'iwcw',
+    'operations/non_ot/ShowObjectGuidanceOperation',
+    'operations/non_ot/ShowGuidanceBoxOperation',
+    'classjs'
+],function(IWCW ,ShowObjectGuidanceOperation, ShowGuidanceBoxOperation) {
 
     var GuidanceStrategy = Class.extend({
-        init: function(guidanceRules, space){
-            this.guidanceRules = guidanceRules;
+        init: function(logicalGuidanceDefinition, space){
+            this.logicalGuidanceDefinition = logicalGuidanceDefinition;
             this.space = space;
             this.iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.GUIDANCE);
         },
-        showObjectGuidance: function(objectId, guidanceRules){
-            var operation = new ShowObjectGuidanceOperation(objectId, guidanceRules);
+        // showObjectGuidance: function(objectId, logicalGuidanceDefinition){
+        //     var operation = new ShowObjectGuidanceOperation(objectId, guidanceRules);
+        //     this.iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.toNonOTOperation());
+        // },
+        showGuidanceBox: function(guidance){
+            var operation = new ShowGuidanceBoxOperation(guidance);
             this.iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.toNonOTOperation());
         },
         onEntitySelect: function(entityId, entityType){

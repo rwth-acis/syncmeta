@@ -14,14 +14,17 @@ define([
     'operations/non_ot/ExportLogicalGuidanceRepresentationOperation',
     'operations/non_ot/ExportImageOperation',
     'operations/non_ot/ShowObjectGuidanceOperation',
+    'operations/non_ot/ShowGuidanceBoxOperation',
     'canvas_widget/AbstractEntity',
     'canvas_widget/ModelAttributesNode',
     'canvas_widget/EntityManager',
     'canvas_widget/AbstractCanvas',
     'canvas_widget/MoveTool',
     'canvas_widget/guidance_modeling/ObjectGuidance',
+    'canvas_widget/guidance_modeling/GuidanceBox',
+    'canvas_widget/guidance_modeling/SelectToolGuidance',
     'jquery.transformable-PATCHED'
-],/** @lends Canvas */function($,jsPlumb,IWCOT,Util,NodeAddOperation,EdgeAddOperation,ToolSelectOperation,EntitySelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,ShowObjectGuidanceOperation,AbstractEntity,ModelAttributesNode,EntityManager,AbstractCanvas,MoveTool,ObjectGuidance) {
+],/** @lends Canvas */function($,jsPlumb,IWCOT,Util,NodeAddOperation,EdgeAddOperation,ToolSelectOperation,EntitySelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,ShowObjectGuidanceOperation,ShowGuidanceBoxOperation,AbstractEntity,ModelAttributesNode,EntityManager,AbstractCanvas,MoveTool,ObjectGuidance,GuidanceBox,SelectToolGuidance) {
     Canvas.prototype = new AbstractCanvas();
     Canvas.prototype.constructor = Canvas;
     /**
@@ -253,15 +256,14 @@ define([
             }
         };
 
-        var localShowToolGuidanceCallback = function(operation){
-            if(operation instanceof ShowObjectGuidanceOperation){
-                processShowObjectGuidanceOperation(operation);
+        var localShowGuidanceBoxCallback = function(operation){
+            if(operation instanceof ShowGuidanceBoxOperation){
+                processShowGuidanceBoxOperation(operation);
             }
         };
 
-        var processShowObjectGuidanceOperation = function(operation){
-            _objectGuidanceOperation = operation;
-            that.showObjectGuidance();
+        var processShowGuidanceBoxOperation = function(operation){
+            that.showGuidanceBox(operation.getGuidance());
         };
 
         /**
@@ -407,6 +409,26 @@ define([
          */
         this.get$node = function(){
             return _$node;
+        };
+
+        this.showGuidanceBox = function(guidance){
+            var itemWidth = 100;
+            var itemHeight = 100;
+            var appearance = _selectedEntity.getAppearance();
+            appearance.top += 100;
+            var guidanceBox = new GuidanceBox(Util.generateRandomId(), appearance.left, appearance.top, itemWidth*guidance.length, 100);
+            for(var i = 0; i < guidance.length; i++){
+                var guidanceItem;
+                switch(guidance[i].type){
+                    case "SELECT_TOOL_GUIDANCE":
+                    guidanceItem = new SelectToolGuidance(guidance[i].id, guidance[i].label, guidance[i].tool);
+                    break;
+                }
+                guidanceBox.addGuidance(guidanceItem);
+            }
+
+            guidanceBox.addToCanvas(that);
+            guidanceBox.draw();
         };
 
         this.showObjectGuidance = function(){
@@ -957,7 +979,7 @@ define([
             _iwcot.registerOnLocalDataReceivedCallback(localExportGuidanceRulesCallback);
             _iwcot.registerOnLocalDataReceivedCallback(localExportLogicalGuidanceRepresentationCallback);
             _iwcot.registerOnLocalDataReceivedCallback(localExportImageCallback);
-            _iwcot.registerOnLocalDataReceivedCallback(localShowToolGuidanceCallback);
+            _iwcot.registerOnLocalDataReceivedCallback(localShowGuidanceBoxCallback);
             _iwcot.registerOnHistoryChangedCallback(historyNodeAddCallback);
             _iwcot.registerOnHistoryChangedCallback(historyEdgeAddCallback);
         };
@@ -975,7 +997,7 @@ define([
             _iwcot.unregisterOnLocalDataReceivedCallback(localExportGuidanceRulesCallback);
             _iwcot.unregisterOnLocalDataReceivedCallback(localExportLogicalGuidanceRepresentationCallback);
             _iwcot.unregisterOnLocalDataReceivedCallback(localExportImageCallback);
-            _iwcot.registerOnLocalDataReceivedCallback(localShowToolGuidanceCallback);
+            _iwcot.registerOnLocalDataReceivedCallback(localShowGuidanceBoxCallback);
             _iwcot.unregisterOnHistoryChangedCallback(historyNodeAddCallback);
             _iwcot.unregisterOnHistoryChangedCallback(historyEdgeAddCallback);
         };

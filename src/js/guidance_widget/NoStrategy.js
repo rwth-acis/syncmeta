@@ -2,11 +2,10 @@ define(['guidance_widget/GuidanceStrategy'
 ],function(GuidanceStrategy) {
 
     var NoStrategy = GuidanceStrategy.extend({
-        init: function(guidanceRules, space){
-            this._super(guidanceRules, space);
+        init: function(logicalGuidanceDefinition, space){
+            this._super(logicalGuidanceDefinition, space);
         },
         onEntitySelect: function(entityId, entityType){
-            this.showObjectGuidance(entityId, []);
         },
         onUserJoin: function(user){
 
