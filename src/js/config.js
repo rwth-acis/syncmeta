@@ -172,7 +172,7 @@ CONFIG = {
             METAMODEL: "my:ns:metamodel",
             INSTANCE: "my:ns:instance",
             GUIDANCEMODEL: "my:ns:guidancemodel",
-            GUIDANCERULES: "my:ns:guidancerules"
+            LOGICALGUIDANCEDEFINITION: "my:ns:logicalguidancedefinition"
         }
     }
 };

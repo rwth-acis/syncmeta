@@ -117,7 +117,7 @@
                             deferred.resolve(data.uri);
                         },{
                             "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate":"http://purl.org/role/terms/data",
-                            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type":"my:ns:logicalguidancerepresentation"
+                            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type":CONFIG.NS.MY.LOGICALGUIDANCEDEFINITION
                         });
                 deferred.promise().then(function(dataURI){
                     openapp.resource.put(
