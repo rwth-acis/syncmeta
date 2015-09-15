@@ -1,22 +1,19 @@
 define([
     'operations/non_ot/NonOTOperation'
-],/** @lends WidgetEnterOperation */function(NonOTOperation) {
+],/** @lends SetViewTypesOperation */function(NonOTOperation) {
 
-    WidgetEnterOperation.TYPE = "WidgetEnterOperation";
+    SetViewTypesOperation.TYPE = "SetViewTypesOperation";
 
     /**
-     * WidgetEnterOperation
+     * SetViewTypesOperation
      * @class operations.non_ot.WidgetEnterOperation
      * @memberof operations.non_ot
      * @constructor
-     * @param {string} widgetName Name of the entered widget
+     * @param {boolean} flag enable (true)/disable(false) the view types of the vml in the palette widget
      */
-    function WidgetEnterOperation(widgetName){
-        /**
-         * Name of selected tool
-         * @type {string}
-         */
-        var enteredWidgetName = widgetName;
+    function SetViewTypesOperation(flag){
+
+        var _flag = flag;
 
         /**
          * Corresponding NonOtOperation
@@ -29,8 +26,8 @@ define([
          * Get name of selected tool
          * @returns {string}
          */
-        this.getEnteredWidgetName = function(){
-            return enteredWidgetName;
+        this.getFlag = function(){
+            return _flag;
         };
 
         /**
@@ -40,14 +37,14 @@ define([
         this.toNonOTOperation = function(){
             if(nonOTOperation === null){
                 nonOTOperation = new NonOTOperation(
-                    WidgetEnterOperation.TYPE,
-                    JSON.stringify({enteredWidgetName: enteredWidgetName})
+                    SetViewTypesOperation.TYPE,
+                    JSON.stringify({flag: _flag})
                 );
             }
             return nonOTOperation;
         };
     }
 
-    return WidgetEnterOperation;
+    return SetViewTypesOperation;
 
 });

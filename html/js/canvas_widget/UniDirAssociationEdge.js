@@ -10,18 +10,20 @@ define([
     'canvas_widget/RelationshipGroupNode',
     'canvas_widget/EnumNode',
     'canvas_widget/NodeShapeNode',
-    'canvas_widget/EdgeShapeNode'
-],/** @lends UniDirAssociationEdge */function(require,$,jsPlumb,_,AbstractEdge,AbstractClassNode,ObjectNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode) {
+    'canvas_widget/EdgeShapeNode',
+    'canvas_widget/ViewObjectNode',
+    'canvas_widget/ViewRelationshipNode'
+],/** @lends UniDirAssociationEdge */function(require,$,jsPlumb,_,AbstractEdge,AbstractClassNode,ObjectNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode, ViewObjectNode, ViewRelationshipNode) {
 
     UniDirAssociationEdge.TYPE = "Uni-Dir-Association";
     UniDirAssociationEdge.RELATIONS = [
         {
             sourceTypes: [ObjectNode.TYPE],
-            targetTypes: [EnumNode.TYPE,NodeShapeNode.TYPE,RelationshipNode.TYPE,RelationshipGroupNode.TYPE]
+            targetTypes: [EnumNode.TYPE,NodeShapeNode.TYPE,RelationshipNode.TYPE,RelationshipGroupNode.TYPE,ViewRelationshipNode.TYPE]
         },
         {
             sourceTypes: [RelationshipNode.TYPE],
-            targetTypes: [EnumNode.TYPE,EdgeShapeNode.TYPE,ObjectNode.TYPE,AbstractClassNode.TYPE]
+            targetTypes: [EnumNode.TYPE,EdgeShapeNode.TYPE,ObjectNode.TYPE,AbstractClassNode.TYPE,ViewObjectNode.TYPE]
         },
         {
             sourceTypes: [RelationshipGroupNode.TYPE],
@@ -30,6 +32,14 @@ define([
         {
             sourceTypes: [AbstractClassNode.TYPE],
             targetTypes: [EnumNode.TYPE,RelationshipNode.TYPE,RelationshipGroupNode.TYPE]
+        },
+        {
+            sourceTypes: [ViewObjectNode.TYPE],
+            targetTypes: [EnumNode.TYPE,NodeShapeNode.TYPE,RelationshipNode.TYPE,RelationshipGroupNode.TYPE,ViewRelationshipNode.TYPE]
+        },
+        {
+            sourceTypes: [ViewRelationshipNode.TYPE],
+            targetTypes: [EnumNode.TYPE,EdgeShapeNode.TYPE,ObjectNode.TYPE,AbstractClassNode.TYPE,ViewObjectNode.TYPE]
         }
     ];
 

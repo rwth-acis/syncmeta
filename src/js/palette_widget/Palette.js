@@ -2,7 +2,7 @@ define([
     'lodash',
     'iwcw',
     'operations/non_ot/ToolSelectOperation',
-    'operations/non_ot/WidgetEnterOperation',
+    'operations/non_ot/SetViewTypesOperation',
     'operations/non_ot/InitModelTypesOperation',
     'palette_widget/MoveTool',
     'palette_widget/Separator',
@@ -13,7 +13,7 @@ define([
     'text!templates/canvas_widget/rectangle_node.html',
     'text!templates/canvas_widget/rounded_rectangle_node.html',
     'text!templates/canvas_widget/triangle_node.html'
-],/** @lends Palette */function(_,IWCW,ToolSelectOperation,WidgetEnterOperation,InitModelTypesOperation,MoveTool, Separator,NodeTool, EdgeTool, circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml) {
+],/** @lends Palette */function(_,IWCW,ToolSelectOperation,SetViewTypesOperation,InitModelTypesOperation,MoveTool, Separator,NodeTool, EdgeTool, circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml) {
 
     /**
      * Palette
@@ -47,7 +47,6 @@ define([
 
         var _currentModel = 'base';
 
-        var _lastWidget = CONFIG.WIDGET.NAME.MAIN;
 
         /**
          * Inter widget communication wrapper
@@ -84,19 +83,17 @@ define([
             }
         };
 
-        var enteredWidgetCallback = function(operation){
-            if(operation instanceof WidgetEnterOperation) {
-                if(operation.getEnteredWidgetName() === CONFIG.WIDGET.NAME.VIEWCANVAS && _tools.hasOwnProperty('ViewObject') && _tools.hasOwnProperty('ViewRelationship')){
+        var setViewTypesCallback = function(operation){
+            if(operation instanceof SetViewTypesOperation) {
+                if(operation.getFlag() && _tools.hasOwnProperty('ViewObject') && _tools.hasOwnProperty('ViewRelationship')){
                     _separators[1].get$node().show();
                     _tools['ViewObject'].get$node().show();
                     _tools['ViewRelationship'].get$node().show();
-                    _lastWidget = CONFIG.WIDGET.NAME.VIEWCANVAS;
                 }
-                else if(operation.getEnteredWidgetName() === CONFIG.WIDGET.NAME.MAIN &&  _tools.hasOwnProperty('ViewObject') && _tools.hasOwnProperty('ViewRelationship')) {
+                else if(!operation.getFlag() &&  _tools.hasOwnProperty('ViewObject') && _tools.hasOwnProperty('ViewRelationship')) {
                     _separators[1].get$node().hide();
                     _tools['ViewObject'].get$node().hide();
                     _tools['ViewRelationship'].get$node().hide();
-                    _lastWidget = CONFIG.WIDGET.NAME.MAIN;
                 }
             }
         };
@@ -177,13 +174,7 @@ define([
             if(_tools.hasOwnProperty(name)){
                 processToolSelection(name);
                 var operation = new ToolSelectOperation(name);
-                if(_currentModel === 'base' && _lastWidget === CONFIG.WIDGET.NAME.MAIN)
-                    _iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.toNonOTOperation());
-                else if(_lastWidget ==CONFIG.WIDGET.NAME.VIEWCANVAS || _currentModel != 'base') {
-                    _iwc.disableBuffer();
-                    _iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.VIEWCANVAS, operation.toNonOTOperation());
-                    _iwc.enableBuffer();
-                }
+                _iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.toNonOTOperation());
             }
         };
 
@@ -201,7 +192,7 @@ define([
          */
         this.registerCallbacks = function(){
             _iwc.registerOnDataReceivedCallback(toolSelectionCallback);
-            _iwc.registerOnDataReceivedCallback(enteredWidgetCallback);
+            _iwc.registerOnDataReceivedCallback(setViewTypesCallback);
             _iwc.registerOnDataReceivedCallback(initModelTypesCallback);
         };
 
@@ -210,7 +201,7 @@ define([
          */
         this.unregisterCallbacks = function(){
             _iwc.unregisterOnDataReceivedCallback(toolSelectionCallback);
-            _iwc.unregisterOnDataReceivedCallback(enteredWidgetCallback);
+            _iwc.unregisterOnDataReceivedCallback(setViewTypesCallback);
             _iwc.unregisterOnDataReceivedCallback(initModelTypesCallback);
         };
 

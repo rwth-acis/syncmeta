@@ -17,7 +17,7 @@ define([
     'operations/non_ot/ExportMetaModelOperation',
     'operations/non_ot/ExportImageOperation',
     'operations/non_ot/JoinOperation',
-    'operations/non_ot/WidgetEnterOperation',
+    'operations/non_ot/SetViewTypesOperation',
     'operations/non_ot/InitModelTypesOperation',
     'operations/non_ot/ViewInitOperation',
     'operations/non_ot/PerformCvgOperation',
@@ -26,7 +26,7 @@ define([
     'operations/non_ot/HighlightOperation',
     'operations/non_ot/UpdateViewListOperation'
 
-],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportImageOperation,JoinOperation,WidgetEnterOperation,InitModelTypesOperation,ViewInitOperation,PerformCvgOperation,DeleteCvgOperation,DeleteViewOperation,HighlightOperation,UpdateViewListOperation) {
+],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportImageOperation,JoinOperation,SetViewTypesOperation,InitModelTypesOperation,ViewInitOperation,PerformCvgOperation,DeleteCvgOperation,DeleteViewOperation,HighlightOperation,UpdateViewListOperation) {
 
     /**
      * OperationFactory
@@ -76,8 +76,8 @@ define([
                     case JoinOperation.TYPE:
                         resOperation = new JoinOperation(data.user,data.done,data.sender,data.data,data.component);
                         break;
-                    case WidgetEnterOperation.TYPE:
-                        resOperation = new WidgetEnterOperation(data.enteredWidgetName);
+                    case SetViewTypesOperation.TYPE:
+                        resOperation = new SetViewTypesOperation(data.flag);
                         break;
                     case InitModelTypesOperation.TYPE:
                         resOperation = new InitModelTypesOperation(data.vls);

@@ -10,8 +10,9 @@ requirejs([
     'Util',
     'operations/non_ot/ToolSelectOperation',
     'operations/non_ot/ActivityOperation',
-    'operations/non_ot/JoinOperatio',
-    'operations/non_ot/WidgetEnterOperation',
+    'operations/non_ot/JoinOperation',
+    'operations/non_ot/ViewInitOperation',
+    'operations/non_ot/SetViewTypesOperation',
     'operations/non_ot/InitModelTypesOperation',
     'canvas_widget/Canvas',
     'canvas_widget/EntityManager',
@@ -37,14 +38,14 @@ requirejs([
     'canvas_widget/GeneralisationEdge',
     'canvas_widget/BiDirAssociationEdge',
     'canvas_widget/UniDirAssociationEdge',
-    'canvas_widget/ViewObjectNodeTool',
     'canvas_widget/ViewObjectNode',
+    'canvas_widget/ViewObjectNodeTool',
     'canvas_widget/ViewRelationshipNode',
     'canvas_widget/ViewRelationshipNodeTool',
     'canvas_widget/ViewManager',
     'promise!Metamodel',
     'promise!Model'
-],function($,jsPlumb,IWCOT, Util,ToolSelectOperation,ActivityOperation,JoinOperation,WidgetEnterOperation,InitModelTypesOperation,Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge, ViewObjectNodeTool, ViewObjectNode, ViewRelationshipNodeTool, ViewRelationshipNode, ViewManager,metamodel,model) {
+],function($,jsPlumb,IWCOT, Util,ToolSelectOperation,ActivityOperation,JoinOperation, ViewInitOperation, SetViewTypesOperation, InitModelTypesOperation,Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge, ViewObjectNode, ViewObjectNodeTool,ViewRelationshipNode, ViewRelationshipNodeTool, ViewManager,metamodel,model) {
 
     var iwcot;
     var canvas;
@@ -195,8 +196,14 @@ requirejs([
         });
     };
     function ViewToGraph(json, viewpoint) {
+        //Initialize the attribute widget
         var operation = new ViewInitOperation(json, viewpoint);
         iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
+
+        //Enable the view types in the palette
+        operation = new SetViewTypesOperation(true);
+        iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation.toNonOTOperation());
+
         var nodeId, edgeId;
         for(nodeId in json.nodes){
             if(json.nodes.hasOwnProperty(nodeId)){
@@ -319,6 +326,10 @@ requirejs([
             var $loading = $("#loading");
             $loading.show();
             Util.GetCurrentBaseModel().done(function (model) {
+                //Disable the view types in the palette
+                var operation = new SetViewTypesOperation(false);
+                iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation.toNonOTOperation());
+
                 resetCanvas();
                 JSONtoGraph(model);
                 canvas.resetTool();
@@ -443,15 +454,6 @@ requirejs([
         $("#loading").hide();
     }
 
-    $(document).on('mouseenter', function(event){
-        var operation = new WidgetEnterOperation(CONFIG.WIDGET.NAME.MAIN);
-        iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE,operation.toNonOTOperation());
-        if(metamodel) {
-            operation = new InitModelTypesOperation(metamodel);
-            iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
-            iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation.toNonOTOperation());
-        }
-    });
 
     ViewManager.initViewList();
 

@@ -27,9 +27,13 @@ requirejs([
 
     palette.addTool(new MoveTool());
     palette.addSeparator(new Separator());
-    if(metamodel && metamodel.hasOwnProperty("nodes")){
-       palette.initNodePalette(metamodel);
-    } else {
+    if(metamodel.length > 0){
+        if(metamodel.hasOwnProperty('nodes'))
+         palette.initNodePalette(metamodel);
+        if(metamodel.hasOwnProperty('edges'))
+            palette.iniEdgePalette(metamodel);
+    }
+    else{
         palette.addTool(new AbstractClassNodeTool());
         palette.addTool(new ObjectNodeTool());
         palette.addTool(new RelationshipNodeTool());
@@ -39,21 +43,19 @@ requirejs([
         palette.addTool(new EdgeShapeNodeTool());
 
         var sep = new Separator();
-		palette.addSeparator(sep);
+        palette.addSeparator(sep);
         sep.get$node().hide();
 
         var viewObjectTool = new ViewObjectNodeTool();
-		palette.addTool(viewObjectTool);
+        palette.addTool(viewObjectTool);
         viewObjectTool.get$node().hide();
 
         var viewRelNodeTool = new ViewRelationshipNodeTool();
-		palette.addTool(viewRelNodeTool);
+        palette.addTool(viewRelNodeTool);
         viewRelNodeTool.get$node().hide();
-    }
-    palette.addSeparator(new Separator());
-    if(metamodel && metamodel.hasOwnProperty("edges")){
-       palette.iniEdgePalette(metamodel);
-    } else {
+
+        palette.addSeparator(new Separator());
+
         palette.addTool(new BiDirAssociationEdgeTool());
         palette.addTool(new UniDirAssociationEdgeTool());
         palette.addTool(new GeneralisationEdgeTool());
