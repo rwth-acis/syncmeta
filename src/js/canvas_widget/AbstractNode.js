@@ -429,13 +429,14 @@ define([
                     var menuItems,
                         offsetClick,
                         offsetCanvas;
+                    var EntityManager = require('canvas_widget/EntityManager');
 
                     offsetClick = $(e.target).offset();
                    	offsetCanvas = that.getCanvas().get$node().offset();
-					
+
 					if(_canvas.getSelectedEntity() === null || _canvas.getSelectedEntity() === that){
                         menuItems = _.extend(_contextMenuItemCallback(),{
-                            connectTo: require('canvas_widget/EntityManager').generateConnectToMenu(that),
+                            connectTo: EntityManager.generateConnectToMenu(that),
                             sepMove: "---------",
                             moveToForeground: {
                                 name: "Move to Foreground",
@@ -598,7 +599,7 @@ define([
          */
         this.addToCanvas = function(canvas){
             _canvas = canvas;
-            canvas.get$canvas().append(_$node);
+            _canvas.get$canvas().append(_$node);
         };
 
         /**
@@ -610,11 +611,13 @@ define([
         };
 
         /**
-         * Removes edge from canvas
+         * Removes node from canvas
          */
         this.removeFromCanvas = function(){
-            _canvas = null;
             _$node.remove();
+            //destroy the context menu
+            $.contextMenu('destroy', '#'+that.getEntityId());
+            _canvas = null;
         };
 
         /**

@@ -29,9 +29,8 @@
    <button id="btnShowViewPoint">Show</button>
    <button id="btnRefreshView" style="display: none;">Refresh</button>
   <button id="btnDelViewPoint"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/times1.png" /></button>
-
 </div>
-<div class="button_bar right">
+<div  class="button_bar right">
 Current View: <strong><p id="lblCurrentView">No view!</p></strong>
 </div>
 <div id="canvas-frame">

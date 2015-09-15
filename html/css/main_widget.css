@@ -333,6 +333,15 @@ button[disabled=disabled], button:disabled {
     display: none;
 }
 
+#viewsHide {
+    display: none;
+}
+#viewCtrlContainer {
+    display: none;
+}
+#lblCurrentView {
+    display: none;
+}
 .user_highlight {
     position: absolute;
     top: 100%;

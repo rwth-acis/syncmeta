@@ -117,9 +117,7 @@ define([
                                         }
                                     }
                                 }
-
                                 that.triggerDeletion();
-
                             }
                         },
                         relationshipNode: {

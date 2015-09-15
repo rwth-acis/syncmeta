@@ -274,6 +274,7 @@ define([
          */
         this.removeFromCanvas = function(){
             _canvas = null;
+            $.contextMenu('destroy', '.'+that.getEntityId());
             jsPlumb.detach(_jsPlumbConnection,{fireEvent: false});
             _jsPlumbConnection = null;
         };

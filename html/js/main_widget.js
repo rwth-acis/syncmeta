@@ -7,9 +7,10 @@ requirejs([
     'jqueryui',
     'jsplumb',
     'iwcotw',
+    'Util',
     'operations/non_ot/ToolSelectOperation',
     'operations/non_ot/ActivityOperation',
-    'operations/non_ot/JoinOperation',
+    'operations/non_ot/JoinOperatio',
     'operations/non_ot/WidgetEnterOperation',
     'operations/non_ot/InitModelTypesOperation',
     'canvas_widget/Canvas',
@@ -36,46 +37,201 @@ requirejs([
     'canvas_widget/GeneralisationEdge',
     'canvas_widget/BiDirAssociationEdge',
     'canvas_widget/UniDirAssociationEdge',
+    'canvas_widget/ViewObjectNodeTool',
+    'canvas_widget/ViewObjectNode',
+    'canvas_widget/ViewRelationshipNode',
+    'canvas_widget/ViewRelationshipNodeTool',
+    'canvas_widget/ViewManager',
     'promise!Metamodel',
     'promise!Model'
-],function($,jsPlumb,IWCOT,ToolSelectOperation,ActivityOperation,JoinOperation,WidgetEnterOperation,InitModelTypesOperation,Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge,metamodel,model) {
+],function($,jsPlumb,IWCOT, Util,ToolSelectOperation,ActivityOperation,JoinOperation,WidgetEnterOperation,InitModelTypesOperation,Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge, ViewObjectNodeTool, ViewObjectNode, ViewRelationshipNodeTool, ViewRelationshipNode, ViewManager,metamodel,model) {
 
     var iwcot;
     var canvas;
 
     iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.MAIN);
     canvas = new Canvas($("#canvas"));
+    if(metamodel.length > 0) {
+        if (metamodel.hasOwnProperty("nodes")) {
+            var nodes = metamodel.nodes, node;
+            for (var nodeId in nodes) {
+                if (nodes.hasOwnProperty(nodeId)) {
+                    node = nodes[nodeId];
+                    canvas.addTool(node.label, new NodeTool(node.label, null, null, node.shape.defaultWidth, node.shape.defaultHeight));
+                }
+            }
+        }
+        if (metamodel.hasOwnProperty("edges")) {
+            var edges = metamodel.edges, edge;
+            for (var edgeId in edges) {
+                if (edges.hasOwnProperty(edgeId)) {
+                    edge = edges[edgeId];
+                    canvas.addTool(edge.label, new EdgeTool(edge.label, edge.relations));
+                }
+            }
+        }
+    }
+    else{
+        //Add Node Tools
+        canvas.addTool(ObjectNode.TYPE, new ObjectNodeTool());
+        canvas.addTool(AbstractClassNode.TYPE, new AbstractClassNodeTool());
+        canvas.addTool(RelationshipNode.TYPE, new RelationshipNodeTool());
+        canvas.addTool(RelationshipGroupNode.TYPE, new RelationshipGroupNodeTool());
+        canvas.addTool(EnumNode.TYPE, new EnumNodeTool());
+        canvas.addTool(NodeShapeNode.TYPE, new NodeShapeNodeTool());
+        canvas.addTool(EdgeShapeNode.TYPE, new EdgeShapeNodeTool());
 
-    if(metamodel && metamodel.hasOwnProperty("nodes")){
-        var nodes = metamodel.nodes, node;
-        for(var nodeId in nodes){
-            if(nodes.hasOwnProperty(nodeId)){
-                node = nodes[nodeId];
-                canvas.addTool(node.label,new NodeTool(node.label,null,null,node.shape.defaultWidth,node.shape.defaultHeight));
+        //Add Edge Tools
+        canvas.addTool(GeneralisationEdge.TYPE, new GeneralisationEdgeTool());
+        canvas.addTool(BiDirAssociationEdge.TYPE, new BiDirAssociationEdgeTool());
+        canvas.addTool(UniDirAssociationEdge.TYPE, new UniDirAssociationEdgeTool());
+
+        //Add View Types
+        canvas.addTool(ViewObjectNode.TYPE, new ViewObjectNodeTool());
+        canvas.addTool(ViewRelationshipNode.TYPE, new ViewRelationshipNodeTool());
+
+        //Init control elements for views
+        $("#btnCreateViewpoint").click(function () {
+            ShowViewCreateMenu();
+        });
+        $('#btnCancelCreateViewpoint').click(function () {
+            HideCreateMenu();
+        });
+
+        $('#btnShowView').click(function(){
+            var viewId = ViewManager.getViewIdOfSelected();
+            if (viewId === $('#lblCurrentViewId').text())
+                return;
+            $("#loading").show();
+            visualizeView(viewId);
+        });
+
+        $('#btnDelViewPoint').click(function(){
+            var viewId = ViewManager.getViewIdOfSelected();
+            if (viewId !== $('#lblCurrentViewId').text()) {
+                openapp.resource.del(ViewManager.getViewUri(viewId), function () {
+                    ViewManager.deleteView(viewId);
+                    //TODO DeleteView Operation
+                    //iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new DeleteViewOperation(viewId).toNonOTOperation());
+                });
+            }
+            else {
+                DeleteView(viewId);
+                $('#viewsHide').click();
+
+            }
+        });
+
+        $('#btnAddViewpoint').click(function () {
+            var viewId = $('#txtNameViewpoint').val();
+            if (ViewManager.existsView(viewId)) {
+                alert('View already exists');
+                return;
+            }
+            resetCanvas();
+            $('#lblCurrentViewId').text(viewId);
+            ViewManager.storeView(viewId, null).then(function (resp) {
+                ViewManager.addView(viewId, null, resp);
+                visualizeView(viewId);
+                //TODO update UpdateViewListOperation
+                //var operation = new UpdateViewListOperation();
+                //iwcot.sendRemoteNonOTOperation(operation.toNonOTOperation());
+                canvas.get$canvas().show();
+                HideCreateMenu();
+            });
+        });
+
+    }
+
+    //Functions and Callbacks for the view-based modeling approach
+    var ShowViewCreateMenu = function(){
+        $('#btnCreateViewpoint').hide();
+        $('#ddmViewSelection').hide();
+        $('#btnShowView').hide();
+        $('#btnDelViewPoint').hide();
+        $('#txtNameViewpoint').show();
+        $('#btnAddViewpoint').show();
+        $('#btnCancelCreateViewpoint').show();
+    };
+    var HideCreateMenu = function(){
+        $('#btnCreateViewpoint').show();
+        $('#ddmViewSelection').show();
+        $('#btnDelViewPoint').show();
+        $('#btnShowView').show();
+        $('#txtNameViewpoint').hide();
+        $('#btnAddViewpoint').hide();
+        $('#btnCancelCreateViewpoint').hide();
+
+    };
+    function resetCanvas() {
+        var edges = EntityManager.getEdges();
+        for (edgeId in edges) {
+            if (edges.hasOwnProperty(edgeId)) {
+                var edge = EntityManager.findEdge(edgeId);
+                edge.remove();
+                //edge.triggerDeletion();
             }
         }
-    } else {
-        canvas.addTool(ObjectNode.TYPE,new ObjectNodeTool());
-        canvas.addTool(AbstractClassNode.TYPE,new AbstractClassNodeTool());
-        canvas.addTool(RelationshipNode.TYPE,new RelationshipNodeTool());
-        canvas.addTool(RelationshipGroupNode.TYPE,new RelationshipGroupNodeTool());
-        canvas.addTool(EnumNode.TYPE,new EnumNodeTool());
-        canvas.addTool(NodeShapeNode.TYPE,new NodeShapeNodeTool());
-        canvas.addTool(EdgeShapeNode.TYPE,new EdgeShapeNodeTool());
-    }
-    if(metamodel && metamodel.hasOwnProperty("edges")){
-        var edges = metamodel.edges, edge;
-        for(var edgeId in edges){
-            if(edges.hasOwnProperty(edgeId)){
-                edge = edges[edgeId];
-                canvas.addTool(edge.label,new EdgeTool(edge.label,edge.relations));
+        var nodes = EntityManager.getNodes();
+        for (nodeId in nodes) {
+            if (nodes.hasOwnProperty(nodeId)) {
+                var node = EntityManager.findNode(nodeId);
+                //node.triggerDeletion();
+                node.remove();
             }
         }
-    } else {
-        canvas.addTool(GeneralisationEdge.TYPE,new GeneralisationEdgeTool());
-        canvas.addTool(BiDirAssociationEdge.TYPE,new BiDirAssociationEdgeTool());
-        canvas.addTool(UniDirAssociationEdge.TYPE,new UniDirAssociationEdgeTool());
+        EntityManager.deleteModelAttribute();
+        EntityManager.clearBin();
+
     }
+    var visualizeView = function(viewId, viewpointData){
+        ViewManager.getViewResource(viewId).getRepresentation('rdfjson', function(viewData){
+            resetCanvas();
+            ViewToGraph(viewData,viewpointData);
+            $('#lblCurrentView').show();
+            $('#lblCurrentViewId').text(viewData.id);
+            canvas.resetTool();
+            $("#loading").hide();
+        });
+    };
+    function ViewToGraph(json, viewpoint) {
+        var operation = new ViewInitOperation(json, viewpoint);
+        iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
+        var nodeId, edgeId;
+        for(nodeId in json.nodes){
+            if(json.nodes.hasOwnProperty(nodeId)){
+                var jNode = json.nodes[nodeId];
+                var node = EntityManager.createNodeFromJSON(jNode.type,nodeId,jNode.left,jNode.top,jNode.width,jNode.height,jNode.zIndex,jNode);
+                //TODO add origin to nodes
+                //if(jNode.hasOwnProperty('origin'))
+                //    node.setOrigin(jNode.origin);
+                node.addToCanvas(canvas);
+                node.draw();
+            }
+        }
+        for(edgeId in json.edges){
+            if(json.edges.hasOwnProperty(edgeId)){
+                var jEdge = json.edges[edgeId];
+                var edge = EntityManager.createEdgeFromJSON(jEdge.type,edgeId,jEdge.source,jEdge.target,jEdge);
+                //  TODO add origin to edges
+                //if(jEdge.hasOwnProperty('origin'))
+                //    edge.setOrigin(jEdge.origin);
+                edge.addToCanvas(canvas);
+                edge.connect();
+            }
+        }
+    }
+    function DeleteView(viewId){
+        var deferred = $.Deferred();
+        openapp.resource.del(ViewManager.getViewUri(viewId), function () {
+            ViewManager.deleteView(viewId);
+            //TODO delete view operation
+            //iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new DeleteViewOperation(viewId).toNonOTOperation());
+            deferred.resolve();
+        });
+        return deferred.promise();
+    }
+    //-------------------------------------------------------------
 
     function JSONtoGraph(json){
         var modelAttributesNode;
@@ -88,15 +244,15 @@ requirejs([
         for(nodeId in json.nodes){
             if(json.nodes.hasOwnProperty(nodeId)){
                 var node = EntityManager.createNodeFromJSON(json.nodes[nodeId].type,nodeId,json.nodes[nodeId].left,json.nodes[nodeId].top,json.nodes[nodeId].width,json.nodes[nodeId].height,json.nodes[nodeId].zIndex,json.nodes[nodeId]);
-                node.draw();
                 node.addToCanvas(canvas);
+                node.draw();
             }
         }
         for(edgeId in json.edges){
             if(json.edges.hasOwnProperty(edgeId)){
                 var edge = EntityManager.createEdgeFromJSON(json.edges[edgeId].type,edgeId,json.edges[edgeId].source,json.edges[edgeId].target,json.edges[edgeId]);
-                edge.connect();
                 edge.addToCanvas(canvas);
+                edge.connect();
             }
         }
     }
@@ -147,6 +303,32 @@ requirejs([
         $("#showtype").show();
     });
 
+    $('#viewsShow').click(function(){
+        $(this).hide();
+        $('#viewsHide').show();
+        $('#ViewCtrlContainer').show();
+        $('#canvas-frame').css('margin-top','64px');
+    });
+
+    $('#viewsHide').click(function()    {
+        $(this).hide();
+        $('#viewsShow').show();
+        $('#ViewCtrlContainer').hide();
+        $('#canvas-frame').css('margin-top','32px');
+        if($('#lblCurrentViewId').text().length > 0) {
+            var $loading = $("#loading");
+            $loading.show();
+            Util.GetCurrentBaseModel().done(function (model) {
+                resetCanvas();
+                JSONtoGraph(model);
+                canvas.resetTool();
+                $('#lblCurrentView').hide();
+                $('#lblCurrentViewId').text("");
+                $loading.hide();
+            })
+        }
+    });
+
     $("#zoomin").click(function(){
         canvas.setZoom(canvas.getZoom()+0.1);
     });
@@ -158,12 +340,23 @@ requirejs([
     var $feedback = $("#feedback");
     $("#save").click(function(){
         $feedback.text("Saving...");
-        EntityManager.storeData().then(function(){
-            $feedback.text("Saved!");
-            setTimeout(function(){
-                $feedback.text("");
-            },1000);
-        });
+        var viewId = $('#lblCurrentViewId').text();
+        if(viewId.length > 0){
+            ViewManager.updateViewContent(viewId, ViewManager.getResource(viewId)).then(function () {
+                //ViewManager.initViewList();
+                $feedback.text("Saved!");
+                setTimeout(function () {
+                    $feedback.text("");
+                }, 1000);
+            });
+        }else {
+            EntityManager.storeData().then(function () {
+                $feedback.text("Saved!");
+                setTimeout(function () {
+                    $feedback.text("");
+                }, 1000);
+            });
+        }
     });
 
     $("#dialog").dialog({
@@ -260,6 +453,7 @@ requirejs([
         }
     });
 
+    ViewManager.initViewList();
 
     iwcot.registerOnJoinOrLeaveCallback(function(operation){
         var activityOperation;

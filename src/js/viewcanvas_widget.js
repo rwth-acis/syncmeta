@@ -212,6 +212,7 @@ requirejs([
         $('#btnCancelCreateViewpoint').click(function () {
             HideCreateMenu();
         });
+
         $('#btnAddViewpoint').click(function () {
             var viewId = $('#txtNameViewpoint').val();
             if (ViewManager.existsView(viewId)) {

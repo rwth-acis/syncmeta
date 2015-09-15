@@ -898,12 +898,9 @@ define([
 			_iwcot.registerOnLocalDataReceivedCallback(localExportDataCallback);
 			_iwcot.registerOnLocalDataReceivedCallback(localExportMetaModelCallback);
 			_iwcot.registerOnLocalDataReceivedCallback(localExportImageCallback);
-            _iwcot.registerOnLocalDataReceivedCallback(localHighlightCallback);
 			_iwcot.registerOnHistoryChangedCallback(historyNodeAddCallback);
 			_iwcot.registerOnHistoryChangedCallback(historyEdgeAddCallback);
 
-            _iwcot.registerOnLocalDataReceivedCallback(localNodeAddCallback);
-            _iwcot.registerOnLocalDataReceivedCallback(localEdgeAddCallback);
 		};
 
 		/**
@@ -916,12 +913,9 @@ define([
 			_iwcot.unregisterOnLocalDataReceivedCallback(localExportDataCallback);
 			_iwcot.unregisterOnLocalDataReceivedCallback(localExportMetaModelCallback);
 			_iwcot.unregisterOnLocalDataReceivedCallback(localExportImageCallback);
-            _iwcot.unregisterOnLocalDataReceivedCallback(localHighlightCallback);
 			_iwcot.unregisterOnHistoryChangedCallback(historyNodeAddCallback);
 			_iwcot.unregisterOnHistoryChangedCallback(historyEdgeAddCallback);
 
-            _iwcot.unregisterOnLocalDataReceivedCallback(localNodeAddCallback);
-            _iwcot.unregisterOnLocalDataReceivedCallback(localEdgeAddCallback);
 		};
 
 		init();
@@ -930,34 +924,6 @@ define([
 			that.registerCallbacks();
 		}
 
-        function localHighlightCallback(operation){
-            if(operation instanceof  HighlightOperation){
-                var entityId = operation.getEntityId();
-                if(entityId) {
-                    var entity = EntityManager.find(operation.getEntityId());
-                    if(entity) {
-                        EntityManager.setHighlightedEntity(entity);
-                        var viewId = operation.getViewId();
-                        entity.highlight("#FFF804", viewId);
-                    }
-                }
-                else
-                    EntityManager.setHighlightedEntity(null);
-
-            }
-        }
-
-        function localNodeAddCallback(operation){
-            if(operation instanceof NodeAddOperation){
-                that.createNode(operation.getType(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(),operation.getZIndex(),operation.getJSON(),operation.getEntityId(), CONFIG.WIDGET.NAME.MAIN);
-            }
-        }
-
-        function localEdgeAddCallback(operation){
-            if(operation instanceof EdgeAddOperation){
-                that.createEdge(operation.getType(),operation.getSource(),operation.getTarget(),operation.getJSON(),operation.getEntityId());
-            }
-        }
 	}
 
 	return Canvas;

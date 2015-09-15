@@ -120,6 +120,34 @@ define(['jqueryui'],/** @lends Util */function($) {
      return s.split("").reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a},0);
      };*/
 
+    /**
+     * Get the current state of the primary document store
+     * @returns {*}
+     * @constructor
+     */
+    Util.GetCurrentBaseModel = function () {
+        var resourceSpace = new openapp.oo.Resource(openapp.param.space());
+        var deferred = $.Deferred();
+        resourceSpace.getSubResources({
+            relation : openapp.ns.role + "data",
+            type : CONFIG.NS.MY.MODEL,
+            onAll : function (data) {
+                if (data === null || data.length === 0) {
+                    deferred.resolve([]);
+                } else {
+                    data[0].getRepresentation("rdfjson", function (representation) {
+                        if (!representation) {
+                            deferred.resolve([]);
+                        } else {
+                            deferred.resolve(representation);
+                        }
+                    });
+                }
+            }
+        });
+        return deferred.promise();
+    };
+
     return Util;
 
 });
