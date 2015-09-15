@@ -30,7 +30,6 @@ define([
 	 * @memberof canvas_widget
 	 * @constructor
 	 * @param {jQuery} $node jquery Selector of canvas node
-	 * @param {string} the name of the widget to generate a iwcot instance for. default is CONFIG.WIDGET.NAME.MAIN
 	 */
 	function Canvas($node) {
 		var that = this;

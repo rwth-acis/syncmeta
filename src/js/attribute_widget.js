@@ -10,8 +10,9 @@ requirejs([
     'attribute_widget/EntityManager',
     'operations/non_ot/JoinOperation',
     'operations/non_ot/InitModelTypesOperation',
-    'operations/non_ot/ViewInitOperation'
-],function ($,IWCW,AttributeWrapper,EntityManager,JoinOperation,InitModelTypesOperation,ViewInitOperation) {
+    'operations/non_ot/ViewInitOperation',
+    'promise!Model'
+],function ($,IWCW,AttributeWrapper,EntityManager,JoinOperation,InitModelTypesOperation,ViewInitOperation, model) {
 
     var wrapper = new AttributeWrapper($("#wrapper"));
 
@@ -43,18 +44,22 @@ requirejs([
     iwc.registerOnDataReceivedCallback(function(operation){
         var model;
         if(operation instanceof JoinOperation && operation.isDone()){
-            model = operation.getData();
+            if(firstInitializationFlag)
+                firstInitializationFlag = false;
+            else {
+                model = operation.getData();
 
-            JSONtoGraph(model);
+                JSONtoGraph(model);
 
-            if(wrapper.getModelAttributesNode() === null) {
-                var modelAttributesNode = EntityManager.createModelAttributesNode();
-                wrapper.setModelAttributesNode(modelAttributesNode);
-                modelAttributesNode.addToWrapper(wrapper);
-                wrapper.select(modelAttributesNode);
+                if (wrapper.getModelAttributesNode() === null) {
+                    var modelAttributesNode = EntityManager.createModelAttributesNode();
+                    wrapper.setModelAttributesNode(modelAttributesNode);
+                    modelAttributesNode.addToWrapper(wrapper);
+                    wrapper.select(modelAttributesNode);
+                }
+
+                $("#loading").hide();
             }
-
-            $("#loading").hide();
         }
         else if(operation instanceof ViewInitOperation){
             if(operation.getViewpoint())
@@ -80,6 +85,24 @@ requirejs([
             }
         }
     });
+
+    //-----------------------------------------------------------------------------
+    // the attribute widget loads the model directly from the role resource space.
+    // attribute widget no longer waits for the JoinOperation from the canvas. This should speed up the initialization a bit.
+    // To revert these changes uncomment line 45-60
+    JSONtoGraph(model);
+
+    var firstInitializationFlag = true;
+
+    if(wrapper.getModelAttributesNode() === null) {
+        var modelAttributesNode = EntityManager.createModelAttributesNode();
+        wrapper.setModelAttributesNode(modelAttributesNode);
+        modelAttributesNode.addToWrapper(wrapper);
+        wrapper.select(modelAttributesNode);
+    }
+
+    $("#loading").hide();
+    //--------------------------------------------------------------------------
 
     $("#q").draggable({
         axis: "y",

@@ -68,7 +68,7 @@ div.simple_node div.label {
     cursor: move
 }
 .selected {
-    border: 2px solid #999999;
+    border: 3px solid #2BFF6E;
 }
 #canvas-frame {
     overflow: hidden;
