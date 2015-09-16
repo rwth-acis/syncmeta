@@ -4,13 +4,13 @@ module.exports = function(grunt) {
 
     // Project configuration.
     //noinspection JSUnusedGlobalSymbols
-    var localConfig = grunt.file.readJSON('.localGruntConfig.json')
+    var localConfig = grunt.file.readJSON('.localGruntConfig.json');
     grunt.initConfig({
 
         pkg: grunt.file.readJSON('package.json'),
 
         baseUrl: localConfig.baseUrl,
-        roleSandboxUrl: "http://role-sandbox.eu",
+        roleSandboxUrl: localConfig.roleSandboxUrl,
 
         bowerdir: grunt.file.readJSON('.bowerrc')['directory'],
         distdir: 'html',

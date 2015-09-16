@@ -1,4 +1,6 @@
 {
     "baseUrl_use_for_commit" : "https://rwth-acis.github.io/syncmeta/html",
-    "baseUrl" : "http://localhost:8081"
+    "roleSandboxUrl_use_for_commit": "http://role-sandbox.eu",
+    "baseUrl" : "http://127.0.0.1:8081",
+    "roleSandboxUrl": "http://127.0.0.1:8073"
 }
