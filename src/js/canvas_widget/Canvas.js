@@ -508,7 +508,7 @@ define([
          * @param {number} zoom
          */
         this.setZoom = function(zoom){
-            if(zoom < 0.5 || zoom > 2){
+            if(zoom < 0.1 || zoom > 2){
                 return;
             }
             _zoom = zoom;
