@@ -10,6 +10,7 @@ requirejs([
     'operations/non_ot/ToolSelectOperation',
     'operations/non_ot/ActivityOperation',
     'operations/non_ot/JoinOperation',
+    'operations/non_ot/SetModelAttributeNodeOperation',
     'canvas_widget/Canvas',
     'canvas_widget/EntityManager',
     'canvas_widget/NodeTool',
@@ -36,7 +37,7 @@ requirejs([
     'canvas_widget/UniDirAssociationEdge',
     'promise!Metamodel',
     'promise!Model'
-],function($,jsPlumb,IWCOT,ToolSelectOperation,ActivityOperation,JoinOperation,Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge,metamodel,model) {
+],function($,jsPlumb,IWCOT,ToolSelectOperation,ActivityOperation,JoinOperation,SetModelAttributeNodeOperation,Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge,metamodel,model) {
 
     var iwcot;
     var canvas;
@@ -262,7 +263,15 @@ requirejs([
                         modelAttributesNode.addToCanvas(canvas);
                     }
                     canvas.resetTool();
+
+                    iwcot.registerOnLocalDataReceivedCallback(function(operation){
+                        if(operation instanceof SetModelAttributeNodeOperation){
+                            iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new SetModelAttributeNodeOperation().toNonOTOperation());
+                        }
+                    });
+
                     $("#loading").hide();
+
                     activityOperation = new ActivityOperation(
                         "UserJoinActivity",
                         "-1",
