@@ -11,7 +11,6 @@ define([
 		'operations/non_ot/ExportDataOperation',
 		'operations/non_ot/ExportMetaModelOperation',
 		'operations/non_ot/ExportImageOperation',
-        'operations/non_ot/HighlightOperation',
 		'canvas_widget/AbstractEntity',
 		'canvas_widget/ModelAttributesNode',
 		'canvas_widget/EntityManager',
@@ -19,7 +18,7 @@ define([
 		'canvas_widget/MoveTool',
 		'jquery.transformable-PATCHED'
 	], /** @lends Canvas */
-	function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelectOperation, EntitySelectOperation, ActivityOperation, ExportDataOperation, ExportMetaModelOperation, ExportImageOperation,HighlightOperation, AbstractEntity, ModelAttributesNode, EntityManager, AbstractCanvas, MoveTool) {
+	function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelectOperation, EntitySelectOperation, ActivityOperation, ExportDataOperation, ExportMetaModelOperation, ExportImageOperation, AbstractEntity, ModelAttributesNode, EntityManager, AbstractCanvas, MoveTool) {
 
 	Canvas.prototype = new AbstractCanvas();
 	Canvas.prototype.constructor = Canvas;
@@ -351,6 +350,8 @@ define([
 				that.setZoom(that.getZoom() + 0.1 * event.deltaY);
 				event.preventDefault();
 			});
+
+
 		};
 
 		/**

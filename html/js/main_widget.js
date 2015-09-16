@@ -14,6 +14,7 @@ requirejs([
     'operations/non_ot/ViewInitOperation',
     'operations/non_ot/SetViewTypesOperation',
     'operations/non_ot/InitModelTypesOperation',
+    'operations/non_ot/SetModelAttributeNodeOperation',
     'canvas_widget/Canvas',
     'canvas_widget/EntityManager',
     'canvas_widget/NodeTool',
@@ -45,7 +46,7 @@ requirejs([
     'canvas_widget/ViewManager',
     'promise!Metamodel',
     'promise!Model'
-],function($,jsPlumb,IWCOT, Util,ToolSelectOperation,ActivityOperation,JoinOperation, ViewInitOperation, SetViewTypesOperation, InitModelTypesOperation,Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge, ViewObjectNode, ViewObjectNodeTool,ViewRelationshipNode, ViewRelationshipNodeTool, ViewManager,metamodel,model) {
+],function($,jsPlumb,IWCOT, Util,ToolSelectOperation,ActivityOperation,JoinOperation, ViewInitOperation, SetViewTypesOperation, InitModelTypesOperation, SetModelAttributeNodeOperation, Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge, ViewObjectNode, ViewObjectNodeTool,ViewRelationshipNode, ViewRelationshipNodeTool, ViewManager,metamodel,model) {
 
     var iwcot;
     var canvas;
@@ -473,6 +474,14 @@ requirejs([
                     }
                     canvas.resetTool();
                     $("#loading").hide();
+
+                    iwcot.registerOnLocalDataReceivedCallback(function(operation){
+                        if(operation instanceof SetModelAttributeNodeOperation){
+                            iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new SetModelAttributeNodeOperation().toNonOTOperation());
+                        }
+                    });
+
+
                     activityOperation = new ActivityOperation(
                         "UserJoinActivity",
                         "-1",

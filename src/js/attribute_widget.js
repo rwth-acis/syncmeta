@@ -11,8 +11,9 @@ requirejs([
     'operations/non_ot/JoinOperation',
     'operations/non_ot/InitModelTypesOperation',
     'operations/non_ot/ViewInitOperation',
+    'operations/non_ot/SetModelAttributeNodeOperation',
     'promise!Model'
-],function ($,IWCW,AttributeWrapper,EntityManager,JoinOperation,InitModelTypesOperation,ViewInitOperation, model) {
+],function ($,IWCW,AttributeWrapper,EntityManager,JoinOperation,InitModelTypesOperation,ViewInitOperation, SetModelAttributeNodeOperation, model) {
 
     var wrapper = new AttributeWrapper($("#wrapper"));
 
@@ -25,7 +26,7 @@ requirejs([
             modelAttributesNode = EntityManager.createModelAttributesNodeFromJSON(json.attributes);
             wrapper.setModelAttributesNode(modelAttributesNode);
             modelAttributesNode.addToWrapper(wrapper);
-            wrapper.select(modelAttributesNode);    
+            //wrapper.select(modelAttributesNode);
         }
         for(nodeId in json.nodes){
             if(json.nodes.hasOwnProperty(nodeId)){
@@ -42,7 +43,7 @@ requirejs([
     }
 
     iwc.registerOnDataReceivedCallback(function(operation){
-        var model;
+        var model, modelAttributesNode;
         if(operation instanceof JoinOperation && operation.isDone()){
             if(firstInitializationFlag)
                 firstInitializationFlag = false;
@@ -51,15 +52,26 @@ requirejs([
 
                 JSONtoGraph(model);
 
-                if (wrapper.getModelAttributesNode() === null) {
-                    var modelAttributesNode = EntityManager.createModelAttributesNode();
-                    wrapper.setModelAttributesNode(modelAttributesNode);
-                    modelAttributesNode.addToWrapper(wrapper);
-                    wrapper.select(modelAttributesNode);
-                }
-
                 $("#loading").hide();
             }
+
+            modelAttributesNode = wrapper.getModelAttributesNode();
+            if (modelAttributesNode === null) {
+                modelAttributesNode = EntityManager.createModelAttributesNode();
+                wrapper.setModelAttributesNode(modelAttributesNode);
+                modelAttributesNode.addToWrapper(wrapper);
+            }
+            wrapper.select(modelAttributesNode);
+
+        }
+        else if(operation instanceof SetModelAttributeNodeOperation){
+            modelAttributesNode = wrapper.getModelAttributesNode();
+            if (modelAttributesNode === null) {
+                modelAttributesNode = EntityManager.createModelAttributesNode();
+                wrapper.setModelAttributesNode(modelAttributesNode);
+                modelAttributesNode.addToWrapper(wrapper);
+            }
+            wrapper.select(modelAttributesNode);
         }
         else if(operation instanceof ViewInitOperation){
             if(operation.getViewpoint())
@@ -94,12 +106,8 @@ requirejs([
 
     var firstInitializationFlag = true;
 
-    if(wrapper.getModelAttributesNode() === null) {
-        var modelAttributesNode = EntityManager.createModelAttributesNode();
-        wrapper.setModelAttributesNode(modelAttributesNode);
-        modelAttributesNode.addToWrapper(wrapper);
-        wrapper.select(modelAttributesNode);
-    }
+    var operation = new SetModelAttributeNodeOperation();
+    iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN, operation.toNonOTOperation());
 
     $("#loading").hide();
     //--------------------------------------------------------------------------
