@@ -12,6 +12,8 @@ requirejs([
     'operations/non_ot/ActivityOperation',
     'operations/non_ot/JoinOperation',
     'operations/non_ot/ViewInitOperation',
+    'operations/non_ot/UpdateViewListOperation',
+    'operations/non_ot/DeleteViewOperation',
     'operations/non_ot/SetViewTypesOperation',
     'operations/non_ot/InitModelTypesOperation',
     'operations/non_ot/SetModelAttributeNodeOperation',
@@ -46,7 +48,7 @@ requirejs([
     'canvas_widget/ViewManager',
     'promise!Metamodel',
     'promise!Model'
-],function($,jsPlumb,IWCOT, Util,ToolSelectOperation,ActivityOperation,JoinOperation, ViewInitOperation, SetViewTypesOperation, InitModelTypesOperation, SetModelAttributeNodeOperation, Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge, ViewObjectNode, ViewObjectNodeTool,ViewRelationshipNode, ViewRelationshipNodeTool, ViewManager,metamodel,model) {
+],function($,jsPlumb,IWCOT, Util,ToolSelectOperation,ActivityOperation,JoinOperation, ViewInitOperation, UpdateViewListOperation, DeleteViewOperation,SetViewTypesOperation, InitModelTypesOperation, SetModelAttributeNodeOperation, Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge, ViewObjectNode, ViewObjectNodeTool,ViewRelationshipNode, ViewRelationshipNodeTool, ViewManager,metamodel,model) {
 
     var iwcot;
     var canvas;
@@ -114,7 +116,7 @@ requirejs([
                 openapp.resource.del(ViewManager.getViewUri(viewId), function () {
                     ViewManager.deleteView(viewId);
                     //TODO DeleteView Operation
-                    //iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new DeleteViewOperation(viewId).toNonOTOperation());
+                    iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new DeleteViewOperation(viewId).toNonOTOperation());
                 });
             }
             else {
@@ -135,9 +137,9 @@ requirejs([
             ViewManager.storeView(viewId, null).then(function (resp) {
                 ViewManager.addView(viewId, null, resp);
                 visualizeView(viewId);
-                //TODO update UpdateViewListOperation
-                //var operation = new UpdateViewListOperation();
-                //iwcot.sendRemoteNonOTOperation(operation.toNonOTOperation());
+
+                var operation = new UpdateViewListOperation();
+                iwcot.sendRemoteNonOTOperation(operation.toNonOTOperation());
                 canvas.get$canvas().show();
                 HideCreateMenu();
             });
@@ -234,7 +236,7 @@ requirejs([
         openapp.resource.del(ViewManager.getViewUri(viewId), function () {
             ViewManager.deleteView(viewId);
             //TODO delete view operation
-            //iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new DeleteViewOperation(viewId).toNonOTOperation());
+            iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new DeleteViewOperation(viewId).toNonOTOperation());
             deferred.resolve();
         });
         return deferred.promise();
@@ -478,6 +480,16 @@ requirejs([
                     iwcot.registerOnLocalDataReceivedCallback(function(operation){
                         if(operation instanceof SetModelAttributeNodeOperation){
                             iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new SetModelAttributeNodeOperation().toNonOTOperation());
+                        }
+                        else if(operation instanceof UpdateViewListOperation){
+                            iwcot.sendRemoteNonOTOperation(new UpdateViewListOperation().toNonOTOperation());
+                            ViewManager.initViewList();
+                        }
+                    });
+
+                    iwcot.registerOnRemoteDataReceivedCallback(function(operation){
+                        if(operation instanceof UpdateViewListOperation) {
+                            ViewManager.initViewList();
                         }
                     });
 

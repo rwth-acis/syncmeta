@@ -100,12 +100,10 @@ define([
         /**
          * Propagate an Attribute Add Operation to the remote users and the local widgets
          * @param {operations.ot.AttributeDeleteOperation} operation
-         * @param {string} component the name of the receiver
          */
-        var propagateAttributeAddOperation = function(operation,component){
+        var propagateAttributeAddOperation = function(operation){
 			processAttributeAddOperation(operation);
-            iwc.setBufferedMessagesReceiver(CONFIG.WIDGET.NAME.VIEWCANVAS);
-            iwc.sendLocalOTOperation(component,operation.getOTOperation());
+            iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.getOTOperation());
         };
 
         /**
@@ -221,7 +219,7 @@ define([
         _$node.find(".ui-icon-plus").click(function(){
             var id = Util.generateRandomId();
             var operation = new AttributeAddOperation(id,that.getEntityId(),that.getRootSubjectEntity().getEntityId(),ConditionPredicateAttribute.TYPE);
-            propagateAttributeAddOperation(operation, CONFIG.WIDGET.NAME.VIEWCANVAS);
+            propagateAttributeAddOperation(operation);
 
         });
 

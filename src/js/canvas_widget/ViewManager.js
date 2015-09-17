@@ -193,6 +193,10 @@ define([
                 if(_viewResourceDictionary.hasOwnProperty(viewId)){
                     _viewResourceDictionary[viewId] = resource;
                     _viewViewpointDictionary[viewId] = viewpointId;
+                    var $option = $(optionTpl({
+                        id: viewId
+                    }));
+                    _$selection.append($option);
                 }
             },
             /**
@@ -210,6 +214,7 @@ define([
              */
             initViewList : function(){
                 var that = this;
+                _$selection.empty();
                 var resourceSpace = new openapp.oo.Resource(openapp.param.space());
                 resourceSpace.getSubResources({
                     relation: openapp.ns.role + "data",

@@ -92,9 +92,7 @@ define([
          */
         this.propagateAttributeDeleteOperation = function(operation){
             processAttributeDeleteOperation(operation);
-            _iwc.disableBuffer();
-            _iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.VIEWCANVAS,operation.getOTOperation());
-            _iwc.enableBuffer();
+            _iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.getOTOperation());
         };
 
         /**

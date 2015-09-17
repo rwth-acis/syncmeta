@@ -94,7 +94,7 @@
 							callback: function(subres){
 								$('#btnRefresh').click();
 								var operation = new UpdateViewListOperation();
-								iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.VIEWCANVAS, operation.toNonOTOperation());
+								iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN, operation.toNonOTOperation());
 							}
 						}); 
 					});
@@ -110,7 +110,7 @@
 			GetList(CONFIG.NS.MY.VIEW, '#viewlist', tpl);
 			GetList(CONFIG.NS.MY.VIEWPOINT, '#viewpointlist', tpl);
 			var operation = new UpdateViewListOperation();
-			iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.VIEWCANVAS, operation.toNonOTOperation());
+			iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN, operation.toNonOTOperation());
 		});
 				
 		$('#btnLoadView').click(function(){

@@ -127,14 +127,8 @@ define([
         _$node.find(".value").append(_value.get$node());
         _$node.find(".ui-icon-close").click(function(){
             var operation = new AttributeDeleteOperation(that.getEntityId(),that.getSubjectEntityId(),that.getRootSubjectEntity().getEntityId(),ListSingleValueAttribute.TYPE);
-            if(that.getRootSubjectEntity().getViewId()){
-                _iwc.setBufferedMessagesReceiver(CONFIG.WIDGET.NAME.VIEWCANVAS);
-                propagateAttributeDeleteOperation(operation, CONFIG.WIDGET.NAME.VIEWCANVAS);
-            }
-            else {
-                _iwc.setBufferedMessagesReceiver(CONFIG.WIDGET.NAME.MAIN);
-                propagateAttributeDeleteOperation(operation, CONFIG.WIDGET.NAME.MAIN);
-            }
+            propagateAttributeDeleteOperation(operation, CONFIG.WIDGET.NAME.MAIN);
+
         });
 
         if(_iwc){

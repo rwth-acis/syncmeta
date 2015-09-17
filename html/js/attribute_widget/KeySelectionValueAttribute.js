@@ -70,11 +70,11 @@ define([
         /**
          * Propagate an Attribute Delete Operation to the remote users and the local widgets
          * @param {operations.ot.AttributeDeleteOperation} operation
-         * @param {string} component one of the canvas widgets
+
          */
-        var propagateAttributeDeleteOperation = function(operation, component){
+        var propagateAttributeDeleteOperation = function(operation){
             processAttributeDeleteOperation(operation);
-            _iwc.sendLocalOTOperation(component,operation.getOTOperation());
+            _iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.getOTOperation());
         };
 
         /**
@@ -164,14 +164,8 @@ define([
         _$node.find(".value").append(_value.get$node());
         _$node.find(".ui-icon-close").click(function(){
             var operation = new AttributeDeleteOperation(that.getEntityId(),that.getSubjectEntityId(),that.getRootSubjectEntity().getEntityId(),KeySelectionValueAttribute.TYPE);
-            if(that.getRootSubjectEntity().getViewId()) {
-                _iwc.setBufferedMessagesReceiver(CONFIG.WIDGET.NAME.VIEWCANVAS);
-                propagateAttributeDeleteOperation(operation, CONFIG.WIDGET.NAME.VIEWCANVAS);
-            }
-            else {
-                _iwc.setBufferedMessagesReceiver(CONFIG.WIDGET.NAME.MAIN);
-                propagateAttributeDeleteOperation(operation, CONFIG.WIDGET.NAME.MAIN);
-            }
+            propagateAttributeDeleteOperation(operation, CONFIG.WIDGET.NAME.MAIN);
+
         });
 
         if(_iwc){

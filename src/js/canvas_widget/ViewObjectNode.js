@@ -83,15 +83,14 @@ define([
             that.get$node().find('.attributes').append(conjSelection.get$node());
 
             if(_fromResource){
-                var targetId = null;
-                for(var key in _fromResource.attributes){
-                    if(_fromResource.attributes.hasOwnProperty(key) && key.indexOf('[target]') != -1){
-                        targetId = key;
-                        break;
-                    }
-                }
+                var targetId;
+                var target = _fromResource.attributes[id + '[target]'];
+                if(target)
+                    targetId = target.value.value;
+
+
                 if(targetId){
-                    attribute.setValueFromJSON(_fromResource.attributes[targetId]);
+                    attribute.setValueFromJSON(_fromResource.attributes[id + '[target]']);
                     if(conditonList = _fromResource.attributes["[condition]"]){
                         var attrList = that.getAttribute('[attributes]').getAttributes();
                         var targetAttrList = {};

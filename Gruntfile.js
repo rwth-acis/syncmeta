@@ -418,7 +418,6 @@ module.exports = function (grunt) {
         grunt.task.run(['clean', 'requirejs', 'copy:lib', 'copy:main', 'buildwidgets' /*,'sftp'*/
         ]);
     });
-	
-    grunt.registerTask('server',['connect']);
-    grunt.registerTask('run',['clean', 'requirejs', 'copy:lib', 'copy:main', 'buildwidgets','connect']);
+
+    grunt.registerTask('serve',['clean', 'requirejs', 'copy:lib', 'copy:main', 'buildwidgets','connect']);
 };
