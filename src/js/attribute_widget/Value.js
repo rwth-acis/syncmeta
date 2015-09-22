@@ -122,8 +122,8 @@ define([
          * @param {operations.ot.ValueChangeOperation} operation
          * @param {string} component the receiver
          */
-        var propagateValueChangeOperation = function(operation, component){
-            iwc.sendLocalOTOperation(component,operation.getOTOperation());
+        var propagateValueChangeOperation = function(operation){
+            iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.getOTOperation());
         };
 
         /**
@@ -135,15 +135,8 @@ define([
         this.propagateValueChange = function(type,value,position){
             var operation = new ValueChangeOperation(that.getEntityId(),value,type,position);
             processValueChangeOperation(operation);
-            if(that.getRootSubjectEntity().getViewId()) {
-                iwc.setBufferedMessagesReceiver(CONFIG.WIDGET.NAME.VIEWCANVAS);
-                propagateValueChangeOperation(operation, CONFIG.WIDGET.NAME.VIEWCANVAS);
+            propagateValueChangeOperation(operation);
 
-            }
-            else {
-                iwc.resetBufferedMessagesReceiver();
-                propagateValueChangeOperation(operation, CONFIG.WIDGET.NAME.MAIN);
-            }
         };
 
         /**

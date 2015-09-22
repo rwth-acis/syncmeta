@@ -5,12 +5,12 @@
 	 'lodash',
 	 'iwcw',
 	 'operations/non_ot/UpdateViewListOperation',
-	 'viewcanvas_widget/GenerateViewpointModel'],
+	 'canvas_widget/GenerateViewpointModel'],
 		function($,_,IWC,UpdateViewListOperation,GenerateViewpointModel){
 				
 			
 				var iwc  = IWC.getInstance("VIEWCONTROL");
-				iwc.disableBuffer();
+
 				
 				var _viewList = {};
 				var _viewpointList = {};

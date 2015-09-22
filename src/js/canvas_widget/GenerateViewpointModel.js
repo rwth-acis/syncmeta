@@ -1,19 +1,19 @@
 define(['Util',
         'canvas_widget/AbstractEntity',
-        'viewcanvas_widget/Node',
-        'viewcanvas_widget/ObjectNode',
-        'viewcanvas_widget/AbstractClassNode',
-        'viewcanvas_widget/RelationshipNode',
-        'viewcanvas_widget/RelationshipGroupNode',
-        'viewcanvas_widget/EnumNode',
-        'viewcanvas_widget/NodeShapeNode',
-        'viewcanvas_widget/EdgeShapeNode',
-        'viewcanvas_widget/GeneralisationEdge',
-        'viewcanvas_widget/BiDirAssociationEdge',
-        'viewcanvas_widget/UniDirAssociationEdge',
-        'viewcanvas_widget/ViewObjectNode',
-        'viewcanvas_widget/ViewRelationshipNode',
-        'viewcanvas_widget/EntityManager'],
+        'canvas_widget/Node',
+        'canvas_widget/ObjectNode',
+        'canvas_widget/AbstractClassNode',
+        'canvas_widget/RelationshipNode',
+        'canvas_widget/RelationshipGroupNode',
+        'canvas_widget/EnumNode',
+        'canvas_widget/NodeShapeNode',
+        'canvas_widget/EdgeShapeNode',
+        'canvas_widget/GeneralisationEdge',
+        'canvas_widget/BiDirAssociationEdge',
+        'canvas_widget/UniDirAssociationEdge',
+        'canvas_widget/ViewObjectNode',
+        'canvas_widget/ViewRelationshipNode',
+        'canvas_widget/EntityManager'],
     function(Util, AbstractEntity, Node, ObjectNode, AbstractClassNode,RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNode,ViewRelationshipNode, EntityManager ){
         function GenerateViewpointModel(viewpointModel){
 
@@ -448,7 +448,7 @@ define(['Util',
                 }
             }
             metamodel['id'] = viewpointModel.id;
-            EntityManager.clear();
+            EntityManager.reset();
             return metamodel;
         }
         return GenerateViewpointModel;

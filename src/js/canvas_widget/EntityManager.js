@@ -999,6 +999,15 @@ define([
                     nodes : {},
                     edges : {}
                 };
+            },
+            /**
+             * resets the EntityManager
+             */
+            reset : function(){
+                this.clearBin();
+                _nodes ={};
+                _edges = {};
+                this.deleteModelAttribute();
             }
 
 		};

@@ -5,7 +5,7 @@
         'Util',
         'iwcw',
         'operations/non_ot/ExportMetaModelOperation',
-        'viewcanvas_widget/GenerateViewpointModel'
+        'canvas_widget/GenerateViewpointModel'
     ],function($,_,Util,IWCW,ExportMetaModelOperation,GenerateViewpointModel){
 
         var componentName = "export"+Util.generateRandomId();
@@ -172,11 +172,7 @@
                                 return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/attribute.xml");
                             }).then(function(){
                                 return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/export.xml");
-                            })/*.then(function(){
-                                return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/imsld_export.xml");
-                            })*/.then(function(){
-								return addWidgetToSpace(spaceURI, "<%= grunt.config('baseUrl') %>/viewcanvas.xml");
-							}).then(function(){
+                            }).then(function(){
                                 return addMetamodelToSpace(spaceURI,metamodel, CONFIG.NS.MY.METAMODEL);
                             }).then(function(){
 								var deferred = $.Deferred();

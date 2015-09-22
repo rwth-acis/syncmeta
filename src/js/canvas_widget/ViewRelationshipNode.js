@@ -22,7 +22,7 @@ function (require, $, jsPlumb, _, AbstractNode, SingleSelectionAttribute, KeySel
 	ViewRelationshipNode.prototype.constructor = ViewRelationshipNode;
 	/**
 	 * ViewRelationshipNode
-	 * @class viewcanvas_widget.ViewRelationshipNode
+	 * @class canvas_widget.ViewRelationshipNode
 	 * @extends canvas_widget.AbstractNode
 	 * @memberof canvas_widget
 	 * @constructor

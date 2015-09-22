@@ -6,7 +6,7 @@ define([
     'canvas_widget/AbstractAttribute',
     'canvas_widget/Value',
     'canvas_widget/SelectionValue',
-    'text!templates/viewcanvas_widget/condition_predicate.html'
+    'text!templates/canvas_widget/condition_predicate.html'
 ],/** @lends ConditionPredicateAttribute */ function($,_,Util,AttributeDeleteOperation,AbstractAttribute,Value,SelectionValue,condition_predicateHtml) {
 
     ConditionPredicateAttribute.TYPE = "ConditionPredicateAttribute";

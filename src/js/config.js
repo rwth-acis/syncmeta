@@ -67,8 +67,7 @@ CONFIG = {
             MAIN: "MAIN",
             PALETTE: "PALETTE",
             ATTRIBUTE: "ATTRIBUTE",
-            ACTIVITY: "ACTIVITY",
-			VIEWCANVAS: "VIEWCANVAS"
+            ACTIVITY: "ACTIVITY"
         }
     },
     ENTITY: {

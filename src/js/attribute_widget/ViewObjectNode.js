@@ -6,9 +6,9 @@ define([
     'attribute_widget/KeySelectionValueSelectionValueListAttribute',
     'attribute_widget/SingleSelectionAttribute',
     'attribute_widget/ConditionListAttribute',
-    'viewcanvas_widget/ViewTypesUtil',
-    'viewcanvas_widget/LogicalOperator',
-    'viewcanvas_widget/LogicalConjunctions',
+    'canvas_widget/ViewTypesUtil',
+    'canvas_widget/LogicalOperator',
+    'canvas_widget/LogicalConjunctions',
     'text!templates/attribute_widget/object_node.html'
 ], /** @lends ViewObjectNode */
 function ($, jsPlumb, _, AbstractNode, KeySelectionValueSelectionValueListAttribute, SingleSelectionAttribute, ConditionListAttribute, ViewTypesUtil, LogicalOperator, LogicalConjunctions, objectNodeHtml) {
@@ -79,14 +79,15 @@ function ($, jsPlumb, _, AbstractNode, KeySelectionValueSelectionValueListAttrib
             if(_fromResource){
                 var targetId = null;
                 for(var key in _fromResource.attributes){
-                    if(_fromResource.attributes.hasOwnProperty(key) && key.indexOf('[target]') != -1){
+                    if(_fromResource.attributes.hasOwnProperty(key) && key.indexOf('[target]') !== -1){
                         targetId = key;
                         break;
                     }
                 }
                 if(targetId){
                     attribute.setValueFromJSON(_fromResource.attributes[targetId]);
-                    if(conditonList = _fromResource.attributes["[condition]"]){
+                    var conditionList = _fromResource.attributes["[condition]"];
+                    if(conditionList){
                         var attrList = that.getAttribute('[attributes]').getAttributes();
                         var targetAttrList = {};
                         for (var attrKey in attrList) {
@@ -95,7 +96,7 @@ function ($, jsPlumb, _, AbstractNode, KeySelectionValueSelectionValueListAttrib
                             }
                         }
                         var cla = new ConditionListAttribute("[condition]", "Conditions", that, targetAttrList, LogicalOperator, LogicalConjunctions);
-                        cla.setValueFromJSON(conditonList);
+                        cla.setValueFromJSON(conditionList);
                         that.addAttribute(cla);
                         that.get$node().find('.attributes').append(cla.get$node());
                     }

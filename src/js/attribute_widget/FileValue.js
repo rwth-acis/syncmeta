@@ -78,24 +78,16 @@ define([
          */
         var propagateValueChange = function(type,value,position){
             var operation = new ValueChangeOperation(that.getEntityId(),value,type,position);
-            if(that.getRootSubjectEntity().getViewId()) {
-                _iwc.setBufferedMessagesReceiver(CONFIG.WIDGET.NAME.VIEWCANVAS);
-                propagateValueChangeOperation(operation, CONFIG.WIDGET.NAME.VIEWCANVAS);
+            propagateValueChangeOperation(operation);
 
-            }
-            else {
-                _iwc.resetBufferedMessagesReceiver();
-                propagateValueChangeOperation(operation, CONFIG.WIDGET.NAME.MAIN);
-            }
         };
         /**
          * Propagate a Value Change Operation to the remote users and the local widgets
          * @param {operations.ot.ValueChangeOperation} operation
-         * @param {string} component the name of the receiver
          */
-        var propagateValueChangeOperation = function(operation, component){
+        var propagateValueChangeOperation = function(operation){
             processValueChangeOperation(operation);
-            _iwc.sendLocalOTOperation(component,operation.getOTOperation());
+            _iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.getOTOperation());
         };
 
         /**

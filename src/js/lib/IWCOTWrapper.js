@@ -43,8 +43,6 @@ define([
     function IWCOTWrapper(componentName,localID){
         var that = this;
 
-        var _componentName = componentName;
-
         /**
          * Set if local and remote messages should be buffered
          * @type {boolean}
@@ -268,15 +266,7 @@ define([
          * @returns {operations.ot.EntityOperation}
          */
         var adjustOperation = function(operation, operationNew){
-            var EntityManager;
-            try{
-                EntityManager = require('canvas_widget/EntityManager');
-
-            }catch(e){
-                EntityManager = require('viewcanvas_widget/EntityManager');
-            }
-            return operationNew.adjust(EntityManager,operation);
-
+            return operationNew.adjust(require('canvas_widget/EntityManager'),operation);
         };
 
         /**
@@ -484,7 +474,7 @@ define([
                         time = new Date().getTime();
                         console.log("OT is stable: " + _ot.isStable());
                         remoteOp = _ot.remoteEvent(time,data);
-                        operation = new OTOperation(data.name,remoteOp.value,remoteOp.type,remoteOp.position, remoteOp.fromView);
+                        operation = new OTOperation(data.name,remoteOp.value,remoteOp.type,remoteOp.position);
                         operation.setSender(sender);
                         resOperation = OperationFactory.createOperationFromOTOperation(operation);
                         if(resOperation instanceof ValueChangeOperation){
@@ -502,7 +492,7 @@ define([
                         operation.setSender(sender);
                         resOperation = OperationFactory.createOperationFromNonOTOperation(operation);
 
-                        if(resOperation instanceof JoinOperation && _componentName === CONFIG.WIDGET.NAME.MAIN){
+                        if(resOperation instanceof JoinOperation){
 
                             // First step
                             if(!resOperation.isDone()){
@@ -519,9 +509,8 @@ define([
                                             clearInterval(_syncInterval);
                                             clearInterval(_purgeInterval);
                                             _ot = new OT(localID);
-                                            sendRemoteNonOTOperation(new JoinOperation(resOperation.getUser(), false, space.user[CONFIG.NS.PERSON.JABBERID], require('canvas_widget/EntityManager').graphToJSON(),_componentName).toNonOTOperation());
-
-                                            },500);
+                                            sendRemoteNonOTOperation(new JoinOperation(resOperation.getUser(),false,space.user[CONFIG.NS.PERSON.JABBERID],require('canvas_widget/EntityManager').graphToJSON()).toNonOTOperation());
+                                        },500);
 
                                         //Unlock if no remote message is received within 5 seconds
                                         _joiningUsersTimeouts[resOperation.getUser()] = setTimeout(function(){
@@ -545,7 +534,7 @@ define([
                                         return;
                                     }
 
-                                //I try to join..
+                                    //I try to join..
                                 } else {
 
                                     console.log("JOINING LOG: GOT RESPONSE ON MY JOINING REQUEST");
@@ -554,12 +543,12 @@ define([
                                     if(_joiningState === IWCOT.JOIN_STATE.NOT_JOINED || _joiningState === IWCOT.JOIN_STATE.COMPLETED){
                                         clearTimeout(_joiningTimeout);
                                         _joiningState = IWCOT.JOIN_STATE.REQUESTED;
-                                        sendRemoteNonOTOperation(new JoinOperation(space.user[CONFIG.NS.PERSON.JABBERID],true,space.user[CONFIG.NS.PERSON.JABBERID],{},_componentName).toNonOTOperation());
+                                        sendRemoteNonOTOperation(new JoinOperation(space.user[CONFIG.NS.PERSON.JABBERID],true,space.user[CONFIG.NS.PERSON.JABBERID],{}).toNonOTOperation());
                                     }
 
                                 }
 
-                            //Second step
+                                //Second step
                             } else {
 
                                 // A remote user tries to join..
@@ -569,7 +558,7 @@ define([
 
                                     // ..and I already have joined
                                     if(_joiningState === IWCOT.JOIN_STATE.COMPLETED){
-                                        sendRemoteNonOTOperation(new JoinOperation(resOperation.getUser(),true,space.user[CONFIG.NS.PERSON.JABBERID],{},_componentName).toNonOTOperation());
+                                        sendRemoteNonOTOperation(new JoinOperation(resOperation.getUser(),true,space.user[CONFIG.NS.PERSON.JABBERID],{}).toNonOTOperation());
                                         userPosition = _joiningUsers.indexOf(sender);
                                         if(userPosition > -1){
                                             _joiningUsers.splice(userPosition,1);
@@ -587,7 +576,7 @@ define([
                                         return;
                                     }
 
-                                //I try to join..
+                                    //I try to join..
                                 } else {
 
                                     console.log("JOINING LOG: LOCAL USER FINISHED JOINING");
@@ -629,7 +618,7 @@ define([
                 sender = payload.sender;
                 switch (type){
                     case PAYLOAD_DATA_TYPE.OT_OPERATION:
-                        operation = new OTOperation(data.name,data.value,data.type,data.position, data.fromView);
+                        operation = new OTOperation(data.name,data.value,data.type,data.position);
                         operation.setSender(sender);
                         resOperation = OperationFactory.createOperationFromOTOperation(operation);
                         for(i = 0, numOfCallbacks = _onLocalDataReceivedCallbacks.length; i < numOfCallbacks; i++){
@@ -651,7 +640,7 @@ define([
                 }
             }
 
-            if((intent.sender === "" || intent.sender === componentName)&& intent.flags.indexOf(CONFIG.IWC.FLAG.PUBLISH_GLOBAL) !== -1) return;
+            if((intent.sender === "" || intent.sender === componentName) && intent.flags.indexOf(CONFIG.IWC.FLAG.PUBLISH_GLOBAL) !== -1) return;
 
             if(typeof senderTimes === "undefined"){
                 senderTimes = _times[intent.sender || "me"] = [];
@@ -682,20 +671,18 @@ define([
             }
 
             if(intent.flags.indexOf(CONFIG.IWC.FLAG.PUBLISH_GLOBAL) !== -1){
-                if(intent.sender.indexOf(_componentName) != -1) {
-                    switch (intent.action) {
-                        case CONFIG.IWC.ACTION.SYNC:
-                            _ot.syncInbound(payload.site, payload.sites);
-                            break;
-                        case CONFIG.IWC.ACTION.DATA:
-                            handleRemoteMessage(payload);
-                            break;
-                        case CONFIG.IWC.ACTION.DATA_ARRAY:
-                            for (i = 0, numOfMessages = payload.length; i < numOfMessages; i++) {
-                                handleRemoteMessage(payload[i]);
-                            }
-                            break;
-                    }
+                switch(intent.action){
+                    case CONFIG.IWC.ACTION.SYNC:
+                        _ot.syncInbound(payload.site,payload.sites);
+                        break;
+                    case CONFIG.IWC.ACTION.DATA:
+                        handleRemoteMessage(payload);
+                        break;
+                    case CONFIG.IWC.ACTION.DATA_ARRAY:
+                        for(i = 0, numOfMessages = payload.length; i < numOfMessages; i++){
+                            handleRemoteMessage(payload[i]);
+                        }
+                        break;
                 }
             }
         };
@@ -708,26 +695,25 @@ define([
             });
         };
 
-        if(_componentName === CONFIG.WIDGET.NAME.MAIN) {
-            _joiningState = IWCOT.JOIN_STATE.NOT_JOINED;
-            _joiningTimeoutCallback = function () {
-                var i,
-                    numOfCallbacks;
+        _joiningState = IWCOT.JOIN_STATE.NOT_JOINED;
+        _joiningTimeoutCallback = function(){
+            var i,
+                numOfCallbacks;
 
-                console.log("JOINING LOG: NO USER OUT THERE: JOINING COMPLETED");
+            console.log("JOINING LOG: NO USER OUT THERE: JOINING COMPLETED");
 
-                _joiningState = IWCOT.JOIN_STATE.COMPLETED;
+            _joiningState = IWCOT.JOIN_STATE.COMPLETED;
 
-                for (i = 0, numOfCallbacks = _onJoinOrLeaveCallbacks.length; i < numOfCallbacks; i++) {
-                    if (typeof _onJoinOrLeaveCallbacks[i] === 'function') {
-                        _onJoinOrLeaveCallbacks[i](new JoinOperation(space.user[CONFIG.NS.PERSON.JABBERID], true, space.user[CONFIG.NS.PERSON.JABBERID], {}, _componentName));
-                    }
+            for(i = 0, numOfCallbacks = _onJoinOrLeaveCallbacks.length; i < numOfCallbacks; i++){
+                if(typeof _onJoinOrLeaveCallbacks[i] === 'function'){
+                    _onJoinOrLeaveCallbacks[i](new JoinOperation(space.user[CONFIG.NS.PERSON.JABBERID],true,space.user[CONFIG.NS.PERSON.JABBERID],{}));
                 }
-            };
-            _joiningTimeout = setTimeout(_joiningTimeoutCallback, 5000);
-            console.log("JOINING LOG: LOCAL USER TRIES TO JOIN");
-            sendRemoteNonOTOperation(new JoinOperation(space.user[CONFIG.NS.PERSON.JABBERID], false, space.user[CONFIG.NS.PERSON.JABBERID], {}, _componentName).toNonOTOperation());
-        }
+            }
+        };
+        _joiningTimeout = setTimeout(_joiningTimeoutCallback,5000);
+        console.log("JOINING LOG: LOCAL USER TRIES TO JOIN");
+        sendRemoteNonOTOperation(new JoinOperation(space.user[CONFIG.NS.PERSON.JABBERID],false,space.user[CONFIG.NS.PERSON.JABBERID],{}).toNonOTOperation());
+
         //var sendBufferTimer = new IWCOT.PausableInterval(sendBufferedMessages,INTERVAL_SEND);
         if(BUFFER_ENABLED) setInterval(sendBufferedLocalMessages,INTERVAL_SEND_LOCAL);
 
@@ -737,9 +723,6 @@ define([
 
         //noinspection JSUnusedGlobalSymbols
         return {
-            getComponentName:function(){
-                return _componentName;
-            },
             /**
              * Connect the iwc client
              * @memberof IWCOTWrapper
@@ -1053,7 +1036,7 @@ define([
                         if(typeof _onHistoryCallbacks[i] === 'function'){
                             _onHistoryCallbacks[i](operation,_history.length,_historyPosition);
                         }
-                        
+
                     }
                     return operation;
                 }
@@ -1070,13 +1053,13 @@ define([
     var instance = null;
 
     var instanceRequested = false;
-  
+
     IWC.hasInstance = function(){
-      if(instance === null){
-        return false;
-      } else {
-        return instance;
-      }
+        if(instance === null){
+            return false;
+        } else {
+            return instance;
+        }
     };
     /**
      * Get instance of IWCOTWrapper

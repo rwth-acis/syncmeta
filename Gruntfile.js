@@ -296,22 +296,6 @@ module.exports = function (grunt) {
                         'html/viewcontrol.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
                     }
 
-                },
-                viewcanvas_widget: {
-                    options: {
-                        data: {
-                            meta: {
-                                title: "View Canvas",
-                                description: "",
-                                width: "560",
-                                height: "400"
-                            },
-                            bodyPartial: '_viewcanvas_widget.tpl'
-                        }
-                    },
-                    files: {
-                        'html/viewcanvas.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
-                    }
                 }
             },
 

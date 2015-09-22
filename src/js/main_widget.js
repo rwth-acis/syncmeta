@@ -55,7 +55,7 @@ requirejs([
 
     iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.MAIN);
     canvas = new Canvas($("#canvas"));
-    if(metamodel.length > 0) {
+    if(metamodel.constructor === Object) {
         if (metamodel.hasOwnProperty("nodes")) {
             var nodes = metamodel.nodes, node;
             for (var nodeId in nodes) {
@@ -408,7 +408,6 @@ requirejs([
         },
         open: function(){
             var name = canvas.getModelAttributesNode().getAttribute("modelAttributes[name]").getValue().getValue();
-            var timeout;
             var $spaceTitle = $("#space_title");
             var $spaceLabel = $("#space_label");
 
@@ -463,8 +462,7 @@ requirejs([
     iwcot.registerOnJoinOrLeaveCallback(function(operation){
         var activityOperation;
         if(operation instanceof JoinOperation){
-            if(operation.getUser() === iwcot.getUser()[CONFIG.NS.PERSON.JABBERID]
-            && operation.getComponent() === CONFIG.WIDGET.NAME.MAIN){
+            if(operation.getUser() === iwcot.getUser()[CONFIG.NS.PERSON.JABBERID]){
                 if(operation.isDone()){
                     operation.setData(model);
                     iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.toNonOTOperation());

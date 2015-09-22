@@ -27,11 +27,13 @@ requirejs([
 
     palette.addTool(new MoveTool());
     palette.addSeparator(new Separator());
-    if(metamodel.length > 0){
-        if(metamodel.hasOwnProperty('nodes'))
-         palette.initNodePalette(metamodel);
-        if(metamodel.hasOwnProperty('edges'))
+    if(metamodel.constructor === Object){
+        if(metamodel.hasOwnProperty('nodes')) {
+            palette.initNodePalette(metamodel);
+        }
+        if(metamodel.hasOwnProperty('edges')) {
             palette.iniEdgePalette(metamodel);
+        }
     }
     else{
         palette.addTool(new AbstractClassNodeTool());

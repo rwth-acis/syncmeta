@@ -9,7 +9,7 @@ define([
     ViewRelationshipNodeTool.prototype.constructor = ViewRelationshipNodeTool;
     /**
      * ViewRelationshipNodeTool
-     * @class viewcanvas_widget.ViewRelationshipNodeTool
+     * @class canvas_widget.ViewRelationshipNodeTool
      * @extends canvas_widget.NodeTool
      * @memberof canvas_widget
      * @constructor
