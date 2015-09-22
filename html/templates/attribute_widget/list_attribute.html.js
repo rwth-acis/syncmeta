@@ -1,1 +1,0 @@
-define('text!templates/attribute_widget/list_attribute.html',[],function () { return '<div class="list_attribute">\n    <div class="name"></div>\n    <ul class="list"></ul>\n    <div><span class="ui-icon ui-icon-plus"></span></div>\n</div>';});

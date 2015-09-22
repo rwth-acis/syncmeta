@@ -8,5 +8,6 @@ doc/
 /.project
 .codio
 .settings
+html/
 
 npm-debug.log

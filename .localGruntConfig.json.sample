@@ -1,5 +1,5 @@
 {
-    "baseUrl_use_for_commit" : "https://mari0.github.io/syncmeta/html",
+    "baseUrl_use_for_commit" : "http://rwth-acis.github.io/syncmeta/views/html",
     "roleSandboxUrl_use_for_commit": "http://role-sandbox.eu",
     "baseUrl" : "http://127.0.0.1:8081",
     "roleSandboxUrl": "http://127.0.0.1:8073"
