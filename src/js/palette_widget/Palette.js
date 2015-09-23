@@ -45,7 +45,6 @@ define([
          */
         var _currentToolName = null;
 
-        var _currentModel = 'base';
 
 
         /**
@@ -95,21 +94,13 @@ define([
                     _tools['ViewObject'].get$node().hide();
                     _tools['ViewRelationship'].get$node().hide();
                 }
+
             }
         };
 
         var initModelTypesCallback = function(operation){
             if(operation instanceof InitModelTypesOperation){
                 var vls = operation.getVLS();
-                var current = null;
-                if(vls.hasOwnProperty('id'))
-                    current = vls.id;
-                else
-                    current = 'base';
-                if(_currentModel === current)
-                    return;
-                else
-                    _currentModel = current;
 
                 if(!$.isEmptyObject(_tools)){
                     _tools = {};

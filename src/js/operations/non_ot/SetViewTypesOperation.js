@@ -12,7 +12,11 @@ define([
      * @param {boolean} flag enable (true)/disable(false) the view types of the vml in the palette widget
      */
     function SetViewTypesOperation(flag){
-
+        /**
+         * Enable or disable the view types of the vml
+         * @type {boolean}
+         * @private
+         */
         var _flag = flag;
 
         /**

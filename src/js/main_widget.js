@@ -74,6 +74,89 @@ requirejs([
                 }
             }
         }
+        ViewManager.GetViewpointList();
+
+
+        //Not needed int the model editor
+        $("#btnCreateViewpoint").hide();
+        $('#btnDelViewPoint').hide();
+
+        //init the new tools for the canvas
+        var initTools = function(vvs){
+            //canvas.removeTools();
+            //canvas.addTool(MoveTool.TYPE, new MoveTool());
+            if(vvs && vvs.hasOwnProperty("nodes")){
+                var nodes = vvs.nodes, node;
+                for(var nodeId in nodes){
+                    if(nodes.hasOwnProperty(nodeId)){
+                        node = nodes[nodeId];
+                        canvas.addTool(node.label,new NodeTool(node.label,null,null,node.shape.defaultWidth,node.shape.defaultHeight));
+                    }
+                }
+            }
+
+            if(vvs && vvs.hasOwnProperty("edges")){
+                var edges = vvs.edges, edge;
+                for(var edgeId in edges){
+                    if(edges.hasOwnProperty(edgeId)){
+                        edge = edges[edgeId];
+                        canvas.addTool(edge.label,new EdgeTool(edge.label,edge.relations));
+                    }
+                }
+            }
+        };
+
+        //Modeling layer implementation. View generation process starts here
+        $('#btnShowView').click(function(){
+            //TODO
+            //Get identifier of the current selected view
+            var viewId = ViewManager.getViewIdOfSelected();
+            if (viewId === $('#lblCurrentView').text())
+                return;
+            var resource = ViewManager.getViewpointResourceFromViewId(viewId);
+            if(resource != null) {
+                resource.getRepresentation('rdfjson',function(vvs){
+                    //initialize the new node- and edge types for the EntityManager
+                    EntityManager.initModelTypes(vvs);
+                    //send the new tools to the palette as well
+                    iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, new InitModelTypesOperation(vvs).toNonOTOperation());
+                    //init the tools for canvas
+                    initTools(vvs);
+
+                    $('#lblCurrentView').show();
+                    $('#lblCurrentViewId').text(viewId);
+
+                });
+            }
+
+        });
+
+        //Modelling layer implementation
+        $('#viewsHide').click(function(){
+            $(this).hide();
+            $('#viewsShow').show();
+            $('#ViewCtrlContainer').hide();
+            $('#canvas-frame').css('margin-top','32px');
+            var $lblCurrentViewId = $('#lblCurrentViewId');
+            if($lblCurrentViewId.text().length > 0) {
+                var $loading = $("#loading");
+                $loading.show();
+
+                //TODO generate the view here
+
+                //reset view
+                var operation = new InitModelTypesOperation(metamodel);
+                iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation.toNonOTOperation());
+
+                EntityManager.initModelTypes(metamodel);
+                initTools(metamodel);
+
+                $('#lblCurrentView').hide();
+                $lblCurrentViewId.text("");
+                $loading.hide();
+            }
+        });
+
     }
     else{
         //Add Node Tools
@@ -145,6 +228,29 @@ requirejs([
             });
         });
 
+        //Meta-modelling layer implementation
+        $('#viewsHide').click(function(){
+            $(this).hide();
+            $('#viewsShow').show();
+            $('#ViewCtrlContainer').hide();
+            $('#canvas-frame').css('margin-top','32px');
+            var $lblCurrentViewId = $('#lblCurrentViewId');
+            if($lblCurrentViewId.text().length > 0) {
+                var $loading = $("#loading");
+                $loading.show();
+                Util.GetCurrentBaseModel().done(function (model) {
+                    //Disable the view types in the palette
+                    var operation= new SetViewTypesOperation(false);
+                    iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation.toNonOTOperation());
+                    resetCanvas();
+                    JSONtoGraph(model);
+                    canvas.resetTool();
+                    $('#lblCurrentView').hide();
+                    $lblCurrentViewId.text("");
+                    $loading.hide();
+                })
+            }
+        });
     }
 
     //Functions and Callbacks for the view-based modeling approach
@@ -320,29 +426,6 @@ requirejs([
         $('#canvas-frame').css('margin-top','64px');
     });
 
-    $('#viewsHide').click(function()    {
-        $(this).hide();
-        $('#viewsShow').show();
-        $('#ViewCtrlContainer').hide();
-        $('#canvas-frame').css('margin-top','32px');
-        if($('#lblCurrentViewId').text().length > 0) {
-            var $loading = $("#loading");
-            $loading.show();
-            Util.GetCurrentBaseModel().done(function (model) {
-                //Disable the view types in the palette
-                var operation = new SetViewTypesOperation(false);
-                iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation.toNonOTOperation());
-
-                resetCanvas();
-                JSONtoGraph(model);
-                canvas.resetTool();
-                $('#lblCurrentView').hide();
-                $('#lblCurrentViewId').text("");
-                $loading.hide();
-            })
-        }
-    });
-
     $("#zoomin").click(function(){
         canvas.setZoom(canvas.getZoom()+0.1);
     });
@@ -355,7 +438,7 @@ requirejs([
     $("#save").click(function(){
         $feedback.text("Saving...");
         var viewId = $('#lblCurrentViewId').text();
-        if(viewId.length > 0){
+        if(viewId.length > 0 && metamodel.constructor !== Object){
             ViewManager.updateViewContent(viewId, ViewManager.getResource(viewId)).then(function () {
                 //ViewManager.initViewList();
                 $feedback.text("Saved!");

@@ -50,93 +50,115 @@ define([
 	 */
 	var nodeTypes = {};
 
+    var _initNodeTypes = function(vls){
+        if(!$.isEmptyObject(nodeTypes))
+            nodeTypes = {};
+
+        var nodes = vls.nodes,
+            node,
+            shape,
+            color,
+            anchors,
+            $shape;
+
+        for (var nodeId in nodes) {
+            if (nodes.hasOwnProperty(nodeId)) {
+                node = nodes[nodeId];
+                if (node.shape.customShape) {
+                    shape = node.shape.customShape;
+                } else {
+                    shape = nodeShapeTypes.hasOwnProperty(node.shape.shape) ? nodeShapeTypes[node.shape.shape] : _.keys(nodeShapeTypes)[0];
+                }
+                if (node.shape.customAnchors) {
+                    try {
+                        if (node.shape.customAnchors) {
+                            anchors = JSON.parse(node.shape.customAnchors);
+                        }
+                        if (!node.shape.customAnchors instanceof Array) {
+                            anchors = ["Perimeter", {
+                                shape : "Rectangle",
+                                anchorCount : 10
+                            }
+                            ];
+                        }
+                    } catch (e) {
+                        anchors = ["Perimeter", {
+                            shape : "Rectangle",
+                            anchorCount : 10
+                        }
+                        ];
+                    }
+                } else {
+                    switch (node.shape.shape) {
+                        case "circle":
+                            anchors = ["Perimeter", {
+                                shape : "Circle",
+                                anchorCount : 10
+                            }
+                            ];
+                            break;
+                        case "diamond":
+                            anchors = ["Perimeter", {
+                                shape : "Diamond",
+                                anchorCount : 10
+                            }
+                            ];
+                            break;
+                        case "rounded_rectangle":
+                            anchors = ["Perimeter", {
+                                shape : "Rectangle",
+                                anchorCount : 10
+                            }
+                            ];
+                            break;
+                        case "triangle":
+                            anchors = ["Perimeter", {
+                                shape : "Triangle",
+                                anchorCount : 10
+                            }
+                            ];
+                            break;
+                        default:
+                        case "rectangle":
+                            anchors = ["Perimeter", {
+                                shape : "Rectangle",
+                                anchorCount : 10
+                            }
+                            ];
+                            break;
+                    }
+                }
+                color = node.shape.color ? $colorTestElement.css('color', '#FFFFFF').css('color', node.shape.color).css('color') : '#FFFFFF';
+                $shape = $(_.template(shape, {
+                    color : color,
+                    type : node.label
+                }));
+
+                nodeTypes[node.label] = Node(node.label, $shape, anchors, node.attributes);
+                nodeTypes[node.label].TYPE = node.label;
+                nodeTypes[node.label].DEFAULT_WIDTH = node.shape.defaultWidth;
+                nodeTypes[node.label].DEFAULT_HEIGHT = node.shape.defaultHeight;
+            }
+        }
+    };
+    var _initEdgeTypes = function(vls){
+        if(!$.isEmptyObject(edgeTypes)) {
+            edgeTypes = {};
+            relations ={};
+        }
+        var edges = vls.edges,
+            edge;
+        for (var edgeId in edges) {
+            if (edges.hasOwnProperty(edgeId)) {
+                edge = edges[edgeId];
+                edgeTypes[edge.label] = Edge(edge.label, edge.shape.arrow, edge.shape.shape, edge.shape.color, edge.shape.overlay, edge.shape.overlayPosition, edge.shape.overlayRotate, edge.attributes);
+                relations[edge.label] = edge.relations;
+            }
+        }
+    };
+
 	if (metamodel && metamodel.hasOwnProperty("nodes")) {
-		var nodes = metamodel.nodes,
-		node,
-		shape,
-		color,
-		anchors,
-		$shape;
-
-		for (var nodeId in nodes) {
-			if (nodes.hasOwnProperty(nodeId)) {
-				node = nodes[nodeId];
-				if (node.shape.customShape) {
-					shape = node.shape.customShape;
-				} else {
-					shape = nodeShapeTypes.hasOwnProperty(node.shape.shape) ? nodeShapeTypes[node.shape.shape] : _.keys(nodeShapeTypes)[0];
-				}
-				if (node.shape.customAnchors) {
-					try {
-						if (node.shape.customAnchors) {
-							anchors = JSON.parse(node.shape.customAnchors);
-						}
-						if (!node.shape.customAnchors instanceof Array) {
-							anchors = ["Perimeter", {
-									shape : "Rectangle",
-									anchorCount : 10
-								}
-							];
-						}
-					} catch (e) {
-						anchors = ["Perimeter", {
-								shape : "Rectangle",
-								anchorCount : 10
-							}
-						];
-					}
-				} else {
-					switch (node.shape.shape) {
-					case "circle":
-						anchors = ["Perimeter", {
-								shape : "Circle",
-								anchorCount : 10
-							}
-						];
-						break;
-					case "diamond":
-						anchors = ["Perimeter", {
-								shape : "Diamond",
-								anchorCount : 10
-							}
-						];
-						break;
-					case "rounded_rectangle":
-						anchors = ["Perimeter", {
-								shape : "Rectangle",
-								anchorCount : 10
-							}
-						];
-						break;
-					case "triangle":
-						anchors = ["Perimeter", {
-								shape : "Triangle",
-								anchorCount : 10
-							}
-						];
-						break;
-					default:
-					case "rectangle":
-						anchors = ["Perimeter", {
-								shape : "Rectangle",
-								anchorCount : 10
-							}
-						];
-						break;
-					}
-				}
-				color = node.shape.color ? $colorTestElement.css('color', '#FFFFFF').css('color', node.shape.color).css('color') : '#FFFFFF';
-				$shape = $(_.template(shape, {
-							color : color,
-							type : node.label
-						}));
-
-				nodeTypes[node.label] = Node(node.label, $shape, anchors, node.attributes);
-				nodeTypes[node.label].TYPE = node.label;
-				nodeTypes[node.label].DEFAULT_WIDTH = node.shape.defaultWidth;
-				nodeTypes[node.label].DEFAULT_HEIGHT = node.shape.defaultHeight;
-			}
-		}
+	    _initNodeTypes(metamodel);
 	} else {
 		nodeTypes[ObjectNode.TYPE] = ObjectNode;
 		nodeTypes[AbstractClassNode.TYPE] = AbstractClassNode;
@@ -160,15 +182,7 @@ define([
 	var relations = {};
 
 	if (metamodel && metamodel.hasOwnProperty("edges")) {
-		var edges = metamodel.edges,
-		edge;
-		for (var edgeId in edges) {
-			if (edges.hasOwnProperty(edgeId)) {
-				edge = edges[edgeId];
-				edgeTypes[edge.label] = Edge(edge.label, edge.shape.arrow, edge.shape.shape, edge.shape.color, edge.shape.overlay, edge.shape.overlayPosition, edge.shape.overlayRotate, edge.attributes);
-				relations[edge.label] = edge.relations;
-			}
-		}
+		_initEdgeTypes(metamodel);
 	} else {
 		edgeTypes[GeneralisationEdge.TYPE] = GeneralisationEdge;
 		edgeTypes[BiDirAssociationEdge.TYPE] = BiDirAssociationEdge;
@@ -1008,9 +1022,31 @@ define([
                 _nodes ={};
                 _edges = {};
                 this.deleteModelAttribute();
+            },
+            /**
+             * initializes the node types
+             * @param vls the vvs
+             */
+            initNodeTypes: function(vls){
+                _initNodeTypes(vls);
+            },
+            /**
+             * initializes the view edge types
+             * @param vls the vvs
+             */
+            initEdgeTypes: function(vls){
+                _initEdgeTypes(vls);
+            },
+            /**
+             * initializes both the node types- and the edge types Object
+             * @param vls the vvs
+             */
+            initModelTypes : function(vls){
+                _initNodeTypes(vls);
+                _initEdgeTypes(vls);
             }
 
-		};
-	}
-	return new EntityManager();
+        };
+    }
+    return new EntityManager();
 });

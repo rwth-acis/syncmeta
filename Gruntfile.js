@@ -218,8 +218,8 @@ module.exports = function (grunt) {
                             meta: {
                                 title: "Debug",
                                 description: "",
-                                width: "100",
-                                height: "300"
+                                width: "400",
+                                height: "200"
                             },
                             bodyPartial: '_debug_widget.tpl'
                         }
@@ -286,8 +286,8 @@ module.exports = function (grunt) {
                             meta: {
                                 title: "View Control",
                                 description: "",
-                                width: "200",
-                                height: "600"
+                                width: "400",
+                                height: "500"
                             },
                             bodyPartial: '_viewcontrol_widget.tpl'
                         }
