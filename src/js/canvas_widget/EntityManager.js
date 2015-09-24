@@ -24,8 +24,9 @@ define([
     'text!templates/canvas_widget/triangle_node.html',
     'text!templates/guidance_modeling/set_property_node.html',
     'promise!Metamodel',
-    'promise!Guidancemodel'
-],/** @lends EntityManager */function(_,Util,AbstractEntity,Node,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,ModelAttributesNode,Edge,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge,ContextNode,ObjectToolNode,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,setPropertyNodeHtml,metamodel, guidancemodel) {
+    'promise!Guidancemodel',
+    'graphlib'
+],/** @lends EntityManager */function(_,Util,AbstractEntity,Node,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,ModelAttributesNode,Edge,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge,ContextNode,ObjectToolNode,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,setPropertyNodeHtml,metamodel, guidancemodel, graphlib) {
 
     /**
      * Predefined node shapes, first is default
@@ -1002,6 +1003,7 @@ define([
                 return guidanceMetamodel;
             },
             generateLogicalGuidanceRepresentation: function(){
+                var graph = new graphlib.Graph();
                 var logicalGuidanceRepresentation = [];
                 var nodes = guidancemodel.guidancemodel.nodes;
                 var edges = guidancemodel.guidancemodel.edges;
@@ -1094,12 +1096,21 @@ define([
                     var subType = "";
 
                     if(type == guidancemodel.INITIAL_NODE_LABEL){
+                        var successors = getFlowSuccessors(nodeId);
                         logicalGuidanceRepresentation.push({
                             "id": nodeId,
                             "type": "INITIAL_NODE",
                             "name": getAttributeValue(node, "name"),
                             "successors": getFlowSuccessors(nodeId).targets
                         });
+                        graph.setNode(nodeId, {
+                            "type": "INITIAL_NODE",
+                            "name": getAttributeValue(node, "name")
+                        });
+                        for(var i = 0; i < successors.targets.length; i++){
+                            graph.setEdge(nodeId, successors.targets[i], successors.labels[i]);
+                        }
+                        
                     }
                     else if(type == guidancemodel.MERGE_NODE_LABEL){
                         var successors = getFlowSuccessors(nodeId);
@@ -1109,21 +1120,38 @@ define([
                             "successors": successors.targets,
                             "successorLabels": successors.labels
                         });
+                        graph.setNode(nodeId, {
+                            "type": "MERGE_NODE"
+                        });
+                        for(var i = 0; i < successors.targets.length; i++){
+                            graph.setEdge(nodeId, successors.targets[i], successors.labels[i]);
+                        }
                     }
                     else if(type == guidancemodel.CONCURRENCY_NODE_LABEL){
+                        var successors = getFlowSuccessors(nodeId);
                         logicalGuidanceRepresentation.push({
                             "id": nodeId,
                             "type": "CONCURRENCY_NODE",
                             "successors": getFlowSuccessors(nodeId).targets
                         });
+                        graph.setNode(nodeId, {
+                            "type": "CONCURRENCY_NODE"
+                        });
+                        for(var i = 0; i < successors.targets.length; i++){
+                            graph.setEdge(nodeId, successors.targets[i], successors.labels[i]);
+                        }
                     }
                     else if(type == guidancemodel.ACTIVITY_FINAL_NODE_LABEL){
                         logicalGuidanceRepresentation.push({
                             "id": nodeId,
                             "type": "ACTIVITY_FINAL_NODE"
                         });
+                        graph.setNode(nodeId, {
+                            "type": "ACTIVITY_FINAL_NODE"
+                        });
                     }
                     else if (subType = guidancemodel.isCreateObjectNodeLabel(type)){
+                        var successors = getFlowSuccessors(nodeId);
                         logicalGuidanceRepresentation.push({
                             "id": nodeId,
                             "type": "CREATE_OBJECT_ACTION",
@@ -1131,9 +1159,19 @@ define([
                             "createdObjectId": getEntitySuccessor(nodeId),
                             "successors": getFlowSuccessors(nodeId).targets
                         });
+
+                        graph.setNode(nodeId, {
+                            "type": "CREATE_OBJECT_ACTION",
+                            "objectType": subType,
+                            "createdObjectId": getEntitySuccessor(nodeId)
+                        });
+                        for(var i = 0; i < successors.targets.length; i++){
+                            graph.setEdge(nodeId, successors.targets[i], successors.labels[i]);
+                        }
                     }
                     else if (subType = guidancemodel.isCreateRelationshipNodeLabel(type)){
                         var entities = getEntityPredecessorsForCreateRelationshipAction(nodeId);
+                        var successors = getFlowSuccessors(nodeId);
                         logicalGuidanceRepresentation.push({
                             "id": nodeId,
                             "type": "CREATE_RELATIONSHIP_ACTION",
@@ -1143,8 +1181,19 @@ define([
                             "targetObjectId": entities["Target"],
                             "successors": getFlowSuccessors(nodeId).targets
                         });
+                        graph.setNode(nodeId, {
+                            "type": "CREATE_RELATIONSHIP_ACTION",
+                            "relationshipType": subType,
+                            "createdRelationshipId": getEntitySuccessor(nodeId),
+                            "sourceObjectId": entities["Source"],
+                            "targetObjectId": entities["Target"]
+                        });
+                        for(var i = 0; i < successors.targets.length; i++){
+                            graph.setEdge(nodeId, successors.targets[i], successors.labels[i]);
+                        }
                     }
                     else if (subType = guidancemodel.isSetPropertyNodeLabel(type)){
+                        var successors = getFlowSuccessors(nodeId);
                         logicalGuidanceRepresentation.push({
                             "id": nodeId,
                             "type": "SET_PROPERTY_ACTION",
@@ -1153,19 +1202,34 @@ define([
                             "sourceObjectId": getEntityPredecessorForSetPropertyAction(nodeId),
                             "successors": getFlowSuccessors(nodeId).targets
                         });
+                        graph.setNode(nodeId, {
+                            "type": "SET_PROPERTY_ACTION",
+                            "entityType": subType,
+                            "propertyName": getAttributeValue(node, "Property"),
+                            "sourceObjectId": getEntityPredecessorForSetPropertyAction(nodeId)
+                        });
+                        for(var i = 0; i < successors.targets.length; i++){
+                            graph.setEdge(nodeId, successors.targets[i], successors.labels[i]);
+                        }
                     }
                     else if (type == guidancemodel.CALL_ACTIVITY_NODE_LABEL){
+                        var successors = getFlowSuccessors(nodeId);
                         logicalGuidanceRepresentation.push({
                             "id": nodeId,
                             "type": "CALL_ACTIVITY_ACTION",
                             "initialNodeId": getInitialNodeForCallActivityAction(nodeId),
                             "successors": getFlowSuccessors(nodeId).targets
                         });
+                        graph.setNode(nodeId, {
+                            "type": "CALL_ACTIVITY_ACTION",
+                            "initialNodeId": getInitialNodeForCallActivityAction(nodeId)
+                        });
+                        for(var i = 0; i < successors.targets.length; i++){
+                            graph.setEdge(nodeId, successors.targets[i], successors.labels[i]);
+                        }
                     }
                 }
-
-                console.log(logicalGuidanceRepresentation);
-                return logicalGuidanceRepresentation;
+                return graphlib.json.write(graph);
             },
             generateGuidanceRules: function(){
                 var guidanceRules = {objectToolRules: []};

@@ -23,7 +23,7 @@ module.exports = function(grunt) {
                 processContent: function (content/*, srcpath*/) {
                     return grunt.template.process(content);
                 },
-                processContentExclude: ['**/*.{png,gif,jpg}','**/lodash.js']
+                processContentExclude: ['**/*.{png,gif,jpg,svg,otf,woff,woff2,ttf}','**/lodash.js']
             },
             lib: {
                 files: [
@@ -45,7 +45,9 @@ module.exports = function(grunt) {
                     {src: '<%= bowerdir %>/lodash/dist/lodash.js', dest: '<%= distdir %>/js/lib/vendor/lodash.js'},
                     {cwd: '<%= bowerdir %>/swfobject/swfobject/',expand: true, src: ['**'], dest: '<%= distdir %>/js/lib/vendor/swfobject'},
                     {src: '<%= bowerdir %>/FileToDataURI/index.swf', dest: '<%= distdir %>/js/lib/vendor/FileToDataURI.swf'},
-                    {src: '<%= bowerdir %>/jszip/jszip.js', dest: '<%= distdir %>/js/lib/vendor/jszip.js'}
+                    {src: '<%= bowerdir %>/jszip/jszip.js', dest: '<%= distdir %>/js/lib/vendor/jszip.js'},
+                    {src: '<%= bowerdir %>/graphlib/dist/graphlib.core.min.js', dest: '<%= distdir %>/js/lib/vendor/graphlib.core.min.js'},
+                    {cwd: '<%= bowerdir %>/font-awesome/',expand: true, src: ['css/**', 'fonts/**'], dest: '<%= distdir %>/css/vendor/font-awesome/'}
                 ]
             },
             main: {
@@ -54,6 +56,20 @@ module.exports = function(grunt) {
                 ]
             }
         },
+
+        bootstrap_prefix: {
+          my_bootstrap: {
+              options: {
+                  // (Required) List of bootstrap CSS file(s). The first file must be the main bootstrap CSS file. The 
+                  // script parse it to retrieve all the bootstrap CSS classes which are then used to prefix the JS file(s). 
+                  // It's also possible to put minified CSS files in the list. 
+                  cssSource: ['<%= bowerdir %>/bootstrap/dist/css/bootstrap.min.css'],
+     
+                  //(Required) Path to the folder where the prefixed CSS files will be created 
+                  cssDest: '<%= distdir %>/css/vendor/',
+              }
+          }
+       },
 
         watch: {
             scripts: {
@@ -329,11 +345,12 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-ssh');
     grunt.loadNpmTasks('grunt-amdcheck');
     grunt.loadNpmTasks('grunt-jsdoc');
+    grunt.loadNpmTasks('grunt-bootstrap-prefix');
     //grunt.loadNpmTasks('grunt-contrib-nodeunit');
 
     // Whenever the "test" task is run, first clean the "tmp" dir, then run this
     // plugin's task(s), then test the result.
-    grunt.registerTask('build', ['clean','requirejs','copy:lib','copy:main','buildwidgets']);
+    grunt.registerTask('build', ['clean','requirejs','copy:lib','copy:main', 'bootstrap_prefix','buildwidgets']);
     grunt.registerTask('deploy', 'Deploy', function(){
         grunt.config.set('baseUrl', localConfig.deployUrl);
         grunt.config.set('roleSandboxUrl', "http://role-sandbox.eu");

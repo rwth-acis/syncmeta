@@ -33,6 +33,10 @@ var require = {
         },
         classjs: {
             exports: "Class"
+        },
+        graphlib: {
+            exports: "graphlib",
+            deps: ['lodash']
         }
     },
     paths: {
@@ -60,7 +64,8 @@ var require = {
         ildeApi: "lib/ildeApi",
         swfobject: "lib/vendor/swfobject/swfobject",
         jszip: "lib/vendor/jszip",
-        classjs: "lib/Class"
+        classjs: "lib/Class",
+        graphlib: "lib/vendor/graphlib.core.min"
     }
 };
 

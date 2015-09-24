@@ -1006,7 +1006,7 @@ define([
             .resizable({
                 containment: "parent",
                 start: function(ev/*,ui*/){
-                    _canvas.hideObjectGuidance();
+                    _canvas.hideGuidanceBox();
                     $sizePreview.show();
                     _$node.css({opacity:0.5});
                     _$node.append($sizePreview);
@@ -1014,7 +1014,7 @@ define([
                     _$node.resizable("option","grid",ev.ctrlKey ? [20,20] : '');
                 },
                 resize:function(ev,ui){
-                    _canvas.hideObjectGuidance();
+                    _canvas.hideGuidanceBox();
                     $sizePreview.text(Math.round(ui.size.width) + "x" + Math.round(ui.size.height));
                     repaint();
                     _$node.resizable("option","aspectRatio",ev.shiftKey);
@@ -1035,7 +1035,7 @@ define([
                     //$(ev.toElement).one('click',function(ev){ev.stopImmediatePropagation();});
                     that.draw();
                     repaint();
-                    _canvas.showObjectGuidance();
+                    _canvas.showGuidanceBox();
                 }
             })
 
@@ -1048,7 +1048,7 @@ define([
                     //ui.position.top = 0;
                     //ui.position.left = 0;
                     _canvas.select(that);
-                    _canvas.hideObjectGuidance();
+                    _canvas.hideGuidanceBox();
                     _$node.css({opacity:0.5});
                     _$node.resizable("disable");
                     drag = false;
@@ -1060,7 +1060,7 @@ define([
 
                     if(drag) repaint();
                     drag = true;
-                    _canvas.hideObjectGuidance();
+                    _canvas.hideGuidanceBox();
                     _$node.draggable("option","grid",ev.ctrlKey ? [20,20] : '');
                 },
                 stop: function(ev,ui){
@@ -1075,7 +1075,7 @@ define([
                     //that.canvas.callListeners(CONFIG.CANVAS.LISTENERS.NODEMOVE,id,offsetX,offsetY);
                     //Avoid node selection on drag stop
                     _$node.draggable("option","grid",'');
-                    _canvas.showObjectGuidance();
+                    _canvas.showGuidanceBox();
                     $(ev.toElement).one('click',function(ev){ev.stopImmediatePropagation();});
                 }
             })

@@ -4,27 +4,23 @@ define(['guidance_widget/GuidanceStrategy'
     var AvoidConflictStrategy = GuidanceStrategy.extend({
         init: function(logicalGuidanceDefinition, space){
             this._super(logicalGuidanceDefinition, space);
+            this.initialNodes = this.logicalGuidanceDefinition.sources();
         },
         onEntitySelect: function(entityId, entityType){
-            // var relevantRules = this.guidanceRules.objectToolRules.filter(function(rule){
-            //     return rule.srcObjectType == entityType;
-            // });
-
-            // if(this.avoidObjects.hasOwnProperty(entityId))
-            //     relevantRules = [];
-
-            // this.showObjectGuidance(entityId, relevantRules);
+            if(entityId === null)
+                return;
+            
             this.showGuidanceBox([
                 {
                     "id": "12345",
                     "type": "SELECT_TOOL_GUIDANCE",
-                    "label": "Create a new attribute",
+                    "label": "Attribute",
                     "tool": "Attribute"
                 },
                 {
                     "id": "43212",
                     "type": "SELECT_TOOL_GUIDANCE",
-                    "label": "Create a new entity",
+                    "label": "Entity",
                     "tool": "Entity"
                 }
             ]);

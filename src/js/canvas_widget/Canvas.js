@@ -104,6 +104,9 @@ define([
         var _objectGuidanceOperation = null;
         var _objectGuidanceInstances = [];
 
+        var _guidanceBox = null;
+        var _guidanceDefinition = null;
+
         /**
          * Apply a Tool Select Operation
          * @param {ToolSelectOperation} operation
@@ -263,7 +266,8 @@ define([
         };
 
         var processShowGuidanceBoxOperation = function(operation){
-            that.showGuidanceBox(operation.getGuidance());
+            _guidanceDefinition = operation.getGuidance();
+            that.showGuidanceBox();
         };
 
         /**
@@ -411,24 +415,39 @@ define([
             return _$node;
         };
 
-        this.showGuidanceBox = function(guidance){
+        this.showGuidanceBox = function(){
+            console.log("Show guidance box");
+            if(_guidanceDefinition === null)
+                return;
             var itemWidth = 100;
             var itemHeight = 100;
-            var appearance = _selectedEntity.getAppearance();
-            appearance.top += 100;
-            var guidanceBox = new GuidanceBox(Util.generateRandomId(), appearance.left, appearance.top, itemWidth*guidance.length, 100);
-            for(var i = 0; i < guidance.length; i++){
+            var entityAppearance = _selectedEntity.getAppearance();
+            var appearance = {
+                top: entityAppearance.top,
+                left: entityAppearance.left,
+                width: entityAppearance.width,
+                height: entityAppearance.height
+            };
+            appearance.top += entityAppearance.height + 10;
+            _guidanceBox = new GuidanceBox(Util.generateRandomId(), appearance.left, appearance.top);
+            for(var i = 0; i < _guidanceDefinition.length; i++){
                 var guidanceItem;
-                switch(guidance[i].type){
+                switch(_guidanceDefinition[i].type){
                     case "SELECT_TOOL_GUIDANCE":
-                    guidanceItem = new SelectToolGuidance(guidance[i].id, guidance[i].label, guidance[i].tool);
+                    guidanceItem = new SelectToolGuidance(_guidanceDefinition[i].id, _guidanceDefinition[i].label, _guidanceDefinition[i].tool, that);
                     break;
                 }
-                guidanceBox.addGuidance(guidanceItem);
+                _guidanceBox.addGuidance(guidanceItem);
             }
 
-            guidanceBox.addToCanvas(that);
-            guidanceBox.draw();
+            _guidanceBox.addToCanvas(that);
+            _guidanceBox.draw();
+        };
+
+        this.hideGuidanceBox = function(){
+            if(_guidanceBox !== null)
+                _guidanceBox.remove();
+            _guidanceBox = null;
         };
 
         this.showObjectGuidance = function(){
@@ -599,7 +618,7 @@ define([
          */
         this.select = function(entity){
             if(_selectedEntity != entity){
-                this.hideObjectGuidance();
+                this.hideGuidanceBox();
                 if(_selectedEntity) _selectedEntity.unselect();
                 if(entity) entity.select();
                 _selectedEntity = entity;
