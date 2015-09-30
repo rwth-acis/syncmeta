@@ -77,6 +77,7 @@ define([
         var shape = shapes.hasOwnProperty(shapeType) ? shapes[shapeType] : _.values(shapes)[0];
         color = color ? $colorTestElement.css('color','#aaaaaa').css('color',color).css('color') : '#aaaaaa';
 
+
         Edge.prototype = new AbstractEdge();
         Edge.prototype.constructor = Edge;
         /**
@@ -87,28 +88,39 @@ define([
          * @param {string} id Entity identifier of edge
          * @param {canvas_widget.AbstractNode} source Source node
          * @param {canvas_widget.AbstractNode} target Target node
+         * @param {string} viewId the name of the view, if the edge is only visible in a particular view
          */
-        function Edge(id,source,target){
+        function Edge(id,source,target, viewId){
             var that = this;
 
             AbstractEdge.call(this,id,type,source,target,overlayRotate);
 
+
+            /**
+             * Stores jsPlumb overlays for the edge
+             * @type {Array}
+             */
             var overlays = [];
 
+            /**
+             * the name of the view this edge belongs to
+             * @type {string}
+             * @private
+             */
+            var _viewId = viewId;
+
+            var makeOverlayFunction = function(text){
+                return function() {
+                    return $("<div></div>").append($("<div></div>").addClass("edge_label fixed").css('color',color).text(text));
+                };
+            };
+            var makeAttributeOverlayFunction = function(attribute){
+                return function() {
+                    return $("<div></div>").append($("<div></div>").addClass("edge_label").append(attribute.get$node()));
+                };
+            };
             var init = function(){
                 var attribute, attributeId, attrObj;
-
-                var makeOverlayFunction = function(text){
-                    return function() {
-                        return $("<div></div>").append($("<div></div>").addClass("edge_label fixed").css('color',color).text(text));
-                    };
-                };
-
-                var makeAttributeOverlayFunction = function(attributeId){
-                    return function() {
-                        return $("<div></div>").append($("<div></div>").addClass("edge_label").append(attrObj[attributeId].get$node()));
-                    };
-                };
 
                 if(arrows().hasOwnProperty(arrowType)){
                     overlays.push(arrows(color)[arrowType]);
@@ -167,21 +179,21 @@ define([
                         switch(attribute.position){
                             case "top":
                                 overlays.push(["Custom", {
-                                    create:makeAttributeOverlayFunction(attributeId),
+                                    create:makeAttributeOverlayFunction(attrObj[attributeId]),
                                     location:1,
                                     id:"label "+attributeId
                                 }]);
                                 break;
                             case "center":
                                 overlays.push(["Custom", {
-                                    create:makeAttributeOverlayFunction(attributeId),
+                                    create:makeAttributeOverlayFunction(attrObj[attributeId]),
                                     location:0.5,
                                     id:"label "+attributeId
                                 }]);
                                 break;
                             case "bottom":
                                 overlays.push(["Custom", {
-                                    create:makeAttributeOverlayFunction(attributeId),
+                                    create:makeAttributeOverlayFunction(attrObj[attributeId]),
                                     location:0,
                                     id:"label "+attributeId
                                 }]);
@@ -244,9 +256,112 @@ define([
             this.toJSON = function(){
                 var json = AbstractEdge.prototype.toJSON.call(this);
                 json.type = type;
+                json.viewId = _viewId;
                 return json;
             };
 
+            /**
+             * restyles the edge
+             * @param arrowType
+             * @param color
+             * @param shapeType
+             * @param overlay
+             * @param overlayPosition
+             * @param overlayRotate
+             * @param attributes
+             */
+            this.restyle = function(arrowType, color, shapeType, overlay, overlayPosition, overlayRotate, attributes){
+                overlays = [];
+                that.getJsPlumbConnection().removeAllOverlays();
+                //that.get$overlay().remove();
+
+                if(arrows().hasOwnProperty(arrowType)){
+                    overlays.push(arrows(color)[arrowType]);
+                }
+
+                if(overlay){
+                    switch(overlayPosition){
+                        case "top":
+                            overlays.push(["Custom", {
+                                create:makeOverlayFunction(overlay),
+                                location:0.9,
+                                id:"label"
+                            }]);
+                            break;
+                        case "bottom":
+                            overlays.push(["Custom", {
+                                create:makeOverlayFunction(overlay),
+                                location:0.1,
+                                id:"label"
+                            }]);
+                            break;
+                        default:
+                        case "center":
+                            overlays.push(["Custom", {
+                                create:makeOverlayFunction(overlay),
+                                location:0.5,
+                                id:"label"
+                            }]);
+                            break;
+                    }
+                }
+
+                overlays.push(["Custom", {
+                    create:function() {
+                        that.get$overlay().hide().find('.type').addClass(shapeType);
+                        return that.get$overlay();
+                    },
+                    location:0.5,
+                    id:"label"
+                }]);
+
+                if(overlay){
+                    that.get$overlay().find("input[name='Label']").css('visibility','hidden');
+                }
+                /* TODO reference für attribute, rework the whole attributes mapping in views
+                for(var attributeId in attributes){
+                    if(attributes.hasOwnProperty(attributeId)){
+                        var attribute = attributes[attributeId];
+                        switch(attribute.position){
+                            case "top":
+                                overlays.push(["Custom", {
+                                    create:makeAttributeOverlayFunction(attribute),
+                                    location:1,
+                                    id:"label "+attributeId
+                                }]);
+                                break;
+                            case "center":
+                                overlays.push(["Custom", {
+                                    create:makeAttributeOverlayFunction(attribute),
+                                    location:0.5,
+                                    id:"label "+attributeId
+                                }]);
+                                break;
+                            case "bottom":
+                                overlays.push(["Custom", {
+                                    create:makeAttributeOverlayFunction(attribute),
+                                    location:0,
+                                    id:"label "+attributeId
+                                }]);
+                                break;
+                        }
+                    }
+                }*/
+
+                for(var i=0;i<overlays.length;i++) {
+                    that.getJsPlumbConnection().addOverlay(overlays[i]);
+                }
+                var paintStyle ={
+                    strokeStyle: color,
+                    lineWidth: 2
+                };
+
+                that.getJsPlumbConnection().setPaintStyle(paintStyle);
+                that.setDefaultPaintStyle(paintStyle);
+                that.setRotateOverlay(overlayRotate);
+                that.repaintOverlays();
+
+            };
             init();
         }
         return Edge;

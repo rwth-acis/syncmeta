@@ -73,10 +73,14 @@ requirejs([
             }
             wrapper.select(modelAttributesNode);
         }
+        else if(operation instanceof InitModelTypesOperation) {
+            var vls = operation.getVLS();
+            if (vls)
+                EntityManager.initModelTypes(vls);
+        }
         else if(operation instanceof ViewInitOperation){
-            if(operation.getViewpoint())
-                EntityManager.initModelTypes(operation.getViewpoint());
             EntityManager.clearBin();
+
             var json = operation.getData();
             var nodeId, edgeId;
             for(nodeId in json.nodes){

@@ -229,7 +229,7 @@ define([
             }
         };
 
-        var init = function(){
+        this.init = function(){
             _$node.off();
             _$node.bind("input",function(){
                 //noinspection UnnecessaryLocalVariableJS
@@ -381,7 +381,7 @@ define([
             _iwcot.unregisterOnHistoryChangedCallback(historyValueChangeCallback);
         };
 
-        init();
+        that.init();
 
         if(_iwcot){
             that.registerCallbacks();

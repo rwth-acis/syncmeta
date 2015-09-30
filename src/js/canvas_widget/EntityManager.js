@@ -138,6 +138,8 @@ define([
                 nodeTypes[node.label].TYPE = node.label;
                 nodeTypes[node.label].DEFAULT_WIDTH = node.shape.defaultWidth;
                 nodeTypes[node.label].DEFAULT_HEIGHT = node.shape.defaultHeight;
+                nodeTypes[node.label].$SHAPE = $shape;
+                nodeTypes[node.label].Anchors = anchors;
             }
         }
     };
@@ -152,6 +154,14 @@ define([
             if (edges.hasOwnProperty(edgeId)) {
                 edge = edges[edgeId];
                 edgeTypes[edge.label] = Edge(edge.label, edge.shape.arrow, edge.shape.shape, edge.shape.color, edge.shape.overlay, edge.shape.overlayPosition, edge.shape.overlayRotate, edge.attributes);
+                edgeTypes[edge.label].TYPE = edge.label;
+                edgeTypes[edge.label].ArrowShape = edge.shape.arrow;
+                edgeTypes[edge.label].ShapeType = edge.shape.shape;
+                edgeTypes[edge.label].Color = edge.shape.color;
+                edgeTypes[edge.label].Overlay = edge.shape.overlay;
+                edgeTypes[edge.label].OvelayPosition = edge.shape.overlayPosition;
+                edgeTypes[edge.label].OverlayRotate = edge.shape.overlayRotate;
+                edgeTypes[edge.label].Attributes = edge.attributes;
                 relations[edge.label] = edge.relations;
             }
         }
@@ -200,7 +210,15 @@ define([
 	 * @constructor
 	 */
 	function EntityManager() {
-        var _highlightedEntityByView = null;
+        /**
+         *
+         * @type {{}}
+         * @private
+         */
+        var _viewTypeMap = {};
+
+        var _viewId = null;
+
 		/**
 		 * Model attributes node
 		 * @type {canvas_widget.ModelAttributesNode}
@@ -241,10 +259,11 @@ define([
 			 * @param {number} height Height of node
 			 * @param {number} zIndex Position of node on z-axis
              * @param {object} json the json representation
+             * @param {string} viewId the name of the view the node belongs to
 			 * @returns {canvas_widget.AbstractNode}
 			 */
 			//TODO: switch id and type
-			createNode : function (type, id, left, top, width, height, zIndex,json) {
+			createNode : function (type, id, left, top, width, height, zIndex,json, viewId) {
 				var node;
 				AbstractEntity.maxZIndex = Math.max(AbstractEntity.maxZIndex, zIndex);
 				AbstractEntity.minZIndex = Math.min(AbstractEntity.minZIndex, zIndex);
@@ -255,7 +274,14 @@ define([
 					return node;
 				}
 				if (nodeTypes.hasOwnProperty(type)) {
-					node = new nodeTypes[type](id, left, top, width, height, zIndex, json);
+                    if(viewId){
+                        node = new new nodeTypes[type](id, left, top, width, height, zIndex, viewId);
+                    }
+                    else {
+                        node = new nodeTypes[type](id, left, top, width, height, zIndex, json);
+                    }
+
+
 					_nodes[id] = node;
 					return node;
 				}
@@ -474,10 +500,11 @@ define([
              * @param {number} height Height of node
              * @param {object} json JSON representation
              * @param {number} zIndex Position of node on z-axis
+             * @param {string} viewId the name of the view the node belongs to
              * @returns {canvas_widget.AbstractNode}
              */
-            createNodeFromJSON: function(type,id,left,top,width,height,zIndex,json){
-                var node = this.createNode(type,id,left,top,width,height,zIndex, json);
+            createNodeFromJSON: function(type,id,left,top,width,height,zIndex,json, viewId){
+                var node = this.createNode(type,id,left,top,width,height,zIndex,json, viewId);
                 if(node){
                     node.getLabel().getValue().setValue(json.label.value.value);
                     for(var attrId in json.attributes){
@@ -1044,6 +1071,57 @@ define([
             initModelTypes : function(vls){
                 _initNodeTypes(vls);
                 _initEdgeTypes(vls);
+            },
+            /**
+             * Get the node type by its name
+             * @param type the name of the node type
+             * @returns {object}
+             */
+            getNodeType: function(type){
+                return nodeTypes.hasOwnProperty(type) ?  nodeTypes[type] : null;
+            },
+            /**
+             * Get the edge type bt its name
+             * @param {string} type the name of the edge type
+             * @returns {*}
+             */
+            getEdgeType: function(type){
+                return edgeTypes.hasOwnProperty(type) ? edgeTypes[type]: null;
+            },
+            //TODO Comments
+            addToViewTypeMap: function(viewId,vvs,vls){
+                _viewId = viewId;
+                var _map = {};
+                var viewpointNodes = vvs.nodes;
+                for(var vpNodeKey in viewpointNodes){
+                    if(viewpointNodes.hasOwnProperty(vpNodeKey)){
+                        var nodeViewType =viewpointNodes[vpNodeKey];
+                        if(nodeViewType.hasOwnProperty('target')) {
+                            _map[nodeViewType.label] = vls.nodes[nodeViewType.target].label;
+                        }
+                    }
+                }
+                var viewpointEdges = vvs.edges;
+                for(var vpEdgeKey in viewpointEdges){
+                    if(viewpointEdges.hasOwnProperty(vpEdgeKey)){
+                        var edgeViewType =viewpointEdges[vpEdgeKey];
+                        if(edgeViewType.hasOwnProperty('target')) {
+                            _map[edgeViewType.label] = vls.edges[edgeViewType.target].label;
+                        }
+                    }
+                }
+                _viewTypeMap[viewId] = _map;
+            },
+            lookupViewTypeMapping : function(viewId, viewTypeName){
+                if(_viewTypeMap.hasOwnProperty(viewId)){
+                    return _viewTypeMap[viewId].hasOwnProperty(viewTypeName) ? _viewTypeMap[viewId][viewTypeName] : null;
+                }
+                else{
+                    return null;
+                }
+            },
+            setViewId:function(viewId){
+                _viewId =viewId;
             }
 
         };

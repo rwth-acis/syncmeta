@@ -46,9 +46,10 @@ requirejs([
     'canvas_widget/ViewRelationshipNode',
     'canvas_widget/ViewRelationshipNodeTool',
     'canvas_widget/ViewManager',
+    'canvas_widget/ViewGenerator',
     'promise!Metamodel',
     'promise!Model'
-],function($,jsPlumb,IWCOT, Util,ToolSelectOperation,ActivityOperation,JoinOperation, ViewInitOperation, UpdateViewListOperation, DeleteViewOperation,SetViewTypesOperation, InitModelTypesOperation, SetModelAttributeNodeOperation, Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge, ViewObjectNode, ViewObjectNodeTool,ViewRelationshipNode, ViewRelationshipNodeTool, ViewManager,metamodel,model) {
+],function($,jsPlumb,IWCOT, Util,ToolSelectOperation,ActivityOperation,JoinOperation, ViewInitOperation, UpdateViewListOperation, DeleteViewOperation,SetViewTypesOperation, InitModelTypesOperation, SetModelAttributeNodeOperation, Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge, ViewObjectNode, ViewObjectNodeTool,ViewRelationshipNode, ViewRelationshipNodeTool, ViewManager, ViewGenerator, metamodel,model) {
 
     var iwcot;
     var canvas;
@@ -108,7 +109,6 @@ requirejs([
 
         //Modeling layer implementation. View generation process starts here
         $('#btnShowView').click(function(){
-            //TODO
             //Get identifier of the current selected view
             var viewId = ViewManager.getViewIdOfSelected();
             if (viewId === $('#lblCurrentView').text())
@@ -118,10 +118,20 @@ requirejs([
                 resource.getRepresentation('rdfjson',function(vvs){
                     //initialize the new node- and edge types for the EntityManager
                     EntityManager.initModelTypes(vvs);
+
                     //send the new tools to the palette as well
-                    iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, new InitModelTypesOperation(vvs).toNonOTOperation());
+                    var operation = new InitModelTypesOperation(vvs).toNonOTOperation();
+                    iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation);
+                    iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation);
+
                     //init the tools for canvas
                     initTools(vvs);
+
+                    //TODO generate the view here
+                    ViewManager.getViewpointData(viewId).done(function(vvs){
+                        EntityManager.addToViewTypeMap(viewId,vvs,metamodel);
+                        ViewGenerator(metamodel,vvs);
+                    });
 
                     $('#lblCurrentView').show();
                     $('#lblCurrentViewId').text(viewId);
@@ -138,18 +148,24 @@ requirejs([
             $('#ViewCtrlContainer').hide();
             $('#canvas-frame').css('margin-top','32px');
             var $lblCurrentViewId = $('#lblCurrentViewId');
-            if($lblCurrentViewId.text().length > 0) {
+            var viewpointId = $lblCurrentViewId.text();
+            if(viewpointId.length > 0) {
                 var $loading = $("#loading");
                 $loading.show();
 
-                //TODO generate the view here
 
                 //reset view
                 var operation = new InitModelTypesOperation(metamodel);
                 iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation.toNonOTOperation());
+                iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
 
+                EntityManager.setViewId(null);
                 EntityManager.initModelTypes(metamodel);
                 initTools(metamodel);
+
+                ViewManager.getViewpointData(viewpointId).done(function(vvs){
+                    ViewGenerator(vvs,metamodel);
+                });
 
                 $('#lblCurrentView').hide();
                 $lblCurrentViewId.text("");
@@ -317,7 +333,7 @@ requirejs([
         for(nodeId in json.nodes){
             if(json.nodes.hasOwnProperty(nodeId)){
                 var jNode = json.nodes[nodeId];
-                var node = EntityManager.createNodeFromJSON(jNode.type,nodeId,jNode.left,jNode.top,jNode.width,jNode.height,jNode.zIndex,jNode);
+                var node = EntityManager.createNodeFromJSON(jNode.type,nodeId,jNode.left,jNode.top,jNode.width,jNode.height,jNode.zIndex,jNode,jNode.viewId);
                 //TODO add origin to nodes
                 //if(jNode.hasOwnProperty('origin'))
                 //    node.setOrigin(jNode.origin);
@@ -548,7 +564,13 @@ requirejs([
             if(operation.getUser() === iwcot.getUser()[CONFIG.NS.PERSON.JABBERID]){
                 if(operation.isDone()){
                     operation.setData(model);
+                    if(metamodel.constructor === Object){
+                        var op = new InitModelTypesOperation(metamodel);
+                        iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, op.toNonOTOperation());
+                        iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, op.toNonOTOperation());
+                    }
                     iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.toNonOTOperation());
+
                     JSONtoGraph(model);
                     if(canvas.getModelAttributesNode() === null) {
                         var modelAttributesNode = EntityManager.createModelAttributesNode();

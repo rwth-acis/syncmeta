@@ -227,6 +227,14 @@ define([
         var _defaultPaintStyle;
 
         /**
+         * Set the default paint style
+         * @param paintStyle
+         */
+        this.setDefaultPaintStyle = function(paintStyle){
+            _defaultPaintStyle = paintStyle;
+        };
+
+        /**
          * Send NodeDeleteOperation for node
          */
         this.triggerDeletion = function(){
@@ -406,7 +414,7 @@ define([
 
         //noinspection JSUnusedGlobalSymbols
         /**
-         * Set jsPlumb object representing the edge
+         * Get jsPlumb object representing the edge
          * @return {Object} jsPlumbConnection
          */
         this.getJsPlumbConnection = function(){

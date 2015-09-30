@@ -36,11 +36,19 @@ define([
          * @param {number} width Width of node
          * @param {number} height Height of node
          * @param {number} zIndex Position of node on z-axis
+         * @param {string} viewId the name of the view, if the node is only visible in the view
          */
-        function Node(id,left,top,width,height,zIndex){
+        function Node(id,left,top,width,height,zIndex, viewId){
             var that = this;
 
             AbstractNode.call(this,id,type,left,top,width,height,zIndex);
+
+            /**
+             * the property stores the name of the view the node belongs to
+             * @type {string}
+             * @private
+             */
+            var _viewId = viewId;
 
             /**
              * jQuery object of node template
@@ -105,6 +113,13 @@ define([
                 return _anchorOptions;
             };
 
+            /** Set anchor options for new connections
+             *
+             */
+            this.setAnchorOptions = function(anchors){
+              _anchorOptions = anchors;
+            };
+
             /**
              * Bind source node events for edge tool
              */
@@ -122,6 +137,7 @@ define([
                     }
                 });
             };
+
 
             /**
              * Bind target node events for edge tool
@@ -157,7 +173,50 @@ define([
             this.toJSON = function(){
                 var json = AbstractNode.prototype.toJSON.call(this);
                 json.type = type;
+                json.viewId = _viewId;
                 return json;
+            };
+
+            /**
+             * set a new shape for the node
+             * @param $shape
+             */
+            this.set$shape = function($shape){
+                _$template.remove();
+                var _$shape = $shape.clone();
+
+                var attributes = that.getAttributes();
+                for(var attrKey in attributes){
+                    if(attributes.hasOwnProperty(attrKey)){
+                        var attribute = attributes[attrKey];
+                        var $tmp = _$shape.find('.'+attribute.getName().toLowerCase());
+                        if($tmp.length > 0){
+                            //initialize the value again
+                            attribute.getValue().init();
+
+                            $tmp.append(attribute.get$node());
+                            break;
+                        }
+                    }
+                }
+                _$template = _$shape;
+                _$node.append(_$shape);
+            };
+
+            /**
+             * hide the node and all associated edges
+             */
+            this.hide = function(){
+                _$node.hide();
+                jsPlumb.hide(_$node);
+            };
+
+            /**
+             * show the node and all associated edges
+             */
+            this.show = function(){
+                _$node.show();
+                jsPlumb.show(_$node);
             };
 
             init();

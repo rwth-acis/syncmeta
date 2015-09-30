@@ -151,7 +151,13 @@ define([
             getViewpointResource:function(viewpointId){
                 return _viewpointResourceDictionary.hasOwnProperty(viewpointId) ? _viewpointResourceDictionary[viewpointId] : null;
             },
-
+            getViewpointData : function(viewpointId){
+                var deferred = $.Deferred();
+                this.getViewpointResource(viewpointId).getRepresentation('rdfjson', function(viewData){
+                    deferred.resolve(viewData);
+                });
+                return deferred.promise();
+            },
             /**
              * returns the currently selected option node of the html selection element
              * @returns {object} jquery object

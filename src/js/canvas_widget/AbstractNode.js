@@ -1042,7 +1042,7 @@ define([
                     drag = false;
                     _$node.draggable("option","grid",ev.ctrlKey ? [20,20] : '');
                 },
-                drag: function(ev,ui){
+                drag: function(ev){
                     // ui.position.left = Math.round(ui.position.left  / _canvas.getZoom());
                     // ui.position.top = Math.round(ui.position.top / _canvas.getZoom());
 
