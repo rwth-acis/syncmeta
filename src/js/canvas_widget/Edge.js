@@ -260,6 +260,7 @@ define([
                 return json;
             };
 
+            //TODO rework attributes needed
             /**
              * restyles the edge
              * @param arrowType
@@ -274,6 +275,8 @@ define([
                 overlays = [];
                 that.getJsPlumbConnection().removeAllOverlays();
                 //that.get$overlay().remove();
+
+                color = color ? $colorTestElement.css('color','#aaaaaa').css('color',color).css('color') : '#aaaaaa';
 
                 if(arrows().hasOwnProperty(arrowType)){
                     overlays.push(arrows(color)[arrowType]);
@@ -351,6 +354,7 @@ define([
                 for(var i=0;i<overlays.length;i++) {
                     that.getJsPlumbConnection().addOverlay(overlays[i]);
                 }
+
                 var paintStyle ={
                     strokeStyle: color,
                     lineWidth: 2
@@ -362,6 +366,7 @@ define([
                 that.repaintOverlays();
 
             };
+
             init();
         }
         return Edge;

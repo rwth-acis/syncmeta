@@ -14,6 +14,7 @@ define([
 
     AbstractEdge.prototype = new AbstractEntity();
     AbstractEdge.prototype.constructor = AbstractEdge;
+
     /**
      * AbstractEdge
      * @class canvas_widget.AbstractEdge
@@ -143,8 +144,6 @@ define([
             }
         };
 
-
-
         /**
          * Callback for a remote Entity Select Operation
          * @param {operations.non_ot.EntitySelectOperation} operation
@@ -219,7 +218,6 @@ define([
             }
             return $e;
         };
-
 
         /**
          * Default paint style of edge

@@ -130,7 +130,7 @@ requirejs([
                     //TODO generate the view here
                     ViewManager.getViewpointData(viewId).done(function(vvs){
                         EntityManager.addToViewTypeMap(viewId,vvs,metamodel);
-                        ViewGenerator(metamodel,vvs);
+                        ViewGenerator.generate(metamodel,vvs);
                     });
 
                     $('#lblCurrentView').show();
@@ -151,7 +151,7 @@ requirejs([
             var viewpointId = $lblCurrentViewId.text();
             if(viewpointId.length > 0) {
                 var $loading = $("#loading");
-                $loading.show();
+                //$loading.show();
 
 
                 //reset view
@@ -163,13 +163,11 @@ requirejs([
                 EntityManager.initModelTypes(metamodel);
                 initTools(metamodel);
 
-                ViewManager.getViewpointData(viewpointId).done(function(vvs){
-                    ViewGenerator(vvs,metamodel);
-                });
+                ViewGenerator.reset(metamodel);
 
                 $('#lblCurrentView').hide();
                 $lblCurrentViewId.text("");
-                $loading.hide();
+               // $loading.hide();
             }
         });
 
