@@ -10,6 +10,7 @@ requirejs([
     'operations/non_ot/ToolSelectOperation',
     'operations/non_ot/ActivityOperation',
     'operations/non_ot/JoinOperation',
+    'operations/non_ot/SetModelAttributeNodeOperation',
     'canvas_widget/Canvas',
     'canvas_widget/EntityManager',
     'canvas_widget/NodeTool',
@@ -37,13 +38,15 @@ requirejs([
     'promise!Metamodel',
     'promise!Model',
     'promise!Guidancemodel'
-],function($,jsPlumb,IWCOT,ToolSelectOperation,ActivityOperation,JoinOperation,Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge,metamodel,model, guidancemodel) {
+],function($,jsPlumb,IWCOT,ToolSelectOperation,ActivityOperation,JoinOperation,SetModelAttributeNodeOperation,Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge,metamodel,model,guidancemodel) {
 
     var iwcot;
     var canvas;
 
     iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.MAIN);
     canvas = new Canvas($("#canvas"));
+
+    console.log(guidancemodel);
 
     if(guidancemodel.isGuidanceEditor()){
         //Set the model which is shown by the editor to the guidancemodel
@@ -276,7 +279,15 @@ requirejs([
                         modelAttributesNode.addToCanvas(canvas);
                     }
                     canvas.resetTool();
+
+                    iwcot.registerOnLocalDataReceivedCallback(function(operation){
+                        if(operation instanceof SetModelAttributeNodeOperation){
+                            iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new SetModelAttributeNodeOperation().toNonOTOperation());
+                        }
+                    });
+
                     $("#loading").hide();
+
                     activityOperation = new ActivityOperation(
                         "UserJoinActivity",
                         "-1",

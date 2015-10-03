@@ -1337,7 +1337,7 @@ define([
                     console.log("GetNodeAttributes!");
 
                     var nodeAttributes, attributeId, attribute;
-                    var edgeId, edge, outgoingEdges;
+                    var edgeId, edge, edges;
                     var source, target;
                     var neighbor, options;
                     var attributes = {};
@@ -1349,11 +1349,11 @@ define([
 
                     visitedNodes.push(node);
 
-                    //Traverse outgoing edges to check for inheritance and linked enums
-                    outgoingEdges = node.getOutgoingEdges();
-                    for(edgeId in outgoingEdges){
-                        if(outgoingEdges.hasOwnProperty(edgeId)){
-                            edge = outgoingEdges[edgeId];
+                    //Traverse edges to check for inheritance and linked enums
+                    edges = node.getEdges();
+                    for(edgeId in edges){
+                        if(edges.hasOwnProperty(edgeId)){
+                            edge = edges[edgeId];
                             source = edge.getSource();
                             target = edge.getTarget();
 

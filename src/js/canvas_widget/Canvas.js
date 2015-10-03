@@ -628,7 +628,7 @@ define([
             _$node.transformable('destroy');
 
             //Unbind Node and Edge Events
-            this.select(null);
+            //this.select(null);
 
             //Disable Canvas Rightclick Menu
             _$node.unbind("contextmenu");
@@ -666,7 +666,7 @@ define([
          * @param {number} zoom
          */
         this.setZoom = function(zoom){
-            if(zoom < 0.5 || zoom > 2){
+            if(zoom < 0.1 || zoom > 2){
                 return;
             }
             _zoom = zoom;
