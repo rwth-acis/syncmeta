@@ -33,7 +33,7 @@ define([
             _$node.css({
                 left: _appearance.left,
                 top: _appearance.top,
-                zIndex: 100000
+                zIndex: 30000
             });
         };
 

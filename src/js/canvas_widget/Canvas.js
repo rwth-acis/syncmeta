@@ -23,8 +23,10 @@ define([
     'canvas_widget/guidance_modeling/ObjectGuidance',
     'canvas_widget/guidance_modeling/GuidanceBox',
     'canvas_widget/guidance_modeling/SelectToolGuidance',
+    'canvas_widget/guidance_modeling/SetPropertyGuidance',
+    'canvas_widget/guidance_modeling/GhostEdge',
     'jquery.transformable-PATCHED'
-],/** @lends Canvas */function($,jsPlumb,IWCOT,Util,NodeAddOperation,EdgeAddOperation,ToolSelectOperation,EntitySelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,ShowObjectGuidanceOperation,ShowGuidanceBoxOperation,AbstractEntity,ModelAttributesNode,EntityManager,AbstractCanvas,MoveTool,ObjectGuidance,GuidanceBox,SelectToolGuidance) {
+],/** @lends Canvas */function($,jsPlumb,IWCOT,Util,NodeAddOperation,EdgeAddOperation,ToolSelectOperation,EntitySelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,ShowObjectGuidanceOperation,ShowGuidanceBoxOperation,AbstractEntity,ModelAttributesNode,EntityManager,AbstractCanvas,MoveTool,ObjectGuidance,GuidanceBox,SelectToolGuidance, SetPropertyGuidance, GhostEdge) {
     Canvas.prototype = new AbstractCanvas();
     Canvas.prototype.constructor = Canvas;
     /**
@@ -145,6 +147,7 @@ define([
             processNodeAddOperation(operation);
             if(_iwcot.sendRemoteOTOperation(operation)){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "NodeAddActivity",
                     operation.getEntityId(),
@@ -267,7 +270,9 @@ define([
 
         var processShowGuidanceBoxOperation = function(operation){
             _guidanceDefinition = operation.getGuidance();
-            that.showGuidanceBox();
+            console.log("Process op");
+            console.log(operation.getEntityId());
+            that.showGuidanceBox(operation.getEntityId());
         };
 
         /**
@@ -415,13 +420,23 @@ define([
             return _$node;
         };
 
-        this.showGuidanceBox = function(){
+        this.showGuidanceBox = function(entityId){
             console.log("Show guidance box");
+            console.log(_guidanceDefinition);
+            var entity;
             if(_guidanceDefinition === null)
                 return;
+            if(typeof(entityId) == 'undefined')
+                entity = _selectedEntity;
+            else{
+                console.log("find node")
+                console.log(entityId);
+                entity = EntityManager.findNode(entityId);
+            }
+
             var itemWidth = 100;
             var itemHeight = 100;
-            var entityAppearance = _selectedEntity.getAppearance();
+            var entityAppearance = entity.getAppearance();
             var appearance = {
                 top: entityAppearance.top,
                 left: entityAppearance.left,
@@ -431,13 +446,20 @@ define([
             appearance.top += entityAppearance.height + 10;
             _guidanceBox = new GuidanceBox(Util.generateRandomId(), appearance.left, appearance.top);
             for(var i = 0; i < _guidanceDefinition.length; i++){
-                var guidanceItem;
+                var guidanceItem = null;
                 switch(_guidanceDefinition[i].type){
                     case "SELECT_TOOL_GUIDANCE":
-                    guidanceItem = new SelectToolGuidance(_guidanceDefinition[i].id, _guidanceDefinition[i].label, _guidanceDefinition[i].tool, that);
+                    guidanceItem = new SelectToolGuidance(_guidanceDefinition[i].id, _guidanceDefinition[i].label, _guidanceDefinition[i].tool, that, _guidanceDefinition[i].icon);
+                    break;
+                    case "SET_PROPERTY_GUIDANCE":
+                    guidanceItem = new SetPropertyGuidance(_guidanceDefinition[i].id, _guidanceDefinition[i].label, _guidanceDefinition[i].entityId, _guidanceDefinition.propertyName, that);
+                    break;
+                    case "GHOST_EDGE_GUIDANCE":
+                    that.showGhostEdge(_guidanceDefinition[i].sourceId, _guidanceDefinition[i].targetId, _guidanceDefinition[i].relationshipType);
                     break;
                 }
-                _guidanceBox.addGuidance(guidanceItem);
+                if(guidanceItem)
+                    _guidanceBox.addGuidance(guidanceItem);
             }
 
             _guidanceBox.addToCanvas(that);
@@ -660,6 +682,24 @@ define([
             _$node.setTransform('scaley', zoom);
 
             jsPlumb.setZoom(zoom);
+        };
+
+        this.showGhostEdge = function(sourceId, targetId, relationshipType){
+            console.log("Show ghost edge");
+            console.log(relationshipType);
+            var source = EntityManager.findNode(sourceId);
+            var target = EntityManager.findNode(targetId);
+            var edge = new GhostEdge(that, EntityManager.getEdgeType(relationshipType), source, target)
+            edge.connect();
+            //edge.addToCanvas(that);
+        };
+
+        this.highlightNode = function(nodeId){
+            EntityManager.findNode(nodeId).highlight("blue", "Set property");
+        };
+
+        this.unhighlightNode = function(nodeId){
+            EntityManager.findNode(nodeId).unhighlight();
         };
 
         /**

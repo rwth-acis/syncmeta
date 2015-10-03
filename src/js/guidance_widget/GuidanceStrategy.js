@@ -12,12 +12,8 @@ define([
             this.space = space;
             this.iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.GUIDANCE);
         },
-        // showObjectGuidance: function(objectId, logicalGuidanceDefinition){
-        //     var operation = new ShowObjectGuidanceOperation(objectId, guidanceRules);
-        //     this.iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.toNonOTOperation());
-        // },
-        showGuidanceBox: function(guidance){
-            var operation = new ShowGuidanceBoxOperation(guidance);
+        showGuidanceBox: function(guidance, entityId){
+            var operation = new ShowGuidanceBoxOperation(guidance, entityId);
             this.iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.toNonOTOperation());
         },
         onEntitySelect: function(entityId, entityType){
@@ -26,8 +22,11 @@ define([
         onUserJoin: function(user){
             //Override in child class to react to user join events   
         },
-        onGuidanceFollowed: function(user, rule){
+        onGuidanceFollowed: function(guidanceId){
             //Override in child class to react to guidance followed events
+        },
+        onNodeAdd: function(id, type){
+            //Override in child class to react to node add events
         }
     });
 

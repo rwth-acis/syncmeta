@@ -334,6 +334,10 @@ define([
                 }
                 return null;
             },
+            getEdgeType: function(type){
+                console.log(edgeTypes[type]);
+                return edgeTypes[type];
+            },
             /**
              * Find edge by id
              * @memberof canvas_widget.EntityManager#

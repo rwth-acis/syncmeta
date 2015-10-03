@@ -35,8 +35,8 @@ div.default_node {
     width: inherit;
 }
 div.custom_node {
-    height: inherit;
-    width: inherit;
+    height: 100%;
+    width: 100%;
     position: relative;
 }
 div.custom_node .fill_parent{
