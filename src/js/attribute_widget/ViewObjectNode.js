@@ -3,7 +3,7 @@ define([
     'jsplumb',
     'lodash',
     'attribute_widget/AbstractNode',
-    'attribute_widget/KeySelectionValueSelectionValueListAttribute',
+    'attribute_widget/RenamingListAttribute',
     'attribute_widget/SingleSelectionAttribute',
     'attribute_widget/ConditionListAttribute',
     'canvas_widget/ViewTypesUtil',
@@ -11,7 +11,7 @@ define([
     'canvas_widget/LogicalConjunctions',
     'text!templates/attribute_widget/object_node.html'
 ], /** @lends ViewObjectNode */
-function ($, jsPlumb, _, AbstractNode, KeySelectionValueSelectionValueListAttribute, SingleSelectionAttribute, ConditionListAttribute, ViewTypesUtil, LogicalOperator, LogicalConjunctions, objectNodeHtml) {
+function ($, jsPlumb, _, AbstractNode, RenamingListAttribute, SingleSelectionAttribute, ConditionListAttribute, ViewTypesUtil, LogicalOperator, LogicalConjunctions, objectNodeHtml) {
 
     ViewObjectNode.TYPE = "ViewObject";
 
@@ -95,7 +95,7 @@ function ($, jsPlumb, _, AbstractNode, KeySelectionValueSelectionValueListAttrib
                                 targetAttrList[attrKey] = attrList[attrKey].getKey().getValue();
                             }
                         }
-                        var cla = new ConditionListAttribute("[condition]", "Conditions", that, targetAttrList, LogicalOperator, LogicalConjunctions);
+                        var cla = new ConditionListAttribute("[condition]", "Conditions", that, targetAttrList, LogicalOperator);
                         cla.setValueFromJSON(conditionList);
                         that.addAttribute(cla);
                         that.get$node().find('.attributes').append(cla.get$node());
@@ -107,12 +107,7 @@ function ($, jsPlumb, _, AbstractNode, KeySelectionValueSelectionValueListAttrib
 			that.get$node().find('.attributes').prepend(attribute.get$node());
 		});
 
-		var attributeList = new KeySelectionValueSelectionValueListAttribute("[attributes]", "Attributes", this, {
-				"string" : "String",
-				"boolean" : "Boolean",
-				"integer" : "Integer",
-				"file" : "File"
-			}, {
+		var attributeList = new RenamingListAttribute("[attributes]", "Attributes", this,  {
 				"show" : "Visible",
 				"hide" : "Hidden"
 			});

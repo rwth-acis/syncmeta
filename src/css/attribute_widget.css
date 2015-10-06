@@ -9,18 +9,21 @@
 }
 
 .key_value_attribute, 
-.condition_predicate {
+.condition_predicate,
+.renaming_attr{
     overflow: auto;
 }
 
 .key_value_attribute div,
-.condition_predicate div {
+.condition_predicate div,
+.renaming_attr div{
     width: 30%;
     float: left;
 }
 
 .key_value_attribute div input,
-.condition_predicate div input{
+.condition_predicate div input,
+.renaming_attr div input{
     border: 1px solid #aaaaaa;
 }
 
@@ -81,9 +84,14 @@
 .key_value_attribute input, select {
     width: 150px;
 }
-.condition_predicate input, select {
+.condition_predicate input, select{
     width: 150px;
 }
+
+.renaming_attr input, select {
+    width: 150px;
+}
+
 
 .type {
     font-weight: bold;

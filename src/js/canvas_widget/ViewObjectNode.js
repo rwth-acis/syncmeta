@@ -4,13 +4,13 @@ define([
     'lodash',
     'canvas_widget/AbstractNode',
 	'canvas_widget/SingleSelectionAttribute',
-    'canvas_widget/KeySelectionValueSelectionValueListAttribute',
+    'canvas_widget/RenamingListAttribute',
 	'canvas_widget/ConditionListAttribute',
 	'canvas_widget/ViewTypesUtil',
     'canvas_widget/LogicalOperator',
     'canvas_widget/LogicalConjunctions',
     'text!templates/canvas_widget/viewobject_node.html'
-],/** @lends ViewObjectNode */function(require,$,_,AbstractNode,SingleSelectionAttribute,KeySelectionValueSelectionValueListAttribute,ConditionListAttribute,ViewTypesUtil,LogicalOperator,LogicalConjunctions,viewobjectNodeHtml) {
+],/** @lends ViewObjectNode */function(require,$,_,AbstractNode,SingleSelectionAttribute,RenamingListAttribute,ConditionListAttribute,ViewTypesUtil,LogicalOperator,LogicalConjunctions,viewobjectNodeHtml) {
 
     ViewObjectNode.TYPE = "ViewObject";
     ViewObjectNode.DEFAULT_WIDTH = 150;
@@ -113,8 +113,8 @@ define([
 
 		});
 		        
-		var attributeList = new KeySelectionValueSelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File"},{"show":"Visible","hide":"Hidden"});
-		this.addAttribute(attributeList);  
+		var attributeList = new RenamingListAttribute("[attributes]","Attributes",this,{"show":"Visible","hide":"Hidden"});
+		this.addAttribute(attributeList);
 		
         _$node.find(".label").append(this.getLabel().get$node());
 

@@ -1,6 +1,5 @@
 define([
     'jqueryui',
-    'jsplumb',
     'lodash',
     'iwcw',
     'Util',
@@ -8,16 +7,16 @@ define([
     'attribute_widget/AbstractAttribute',
     'attribute_widget/Value',
     'attribute_widget/SelectionValue',
-    'text!templates/attribute_widget/key_value_attribute.html'
-],/** @lends KeySelectionValueAttribute */ function($,jsPlumb,_,IWCW,Util,AttributeDeleteOperation,AbstractAttribute,Value,SelectionValue,keySelectionValueAttributeHtml) {
+    'text!templates/attribute_widget/renaming_attribute.html'
+],/** @lends RenamingAttribute */ function($,_,IWCW,Util,AttributeDeleteOperation,AbstractAttribute,Value,SelectionValue,renamingAttrHTML) {
 
-    KeySelectionValueAttribute.TYPE = "KeySelectionValueAttribute";
+    RenamingAttribute.TYPE = "RenamingAttribute";
 
-    KeySelectionValueAttribute.prototype = new AbstractAttribute();
-	KeySelectionValueAttribute.prototype.constructor = KeySelectionValueAttribute;
+    RenamingAttribute.prototype = new AbstractAttribute();
+    RenamingAttribute.prototype.constructor = RenamingAttribute;
     /**
-     * KeySelectionValueAttribute
-     * @class attribute_widget.KeySelectionValueAttribute
+     * RenamingAttribute
+     * @class attribute_widget.ConditionPredicateAttribute
      * @memberof attribute_widget
      * @extends attribute_widget.AbstractAttribute
      * @param {string} id Entity id
@@ -26,7 +25,7 @@ define([
      * @param {Object} options Selection options
      * @constructor
      */
-    function KeySelectionValueAttribute(id,name,subjectEntity,options){
+    function RenamingAttribute(id,name,subjectEntity,options){
         var that = this;
 
         AbstractAttribute.call(this,id,name,subjectEntity);
@@ -44,21 +43,29 @@ define([
          * @type {attribute_widget.Value}
          * @private
          */
-        var _key = new Value(id+"[key]","Attribute Name",this,this.getRootSubjectEntity());
+        var _key = new Value(id+"[val]","Attribute Name",this,this.getRootSubjectEntity());
 
         /***
-         * Value object of value
+         * Value object of ref
          * @type {attribute_widget.Value}
          * @private
          */
-        var _value = new SelectionValue(id+"[value]","Attribute Type",this,this.getRootSubjectEntity(),_options);
+        var _ref = new Value(id+"[ref]","Attribute Reference",this,this.getRootSubjectEntity());
+
+        /***
+         * Value object of vis
+         * @type {attribute_widget.Value}
+         * @private
+         */
+        var _vis = new SelectionValue(id+"[vis]","Attribute Visibility",this,this.getRootSubjectEntity(),_options);
 
         /**
          * jQuery object of the DOM node representing the attribute
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(keySelectionValueAttributeHtml,{}));
+        var _$node = $(_.template(renamingAttrHTML,{}));
+
 
         /**
          * Inter widget communication wrapper
@@ -70,9 +77,8 @@ define([
         /**
          * Propagate an Attribute Delete Operation to the remote users and the local widgets
          * @param {operations.ot.AttributeDeleteOperation} operation
-
          */
-        var propagateAttributeDeleteOperation = function(operation){
+        this.propagateAttributeDeleteOperation = function(operation){
             processAttributeDeleteOperation(operation);
             _iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.getOTOperation());
         };
@@ -91,7 +97,7 @@ define([
          * @param {operations.ot.AttributeDeleteOperation} operation
          */
         var attributeDeleteCallback = function(operation){
-            if(operation instanceof AttributeDeleteOperation && operation.getEntityId() === that.getEntityId()){
+            if(operation instanceof AttributeDeleteOperation && operation.getRootSubjectEntityId() === that.getRootSubjectEntity().getEntityId() && operation.getSubjectEntityId() === that.getEntityId()){
                 processAttributeDeleteOperation(operation);
             }
         };
@@ -114,20 +120,22 @@ define([
         };
 
         /**
-         * Set Value object of value
-         * @param {attribute_widget.Value} value
-         */
-        this.setValue = function(value){
-            _value = value;
-        };
-
-        /**
          * Get Value object of value
          * @returns {attribute_widget.Value}
          */
-        this.getValue = function(){
-            return _value;
+        this.getRef = function(){
+            return _ref;
         };
+
+        //noinspection JSUnusedGlobalSymbols
+        /**
+         * Set Value object of value
+         * @param {attribute_widget.Value} value
+         */
+        this.setVisibility = function(value){
+            _vis = value;
+        };
+
 
         /**
          * Get jQuery object of the DOM node representing the attribute
@@ -142,8 +150,9 @@ define([
          * @param json
          */
         this.setValueFromJSON = function(json){
-            _key.setValueFromJSON(json.key);
-            _value.setValueFromJSON(json.value);
+            _key.setValueFromJSON(json.val);
+            _ref.setValueFromJSON(json.ref);
+            _vis.setValueFromJSON(json.vis||{value: ""});
         };
 
         /**
@@ -160,23 +169,18 @@ define([
             _iwc.unregisterOnDataReceivedCallback(attributeDeleteCallback);
         };
 
+        _$node.find(".val").append(_key.get$node());
+        _$node.find(".ref").append(_ref.get$node());
+        _$node.find(".vis").append(_vis.get$node());
 
+        _$node.find(".ref").find('input').prop( "disabled", true );
 
-        _$node.find(".key").append(_key.get$node());
-        _$node.find(".value").append(_value.get$node());
-        _$node.find(".ui-icon-close").click(function(){
-            var operation = new AttributeDeleteOperation(that.getEntityId(),that.getSubjectEntityId(),that.getRootSubjectEntity().getEntityId(),KeySelectionValueAttribute.TYPE);
-            propagateAttributeDeleteOperation(operation, CONFIG.WIDGET.NAME.MAIN);
-
-        });
 
         if(_iwc){
             that.registerCallbacks();
         }
-		
-
     }
 
-    return KeySelectionValueAttribute;
+    return RenamingAttribute;
 
 });

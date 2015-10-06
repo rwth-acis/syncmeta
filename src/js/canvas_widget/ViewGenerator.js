@@ -12,8 +12,8 @@ define(['canvas_widget/EntityManager'], /**@lends ViewGenerator*/ function (Enti
      * @param {canvas_widget.Node} node the node
      */
     function applyNodeTypeToNode(nodeType,node){
-        node.set$shape(nodeType.$SHAPE);
-        node.setAnchorOptions(nodeType.Anchors);
+        node.set$shape(nodeType.get$shape());
+        node.setAnchorOptions(nodeType.getAnchors());
         node.show();
     }
 
@@ -36,13 +36,14 @@ define(['canvas_widget/EntityManager'], /**@lends ViewGenerator*/ function (Enti
      * @param {canvas_widget.Edge} edge the edge to transform
      */
     function applyEdgeTypeToEdge(edgeType, edge){
-        edge.restyle(edgeType.ArrowShape,
-            edgeType.Color,
-            edgeType.ShapeType,
-            edgeType.Overlay,
-            edgeType.OverlayPosition,
-            edgeType.OverlayRotate,
-            edgeType.Attributes);
+        edge.restyle(
+            edgeType.getArrowType(),
+            edgeType.getColor(),
+            edgeType.getShapeType(),
+            edgeType.getOverlay(),
+            edgeType.getOverlayPosition(),
+            edgeType.getOverlayRotate(),
+            edgeType.getAttributes());
     }
 
     /**

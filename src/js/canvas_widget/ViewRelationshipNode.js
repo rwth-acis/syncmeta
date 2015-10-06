@@ -5,14 +5,14 @@ define([
     'lodash',
     'canvas_widget/AbstractNode',
     'canvas_widget/SingleSelectionAttribute',
-    'canvas_widget/KeySelectionValueSelectionValueListAttribute',
+    'canvas_widget/RenamingListAttribute',
     'canvas_widget/ConditionListAttribute',
     'canvas_widget/ViewTypesUtil',
     'canvas_widget/LogicalOperator',
     'canvas_widget/LogicalConjunctions',
     'text!templates/canvas_widget/viewrelationship_node.html'
 ], /** @lends ViewRelationshipNode */
-function (require, $, jsPlumb, _, AbstractNode, SingleSelectionAttribute, KeySelectionValueSelectionValueListAttribute, ConditionListAttribute, ViewTypesUtil, LogicalOperator, LogicalConjunctions, viewrelationshipNodeHtml) {
+function (require, $, jsPlumb, _, AbstractNode, SingleSelectionAttribute, RenamingListAttribute, ConditionListAttribute, ViewTypesUtil, LogicalOperator, LogicalConjunctions, viewrelationshipNodeHtml) {
 
 	ViewRelationshipNode.TYPE = "ViewRelationship";
 	ViewRelationshipNode.DEFAULT_WIDTH = 150;
@@ -114,12 +114,7 @@ function (require, $, jsPlumb, _, AbstractNode, SingleSelectionAttribute, KeySel
 			that.addAttribute(attribute);
 			that.get$node().find('.attributes').prepend(attribute.get$node());
 		});
-		this.addAttribute(new KeySelectionValueSelectionValueListAttribute("[attributes]", "Attributes", this, {
-				"string" : "String",
-				"boolean" : "Boolean",
-				"integer" : "Integer",
-				"file" : "File"
-			}, {
+		this.addAttribute(new RenamingListAttribute("[attributes]", "Attributes", this, {
 				"hidden" : "Show",
 				"top" : "Show Top",
 				"center" : "Show Center",
@@ -127,7 +122,6 @@ function (require, $, jsPlumb, _, AbstractNode, SingleSelectionAttribute, KeySel
                 "hide": "Hide"
 			}));
 
-		
 		$node.find(".label").append(this.getLabel().get$node());
 
 		for (var attributeKey in _attributes) {

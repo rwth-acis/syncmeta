@@ -1,7 +1,6 @@
 define(['lodash',
-        'Util',
         'canvas_widget/ViewTypesUtil'],
-    function(_, Util,ViewTypesUtil) {
+    function(_,ViewTypesUtil) {
         function CVG(canvas, json){
             var _canvas = canvas;
             var _json = json;

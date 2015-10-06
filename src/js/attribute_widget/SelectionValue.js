@@ -99,6 +99,8 @@ define([
                             }
                         }
 
+                        var optVal =  viewType.getAttribute(viewType.getEntityId()+ '[target]').getOptionValue();
+                        viewType.getLabel().getValue().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT, optVal, 0);
 
                         attributeList = {};
                         //the attributes of the new target
@@ -106,18 +108,17 @@ define([
                         //crate the attributes of the new target
                         for (var key2 in targetAttributes) {
                             if (targetAttributes.hasOwnProperty(key2)) {
-                                var id = Util.generateRandomId();
+                                var refAttr = targetAttributes[key2];
+                                var id = refAttr.getEntityId();
 
                                 op = new AttributeAddOperation(id, viewTypeAttribute.getEntityId(), viewTypeAttribute.getRootSubjectEntity().getEntityId(), KeySelectionValueSelectionValueAttribute.TYPE);
 
                                 viewTypeAttribute.propagateAttributeAddOperation(op, CONFIG.WIDGET.NAME.MAIN);
                                 attr = viewTypeAttribute.getAttribute(id);
-                                attr.getKey().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT, targetAttributes[key2].getKey().getValue(), 0);
-                                attr.getValue().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT, targetAttributes[key2].getValue().getValue(), 0);
-                                if (viewType.getType() === 'ViewRelationship')
-                                    attr.getValue2().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT, targetAttributes[key2].getValue2().getValue(), 0);
+                                attr.getKey().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT, refAttr.getKey().getValue(), 0);
+                                attr.getRef().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT, refAttr.getKey().getValue(), 0);
 
-                                attributeList[id] = targetAttributes[key2].getKey().getValue();
+                                attributeList[id] = refAttr.getKey().getValue();
                             }
                         }
                     }

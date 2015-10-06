@@ -369,6 +369,29 @@ define([
 
             init();
         }
+
+        Edge.getArrowType = function(){
+            return arrowType;
+        };
+        Edge.getShapeType = function(){
+            return shapeType;
+        };
+        Edge.getColor = function(){
+            return color;
+        };
+        Edge.getOverlay = function(){
+            return overlay;
+        };
+        Edge.getOverlayPosition = function(){
+            return overlayPosition;
+        };
+        Edge.getOverlayRotate = function(){
+            return overlayRotate;
+        };
+        Edge.getAttributes = function(){
+            return attributes;
+        };
+
         return Edge;
     }
 

@@ -138,8 +138,6 @@ define([
                 nodeTypes[node.label].TYPE = node.label;
                 nodeTypes[node.label].DEFAULT_WIDTH = node.shape.defaultWidth;
                 nodeTypes[node.label].DEFAULT_HEIGHT = node.shape.defaultHeight;
-                nodeTypes[node.label].$SHAPE = $shape;
-                nodeTypes[node.label].Anchors = anchors;
             }
         }
     };
@@ -155,13 +153,6 @@ define([
                 edge = edges[edgeId];
                 edgeTypes[edge.label] = Edge(edge.label, edge.shape.arrow, edge.shape.shape, edge.shape.color, edge.shape.overlay, edge.shape.overlayPosition, edge.shape.overlayRotate, edge.attributes);
                 edgeTypes[edge.label].TYPE = edge.label;
-                edgeTypes[edge.label].ArrowShape = edge.shape.arrow;
-                edgeTypes[edge.label].ShapeType = edge.shape.shape;
-                edgeTypes[edge.label].Color = edge.shape.color;
-                edgeTypes[edge.label].Overlay = edge.shape.overlay;
-                edgeTypes[edge.label].OvelayPosition = edge.shape.overlayPosition;
-                edgeTypes[edge.label].OverlayRotate = edge.shape.overlayRotate;
-                edgeTypes[edge.label].Attributes = edge.attributes;
                 relations[edge.label] = edge.relations;
             }
         }
@@ -512,6 +503,13 @@ define([
                             var attr = node.getAttribute(attrId);
                             if(attr){
                                 attr.setValueFromJSON(json.attributes[attrId]);
+                            }else{
+                                var newId = attrId.replace(/[^\[\]]*/, id);
+                                attr =  node.getAttribute(newId);
+                                if(attr){
+                                    attr.setValueFromJSON(json.attributes[attrId]);
+                                }
+
                             }
                         }
                     }

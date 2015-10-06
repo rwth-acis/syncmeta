@@ -212,7 +212,8 @@ button[disabled=disabled], button:disabled {
 }
 
 .attributes .list_attribute ul.list li.key_value_attribute,
-.attributes .list_attribute ul.list li.condition_predicate
+.attributes .list_attribute ul.list li.condition_predicate,
+.attributes .list_attribute ul.list li.renaming_attr
 {
     overflow: hidden;
 }
@@ -234,9 +235,23 @@ button[disabled=disabled], button:disabled {
 	margin-left: 3px;
 }
 
+.attributes .list_attribute ul.list li.renaming_attr div.val,
+.attributes .list_attribute ul.list li.renaming_attr div.ref{
+    float: left;
+    margin-left: 3px;
+    width: 50%;
+}
+
+.attributes .list_attribute ul.list li.renaming_attr div.vis{
+    float: right;
+    margin-left: 3px;
+}
+
 .attributes .list_attribute ul.list li.key_value_attribute div.key input,
 .attributes .list_attribute ul.list li.key_value_attribute div.value input,
-.attributes .list_attribute ul.list li.condition_predicate div.val input{
+.attributes .list_attribute ul.list li.condition_predicate div.val input,
+.attributes .list_attribute ul.list li.renaming_attr div.val input,
+.attributes .list_attribute ul.list li.renaming_attr div.ref input{
     width: 100%;
     border: 0;
     outline: none;

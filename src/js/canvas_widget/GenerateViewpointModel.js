@@ -147,12 +147,20 @@ define(['Util',
                 for (attributeId in nodeAttributes) {
                     if (nodeAttributes.hasOwnProperty(attributeId)) {
                         attribute = nodeAttributes[attributeId];
-                        if (node instanceof RelationshipNode || node instanceof ViewRelationshipNode) {
+                        if (node instanceof RelationshipNode) {
                             obj = {};
                             obj[attributeId] = {
-                                key : attribute.getKey().getValue(),
-                                value : attribute.getValue().getValue(),
-                                position : attribute.getValue2().getValue()
+                                key: attribute.getKey().getValue(),
+                                value: attribute.getValue().getValue(),
+                                position: attribute.getValue2().getValue()
+                            };
+                            Util.merge(attributes, obj);
+                        } else if(node instanceof  ViewRelationshipNode){
+                            obj = {};
+                            obj[attributeId] = {
+                                key: attribute.getKey().getValue(),
+                                ref: attribute.getRef().getValue(),
+                                position: attribute.getVis().getValue()
                             };
                             Util.merge(attributes, obj);
                         } else if (node instanceof EnumNode) {
@@ -166,8 +174,8 @@ define(['Util',
                             obj = {};
                             obj[attributeId] = {
                                 key : attribute.getKey().getValue(),
-                                value : attribute.getValue().getValue(),
-                                visibility: attribute.getValue2().getValue()
+                                ref : attribute.getRef().getValue(),
+                                visibility: attribute.getVis().getValue()
                             };
                             Util.merge(attributes, obj);
 

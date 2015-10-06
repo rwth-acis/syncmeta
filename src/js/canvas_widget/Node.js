@@ -221,6 +221,15 @@ define([
 
             init();
         }
+
+        Node.get$shape = function(){
+            return $shape;
+        };
+
+        Node.getAnchors = function(){
+            return anchors;
+        };
+
         return Node;
     }
 

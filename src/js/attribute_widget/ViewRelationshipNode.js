@@ -2,7 +2,7 @@ define([
     'jqueryui',
     'lodash',
     'attribute_widget/AbstractNode',
-    'attribute_widget/KeySelectionValueSelectionValueListAttribute',
+    'attribute_widget/RenamingListAttribute',
     'attribute_widget/SingleSelectionAttribute',
     'attribute_widget/ConditionListAttribute',
     'canvas_widget/ViewTypesUtil',
@@ -10,7 +10,7 @@ define([
     'canvas_widget/LogicalConjunctions',
     'text!templates/attribute_widget/relationship_node.html'
 ], /** @lends ViewRelationshipNode */
-	function ($, _, AbstractNode, KeySelectionValueSelectionValueListAttribute, SingleSelectionAttribute, ConditionListAttribute, ViewTypesUtil,LogicalOperator,LogicalConjunctions, relationshipNodeHtml) {
+	function ($, _, AbstractNode, RenamingListAttribute, SingleSelectionAttribute, ConditionListAttribute, ViewTypesUtil,LogicalOperator,LogicalConjunctions, relationshipNodeHtml) {
 
 	ViewRelationshipNode.TYPE = "ViewRelationship";
 
@@ -103,12 +103,7 @@ define([
 			that.get$node().find('.attributes').prepend(attribute.get$node());
 		});
 
-		this.addAttribute(new KeySelectionValueSelectionValueListAttribute("[attributes]", "Attributes", this, {
-				"string" : "String",
-				"boolean" : "Boolean",
-				"integer" : "Integer",
-				"file" : "File"
-        }, {
+		this.addAttribute(new RenamingListAttribute("[attributes]", "Attributes", this, {
             "hidden" : "Show",
             "top" : "Show Top",
             "center" : "Show Center",
