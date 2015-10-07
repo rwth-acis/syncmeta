@@ -10,6 +10,7 @@ define(['guidance_widget/GuidanceStrategy'
             this.nodeMappings = {};
         },
         onEntitySelect: function(entityId, entityType){
+            console.log("Entity select!");
             if(entityId === null)
                 return;
         },
@@ -62,6 +63,18 @@ define(['guidance_widget/GuidanceStrategy'
                 this.resolveMergeNodes();
                 this.showExpectedActions(id);
             }
+        },
+        onEdgeAdd: function(id, type){
+            var expected = [];
+            for(var i = 0; i < this.expectedActions.length; i++){
+                var action = this.logicalGuidanceDefinition.node(this.expectedActions[i]);
+                if(action.type == "CREATE_RELATIONSHIP_ACTION" && action.relationshipType == type){
+                    expected = expected.concat(this.logicalGuidanceDefinition.successors(this.expectedActions[i]));
+                }
+            }
+            this.expectedActions = expected;
+            this.resolveMergeNodes();
+            //this.showExpectedActions(id);
         },
         showExpectedActions: function(entityId){
             console.log("Expected actions")

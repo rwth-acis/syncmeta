@@ -264,6 +264,14 @@ define([
             return type;
         };
 
+        Edge.getArrowOverlays = function(){
+            var overlays = [];
+            if(arrows().hasOwnProperty(arrowType)){
+                overlays.push(arrows(color)[arrowType]);
+            }
+            return overlays;
+        }
+
         return Edge;
     }
 

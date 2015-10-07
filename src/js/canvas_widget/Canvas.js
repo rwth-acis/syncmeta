@@ -187,6 +187,7 @@ define([
             processEdgeAddOperation(operation);
             if(_iwcot.sendRemoteOTOperation(operation)){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "EdgeAddActivity",
                     operation.getEntityId(),
@@ -449,14 +450,14 @@ define([
                 var guidanceItem = null;
                 switch(_guidanceDefinition[i].type){
                     case "SELECT_TOOL_GUIDANCE":
-                    guidanceItem = new SelectToolGuidance(_guidanceDefinition[i].id, _guidanceDefinition[i].label, _guidanceDefinition[i].tool, that, _guidanceDefinition[i].icon);
-                    break;
+                        guidanceItem = new SelectToolGuidance(_guidanceDefinition[i].id, _guidanceDefinition[i].label, _guidanceDefinition[i].tool, that, _guidanceDefinition[i].icon);
+                        break;
                     case "SET_PROPERTY_GUIDANCE":
-                    guidanceItem = new SetPropertyGuidance(_guidanceDefinition[i].id, _guidanceDefinition[i].label, _guidanceDefinition[i].entityId, _guidanceDefinition.propertyName, that);
-                    break;
+                        guidanceItem = new SetPropertyGuidance(_guidanceDefinition[i].id, _guidanceDefinition[i].label, _guidanceDefinition[i].entityId, _guidanceDefinition.propertyName, that);
+                        break;
                     case "GHOST_EDGE_GUIDANCE":
-                    that.showGhostEdge(_guidanceDefinition[i].sourceId, _guidanceDefinition[i].targetId, _guidanceDefinition[i].relationshipType);
-                    break;
+                        that.showGhostEdge(_guidanceDefinition[i].sourceId, _guidanceDefinition[i].targetId, _guidanceDefinition[i].relationshipType);
+                        break;
                 }
                 if(guidanceItem)
                     _guidanceBox.addGuidance(guidanceItem);
@@ -685,13 +686,10 @@ define([
         };
 
         this.showGhostEdge = function(sourceId, targetId, relationshipType){
-            console.log("Show ghost edge");
-            console.log(relationshipType);
             var source = EntityManager.findNode(sourceId);
             var target = EntityManager.findNode(targetId);
             var edge = new GhostEdge(that, EntityManager.getEdgeType(relationshipType), source, target)
             edge.connect();
-            //edge.addToCanvas(that);
         };
 
         this.highlightNode = function(nodeId){

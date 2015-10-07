@@ -27,6 +27,9 @@ define([
         },
         onNodeAdd: function(id, type){
             //Override in child class to react to node add events
+        },
+        onEdgeAdd: function(id, type){
+            //Override in child class to react to edge add events
         }
     });
 

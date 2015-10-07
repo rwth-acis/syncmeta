@@ -11,11 +11,12 @@ requirejs([
     'operations/non_ot/EntitySelectOperation',
     'operations/non_ot/ObjectGuidanceFollowedOperation',
     'operations/ot/NodeAddOperation',
+    'operations/ot/EdgeAddOperation',
     'guidance_widget/NoStrategy',
     'guidance_widget/AvoidConflictsStrategy',
     'promise!LogicalGuidanceDefinition',
     'promise!Space'
-],function ($, _, require, IWCW, EntitySelectOperation, ObjectGuidanceFollowedOperation, NodeAddOperation, NoStrategy, AvoidConflictsStrategy, LogicalGuidanceDefinition, Space) {
+],function ($, _, require, IWCW, EntitySelectOperation, ObjectGuidanceFollowedOperation, NodeAddOperation, EdgeAddOperation, NoStrategy, AvoidConflictsStrategy, LogicalGuidanceDefinition, Space) {
     var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.GUIDANCE);
     var strategies = [
         NoStrategy,
@@ -45,7 +46,10 @@ requirejs([
             selectedStrategy.onGuidanceFollowed(operation.getNonOTOperation().getSender(), operation.getObjectId(), operation.getObjectGuidanceRule());
         }
         else if(operation instanceof NodeAddOperation){
-            selectedStrategy.onNodeAdd(operation.getEntityId(), operation.getType())
+            selectedStrategy.onNodeAdd(operation.getEntityId(), operation.getType());
+        }
+        else if (operation instanceof EdgeAddOperation){
+            selectedStrategy.onEdgeAdd(operation.getEntityId(), operation.getType());
         }
     };
 

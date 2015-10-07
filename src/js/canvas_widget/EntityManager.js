@@ -335,7 +335,6 @@ define([
                 return null;
             },
             getEdgeType: function(type){
-                console.log(edgeTypes[type]);
                 return edgeTypes[type];
             },
             /**
