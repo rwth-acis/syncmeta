@@ -56,16 +56,24 @@ define([
 
             //Bind Node Events
             var nodes = EntityManager.getNodes();
-            var nodeId, node;
+            var nodeId, node, nodeType, strGetNodesByType;
             var i, numOfRelations;
 
             for(nodeId in nodes){
                 if(nodes.hasOwnProperty(nodeId)){
                     node = nodes[nodeId];
                     node.lowlight();
+                    if(EntityManager.getViewId() === null) {
+                        nodeType = node.getType();
+                        strGetNodesByType = 'getNodesByType';
+                    }
+                    else{
+                        nodeType = node.getCurrentViewType();
+                        strGetNodesByType = 'getNodesByViewType';
+                    }
                     for(i = 0, numOfRelations = _relations.length; i < numOfRelations; i++){
-                        if(relations[i].sourceTypes.indexOf(node.getType()) !== -1){
-                            if(_.size(_.filter(EntityManager.getNodesByType(relations[i].targetTypes),makeNeighborhoodFilter(node.getEntityId()))) > 0){
+                        if(relations[i].sourceTypes.indexOf(nodeType) !== -1){
+                            if(_.size(_.filter(EntityManager[strGetNodesByType](relations[i].targetTypes),makeNeighborhoodFilter(node.getEntityId()))) > 0){
                                 node.makeSource();
                                 node.unlowlight();
                                 break;
@@ -79,12 +87,21 @@ define([
                 var sourceNode = EntityManager.findNode(info.sourceId),
                     sourceType,
                     i,
-                    numOfRelations;
+                    numOfRelations,
+                    strGetNodesByType;
                 if(sourceNode){
-                    sourceType = sourceNode.getType();
+                    if(EntityManager.getViewId() === null) {
+                        sourceType = sourceNode.getType();
+                        strGetNodesByType = 'getNodesByType';
+                    }
+                    else{
+                        sourceType = sourceNode.getCurrentViewType();
+                        strGetNodesByType = 'getNodesByViewType';
+                    }
+
                     for(i = 0, numOfRelations = _relations.length; i < numOfRelations; i++){
                         if(relations[i].sourceTypes.indexOf(sourceType) !== -1){
-                            _.each(_.filter(EntityManager.getNodesByType(relations[i].targetTypes),makeNeighborhoodFilter(sourceNode.getEntityId())),makeMakeTargetCallback());
+                            _.each(_.filter(EntityManager[strGetNodesByType](relations[i].targetTypes),makeNeighborhoodFilter(sourceNode.getEntityId())),makeMakeTargetCallback());
                         }
                     }
                 }

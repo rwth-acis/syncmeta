@@ -4,10 +4,11 @@
 	 requirejs(['jqueryui',
 	 'lodash',
 	 'iwcw',
+	 'Util',
 	 'operations/non_ot/UpdateViewListOperation',
 	 'canvas_widget/GenerateViewpointModel',
 	 'promise!Metamodel'],
-		function($,_,IWC,UpdateViewListOperation,GenerateViewpointModel, metamodel){
+		function($,_,IWC, Util, UpdateViewListOperation,GenerateViewpointModel, metamodel){
 				
 			
 				var iwc  = IWC.getInstance("VIEWCONTROL");
@@ -52,7 +53,52 @@
 												addMetamodelToSpace(spaceUri, viewpointmodel, CONFIG.NS.MY.VIEWPOINT);
 											})
 										});
-									})
+									});
+									$viewEntry.find('.patch').click(function(event){
+									    var renamingTplStr = '{"id":"<<=id>>","name":"","val":{"id":"<<=id>>[val]","name":"Attribute Name","value":"<<=val>>"},"ref":{"id":"<<=id>>[ref]","name":"Attribute Reference","value":"<<=val>>"},"vis":{"id":"<<=id>>[vis]","name":"Attribute Visibility","value":"show"}}'.replace(/<</g,"<"+"%").replace(/>>/g,"%"+">");
+                                        var renamingAttrTpl = _.template(renamingTplStr);
+
+                                        var resource_uri = $(event.target).parents('tr').find('.lblviewname').attr('uri');
+
+                                        openapp.resource.get(resource_uri,function(context){
+                                             openapp.resource.context(context).representation().get(function (rep) {
+                                                var attr, attributes, attrList, renamingAttr;
+                                                var data = rep.data;
+                                        	    var nodes = data.nodes;
+                                        	    for(var nKey in nodes){
+                                        	        if(nodes.hasOwnProperty(nKey) && (nodes[nKey].type === 'ViewObject' ||nodes[nKey].type === 'ViewRelationship')){
+                                        	            attributes = nodes[nKey].attributes['[attributes]'];
+                                        	            attributes.type = 'RenamingListAttribute';
+                                        	            attrList = attributes.list;
+                                        	            for(var attrKey in attrList){
+                                        	                if(attrList.hasOwnProperty(attrKey)){
+                                        	                    attr = attrList[attrKey];
+                                                                if(attr.hasOwnProperty('key') && attr.hasOwnProperty('value') && attr.hasOwnProperty('value2'))
+                                                                {
+                                                                    renamingAttr = JSON.parse(renamingAttrTpl({
+                                                                        id: attr.id,
+                                                                        val : attr.key.value
+                                                                    }));
+                                                                    Util.merge(attr, renamingAttr);
+
+                                                                    delete attr.key;
+                                                                    delete attr.value;
+                                                                    delete attr.value2;
+                                                                }
+                                        	                }
+
+                                        	            }
+                                        	        }
+                                        	    }
+
+                                            	    openapp.resource.context(context).representation().json(data).put(function(res){
+                                            	        console.log(res);
+                                            	    });
+
+                                        	});
+                                        });
+
+									});
 									$(appendTo).append($viewEntry);	
 								});
 							});
@@ -60,7 +106,7 @@
 					}); 
 				}						
 				var GetViewListEntryTemplate = function(){
-					var templateString = '<tr><td class="lblviewname" uri=<<= uri >>><<= name >></td><td><button class="json">JSON</button></td><td><button class="del">Del</button></td><td><button class="ToSpace">Add To Space</button></td></tr>'.replace(/<</g,"<"+"%").replace(/>>/g,"%"+">");
+					var templateString = '<tr><td class="lblviewname" uri=<<= uri >>><<= name >></td><td><button class="json">JSON</button></td><td><button class="del">Del</button></td><td><button class="ToSpace">Add To Space</button></td><td><button class="patch">Patch</button></td></tr>'.replace(/<</g,"<"+"%").replace(/>>/g,"%"+">");
 					return tpl = _.template(templateString);
 				}
 				var GetViewpointListEntryTemplate = function(){

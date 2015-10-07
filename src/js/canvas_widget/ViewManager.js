@@ -71,7 +71,6 @@ define([
                     }
                 });
             },
-
             /**
              * checks if a view exists
               * @param viewId the viewId of the vie
@@ -80,7 +79,6 @@ define([
             existsView : function(viewId) {
                 return _viewResourceDictionary.hasOwnProperty(viewId);
             },
-
             /**
              * returns the view identifier of  currently selected html selection element
              * @returns {string} the identifier of the view
@@ -88,7 +86,6 @@ define([
             getViewIdOfSelected : function(){
                 return this.getSelected$node().attr('id');
             },
-
             /**
              * returns the viewpoint role space resource object for a identifier of a view
              * @param viewId the identifier of the view
@@ -103,7 +100,6 @@ define([
                 }
                 return null;
             },
-
             /**
              * gets the view uri for a viewId
              * @param viewId the view identifier of the view
@@ -112,7 +108,6 @@ define([
             getViewUri : function(viewId){
                 return _viewResourceDictionary.hasOwnProperty(viewId)? _viewResourceDictionary[viewId].uri : null;
             },
-
             /**
              * returns the view role space resource object for a identifier of a view
              * @param viewId the identifier of the view
@@ -121,7 +116,6 @@ define([
             getViewResource:function(viewId){
                 return _viewResourceDictionary.hasOwnProperty(viewId)? _viewResourceDictionary[viewId] : null;
             },
-
             /**
              * the data for a specific view
              * @param viewId the identifier of the view
@@ -142,7 +136,6 @@ define([
             getViewpointId : function(viewId){
                 return _viewViewpointDictionary.hasOwnProperty(viewId)? _viewViewpointDictionary[viewId] : null;
             },
-
             /**
              * returns the viewpoint resource object for a viewpoint id
              * @param viewpointId
@@ -165,7 +158,6 @@ define([
             getSelected$node : function(){
                 return  _$selection.find('option:selected');
             },
-
             /**
              * returns the openapp.oo.Resource object of the view
              * @param {string} viewId the view identifier
@@ -176,7 +168,6 @@ define([
                   return _viewResourceDictionary[viewId];
               }
             },
-
             /**
              * adds a view to the ViewManager
              * @param {string} viewId the view identifier
@@ -214,7 +205,6 @@ define([
                 delete _viewViewpointDictionary[viewId];
                 _$selection.find('#'+viewId).remove();
             },
-
             /**
              * initializes the view manager and adds new views to to view manager
              */
@@ -237,7 +227,6 @@ define([
             /**
              * Stores current view in the ROLE Space
              * @param {string} viewId the identifier for the view
-             * @param {string} viewpointId Id of the viewpoint
              * @returns {object} jquery promise
              */
             storeView : function (viewId) {
@@ -272,7 +261,6 @@ define([
             /**
              * generates the json representation of a view
              * @param viewId the unique name of the view
-             * @param viewpointId the unique name of the viewpoint
              * @returns {Object}
              */
             viewToJSON : function (viewId) {

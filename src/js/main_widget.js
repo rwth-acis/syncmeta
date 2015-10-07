@@ -117,7 +117,7 @@ requirejs([
             if(resource != null) {
                 resource.getRepresentation('rdfjson',function(vvs){
                     //initialize the new node- and edge types for the EntityManager
-                    EntityManager.initModelTypes(vvs);
+                    EntityManager.initViewTypes(vvs);
 
                     //send the new tools to the palette as well
                     var operation = new InitModelTypesOperation(vvs).toNonOTOperation();
@@ -129,7 +129,6 @@ requirejs([
 
                     //TODO generate the view here
                     ViewManager.getViewpointData(viewId).done(function(vvs){
-                        EntityManager.addToViewTypeMap(viewId,vvs,metamodel);
                         ViewGenerator.generate(metamodel,vvs);
                     });
 

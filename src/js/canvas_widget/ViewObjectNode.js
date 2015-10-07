@@ -74,6 +74,7 @@ define([
         this.toJSON = function(){
             return AbstractNode.prototype.toJSON.call(this);
         };
+
 		ViewTypesUtil.GetCurrentBaseModel().then(function(model){
 			var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes,['Object']);
 			var attribute = new SingleSelectionAttribute(id+"[target]", "Target", that, selectionValues);

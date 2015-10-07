@@ -88,10 +88,19 @@ define([
          * @param {string} id Entity identifier of edge
          * @param {canvas_widget.AbstractNode} source Source node
          * @param {canvas_widget.AbstractNode} target Target node
-         * @param {string} viewId the name of the view, if the edge is only visible in a particular view
          */
-        function Edge(id,source,target, viewId){
+        function Edge(id,source,target){
             var that = this;
+
+            var currentViewType = null;
+
+            this.setCurrentViewType = function(type){
+                currentViewType = type;
+            };
+
+            this.getCurrentViewType = function(){
+              return currentViewType;
+            };
 
             AbstractEdge.call(this,id,type,source,target,overlayRotate);
 
@@ -101,13 +110,6 @@ define([
              * @type {Array}
              */
             var overlays = [];
-
-            /**
-             * the name of the view this edge belongs to
-             * @type {string}
-             * @private
-             */
-            var _viewId = viewId;
 
             var makeOverlayFunction = function(text){
                 return function() {
@@ -256,7 +258,6 @@ define([
             this.toJSON = function(){
                 var json = AbstractEdge.prototype.toJSON.call(this);
                 json.type = type;
-                json.viewId = _viewId;
                 return json;
             };
 
@@ -274,6 +275,7 @@ define([
             this.restyle = function(arrowType, color, shapeType, overlay, overlayPosition, overlayRotate, attributes){
                 overlays = [];
                 that.getJsPlumbConnection().removeAllOverlays();
+
                 //that.get$overlay().remove();
 
                 color = color ? $colorTestElement.css('color','#aaaaaa').css('color',color).css('color') : '#aaaaaa';

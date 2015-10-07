@@ -36,19 +36,22 @@ define([
          * @param {number} width Width of node
          * @param {number} height Height of node
          * @param {number} zIndex Position of node on z-axis
-         * @param {string} viewId the name of the view, if the node is only visible in the view
          */
-        function Node(id,left,top,width,height,zIndex, viewId){
+        function Node(id,left,top,width,height,zIndex){
             var that = this;
 
             AbstractNode.call(this,id,type,left,top,width,height,zIndex);
 
-            /**
-             * the property stores the name of the view the node belongs to
-             * @type {string}
-             * @private
-             */
-            var _viewId = viewId;
+            var currentViewType = null;
+
+            this.setCurrentViewType = function(type){
+                currentViewType = type;
+            };
+
+            this.getCurrentViewType = function(){
+                return currentViewType;
+            };
+
 
             /**
              * jQuery object of node template
@@ -173,7 +176,6 @@ define([
             this.toJSON = function(){
                 var json = AbstractNode.prototype.toJSON.call(this);
                 json.type = type;
-                json.viewId = _viewId;
                 return json;
             };
 

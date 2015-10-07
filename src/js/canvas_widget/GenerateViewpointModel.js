@@ -194,13 +194,15 @@ define(['Util',
             }
 
             function getViewTypeAttributes(node){
-                var target;
+                var target, targetName;
                 var conjunction;
                 var conditions = {};
                 var nodeid = node.getEntityId();
                 if(viewpointModel.nodes.hasOwnProperty(nodeid)){
                     if(viewpointModel.nodes[nodeid].attributes.hasOwnProperty(nodeid+'[target]')) {
-                        target = viewpointModel.nodes[nodeid].attributes[nodeid + '[target]'].value.value;
+                        var attr = viewpointModel.nodes[nodeid].attributes[nodeid + '[target]'];
+                        target = attr.value.value;
+                        targetName = attr.hasOwnProperty('option') ? attr.option : null;
                     }
                     if(viewpointModel.nodes[nodeid].attributes.hasOwnProperty('[condition]')){
                         var conditionsList = viewpointModel.nodes[nodeid].attributes['[condition]'].list;
@@ -220,6 +222,7 @@ define(['Util',
                     }
                 }
                 return {target: target,
+                    targetName: targetName,
                     conditions : conditions,
                     conjunction: conjunction};
 

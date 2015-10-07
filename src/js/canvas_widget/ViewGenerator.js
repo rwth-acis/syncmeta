@@ -14,6 +14,7 @@ define(['canvas_widget/EntityManager'], /**@lends ViewGenerator*/ function (Enti
     function applyNodeTypeToNode(nodeType,node){
         node.set$shape(nodeType.get$shape());
         node.setAnchorOptions(nodeType.getAnchors());
+        node.setCurrentViewType(nodeType.TYPE);
         node.show();
     }
 
@@ -44,6 +45,7 @@ define(['canvas_widget/EntityManager'], /**@lends ViewGenerator*/ function (Enti
             edgeType.getOverlayPosition(),
             edgeType.getOverlayRotate(),
             edgeType.getAttributes());
+        edge.setCurrentViewType(edgeType.TYPE);
     }
 
     /**
@@ -75,12 +77,11 @@ define(['canvas_widget/EntityManager'], /**@lends ViewGenerator*/ function (Enti
                 var nodeViewType =viewpointNodes[vpNodeKey];
                 if(nodeViewType.hasOwnProperty('target')) {
                     _processed[nodeViewType.target] = true;
-                    var originType = EntityManager.lookupViewTypeMapping(vvs.id, nodeViewType.label);
-                    var nodeTypeObject = EntityManager.getNodeType(nodeViewType.label);
-                    applyNodeTypeToNodes(nodeTypeObject, EntityManager.getNodesByType(originType));
+                    var viewNodeTypeObject = EntityManager.getViewNodeType(nodeViewType.label);
+                    applyNodeTypeToNodes(viewNodeTypeObject, EntityManager.getNodesByType(viewNodeTypeObject.getTargetNodeType().TYPE));
                 }
                 else{
-                    //Todo new Object classes
+                    //Todo handle new Object classes
                 }
             }
         }
@@ -105,9 +106,8 @@ define(['canvas_widget/EntityManager'], /**@lends ViewGenerator*/ function (Enti
                 var edgeViewType =viewpointEdges[vpEdgeKey];
                 if(edgeViewType.hasOwnProperty('target')) {
                     _processed[edgeViewType.target] = true;
-                    var originEdgeTypeLabel = EntityManager.lookupViewTypeMapping(vvs.id, edgeViewType.label);
-                    var edgeTypeObject = EntityManager.getEdgeType(edgeViewType.label);
-                    applyEdgeTypeToEdges(edgeTypeObject, EntityManager.getEdgesByType(originEdgeTypeLabel));
+                    var viewEdgeTypeObject = EntityManager.getViewEdgeType(edgeViewType.label);
+                    applyEdgeTypeToEdges(viewEdgeTypeObject, EntityManager.getEdgesByType(viewEdgeTypeObject.getTargetEdgeType().TYPE));
                 } else{
                     //Todo new Object classes
                 }
