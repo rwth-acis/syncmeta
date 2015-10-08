@@ -10,12 +10,8 @@ define(['guidance_widget/GuidanceStrategy'
             this.nodeMappings = {};
         },
         onEntitySelect: function(entityId, entityType){
-            console.log("Entity select!");
-            if(entityId === null)
-                return;
         },
         onUserJoin: function(user){
-
         },
         onGuidanceFollowed: function(user, objectId, rule){
             // if(user == this.space.user[CONFIG.NS.PERSON.JABBERID]){

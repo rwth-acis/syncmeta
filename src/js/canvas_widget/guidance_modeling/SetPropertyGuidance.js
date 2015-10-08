@@ -26,6 +26,12 @@ define([
                 _entityAttribute = attrib;
         }
 
+        _propertyInput.getValue().setValue(_entityAttribute.getValue().getValue());
+
+        _entityAttribute.get$node().find(".val").bind("input", function(){
+            _propertyInput.getValue().setValue(_entityAttribute.getValue().getValue());
+        });
+
         _propertyInput.get$node().find(".val").bind("input", function(){
             _entityAttribute.getValue().setValue(_propertyInput.getValue().getValue());
         });
