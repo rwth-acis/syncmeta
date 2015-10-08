@@ -171,7 +171,8 @@ requirejs([
     });
 
     var $feedback = $("#feedback");
-    $("#save").click(function(){
+
+    var saveFunction = function(){
         $feedback.text("Saving...");
         EntityManager.storeData().then(function(){
             $feedback.text("Saved!");
@@ -179,6 +180,9 @@ requirejs([
                 $feedback.text("");
             },1000);
         });
+    };
+    $("#save").click(function(){
+        saveFunction();
     });
 
     $("#dialog").dialog({
@@ -245,7 +249,7 @@ requirejs([
         if(readyToSave){
             readyToSave = false;
             setTimeout(function(){
-                $("#save").click();
+                saveFunction();
             },500);
             setTimeout(function(){
                 readyToSave = true;
