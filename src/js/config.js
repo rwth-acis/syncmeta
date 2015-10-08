@@ -37,6 +37,9 @@ var require = {
         graphlib: {
             exports: "graphlib",
             deps: ['lodash']
+        },
+        bootstrap: {
+            deps: ["jquery"]
         }
     },
     paths: {
@@ -65,7 +68,8 @@ var require = {
         swfobject: "lib/vendor/swfobject/swfobject",
         jszip: "lib/vendor/jszip",
         classjs: "lib/Class",
-        graphlib: "lib/vendor/graphlib.core.min"
+        graphlib: "lib/vendor/graphlib.core.min",
+        bootstrap: "lib/vendor/bootstrap/dropdown.prefixed"
     }
 };
 

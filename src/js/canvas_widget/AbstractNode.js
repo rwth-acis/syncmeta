@@ -653,6 +653,7 @@ define([
          * @returns {canvas_widget.AbstractAttribute}
          */
         this.getAttribute = function(id){
+            console.log(_attributes);
             if(_attributes.hasOwnProperty(id)){
                 return _attributes[id];
             }

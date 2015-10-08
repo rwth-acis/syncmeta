@@ -67,6 +67,8 @@ module.exports = function(grunt) {
      
                   //(Required) Path to the folder where the prefixed CSS files will be created 
                   cssDest: '<%= distdir %>/css/vendor/',
+                  jsSource: ['<%= bowerdir %>/bootstrap/js/dropdown.js'],
+                  jsDest: '<%= distdir %>/js/lib/vendor/bootstrap'
               }
           }
        },

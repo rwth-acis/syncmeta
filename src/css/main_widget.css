@@ -338,3 +338,7 @@ button[disabled=disabled], button:disabled {
     font-weight: bold;
     white-space: nowrap;
 }
+
+.ghost-edge {
+    opacity: 0.3;
+}

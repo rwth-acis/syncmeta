@@ -35,7 +35,7 @@ define([
                 anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
                 connector: edgeFunction.getShape(),
                 overlays: overlays,
-                cssClass: ""
+                cssClass: "ghost-edge"
             };
 
             if(source === target){

@@ -453,7 +453,7 @@ define([
                         guidanceItem = new SelectToolGuidance(_guidanceDefinition[i].id, _guidanceDefinition[i].label, _guidanceDefinition[i].tool, that, _guidanceDefinition[i].icon);
                         break;
                     case "SET_PROPERTY_GUIDANCE":
-                        guidanceItem = new SetPropertyGuidance(_guidanceDefinition[i].id, _guidanceDefinition[i].label, _guidanceDefinition[i].entityId, _guidanceDefinition.propertyName, that);
+                        guidanceItem = new SetPropertyGuidance(_guidanceDefinition[i].id, _guidanceDefinition[i].label, EntityManager.findNode(entityId), _guidanceDefinition[i].propertyName, that);
                         break;
                     case "GHOST_EDGE_GUIDANCE":
                         that.showGhostEdge(_guidanceDefinition[i].sourceId, _guidanceDefinition[i].targetId, _guidanceDefinition[i].relationshipType);
