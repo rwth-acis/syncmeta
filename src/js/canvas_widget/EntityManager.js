@@ -23,12 +23,13 @@ define([
     'text!templates/canvas_widget/rounded_rectangle_node.html',
     'text!templates/canvas_widget/triangle_node.html',
     'text!templates/guidance_modeling/set_property_node.html',
+    'text!templates/guidance_modeling/activity_final_node.html',
     'text!templates/canvas_widget/start_activity_node.html',
     'text!templates/canvas_widget/action_node.html',
     'promise!Metamodel',
     'promise!Guidancemodel',
     'graphlib'
-],/** @lends EntityManager */function(_,Util,AbstractEntity,Node,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,ModelAttributesNode,Edge,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge,ContextNode,ObjectToolNode,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,setPropertyNodeHtml,startActivityNodeHtml,actionNodeHtml,metamodel, guidancemodel, graphlib) {
+],/** @lends EntityManager */function(_,Util,AbstractEntity,Node,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,ModelAttributesNode,Edge,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge,ContextNode,ObjectToolNode,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,setPropertyNodeHtml,activityFinalNodeHtml,startActivityNodeHtml,actionNodeHtml,metamodel, guidancemodel, graphlib) {
 
     /**
      * Predefined node shapes, first is default
@@ -118,8 +119,6 @@ define([
                 }
                 color = node.shape.color ? $colorTestElement.css('color','#FFFFFF').css('color',node.shape.color).css('color') : '#FFFFFF';
                 
-                if(node.label == "Create entity object")
-                    console.log(shape);
                 $shape = $(_.template(shape,{color: color, type: node.label}));
 
                 nodeTypes[node.label] = Node(node.label,$shape,anchors,node.attributes, node.jsplumb);
@@ -650,10 +649,10 @@ define([
                     label: guidancemodel.ACTIVITY_FINAL_NODE_LABEL,
                     shape: {
                         shape: "circle",
-                        color: "black",
-                        defaultWidth: 0,
-                        defaultHeight: 0,
-                        customShape: "",
+                        color: "",
+                        defaultWidth: 50,
+                        defaultHeight: 50,
+                        customShape: activityFinalNodeHtml,
                         customAnchors: ""
                     },
                     attributes: {
@@ -748,8 +747,8 @@ define([
                             shape: {
                                 shape: "rounded_rectangle",
                                 color: "",
-                                defaultWidth: 0,
-                                defaultHeight: 0,
+                                defaultWidth: 100,
+                                defaultHeight: 50,
                                 customShape: _.template(actionNodeHtml, {label: node.label, icon: "plus"}),
                                 customAnchors: ""
                             }
@@ -783,9 +782,9 @@ define([
                             attributes: {},
                             shape: {
                                 shape: "",
-                                defaultWidth: 0,
-                                defaultHeight: 0,
-                                customShape: _.template(setPropertyNodeHtml, {type: setPropertyLabel, color: "white"}),
+                                defaultWidth: 130,
+                                defaultHeight: 50,
+                                customShape: _.template(setPropertyNodeHtml, {}),
                                 customAnchors: ""
                             }
                         };
