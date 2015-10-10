@@ -79,7 +79,6 @@ define([
                                 //TODO: Add option to set identifier attribute in metamodel
                                 if(attribute.key.toLowerCase() === 'title' || attribute.key.toLowerCase() === "name"){
                                     that.setLabel(attrObj[attributeId]);
-                                    key = "label";
                                 }
                                 break;
                             case "integer":

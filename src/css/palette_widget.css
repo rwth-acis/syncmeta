@@ -1,3 +1,8 @@
+#palette {
+    max-height: 500px;
+    overflow: auto;
+}
+
 button {
     border: 1px dotted #CCCCCC;
     background: none;
