@@ -5,7 +5,6 @@ define(['guidance_widget/GuidanceStrategy'
         init: function(logicalGuidanceDefinition, space){
             this._super(logicalGuidanceDefinition, space);
             this.initialNodes = this.logicalGuidanceDefinition.sources();
-            this.currentAction = null;
             this.expectedActions = [];
             this.nodeMappings = {};
         },
@@ -73,8 +72,6 @@ define(['guidance_widget/GuidanceStrategy'
             //this.showExpectedActions(id);
         },
         showExpectedActions: function(entityId){
-            console.log("Expected actions")
-            console.log(this.expectedActions);
             var guidanceItems = [];
             for(var i = 0; i < this.expectedActions.length; i++){
                 var action = this.logicalGuidanceDefinition.node(this.expectedActions[i]);
@@ -125,8 +122,6 @@ define(['guidance_widget/GuidanceStrategy'
                     expected.push(this.expectedActions[i]);
                 }
             }
-            console.log("Resolve merge node");
-            console.log(expected);
             this.expectedActions = expected;
         }
     });

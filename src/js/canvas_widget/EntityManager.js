@@ -26,10 +26,11 @@ define([
     'text!templates/guidance_modeling/activity_final_node.html',
     'text!templates/canvas_widget/start_activity_node.html',
     'text!templates/canvas_widget/action_node.html',
+    'text!templates/guidance_modeling/entity_node.html',
     'promise!Metamodel',
     'promise!Guidancemodel',
     'graphlib'
-],/** @lends EntityManager */function(_,Util,AbstractEntity,Node,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,ModelAttributesNode,Edge,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge,ContextNode,ObjectToolNode,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,setPropertyNodeHtml,activityFinalNodeHtml,startActivityNodeHtml,actionNodeHtml,metamodel, guidancemodel, graphlib) {
+],/** @lends EntityManager */function(_,Util,AbstractEntity,Node,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,ModelAttributesNode,Edge,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge,ContextNode,ObjectToolNode,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,setPropertyNodeHtml,activityFinalNodeHtml,startActivityNodeHtml,actionNodeHtml,entityNodeHtml,metamodel, guidancemodel, graphlib) {
 
     /**
      * Predefined node shapes, first is default
@@ -653,7 +654,7 @@ define([
                         defaultWidth: 50,
                         defaultHeight: 50,
                         customShape: activityFinalNodeHtml,
-                        customAnchors: ""
+                        customAnchors: [ "Perimeter", { shape:"Circle", anchorCount: 60} ]
                     },
                     attributes: {
                     }
@@ -765,10 +766,10 @@ define([
                             attributes: {},
                             shape: {
                                 shape: "rectangle",
-                                color: "blue",
-                                defaultWidth: 0,
-                                defaultHeight: 0,
-                                customShape: "",
+                                color: "",
+                                defaultWidth: 100,
+                                defaultHeight: 50,
+                                customShape: _.template(entityNodeHtml, {icon: "square", label: node.label}),
                                 customAnchors: ""
                             }
                         };
@@ -854,9 +855,9 @@ define([
                             shape: {
                                 shape: "rounded_rectangle",
                                 color: "",
-                                defaultWidth: 0,
-                                defaultHeight: 0,
-                                customShape: "",
+                                defaultWidth: 100,
+                                defaultHeight: 50,
+                                customShape: _.template(actionNodeHtml, {label: edge.label, icon: "plus"}),
                                 customAnchors: ""
                             }
                         };
@@ -873,9 +874,9 @@ define([
                             shape: {
                                 shape: "rectangle",
                                 color: "blue",
-                                defaultWidth: 0,
-                                defaultHeight: 0,
-                                customShape: "",
+                                defaultWidth: 100,
+                                defaultHeight: 50,
+                                customShape: _.template(entityNodeHtml, {icon: "exchange", label: edge.label}),
                                 customAnchors: ""
                             }
                         };
@@ -958,8 +959,8 @@ define([
                     label: "Action flow edge",
                     shape: {
                         arrow: "unidirassociation",
-                        shape: "straight",
-                        color: "",
+                        shape: "segmented",
+                        color: "black",
                         overlay: "",
                         overlayPosition: "top",
                         overlayRotate: true
