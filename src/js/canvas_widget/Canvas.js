@@ -650,7 +650,6 @@ define([
          */
         this.select = function(entity){
             if(_selectedEntity != entity){
-                this.hideGuidanceBox();
                 if(_selectedEntity) _selectedEntity.unselect();
                 if(entity) entity.select();
                 _selectedEntity = entity;

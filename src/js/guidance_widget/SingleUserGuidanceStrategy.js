@@ -1,5 +1,5 @@
-define(['guidance_widget/GuidanceStrategy'
-],function(GuidanceStrategy) {
+define(['Util','guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStatus'
+],function(Util,GuidanceStrategy, ActivityStatus) {
 
     var SingleUserGuidanceStrategy = GuidanceStrategy.extend({
         init: function(logicalGuidanceDefinition, space){
@@ -9,7 +9,10 @@ define(['guidance_widget/GuidanceStrategy'
             this.activityStatusList = {};
             this.lastCreatedObjectId = "";
 
-            this.resetActivityStatusList();
+            for(var i = 0; i < this.initialNodes.length; i++){
+                var nodeId = this.initialNodes[i];
+                this.activityStatusList[Util.generateRandomId()] = new ActivityStatus(this.logicalGuidanceDefinition, nodeId);
+            }
         },
         onEntitySelect: function(entityId, entityType){
         },
@@ -33,25 +36,47 @@ define(['guidance_widget/GuidanceStrategy'
             this.lastCreatedObjectId = id;
             for(var activityId in this.activityStatusList){
                 var activityStatus = this.activityStatusList[activityId];
-                for(var i = 0; i < activityStatus.currentNodes.length; i++){
-                    var nodeId = activityStatus.currentNodes[i];
+                //Check if there is a fitting expected node
+                var fittingNode = null;
+                for(var i = 0; i < activityStatus.expectedNodes.length; i++){
+                    var nodeId = activityStatus.expectedNodes[i];
                     var node = this.logicalGuidanceDefinition.node(nodeId);
                     if(node.type == "CREATE_OBJECT_ACTION" && node.objectType == type){
+                        fittingNode = nodeId;
                         this.nodeMappings[node.createdObjectId] = id;
-                        this.proceedInActivity(activityId, nodeId);
+                        break;
                     }
                 }
+                if(!fittingNode){
+                    activityStatus.reset();
+                    for(var i = 0; i < activityStatus.expectedNodes.length; i++){
+                        var nodeId = activityStatus.expectedNodes[i];
+                        var node = this.logicalGuidanceDefinition.node(nodeId);
+                        if(node.type == "CREATE_OBJECT_ACTION" && node.objectType == type){
+                            fittingNode = nodeId;
+                            this.nodeMappings[node.createdObjectId] = id;
+                            break;
+                        }
+                    }
+                }
+
+                if(fittingNode)
+                    activityStatus.proceed(fittingNode);
+
             }
             this.showExpectedActions(id);
+        },
+        onNodeDelete: function(id, type){
+            this.showGuidanceBox([]);
         },
         onEdgeAdd: function(id, type){
             for(var activityId in this.activityStatusList){
                 var activityStatus = this.activityStatusList[activityId];
-                for(var i = 0; i < activityStatus.currentNodes.length; i++){
-                    var nodeId = activityStatus.currentNodes[i];
+                for(var i = 0; i < activityStatus.expectedNodes.length; i++){
+                    var nodeId = activityStatus.expectedNodes[i];
                     var node = this.logicalGuidanceDefinition.node(nodeId);
                     if(node.type == "CREATE_RELATIONSHIP_ACTION" && node.relationshipType == type){
-                        this.proceedInActivity(activityId, nodeId);
+                        activityStatus.proceed(nodeId);
                     }
                 }
             }
@@ -61,8 +86,8 @@ define(['guidance_widget/GuidanceStrategy'
             var guidanceItems = [];
             for(var activityId in this.activityStatusList){
                 var activityStatus = this.activityStatusList[activityId];
-                for(var i = 0; i < activityStatus.currentNodes.length; i++){
-                    var nodeId = activityStatus.currentNodes[i];
+                for(var i = 0; i < activityStatus.expectedNodes.length; i++){
+                    var nodeId = activityStatus.expectedNodes[i];
                     var node = this.logicalGuidanceDefinition.node(nodeId);
 
                     switch(node.type){
@@ -135,6 +160,10 @@ define(['guidance_widget/GuidanceStrategy'
             activityStatus.currentNodes = currentNodes;
             console.log("Proceed in Activity!");
             console.log(activityStatus);
+        },
+        resetActivityStatus: function(activityId){
+            this.activityStatusList[activityId].currentNodes = [activityId];
+            this.proceedInActivity(activityId, activityId);
         },
         resetActivityStatusList: function(){
             this.activityStatusList = {};

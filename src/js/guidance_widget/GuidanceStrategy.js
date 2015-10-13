@@ -30,6 +30,9 @@ define([
         },
         onEdgeAdd: function(id, type){
             //Override in child class to react to edge add events
+        },
+        onNodeDelete: function(id, type){
+            //Override in child class to react to node delete events
         }
     });
 
