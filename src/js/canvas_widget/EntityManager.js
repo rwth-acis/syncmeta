@@ -1023,8 +1023,8 @@ define([
                     for(var edgeId in edges){
                         var edge = edges[edgeId];
                         if(edge.source == nodeId){
-                            var targetType = nodes[edge.target].type
-                            if(!(targetType = guidancemodel.isEntityNodeLabel(targetType))){
+                            //var targetType = nodes[edge.target].type
+                            if(edge.type == "Action flow edge"){
                                 targets.push(edge.target);
                                 labels.push(edge.label.value.value);
                             }
@@ -1240,7 +1240,6 @@ define([
              * @returns {{nodes: {}, edges: {}}} JSON representation of meta model
              */
             generateMetaModel: function(){
-                console.log("Generate metamodel!");
                 /**
                  * Determine the type of the concrete classes (ObjectNodes) of the class diagram contained in the sub graph rooted by the passed node
                  * @param node Node to start with
@@ -1577,6 +1576,7 @@ define([
              * @returns {Deferred}
              */
             storeData: function(){
+                console.log("Save started!");
                 var resourceSpace = new openapp.oo.Resource(openapp.param.space());
 
                 var data = this.graphToJSON();
@@ -1586,14 +1586,12 @@ define([
 
                 //In the guidance model editor update the guidance model
                 if(guidancemodel.isGuidanceEditor()){
-                    guidancemodel.guidancemodel = data;
-                    resourcesToSave.push({'typeName': CONFIG.NS.MY.GUIDANCEMODEL, 'representation': guidancemodel});
+                    resourcesToSave.push({'typeName': CONFIG.NS.MY.GUIDANCEMODEL, 'representation': data});
                 }
                 //In the metamodel editor create the guidance metamodel needed for the guidance editor
                 else if(!metamodel.hasOwnProperty('nodes')){
-                    guidancemodel.metamodel = this.generateMetaModel();
-                    guidancemodel.guidancemetamodel = this.generateGuidanceMetamodel();
-                    resourcesToSave.push({'typeName': CONFIG.NS.MY.GUIDANCEMODEL, 'representation': guidancemodel});
+                    resourcesToSave.push({'typeName': CONFIG.NS.MY.METAMODELPREVIEW, 'representation': this.generateMetaModel()});
+                    resourcesToSave.push({'typeName': CONFIG.NS.MY.GUIDANCEMETAMODEL, 'representation': this.generateGuidanceMetamodel()});
                     resourcesToSave.push({'typeName': CONFIG.NS.MY.MODEL, 'representation': data})
                 }
                 //In the model editor just update the model
@@ -1612,6 +1610,7 @@ define([
                             doc.del();
                         },
                         onAll: function(){
+                            console.log("Deleted " + type);
                             innerDeferred.resolve();
                         }
                     });
@@ -1621,6 +1620,7 @@ define([
                             type: type,
                             representation: representation,
                             callback: function(){
+                                console.log("Saved " + type);
                                 deferred.resolve();
                             }
                         });

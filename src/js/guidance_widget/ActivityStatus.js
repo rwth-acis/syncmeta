@@ -8,6 +8,7 @@ define([
             this.logicalGuidanceDefinition = logicalGuidanceDefinition;
             this.initialNode = initialNode;
             this.currentNode = initialNode;
+            this.name = logicalGuidanceDefinition.node(initialNode).name;
             this.computeExpectedNodes();
         },
         computeExpectedNodes: function(){

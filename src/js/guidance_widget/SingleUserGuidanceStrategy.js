@@ -86,6 +86,7 @@ define(['Util','guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStat
             var guidanceItems = [];
             for(var activityId in this.activityStatusList){
                 var activityStatus = this.activityStatusList[activityId];
+                console.log("Activity: " + activityStatus.name);
                 for(var i = 0; i < activityStatus.expectedNodes.length; i++){
                     var nodeId = activityStatus.expectedNodes[i];
                     var node = this.logicalGuidanceDefinition.node(nodeId);

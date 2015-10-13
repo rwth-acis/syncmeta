@@ -117,24 +117,64 @@ define([
                 return type.indexOf(" Tool", type.length - " Tool".length) !== -1;
             };
 
+            var innerDeferred = $.Deferred();
+            var innerDeferred2 = $.Deferred();
             //Get the guidance model
             resourceSpace.getSubResources({
                 relation: openapp.ns.role + "data",
                 type: CONFIG.NS.MY.GUIDANCEMODEL,
                 onAll: function(data) {
                     if(data === null || data.length === 0){
-                        deferred.resolve(guidancemodeling);
+                        innerDeferred.resolve();
                     } else {
                         data[0].getRepresentation("rdfjson",function(representation){
                             if(representation){
-                                guidancemodeling.guidancemodel = representation.guidancemodel;
-                                guidancemodeling.metamodel = representation.metamodel;
-                                guidancemodeling.guidancemetamodel = representation.guidancemetamodel;
+                                guidancemodeling.guidancemodel = representation;
+                                //guidancemodeling.guidancemetamodel = representation.guidancemetamodel;
                             }
-                            deferred.resolve(guidancemodeling);
+                            innerDeferred.resolve();
                         });
                     }
                 }
+            });
+
+            innerDeferred.then(function(){
+                resourceSpace.getSubResources({
+                    relation: openapp.ns.role + "data",
+                    type: CONFIG.NS.MY.METAMODELPREVIEW,
+                    onAll: function(data) {
+                        if(data === null || data.length === 0){
+                            innerDeferred2.resolve();
+                        } else {
+                            data[0].getRepresentation("rdfjson",function(representation){
+                                if(representation){
+                                    guidancemodeling.metamodel = representation;
+                                    //guidancemodeling.guidancemetamodel = representation.guidancemetamodel;
+                                }
+                                innerDeferred2.resolve();
+                            });
+                        }
+                    }
+                });
+            });
+
+            innerDeferred.then(function(){
+                resourceSpace.getSubResources({
+                    relation: openapp.ns.role + "data",
+                    type: CONFIG.NS.MY.GUIDANCEMETAMODEL,
+                    onAll: function(data) {
+                        if(data === null || data.length === 0){
+                            deferred.resolve(guidancemodeling);
+                        } else {
+                            data[0].getRepresentation("rdfjson",function(representation){
+                                if(representation){
+                                    guidancemodeling.guidancemetamodel = representation;
+                                }
+                                deferred.resolve(guidancemodeling);
+                            });
+                        }
+                    }
+                });
             });
         });
         return deferred.promise();

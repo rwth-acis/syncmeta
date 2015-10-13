@@ -181,6 +181,8 @@ CONFIG = {
             METAMODEL: "my:ns:metamodel",
             INSTANCE: "my:ns:instance",
             GUIDANCEMODEL: "my:ns:guidancemodel",
+            METAMODELPREVIEW: "my:ns:metamodelpreview",
+            GUIDANCEMETAMODEL: "my:ns:guidancemetamodel",
             LOGICALGUIDANCEDEFINITION: "my:ns:logicalguidancedefinition"
         }
     }
