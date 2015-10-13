@@ -8,12 +8,13 @@ requirejs([
     'iwcw',
     'attribute_widget/AttributeWrapper',
     'attribute_widget/EntityManager',
+    'attribute_widget/ViewGenerator',
     'operations/non_ot/JoinOperation',
     'operations/non_ot/InitModelTypesOperation',
     'operations/non_ot/ViewInitOperation',
     'operations/non_ot/SetModelAttributeNodeOperation',
     'promise!Model'
-],function ($,IWCW,AttributeWrapper,EntityManager,JoinOperation,InitModelTypesOperation,ViewInitOperation, SetModelAttributeNodeOperation, model) {
+],function ($,IWCW,AttributeWrapper,EntityManager, ViewGenerator, JoinOperation,InitModelTypesOperation,ViewInitOperation, SetModelAttributeNodeOperation, model) {
 
     var wrapper = new AttributeWrapper($("#wrapper"));
 
@@ -74,9 +75,19 @@ requirejs([
             wrapper.select(modelAttributesNode);
         }
         else if(operation instanceof InitModelTypesOperation) {
-            var vls = operation.getVLS();
-            if (vls)
-                EntityManager.initModelTypes(vls);
+            var vvs = operation.getVLS();
+            if (vvs.hasOwnProperty('id')) {
+                EntityManager.initViewTypes(vvs);
+                require(['promise!Metamodel'],function(metamodel){
+                    ViewGenerator.generate(metamodel, vvs);
+                });
+
+            }else{
+                EntityManager.setViewId(null);
+                require(['promise!Metamodel'],function(metamodel){
+                    ViewGenerator.reset(metamodel);
+                });
+            }
         }
         else if(operation instanceof ViewInitOperation){
             EntityManager.clearBin();

@@ -4,7 +4,7 @@ define(function () {
 
         function ViewEdge(id, source, target){
             var viewEdge = new edgeType(id, source, target);
-            //viewEdge.restyle(arrowType, color, shapeType, overlay, overlayPosition, overlayRotate, attributes);
+            viewEdge.restyle(arrowType, color, shapeType, overlay, overlayPosition, overlayRotate, attributes);
             viewEdge.setCurrentViewType(type);
             return viewEdge;
         }

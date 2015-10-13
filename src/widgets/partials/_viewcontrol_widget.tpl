@@ -60,34 +60,36 @@
 
                                         var resource_uri = $(event.target).parents('tr').find('.lblviewname').attr('uri');
 
+                                        require(['promise!Model'], function(model){
+
                                         openapp.resource.get(resource_uri,function(context){
                                              openapp.resource.context(context).representation().get(function (rep) {
-                                                var attr, attributes, attrList, renamingAttr;
+                                                var attr, attributes, attrList, renamingAttr, refKey;
                                                 var data = rep.data;
                                         	    var nodes = data.nodes;
                                         	    for(var nKey in nodes){
-                                        	        if(nodes.hasOwnProperty(nKey) && (nodes[nKey].type === 'ViewObject' ||nodes[nKey].type === 'ViewRelationship')){
-                                        	            attributes = nodes[nKey].attributes['[attributes]'];
-                                        	            attributes.type = 'RenamingListAttribute';
-                                        	            attrList = attributes.list;
-                                        	            for(var attrKey in attrList){
-                                        	                if(attrList.hasOwnProperty(attrKey)){
-                                        	                    attr = attrList[attrKey];
-                                                                if(attr.hasOwnProperty('key') && attr.hasOwnProperty('value') && attr.hasOwnProperty('value2'))
-                                                                {
-                                                                    renamingAttr = JSON.parse(renamingAttrTpl({
-                                                                        id: attr.id,
-                                                                        val : attr.key.value
-                                                                    }));
-                                                                    Util.merge(attr, renamingAttr);
+                                        	        if(nodes.hasOwnProperty(nKey) && (nodes[nKey].type === 'ViewObject' || nodes[nKey].type === 'ViewRelationship')){
+                                        	            var refNode = model.nodes[nodes[nKey].attributes[nKey+'[target]'].value.value];
+                                        	            if(refNode){
+                                        	                attributes = nodes[nKey].attributes['[attributes]'];
+                                                            attributes.type = 'RenamingListAttribute';
+                                                            attributes.list  = {};
+                                                            attrList = refNode.attributes['[attributes]'].list;
 
-                                                                    delete attr.key;
-                                                                    delete attr.value;
-                                                                    delete attr.value2;
+                                                            for(var attrKey in attrList){
+                                                                if(attrList.hasOwnProperty(attrKey)){
+                                                                    attr = attrList[attrKey];
+                                                                    attributes.list[attrKey] = JSON.parse(renamingAttrTpl({id:attrKey, val:attr.key.value}));
+
                                                                 }
-                                        	                }
-
+                                                            }
+                                        	            }else{
+                                        	                console.error('No reference');
                                         	            }
+
+
+
+
                                         	        }
                                         	    }
 
@@ -98,6 +100,7 @@
                                         	});
                                         });
 
+									});
 									});
 									$(appendTo).append($viewEntry);	
 								});

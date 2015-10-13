@@ -111,11 +111,22 @@ define([
              */
             var overlays = [];
 
+            /**
+             * make jsPlumb overlay
+             * @param text
+             * @returns {Function}
+             */
             var makeOverlayFunction = function(text){
                 return function() {
                     return $("<div></div>").append($("<div></div>").addClass("edge_label fixed").css('color',color).text(text));
                 };
             };
+
+            /**
+             * make a jsPlumb overlay for a attribute
+             * @param attribute
+             * @returns {Function}
+             */
             var makeAttributeOverlayFunction = function(attribute){
                 return function() {
                     return $("<div></div>").append($("<div></div>").addClass("edge_label").append(attribute.get$node()));
@@ -217,6 +228,12 @@ define([
                 if(overlay){
                     that.get$overlay().find("input[name='Label']").css('visibility','hidden');
                 }
+
+                that.setDefaultPaintStyle({
+                    strokeStyle: color,
+                    lineWidth: 2
+                });
+
             };
 
             /**
@@ -228,10 +245,7 @@ define([
                 var connectOptions = {
                     source: source.get$node(),
                     target: target.get$node(),
-                    paintStyle:{
-                        strokeStyle: color,
-                        lineWidth: 2
-                    },
+                    paintStyle:that.getDefaultPaintStyle(),
                     endpoint: "Blank",
                     anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
                     connector: shape,
@@ -274,9 +288,6 @@ define([
              */
             this.restyle = function(arrowType, color, shapeType, overlay, overlayPosition, overlayRotate, attributes){
                 overlays = [];
-                that.getJsPlumbConnection().removeAllOverlays();
-
-                //that.get$overlay().remove();
 
                 color = color ? $colorTestElement.css('color','#aaaaaa').css('color',color).css('color') : '#aaaaaa';
 
@@ -323,38 +334,35 @@ define([
                 if(overlay){
                     that.get$overlay().find("input[name='Label']").css('visibility','hidden');
                 }
-                /* TODO reference für attribute, rework the whole attributes mapping in views
+
+
                 for(var attributeId in attributes){
                     if(attributes.hasOwnProperty(attributeId)){
                         var attribute = attributes[attributeId];
                         switch(attribute.position){
                             case "top":
                                 overlays.push(["Custom", {
-                                    create:makeAttributeOverlayFunction(attribute),
+                                    create:makeAttributeOverlayFunction(that.getAttribute(attributeId)),
                                     location:1,
                                     id:"label "+attributeId
                                 }]);
                                 break;
                             case "center":
                                 overlays.push(["Custom", {
-                                    create:makeAttributeOverlayFunction(attribute),
+                                    create:makeAttributeOverlayFunction(that.getAttribute(attributeId)),
                                     location:0.5,
                                     id:"label "+attributeId
                                 }]);
                                 break;
                             case "bottom":
                                 overlays.push(["Custom", {
-                                    create:makeAttributeOverlayFunction(attribute),
+                                    create:makeAttributeOverlayFunction(that.getAttribute(attributeId)),
                                     location:0,
                                     id:"label "+attributeId
                                 }]);
                                 break;
                         }
                     }
-                }*/
-
-                for(var i=0;i<overlays.length;i++) {
-                    that.getJsPlumbConnection().addOverlay(overlays[i]);
                 }
 
                 var paintStyle ={
@@ -362,10 +370,18 @@ define([
                     lineWidth: 2
                 };
 
-                that.getJsPlumbConnection().setPaintStyle(paintStyle);
+
                 that.setDefaultPaintStyle(paintStyle);
                 that.setRotateOverlay(overlayRotate);
-                that.repaintOverlays();
+
+                if(that.getJsPlumbConnection()){ //if the edge is drawn on the canvas
+                    that.getJsPlumbConnection().removeAllOverlays();
+                    for(var i=0;i<overlays.length;i++) {
+                        that.getJsPlumbConnection().addOverlay(overlays[i]);
+                    }
+                    that.getJsPlumbConnection().setPaintStyle(paintStyle);
+                    that.repaintOverlays();
+                }
 
             };
 

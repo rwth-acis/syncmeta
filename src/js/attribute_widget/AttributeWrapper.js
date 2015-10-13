@@ -65,12 +65,11 @@ define([
             if(operation instanceof NodeAddOperation){
                 var node;
                 var json = operation.getJSON();
-                var viewId = operation.getViewId();
                 if(json){
-                    node = EntityManager.createNodeFromJSON(operation.getType(),operation.getEntityId(),operation.getLeft(),operation.getTop(),operation.getWidth(),operation.getHeight(),operation.getJSON(),viewId);
+                    node = EntityManager.createNodeFromJSON(operation.getType(),operation.getEntityId(),operation.getLeft(),operation.getTop(),operation.getWidth(),operation.getHeight(),operation.getJSON());
                     EntityManager.addToMapIfNotExists(operation.getViewId(), json.origin,operation.getEntityId())
                 } else {
-                    node = EntityManager.createNode(operation.getType(),operation.getEntityId(),operation.getLeft(),operation.getTop(),operation.getWidth(),operation.getHeight(),null,viewId);
+                    node = EntityManager.createNode(operation.getType(),operation.getEntityId(),operation.getLeft(),operation.getTop(),operation.getWidth(),operation.getHeight());
                 }
                 node.addToWrapper(that);
             }

@@ -149,7 +149,7 @@ requirejs([
             var $lblCurrentViewId = $('#lblCurrentViewId');
             var viewpointId = $lblCurrentViewId.text();
             if(viewpointId.length > 0) {
-                var $loading = $("#loading");
+                //var $loading = $("#loading");
                 //$loading.show();
 
 

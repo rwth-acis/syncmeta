@@ -92,6 +92,36 @@ define([
             init();
 
         }
+        Edge.prototype.applyAttributeRenaming = function(renamingAttributes) {
+            var renAttr, $attr, attributes = this.getAttributes();
+            for(var attrKey in attributes){
+                if(attributes.hasOwnProperty(attrKey)){
+                    renAttr = renamingAttributes[attrKey];
+                    $attr = attributes[attrKey].get$node();
+                    if(renAttr){
+                        if(renAttr.position === 'hide'){
+                            $attr.hide();
+                        }
+                        else {
+                            $attr.find('.name').text(renAttr.key);
+                            if($attr.is(':hidden')){
+                                $attr.show();
+                            }
+                        }
+                    }
+                    else{
+                        $attr.hide();
+                    }
+                }
+            }
+        };
+
+        Edge.getType = function(){
+            return type;
+        };
+        Edge.getAttributes = function(){
+            return attributes;
+        };
         return Edge;
     }
 

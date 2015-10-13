@@ -59,6 +59,8 @@ define([
              */
             var _$node = AbstractNode.prototype.get$node.call(this).append($template);
 
+
+
             var init = function(){
                 var attribute, attributeId, attrObj = {};
 
@@ -106,7 +108,36 @@ define([
             init();
 
         }
+        Node.prototype.applyAttributeRenaming = function(renamingAttributes){
+            var renAttr, $attr, attributes = this.getAttributes();
+            for(var attrKey in attributes){
+                if(attributes.hasOwnProperty(attrKey)){
+                    renAttr = renamingAttributes[attrKey];
+                    $attr = attributes[attrKey].get$node();
+                    if(renAttr){
+                        if(renAttr.visibility === 'hide'){
+                            $attr.hide();
+                        }
+                        else {
+                            $attr.find('.name').text(renAttr.key);
+                            if($attr.is(':hidden')){
+                                $attr.show();
+                            }
+                        }
+                    }
+                    else{
+                        $attr.hide();
+                    }
+                }
+            }
+        };
 
+        Node.getType = function(){
+            return type;
+        };
+        Node.getAttributes = function(){
+            return attributes;
+        };
         return Node;
     }
 

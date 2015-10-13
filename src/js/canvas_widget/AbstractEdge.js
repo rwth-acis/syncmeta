@@ -233,6 +233,14 @@ define([
         };
 
         /**
+         * Get the default paint style
+         * @returns {*}
+         */
+        this.getDefaultPaintStyle = function(){
+            return _defaultPaintStyle;
+        };
+
+        /**
          * Send NodeDeleteOperation for node
          */
         this.triggerDeletion = function(){
