@@ -6,13 +6,14 @@ define([
     function GhostEdge(canvas, edgeFunction, source, target){
         var _jsPlumbConnection = null;
         var label = edgeFunction.getType();
-        var _button = $(`<button class='bs-btn bs-btn-default bs-btn-xs'><i class='fa fa-plus'></i>${label}</button>`);
+        var _button = $(`<button class='bs-btn bs-btn-default bs-btn-xs'><i class='fa fa-plus' style='margin-right:5px;'></i>${label}</button>`);
         var _canvas = canvas;
+        var that = this;
 
         _button.click(function(event){
             event.stopPropagation();
             _canvas.createEdge(edgeFunction.getType(),source.getEntityId(),target.getEntityId());
-            jsPlumb.detach(_jsPlumbConnection);
+            that.remove();
         });
         this.connect = function(){
             var overlays = edgeFunction.getArrowOverlays();
@@ -47,7 +48,9 @@ define([
         };
 
         this.remove = function(){
-
+            if(_jsPlumbConnection)
+                jsPlumb.detach(_jsPlumbConnection);
+            _jsPlumbConnection = null;
         };
     };
 

@@ -1108,7 +1108,7 @@ define([
                         var successors = getFlowSuccessors(nodeId);
                         graph.setNode(nodeId, {
                             "type": "INITIAL_NODE",
-                            "name": getAttributeValue(node, "name")
+                            "name": getAttributeValue(node, "label")
                         });
                         for(var i = 0; i < successors.targets.length; i++){
                             graph.setEdge(nodeId, successors.targets[i], successors.labels[i]);

@@ -108,6 +108,7 @@ define([
 
         var _guidanceBox = null;
         var _guidanceDefinition = null;
+        var _ghostEdges = [];
 
         /**
          * Apply a Tool Select Operation
@@ -422,6 +423,7 @@ define([
         };
 
         this.showGuidanceBox = function(entityId){
+            this.hideGuidanceBox();
             console.log("Show guidance box");
             console.log(_guidanceDefinition);
             var entity;
@@ -445,6 +447,7 @@ define([
                 height: entityAppearance.height
             };
             appearance.top += entityAppearance.height + 10;
+            appearance.left += entityAppearance.width / 2;
             _guidanceBox = new GuidanceBox(Util.generateRandomId(), appearance.left, appearance.top);
             for(var i = 0; i < _guidanceDefinition.length; i++){
                 var guidanceItem = null;
@@ -471,6 +474,10 @@ define([
             if(_guidanceBox !== null)
                 _guidanceBox.remove();
             _guidanceBox = null;
+            for(var i = 0; i < _ghostEdges.length; i++){
+                _ghostEdges[i].remove();
+            }
+            _ghostEdges = [];
         };
 
         this.showObjectGuidance = function(){
@@ -690,6 +697,7 @@ define([
             var target = EntityManager.findNode(targetId);
             var edge = new GhostEdge(that, EntityManager.getEdgeType(relationshipType), source, target)
             edge.connect();
+            _ghostEdges.push(edge);
         };
 
         this.highlightNode = function(nodeId){

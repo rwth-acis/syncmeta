@@ -30,8 +30,9 @@ define([
         };
 
         this.draw = function(){
+            var width = _$node.width();
             _$node.css({
-                left: _appearance.left,
+                left: _appearance.left - width / 2,
                 top: _appearance.top,
                 zIndex: 30000
             });

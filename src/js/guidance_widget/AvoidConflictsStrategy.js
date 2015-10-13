@@ -5,8 +5,11 @@ define(['guidance_widget/GuidanceStrategy'
         init: function(logicalGuidanceDefinition, space){
             this._super(logicalGuidanceDefinition, space);
             this.initialNodes = this.logicalGuidanceDefinition.sources();
-            this.expectedActions = [];
             this.nodeMappings = {};
+            this.activityStatusList = {};
+            this.lastCreatedObjectId = "";
+
+            this.resetActivityStatusList();
         },
         onEntitySelect: function(entityId, entityType){
         },
@@ -27,102 +30,123 @@ define(['guidance_widget/GuidanceStrategy'
             // }
         },
         onNodeAdd: function(id, type){
-            //If there are no expected actions anticipate the next action based
-            //on the starting actions of activities
-            var expected = [];
-            if(this.expectedActions.length == 0){
-                for(var i = 0; i < this.initialNodes.length; i++){
-                    var successors = this.logicalGuidanceDefinition.successors(this.initialNodes[i]);
-                    for(var j = 0; j < successors.length; j++){
-                        var successor = this.logicalGuidanceDefinition.node(successors[j]);
-                        console.log(successor);
-                        if(successor.type == "CREATE_OBJECT_ACTION" && successor.objectType == type){
-                            expected = expected.concat(this.logicalGuidanceDefinition.successors(successors[j]));
-                            this.nodeMappings[successor.createdObjectId] = id;
-                        }
+            this.lastCreatedObjectId = id;
+            for(var activityId in this.activityStatusList){
+                var activityStatus = this.activityStatusList[activityId];
+                for(var i = 0; i < activityStatus.currentNodes.length; i++){
+                    var nodeId = activityStatus.currentNodes[i];
+                    var node = this.logicalGuidanceDefinition.node(nodeId);
+                    if(node.type == "CREATE_OBJECT_ACTION" && node.objectType == type){
+                        this.nodeMappings[node.createdObjectId] = id;
+                        this.proceedInActivity(activityId, nodeId);
                     }
                 }
-                this.expectedActions = expected;
-                this.resolveMergeNodes();
-                this.showExpectedActions(id);
             }
-            else{
-                for(var i = 0; i < this.expectedActions.length; i++){
-                    var action = this.logicalGuidanceDefinition.node(this.expectedActions[i]);
-                    if(action.type == "CREATE_OBJECT_ACTION" && action.objectType == type){
-                        expected = expected.concat(this.logicalGuidanceDefinition.successors(this.expectedActions[i]));
-                        this.nodeMappings[action.createdObjectId] = id;
-                    }
-                }
-                this.expectedActions = expected;
-                this.resolveMergeNodes();
-                this.showExpectedActions(id);
-            }
+            this.showExpectedActions(id);
         },
         onEdgeAdd: function(id, type){
-            var expected = [];
-            for(var i = 0; i < this.expectedActions.length; i++){
-                var action = this.logicalGuidanceDefinition.node(this.expectedActions[i]);
-                if(action.type == "CREATE_RELATIONSHIP_ACTION" && action.relationshipType == type){
-                    expected = expected.concat(this.logicalGuidanceDefinition.successors(this.expectedActions[i]));
+            for(var activityId in this.activityStatusList){
+                var activityStatus = this.activityStatusList[activityId];
+                for(var i = 0; i < activityStatus.currentNodes.length; i++){
+                    var nodeId = activityStatus.currentNodes[i];
+                    var node = this.logicalGuidanceDefinition.node(nodeId);
+                    if(node.type == "CREATE_RELATIONSHIP_ACTION" && node.relationshipType == type){
+                        this.proceedInActivity(activityId, nodeId);
+                    }
                 }
             }
-            this.expectedActions = expected;
-            this.resolveMergeNodes();
-            //this.showExpectedActions(id);
+            this.showExpectedActions(this.lastCreatedObjectId);
         },
         showExpectedActions: function(entityId){
             var guidanceItems = [];
-            for(var i = 0; i < this.expectedActions.length; i++){
-                var action = this.logicalGuidanceDefinition.node(this.expectedActions[i]);
-                console.log(action);
-                switch(action.type){
-                case "SET_PROPERTY_ACTION":
-                    guidanceItems.push({
-                        "id": "12345",
-                        "type": "SET_PROPERTY_GUIDANCE",
-                        "label": "Set " + action.propertyName + " property",
-                        "entityId": this.nodeMappings[action.sourceObjectId],
-                        "propertyName": action.propertyName
-                    });
-                    break;
-                case "CREATE_OBJECT_ACTION":
-                    guidanceItems.push({
-                        "id": "12345",
-                        "type": "SELECT_TOOL_GUIDANCE",
-                        "label": action.objectType,
-                        "tool": action.objectType
-                    });
-                    break;
-                case "CREATE_RELATIONSHIP_ACTION":
-                    guidanceItems.push({
-                        "id": "12345",
-                        "type": "GHOST_EDGE_GUIDANCE",
-                        "sourceId": this.nodeMappings[action.sourceObjectId],
-                        "targetId": this.nodeMappings[action.targetObjectId],
-                        "relationshipType": action.relationshipType
-                    });
-                    break;
+            for(var activityId in this.activityStatusList){
+                var activityStatus = this.activityStatusList[activityId];
+                for(var i = 0; i < activityStatus.currentNodes.length; i++){
+                    var nodeId = activityStatus.currentNodes[i];
+                    var node = this.logicalGuidanceDefinition.node(nodeId);
 
+                    switch(node.type){
+                        case "SET_PROPERTY_ACTION":
+                        guidanceItems.push(this.createSetPropertyGuidanceItem("", node));
+                        break;
+                        case "CREATE_OBJECT_ACTION":
+                        guidanceItems.push(this.createSelectToolGuidanceItem("", node));
+                        break;
+                        case "CREATE_RELATIONSHIP_ACTION":
+                        guidanceItems.push(this.createGhostEdgeGuidanceItem("", node));
+                        break;
+                    }
                 }
             }
-            if(guidanceItems.length == 0)
-                this.expectedActions = [];
             this.showGuidanceBox(guidanceItems, entityId);
         },
-        resolveMergeNodes: function(){
-            var expected = [];
-            for(var i = 0; i < this.expectedActions.length; i++){
-                var action = this.logicalGuidanceDefinition.node(this.expectedActions[i]);
-                if(action.type == "MERGE_NODE"){
-                    var mergeSuccessors = this.logicalGuidanceDefinition.successors(this.expectedActions[i]);
-                    expected = expected.concat(mergeSuccessors);
+        createSetPropertyGuidanceItem: function(id, action){
+            var guidanceItem = {
+                "id": id,
+                "type": "SET_PROPERTY_GUIDANCE",
+                "label": "Set " + action.propertyName + " property",
+                "entityId": this.nodeMappings[action.sourceObjectId],
+                "propertyName": action.propertyName
+            };
+            return guidanceItem;
+        },
+        createSelectToolGuidanceItem: function(id, action){
+            var guidanceItem = {
+                "id": id,
+                "type": "SELECT_TOOL_GUIDANCE",
+                "label": action.objectType,
+                "tool": action.objectType
+            };
+            return guidanceItem;
+        },
+        createGhostEdgeGuidanceItem: function(id, action){
+            var guidanceItem = {
+                "id": id,
+                "type": "GHOST_EDGE_GUIDANCE",
+                "sourceId": this.nodeMappings[action.sourceObjectId],
+                "targetId": this.nodeMappings[action.targetObjectId],
+                "relationshipType": action.relationshipType
+            };
+            return guidanceItem;
+        },
+        proceedInActivity: function(activityId, nodeId){
+            var nodesToResolve = this.logicalGuidanceDefinition.successors(nodeId);
+            var currentNodes = [];
+            while(nodesToResolve.length > 0){
+                var nextNodesToResolve = [];
+                for (var i = 0; i < nodesToResolve.length; i++){
+                    var nodeId = nodesToResolve[i];
+                    var node = this.logicalGuidanceDefinition.node(nodeId);
+                    if(node.type == "SET_PROPERTY_ACTION"){
+                        currentNodes.push(nodeId);
+                        nextNodesToResolve = nextNodesToResolve.concat(this.logicalGuidanceDefinition.successors(nodeId));
+                    }
+                    else if(node.type == "MERGE_NODE"){
+                        nextNodesToResolve = nextNodesToResolve.concat(this.logicalGuidanceDefinition.successors(nodeId));
+                    }
+                    else{
+                        currentNodes.push(nodeId);
+                    }
                 }
-                else{
-                    expected.push(this.expectedActions[i]);
-                }
+                nodesToResolve = nextNodesToResolve;
             }
-            this.expectedActions = expected;
+            
+            var activityStatus = this.activityStatusList[activityId];
+            activityStatus.currentNodes = currentNodes;
+            console.log("Proceed in Activity!");
+            console.log(activityStatus);
+        },
+        resetActivityStatusList: function(){
+            this.activityStatusList = {};
+            for(var i = 0; i < this.initialNodes.length; i++){
+                var nodeId = this.initialNodes[i];
+                var nodeData = this.logicalGuidanceDefinition.node(nodeId);
+                this.activityStatusList[nodeId] = {
+                    name: nodeData.name,
+                    currentNodes: [nodeId]
+                }
+                this.proceedInActivity(nodeId, nodeId);
+            }
         }
     });
 
