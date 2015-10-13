@@ -27,10 +27,11 @@ define([
     'text!templates/canvas_widget/start_activity_node.html',
     'text!templates/canvas_widget/action_node.html',
     'text!templates/guidance_modeling/entity_node.html',
+    'text!templates/guidance_modeling/call_activity_node.html',
     'promise!Metamodel',
     'promise!Guidancemodel',
     'graphlib'
-],/** @lends EntityManager */function(_,Util,AbstractEntity,Node,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,ModelAttributesNode,Edge,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge,ContextNode,ObjectToolNode,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,setPropertyNodeHtml,activityFinalNodeHtml,startActivityNodeHtml,actionNodeHtml,entityNodeHtml,metamodel, guidancemodel, graphlib) {
+],/** @lends EntityManager */function(_,Util,AbstractEntity,Node,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,ModelAttributesNode,Edge,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge,ContextNode,ObjectToolNode,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,setPropertyNodeHtml,activityFinalNodeHtml,startActivityNodeHtml,actionNodeHtml,entityNodeHtml,callActivityNodeHtml,metamodel, guidancemodel, graphlib) {
 
     /**
      * Predefined node shapes, first is default
@@ -685,9 +686,9 @@ define([
                     shape: {
                         shape: "rounded_rectangle",
                         color: "",
-                        defaultWidth: 0,
-                        defaultHeight: 0,
-                        customShape: "",
+                        defaultWidth: 100,
+                        defaultHeight: 50,
+                        customShape: callActivityNodeHtml,
                         customAnchors: ""
                     },
                     attributes: {
@@ -698,7 +699,7 @@ define([
 
                 //Add a label attribute to the call activity node
                 callActivityNode.attributes[Util.generateRandomId()] = {
-                    key: "name",
+                    key: "label",
                     value: "string"
                 };
 
