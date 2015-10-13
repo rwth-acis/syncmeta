@@ -6,7 +6,7 @@ define([
     function GhostEdge(canvas, edgeFunction, source, target){
         var _jsPlumbConnection = null;
         var label = edgeFunction.getType();
-        var _button = $(`<button class='bs-btn bs-btn-default bs-btn-xs'><i class='fa fa-plus' style='margin-right:5px;'></i>${label}</button>`);
+        var _button = $(`<button class='bs-btn bs-btn-default bs-btn-xs' style="z-index: 30000;"><i class='fa fa-plus' style='margin-right:5px;'></i>${label}</button>`);
         var _canvas = canvas;
         var that = this;
 
@@ -22,7 +22,8 @@ define([
                     return $("<div></div>").append(_button);                
                 },
                 location:0.5,
-                id:"customOverlay"
+                id:"customOverlay",
+                cssClass: "ghost-edge-overlay"
             }]);
             var connectOptions = {
                 source: source.get$node(),

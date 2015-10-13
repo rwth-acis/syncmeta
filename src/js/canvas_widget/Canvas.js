@@ -429,6 +429,8 @@ define([
             var entity;
             if(_guidanceDefinition === null)
                 return;
+            if(_guidanceDefinition.length == 0)
+                return;
             if(typeof(entityId) == 'undefined')
                 entity = _selectedEntity;
             else{

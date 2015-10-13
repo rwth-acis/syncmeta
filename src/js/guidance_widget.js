@@ -13,9 +13,10 @@ requirejs([
     'operations/ot/NodeAddOperation',
     'operations/ot/EdgeAddOperation',
     'guidance_widget/NoStrategy',
-    'guidance_widget/AvoidConflictsStrategy',
+    'guidance_widget/SingleUserGuidanceStrategy',
     'promise!LogicalGuidanceDefinition',
-    'promise!Space'
+    'promise!Space',
+    'bootstrap'
 ],function ($, _, require, IWCW, EntitySelectOperation, ObjectGuidanceFollowedOperation, NodeAddOperation, EdgeAddOperation, NoStrategy, AvoidConflictsStrategy, LogicalGuidanceDefinition, Space) {
     var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.GUIDANCE);
     var strategies = [
@@ -24,18 +25,18 @@ requirejs([
     ];
     var selectedStrategy = new strategies[0](LogicalGuidanceDefinition, Space);
 
-    var $strategies = $("<div class='strategies'><select></select></div>");
-    $('#guidance').append($strategies);
+    var $strategies = $("#guidanceSelect");
 
     for(var i = 0; i < strategies.length; i++){
         var strategy = strategies[i];
-        var $strategy = $(_.template("<option>${name}</option>")({name: strategy.NAME}));
-        $strategy.val(i);
-        $strategies.find("select").append($strategy);
+        var $strategy = $(_.template("<li><a href='javascript:;'><i class='fa fa-${icon}' style='margin-right:5px;'></i>${name}</a></li>")({name: strategy.NAME, icon: strategy.ICON}));
+        $strategy.find("a").val(i);
+        $strategies.append($strategy);
     }
-    $strategies.find("select").change(function(){
+    $strategies.find("a").click(function(){
         var index = $(this).val();
         selectedStrategy = new strategies[index](LogicalGuidanceDefinition, Space);
+        $("#strategyButton").text(strategies[index].NAME);
     });
 
     var operationCallback = function(operation){

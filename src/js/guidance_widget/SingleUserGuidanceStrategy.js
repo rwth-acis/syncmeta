@@ -1,7 +1,7 @@
 define(['guidance_widget/GuidanceStrategy'
 ],function(GuidanceStrategy) {
 
-    var AvoidConflictStrategy = GuidanceStrategy.extend({
+    var SingleUserGuidanceStrategy = GuidanceStrategy.extend({
         init: function(logicalGuidanceDefinition, space){
             this._super(logicalGuidanceDefinition, space);
             this.initialNodes = this.logicalGuidanceDefinition.sources();
@@ -150,8 +150,9 @@ define(['guidance_widget/GuidanceStrategy'
         }
     });
 
-    AvoidConflictStrategy.NAME = "Avoid Conflicts Strategy";
+    SingleUserGuidanceStrategy.NAME = "Single User Guidance Strategy";
+    SingleUserGuidanceStrategy.ICON = "user";
 
-    return AvoidConflictStrategy;
+    return SingleUserGuidanceStrategy;
 
 });
