@@ -80,7 +80,7 @@ define([
                         resOperation = new SetViewTypesOperation(data.flag);
                         break;
                     case InitModelTypesOperation.TYPE:
-                        resOperation = new InitModelTypesOperation(data.vls);
+                        resOperation = new InitModelTypesOperation(data.vls, data.startViewGeneration);
                         break;
                     case ViewInitOperation.TYPE:
                         resOperation = new ViewInitOperation(data.data, data.viewpoint);

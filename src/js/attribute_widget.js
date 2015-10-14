@@ -76,17 +76,22 @@ requirejs([
         }
         else if(operation instanceof InitModelTypesOperation) {
             var vvs = operation.getVLS();
+
             if (vvs.hasOwnProperty('id')) {
                 EntityManager.initViewTypes(vvs);
-                require(['promise!Metamodel'],function(metamodel){
-                    ViewGenerator.generate(metamodel, vvs);
-                });
+                if(operation.getViewGenerationFlag()) {
+                    require(['promise!Metamodel'], function (metamodel) {
+                        ViewGenerator.generate(metamodel, vvs);
+                    });
+                }
 
             }else{
                 EntityManager.setViewId(null);
-                require(['promise!Metamodel'],function(metamodel){
-                    ViewGenerator.reset(metamodel);
-                });
+                if(operation.getViewGenerationFlag()) {
+                    require(['promise!Metamodel'], function (metamodel) {
+                        ViewGenerator.reset(metamodel);
+                    });
+                }
             }
         }
         else if(operation instanceof ViewInitOperation){

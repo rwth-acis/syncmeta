@@ -9,14 +9,17 @@ define([
      * @class operations.non_ot.InitModelTypesOperation
      * @memberof operations.non_ot
      * @constructor
-     * @param {string} p_vls the visual language specification
+     * @param {string} vls the visual language specification
+     * @param {bool} startViewGeneration
      */
-    function InitModelTypesOperation(p_vls){
+    function InitModelTypesOperation(vls, startViewGeneration){
         /**
          * Name of selected tool
          * @type {string}
          */
-        var  vls= p_vls;
+        var  _vls= vls;
+
+        var _startViewGeneration = startViewGeneration;
 
         /**
          * Corresponding NonOtOperation
@@ -33,6 +36,10 @@ define([
             return vls;
         };
 
+        this.getViewGenerationFlag = function(){
+            return _startViewGeneration;
+        };
+
         /**
          * Convert operation to NonOTOperation
          * @returns {operations.non_ot.NonOTOperation}
@@ -41,7 +48,7 @@ define([
             if(nonOTOperation === null){
                 nonOTOperation = new NonOTOperation(
                     InitModelTypesOperation.TYPE,
-                    JSON.stringify({vls: vls})
+                    JSON.stringify({vls: _vls, startViewGeneration: _startViewGeneration})
                 );
             }
             return nonOTOperation;

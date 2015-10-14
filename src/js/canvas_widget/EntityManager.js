@@ -175,7 +175,16 @@ define([
         }
     };
 
+    /**
+     * contains all view node types of the current view
+     * @type {{}}
+     */
     var viewNodeTypes = {};
+
+    /**
+     * contains all view edge types of the current view
+     * @type {{}}
+     */
     var viewEdgeTypes = {};
 
 	if (metamodel && metamodel.hasOwnProperty("nodes")) {
@@ -223,6 +232,11 @@ define([
 	 * @constructor
 	 */
 	function EntityManager() {
+        /**
+         * the view id indicates if the EntityManager should use View types for modeling or node types
+         * @type {string}
+         * @private
+         */
         var _viewId = null;
 
         /**
@@ -1101,32 +1115,66 @@ define([
             getEdgeType: function(type){
                 return edgeTypes.hasOwnProperty(type) ? edgeTypes[type]: null;
             },
-            //TODO Comments
+            /**
+             * initializes the node types of a view
+             * @param vvs
+             */
             initViewNodeTypes: function(vvs){
                 viewNodeTypes = _initNodeTypes(vvs);
             },
+            /**
+             * initializes the edge types of a view
+             * @param vvs
+             */
             initViewEdgeTypes: function(vvs){
                 var res = _initEdgeTypes(vvs);
                 viewEdgeTypes = res.edgeTypes;
                 relations = res.relations;
             },
+            /**
+             * initializes the node and edge types of view
+             * @param vvs
+             */
             initViewTypes: function(vvs){
                 this.setViewId(vvs.id);
                 this.initViewNodeTypes(vvs);
                 this.initViewEdgeTypes(vvs);
             },
+            /**
+             * get a view node type
+             * @param {string} type the name of the view type
+             * @returns {*}
+             */
             getViewNodeType: function(type){
                 return viewNodeTypes.hasOwnProperty(type) ? viewNodeTypes[type] : null;
             },
+            /**
+             * get a view edge type
+             * @param {string} type the name of the view edge type
+             * @returns {*}
+             */
             getViewEdgeType: function(type){
                 return viewEdgeTypes.hasOwnProperty(type) ? viewEdgeTypes[type] : null;
             },
+            /**
+             * set the identifier of the view
+             * @param {string} viewId
+             */
             setViewId:function(viewId){
                 _viewId =viewId;
             },
+            /**
+             * get the identifier of the view
+             * @returns {*}
+             */
             getViewId: function(){
                 return _viewId;
             },
+            /**
+             * get nodes by view type
+             * @param {string} type the name of the view type
+             * @returns {object} a map of objects with key as identifier and value as Node
+             */
             getNodesByViewType : function(type){
                 if(viewNodeTypes.hasOwnProperty(type)){
                     return this.getNodesByType(viewNodeTypes[type].getTargetNodeType().TYPE);

@@ -120,7 +120,7 @@ requirejs([
                     EntityManager.initViewTypes(vvs);
 
                     //send the new tools to the palette as well
-                    var operation = new InitModelTypesOperation(vvs).toNonOTOperation();
+                    var operation = new InitModelTypesOperation(vvs, true).toNonOTOperation();
                     iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation);
                     iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation);
 
@@ -154,7 +154,7 @@ requirejs([
 
 
                 //reset view
-                var operation = new InitModelTypesOperation(metamodel);
+                var operation = new InitModelTypesOperation(metamodel, true);
                 iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation.toNonOTOperation());
                 iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
 
