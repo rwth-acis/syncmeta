@@ -61,6 +61,10 @@ var require = {
 };
 
 CONFIG = {
+    LAYER:{
+        META: "META",
+        MODEL: "MODEL"
+    },
     WIDGET: {
         NAME: {
             MAIN: "MAIN",

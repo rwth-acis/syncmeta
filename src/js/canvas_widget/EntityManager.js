@@ -46,6 +46,8 @@ define([
 	 */
 	var $colorTestElement = $('<div></div>');
 
+    var _layer = null;
+
 	/**
 	 * Different node types
 	 * @type {object}
@@ -139,6 +141,7 @@ define([
 
                 if(node.hasOwnProperty('targetName') && !$.isEmptyObject(nodeTypes) && nodeTypes.hasOwnProperty(node.targetName)){
                     _nodeTypes[node.label] = ViewNode(node.label, $shape, anchors, node.attributes, nodeTypes[node.targetName]);
+                    nodeTypes[node.targetName].VIEWTYPE = node.label;
                 }
                 else {
                     _nodeTypes[node.label] = Node(node.label, $shape, anchors, node.attributes);
@@ -161,6 +164,7 @@ define([
 
                 if(edge.hasOwnProperty('targetName') && !$.isEmptyObject(edgeTypes) && edgeTypes.hasOwnProperty(edge.targetName)){
                     _edgeTypes[edge.label] = ViewEdge(edge.label, edge.shape.arrow, edge.shape.shape, edge.shape.color, edge.shape.overlay, edge.shape.overlayPosition, edge.shape.overlayRotate, edge.attributes, edgeTypes[edge.targetName]);
+                    edgeTypes[edge.targetName].VIEWTYPE = edge.label;
                 }else{
                     _edgeTypes[edge.label] = Edge(edge.label, edge.shape.arrow, edge.shape.shape, edge.shape.color, edge.shape.overlay, edge.shape.overlayPosition, edge.shape.overlayRotate, edge.attributes);
                 }
@@ -189,6 +193,7 @@ define([
 
 	if (metamodel && metamodel.hasOwnProperty("nodes")) {
 	    nodeTypes = _initNodeTypes(metamodel);
+        _layer = CONFIG.LAYER.MODEL;
 	} else {
 		nodeTypes[ObjectNode.TYPE] = ObjectNode;
 		nodeTypes[AbstractClassNode.TYPE] = AbstractClassNode;
@@ -202,6 +207,7 @@ define([
         nodeTypes[ViewObjectNode.TYPE] = ViewObjectNode;
         nodeTypes[ViewRelationshipNode.TYPE] = ViewRelationshipNode;
 
+        _layer = CONFIG.LAYER.META;
 	}
 
 	/**
@@ -1180,6 +1186,13 @@ define([
                     return this.getNodesByType(viewNodeTypes[type].getTargetNodeType().TYPE);
                 }
                 return null;
+            },
+            /**
+             * Get the current layer you are operating on
+             * @returns {string} CONFIG.LAYER.META or CONFIG.LAYER.MODEL
+             */
+            getLayer: function(){
+                return _layer;
             }
 
         };

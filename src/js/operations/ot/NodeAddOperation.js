@@ -19,32 +19,15 @@ define([
      * @param {number} height Height of node
      * @param {number} zIndex Position of node on z-axis
      * @param {object} json JSON representation of node
-     * @param {string} toCanvas the canvas widget, can be CONFIG.WIDGET.NAME.MAIN or CONFIG.WIDGET.NAME.VIEWCANVAS
      * @param {string} viewId the identifier of the view
-     * @param {string} origin the identifier of the reference node
      * @constructor
      */
-    function NodeAddOperation(entityId,type,left,top,width,height,zIndex,json, toCanvas, viewId,origin){
+    function NodeAddOperation(entityId,type,left,top,width,height,zIndex,json, viewId, oType){
         var that = this;
 
-        var _origin = origin;
 
-        this.getOrigin = function(){
-            return _origin;
-        };
-
-        this.setOrigin = function(origin){
-            _origin = origin;
-        };
 
         EntityOperation.call(this,EntityOperation.TYPES.NodeAddOperation,entityId,CONFIG.ENTITY.NODE);
-
-        /**
-         * the canvas widget, can be CONFIG.WIDGET.NAME.MAIN or CONFIG.WIDGET.NAME.VIEWCANVAS
-         * @type {string}
-         * @private
-         */
-        var _toCanvas = toCanvas;
 
         /**
          * the identifier of the view
@@ -52,6 +35,9 @@ define([
          * @private
          */
         var _viewId = viewId;
+
+        var _oType = oType;
+
         /**
          * Type of node to add
          * @type {String}
@@ -116,9 +102,8 @@ define([
                     height: _height,
                     zIndex: _zIndex,
                     json: _json,
-                    toCanvas: _toCanvas,
                     viewId:_viewId,
-                    origin:_origin
+                    oType: _oType
                 }),
                 CONFIG.OPERATION.TYPE.INSERT,
                 CONFIG.IWC.POSITION.NODE.ADD
@@ -131,6 +116,10 @@ define([
          */
         this.getType = function(){
             return _type;
+        };
+
+        this.getOriginType = function(){
+            return _oType;
         };
 
         /**
@@ -181,13 +170,6 @@ define([
             return _json;
         };
 
-        /**
-         * the name of the canvas widget
-         * @returns {string}
-         */
-        this.getToCanvas = function(){
-            return _toCanvas;
-        };
 
         /**
          * the identifier of the view

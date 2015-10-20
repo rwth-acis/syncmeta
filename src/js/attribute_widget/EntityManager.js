@@ -42,6 +42,7 @@ define([
                 node = nodes[nodeId];
                 if(node.hasOwnProperty('targetName') && !$.isEmptyObject(nodeTypes) && nodeTypes.hasOwnProperty(node.targetName)){
                     _nodeTypes[node.label] = ViewNode(node.label, node.attributes, nodeTypes[node.targetName]);
+                    nodeTypes[node.targetName].VIEWTYPE = node.label;
                 }
                 else {
                     _nodeTypes[node.label] = Node(node.label, node.shape.shape, node.shape.customShape, node.shape.customAnchors, node.shape.color, node.attributes);
@@ -61,6 +62,7 @@ define([
                 edge = edges[edgeId];
                 if(edge.hasOwnProperty('targetName') && !$.isEmptyObject(edgeTypes) && edgeTypes.hasOwnProperty(edge.targetName)){
                     _edgeTypes[edge.label] = ViewEdge(edge.attributes, edgeTypes[edge.targetName]);
+                    edgeTypes[edge.targetName].VIEWTYPE = edge.label;
                 }else {
                     _edgeTypes[edge.label] = Edge(edge.label, edge.shape.arrow, edge.shape.shape, edge.shape.color, edge.shape.overlay, edge.shape.overlayPosition, edge.shape.overlayRotate, edge.attributes);
                 }

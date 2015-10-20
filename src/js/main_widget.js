@@ -260,6 +260,7 @@ requirejs([
                     canvas.resetTool();
                     $('#lblCurrentView').hide();
                     $lblCurrentViewId.text("");
+                    EntityManager.setViewId(null);
                     $loading.hide();
                 })
             }
@@ -313,6 +314,7 @@ requirejs([
             ViewToGraph(viewData,viewpointData);
             $('#lblCurrentView').show();
             $('#lblCurrentViewId').text(viewData.id);
+            EntityManager.setViewId(viewData.id);
             canvas.resetTool();
             $("#loading").hide();
         });

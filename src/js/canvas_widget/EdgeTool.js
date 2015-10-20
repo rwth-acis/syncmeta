@@ -63,7 +63,7 @@ define([
                 if(nodes.hasOwnProperty(nodeId)){
                     node = nodes[nodeId];
                     node.lowlight();
-                    if(EntityManager.getViewId() === null) {
+                    if(EntityManager.getViewId() === null || EntityManager.getLayer() === CONFIG.LAYER.META) {
                         nodeType = node.getType();
                         strGetNodesByType = 'getNodesByType';
                     }
@@ -90,7 +90,7 @@ define([
                     numOfRelations,
                     strGetNodesByType;
                 if(sourceNode){
-                    if(EntityManager.getViewId() === null) {
+                    if(EntityManager.getViewId() === null || EntityManager.getLayer() === CONFIG.LAYER.META) {
                         sourceType = sourceNode.getType();
                         strGetNodesByType = 'getNodesByType';
                     }

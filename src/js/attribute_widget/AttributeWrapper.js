@@ -63,13 +63,28 @@ define([
          */
         var nodeAddCallback = function(operation){
             if(operation instanceof NodeAddOperation){
-                var node;
+                var node, type;
+                if (operation.getViewId() === EntityManager.getViewId()) {
+                    type = operation.getType();
+                }
+                else {
+                    if (!operation.getViewId()) {
+                        type = operation.getType();
+                    }
+                    else {
+                        type = operation.getOriginType();
+                    }
+                    if (EntityManager.getViewId()) {
+                        type = EntityManager.getNodeType(type).VIEWTYPE;
+                    }
+                }
+
                 var json = operation.getJSON();
                 if(json){
-                    node = EntityManager.createNodeFromJSON(operation.getType(),operation.getEntityId(),operation.getLeft(),operation.getTop(),operation.getWidth(),operation.getHeight(),operation.getJSON());
+                    node = EntityManager.createNodeFromJSON(type,operation.getEntityId(),operation.getLeft(),operation.getTop(),operation.getWidth(),operation.getHeight(),operation.getJSON());
                     EntityManager.addToMapIfNotExists(operation.getViewId(), json.origin,operation.getEntityId())
                 } else {
-                    node = EntityManager.createNode(operation.getType(),operation.getEntityId(),operation.getLeft(),operation.getTop(),operation.getWidth(),operation.getHeight());
+                    node = EntityManager.createNode(type,operation.getEntityId(),operation.getLeft(),operation.getTop(),operation.getWidth(),operation.getHeight());
                 }
                 node.addToWrapper(that);
             }
@@ -81,16 +96,27 @@ define([
          */
         var edgeAddCallback = function(operation){
             if(operation instanceof EdgeAddOperation){
-                var edge;
-                var json = operation.getJSON();
-                var viewId = operation.getViewId();
-                if(json){
-                    edge = EntityManager.createEdgeFromJSON(operation.getType(),operation.getEntityId(),operation.getSource(),operation.getTarget(),json,viewId);
-                    if(json.hasOwnProperty('origin'))
-                        EntityManager.addToMapIfNotExists(operation.getViewId(), json.origin, operation.getEntityId());
+                var edge, type;
 
+                if (operation.getViewId() === EntityManager.getViewId()) {
+                    type = operation.getType();
+                }
+                else {
+                    if (!operation.getViewId()) {
+                        type = operation.getType();
+                    }
+                    else {
+                        type = operation.getOriginType();
+                    }
+                    if (EntityManager.getViewId()) {
+                        type = EntityManager.getEdgeType(type).VIEWTYPE;
+                    }
+                }
+                var json = operation.getJSON();
+                if(json){
+                    edge = EntityManager.createEdgeFromJSON(type,operation.getEntityId(),operation.getSource(),operation.getTarget(),json);
                 } else {
-                    edge = EntityManager.createEdge(operation.getType(),operation.getEntityId(),EntityManager.findNode(operation.getSource()),EntityManager.findNode(operation.getTarget()),null,viewId);
+                    edge = EntityManager.createEdge(type,operation.getEntityId(),EntityManager.findNode(operation.getSource()),EntityManager.findNode(operation.getTarget()));
                 }
                 edge.addToWrapper(that);
             }

@@ -141,9 +141,8 @@ define([
                                                 value.height,
                                                 value.zIndex,
                                                 value.json,
-                                                value.toCanvas,
                                                 value.viewId,
-                                                value.origin
+                                                value.oType
                                             );
                                             break;
                                         case CONFIG.OPERATION.TYPE.UPDATE:
@@ -197,7 +196,7 @@ define([
                                         value.target,
                                         value.json,
                                         value.viewId,
-                                        value.origin
+                                        value.oType
                                     );
                                     break;
                                 case CONFIG.OPERATION.TYPE.UPDATE:
