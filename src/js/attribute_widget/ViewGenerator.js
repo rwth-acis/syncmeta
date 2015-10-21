@@ -76,19 +76,6 @@ define(['attribute_widget/EntityManager'], /**@lends ViewGenerator*/ function (E
             }
         }
 
-        //Hide the other types
-        var nodeTypes = vls.nodes;
-        for(var nodeTypeKey in nodeTypes){
-            if(nodeTypes.hasOwnProperty(nodeTypeKey)&& !_processed.hasOwnProperty(nodeTypeKey)){
-                var nodes = EntityManager.getNodesByType(nodeTypes[nodeTypeKey].label);
-                for(var nodeKey in nodes){
-                    if(nodes.hasOwnProperty(nodeKey)){
-                        nodes[nodeKey].hide();
-                    }
-                }
-            }
-        }
-
         //transform edges
         var viewpointEdges = vvs.edges;
         for(var vpEdgeKey in viewpointEdges){

@@ -1,6 +1,6 @@
 define(function () {
 
-    function makeViewEdge(type, arrowType,shapeType,color,overlay,overlayPosition,overlayRotate,attributes, edgeType){
+    function makeViewEdge(type, arrowType,shapeType,color,overlay,overlayPosition,overlayRotate,attributes, edgeType, conditions, conj){
 
         function ViewEdge(id, source, target){
             var viewEdge = new edgeType(id, source, target);
@@ -8,6 +8,14 @@ define(function () {
             viewEdge.setCurrentViewType(type);
             return viewEdge;
         }
+
+        ViewEdge.getConditions = function(){
+            return conditions;
+        };
+
+        ViewEdge.getConditionConj = function(){
+            return conj;
+        };
 
         ViewEdge.getArrowType = function(){
             return arrowType;

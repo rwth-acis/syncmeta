@@ -1,7 +1,7 @@
 define([],
     function () {
 
-    function makeViewNode(type, $shape, anchors, attributes, nodeType) {
+    function makeViewNode(type, $shape, anchors, attributes, nodeType, conditions, conj) {
 
         ViewNode.prototype.constructor = ViewNode;
         function ViewNode(id, left, top, width, height, zIndex) {
@@ -10,11 +10,18 @@ define([],
             viewNode.set$shape($shape);
             viewNode.setAnchorOptions(anchors);
             viewNode.setCurrentViewType(type);
-            //TODO attributes here
 
             return viewNode;
 
         }
+
+        ViewNode.getConditions = function(){
+          return conditions;
+        };
+
+        ViewNode.getConditionConj = function(){
+            return conj;
+        };
 
         ViewNode.get$shape = function(){
             return $shape;

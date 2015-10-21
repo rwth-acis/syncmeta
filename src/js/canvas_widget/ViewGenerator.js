@@ -12,10 +12,90 @@ define(['canvas_widget/EntityManager'], /**@lends ViewGenerator*/ function (Enti
      * @param {canvas_widget.Node} node the node
      */
     function applyNodeTypeToNode(nodeType,node){
-        node.set$shape(nodeType.get$shape());
-        node.setAnchorOptions(nodeType.getAnchors());
-        node.setCurrentViewType(nodeType.TYPE);
-        node.show();
+        if(checkConditions(nodeType, node)) {
+            node.set$shape(nodeType.get$shape());
+            node.setAnchorOptions(nodeType.getAnchors());
+            node.setCurrentViewType(nodeType.TYPE);
+            node.show();
+        }
+        else{
+            node.hide();
+        }
+    }
+
+    /**
+     * check the condition for node
+     * @param type
+     * @param entity
+     * @returns {boolean}
+     */
+    function checkConditions(type, entity){
+        if(type.name === 'Edge' || type.name === 'Node') {
+            return true;
+        }
+
+        var cond,
+            conj = type.getConditionConj(),
+            conditions = type.getConditions();
+
+
+        for(var cKey in conditions){
+            if(conditions.hasOwnProperty(cKey)){
+                cond = conditions[cKey];
+                var attr = entity.getAttribute(cond.property);
+                if(attr) {
+                    var res = resolveCondition(attr.getValue().getValue(), cond.operator, cond.value);
+                    if (conj === 'AND' && !res) {
+                        return false;
+                    }
+                    else if (conj === 'OR' && res) {
+                        return true;
+                    }
+                }
+            }
+        }
+        if(conj === 'AND') {
+            return true;
+        }
+        else if(conj === 'OR') {
+            return false;
+        }
+    }
+
+    /**
+     * resolves a condition
+     * @param attrValue the attribute value from the instance of a view type
+     * @param {string} operator the operator defined in the view type definition
+     * @param {string} value the value defined in the view type definition
+     * @returns {boolean} true if the condition is true else false
+     */
+    function resolveCondition(attrValue, operator, value){
+        var val = null;
+        try{
+            if(typeof val === 'boolean')
+                val = value;
+            else
+                val = parseInt(value);
+            if(isNaN(val))
+                val = value;
+        }
+        catch(e){
+            val = value;
+        }
+        switch(operator){
+            case 'greater':
+                return attrValue > val;
+            case 'smaller':
+                return attrValue < val;
+            case 'equal':
+                return attrValue === val;
+            case 'greater_eq':
+                return attrValue >= val;
+            case 'smaller_eq':
+                return attrValue <= val;
+            case 'nequal':
+                return attrValue != val;
+        }
     }
 
     /**
@@ -37,15 +117,21 @@ define(['canvas_widget/EntityManager'], /**@lends ViewGenerator*/ function (Enti
      * @param {canvas_widget.Edge} edge the edge to transform
      */
     function applyEdgeTypeToEdge(edgeType, edge){
-        edge.restyle(
-            edgeType.getArrowType(),
-            edgeType.getColor(),
-            edgeType.getShapeType(),
-            edgeType.getOverlay(),
-            edgeType.getOverlayPosition(),
-            edgeType.getOverlayRotate(),
-            edgeType.getAttributes());
-        edge.setCurrentViewType(edgeType.TYPE);
+        if(checkConditions(edgeType, edge)) {
+            edge.restyle(
+                edgeType.getArrowType(),
+                edgeType.getColor(),
+                edgeType.getShapeType(),
+                edgeType.getOverlay(),
+                edgeType.getOverlayPosition(),
+                edgeType.getOverlayRotate(),
+                edgeType.getAttributes());
+            edge.setCurrentViewType(edgeType.TYPE);
+        }
+        else{
+            edge.hide();
+        }
+
     }
 
     /**
@@ -110,6 +196,19 @@ define(['canvas_widget/EntityManager'], /**@lends ViewGenerator*/ function (Enti
                     applyEdgeTypeToEdges(viewEdgeTypeObject, EntityManager.getEdgesByType(viewEdgeTypeObject.getTargetEdgeType().TYPE));
                 } else{
                     //Todo new Object classes
+                }
+            }
+        }
+
+        //Hide the other types
+        var edgeTypes = vls.edges;
+        for(var edgeTypeKey in edgeTypes){
+            if(edgeTypes.hasOwnProperty(edgeTypeKey)&& !_processed.hasOwnProperty(edgeTypeKey)){
+                var edges = EntityManager.getEdgesByType(edgeTypes[edgeTypeKey].label);
+                for(var edgeKey in edges){
+                    if(edges.hasOwnProperty(edgeKey)){
+                        edges[edgeKey].hide();
+                    }
                 }
             }
         }
