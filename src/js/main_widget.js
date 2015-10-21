@@ -127,9 +127,10 @@ requirejs([
                     //init the tools for canvas
                     initTools(vvs);
 
-                    //TODO generate the view here
                     ViewManager.getViewpointData(viewId).done(function(vvs){
                         ViewGenerator.generate(metamodel,vvs);
+                        //Repaint all jsPlumb connections
+                        jsPlumb.repaintEverything();
                     });
 
                     $('#lblCurrentView').show();
@@ -163,6 +164,9 @@ requirejs([
                 initTools(metamodel);
 
                 ViewGenerator.reset(metamodel);
+
+                //Repaint all jsPlumb connections
+                jsPlumb.repaintEverything();
 
                 $('#lblCurrentView').hide();
                 $lblCurrentViewId.text("");

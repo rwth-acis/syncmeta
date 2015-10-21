@@ -63,8 +63,11 @@ define([
          */
         var nodeAddCallback = function(operation){
             if(operation instanceof NodeAddOperation){
-                var node, type;
-                if (operation.getViewId() === EntityManager.getViewId()) {
+
+
+                var node, type, viewType;
+
+                if (operation.getViewId() === EntityManager.getViewId() || EntityManager.getLayer() === CONFIG.LAYER.META) {
                     type = operation.getType();
                 }
                 else {
@@ -75,7 +78,10 @@ define([
                         type = operation.getOriginType();
                     }
                     if (EntityManager.getViewId()) {
-                        type = EntityManager.getNodeType(type).VIEWTYPE;
+                        viewType = EntityManager.getNodeType(type).VIEWTYPE;
+                        if(viewType){
+                            type = viewType;
+                        }
                     }
                 }
 
@@ -96,9 +102,9 @@ define([
          */
         var edgeAddCallback = function(operation){
             if(operation instanceof EdgeAddOperation){
-                var edge, type;
+                var edge, type, viewType;
 
-                if (operation.getViewId() === EntityManager.getViewId()) {
+                if (operation.getViewId() === EntityManager.getViewId() || EntityManager.getLayer() === CONFIG.LAYER.META) {
                     type = operation.getType();
                 }
                 else {
@@ -109,7 +115,10 @@ define([
                         type = operation.getOriginType();
                     }
                     if (EntityManager.getViewId()) {
-                        type = EntityManager.getEdgeType(type).VIEWTYPE;
+                        viewType = EntityManager.getEdgeType(type).VIEWTYPE;
+                        if(viewType){
+                            type = viewType;
+                        }
                     }
                 }
                 var json = operation.getJSON();

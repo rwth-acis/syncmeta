@@ -21,7 +21,9 @@ define([
 	], /** @lends EntityManager */
 	function (_, Node, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, ModelAttributesNode, Edge, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNode, ViewRelationshipNode, ViewNode, ViewEdge, metamodel) {
 
-	/**
+    var _layer = null;
+
+    /**
 	 * Different node types
 	 * @type {object}
 	 */
@@ -32,6 +34,7 @@ define([
      */
     var edgeTypes = {};
     var relations = {};
+
 
     var _initNodeTypes = function(vls){
         var nodes = vls.nodes,
@@ -76,7 +79,10 @@ define([
     };
 	if (metamodel && metamodel.hasOwnProperty("nodes")) {
 		nodeTypes = _initNodeTypes(metamodel);
+        _layer = CONFIG.LAYER.MODEL;
 	} else {
+        _layer = CONFIG.LAYER.META;
+
 		nodeTypes[ObjectNode.TYPE] = ObjectNode;
 		nodeTypes[AbstractClassNode.TYPE] = AbstractClassNode;
 		nodeTypes[RelationshipNode.TYPE] = RelationshipNode;
@@ -554,13 +560,28 @@ define([
              * @param vvs
              */
             initViewNodeTypes: function(vvs){
+                //delete the old view type references
+                for(var nodeTypeName in nodeTypes){
+                    if(nodeTypes.hasOwnProperty(nodeTypeName)){
+                       delete  nodeTypes[nodeTypeName].VIEWTYPE;
+                    }
+                }
+                //initialize the new
                 viewNodeTypes = _initNodeTypes(vvs);
+
             },
             /**
              * initializes the edge types of a view
              * @param vvs
              */
             initViewEdgeTypes: function(vvs){
+                //delete the old view type references
+                for(var edgeTypeName in edgeTypes){
+                    if(edgeTypes.hasOwnProperty(edgeTypeName)){
+                        delete  edgeTypes[edgeTypeName].VIEWTYPE;
+                    }
+                }
+                //initialize the new
                 var res = _initEdgeTypes(vvs);
                 viewEdgeTypes = res.edgeTypes;
                 relations = res.relations;
@@ -603,6 +624,9 @@ define([
              */
             getViewId : function(){
                 return viewId;
+            },
+            getLayer : function(){
+                return _layer;
             },
             //CVG map functions
             addToMap : function(view, key, value){

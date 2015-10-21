@@ -1126,6 +1126,12 @@ define([
              * @param vvs
              */
             initViewNodeTypes: function(vvs){
+                //delete the old view type references
+                for(var nodeTypeName in nodeTypes){
+                    if(nodeTypes.hasOwnProperty(nodeTypeName)){
+                        delete  nodeTypes[nodeTypeName].VIEWTYPE;
+                    }
+                }
                 viewNodeTypes = _initNodeTypes(vvs);
             },
             /**
@@ -1133,6 +1139,12 @@ define([
              * @param vvs
              */
             initViewEdgeTypes: function(vvs){
+                //delete the old view type references
+                for(var edgeTypeName in edgeTypes){
+                    if(edgeTypes.hasOwnProperty(edgeTypeName)){
+                        delete  edgeTypes[edgeTypeName].VIEWTYPE;
+                    }
+                }
                 var res = _initEdgeTypes(vvs);
                 viewEdgeTypes = res.edgeTypes;
                 relations = res.relations;

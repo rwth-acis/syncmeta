@@ -194,7 +194,7 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
             if (operation instanceof NodeAddOperation) {
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
 
-                if(EntityManager.getLayer() === CONFIG.LAYER.META) {
+                if(operation.getViewId() === EntityManager.getViewId()) {
                     if(operation.getViewId() === EntityManager.getViewId()) {
                         _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
                             "NodeAddActivity",
@@ -205,49 +205,47 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
                             }).toNonOTOperation());
                         processNodeAddOperation(operation);
                     }
-                } else {
-                    if (operation.getViewId() === EntityManager.getViewId()) {
-                        _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
-                            "NodeAddActivity",
-                            operation.getEntityId(),
-                            operation.getOTOperation().getSender(),
-                            NodeAddOperation.getOperationDescription(operation.getType()), {
-                                nodeType: operation.getType()
-                            }).toNonOTOperation());
-                        processNodeAddOperation(operation);
+                } else if(EntityManager.getLayer() === CONFIG.LAYER.MODEL) {
+
+                    var type, node, viewType;
+
+                    if(!operation.getViewId()){
+                        type = operation.getType();
                     }
                     else{
-                        var type, node;
-
-                        if(!operation.getViewId()){
-                            type = operation.getType();
-                        }
-                        else{
-                            type = operation.getOriginType();
-                        }
-
-                        if(EntityManager.getViewId()){
-                            type = EntityManager.getNodeType(type).VIEWTYPE;
-                        }
-                        _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
-                            "NodeAddActivity",
-                            operation.getEntityId(),
-                            operation.getOTOperation().getSender(),
-                            NodeAddOperation.getOperationDescription(type), {
-                                nodeType: type
-                            }).toNonOTOperation());
-
-                        //processNodeAddOperation
-                        if (operation.getJSON()) {
-                            node = EntityManager.createNodeFromJSON(type, operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex(), operation.getJSON());
-                        } else {
-                            node = EntityManager.createNode(type, operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex());
-                        }
-
-                        node.draw();
-                        node.addToCanvas(that);
-                        that.remountCurrentTool();
+                        type = operation.getOriginType();
                     }
+
+                    if(EntityManager.getViewId()){
+                        viewType = EntityManager.getNodeType(type).VIEWTYPE;
+                        if(viewType){
+                            type = viewType;
+                        }
+                    }
+                    _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
+                        "NodeAddActivity",
+                        operation.getEntityId(),
+                        operation.getOTOperation().getSender(),
+                        NodeAddOperation.getOperationDescription(type), {
+                            nodeType: type
+                        }).toNonOTOperation());
+
+                    //processNodeAddOperation
+                    if (operation.getJSON()) {
+                        node = EntityManager.createNodeFromJSON(type, operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex(), operation.getJSON());
+                    } else {
+                        node = EntityManager.createNode(type, operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex());
+                    }
+
+                    node.draw();
+                    node.addToCanvas(that);
+
+                    //if we are in a view but the view type got no mapping in this view -> hide the element
+                    if(!viewType && EntityManager.getViewId()){
+                        node.hide();
+                    }
+                    that.remountCurrentTool();
+
                 }
             }
         };
@@ -281,7 +279,7 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
 
                 }
                 else if(EntityManager.getLayer() === CONFIG.LAYER.MODEL){
-                    var type, edge;
+                    var type, edge, viewType;
 
                     if(!operation.getViewId()){
                         type = operation.getType();
@@ -291,7 +289,10 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
                     }
 
                     if(EntityManager.getViewId()){
-                        type = EntityManager.getEdgeType(type).VIEWTYPE;
+                        viewType = EntityManager.getEdgeType(type).VIEWTYPE;
+                        if(viewType){
+                            type = viewType;
+                        }
                     }
 
 
@@ -303,6 +304,11 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
 
                     edge.connect();
                     edge.addToCanvas(that);
+
+                    //if we are in a view but the view type got no mapping in this view -> hide the element
+                    if(!viewType && EntityManager.getViewId()){
+                        edge.hide();
+                    }
                     that.remountCurrentTool();
                 }
             }
@@ -664,7 +670,7 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
                 id= Util.generateRandomId(24);
             zIndex = zIndex || AbstractEntity.maxZIndex + 1;
 
-            if(EntityManager.getViewId() !== null){
+            if(EntityManager.getViewId() !== null && EntityManager.getLayer() === CONFIG.LAYER.MODEL){
                 oType = EntityManager.getViewNodeType(type).getTargetNodeType().TYPE;
             }
             var operation = new NodeAddOperation(id, type, left, top, width, height, zIndex, json || null, EntityManager.getViewId(), oType);
@@ -688,7 +694,7 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
                 id = identifier;
             else
                 id = Util.generateRandomId(24);
-            if(EntityManager.getViewId() !== null){
+            if(EntityManager.getViewId() !== null && EntityManager.getLayer() === CONFIG.LAYER.MODEL){
                 oType = EntityManager.getViewEdgeType(type).getTargetEdgeType().TYPE;
             }
             var operation = new EdgeAddOperation(id, type, source, target, json || null, EntityManager.getViewId(), oType);

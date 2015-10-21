@@ -275,7 +275,7 @@ define([
                 return json;
             };
 
-            //TODO rework attributes needed
+
             /**
              * restyles the edge
              * @param arrowType
@@ -387,6 +387,11 @@ define([
 
             init();
         }
+
+        Edge.prototype.hide = function(){
+            var connector = this.getJsPlumbConnection();
+            connector.setVisible(false);
+        };
 
         Edge.getArrowType = function(){
             return arrowType;
