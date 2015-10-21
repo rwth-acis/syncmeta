@@ -8,6 +8,7 @@ define(['Util','guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStat
             this.nodeMappings = {};
             this.activityStatusList = {};
             this.lastCreatedObjectId = "";
+            this.currentActivity = null;
 
             for(var i = 0; i < this.initialNodes.length; i++){
                 var nodeId = this.initialNodes[i];
@@ -32,63 +33,78 @@ define(['Util','guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStat
             //     },10000);
             // }
         },
+        checkNodeAddForActivity: function(id, type, activityStatus){
+            var activityExpectedNodes = activityStatus.getExpectedNodes();
+            for(var i = 0; i < activityExpectedNodes.length; i++){
+                var nodeId = activityExpectedNodes[i];
+                var node = this.logicalGuidanceDefinition.node(nodeId);
+                if(node.type == "CREATE_OBJECT_ACTION" && node.objectType == type){
+                    return nodeId;
+                }
+            }
+            return null;
+        },
+        checkEdgeAddForActivity: function(id, type, activityStatus){
+            var activityExpectedNodes = activityStatus.getExpectedNodes();
+            for(var i = 0; i < activityExpectedNodes.length; i++){
+                var nodeId = activityExpectedNodes[i];
+                var node = this.logicalGuidanceDefinition.node(nodeId);
+                if(node.type == "CREATE_RELATIONSHIP_ACTION" && node.relationshipType == type){
+                    return nodeId;
+                }
+            }
+            return null;
+        },
         onNodeAdd: function(id, type){
             this.lastCreatedObjectId = id;
-            for(var activityId in this.activityStatusList){
-                var activityStatus = this.activityStatusList[activityId];
-                //Check if there is a fitting expected node
-                var fittingNode = null;
-                for(var i = 0; i < activityStatus.expectedNodes.length; i++){
-                    var nodeId = activityStatus.expectedNodes[i];
-                    var node = this.logicalGuidanceDefinition.node(nodeId);
-                    if(node.type == "CREATE_OBJECT_ACTION" && node.objectType == type){
-                        fittingNode = nodeId;
-                        this.nodeMappings[node.createdObjectId] = id;
+            var nextNode = null;
+            //Check if we can proceed in the current activity
+            if(this.currentActivity){    
+                nextNode = this.checkNodeAddForActivity(id, type, this.currentActivity);
+            }
+            //If we could not proceed check if we can start a new activity
+            if(!nextNode){
+                this.currentActivity = null;
+                for(var i = 0; i < this.initialNodes.length; i++){
+                    var nodeId = this.initialNodes[i];
+                    var newActivity = new ActivityStatus(this.logicalGuidanceDefinition, nodeId);
+                    nextNode = this.checkNodeAddForActivity(id, type, newActivity);
+                    if(nextNode){
+                        this.currentActivity = newActivity;
                         break;
                     }
                 }
-                if(!fittingNode){
-                    activityStatus.reset();
-                    for(var i = 0; i < activityStatus.expectedNodes.length; i++){
-                        var nodeId = activityStatus.expectedNodes[i];
-                        var node = this.logicalGuidanceDefinition.node(nodeId);
-                        if(node.type == "CREATE_OBJECT_ACTION" && node.objectType == type){
-                            fittingNode = nodeId;
-                            this.nodeMappings[node.createdObjectId] = id;
-                            break;
-                        }
-                    }
-                }
-
-                if(fittingNode)
-                    activityStatus.proceed(fittingNode);
-
+            }
+            if(this.currentActivity){
+                var node = this.logicalGuidanceDefinition.node(nextNode);
+                this.currentActivity.setNodeMapping(node.createdObjectId, id);
+                this.currentActivity.proceed(nextNode);
             }
             this.showExpectedActions(id);
         },
         onNodeDelete: function(id, type){
-            this.showGuidanceBox([]);
+            this.showGuidanceBox("", []);
         },
         onEdgeAdd: function(id, type){
-            for(var activityId in this.activityStatusList){
-                var activityStatus = this.activityStatusList[activityId];
-                for(var i = 0; i < activityStatus.expectedNodes.length; i++){
-                    var nodeId = activityStatus.expectedNodes[i];
-                    var node = this.logicalGuidanceDefinition.node(nodeId);
-                    if(node.type == "CREATE_RELATIONSHIP_ACTION" && node.relationshipType == type){
-                        activityStatus.proceed(nodeId);
-                    }
-                }
+            var nextNode = null;
+            if(this.currentActivity){
+                nextNode = this.checkEdgeAddForActivity(id, type, this.currentActivity)
             }
+            if(nextNode)
+                this.currentActivity.proceed(nextNode);
+            else
+                this.currentActivity = null;
+            
             this.showExpectedActions(this.lastCreatedObjectId);
         },
         showExpectedActions: function(entityId){
             var guidanceItems = [];
-            for(var activityId in this.activityStatusList){
-                var activityStatus = this.activityStatusList[activityId];
-                console.log("Activity: " + activityStatus.name);
-                for(var i = 0; i < activityStatus.expectedNodes.length; i++){
-                    var nodeId = activityStatus.expectedNodes[i];
+            var activityName = "";
+
+            if(this.currentActivity){
+                activityName = this.currentActivity.getName();
+                for(var i = 0; i < this.currentActivity.getExpectedNodes().length; i++){
+                    var nodeId = this.currentActivity.getExpectedNodes()[i];
                     var node = this.logicalGuidanceDefinition.node(nodeId);
 
                     switch(node.type){
@@ -104,14 +120,14 @@ define(['Util','guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStat
                     }
                 }
             }
-            this.showGuidanceBox(guidanceItems, entityId);
+            this.showGuidanceBox(activityName, guidanceItems, entityId);
         },
         createSetPropertyGuidanceItem: function(id, action){
             var guidanceItem = {
                 "id": id,
                 "type": "SET_PROPERTY_GUIDANCE",
                 "label": "Set " + action.propertyName + " property",
-                "entityId": this.nodeMappings[action.sourceObjectId],
+                "entityId": this.currentActivity.getNodeMapping(action.sourceObjectId),
                 "propertyName": action.propertyName
             };
             return guidanceItem;
@@ -129,54 +145,11 @@ define(['Util','guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStat
             var guidanceItem = {
                 "id": id,
                 "type": "GHOST_EDGE_GUIDANCE",
-                "sourceId": this.nodeMappings[action.sourceObjectId],
-                "targetId": this.nodeMappings[action.targetObjectId],
+                "sourceId": this.currentActivity.getNodeMapping(action.sourceObjectId),
+                "targetId": this.currentActivity.getNodeMapping(action.targetObjectId),
                 "relationshipType": action.relationshipType
             };
             return guidanceItem;
-        },
-        proceedInActivity: function(activityId, nodeId){
-            var nodesToResolve = this.logicalGuidanceDefinition.successors(nodeId);
-            var currentNodes = [];
-            while(nodesToResolve.length > 0){
-                var nextNodesToResolve = [];
-                for (var i = 0; i < nodesToResolve.length; i++){
-                    var nodeId = nodesToResolve[i];
-                    var node = this.logicalGuidanceDefinition.node(nodeId);
-                    if(node.type == "SET_PROPERTY_ACTION"){
-                        currentNodes.push(nodeId);
-                        nextNodesToResolve = nextNodesToResolve.concat(this.logicalGuidanceDefinition.successors(nodeId));
-                    }
-                    else if(node.type == "MERGE_NODE"){
-                        nextNodesToResolve = nextNodesToResolve.concat(this.logicalGuidanceDefinition.successors(nodeId));
-                    }
-                    else{
-                        currentNodes.push(nodeId);
-                    }
-                }
-                nodesToResolve = nextNodesToResolve;
-            }
-            
-            var activityStatus = this.activityStatusList[activityId];
-            activityStatus.currentNodes = currentNodes;
-            console.log("Proceed in Activity!");
-            console.log(activityStatus);
-        },
-        resetActivityStatus: function(activityId){
-            this.activityStatusList[activityId].currentNodes = [activityId];
-            this.proceedInActivity(activityId, activityId);
-        },
-        resetActivityStatusList: function(){
-            this.activityStatusList = {};
-            for(var i = 0; i < this.initialNodes.length; i++){
-                var nodeId = this.initialNodes[i];
-                var nodeData = this.logicalGuidanceDefinition.node(nodeId);
-                this.activityStatusList[nodeId] = {
-                    name: nodeData.name,
-                    currentNodes: [nodeId]
-                }
-                this.proceedInActivity(nodeId, nodeId);
-            }
         }
     });
 

@@ -107,6 +107,7 @@ define([
         var _objectGuidanceInstances = [];
 
         var _guidanceBox = null;
+        var _guidanceBoxLabel = "";
         var _guidanceDefinition = null;
         var _ghostEdges = [];
 
@@ -272,8 +273,9 @@ define([
 
         var processShowGuidanceBoxOperation = function(operation){
             _guidanceDefinition = operation.getGuidance();
-            console.log("Process op");
-            console.log(operation.getEntityId());
+            _guidanceBoxLabel = operation.getLabel();
+            console.log("GUIDANCE BOX OP");
+            console.log(_guidanceBoxLabel);
             that.showGuidanceBox(operation.getEntityId());
         };
 
@@ -450,7 +452,7 @@ define([
             };
             appearance.top += entityAppearance.height + 10;
             appearance.left += entityAppearance.width / 2;
-            _guidanceBox = new GuidanceBox(Util.generateRandomId(), appearance.left, appearance.top);
+            _guidanceBox = new GuidanceBox(Util.generateRandomId(), _guidanceBoxLabel, appearance.left, appearance.top);
             for(var i = 0; i < _guidanceDefinition.length; i++){
                 var guidanceItem = null;
                 switch(_guidanceDefinition[i].type){

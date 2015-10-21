@@ -4,7 +4,7 @@ define(['guidance_widget/GuidanceStrategy'
     var NoStrategy = GuidanceStrategy.extend({
         init: function(logicalGuidanceDefinition, space){
             this._super(logicalGuidanceDefinition, space);
-            this.showGuidanceBox([]);
+            this.showGuidanceBox("", []);
         },
         onEntitySelect: function(entityId, entityType){
         },

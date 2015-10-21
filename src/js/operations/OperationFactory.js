@@ -83,7 +83,7 @@ define([
                         resOperation = new ShowObjectGuidanceOperation(data.objectId, data.objectGuidanceRules);
                         break;
                     case ShowGuidanceBoxOperation.TYPE:
-                        resOperation = new ShowGuidanceBoxOperation(data.guidance, data.entityId);
+                        resOperation = new ShowGuidanceBoxOperation(data.label, data.guidance, data.entityId);
                         break;
                     case ObjectGuidanceFollowedOperation.TYPE:
                         resOperation = new ObjectGuidanceFollowedOperation(data.objectId, data.objectGuidanceRule);

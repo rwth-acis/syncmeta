@@ -11,7 +11,7 @@ define([
      * @constructor
      * @param {string} toolName Name of selected tool
      */
-    function ShowGuidanceBoxOperation(guidance, entityId){
+    function ShowGuidanceBoxOperation(label, guidance, entityId){
 
         /**
          * Corresponding NonOtOperation
@@ -19,9 +19,14 @@ define([
          * @private
          */
         var nonOTOperation = null;
+        var _label = label;
         var _guidance = guidance;
         var _entityId = entityId
         // var _objectGuidanceRules = objectGuidanceRules;
+
+        this.getLabel = function(){
+            return _label;
+        };
 
         this.getGuidance = function(){
             return _guidance;
@@ -31,10 +36,6 @@ define([
             return _entityId;
         }
 
-        // this.getObjectGuidanceRules = function(){
-        //     return _objectGuidanceRules;
-        // }
-
         /**
          * Convert operation to NonOTOperation
          * @returns {operations.non_ot.NonOTOperation}
@@ -43,7 +44,7 @@ define([
             if(nonOTOperation === null){
                 nonOTOperation = new NonOTOperation(
                     ShowGuidanceBoxOperation.TYPE,
-                    JSON.stringify({guidance: _guidance, entityId: _entityId})
+                    JSON.stringify({label: _label, guidance: _guidance, entityId: _entityId})
                 );
             }
             return nonOTOperation;

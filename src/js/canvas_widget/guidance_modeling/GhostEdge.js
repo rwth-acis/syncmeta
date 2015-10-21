@@ -6,7 +6,7 @@ define([
     function GhostEdge(canvas, edgeFunction, source, target){
         var _jsPlumbConnection = null;
         var label = edgeFunction.getType();
-        var _button = $(`<button class='bs-btn bs-btn-default bs-btn-xs' style="z-index: 30000;"><i class='fa fa-plus' style='margin-right:5px;'></i>${label}</button>`);
+        var _button = $(`<button class='bs-btn bs-btn-default bs-btn-s' style="z-index: 30000;"><i class='fa fa-plus' style='margin-right:5px;'></i>${label}</button>`);
         var _canvas = canvas;
         var that = this;
 

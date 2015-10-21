@@ -6,11 +6,13 @@ define([
     'text!templates/canvas_widget/abstract_node.html',
     'text!templates/guidance_modeling/guidance_box_node.html'
 ],/** @lends ContextNode */function(IWCOTW, $,_,ObjectGuidanceFollowedOperation,abstractNodeHtml, guidanceBoxNodeHtml) {
-    function GuidanceBox(id, left, top){
+    function GuidanceBox(id, label, left, top){
         var _iwc = IWCOTW.getInstance(CONFIG.WIDGET.NAME.MAIN);
-
-        var _$node = $(_.template(abstractNodeHtml,{id: id})).append(guidanceBoxNodeHtml);
+        console.log("GUIDANCE BOX LABEL");
+        console.log(label);
+        var _$node = $(_.template(abstractNodeHtml,{id: id})).append(_.template(guidanceBoxNodeHtml,{label: label}));
         var _canvas;
+        var _numGuidanceItems = 0;
 
         var _appearance = {
             left: left,
@@ -25,7 +27,9 @@ define([
         };
 
         this.addGuidance = function(guidance){
-            console.log("Add guidance");
+            _numGuidanceItems++;
+            var row = Math.floor(_numGuidanceItems / 3);
+
             _$node.find(".buttons").append(guidance.get$node());
         };
 
