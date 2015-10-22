@@ -39,10 +39,13 @@ define([
                     offsetCanvas;
 
                 if (ev.which != 1) return;
-                offsetClick = $(ev.target).offset();
-                offsetCanvas = $(this).offset();
+                offsetCanvas = $canvas.offset();
+                var zoom = that.getCanvas().getZoom();
+                var nodeX = (ev.pageX - offsetCanvas.left) / zoom;
+                var nodeY = (ev.pageY - offsetCanvas.top) / zoom;
+
                 //if(this == ev.target){
-                    that.getCanvas().createNode(that.getName(),ev.originalEvent.offsetX+offsetClick.left-offsetCanvas.left,ev.originalEvent.offsetY+offsetClick.top-offsetCanvas.top,_defaultWidth,_defaultHeight);
+                    that.getCanvas().createNode(that.getName(),nodeX,nodeY,_defaultWidth,_defaultHeight);
                     //that.canvas.callListeners(CONFIG.CANVAS.LISTENERS.NODEADD,that.name,ev.originalEvent.offsetX,ev.originalEvent.offsetY,_defaultWidth,_defaultHeight);
                 //}
                 that.getCanvas().resetTool();

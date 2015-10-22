@@ -71,13 +71,9 @@ define([
             var expectedNodes = [];
             if(this.currentSubActivity){
                 expectedNodes = this.currentSubActivity.getExpectedNodes();
-                console.log("Expected nodes of subactivity:");
-                console.log(expectedNodes);
                 if(this.currentSubActivity.reachesEnd()){
-                    console.log("Sub activity reaches end!");
                     this.computeExpectedNodes();
                     expectedNodes = expectedNodes.concat(this.expectedNodes);
-                    console.log(expectedNodes);
                 }
             }
             else{
