@@ -41,8 +41,8 @@ define([
                 if (ev.which != 1) return;
                 offsetCanvas = $canvas.offset();
                 var zoom = that.getCanvas().getZoom();
-                var nodeX = (ev.pageX - offsetCanvas.left) / zoom;
-                var nodeY = (ev.pageY - offsetCanvas.top) / zoom;
+                var nodeX = (ev.pageX - offsetCanvas.left) / zoom - _defaultWidth / 2;
+                var nodeY = (ev.pageY - offsetCanvas.top) / zoom - _defaultHeight / 2;
 
                 //if(this == ev.target){
                     that.getCanvas().createNode(that.getName(),nodeX,nodeY,_defaultWidth,_defaultHeight);
