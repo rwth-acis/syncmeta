@@ -13,8 +13,6 @@ define([
             this.iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.GUIDANCE);
         },
         showGuidanceBox: function(label, guidance, entityId){
-            console.log("Show guidance box");
-            console.log(label);
             var operation = new ShowGuidanceBoxOperation(label, guidance, entityId);
             this.iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.toNonOTOperation());
         },

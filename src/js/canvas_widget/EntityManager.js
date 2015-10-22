@@ -1009,8 +1009,6 @@ define([
                     relations: [{sourceTypes: [guidancemodel.CALL_ACTIVITY_NODE_LABEL], targetTypes: [guidancemodel.INITIAL_NODE_LABEL]}]
                 };
 
-                console.log("Guidance metamodel");
-                console.log(guidanceMetamodel);
                 return guidanceMetamodel;
             },
             generateLogicalGuidanceRepresentation: function(){
@@ -1287,8 +1285,6 @@ define([
                  * @returns {object}
                  */
                 function getNodeAttributes(node,visitedNodes){
-                    console.log("GetNodeAttributes!");
-
                     var nodeAttributes, attributeId, attribute;
                     var edgeId, edge, edges;
                     var source, target;
@@ -1310,11 +1306,6 @@ define([
                             source = edge.getSource();
                             target = edge.getTarget();
 
-                            if(target instanceof EnumNode)
-                                console.log("Target is EnumNode!");
-                            if(source instanceof EnumNode)
-                                console.log("Source is EnumNode!");
-
                             //Does the node inherit attributes from a parent node?
                             if( (edge instanceof GeneralisationEdge && target instanceof AbstractClassNode) ||
                                 (edge instanceof GeneralisationEdge && node instanceof ObjectNode && target instanceof ObjectNode) ||
@@ -1328,7 +1319,6 @@ define([
                                     source === node && (neighbor = target) instanceof EnumNode)) ||
 
                                 (edge instanceof UniDirAssociationEdge && (neighbor = target) instanceof EnumNode) ){
-                                console.log("Enum node found!!!");
                                 options = {};
                                 nodeAttributes = {};
                                 Util.merge(nodeAttributes,getNodeAttributes(neighbor,[]));
@@ -1577,7 +1567,6 @@ define([
              * @returns {Deferred}
              */
             storeData: function(){
-                console.log("Save started!");
                 var resourceSpace = new openapp.oo.Resource(openapp.param.space());
 
                 var data = this.graphToJSON();
@@ -1611,7 +1600,6 @@ define([
                             doc.del();
                         },
                         onAll: function(){
-                            console.log("Deleted " + type);
                             innerDeferred.resolve();
                         }
                     });
@@ -1621,7 +1609,6 @@ define([
                             type: type,
                             representation: representation,
                             callback: function(){
-                                console.log("Saved " + type);
                                 deferred.resolve();
                             }
                         });

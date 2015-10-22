@@ -56,17 +56,14 @@ define(['Util','guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStat
             return null;
         },
         onNodeAdd: function(id, type){
-            console.log("A new node was created");
             this.lastCreatedObjectId = id;
             var nextNode = null;
             //Check if we can proceed in the current activity
             if(this.currentActivity){
-                console.log("There is a current activity. Check if it can proceed.")
                 nextNode = this.checkNodeAddForActivity(id, type, this.currentActivity);
             }
             //If we could not proceed check if we can start a new activity
             if(!nextNode){
-                console.log("There is no next node. A new activity is created if possible");
                 this.currentActivity = null;
                 for(var i = 0; i < this.initialNodes.length; i++){
                     var nodeId = this.initialNodes[i];
@@ -105,15 +102,11 @@ define(['Util','guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStat
             var activityName = "";
 
             if(this.currentActivity){
-                console.log("Show expected actions");
                 activityName = this.currentActivity.getName();
                 var activityExpectedNodes = this.currentActivity.getExpectedNodes();
-                console.log(activityExpectedNodes.length);
                 for(var i = 0; i < activityExpectedNodes.length; i++){
-                    console.log(i);
                     var nodeId = activityExpectedNodes[i];
                     var node = this.logicalGuidanceDefinition.node(nodeId);
-                    console.log(node.type);
                     switch(node.type){
                         case "SET_PROPERTY_ACTION":
                         guidanceItems.push(this.createSetPropertyGuidanceItem("", node));

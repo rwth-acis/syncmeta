@@ -274,8 +274,6 @@ define([
         var processShowGuidanceBoxOperation = function(operation){
             _guidanceDefinition = operation.getGuidance();
             _guidanceBoxLabel = operation.getLabel();
-            console.log("GUIDANCE BOX OP");
-            console.log(_guidanceBoxLabel);
             that.showGuidanceBox(operation.getEntityId());
         };
 
@@ -426,8 +424,6 @@ define([
 
         this.showGuidanceBox = function(entityId){
             this.hideGuidanceBox();
-            console.log("Show guidance box");
-            console.log(_guidanceDefinition);
             var entity;
             if(_guidanceDefinition === null)
                 return;
@@ -436,8 +432,6 @@ define([
             if(typeof(entityId) == 'undefined')
                 entity = _selectedEntity;
             else{
-                console.log("find node")
-                console.log(entityId);
                 entity = EntityManager.findNode(entityId);
             }
 
