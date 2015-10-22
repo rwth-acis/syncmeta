@@ -10,13 +10,14 @@ define([
             this.currentNode = initialNode;
             this.name = logicalGuidanceDefinition.node(initialNode).name;
             this.computeExpectedNodes();
-            this.subActivity = null;
-            this.subActivityNode = null;
+            this.currentSubActivity = null;
+            this.possibleSubActivities = [];
             this.nodeMappings = {};
         },
         computeExpectedNodes: function(){
             var nodesToResolve = this.logicalGuidanceDefinition.successors(this.currentNode);
             var expectedNodes = [];
+            this.possibleSubActivities = [];
             while(nodesToResolve.length > 0){
                 var nextNodesToResolve = [];
                 for (var i = 0; i < nodesToResolve.length; i++){
@@ -30,9 +31,9 @@ define([
                         nextNodesToResolve = nextNodesToResolve.concat(this.logicalGuidanceDefinition.successors(nodeId));
                     }
                     else if(node.type == "CALL_ACTIVITY_ACTION"){
-                        this.subActivity = new ActivityStatus(this.logicalGuidanceDefinition, node.initialNodeId);
-                        this.subActivityNode = nodeId;
-                        expectedNodes = expectedNodes.concat(this.subActivity.getExpectedNodes());
+                        var subActivity = new ActivityStatus(this.logicalGuidanceDefinition, node.initialNodeId);
+                        this.possibleSubActivities.push(subActivity);
+                        expectedNodes = expectedNodes.concat(subActivity.getExpectedNodes());
                     }
                     else{
                         expectedNodes.push(nodeId);
@@ -45,10 +46,21 @@ define([
         },
         proceed: function(nodeId){
             var node = this.logicalGuidanceDefinition.node(nodeId);
-            if(this.subActivity && this.subActivity.getExpectedNodes().indexOf(nodeId) >= 0){
-                this.subActivity.proceed(nodeId);
-                this.currentNode = this.subActivityNode;
+            //Are we entering a subactivity?
+            if(!this.currentSubActivity && this.possibleSubActivities.length > 0){
+                for(var i = 0; i < this.possibleSubActivities.length; i++){
+                    var subActivity = this.possibleSubActivities[i];
+                    if(subActivity.getExpectedNodes().indexOf(nodeId) >= 0){
+                        this.currentSubActivity = subActivity;
+                        this.currentNode = subActivity.initialNode;
+                    }
+                }
             }
+            //Are we proceeding in an active subactivity?
+            if(this.currentSubActivity && this.currentSubActivity.getExpectedNodes().indexOf(nodeId) >= 0){
+                this.currentSubActivity.proceed(nodeId);
+            }
+            //Are we proceeding in the main activity?
             else{
                 this.subActivity = null;
                 this.currentNode = nodeId;
@@ -57,11 +69,15 @@ define([
         },
         getExpectedNodes: function(){
             var expectedNodes = [];
-            if(this.subActivity && !this.subActivity.isAtStart()){
-                expectedNodes = this.subActivity.getExpectedNodes();
-                if(this.subActivity.reachesEnd()){
+            if(this.currentSubActivity){
+                expectedNodes = this.currentSubActivity.getExpectedNodes();
+                console.log("Expected nodes of subactivity:");
+                console.log(expectedNodes);
+                if(this.currentSubActivity.reachesEnd()){
+                    console.log("Sub activity reaches end!");
                     this.computeExpectedNodes();
                     expectedNodes = expectedNodes.concat(this.expectedNodes);
+                    console.log(expectedNodes);
                 }
             }
             else{
@@ -90,8 +106,8 @@ define([
         },
         getName: function(){
             var name = this.name;
-            if(this.subActivity && !this.subActivity.isAtStart())
-                name = name + " > " + this.subActivity.getName();
+            if(this.currentSubActivity)
+                name = name + " > " + this.currentSubActivity.getName();
             return name;
         },
         setNodeMapping: function(guidanceNodeId, modelNodeId){
