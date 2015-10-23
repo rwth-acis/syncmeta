@@ -1,5 +1,5 @@
-define(['Util','guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStatus'
-],function(Util,GuidanceStrategy, ActivityStatus) {
+define(['Util','guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStatus', 'text!templates/guidance_modeling/guidance_strategy_ui.html'
+],function(Util,GuidanceStrategy, ActivityStatus, guidanceStrategyUiHtml) {
 
     var SingleUserGuidanceStrategy = GuidanceStrategy.extend({
         init: function(logicalGuidanceDefinition, space){
@@ -80,6 +80,7 @@ define(['Util','guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStat
                 this.currentActivity.setNodeMapping(node.createdObjectId, id);
                 this.currentActivity.proceed(nextNode);
             }
+            this.highlightActiveActivity();
             this.showExpectedActions(id);
         },
         onNodeDelete: function(id, type){
@@ -152,6 +153,43 @@ define(['Util','guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStat
                 "relationshipType": action.relationshipType
             };
             return guidanceItem;
+        },
+        buildUi: function(){
+            var ui = $(guidanceStrategyUiHtml);
+            //Create the available guidance list
+            var guidanceList = ui.find(".guidance-list")
+            for(var i = 0; i < this.initialNodes.length; i++){
+                var nodeId = this.initialNodes[i];
+                var node = this.logicalGuidanceDefinition.node(nodeId);
+                var listItem = $("<li class='bs-list-group-item guidance-item'><p class='name'></p><p><small class='bs-text-muted description'></small></p></li>");
+                listItem.attr("id", nodeId + "guidance-text");
+                listItem.find(".name").text(node.name);
+                //Get expected start nodes to create the description text
+                var tempActivity = new ActivityStatus(this.logicalGuidanceDefinition, nodeId);
+                var expectedNodes = tempActivity.getExpectedNodes();
+
+                listItem.find(".description").text(this.getDescriptionTextForAction(expectedNodes[0]) + " to start.");
+                guidanceList.append(listItem);
+            }
+            return ui;
+        },
+        highlightActiveActivity: function(){
+            $(".guidance-item").removeClass("bs-list-group-item-info");
+            if(this.currentActivity){
+                var nodeId = this.currentActivity.initialNode;
+                $('#' + nodeId + 'guidance-text').addClass("bs-list-group-item-info");
+            }
+        },
+        getDescriptionTextForAction: function(nodeId){
+            var node = this.logicalGuidanceDefinition.node(nodeId);
+            switch(node.type){
+                case "CREATE_OBJECT_ACTION":
+                    return "Create a new " + node.objectType;
+                    break;
+                default:
+                    break;
+
+            }
         }
     });
 

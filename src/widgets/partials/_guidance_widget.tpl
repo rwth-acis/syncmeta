@@ -16,3 +16,5 @@
 </div>
 </div>
 </div>
+<div id="guidance-strategy-ui" style="height:320px; overflow:auto;">
+<div>

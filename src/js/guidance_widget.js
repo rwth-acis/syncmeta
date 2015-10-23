@@ -25,6 +25,7 @@ requirejs([
         AvoidConflictsStrategy
     ];
     var selectedStrategy = new strategies[0](LogicalGuidanceDefinition, Space);
+    selectedStrategy.buildUi();
 
     var $strategies = $("#guidanceSelect");
 
@@ -37,6 +38,8 @@ requirejs([
     $strategies.find("a").click(function(){
         var index = $(this).val();
         selectedStrategy = new strategies[index](LogicalGuidanceDefinition, Space);
+        $("#guidance-strategy-ui").empty();
+        $("#guidance-strategy-ui").append(selectedStrategy.buildUi());
         $("#strategyButton").text(strategies[index].NAME);
     });
 

@@ -119,7 +119,7 @@ module.exports = function(grunt) {
                             title: "Palette",
                             description: "",
                             width: "160",
-                            height: "700"
+                            height: "400"
                         },
                         bodyPartial: '_palette_widget.tpl'
                     }
@@ -255,7 +255,7 @@ module.exports = function(grunt) {
                             title: "Guidance widget",
                             description: "",
                             width: "300",
-                            height: "500"
+                            height: "400"
                         },
                         bodyPartial: '_guidance_widget.tpl'
                     }
