@@ -6,14 +6,19 @@ define([
     function GhostEdge(canvas, edgeFunction, source, target){
         var _jsPlumbConnection = null;
         var label = edgeFunction.getType();
-        var _button = $(`<button class='bs-btn bs-btn-default bs-btn-s' style="z-index: 30000;"><i class='fa fa-plus' style='margin-right:5px;'></i>${label}</button>`);
+        var _button = $(`<button class='bs-btn bs-btn-default bs-btn-s' style="z-index: 30000; opacity:0.4;"><i class='fa fa-plus' style='margin-right:5px;'></i>${label}</button>`);
         var _canvas = canvas;
         var that = this;
 
         _button.click(function(event){
             event.stopPropagation();
-            _canvas.createEdge(edgeFunction.getType(),source.getEntityId(),target.getEntityId());
             that.remove();
+            _canvas.createEdge(edgeFunction.getType(),source.getEntityId(),target.getEntityId());
+        });
+        _button.hover(function(){
+            $(this).css({"opacity": 1});
+        },function(){
+            $(this).css({"opacity": 0.4});
         });
         this.connect = function(){
             var overlays = edgeFunction.getArrowOverlays();
