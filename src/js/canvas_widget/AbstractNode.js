@@ -167,6 +167,8 @@ define([
          */
         var _outgoingNeighbors = {};
 
+        var _relatedGhostEdges = [];
+
         /**
          * Apply a Node Move Operation
          * @param {operations.ot.NodeMoveOperation} operation
@@ -264,6 +266,11 @@ define([
                     edge.remove();
                 }
             }
+
+            for(var i = 0; i < _relatedGhostEdges.length; i++){
+                _relatedGhostEdges[i].remove();
+            }
+
             that.remove();
         };
 
@@ -984,6 +991,10 @@ define([
                 type: _type,
                 attributes: attr
             };
+        };
+
+        this.addGhostEdge = function(ghostEdge){
+            _relatedGhostEdges.push(ghostEdge);
         };
 
         /**

@@ -10,6 +10,9 @@ define([
         var _canvas = canvas;
         var that = this;
 
+        source.addGhostEdge(this);
+        target.addGhostEdge(this);
+
         _button.click(function(event){
             event.stopPropagation();
             that.remove();
