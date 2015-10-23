@@ -8,8 +8,6 @@ define([
 ],/** @lends ContextNode */function(IWCOTW, $,_,ObjectGuidanceFollowedOperation,abstractNodeHtml, guidanceBoxNodeHtml) {
     function GuidanceBox(id, label, left, top){
         var _iwc = IWCOTW.getInstance(CONFIG.WIDGET.NAME.MAIN);
-        console.log("GUIDANCE BOX LABEL");
-        console.log(label);
         var _$node = $(_.template(abstractNodeHtml,{id: id})).append(_.template(guidanceBoxNodeHtml,{label: label}));
         var _canvas;
         var _numGuidanceItems = 0;
@@ -18,9 +16,6 @@ define([
             left: left,
             top: top
         };
-
-        //registerCallbacks();
-
 
         this.get$node = function(){
             return _$node;

@@ -952,7 +952,7 @@ define([
                 //Relations for the concurrency node
                 flowEdgeRelations = flowEdgeRelations.concat({
                     sourceTypes: [guidancemodel.CONCURRENCY_NODE_LABEL],
-                    targetTypes: [guidancemodel.ACTIVITY_FINAL_NODE_LABEL, guidancemodel.MERGE_NODE_LABEL].concat(actionNodeLabels)
+                    targetTypes: [guidancemodel.ACTIVITY_FINAL_NODE_LABEL, guidancemodel.CONCURRENCY_NODE_LABEL, guidancemodel.MERGE_NODE_LABEL].concat(actionNodeLabels)
                 });
 
                 //Create the action flow edge
@@ -960,7 +960,7 @@ define([
                     label: "Action flow edge",
                     shape: {
                         arrow: "unidirassociation",
-                        shape: "segmented",
+                        shape: "curved",
                         color: "black",
                         overlay: "",
                         overlayPosition: "top",
@@ -974,7 +974,7 @@ define([
                     label: "Data flow edge",
                     shape: {
                         arrow: "unidirassociation",
-                        shape: "straight",
+                        shape: "curved",
                         color: "blue",
                         overlay: "",
                         overlayPosition: "top",
@@ -999,7 +999,7 @@ define([
                     label: "Association edge",
                     shape: {
                         arrow: "unidirassociation",
-                        shape: "straight",
+                        shape: "curved",
                         color: "",
                         dashstyle: "4 2",
                         overlay: "",

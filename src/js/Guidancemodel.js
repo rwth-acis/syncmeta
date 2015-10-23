@@ -18,10 +18,10 @@ define([
         openapp.resource.get(act, function(resource){
             var activityName = resource.data[resource.uri]["http://purl.org/dc/terms/title"][0].value;
             guidancemodeling.INITIAL_NODE_LABEL = "Initial node";
-            guidancemodeling.MERGE_NODE_LABEL = "Merge node";
+            guidancemodeling.MERGE_NODE_LABEL = "Decision node";
             guidancemodeling.CALL_ACTIVITY_NODE_LABEL = "Call activity node";
             guidancemodeling.ACTIVITY_FINAL_NODE_LABEL = "Activity final node";
-            guidancemodeling.CONCURRENCY_NODE_LABEL = "Concurrency node";
+            guidancemodeling.CONCURRENCY_NODE_LABEL = "Fork node";
 
             guidancemodeling.isGuidanceEditor = function(){
                 return activityName == "Guidance modeling";

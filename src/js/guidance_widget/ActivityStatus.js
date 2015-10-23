@@ -1,18 +1,20 @@
 define([
+    'guidance_widget/ConcurrentRegion',
     'classjs',
     'graphlib'
-],function() {
+],function(ConcurrentRegion) {
 
     var ActivityStatus = Class.extend({
         init: function(logicalGuidanceDefinition, initialNode){
             this.logicalGuidanceDefinition = logicalGuidanceDefinition;
             this.initialNode = initialNode;
             this.currentNode = initialNode;
-            this.name = logicalGuidanceDefinition.node(initialNode).name;
+            this.name = logicalGuidanceDefinition.node(initialNode).name || "";
             this.computeExpectedNodes();
             this.currentSubActivity = null;
             this.possibleSubActivities = [];
             this.nodeMappings = {};
+            this.concurrentRegion = null;
         },
         computeExpectedNodes: function(){
             var nodesToResolve = this.logicalGuidanceDefinition.successors(this.currentNode);
@@ -35,6 +37,30 @@ define([
                         this.possibleSubActivities.push(subActivity);
                         expectedNodes = expectedNodes.concat(subActivity.getExpectedNodes());
                     }
+                    else if(node.type == "CONCURRENCY_NODE"){
+                        //Check if it is a fork or a join node
+                        var ingoing = this.logicalGuidanceDefinition.predecessors(nodeId).length;
+                        var outgoing = this.logicalGuidanceDefinition.successors(nodeId).length;
+                        if(outgoing > ingoing){
+                            // Fork node
+                            if(!this.concurrentRegion)
+                                this.concurrentRegion = new ConcurrentRegion(this.logicalGuidanceDefinition, nodeId);
+                            nextNodesToResolve.push(this.concurrentRegion.getCurrentThreadStart());
+                        }
+                        else{
+                            // Join node
+                            if(this.concurrentRegion.isLastThread()){
+                                //If it is the last thread we can take the actions after the join node
+                                nextNodesToResolve = nextNodesToResolve.concat(this.logicalGuidanceDefinition.successors(nodeId));
+                            }
+                            else{
+                                console.log("Next thread start");
+                                console.log(this.concurrentRegion.getNextThreadStart());
+                                //If it is not the last thread we take the actions of the next thread
+                                nextNodesToResolve.push(this.concurrentRegion.getNextThreadStart());
+                            }
+                        }
+                    }
                     else{
                         expectedNodes.push(nodeId);
                     }
@@ -42,6 +68,9 @@ define([
                 nodesToResolve = nextNodesToResolve;
             }
             
+            expectedNodes = expectedNodes.filter(function(item, pos, self) {
+                return self.indexOf(item) == pos;
+            });
             this.expectedNodes = expectedNodes;
         },
         proceed: function(nodeId){
@@ -64,6 +93,13 @@ define([
             else{
                 this.subActivity = null;
                 this.currentNode = nodeId;
+                //Check if we are in a concurrent region and have advanced there
+                if(this.concurrentRegion){
+                    this.concurrentRegion.update(nodeId);
+                    if(this.concurrentRegion.isFinished()){
+                        this.concurrentRegion = null;
+                    }
+                }
                 this.computeExpectedNodes();
             }
         },
