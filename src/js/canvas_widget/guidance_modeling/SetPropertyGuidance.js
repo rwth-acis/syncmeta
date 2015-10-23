@@ -28,12 +28,17 @@ define([
 
         _propertyInput.getValue().setValue(_entityAttribute.getValue().getValue());
 
-        _entityAttribute.get$node().find(".val").bind("input", function(){
+        _entityAttribute.get$node().find(".val").bind("input", function(){;
             _propertyInput.getValue().setValue(_entityAttribute.getValue().getValue());
         });
 
-        _propertyInput.get$node().find(".val").bind("input", function(){
+        _propertyInput.get$node().find(".val").bind("input", function(ev){
             _entityAttribute.getValue().setValue(_propertyInput.getValue().getValue());
+        });
+        _propertyInput.get$node().find(".val").keypress(function(ev){
+            if(ev.which == 13){
+                _$node.find(".bs-dropdown-toggle").dropdown('toggle');
+            }
         });
 
         _$node.find(".property-input").append(_propertyInput.get$node().find(".val").prop("disabled", false));

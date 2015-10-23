@@ -161,14 +161,14 @@ define(['Util','guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStat
             for(var i = 0; i < this.initialNodes.length; i++){
                 var nodeId = this.initialNodes[i];
                 var node = this.logicalGuidanceDefinition.node(nodeId);
-                var listItem = $("<li class='bs-list-group-item guidance-item'><p class='name'></p><p><small class='bs-text-muted description'></small></p></li>");
+                var listItem = $("<li class='bs-list-group-item guidance-item'><p><i class='fa fa-puzzle-piece' style='margin-right:5px;'></i><span class='name'></span></p><p><small class='bs-text-muted description'></small></p></li>");
                 listItem.attr("id", nodeId + "guidance-text");
                 listItem.find(".name").text(node.name);
                 //Get expected start nodes to create the description text
                 var tempActivity = new ActivityStatus(this.logicalGuidanceDefinition, nodeId);
                 var expectedNodes = tempActivity.getExpectedNodes();
 
-                listItem.find(".description").text(this.getDescriptionTextForAction(expectedNodes[0]) + " to start.");
+                listItem.find(".description").text(this.getDescriptionTextForAction(expectedNodes[0]) + " to start this activity.");
                 guidanceList.append(listItem);
             }
             return ui;

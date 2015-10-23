@@ -12,6 +12,12 @@ define([
         var _canvas;
         var _numGuidanceItems = 0;
 
+        _$node.find(".guidance-box").hover(function(){
+            $(this).css({"opacity": 1});
+        }, function(){
+            $(this).css({"opacity": 0.5});
+        });
+
         var _appearance = {
             left: left,
             top: top
