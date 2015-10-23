@@ -9,6 +9,8 @@ define(['Util','guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStat
             this.activityStatusList = {};
             this.lastCreatedObjectId = "";
             this.currentActivity = null;
+            this.activityHistory = [];
+            this.ui = "";
 
             for(var i = 0; i < this.initialNodes.length; i++){
                 var nodeId = this.initialNodes[i];
@@ -64,6 +66,7 @@ define(['Util','guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStat
             }
             //If we could not proceed check if we can start a new activity
             if(!nextNode){
+                this.addCurrentActivityToHistory();
                 this.currentActivity = null;
                 for(var i = 0; i < this.initialNodes.length; i++){
                     var nodeId = this.initialNodes[i];
@@ -155,9 +158,9 @@ define(['Util','guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStat
             return guidanceItem;
         },
         buildUi: function(){
-            var ui = $(guidanceStrategyUiHtml);
+            this.ui = $(guidanceStrategyUiHtml);
             //Create the available guidance list
-            var guidanceList = ui.find(".guidance-list")
+            var guidanceList = this.ui.find(".guidance-list")
             for(var i = 0; i < this.initialNodes.length; i++){
                 var nodeId = this.initialNodes[i];
                 var node = this.logicalGuidanceDefinition.node(nodeId);
@@ -171,7 +174,7 @@ define(['Util','guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStat
                 listItem.find(".description").text(this.getDescriptionTextForAction(expectedNodes[0]) + " to start this activity.");
                 guidanceList.append(listItem);
             }
-            return ui;
+            return this.ui;
         },
         highlightActiveActivity: function(){
             $(".guidance-item").removeClass("bs-list-group-item-info");
@@ -189,6 +192,31 @@ define(['Util','guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStat
                 default:
                     break;
 
+            }
+        },
+        addCurrentActivityToHistory: function(){
+            if(this.currentActivity == null)
+                return;
+            if(this.activityHistory.length > 4){
+                this.activityHistory.shift();
+            }
+            this.activityHistory.push(this.currentActivity);
+
+            var historyList = this.ui.find(".history-list")
+            historyList.empty();
+            for(var i = this.activityHistory.length - 1; i >= 0; i--){
+                var activity = this.activityHistory[i];
+                var nodeId = activity.initialNode;
+                var node = this.logicalGuidanceDefinition.node(nodeId);
+                var listItem = $("<li class='bs-list-group-item guidance-history-item'><p><i class='fa fa-puzzle-piece' style='margin-right:5px;'></i><span class='name'></span></p><p><small class='bs-text-muted description'></small></p></li>");
+                listItem.attr("id", nodeId + "guidance-history-item");
+                listItem.find(".name").text(node.name);
+                //Get expected start nodes to create the description text
+                // var tempActivity = new ActivityStatus(this.logicalGuidanceDefinition, nodeId);
+                // var expectedNodes = tempActivity.getExpectedNodes();
+
+                // listItem.find(".description").text(this.getDescriptionTextForAction(expectedNodes[0]) + " to start this activity.");
+                historyList.append(listItem);
             }
         }
     });
