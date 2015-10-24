@@ -24,9 +24,9 @@ define([
     'canvas_widget/guidance_modeling/GuidanceBox',
     'canvas_widget/guidance_modeling/SelectToolGuidance',
     'canvas_widget/guidance_modeling/SetPropertyGuidance',
-    'canvas_widget/guidance_modeling/GhostEdge',
+    'canvas_widget/guidance_modeling/GhostEdgeGuidance',
     'jquery.transformable-PATCHED'
-],/** @lends Canvas */function($,jsPlumb,IWCOT,Util,NodeAddOperation,EdgeAddOperation,ToolSelectOperation,EntitySelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,ShowObjectGuidanceOperation,ShowGuidanceBoxOperation,AbstractEntity,ModelAttributesNode,EntityManager,AbstractCanvas,MoveTool,ObjectGuidance,GuidanceBox,SelectToolGuidance, SetPropertyGuidance, GhostEdge) {
+],/** @lends Canvas */function($,jsPlumb,IWCOT,Util,NodeAddOperation,EdgeAddOperation,ToolSelectOperation,EntitySelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,ShowObjectGuidanceOperation,ShowGuidanceBoxOperation,AbstractEntity,ModelAttributesNode,EntityManager,AbstractCanvas,MoveTool,ObjectGuidance,GuidanceBox,SelectToolGuidance, SetPropertyGuidance, GhostEdgeGuidance) {
     Canvas.prototype = new AbstractCanvas();
     Canvas.prototype.constructor = Canvas;
     /**
@@ -692,9 +692,26 @@ define([
         this.showGhostEdge = function(sourceId, targetId, relationshipType){
             var source = EntityManager.findNode(sourceId);
             var target = EntityManager.findNode(targetId);
-            var edge = new GhostEdge(that, EntityManager.getEdgeType(relationshipType), source, target)
-            edge.connect();
-            _ghostEdges.push(edge);
+            var ghostEdgeGuidance = null;
+            //Check if there already is a ghost edge between the two nodes
+            for(var i = 0; i < _ghostEdges.length; i++){
+                var ghostEdge = _ghostEdges[i];
+                var node1 = ghostEdge.getNode1();
+                var node2 = ghostEdge.getNode2();
+                if((source == node1 && target == node2) || (source == node2 && target == node1)){
+                    ghostEdgeGuidance = ghostEdge;
+                    break;
+                }
+            }
+            if(!ghostEdgeGuidance){
+                ghostEdgeGuidance = new GhostEdgeGuidance(that, source, target);
+                _ghostEdges.push(ghostEdgeGuidance);
+            }
+            ghostEdgeGuidance.addEdge(EntityManager.getEdgeType(relationshipType), source, target);
+
+            for(var i = 0; i < _ghostEdges.length; i++){
+                _ghostEdges[i].show();
+            }
         };
 
         this.highlightNode = function(nodeId){

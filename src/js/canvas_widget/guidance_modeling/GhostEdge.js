@@ -1,33 +1,30 @@
 define([
 'jqueryui',
 'jsplumb',
-'lodash'
-],/** @lends ContextNode */function($, jsPlumb, _) {
+'lodash',
+'text!templates/guidance_modeling/ghost_edge.html',
+'bootstrap'
+],/** @lends ContextNode */function($, jsPlumb, _, ghostEdgeHtml) {
     function GhostEdge(canvas, edgeFunction, source, target){
         var _jsPlumbConnection = null;
-        var label = edgeFunction.getType();
-        var _button = $(`<button class='bs-btn bs-btn-default bs-btn-s' style="z-index: 30000; opacity:0.4;"><i class='fa fa-plus' style='margin-right:5px;'></i>${label}</button>`);
+        var _label = edgeFunction.getType();
         var _canvas = canvas;
         var that = this;
 
         source.addGhostEdge(this);
         target.addGhostEdge(this);
-
-        _button.click(function(event){
-            event.stopPropagation();
-            that.remove();
-            _canvas.createEdge(edgeFunction.getType(),source.getEntityId(),target.getEntityId());
-        });
-        _button.hover(function(){
-            $(this).css({"opacity": 1});
-        },function(){
-            $(this).css({"opacity": 0.4});
-        });
-        this.connect = function(){
+    
+        this.getLabel = function(){
+            return _label;
+        };
+        
+        this.connect = function(button){
+            if(_jsPlumbConnection)
+                return;
             var overlays = edgeFunction.getArrowOverlays();
             overlays.push(["Custom", {
                 create:function(component) {
-                    return $("<div></div>").append(_button);                
+                    return $("<div></div>").append(button);                
                 },
                 location:0.5,
                 id:"customOverlay",
@@ -61,6 +58,18 @@ define([
                 jsPlumb.detach(_jsPlumbConnection);
             _jsPlumbConnection = null;
         };
+
+        this.getEdgeFunction = function(){
+            return edgeFunction;
+        };
+
+        this.getSource = function(){
+            return source;
+        };
+
+        this.getTarget = function(){
+            return target;
+        }; 
     };
 
     return GhostEdge;
