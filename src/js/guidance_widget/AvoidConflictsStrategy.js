@@ -1,7 +1,7 @@
 define(['Util','guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStatus', 'text!templates/guidance_modeling/guidance_strategy_ui.html'
 ],function(Util,GuidanceStrategy, ActivityStatus, guidanceStrategyUiHtml) {
 
-    var SingleUserGuidanceStrategy = GuidanceStrategy.extend({
+    var AvoidConflictsStrategy = GuidanceStrategy.extend({
         init: function(logicalGuidanceDefinition, space){
             this._super(logicalGuidanceDefinition, space);
             this.initialNodes = this.logicalGuidanceDefinition.sources();
@@ -221,9 +221,9 @@ define(['Util','guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStat
         }
     });
 
-    SingleUserGuidanceStrategy.NAME = "Single User Guidance Strategy";
-    SingleUserGuidanceStrategy.ICON = "user";
+    AvoidConflictsStrategy.NAME = "Avoid Conflicts Strategy";
+    AvoidConflictsStrategy.ICON = "user";
 
-    return SingleUserGuidanceStrategy;
+    return AvoidConflictsStrategy;
 
 });

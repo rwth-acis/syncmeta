@@ -14,7 +14,7 @@ requirejs([
     'operations/ot/EdgeAddOperation',
     'operations/ot/NodeDeleteOperation',
     'guidance_widget/NoStrategy',
-    'guidance_widget/SingleUserGuidanceStrategy',
+    'guidance_widget/AvoidConflictsStrategy',
     'promise!LogicalGuidanceDefinition',
     'promise!Space',
     'bootstrap'

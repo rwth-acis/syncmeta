@@ -735,8 +735,9 @@ define([
             _$awarenessTrace.css({
                 left: _appearance.left + _appearance.width/2,
                 top: _appearance.top + _appearance.height/2,
-                width: _appearance.width,
-                height: _appearance.height
+                width: _appearance.width * 1.2,
+                height: _appearance.height * 1.2,
+                zIndex: _zIndex - 1
             });
             _$node.css({
                 left: _appearance.left,
