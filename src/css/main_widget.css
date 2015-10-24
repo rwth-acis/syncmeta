@@ -19,6 +19,7 @@
     position: absolute;
     overflow: visible;
     opacity: 0;
+    pointer-events: none;
 }
 div.class_node{
     height: inherit;
@@ -345,5 +346,5 @@ button[disabled=disabled], button:disabled {
 }
 
 .ghost-edge-overlay {
-    z-index: 30000;
+    z-index: 31000;
 }

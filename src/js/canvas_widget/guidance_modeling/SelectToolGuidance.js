@@ -3,9 +3,8 @@ define([
     'jqueryui',
     'lodash',
     'operations/non_ot/ObjectGuidanceFollowedOperation',
-    'text!templates/canvas_widget/abstract_node.html',
     'text!templates/guidance_modeling/select_tool_guidance.html'
-],/** @lends ContextNode */function(IWCOTW, $,_,ObjectGuidanceFollowedOperation,abstractNodeHtml, selectToolGuidanceHtml) {
+],/** @lends ContextNode */function(IWCOTW, $,_,ObjectGuidanceFollowedOperation, selectToolGuidanceHtml) {
     function SelectToolGuidance(id, label, tool, canvas, icon){
         var _iwc = IWCOTW.getInstance(CONFIG.WIDGET.NAME.MAIN);
         var _id = id;
@@ -17,6 +16,7 @@ define([
         _$node.click(function(){
             _canvas.mountTool(tool);
             _canvas.hideGuidanceBox();
+            _canvas.scrollNodeIntoView();
         });
 
         this.get$node = function(){

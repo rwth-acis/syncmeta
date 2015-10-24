@@ -55,12 +55,10 @@ define([
         	return this.remainingThreadIds.length == 0;
         },
         findThread: function(startNodeId){
-        	console.log("Find thread!");
         	var nodesInThread = [startNodeId];
         	var nodesToCheck = [];
         	var nextNodesToCheck = [];
         	nodesToCheck = this.logicalGuidanceDefinition.successors(startNodeId);
-        	console.log(nodesToCheck.length);
         	while(nodesToCheck.length > 0){
 	        	nextNodesToCheck = [];
 	        	for(var i = 0; i < nodesToCheck.length; i++){
@@ -80,8 +78,6 @@ define([
 	        	}
 	        	nodesToCheck = nextNodesToCheck;
 	        }
-	        console.log("Found thread nodes:");
-	        console.log(nodesInThread);
 	        return nodesInThread;
         }
     });

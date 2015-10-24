@@ -268,7 +268,8 @@ define([
             }
 
             for(var i = 0; i < _relatedGhostEdges.length; i++){
-                _relatedGhostEdges[i].remove();
+                if(_relatedGhostEdges[i])
+                    _relatedGhostEdges[i].remove();
             }
 
             that.remove();

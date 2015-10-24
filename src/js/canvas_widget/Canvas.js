@@ -778,6 +778,44 @@ define([
             //}
         };
 
+        this.scrollNodeIntoView  = function(nodeId){
+            var frameOffset = $("#canvas-frame").offset();
+            var frameWidth = $("#canvas-frame").width();
+            var frameHeight = $("#canvas-frame").height();
+            console.log("frame offset");
+            console.log(frameOffset);
+            var node = null;
+            if(!nodeId)
+                node = _selectedEntity;
+            else{
+                node = EntityManager.findNode(nodeId);
+            }
+            if(!node)
+                return;
+            var nodeOffset = node.get$node().offset();
+            var nodeWidth = node.get$node().width();
+            var nodeHeight = node.get$node().height();
+            console.log(nodeOffset);
+            var scrollX = nodeOffset.left - frameOffset.left;
+            var scrollY = nodeOffset.top - frameOffset.top;
+            var canvasTop = _$node.position().top;
+            var canvasLeft = _$node.position().left;
+            console.log(canvasTop);
+            console.log("Scroll!!");
+            console.log(canvasTop - scrollY);
+            console.log(canvasLeft - scrollX);
+
+
+            _$node.animate({
+                top: "+=" + (frameHeight / 2 - scrollY - nodeHeight / 2),
+                left: "+=" + (frameWidth / 2 - scrollX - nodeWidth / 2)
+            },1000);
+            // _$node.css({
+            //     top: canvasTop + frameHeight / 2 - scrollY - nodeHeight / 2,
+            //     left: canvasLeft + frameWidth / 2 - scrollX - nodeWidth / 2
+            // });
+        };
+
         /**
          * Convert current canvas content to PNG image file
          * @return {string} Data-URI of generated PNG image

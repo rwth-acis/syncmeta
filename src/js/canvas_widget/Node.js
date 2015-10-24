@@ -168,6 +168,10 @@ define([
                 return json;
             };
 
+            this.get$node = function(){
+                return _$node;
+            };
+
             init();
         }
         return Node;
