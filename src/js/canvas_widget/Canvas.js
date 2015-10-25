@@ -15,7 +15,7 @@ define([
     'operations/non_ot/ExportImageOperation',
     'operations/non_ot/ShowObjectGuidanceOperation',
     'operations/non_ot/ShowGuidanceBoxOperation',
-    'operations/non_ot/CanvasDragOperation',
+    'operations/non_ot/CanvasViewChangeOperation',
     'operations/non_ot/CanvasResizeOperation',
     'operations/non_ot/CanvasZoomOperation',
     'canvas_widget/AbstractEntity',
@@ -29,7 +29,7 @@ define([
     'canvas_widget/guidance_modeling/SetPropertyGuidance',
     'canvas_widget/guidance_modeling/GhostEdgeGuidance',
     'jquery.transformable-PATCHED'
-],/** @lends Canvas */function($,jsPlumb,IWCOT,Util,NodeAddOperation,EdgeAddOperation,ToolSelectOperation,EntitySelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,ShowObjectGuidanceOperation,ShowGuidanceBoxOperation,CanvasDragOperation,CanvasResizeOperation,CanvasZoomOperation,AbstractEntity,ModelAttributesNode,EntityManager,AbstractCanvas,MoveTool,ObjectGuidance,GuidanceBox,SelectToolGuidance, SetPropertyGuidance, GhostEdgeGuidance) {
+],/** @lends Canvas */function($,jsPlumb,IWCOT,Util,NodeAddOperation,EdgeAddOperation,ToolSelectOperation,EntitySelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,ShowObjectGuidanceOperation,ShowGuidanceBoxOperation,CanvasViewChangeOperation,CanvasResizeOperation,CanvasZoomOperation,AbstractEntity,ModelAttributesNode,EntityManager,AbstractCanvas,MoveTool,ObjectGuidance,GuidanceBox,SelectToolGuidance, SetPropertyGuidance, GhostEdgeGuidance) {
     Canvas.prototype = new AbstractCanvas();
     Canvas.prototype.constructor = Canvas;
     /**
@@ -115,9 +115,7 @@ define([
         var _ghostEdges = [];
 
         $(window).resize(function(){
-            var canvasFrame = $("#canvas-frame");
-            var operation = new CanvasResizeOperation(canvasFrame.width(), canvasFrame.height());
-            _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.toNonOTOperation());
+            sendViewChangeOperation();
         });
 
         /**
@@ -236,6 +234,12 @@ define([
                 processNodeAddOperation(operation, true);
             }
         };
+
+        var sendViewChangeOperation = function(){
+            var canvasFrame = $("#canvas-frame");
+            var operation = new CanvasViewChangeOperation(_$node.position().left, _$node.position().top, canvasFrame.width(), canvasFrame.height(), _zoom);
+            _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.toNonOTOperation());
+        }
 
         /**
          * Callback for a remote Edge Add Operation
@@ -412,8 +416,7 @@ define([
                     //ui.position.top = Math.round(ui.position.top / _zoom);
                 },
                 stop: function(){
-                    var operation = new CanvasDragOperation(_$node.position().left, _$node.position().top);
-                    _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.toNonOTOperation());
+                    sendViewChangeOperation();
 
                 }
             });
@@ -704,8 +707,7 @@ define([
             _$node.setTransform('scaley', zoom);
 
             jsPlumb.setZoom(zoom);
-            var operation = new CanvasZoomOperation(zoom);
-            _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.HEATMAP, operation.toNonOTOperation());
+            sendViewChangeOperation();
         };
 
         this.showGhostEdge = function(sourceId, targetId, relationshipType){

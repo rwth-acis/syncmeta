@@ -2,7 +2,7 @@ define([
     'operations/non_ot/NonOTOperation'
 ],/** @lends EntitySelectOperation */function(NonOTOperation) {
 
-    CanvasDragOperation.TYPE = "CanvasDragOperation";
+    CanvasViewChangeOperation.TYPE = "CanvasViewChangeOperation";
 
     /**
      * Entity Select Operation
@@ -11,7 +11,7 @@ define([
      * @constructor
      * @param {string} selectedEntityId Entity id of the selected entity
      */
-    function CanvasDragOperation(left, top){
+    function CanvasViewChangeOperation(left, top, width, height, zoom){
 
         /**
          * Corresponding NonOtOperation
@@ -26,6 +26,18 @@ define([
 
         this.getTop = function(){
             return top;
+        };
+
+        this.getWidth = function(){
+            return width;
+        };
+
+        this.getHeight = function(){
+            return height;
+        };
+
+        this.getZoom = function(){
+            return zoom;
         };
 
         /**
@@ -51,10 +63,13 @@ define([
         this.toNonOTOperation = function(){
             if(_nonOTOperation === null){
                 _nonOTOperation = new NonOTOperation(
-                    CanvasDragOperation.TYPE,
+                    CanvasViewChangeOperation.TYPE,
                     JSON.stringify({
                         left: left,
-                        top: top
+                        top: top,
+                        width: width,
+                        height: height,
+                        zoom: zoom
                     })
                 );
             }
@@ -62,6 +77,6 @@ define([
         };
     }
 
-    return CanvasDragOperation;
+    return CanvasViewChangeOperation;
 
 });

@@ -13,18 +13,16 @@ requirejs([
     'operations/ot/NodeMoveOperation',
     'operations/ot/NodeResizeOperation',
     'operations/ot/NodeDeleteOperation',
-    'operations/non_ot/CanvasDragOperation',
+    'operations/non_ot/CanvasViewChangeOperation',
     'operations/non_ot/CanvasResizeOperation',
     'operations/non_ot/CanvasZoomOperation',
     'promise!Model'
-],function ($, _, require, IWCOT, NodePreview, NodeAddOperation,NodeMoveOperation,NodeResizeOperation,NodeDeleteOperation, CanvasDragOperation, CanvasResizeOperation, CanvasZoomOperation, model) {
+],function ($, _, require, IWCOT, NodePreview, NodeAddOperation,NodeMoveOperation,NodeResizeOperation,NodeDeleteOperation, CanvasViewChangeOperation, CanvasResizeOperation, CanvasZoomOperation, model) {
     var iwc = IWCOT.getInstance(CONFIG.WIDGET.NAME.HEATMAP);
     var $heatmap = $("#heatmap");
     var scaleFactor = $heatmap.width() / 9000;
     var $window = $("<div style='position:absolute; z-index:10000; width:50px; height:50px; border-style:groove;'></div>");
-    var canvasWidth = 100;
-    var canvasHeight = 100;
-    var canvasZoom = 1;
+    $window.hide();
     $heatmap.append($window);
     var previewNodes = {};
     var localUserId;
@@ -72,21 +70,9 @@ requirejs([
                 delete previewNodes[id];
             }
         }
-        else if (operation instanceof CanvasDragOperation){
+        else if (operation instanceof CanvasViewChangeOperation){
             localUserId = operation.getNonOTOperation().getSender();
-            $window.css({
-                top: -operation.getTop() * scaleFactor / canvasZoom,
-                left: -operation.getLeft() * scaleFactor / canvasZoom
-            });
-        }
-        else if(operation instanceof CanvasResizeOperation){
-            canvasWidth = operation.getWidth();
-            canvasHeight = operation.getHeight();
-            updateWindow();
-        }
-        else if(operation instanceof CanvasZoomOperation){
-            canvasZoom = operation.getZoom();
-            updateWindow();
+            updateWindow(operation);
         }
     };
 
@@ -94,11 +80,19 @@ requirejs([
         iwc.registerOnDataReceivedCallback(operationCallback);
     };
 
-    var updateWindow = function(){
+    var updateWindow = function(viewChangeOperation){
+        var top = viewChangeOperation.getTop();
+        var left = viewChangeOperation.getLeft();
+        var width = viewChangeOperation.getWidth();
+        var height = viewChangeOperation.getHeight();
+        var zoom = viewChangeOperation.getZoom();
         $window.css({
-            width: canvasWidth * scaleFactor / canvasZoom,
-            height: canvasHeight * scaleFactor / canvasZoom
+            top: -top * scaleFactor / zoom,
+            left: -left * scaleFactor / zoom,
+            width: width * scaleFactor / zoom,
+            height: height * scaleFactor / zoom
         });
+        $window.show();
     };
 
     var updateColor = function(node, userId){
