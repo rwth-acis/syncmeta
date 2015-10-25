@@ -16,7 +16,6 @@ define([
         _$node.click(function(){
             _canvas.mountTool(tool);
             _canvas.hideGuidanceBox();
-            _canvas.scrollNodeIntoView();
         });
 
         this.get$node = function(){

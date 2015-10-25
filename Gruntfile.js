@@ -263,6 +263,23 @@ module.exports = function(grunt) {
                 files: {
                     'html/guidance.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
                 }
+            },
+
+            heatmap_widget: {
+                options: {
+                    data: {
+                        meta: {
+                            title: "Heatmap",
+                            description: "",
+                            width: "400",
+                            height: "400"
+                        },
+                        bodyPartial: '_heat_map_widget.tpl'
+                    }
+                },
+                files: {
+                    'html/heatmap.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
+                }
             }
         },
 

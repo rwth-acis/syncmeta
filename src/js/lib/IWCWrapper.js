@@ -2,8 +2,10 @@ define([
     'iwc',
     'operations/ot/OTOperation',
     'operations/non_ot/NonOTOperation',
-    'operations/OperationFactory'
-],/** @lends IWC */function(IIWC,OTOperation,NonOTOperation,OperationFactory){
+    'operations/OperationFactory',
+    'Util',
+    'promise!Space'
+],/** @lends IWC */function(IIWC,OTOperation,NonOTOperation,OperationFactory, Util, Space){
 
     var PAYLOAD_DATA_TYPE = {
         OT_OPERATION: "OTOperation",
@@ -298,6 +300,9 @@ define([
                     data: operation.getOperationObject(),
                     sender: operation.getSender()
                 });
+            },
+            getUserColor: function(jabberId){
+                return Util.getColor(Space.members[jabberId].globalId);
             },
             /**
              * Register callback for local data receive events

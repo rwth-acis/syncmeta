@@ -15,6 +15,8 @@ define([
     'operations/non_ot/ExportImageOperation',
     'operations/non_ot/ShowObjectGuidanceOperation',
     'operations/non_ot/ShowGuidanceBoxOperation',
+    'operations/non_ot/CanvasDragOperation',
+    'operations/non_ot/CanvasResizeOperation',
     'canvas_widget/AbstractEntity',
     'canvas_widget/ModelAttributesNode',
     'canvas_widget/EntityManager',
@@ -26,7 +28,7 @@ define([
     'canvas_widget/guidance_modeling/SetPropertyGuidance',
     'canvas_widget/guidance_modeling/GhostEdgeGuidance',
     'jquery.transformable-PATCHED'
-],/** @lends Canvas */function($,jsPlumb,IWCOT,Util,NodeAddOperation,EdgeAddOperation,ToolSelectOperation,EntitySelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,ShowObjectGuidanceOperation,ShowGuidanceBoxOperation,AbstractEntity,ModelAttributesNode,EntityManager,AbstractCanvas,MoveTool,ObjectGuidance,GuidanceBox,SelectToolGuidance, SetPropertyGuidance, GhostEdgeGuidance) {
+],/** @lends Canvas */function($,jsPlumb,IWCOT,Util,NodeAddOperation,EdgeAddOperation,ToolSelectOperation,EntitySelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,ShowObjectGuidanceOperation,ShowGuidanceBoxOperation,CanvasDragOperation,CanvasResizeOperation,AbstractEntity,ModelAttributesNode,EntityManager,AbstractCanvas,MoveTool,ObjectGuidance,GuidanceBox,SelectToolGuidance, SetPropertyGuidance, GhostEdgeGuidance) {
     Canvas.prototype = new AbstractCanvas();
     Canvas.prototype.constructor = Canvas;
     /**
@@ -111,6 +113,12 @@ define([
         var _guidanceDefinition = null;
         var _ghostEdges = [];
 
+        $(window).resize(function(){
+            var canvasFrame = $("#canvas-frame");
+            var operation = new CanvasResizeOperation(canvasFrame.width(), canvasFrame.height());
+            _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.toNonOTOperation());
+        });
+
         /**
          * Apply a Tool Select Operation
          * @param {ToolSelectOperation} operation
@@ -150,6 +158,7 @@ define([
             if(_iwcot.sendRemoteOTOperation(operation)){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "NodeAddActivity",
                     operation.getEntityId(),
@@ -396,8 +405,14 @@ define([
                     _$node.draggable("option","containment",[-_canvasWidth+$canvasFrame.width(),-_canvasHeight+$canvasFrame.height(),0,0]);
                 },
                 drag: function(event, ui) {
+
                     //ui.position.left = Math.round(ui.position.left  / _zoom);
                     //ui.position.top = Math.round(ui.position.top / _zoom);
+                },
+                stop: function(){
+                    var operation = new CanvasDragOperation(_$node.position().left, _$node.position().top);
+                    _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.toNonOTOperation());
+
                 }
             });
 

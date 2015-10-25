@@ -80,7 +80,8 @@ CONFIG = {
             PALETTE: "PALETTE",
             ATTRIBUTE: "ATTRIBUTE",
             ACTIVITY: "ACTIVITY",
-            GUIDANCE: "GUIDANCE"
+            GUIDANCE: "GUIDANCE",
+            HEATMAP: "HEATMAP"
         }
     },
     ENTITY: {
