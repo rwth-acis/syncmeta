@@ -26,8 +26,9 @@ define([
     'operations/non_ot/CanvasViewChangeOperation',
     'operations/non_ot/CanvasResizeOperation',
     'operations/non_ot/CanvasZoomOperation',
-    'operations/non_ot/ShareGuidanceActivityOperation'
-],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,JoinOperation, SetModelAttributeNodeOperation, ShowObjectGuidanceOperation, ShowGuidanceBoxOperation, ObjectGuidanceFollowedOperation, CanvasViewChangeOperation, CanvasResizeOperation, CanvasZoomOperation, ShareGuidanceActivityOperation) {
+    'operations/non_ot/ShareGuidanceActivityOperation',
+    'operations/non_ot/RevokeSharedActivityOperation',
+],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,JoinOperation, SetModelAttributeNodeOperation, ShowObjectGuidanceOperation, ShowGuidanceBoxOperation, ObjectGuidanceFollowedOperation, CanvasViewChangeOperation, CanvasResizeOperation, CanvasZoomOperation, ShareGuidanceActivityOperation, RevokeSharedActivityOperation) {
 
     /**
      * OperationFactory
@@ -108,6 +109,9 @@ define([
                         break;
                     case ShareGuidanceActivityOperation.TYPE:
                         resOperation = new ShareGuidanceActivityOperation(data.id, data.initialNode, data.joinNode, data.objectMappings, data.remainingThreads);
+                        break;
+                    case RevokeSharedActivityOperation.TYPE:
+                        resOperation = new RevokeSharedActivityOperation(data.id);
                         break;
                 }
                 return resOperation;

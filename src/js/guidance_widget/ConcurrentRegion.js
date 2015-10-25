@@ -2,9 +2,10 @@ define([
     'iwcw',
 	'Util',
     'operations/non_ot/ShareGuidanceActivityOperation',
+    'operations/non_ot/RevokeSharedActivityOperation',
     'classjs',
     'graphlib'
-],function(IWCW, Util, ShareGuidanceActivityOperation) {
+],function(IWCW, Util, ShareGuidanceActivityOperation, RevokeSharedActivityOperation) {
 
     var ConcurrentRegion = Class.extend({
         init: function(activity, logicalGuidanceDefinition, initialNode){
@@ -54,7 +55,10 @@ define([
         		return;
         	}
         	if(this.isLastThread()){
-        		this.isFinished = true;
+                if(!this._isFinished){
+                    this._isFinished = true;
+                }
+
         		return;
         	}
         	for(var i = 0; i < this.remainingThreadIds.length; i++){
@@ -63,6 +67,11 @@ define([
         		if(this.threads[threadId].indexOf(nodeId) >= 0){
         			this.remainingThreadIds.splice(this.remainingThreadIds.indexOf(this.currentThreadId), 1);
         			this.currentThreadId = threadId;
+                    if(this.isLastThread()){
+                        console.log("LAST THREAD!");
+                        var operation = new RevokeSharedActivityOperation(this.activity.id);
+                        this.iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.toNonOTOperation());
+                    }
         			return;
         		}
         	}

@@ -1,5 +1,5 @@
-define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStatus','operations/non_ot/ShareGuidanceActivityOperation', 'text!templates/guidance_modeling/guidance_strategy_ui.html'
-],function(Util,IWCW,GuidanceStrategy, ActivityStatus, ShareGuidanceActivityOperation, guidanceStrategyUiHtml) {
+define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStatus','operations/non_ot/ShareGuidanceActivityOperation', 'operations/non_ot/RevokeSharedActivityOperation', 'text!templates/guidance_modeling/guidance_strategy_ui.html'
+],function(Util,IWCW,GuidanceStrategy, ActivityStatus, ShareGuidanceActivityOperation, RevokeSharedActivityOperation, guidanceStrategyUiHtml) {
 
     var CollaborationStrategy = GuidanceStrategy.extend({
         init: function(logicalGuidanceDefinition, space){
@@ -20,6 +20,7 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
 
             this.iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.GUIDANCE);
             this.iwc.registerOnDataReceivedCallback(this.onShareGuidanceActivityOperation, this);
+            this.iwc.registerOnDataReceivedCallback(this.onRevokeSharedActivityOperation, this);
         },
         onEntitySelect: function(entityId, entityType){
         },
@@ -242,6 +243,14 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
                 console.log("Received remote share guidance op!!!");
                 var activity = ActivityStatus.createFromShareOperation(this.logicalGuidanceDefinition, operation);
                 this.sharedActivities[activity.id] = activity;
+            }
+        },
+        onRevokeSharedActivityOperation: function(operation){
+            if(operation instanceof RevokeSharedActivityOperation){
+                console.log("Received remote revoke guidance op!!!");
+                if(this.sharedActivities.hasOwnProperty(operation.getId())){
+                    delete this.sharedActivities[operation.getId()];
+                }
             }
         }
     });

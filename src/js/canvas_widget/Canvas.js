@@ -19,6 +19,7 @@ define([
     'operations/non_ot/CanvasResizeOperation',
     'operations/non_ot/CanvasZoomOperation',
     'operations/non_ot/ShareGuidanceActivityOperation',
+    'operations/non_ot/RevokeSharedActivityOperation',
     'canvas_widget/AbstractEntity',
     'canvas_widget/ModelAttributesNode',
     'canvas_widget/EntityManager',
@@ -31,7 +32,7 @@ define([
     'canvas_widget/guidance_modeling/GhostEdgeGuidance',
     'canvas_widget/guidance_modeling/CollaborationGuidance',
     'jquery.transformable-PATCHED'
-],/** @lends Canvas */function($,jsPlumb,IWCOT,Util,NodeAddOperation,EdgeAddOperation,ToolSelectOperation,EntitySelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,ShowObjectGuidanceOperation,ShowGuidanceBoxOperation,CanvasViewChangeOperation,CanvasResizeOperation,CanvasZoomOperation,ShareGuidanceActivityOperation,AbstractEntity,ModelAttributesNode,EntityManager,AbstractCanvas,MoveTool,ObjectGuidance,GuidanceBox,SelectToolGuidance, SetPropertyGuidance, GhostEdgeGuidance, CollaborationGuidance) {
+],/** @lends Canvas */function($,jsPlumb,IWCOT,Util,NodeAddOperation,EdgeAddOperation,ToolSelectOperation,EntitySelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,ShowObjectGuidanceOperation,ShowGuidanceBoxOperation,CanvasViewChangeOperation,CanvasResizeOperation,CanvasZoomOperation,ShareGuidanceActivityOperation,RevokeSharedActivityOperation,AbstractEntity,ModelAttributesNode,EntityManager,AbstractCanvas,MoveTool,ObjectGuidance,GuidanceBox,SelectToolGuidance, SetPropertyGuidance, GhostEdgeGuidance, CollaborationGuidance) {
     Canvas.prototype = new AbstractCanvas();
     Canvas.prototype.constructor = Canvas;
     /**
@@ -362,9 +363,25 @@ define([
             }
         };
 
+        var localRevokeSharedActivityOperationCallback = function(operation){
+            if(operation instanceof RevokeSharedActivityOperation){
+                console.log("Main received local RevokeSharedActivityOperation!");
+                //Just forward the message to remote users
+                _iwcot.sendRemoteNonOTOperation(operation.toNonOTOperation());
+            }
+        };
+
         var remoteShareGuidanceActivityOperationCallback = function(operation){
             if(operation instanceof ShareGuidanceActivityOperation){
                 console.log("Main received remote ShareGuidanceActivityOperation");
+                //Just forward the message to the local guidance widget
+                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.toNonOTOperation());
+            }
+        };
+
+        var remoteRevokeSharedActivityOperationCallback = function(operation){
+            if(operation instanceof RevokeSharedActivityOperation){
+                console.log("Main received remote RevokeSharedActivityOperation");
                 //Just forward the message to the local guidance widget
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.toNonOTOperation());
             }
@@ -1143,6 +1160,8 @@ define([
             _iwcot.registerOnHistoryChangedCallback(historyEdgeAddCallback);
             _iwcot.registerOnLocalDataReceivedCallback(localShareGuidanceActivityOperationCallback);
             _iwcot.registerOnRemoteDataReceivedCallback(remoteShareGuidanceActivityOperationCallback);
+            _iwcot.registerOnLocalDataReceivedCallback(localRevokeSharedActivityOperationCallback);
+            _iwcot.registerOnRemoteDataReceivedCallback(remoteRevokeSharedActivityOperationCallback);
         };
 
 
@@ -1163,6 +1182,8 @@ define([
             _iwcot.unregisterOnHistoryChangedCallback(historyEdgeAddCallback);
             _iwcot.unregisterOnLocalDataReceivedCallback(localShareGuidanceActivityOperationCallback);
             _iwcot.unregisterOnRemoteDataReceivedCallback(remoteShareGuidanceActivityOperationCallback);
+            _iwcot.unregisterOnLocalDataReceivedCallback(localRevokeSharedActivityOperationCallback);
+            _iwcot.unregisterOnRemoteDataReceivedCallback(remoteRevokeSharedActivityOperationCallback);
         };
 
         init();

@@ -162,6 +162,7 @@ define([
         
         var activity = new ActivityStatus(logicalGuidanceDefinition, initialNode);
         activity.nodeMappings = objectMappings;
+        activity.id = id;
         return activity;
     };
 
