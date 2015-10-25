@@ -512,7 +512,7 @@ define([
                         guidanceItem = new SetPropertyGuidance(_guidanceDefinition[i].id, _guidanceDefinition[i].label, EntityManager.findNode(_guidanceDefinition[i].entityId), _guidanceDefinition[i].propertyName, that);
                         break;
                     case "COLLABORATION_GUIDANCE":
-                        guidanceItem = new CollaborationGuidance("", _guidanceDefinition[i].label, _guidanceDefinition[i].activityId, that);
+                        guidanceItem = new CollaborationGuidance("", _guidanceDefinition[i].label, _guidanceDefinition[i].activityId, _guidanceDefinition[i].objectId, that);
                         break;
                     case "GHOST_EDGE_GUIDANCE":
                         that.showGhostEdge(_guidanceDefinition[i].sourceId, _guidanceDefinition[i].targetId, _guidanceDefinition[i].relationshipType);

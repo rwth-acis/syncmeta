@@ -145,6 +145,7 @@ define([
             return name;
         },
         setNodeMapping: function(guidanceNodeId, modelNodeId){
+            this.lastAddedNode = modelNodeId;
             this.nodeMappings[guidanceNodeId] = modelNodeId;
         },
         getNodeMapping: function(guidanceNodeId){
@@ -158,11 +159,21 @@ define([
         var initialNode = operation.getInitialNode();
         var joinNode = operation.getJoinNode();
         var objectMappings = operation.getObjectMappings();
-        var remainingThreds = operation.getRemainingThreads();
+        var remainingThreads = operation.getRemainingThreads();
+        var lastAddedNode = operation.getObjectId();
         
         var activity = new ActivityStatus(logicalGuidanceDefinition, initialNode);
         activity.nodeMappings = objectMappings;
         activity.id = id;
+        activity.lastAddedNode = lastAddedNode;
+
+        var concurrentRegion = new ConcurrentRegion(activity, logicalGuidanceDefinition, joinNode);
+        concurrentRegion.remainingThreadIds = remainingThreads;
+        concurrentRegion.currentThreadId = remainingThreads[0];
+        concurrentRegion.started = true;
+
+        activity.concurrentRegion = concurrentRegion;
+        activity.currentNode = joinNode;
         return activity;
     };
 

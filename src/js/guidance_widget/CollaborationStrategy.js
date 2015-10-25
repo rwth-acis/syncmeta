@@ -1,5 +1,5 @@
-define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStatus','operations/non_ot/ShareGuidanceActivityOperation', 'operations/non_ot/RevokeSharedActivityOperation', 'text!templates/guidance_modeling/guidance_strategy_ui.html'
-],function(Util,IWCW,GuidanceStrategy, ActivityStatus, ShareGuidanceActivityOperation, RevokeSharedActivityOperation, guidanceStrategyUiHtml) {
+define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStatus','operations/non_ot/ShareGuidanceActivityOperation', 'operations/non_ot/RevokeSharedActivityOperation','operations/non_ot/CollaborateInActivityOperation', 'text!templates/guidance_modeling/guidance_strategy_ui.html'
+],function(Util,IWCW,GuidanceStrategy, ActivityStatus, ShareGuidanceActivityOperation, RevokeSharedActivityOperation, CollaborateInActivityOperation, guidanceStrategyUiHtml) {
 
     var CollaborationStrategy = GuidanceStrategy.extend({
         init: function(logicalGuidanceDefinition, space){
@@ -21,6 +21,7 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
             this.iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.GUIDANCE);
             this.iwc.registerOnDataReceivedCallback(this.onShareGuidanceActivityOperation, this);
             this.iwc.registerOnDataReceivedCallback(this.onRevokeSharedActivityOperation, this);
+            this.iwc.registerOnDataReceivedCallback(this.onCollaborateInActivityOperation, this);
         },
         onEntitySelect: function(entityId, entityType){
         },
@@ -172,7 +173,8 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
             var guidanceItem = {
                 "type": "COLLABORATION_GUIDANCE",
                 "activityId": activity.id,
-                "label": "Help"
+                "label": "Help",
+                "objectId": activity.lastAddedNode
             };
             return guidanceItem;
         },
@@ -249,6 +251,18 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
             if(operation instanceof RevokeSharedActivityOperation){
                 console.log("Received remote revoke guidance op!!!");
                 if(this.sharedActivities.hasOwnProperty(operation.getId())){
+                    delete this.sharedActivities[operation.getId()];
+                }
+            }
+        },
+        onCollaborateInActivityOperation: function(operation){
+            if(operation instanceof CollaborateInActivityOperation){
+                console.log("I want to collaborate!!!");
+                if(this.sharedActivities.hasOwnProperty(operation.getId())){
+                    this.addCurrentActivityToHistory();
+                    this.currentActivity = this.sharedActivities[operation.getId()];
+                    this.currentActivity.computeExpectedNodes();
+                    this.showExpectedActions(this.currentActivity.lastAddedNode);
                     delete this.sharedActivities[operation.getId()];
                 }
             }

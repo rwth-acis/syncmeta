@@ -48,7 +48,7 @@ define([
                     //Here we have entered the first
                     //thread and we notify other users that
                     //we have startet a concurrent region
-                    var operation = new ShareGuidanceActivityOperation(this.activity.id, this.activity.initialNode, this.initialNode, this.activity.nodeMappings, this.remainingThreadIds);
+                    var operation = new ShareGuidanceActivityOperation(this.activity.id, this.activity.initialNode, this.initialNode, this.activity.nodeMappings, this.remainingThreadIds, this.activity.lastAddedNode);
                     this.iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.toNonOTOperation());
                     this.started = true;
                 }

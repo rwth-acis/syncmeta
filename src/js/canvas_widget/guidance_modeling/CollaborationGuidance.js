@@ -2,9 +2,10 @@ define([
     'iwcotw',
     'jqueryui',
     'lodash',
+    'operations/non_ot/CollaborateInActivityOperation',
     'text!templates/guidance_modeling/collaboration_guidance.html'
-],/** @lends ContextNode */function(IWCOTW, $,_, selectToolGuidanceHtml) {
-    function CollaborationGuidance(id, label, activityId, canvas){
+],/** @lends ContextNode */function(IWCOTW, $,_, CollaborateInActivityOperation, selectToolGuidanceHtml) {
+    function CollaborationGuidance(id, label, activityId, objectId, canvas){
         var _iwc = IWCOTW.getInstance(CONFIG.WIDGET.NAME.MAIN);
         var _id = id;
         var _label = label;
@@ -13,7 +14,10 @@ define([
         var _$node = $(_.template(selectToolGuidanceHtml, {text: label, icon:"users"}));
 
         _$node.click(function(){
-            console.log("Click on collaboration guidance");
+            var operation = new CollaborateInActivityOperation(activityId);
+            _iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.toNonOTOperation());
+            _canvas.hideGuidanceBox();
+            _canvas.scrollNodeIntoView(objectId);
         });
 
         this.get$node = function(){
