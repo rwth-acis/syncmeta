@@ -194,6 +194,7 @@ define([
             hideTraceAwareness();
             if(_iwcot.sendRemoteOTOperation(operation)){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "NodeMoveActivity",
                     operation.getEntityId(),
@@ -240,6 +241,7 @@ define([
             hideTraceAwareness();
             if(_iwcot.sendRemoteOTOperation(operation)){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "NodeResizeActivity",
                     operation.getEntityId(),
@@ -284,6 +286,7 @@ define([
             if(_iwcot.sendRemoteOTOperation(operation)){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "NodeDeleteActivity",
                     operation.getEntityId(),
@@ -349,6 +352,7 @@ define([
         var remoteNodeMoveCallback = function(operation){
             if(operation instanceof NodeMoveOperation && operation.getEntityId() === that.getEntityId()){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "NodeMoveActivity",
                     operation.getEntityId(),
@@ -389,6 +393,7 @@ define([
         var remoteNodeResizeCallback = function(operation){
             if(operation instanceof NodeResizeOperation && operation.getEntityId() === that.getEntityId()){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "NodeResizeActivity",
                     operation.getEntityId(),
@@ -409,6 +414,7 @@ define([
         var remoteNodeDeleteCallback = function(operation){
             if(operation instanceof NodeDeleteOperation && operation.getEntityId() === that.getEntityId()){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "NodeDeleteActivity",
                     operation.getEntityId(),

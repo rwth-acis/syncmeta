@@ -24,8 +24,9 @@ define([
     'operations/non_ot/ShowGuidanceBoxOperation',
     'operations/non_ot/ObjectGuidanceFollowedOperation',
     'operations/non_ot/CanvasDragOperation',
-    'operations/non_ot/CanvasResizeOperation'
-],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,JoinOperation, SetModelAttributeNodeOperation, ShowObjectGuidanceOperation, ShowGuidanceBoxOperation, ObjectGuidanceFollowedOperation, CanvasDragOperation, CanvasResizeOperation) {
+    'operations/non_ot/CanvasResizeOperation',
+    'operations/non_ot/CanvasZoomOperation'
+],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,JoinOperation, SetModelAttributeNodeOperation, ShowObjectGuidanceOperation, ShowGuidanceBoxOperation, ObjectGuidanceFollowedOperation, CanvasDragOperation, CanvasResizeOperation, CanvasZoomOperation) {
 
     /**
      * OperationFactory
@@ -96,9 +97,13 @@ define([
                         break;
                     case CanvasDragOperation.TYPE:
                         resOperation = new CanvasDragOperation(data.left, data.top);
+                        resOperation.setNonOTOperation(operation);
                         break;
                     case CanvasResizeOperation.TYPE:
                         resOperation = new CanvasResizeOperation(data.width, data.height);
+                        break;
+                    case CanvasZoomOperation.TYPE:
+                        resOperation = new CanvasZoomOperation(data.zoom);
                         break;
                 }
                 return resOperation;

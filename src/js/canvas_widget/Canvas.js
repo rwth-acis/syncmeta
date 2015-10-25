@@ -17,6 +17,7 @@ define([
     'operations/non_ot/ShowGuidanceBoxOperation',
     'operations/non_ot/CanvasDragOperation',
     'operations/non_ot/CanvasResizeOperation',
+    'operations/non_ot/CanvasZoomOperation',
     'canvas_widget/AbstractEntity',
     'canvas_widget/ModelAttributesNode',
     'canvas_widget/EntityManager',
@@ -28,7 +29,7 @@ define([
     'canvas_widget/guidance_modeling/SetPropertyGuidance',
     'canvas_widget/guidance_modeling/GhostEdgeGuidance',
     'jquery.transformable-PATCHED'
-],/** @lends Canvas */function($,jsPlumb,IWCOT,Util,NodeAddOperation,EdgeAddOperation,ToolSelectOperation,EntitySelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,ShowObjectGuidanceOperation,ShowGuidanceBoxOperation,CanvasDragOperation,CanvasResizeOperation,AbstractEntity,ModelAttributesNode,EntityManager,AbstractCanvas,MoveTool,ObjectGuidance,GuidanceBox,SelectToolGuidance, SetPropertyGuidance, GhostEdgeGuidance) {
+],/** @lends Canvas */function($,jsPlumb,IWCOT,Util,NodeAddOperation,EdgeAddOperation,ToolSelectOperation,EntitySelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,ShowObjectGuidanceOperation,ShowGuidanceBoxOperation,CanvasDragOperation,CanvasResizeOperation,CanvasZoomOperation,AbstractEntity,ModelAttributesNode,EntityManager,AbstractCanvas,MoveTool,ObjectGuidance,GuidanceBox,SelectToolGuidance, SetPropertyGuidance, GhostEdgeGuidance) {
     Canvas.prototype = new AbstractCanvas();
     Canvas.prototype.constructor = Canvas;
     /**
@@ -224,6 +225,7 @@ define([
         var remoteNodeAddCallback = function(operation){
             if(operation instanceof NodeAddOperation){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "NodeAddActivity",
                     operation.getEntityId(),
@@ -702,6 +704,8 @@ define([
             _$node.setTransform('scaley', zoom);
 
             jsPlumb.setZoom(zoom);
+            var operation = new CanvasZoomOperation(zoom);
+            _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.HEATMAP, operation.toNonOTOperation());
         };
 
         this.showGhostEdge = function(sourceId, targetId, relationshipType){
