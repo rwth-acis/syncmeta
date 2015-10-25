@@ -20,6 +20,7 @@ define([
         	this.threads = [];
         	this._isFinished = false;
             this.started = false;
+            this._isOwner = true;
 
         	var startingNodes = this.logicalGuidanceDefinition.successors(initialNode);
         	for(var i = 0; i < startingNodes.length; i++){
@@ -29,6 +30,9 @@ define([
 
         	this.currentThreadId = this.remainingThreadIds.shift();
 
+        },
+        isOwner: function(){
+            return this._isOwner;
         },
         getCurrentThreadStart: function(nodeId){
         	return this.threadStartingNodes[this.currentThreadId];

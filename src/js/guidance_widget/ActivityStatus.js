@@ -51,7 +51,7 @@ define([
                         }
                         else{
                             // Join node
-                            if(this.concurrentRegion.isLastThread()){
+                            if(this.concurrentRegion.isLastThread() && this.concurrentRegion.isOwner()){
                                 //If it is the last thread we can take the actions after the join node
                                 nextNodesToResolve = nextNodesToResolve.concat(this.logicalGuidanceDefinition.successors(nodeId));
                             }
@@ -171,6 +171,7 @@ define([
         concurrentRegion.remainingThreadIds = remainingThreads;
         concurrentRegion.currentThreadId = remainingThreads[0];
         concurrentRegion.started = true;
+        concurrentRegion._isOwner = false;
 
         activity.concurrentRegion = concurrentRegion;
         activity.currentNode = joinNode;

@@ -261,9 +261,9 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
                 if(this.sharedActivities.hasOwnProperty(operation.getId())){
                     this.addCurrentActivityToHistory();
                     this.currentActivity = this.sharedActivities[operation.getId()];
+                    delete this.sharedActivities[operation.getId()];
                     this.currentActivity.computeExpectedNodes();
                     this.showExpectedActions(this.currentActivity.lastAddedNode);
-                    delete this.sharedActivities[operation.getId()];
                 }
             }
         }

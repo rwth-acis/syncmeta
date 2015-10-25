@@ -4,6 +4,7 @@ define([
     'operations/ot/NodeAddOperation',
     'operations/ot/NodeDeleteOperation',
     'operations/ot/NodeMoveOperation',
+    'operations/ot/NodeMoveZOperation',
     'operations/ot/NodeResizeOperation',
     'operations/ot/EdgeAddOperation',
     'operations/ot/EdgeDeleteOperation',
@@ -29,7 +30,7 @@ define([
     'operations/non_ot/ShareGuidanceActivityOperation',
     'operations/non_ot/RevokeSharedActivityOperation',
     'operations/non_ot/CollaborateInActivityOperation'
-],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,JoinOperation, SetModelAttributeNodeOperation, ShowObjectGuidanceOperation, ShowGuidanceBoxOperation, ObjectGuidanceFollowedOperation, CanvasViewChangeOperation, CanvasResizeOperation, CanvasZoomOperation, ShareGuidanceActivityOperation, RevokeSharedActivityOperation, CollaborateInActivityOperation) {
+],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeMoveZOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,JoinOperation, SetModelAttributeNodeOperation, ShowObjectGuidanceOperation, ShowGuidanceBoxOperation, ObjectGuidanceFollowedOperation, CanvasViewChangeOperation, CanvasResizeOperation, CanvasZoomOperation, ShareGuidanceActivityOperation, RevokeSharedActivityOperation, CollaborateInActivityOperation) {
 
     /**
      * OperationFactory
@@ -182,7 +183,7 @@ define([
                                     );
                                     break;
                                 case CONFIG.IWC.POSITION.NODE.Z:
-                                    resOperation = new NodeMoveOperation(
+                                    resOperation = new NodeMoveZOperation(
                                         entityId,
                                         value.offsetZ
                                     );
