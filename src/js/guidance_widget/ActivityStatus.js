@@ -1,11 +1,13 @@
 define([
+    'Util',
     'guidance_widget/ConcurrentRegion',
     'classjs',
     'graphlib'
-],function(ConcurrentRegion) {
+],function(Util,ConcurrentRegion) {
 
     var ActivityStatus = Class.extend({
         init: function(logicalGuidanceDefinition, initialNode){
+            this.id = Util.generateRandomId();
             this.logicalGuidanceDefinition = logicalGuidanceDefinition;
             this.initialNode = initialNode;
             this.currentNode = initialNode;
@@ -44,7 +46,7 @@ define([
                         if(outgoing > ingoing){
                             // Fork node
                             if(!this.concurrentRegion)
-                                this.concurrentRegion = new ConcurrentRegion(this.logicalGuidanceDefinition, nodeId);
+                                this.concurrentRegion = new ConcurrentRegion(this, this.logicalGuidanceDefinition, nodeId);
                             nextNodesToResolve.push(this.concurrentRegion.getCurrentThreadStart());
                         }
                         else{
@@ -150,6 +152,18 @@ define([
         }
        
     });
+
+    ActivityStatus.createFromShareOperation = function(logicalGuidanceDefinition, operation){
+        var id = operation.getId();
+        var initialNode = operation.getInitialNode();
+        var joinNode = operation.getJoinNode();
+        var objectMappings = operation.getObjectMappings();
+        var remainingThreds = operation.getRemainingThreads();
+        
+        var activity = new ActivityStatus(logicalGuidanceDefinition, initialNode);
+        activity.nodeMappings = objectMappings;
+        return activity;
+    };
 
     return ActivityStatus;
 

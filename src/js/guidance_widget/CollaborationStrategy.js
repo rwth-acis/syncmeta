@@ -1,5 +1,5 @@
-define(['Util','guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStatus', 'text!templates/guidance_modeling/guidance_strategy_ui.html'
-],function(Util,GuidanceStrategy, ActivityStatus, guidanceStrategyUiHtml) {
+define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStatus','operations/non_ot/ShareGuidanceActivityOperation', 'text!templates/guidance_modeling/guidance_strategy_ui.html'
+],function(Util,IWCW,GuidanceStrategy, ActivityStatus, ShareGuidanceActivityOperation, guidanceStrategyUiHtml) {
 
     var CollaborationStrategy = GuidanceStrategy.extend({
         init: function(logicalGuidanceDefinition, space){
@@ -11,11 +11,15 @@ define(['Util','guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStat
             this.currentActivity = null;
             this.activityHistory = [];
             this.ui = "";
+            this.sharedActivities = {};
 
             for(var i = 0; i < this.initialNodes.length; i++){
                 var nodeId = this.initialNodes[i];
                 this.activityStatusList[Util.generateRandomId()] = new ActivityStatus(this.logicalGuidanceDefinition, nodeId);
             }
+
+            this.iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.GUIDANCE);
+            this.iwc.registerOnDataReceivedCallback(this.onShareGuidanceActivityOperation, this);
         },
         onEntitySelect: function(entityId, entityType){
         },
@@ -126,6 +130,12 @@ define(['Util','guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStat
                     }
                 }
             }
+
+            //Add collaboration guidance
+            for(var activityId in this.sharedActivities){
+                var activity = this.sharedActivities[activityId];
+                guidanceItems.push(this.createCollaborationGuidanceItem(activity));
+            }
             this.showGuidanceBox(activityName, guidanceItems, entityId);
         },
         createSetPropertyGuidanceItem: function(id, action){
@@ -154,6 +164,14 @@ define(['Util','guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStat
                 "sourceId": this.currentActivity.getNodeMapping(action.sourceObjectId),
                 "targetId": this.currentActivity.getNodeMapping(action.targetObjectId),
                 "relationshipType": action.relationshipType
+            };
+            return guidanceItem;
+        },
+        createCollaborationGuidanceItem: function(activity){
+            var guidanceItem = {
+                "type": "COLLABORATION_GUIDANCE",
+                "activityId": activity.id,
+                "label": "Help"
             };
             return guidanceItem;
         },
@@ -217,6 +235,13 @@ define(['Util','guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStat
 
                 // listItem.find(".description").text(this.getDescriptionTextForAction(expectedNodes[0]) + " to start this activity.");
                 historyList.append(listItem);
+            }
+        },
+        onShareGuidanceActivityOperation: function(operation){
+            if(operation instanceof ShareGuidanceActivityOperation){
+                console.log("Received remote share guidance op!!!");
+                var activity = ActivityStatus.createFromShareOperation(this.logicalGuidanceDefinition, operation);
+                this.sharedActivities[activity.id] = activity;
             }
         }
     });

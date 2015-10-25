@@ -54,6 +54,8 @@ define([
          */
         var _onDataReceivedCallbacks = [];
 
+        var _onDataReceivedCallers = [];
+
         /**
          * Stores (for each user) the times an inocming messages has been received to drop duplicate (same time) messages
          * @type {object}
@@ -182,7 +184,8 @@ define([
                         //adjustHistory(remoteOp);
                         for(i = 0, numOfCallbacks = _onDataReceivedCallbacks.length; i < numOfCallbacks; i++){
                             if(typeof _onDataReceivedCallbacks[i] === 'function'){
-                                _onDataReceivedCallbacks[i](resOperation);
+                                var caller = _onDataReceivedCallers[i] || this;
+                                _onDataReceivedCallbacks[i].call(caller, resOperation);
                             }
                         }
                         break;
@@ -193,7 +196,8 @@ define([
                         //adjustHistory(remoteOp);
                         for(i = 0, numOfCallbacks = _onDataReceivedCallbacks.length; i < numOfCallbacks; i++){
                             if(typeof _onDataReceivedCallbacks[i] === 'function'){
-                                _onDataReceivedCallbacks[i](resOperation);
+                                var caller = _onDataReceivedCallers[i] || this;
+                                _onDataReceivedCallbacks[i].call(caller, resOperation);
                             }
                         }
                         break;
@@ -309,10 +313,11 @@ define([
              * @memberof IWCWrapper#
              * @param {function} callback
              */
-            registerOnDataReceivedCallback: function(callback){
+            registerOnDataReceivedCallback: function(callback, caller){
                 if(typeof callback === "function"){
                     this.unregisterOnDataReceivedCallback(callback);
                     _onDataReceivedCallbacks.push(callback);
+                    _onDataReceivedCallers.push(caller);
                 }
             },
             /**
@@ -327,6 +332,7 @@ define([
                     for(i = 0, numOfCallbacks = _onDataReceivedCallbacks.length; i < numOfCallbacks; i++){
                         if(callback === _onDataReceivedCallbacks[i]){
                             _onDataReceivedCallbacks.splice(i,1);
+                            _onDataReceivedCallers.splice(i, 1);
                         }
                     }
                 }

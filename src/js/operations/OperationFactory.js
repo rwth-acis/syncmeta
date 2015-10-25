@@ -25,8 +25,9 @@ define([
     'operations/non_ot/ObjectGuidanceFollowedOperation',
     'operations/non_ot/CanvasViewChangeOperation',
     'operations/non_ot/CanvasResizeOperation',
-    'operations/non_ot/CanvasZoomOperation'
-],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,JoinOperation, SetModelAttributeNodeOperation, ShowObjectGuidanceOperation, ShowGuidanceBoxOperation, ObjectGuidanceFollowedOperation, CanvasViewChangeOperation, CanvasResizeOperation, CanvasZoomOperation) {
+    'operations/non_ot/CanvasZoomOperation',
+    'operations/non_ot/ShareGuidanceActivityOperation'
+],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,JoinOperation, SetModelAttributeNodeOperation, ShowObjectGuidanceOperation, ShowGuidanceBoxOperation, ObjectGuidanceFollowedOperation, CanvasViewChangeOperation, CanvasResizeOperation, CanvasZoomOperation, ShareGuidanceActivityOperation) {
 
     /**
      * OperationFactory
@@ -104,6 +105,9 @@ define([
                         break;
                     case CanvasZoomOperation.TYPE:
                         resOperation = new CanvasZoomOperation(data.zoom);
+                        break;
+                    case ShareGuidanceActivityOperation.TYPE:
+                        resOperation = new ShareGuidanceActivityOperation(data.id, data.initialNode, data.joinNode, data.objectMappings, data.remainingThreads);
                         break;
                 }
                 return resOperation;

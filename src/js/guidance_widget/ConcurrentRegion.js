@@ -1,19 +1,24 @@
 define([
+    'iwcw',
 	'Util',
+    'operations/non_ot/ShareGuidanceActivityOperation',
     'classjs',
     'graphlib'
-],function(Util) {
+],function(IWCW, Util, ShareGuidanceActivityOperation) {
 
     var ConcurrentRegion = Class.extend({
-        init: function(logicalGuidanceDefinition, initialNode){
+        init: function(activity, logicalGuidanceDefinition, initialNode){
+            this.activity = activity;
             this.logicalGuidanceDefinition = logicalGuidanceDefinition;
             this.initialNode = initialNode;
+            this.iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.GUIDANCE);
             this.subConcurrentRegion = null;
             this.threadStartingNodes = this.logicalGuidanceDefinition.successors(initialNode);
         	this.currentThreadId = null;
         	this.remainingThreadIds = [];
         	this.threads = [];
         	this._isFinished = false;
+            this.started = false;
 
         	var startingNodes = this.logicalGuidanceDefinition.successors(initialNode);
         	for(var i = 0; i < startingNodes.length; i++){
@@ -22,6 +27,7 @@ define([
         	}
 
         	this.currentThreadId = this.remainingThreadIds.shift();
+
         },
         getCurrentThreadStart: function(nodeId){
         	return this.threadStartingNodes[this.currentThreadId];
@@ -35,6 +41,16 @@ define([
         update: function(nodeId){
         	//Check if we are still in the current thread
         	if(this.threads[this.currentThreadId].indexOf(nodeId) >=0){
+                console.log("We are in the current thread");
+                if(!this.started){
+                    console.log("Started concurrent region!!");
+                    //Here we have entered the first
+                    //thread and we notify other users that
+                    //we have startet a concurrent region
+                    var operation = new ShareGuidanceActivityOperation(this.activity.id, this.activity.initialNode, this.initialNode, this.activity.nodeMappings, this.remainingThreadIds);
+                    this.iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.toNonOTOperation());
+                    this.started = true;
+                }
         		return;
         	}
         	if(this.isLastThread()){
