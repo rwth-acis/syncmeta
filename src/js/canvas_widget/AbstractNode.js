@@ -270,7 +270,7 @@ define([
             }
 
             for(var i = 0; i < _relatedGhostEdges.length; i++){
-                if(_relatedGhostEdges[i])
+                if(typeof _relatedGhostEdges[i] == "function")
                     _relatedGhostEdges[i].remove();
             }
 

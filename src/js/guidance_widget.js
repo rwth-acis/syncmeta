@@ -15,14 +15,16 @@ requirejs([
     'operations/ot/NodeDeleteOperation',
     'guidance_widget/NoStrategy',
     'guidance_widget/AvoidConflictsStrategy',
+    'guidance_widget/CollaborationStrategy',
     'promise!LogicalGuidanceDefinition',
     'promise!Space',
     'bootstrap'
-],function ($, _, require, IWCW, EntitySelectOperation, ObjectGuidanceFollowedOperation, NodeAddOperation, EdgeAddOperation, NodeDeleteOperation, NoStrategy, AvoidConflictsStrategy, LogicalGuidanceDefinition, Space) {
+],function ($, _, require, IWCW, EntitySelectOperation, ObjectGuidanceFollowedOperation, NodeAddOperation, EdgeAddOperation, NodeDeleteOperation, NoStrategy, AvoidConflictsStrategy, CollaborationStrategy, LogicalGuidanceDefinition, Space) {
     var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.GUIDANCE);
     var strategies = [
         NoStrategy,
-        AvoidConflictsStrategy
+        AvoidConflictsStrategy,
+        CollaborationStrategy
     ];
     var selectedStrategy = new strategies[0](LogicalGuidanceDefinition, Space);
     selectedStrategy.buildUi();
