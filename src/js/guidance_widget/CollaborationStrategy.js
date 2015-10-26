@@ -1,5 +1,5 @@
-define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStatus','operations/non_ot/ShareGuidanceActivityOperation', 'operations/non_ot/RevokeSharedActivityOperation','operations/non_ot/CollaborateInActivityOperation', 'text!templates/guidance_modeling/guidance_strategy_ui.html'
-],function(Util,IWCW,GuidanceStrategy, ActivityStatus, ShareGuidanceActivityOperation, RevokeSharedActivityOperation, CollaborateInActivityOperation, guidanceStrategyUiHtml) {
+define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStatus','operations/non_ot/ShareGuidanceActivityOperation', 'operations/non_ot/RevokeSharedActivityOperation','operations/non_ot/CollaborateInActivityOperation', 'operations/non_ot/MoveCanvasOperation', 'text!templates/guidance_modeling/guidance_strategy_ui.html'
+],function(Util,IWCW,GuidanceStrategy, ActivityStatus, ShareGuidanceActivityOperation, RevokeSharedActivityOperation, CollaborateInActivityOperation, MoveCanvasOperation, guidanceStrategyUiHtml) {
 
     var CollaborationStrategy = GuidanceStrategy.extend({
         init: function(logicalGuidanceDefinition, space){
@@ -72,7 +72,7 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
             }
             //If we could not proceed check if we can start a new activity
             if(!nextNode){
-                this.addCurrentActivityToHistory();
+                this.addActivityToHistory(this.currentActivity);
                 this.currentActivity = null;
                 for(var i = 0; i < this.initialNodes.length; i++){
                     var nodeId = this.initialNodes[i];
@@ -215,28 +215,35 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
 
             }
         },
-        addCurrentActivityToHistory: function(){
-            if(this.currentActivity == null)
+        addActivityToHistory: function(activity){
+            if(activity == null)
                 return;
             if(this.activityHistory.length > 4){
                 this.activityHistory.shift();
             }
-            this.activityHistory.push(this.currentActivity);
+            this.activityHistory.push(activity);
 
             var historyList = this.ui.find(".history-list")
+            historyList.find(".guidance-history-item").off("click");
             historyList.empty();
+            var that = this;
             for(var i = this.activityHistory.length - 1; i >= 0; i--){
                 var activity = this.activityHistory[i];
                 var nodeId = activity.initialNode;
                 var node = this.logicalGuidanceDefinition.node(nodeId);
-                var listItem = $("<li class='bs-list-group-item guidance-history-item'><p><i class='fa fa-puzzle-piece' style='margin-right:5px;'></i><span class='name'></span></p><p><small class='bs-text-muted description'></small></p></li>");
+                var listItem = $("<li class='bs-list-group-item guidance-history-item' style='cursor: pointer;'><p><i class='fa fa-puzzle-piece' style='margin-right:5px;'></i><span class='name'></span></p><p><small class='bs-text-muted description'></small></p></li>");
                 listItem.attr("id", nodeId + "guidance-history-item");
                 listItem.find(".name").text(node.name);
-                //Get expected start nodes to create the description text
-                // var tempActivity = new ActivityStatus(this.logicalGuidanceDefinition, nodeId);
-                // var expectedNodes = tempActivity.getExpectedNodes();
-
-                // listItem.find(".description").text(this.getDescriptionTextForAction(expectedNodes[0]) + " to start this activity.");
+                listItem.val(i);
+                listItem.click(function(){
+                    var id = $(this).val();
+                    var currentActivity = that.currentActivity;
+                    that.currentActivity = that.activityHistory[id];
+                    that.showExpectedActions(that.currentActivity.lastAddedNode);
+                    var operation = new MoveCanvasOperation(that.currentActivity.lastAddedNode, false);
+                    that.iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.toNonOTOperation());
+                    that.addActivityToHistory(currentActivity);
+                });
                 historyList.append(listItem);
             }
         },
@@ -259,7 +266,7 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
             if(operation instanceof CollaborateInActivityOperation){
                 console.log("I want to collaborate!!!");
                 if(this.sharedActivities.hasOwnProperty(operation.getId())){
-                    this.addCurrentActivityToHistory();
+                    this.addActivityToHistory(this.currentActivity);
                     this.currentActivity = this.sharedActivities[operation.getId()];
                     delete this.sharedActivities[operation.getId()];
                     this.currentActivity.computeExpectedNodes();

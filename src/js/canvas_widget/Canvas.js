@@ -20,6 +20,7 @@ define([
     'operations/non_ot/CanvasZoomOperation',
     'operations/non_ot/ShareGuidanceActivityOperation',
     'operations/non_ot/RevokeSharedActivityOperation',
+    'operations/non_ot/MoveCanvasOperation',
     'canvas_widget/AbstractEntity',
     'canvas_widget/ModelAttributesNode',
     'canvas_widget/EntityManager',
@@ -32,7 +33,7 @@ define([
     'canvas_widget/guidance_modeling/GhostEdgeGuidance',
     'canvas_widget/guidance_modeling/CollaborationGuidance',
     'jquery.transformable-PATCHED'
-],/** @lends Canvas */function($,jsPlumb,IWCOT,Util,NodeAddOperation,EdgeAddOperation,ToolSelectOperation,EntitySelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,ShowObjectGuidanceOperation,ShowGuidanceBoxOperation,CanvasViewChangeOperation,CanvasResizeOperation,CanvasZoomOperation,ShareGuidanceActivityOperation,RevokeSharedActivityOperation,AbstractEntity,ModelAttributesNode,EntityManager,AbstractCanvas,MoveTool,ObjectGuidance,GuidanceBox,SelectToolGuidance, SetPropertyGuidance, GhostEdgeGuidance, CollaborationGuidance) {
+],/** @lends Canvas */function($,jsPlumb,IWCOT,Util,NodeAddOperation,EdgeAddOperation,ToolSelectOperation,EntitySelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,ShowObjectGuidanceOperation,ShowGuidanceBoxOperation,CanvasViewChangeOperation,CanvasResizeOperation,CanvasZoomOperation,ShareGuidanceActivityOperation,RevokeSharedActivityOperation,MoveCanvasOperation,AbstractEntity,ModelAttributesNode,EntityManager,AbstractCanvas,MoveTool,ObjectGuidance,GuidanceBox,SelectToolGuidance, SetPropertyGuidance, GhostEdgeGuidance, CollaborationGuidance) {
     Canvas.prototype = new AbstractCanvas();
     Canvas.prototype.constructor = Canvas;
     /**
@@ -340,6 +341,12 @@ define([
                     //Do nothing here
                 }
 
+            }
+        };
+
+        var localMoveCanvasOperation = function(operation){
+            if(operation instanceof MoveCanvasOperation){
+                that.scrollNodeIntoView(operation.getObjectId(), operation.getTransition());
             }
         };
 
@@ -1162,6 +1169,7 @@ define([
             _iwcot.registerOnRemoteDataReceivedCallback(remoteShareGuidanceActivityOperationCallback);
             _iwcot.registerOnLocalDataReceivedCallback(localRevokeSharedActivityOperationCallback);
             _iwcot.registerOnRemoteDataReceivedCallback(remoteRevokeSharedActivityOperationCallback);
+            _iwcot.registerOnLocalDataReceivedCallback(localMoveCanvasOperation);
         };
 
 
@@ -1184,6 +1192,7 @@ define([
             _iwcot.unregisterOnRemoteDataReceivedCallback(remoteShareGuidanceActivityOperationCallback);
             _iwcot.unregisterOnLocalDataReceivedCallback(localRevokeSharedActivityOperationCallback);
             _iwcot.unregisterOnRemoteDataReceivedCallback(remoteRevokeSharedActivityOperationCallback);
+            _iwcot.unregisterOnLocalDataReceivedCallback(localMoveCanvasOperation);
         };
 
         init();

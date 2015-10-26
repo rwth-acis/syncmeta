@@ -29,8 +29,9 @@ define([
     'operations/non_ot/CanvasZoomOperation',
     'operations/non_ot/ShareGuidanceActivityOperation',
     'operations/non_ot/RevokeSharedActivityOperation',
-    'operations/non_ot/CollaborateInActivityOperation'
-],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeMoveZOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,JoinOperation, SetModelAttributeNodeOperation, ShowObjectGuidanceOperation, ShowGuidanceBoxOperation, ObjectGuidanceFollowedOperation, CanvasViewChangeOperation, CanvasResizeOperation, CanvasZoomOperation, ShareGuidanceActivityOperation, RevokeSharedActivityOperation, CollaborateInActivityOperation) {
+    'operations/non_ot/CollaborateInActivityOperation',
+    'operations/non_ot/MoveCanvasOperation'
+],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeMoveZOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,JoinOperation, SetModelAttributeNodeOperation, ShowObjectGuidanceOperation, ShowGuidanceBoxOperation, ObjectGuidanceFollowedOperation, CanvasViewChangeOperation, CanvasResizeOperation, CanvasZoomOperation, ShareGuidanceActivityOperation, RevokeSharedActivityOperation, CollaborateInActivityOperation, MoveCanvasOperation) {
 
     /**
      * OperationFactory
@@ -118,6 +119,10 @@ define([
                     case CollaborateInActivityOperation.TYPE:
                         resOperation = new CollaborateInActivityOperation(data.id);
                         break;
+                    case MoveCanvasOperation.TYPE:
+                        resOperation = new MoveCanvasOperation(data.objectId, data.transition);
+                        break;
+                        
                 }
                 return resOperation;
             },
