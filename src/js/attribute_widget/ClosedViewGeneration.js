@@ -32,49 +32,7 @@ define(['lodash', 'Util'],
             }
         }
 
-        /**
-         * recursively add the generalisation relations to the viewpoint
-         * @param addToViewpoint the viewpoint creation map with the nodes and edges for the canvas widget
-         * @param viewId the identifier of the view
-         * @param baseNode the node to start
-         * @returns {*} the viewpoint creation map with the nodes and edges for the canvas widget
-         */
-        function getGeneralizationHierarchy(addToViewpoint, viewId, baseNode){
-            var EntityManager = require('attribute_widget/EntityManager');
-            var newEdgeId, newId, refId = null;
-            var outEdges =  baseNode.getOutgoingEdges();
-            for(var outEdgeKey in outEdges){
-                if(outEdges.hasOwnProperty(outEdgeKey) && outEdges[outEdgeKey].getType() === 'Generalisation'){
-                    var generalizationEdge = outEdges[outEdgeKey];
-                    var superClassNode =generalizationEdge.getTarget();
-                    if(superClassNode.getType() === 'Abstract Class') {
-                        var superClassId = superClassNode.getEntityId();
-                        if (!EntityManager.doesMapExists(viewId, superClassId)) {
-                            newId = Util.generateRandomId();
-                            addToViewpoint.nodes[newId] = superClassId;
-                            EntityManager.addToMap(viewId, superClassId, newId);
-                            refId = newId;
-                        }
-                        else
-                            refId = EntityManager.lookupMap(viewId, superClassId);
 
-                        var generalizationEdgeId = generalizationEdge.getEntityId();
-                        if (!EntityManager.doesMapExists(viewId, generalizationEdgeId)) {
-                            newEdgeId = Util.generateRandomId();
-                            EntityManager.addToMap(viewId, generalizationEdgeId, newEdgeId);
-                            addToViewpoint.edges[newEdgeId] = {
-                                origin: generalizationEdgeId,
-                                type: 'Generalisation',
-                                source: EntityManager.lookupMap(viewId, baseNode.getEntityId()),
-                                target: refId
-                            };
-                        }
-                        addToViewpoint = getGeneralizationHierarchy(addToViewpoint, viewId, superClassNode);
-                    }
-                }
-            }
-            return addToViewpoint;
-        }
 
         /**
          * the closed-view-generation algorithm
@@ -119,30 +77,6 @@ define(['lodash', 'Util'],
                                 target:refId
                             };
                         }
-
-                    }
-                    else if(neighbor.getType() === 'Abstract Class'){
-                        //create the neighbor if he is not in the map dictionary
-                        if(!EntityManager.doesMapExists(viewId, neighborId)){
-                            addToViewpoint.nodes[newId] = neighborId;
-                            EntityManager.addToMap(viewId,neighborId, newId);
-                            refId = newId;
-                        }
-                        else
-                            refId = EntityManager.lookupMap(viewId, neighborId);
-
-                        originalEdge = getEdgeBetween(baseNode, neighbor);
-                        if(!EntityManager.doesMapExists(viewId,originalEdge.getEntityId())){
-                            newEdgeId = Util.generateRandomId();
-                            EntityManager.addToMap(viewId, originalEdge.getEntityId(), newEdgeId);
-                            addToViewpoint.edges[newEdgeId] = {
-                                origin:originalEdge.getEntityId(),
-                                type: originalEdge.getType(),
-                                source: viewType.getEntityId(),
-                                target:refId
-                            };
-                        }
-                        addToViewpoint = getGeneralizationHierarchy(addToViewpoint, viewId, neighbor);
 
                     }
                     else if((neighbor.getType() === 'Object' || neighbor.getType() === 'Relationship') && EntityManager.doesMapExists(viewId,neighborId)){

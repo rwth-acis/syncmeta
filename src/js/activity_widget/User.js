@@ -53,7 +53,8 @@ define([
         var _$node = $(_userBoxTemplate({
             heading: space.members.hasOwnProperty(jabberId) ? space.members[jabberId][CONFIG.NS.PERSON.TITLE] : "",
             text: "",
-            color: space.members.hasOwnProperty(jabberId) ? Util.getColor(space.members[jabberId].globalId) : "#000000"
+            color: space.members.hasOwnProperty(jabberId) ? Util.getColor(space.members[jabberId].globalId) : "#000000",
+            view: ""
         })).hide();
 
         /**

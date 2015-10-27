@@ -42,7 +42,7 @@ function ($, jsPlumb, _, AbstractNode, RenamingListAttribute, SingleSelectionAtt
 		 * @type {jQuery}
 		 * @private
 		 */
-		var _$template = $(_.template(objectNodeHtml, {}));
+		var _$template = $(_.template(objectNodeHtml, {type:'ViewObject'}));
 
 		/**
 		 * jQuery object of DOM node representing the node

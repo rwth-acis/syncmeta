@@ -31,7 +31,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$template = $(_.template(objectNodeHtml,{}));
+        var _$template = $(_.template(objectNodeHtml,{type:"Object"}));
 
         /**
          * jQuery object of DOM node representing the node

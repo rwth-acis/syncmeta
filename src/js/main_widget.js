@@ -124,6 +124,10 @@ requirejs([
                     iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation);
                     iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation);
 
+                    var activityOperation = new ActivityOperation("ViewApplyActivity", vvs.id, iwcot.getUser()[CONFIG.NS.PERSON.JABBERID]);
+                    iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
+                    iwcot.sendRemoteNonOTOperation(activityOperation.toNonOTOperation());
+
                     //init the tools for canvas
                     initTools(vvs);
 
@@ -158,6 +162,10 @@ requirejs([
                 var operation = new InitModelTypesOperation(metamodel, true);
                 iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation.toNonOTOperation());
                 iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
+
+                var activityOperation = new ActivityOperation("ViewApplyActivity", '', iwcot.getUser()[CONFIG.NS.PERSON.JABBERID]);
+                iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
+                iwcot.sendRemoteNonOTOperation(activityOperation.toNonOTOperation());
 
                 EntityManager.setViewId(null);
                 EntityManager.initModelTypes(metamodel);
@@ -259,6 +267,9 @@ requirejs([
                     //Disable the view types in the palette
                     var operation= new SetViewTypesOperation(false);
                     iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation.toNonOTOperation());
+                    var activityOperation = new ActivityOperation("ViewApplyActivity", '', iwcot.getUser()[CONFIG.NS.PERSON.JABBERID]);
+                    iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
+                    iwcot.sendRemoteNonOTOperation(activityOperation.toNonOTOperation());
                     resetCanvas();
                     JSONtoGraph(model);
                     canvas.resetTool();
@@ -331,6 +342,10 @@ requirejs([
         //Enable the view types in the palette
         operation = new SetViewTypesOperation(true);
         iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation.toNonOTOperation());
+
+        var activityOperation = new ActivityOperation("ViewApplyActivity", json.id, iwcot.getUser()[CONFIG.NS.PERSON.JABBERID]);
+        iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
+        iwcot.sendRemoteNonOTOperation(activityOperation.toNonOTOperation());
 
         var nodeId, edgeId;
         for(nodeId in json.nodes){
@@ -596,6 +611,8 @@ requirejs([
                     iwcot.registerOnRemoteDataReceivedCallback(function(operation){
                         if(operation instanceof UpdateViewListOperation) {
                             ViewManager.initViewList();
+                        }else if(operation instanceof ActivityOperation){
+                            iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, operation.toNonOTOperation());
                         }
                     });
 
@@ -617,7 +634,7 @@ requirejs([
                         {}
                     ).toNonOTOperation();
                     iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,activityOperation);
-                    model = operation.getData();
+                    //model = operation.getData();
                 }
             } else {
                 if(operation.isDone()){
@@ -635,7 +652,8 @@ requirejs([
         }
     });
 
-    /*$("#save_image").click(function(){
+    /*
+    $("#save_image").click(function(){
         canvas.toPNG().then(function(uri){
             var link = document.createElement('a');
             link.download = "export.png";

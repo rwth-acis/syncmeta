@@ -33,14 +33,6 @@ define([
         {
             sourceTypes: [EnumNode.TYPE],
             targetTypes: [EnumNode.TYPE]
-        },
-		{
-            sourceTypes: [ViewObjectNode.TYPE],
-            targetTypes: [ObjectNode.TYPE,AbstractClassNode.TYPE,ViewObjectNode.TYPE]
-        },
-        {
-            sourceTypes: [ViewRelationshipNode.TYPE],
-            targetTypes: [RelationshipNode.TYPE,AbstractClassNode.TYPE,ViewRelationshipNode.TYPE]
         }
     ];
 
