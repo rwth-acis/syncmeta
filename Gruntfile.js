@@ -269,7 +269,7 @@ module.exports = function(grunt) {
                 options: {
                     data: {
                         meta: {
-                            title: "Heatmap",
+                            title: "Collaboration Overview",
                             description: "",
                             width: "400",
                             height: "400"

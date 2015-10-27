@@ -7,7 +7,7 @@ define([
     var NodePreview = Class.extend({
         init: function(id, x, y, width, height, scaleFactor, color){
             this.$node = $(heatspotHtml);
-            this.originialX = x;
+            this.originalX = x;
             this.originalY = y;
             this.originalWidth = width;
             this.originalHeight = height;
@@ -40,7 +40,7 @@ define([
             this.$node.remove();
         },
         moveX: function(x){
-            this.originialX += x,
+            this.originalX += x,
             this.draw();
         },
         moveY: function(y){
@@ -62,7 +62,7 @@ define([
         draw: function(){
             this.$node.css({
                 top: this.originalY * this.scaleFactor,
-                left: this.originialX * this.scaleFactor,
+                left: this.originalX * this.scaleFactor,
                 width: this.originalWidth * this.scaleFactor,
                 height: this.originalHeight * this.scaleFactor
             });

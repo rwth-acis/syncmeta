@@ -336,6 +336,10 @@ define([
                         }
                     }
                 }
+            },
+
+            getUser: function(){
+                return Space.user;
             }
         };
     }

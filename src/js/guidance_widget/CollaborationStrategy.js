@@ -8,6 +8,8 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
             this.nodeMappings = {};
             this.activityStatusList = {};
             this.lastCreatedObjectId = "";
+            this.lastCreatedEntityId = "";
+            this.createdEntityHistory = [];
             this.currentActivity = null;
             this.activityHistory = [];
             this.ui = "";
@@ -65,6 +67,8 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
         },
         onNodeAdd: function(id, type){
             this.lastCreatedObjectId = id;
+            this.lastCreatedEntityId = id;
+            this.createdEntityHistory.push(id);
             var nextNode = null;
             //Check if we can proceed in the current activity
             if(this.currentActivity){
@@ -92,10 +96,42 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
             this.highlightActiveActivity();
             this.showExpectedActions(id);
         },
+        checkActivityValidityAfterNodeDelete: function(activity, nodeId){
+            for(var mappingId in activity.nodeMappings){
+                if(activity.nodeMappings[mappingId] == nodeId)
+                    return false;
+            }
+            return true;
+        },
         onNodeDelete: function(id, type){
-            this.showGuidanceBox("", []);
+            var lastCreatedEntityId = this.createdEntityHistory[this.createdEntityHistory.length - 1];
+            if(lastCreatedEntityId == id){
+                this.currentActivity.revertLastAction();
+                this.createdEntityHistory.pop();
+                this.lastCreatedObjectId = this.createdEntityHistory[this.createdEntityHistory.length - 1];
+                this.showExpectedActions(this.lastCreatedObjectId);
+            }
+            else{
+                if(this.currentActivity){
+                    if(!this.checkActivityValidityAfterNodeDelete(this.currentActivity, id)){
+                        this.currentActivity = null;
+                    }
+                }
+                var newHistoryList = [];
+                for(var i = 0; i < this.activityHistory.length; i++){
+                    var activity = this.activityHistory[i];
+                    if(this.checkActivityValidityAfterNodeDelete(activity, id)){
+                        newHistoryList.push(activity);
+                    }
+                }
+                this.activityHistory = newHistoryList;
+                this.redrawHistoryList();
+                this.showGuidanceBox("", []);
+            }
         },
         onEdgeAdd: function(id, type){
+            this.lastCreatedEntityId = id;
+            this.createdEntityHistory.push(id);
             var nextNode = null;
             if(this.currentActivity){
                 nextNode = this.checkEdgeAddForActivity(id, type, this.currentActivity)
@@ -106,6 +142,18 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
                 this.currentActivity = null;
             
             this.showExpectedActions(this.lastCreatedObjectId);
+        },
+        onEdgeDelete: function(id, type){
+            console.log("Edge delete!!!");
+            var lastCreatedEntityId = this.createdEntityHistory[this.createdEntityHistory.length - 1];
+            if(lastCreatedEntityId == id){
+                this.currentActivity.revertLastAction();
+                this.createdEntityHistory.pop();
+                this.showExpectedActions(this.lastCreatedObjectId);
+            }
+            else{
+                this.showGuidanceBox("", []);
+            }
         },
         showExpectedActions: function(entityId){
             var guidanceItems = [];
@@ -222,7 +270,10 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
                 this.activityHistory.shift();
             }
             this.activityHistory.push(activity);
-
+            this.redrawHistoryList();
+            
+        },
+        redrawHistoryList: function(){
             var historyList = this.ui.find(".history-list")
             historyList.find(".guidance-history-item").off("click");
             historyList.empty();

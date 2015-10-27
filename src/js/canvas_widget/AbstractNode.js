@@ -174,7 +174,9 @@ define([
          * @param {operations.ot.NodeMoveOperation} operation
          */
         var processNodeMoveOperation = function(operation){
+            _canvas.hideGuidanceBox();
             that.move(operation.getOffsetX(),operation.getOffsetY(),0);
+            _canvas.showGuidanceBox();
         };
 
         /**
@@ -229,7 +231,9 @@ define([
          * @param {operations.ot.NodeResizeOperation} operation
          */
         var processNodeResizeOperation = function(operation){
+            _canvas.hideGuidanceBox();
             that.resize(operation.getOffsetX(),operation.getOffsetY());
+            _canvas.showGuidanceBox();
         };
 
         /**
@@ -433,6 +437,7 @@ define([
         var historyNodeMoveCallback = function(operation){
             if(operation instanceof NodeMoveOperation && operation.getEntityId() === that.getEntityId()){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
                 processNodeMoveOperation(operation);
             }
         };
@@ -455,6 +460,7 @@ define([
         var historyNodeResizeCallback = function(operation){
             if(operation instanceof NodeResizeOperation && operation.getEntityId() === that.getEntityId()){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
                 processNodeResizeOperation(operation);
             }
         };
@@ -466,6 +472,8 @@ define([
         var historyNodeDeleteCallback = function(operation){
             if(operation instanceof NodeDeleteOperation && operation.getEntityId() === that.getEntityId()){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
                 processNodeDeleteOperation(operation);
             }
         };

@@ -21,16 +21,22 @@ requirejs([
     var iwc = IWCOT.getInstance(CONFIG.WIDGET.NAME.HEATMAP);
     var $heatmap = $("#heatmap");
     var scaleFactor = $heatmap.width() / 9000;
-    var $window = $("<div style='position:absolute; z-index:10000; width:50px; height:50px; border-style:groove;'></div>");
+    var $window = $("<div style='position:absolute; z-index:10000; width:50px; height:50px; border-style:groove; border-width: 1px;'></div>");
     $window.hide();
     $heatmap.append($window);
     var previewNodes = {};
-    var localUserId;
+    var localUserId = iwc.getUser()[CONFIG.NS.PERSON.JABBERID];
+
+    var minLeft = 4500;
+    var minTop = 4500;
+    var maxBottom = 5000;
+    var maxRight = 5000;
 
     var addNodePreview = function(id, x, y, width, height, color){
         var nodePreview = new NodePreview(id, x, y, width, height, scaleFactor, color);
         previewNodes[id] = nodePreview;
         $heatmap.append(nodePreview.get$node());
+        return nodePreview;
     };
 
     var operationCallback = function(operation){
@@ -39,7 +45,9 @@ requirejs([
             var color = null;
             if(senderJabberId != localUserId)
                 color = iwc.getUserColor(senderJabberId);
-            addNodePreview(operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), color);
+            var node = addNodePreview(operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), color);
+            updateBoundingBox(node);
+            updateZoom();
         }
         else if (operation instanceof NodeMoveOperation){
             var id = operation.getEntityId();
@@ -49,6 +57,8 @@ requirejs([
                 node.moveY(operation.getOffsetY());
                 var senderJabberId = operation.getOTOperation().getSender();
                 updateColor(node, senderJabberId);
+                updateBoundingBox(node);
+                updateZoom();
             }
 
         }
@@ -60,6 +70,8 @@ requirejs([
                 node.changeHeight(operation.getOffsetY());
                 var senderJabberId = operation.getOTOperation().getSender();
                 updateColor(node, senderJabberId);
+                updateBoundingBox(node);
+                updateZoom();
             }
         }
         else if (operation instanceof NodeDeleteOperation){
@@ -71,7 +83,6 @@ requirejs([
             }
         }
         else if (operation instanceof CanvasViewChangeOperation){
-            localUserId = operation.getNonOTOperation().getSender();
             updateWindow(operation);
         }
     };
@@ -104,10 +115,46 @@ requirejs([
         }
     };
 
+    var updateZoom = function(){
+        var width = maxRight - minLeft;
+        var height = maxBottom - minTop;
+
+        var bigger = width > height ? width : height;
+
+        var centerX = minLeft + width / 2;
+        var centerY = minTop + height / 2;
+
+        var originX = centerX / 9000 * 100;
+        var originY = centerY / 9000 * 100;
+
+        var translateX = -(centerX - 4500) * scaleFactor;
+        var translatY =  -(centerY - 4500) * scaleFactor;
+        var zoom = 9000 / bigger * 0.9;
+        $heatmap.css({
+            "transform-origin": originX + "%" + " " + originY + "%",
+            transform: "translate(" + translateX + "px, " + translatY + "px) scale(" + zoom + ")"
+        })
+    };
+
+    var updateBoundingBox = function(node){
+        if(node.originalX < minLeft)
+            minLeft = node.originalX;
+        if(node.originalY < minTop)
+            minTop = node.originalY;
+        if(node.originalX + node.originalWidth > maxRight)
+            maxRight = node.originalX + node.originalWidth;
+        if(node.originalY + node.originalHeight > maxBottom)
+            maxBottom = node.originalY + node.originalHeight
+    };
+
     registerCallbacks();
 
     for(var nodeId in model.nodes){
         var node = model.nodes[nodeId];
-        addNodePreview(nodeId, node.left, node.top, node.width, node.height, scaleFactor, null);
+        var nodePreview = addNodePreview(nodeId, node.left, node.top, node.width, node.height, scaleFactor, null);
+        updateColor(nodePreview, localUserId);
+        updateBoundingBox(nodePreview);
     };
+    updateZoom();
+
 });

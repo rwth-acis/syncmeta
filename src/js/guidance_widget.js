@@ -13,6 +13,7 @@ requirejs([
     'operations/ot/NodeAddOperation',
     'operations/ot/EdgeAddOperation',
     'operations/ot/NodeDeleteOperation',
+    'operations/ot/EdgeDeleteOperation',
     'operations/non_ot/ShareGuidanceActivityOperation',
     'guidance_widget/NoStrategy',
     'guidance_widget/AvoidConflictsStrategy',
@@ -20,7 +21,7 @@ requirejs([
     'promise!LogicalGuidanceDefinition',
     'promise!Space',
     'bootstrap'
-],function ($, _, require, IWCW, EntitySelectOperation, ObjectGuidanceFollowedOperation, NodeAddOperation, EdgeAddOperation, NodeDeleteOperation, ShareGuidanceActivityOperation, NoStrategy, AvoidConflictsStrategy, CollaborationStrategy, LogicalGuidanceDefinition, Space) {
+],function ($, _, require, IWCW, EntitySelectOperation, ObjectGuidanceFollowedOperation, NodeAddOperation, EdgeAddOperation, NodeDeleteOperation, EdgeDeleteOperation, ShareGuidanceActivityOperation, NoStrategy, AvoidConflictsStrategy, CollaborationStrategy, LogicalGuidanceDefinition, Space) {
     var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.GUIDANCE);
     var strategies = [
         NoStrategy,
@@ -61,6 +62,9 @@ requirejs([
         }
         else if (operation instanceof NodeDeleteOperation){
             selectedStrategy.onNodeDelete(operation.getEntityId(), operation.getType());
+        }
+        else if (operation instanceof EdgeDeleteOperation){
+            selectedStrategy.onEdgeDelete(operation.getEntityId(), operation.getType());
         }
     };
 

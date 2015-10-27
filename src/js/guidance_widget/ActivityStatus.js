@@ -17,6 +17,7 @@ define([
             this.possibleSubActivities = [];
             this.nodeMappings = {};
             this.concurrentRegion = null;
+            this.nodeHistory = [];
         },
         computeExpectedNodes: function(){
             var nodesToResolve = this.logicalGuidanceDefinition.successors(this.currentNode);
@@ -36,6 +37,8 @@ define([
                     }
                     else if(node.type == "CALL_ACTIVITY_ACTION"){
                         var subActivity = new ActivityStatus(this.logicalGuidanceDefinition, node.initialNodeId);
+                        subActivity.lastAddedNode = this.lastAddedNode;
+                        subActivity.nodeMappings = this.nodeMappings;
                         this.possibleSubActivities.push(subActivity);
                         expectedNodes = expectedNodes.concat(subActivity.getExpectedNodes());
                     }
@@ -83,6 +86,7 @@ define([
                     var subActivity = this.possibleSubActivities[i];
                     if(subActivity.getExpectedNodes().indexOf(nodeId) >= 0){
                         this.currentSubActivity = subActivity;
+                        this.nodeHistory.push(this.currentNode);
                         this.currentNode = subActivity.initialNode;
                     }
                 }
@@ -94,6 +98,7 @@ define([
             //Are we proceeding in the main activity?
             else{
                 this.subActivity = null;
+                this.nodeHistory.push(this.currentNode);
                 this.currentNode = nodeId;
                 //Check if we are in a concurrent region and have advanced there
                 if(this.concurrentRegion){
@@ -102,6 +107,19 @@ define([
                         this.concurrentRegion = null;
                     }
                 }
+                this.computeExpectedNodes();
+            }
+        },
+        revertLastAction: function(){
+            if(this.nodeHistory.length == 0){
+                return;
+            }
+            if(this.currentSubActivity){
+                console.log("Revert subactivity action!");
+                this.currentSubActivity.revertLastAction();
+            }
+            else{
+                this.currentNode = this.nodeHistory.pop();
                 this.computeExpectedNodes();
             }
         },

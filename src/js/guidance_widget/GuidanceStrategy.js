@@ -34,6 +34,9 @@ define([
         onNodeDelete: function(id, type){
             //Override in child class to react to node delete events
         },
+        onEdgeDelete: function(id, type){
+            //Override in child class to react to edge delete events
+        },
         buildUi: function(){
             //Override in child class and return the ui (HTML) for this strategy
         }

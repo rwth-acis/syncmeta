@@ -117,6 +117,7 @@ define([
         var _guidanceBoxLabel = "";
         var _guidanceDefinition = null;
         var _ghostEdges = [];
+        var _guidanceBoxEntityId = null;
 
         $(window).resize(function(){
             sendViewChangeOperation();
@@ -414,6 +415,8 @@ define([
         var historyNodeAddCallback = function(operation){
             if(operation instanceof NodeAddOperation){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
                 processNodeAddOperation(operation);
             }
         };
@@ -425,6 +428,7 @@ define([
         var historyEdgeAddCallback = function(operation){
             if(operation instanceof EdgeAddOperation){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
                 processEdgeAddOperation(operation);
             }
         };
@@ -487,15 +491,22 @@ define([
         this.showGuidanceBox = function(entityId){
             this.hideGuidanceBox();
             var entity;
+            if(typeof(entityId) == 'undefined'){
+                entityId = _guidanceBoxEntityId;
+            }
+            else{
+                _guidanceBoxEntityId = entityId;
+            }
             if(_guidanceDefinition === null)
                 return;
             if(_guidanceDefinition.length == 0)
                 return;
-            if(typeof(entityId) == 'undefined')
-                entity = _selectedEntity;
-            else{
-                entity = EntityManager.findNode(entityId);
-            }
+            if(!entityId)
+                entityId = _selectedEntity.getEntityId();
+            
+            entity = EntityManager.findNode(entityId);
+            if(!entity)
+                return;
 
             var itemWidth = 100;
             var itemHeight = 100;
