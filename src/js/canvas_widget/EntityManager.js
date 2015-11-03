@@ -589,13 +589,21 @@ define([
                 }
 
                 var items = {},
-                    nodeType;
+                    nodeType,
+                    _nodeTypes;
 
-                for(nodeType in nodeTypes){
-                    if(nodeTypes.hasOwnProperty(nodeType)){
+                if(_viewId){
+                    _nodeTypes = viewNodeTypes;
+                }
+                else{
+                    _nodeTypes = nodeTypes;
+                }
+
+                for(nodeType in _nodeTypes){
+                    if(_nodeTypes.hasOwnProperty(nodeType)){
                         items[nodeType] = {
                             name: '..' + nodeType,
-                            callback: makeAddNodeCallback(nodeType,nodeTypes[nodeType].DEFAULT_WIDTH,nodeTypes[nodeType].DEFAULT_HEIGHT)
+                            callback: makeAddNodeCallback(nodeType,_nodeTypes[nodeType].DEFAULT_WIDTH,_nodeTypes[nodeType].DEFAULT_HEIGHT)
                         };
                     }
                 }
@@ -641,16 +649,21 @@ define([
                         for(i = 0, numOfRelations = relations[connectionType].length; i < numOfRelations; i++){
                             sourceNodeTypes = relations[connectionType][i].sourceTypes;
                             targetNodeTypes = relations[connectionType][i].targetTypes;
-                            if(sourceNodeTypes.indexOf(node.getType()) !== -1){
+                            if(sourceNodeTypes.indexOf(node.getType()) !== -1 || (_viewId && sourceNodeTypes.indexOf(node.getCurrentViewType()) !== -1)){
                                 for(j = 0, numOfTargetTypes = targetNodeTypes.length; j < numOfTargetTypes; j++){
                                     targetNodeType = targetNodeTypes[j];
                                     targetNodeItems = {};
-                                    targetNodes = this.getNodesByType(targetNodeType);
+                                    if(_viewId){
+                                        targetNodes = this.getNodesByViewType(targetNodeType);
+                                    }else {
+                                        targetNodes = this.getNodesByType(targetNodeType);
+                                    }
                                     existsLinkableTargetNode = false;
                                     for(targetNodeId in targetNodes){
                                         if(targetNodes.hasOwnProperty(targetNodeId)){
                                             targetNode = targetNodes[targetNodeId];
                                             if(targetNode === node) continue;
+                                            if(_viewId && targetNode.getCurrentViewType() === null) continue;
                                             targetAppearance = targetNode.getAppearance();
                                             if(!targetNode.getNeighbors().hasOwnProperty(node.getEntityId())){
                                                 targetNodeItems[connectionType+targetNodeType+i+targetNodeId] = {

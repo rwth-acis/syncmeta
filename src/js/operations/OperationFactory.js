@@ -4,6 +4,7 @@ define([
     'operations/ot/NodeAddOperation',
     'operations/ot/NodeDeleteOperation',
     'operations/ot/NodeMoveOperation',
+    'operations/ot/NodeMoveZOperation',
     'operations/ot/NodeResizeOperation',
     'operations/ot/EdgeAddOperation',
     'operations/ot/EdgeDeleteOperation',
@@ -26,7 +27,7 @@ define([
     'operations/non_ot/SetModelAttributeNodeOperation',
     'operations/non_ot/UpdateViewListOperation'
 
-],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportImageOperation,JoinOperation,SetViewTypesOperation,InitModelTypesOperation,ViewInitOperation,PerformCvgOperation,DeleteCvgOperation,DeleteViewOperation,SetModelAttributeNodeOperation,UpdateViewListOperation) {
+],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeMoveZOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportImageOperation,JoinOperation,SetViewTypesOperation,InitModelTypesOperation,ViewInitOperation,PerformCvgOperation,DeleteCvgOperation,DeleteViewOperation,SetModelAttributeNodeOperation,UpdateViewListOperation) {
 
     /**
      * OperationFactory
@@ -167,7 +168,7 @@ define([
                                     );
                                     break;
                                 case CONFIG.IWC.POSITION.NODE.Z:
-                                    resOperation = new NodeMoveOperation(
+                                    resOperation = new NodeMoveZOperation(
                                         entityId,
                                         value.offsetZ
                                     );

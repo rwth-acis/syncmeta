@@ -19,6 +19,7 @@ define(['canvas_widget/EntityManager'], /**@lends ViewGenerator*/ function (Enti
             node.show();
         }
         else{
+            node.setCurrentViewType(null);
             node.hide();
         }
     }
