@@ -604,7 +604,11 @@ requirejs([
                         }
                         else if(operation instanceof UpdateViewListOperation){
                             iwcot.sendRemoteNonOTOperation(new UpdateViewListOperation().toNonOTOperation());
-                            ViewManager.initViewList();
+                            if(metamodel.constructor === Object){
+                                ViewManager.GetViewpointList();
+                            }else {
+                                ViewManager.initViewList();
+                            }
                         }
                     });
 

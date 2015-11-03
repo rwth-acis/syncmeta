@@ -177,10 +177,6 @@ define([
                         break;
                     case UserJoinActivity.TYPE:
                         that.addUser(operation.getSender());
-                        var data = operation.getData();
-                        if(data.hasOwnProperty('viewId')){
-                            userList[operation.getSender()].get$node().find('.lblViewId').text(data.viewId);
-                        }
                         break;
                     case ViewApplyActivity.TYPE:
                         activity = new ViewApplyActivity(operation.getEntityId(),operation.getSender());

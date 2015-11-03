@@ -133,15 +133,12 @@
 
             function getMetaModel(){
                 var deferred = $.Deferred();
-                iwc.registerOnDataReceivedCallback(function(operation){
-                    if(operation instanceof ExportMetaModelOperation){
-                        deferred.resolve(operation.getData());
-                    }
+                Util.GetCurrentBaseModel().done(function(meta){
+                    deferred.resolve(GenerateViewpointModel(meta));
                 });
-                var operation = new ExportMetaModelOperation(componentName,null);
-                iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.toNonOTOperation());
                 return deferred.promise();
             }
+
 			function getViewpoints(){
 				var deferred = $.Deferred();
 				 var resourceSpace = new openapp.oo.Resource(openapp.param.space());
@@ -171,7 +168,7 @@
                             }).then(function(){
                                 return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/attribute.xml");
                             }).then(function(){
-                                return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/export.xml");
+                                return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/debug.xml");
                             }).then(function(){
                                 return addMetamodelToSpace(spaceURI,metamodel, CONFIG.NS.MY.METAMODEL);
                             }).then(function(){

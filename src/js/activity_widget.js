@@ -10,6 +10,7 @@ requirejs([
 
     new ActivityList($("#user_list"),$("#activity_list"));
 
+
     $("#q").draggable({
         axis: "y",
         start: function(){
