@@ -592,7 +592,7 @@ define([
                     nodeType,
                     _nodeTypes;
 
-                if(_viewId){
+                if(_viewId &&  _layer === CONFIG.LAYER.MODEL){
                     _nodeTypes = viewNodeTypes;
                 }
                 else{
@@ -601,6 +601,7 @@ define([
 
                 for(nodeType in _nodeTypes){
                     if(_nodeTypes.hasOwnProperty(nodeType)){
+                       if(_layer === CONFIG.LAYER.META && !_viewId && (nodeType === 'ViewObject' || nodeType ==='ViewRelationship')) continue;
                         items[nodeType] = {
                             name: '..' + nodeType,
                             callback: makeAddNodeCallback(nodeType,_nodeTypes[nodeType].DEFAULT_WIDTH,_nodeTypes[nodeType].DEFAULT_HEIGHT)
@@ -649,11 +650,11 @@ define([
                         for(i = 0, numOfRelations = relations[connectionType].length; i < numOfRelations; i++){
                             sourceNodeTypes = relations[connectionType][i].sourceTypes;
                             targetNodeTypes = relations[connectionType][i].targetTypes;
-                            if(sourceNodeTypes.indexOf(node.getType()) !== -1 || (_viewId && sourceNodeTypes.indexOf(node.getCurrentViewType()) !== -1)){
-                                for(j = 0, numOfTargetTypes = targetNodeTypes.length; j < numOfTargetTypes; j++){
+                            if(sourceNodeTypes.indexOf(node.getType()) !== -1 || (_layer === CONFIG.LAYER.MODEL && _viewId && sourceNodeTypes.indexOf(node.getCurrentViewType()) !== -1)){
+                                for(j = 0, numOfTargetTypes = targetNodeTypes.length;j < numOfTargetTypes; j++){
                                     targetNodeType = targetNodeTypes[j];
                                     targetNodeItems = {};
-                                    if(_viewId){
+                                    if(_viewId && _layer ===CONFIG.LAYER.MODEL){
                                         targetNodes = this.getNodesByViewType(targetNodeType);
                                     }else {
                                         targetNodes = this.getNodesByType(targetNodeType);
@@ -663,7 +664,7 @@ define([
                                         if(targetNodes.hasOwnProperty(targetNodeId)){
                                             targetNode = targetNodes[targetNodeId];
                                             if(targetNode === node) continue;
-                                            if(_viewId && targetNode.getCurrentViewType() === null) continue;
+                                            if(_layer === CONFIG.LAYER.MODEL && _viewId && targetNode.getCurrentViewType() === null) continue;
                                             targetAppearance = targetNode.getAppearance();
                                             if(!targetNode.getNeighbors().hasOwnProperty(node.getEntityId())){
                                                 targetNodeItems[connectionType+targetNodeType+i+targetNodeId] = {

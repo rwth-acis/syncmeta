@@ -533,25 +533,6 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
                                 addNode : {
                                     name : "Add node..",
                                     items : EntityManager.generateAddNodeMenu(that, e.originalEvent.offsetX, e.originalEvent.offsetY)
-                                },
-                                Paste: {
-                                    name: "Paste",
-                                    callback:function(){
-                                        var resourceSpace = new openapp.oo.Resource(openapp.param.space());
-                                        require(["promise!Space"], function(Space){
-                                            resourceSpace.getSubResources({
-                                                relation: openapp.ns.role + "data",
-                                                type: CONFIG.NS.MY.COPY+":"+Space.user[CONFIG.NS.PERSON.JABBERID],
-                                                onAll: function(items) {
-                                                    if(items.length ==1){
-                                                        items[0].getRepresentation("rdfjson",function(rep){
-                                                            that.createNode(rep.type, e.originalEvent.offsetX, e.originalEvent.offsetY, rep.width, rep.height, rep.zIndex, rep);
-                                                        });
-                                                    }
-                                                }
-                                            });
-                                        });
-                                    }
                                 }
                             }
                         };

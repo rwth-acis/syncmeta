@@ -195,7 +195,6 @@ define([
                         if($tmp.length > 0){
                             //initialize the value again
                             attribute.getValue().init();
-
                             $tmp.append(attribute.get$node());
                             break;
                         }

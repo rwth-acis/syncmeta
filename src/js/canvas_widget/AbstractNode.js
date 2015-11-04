@@ -459,33 +459,9 @@ define([
                                     that.triggerDeletion();
                                 }
                             },
-                            sepAdd: "-----------",
-                            sepAdd2: "-----------",
-                            addNode: {
-                                name: "Add node..",
-                                items: require('canvas_widget/EntityManager').generateAddNodeMenu(that.getCanvas(), e.originalEvent.offsetX+offsetClick.left-offsetCanvas.left, e.originalEvent.offsetY+offsetClick.top-offsetCanvas.top)
-                            },
-                            copy:{
-                                name:'Copy',
-                                callback:function(){
-                                    var resourceSpace = new openapp.oo.Resource(openapp.param.space());
-                                    require(["promise!Space"], function(Space){
-                                        resourceSpace.getSubResources({
-                                            relation: openapp.ns.role + "data",
-                                            type: CONFIG.NS.MY.COPY+":"+Space.user[CONFIG.NS.PERSON.JABBERID],
-                                            onAll: function(items) {
-                                                for(var i=0;i<items.length;i++) {
-                                                    openapp.resource.del(items[i].uri);
-                                                }
-                                                resourceSpace.create({
-                                                    relation: openapp.ns.role + "data",
-                                                    type: CONFIG.NS.MY.COPY+":"+Space.user[CONFIG.NS.PERSON.JABBERID],
-                                                    representation: that.toJSON()
-                                                });
-                                            }
-                                        });
-                                    });
-                                }
+                            quit:{
+                                name:' ',
+                                disabled:true
                             }
                         });
 
