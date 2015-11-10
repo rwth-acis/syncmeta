@@ -204,29 +204,23 @@ define([
                 _$node.append(_$shape);
             };
 
-            /**
-             * hide the node and all associated edges
-             */
-            this.hide = function(){
-                _$node.hide();
-                jsPlumb.hide(_$node);
-            };
-
-            /**
-             * show the node and all associated edges
-             */
-            this.show = function(){
-                _$node.show();
-                jsPlumb.show(_$node);
-            };
-
             init();
         }
 
+        /**
+         * Get the jquery shape object from the node type
+         * @static
+         * @returns {*}
+         */
         Node.get$shape = function(){
             return $shape;
         };
 
+        /**
+         * Get the anchors of the node type
+         * @static
+         * @returns {*}
+         */
         Node.getAnchors = function(){
             return anchors;
         };

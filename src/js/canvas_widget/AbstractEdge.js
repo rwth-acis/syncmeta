@@ -730,6 +730,22 @@ define([
         return this._toJSON();
     };
 
+    /**
+     * Hide a jsPlumb connection
+     */
+    AbstractEdge.prototype.hide = function(){
+        var connector = this.getJsPlumbConnection();
+        connector.setVisible(false);
+    };
+
+    /**
+     * Show a jsPlumb connection
+     */
+    AbstractEdge.prototype.show = function(){
+        var connector = this.getJsPlumbConnection();
+        connector.setVisible(true);
+    };
+
     return AbstractEdge;
 
 });

@@ -70,9 +70,6 @@ define(['attribute_widget/EntityManager'], /**@lends ViewGenerator*/ function (E
                     var viewNodeTypeObject = EntityManager.getViewNodeType(nodeViewType.label);
                     applyNodeTypeToNodes(viewNodeTypeObject, EntityManager.getNodesByType(viewNodeTypeObject.getTargetNodeType().getType()));
                 }
-                else{
-                    //Todo handle new Object classes
-                }
             }
         }
 
@@ -85,8 +82,6 @@ define(['attribute_widget/EntityManager'], /**@lends ViewGenerator*/ function (E
                     _processed[edgeViewType.target] = true;
                     var viewEdgeTypeObject = EntityManager.getViewEdgeType(edgeViewType.label);
                     applyEdgeTypeToEdges(viewEdgeTypeObject, EntityManager.getEdgesByType(viewEdgeTypeObject.getTargetEdgeType().getType()));
-                } else{
-                    //Todo new Object classes
                 }
             }
         }

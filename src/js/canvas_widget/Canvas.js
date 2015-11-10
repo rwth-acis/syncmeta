@@ -533,6 +533,32 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
                                 addNode : {
                                     name : "Add node..",
                                     items : EntityManager.generateAddNodeMenu(that, e.originalEvent.offsetX, e.originalEvent.offsetY)
+                                },
+                                hide:{
+                                    name:"Hide entities..",
+                                    items: {
+                                        nodes: {
+                                            name: "nodes..",
+                                            items: EntityManager.generateVisibilityNodeMenu()
+                                        },
+                                        edges: {
+                                            name: "edges..",
+                                            items: EntityManager.generateVisibilityEdgeMenu()
+                                        }
+                                    }
+                                },
+                                show:{
+                                    name:"Show entities..",
+                                    items: {
+                                        nodes: {
+                                            name: "nodes..",
+                                            items: EntityManager.generateVisibilityNodeMenu()
+                                        },
+                                        edges: {
+                                            name: "edges..",
+                                            items: EntityManager.generateVisibilityEdgeMenu()
+                                        }
+                                    }
                                 }
                             }
                         };

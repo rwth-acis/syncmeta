@@ -168,7 +168,7 @@ module.exports = function (grunt) {
                                 title: "Property Browser",
                                 description: "",
                                 width: "560",
-                                height: "350"
+                                height: "200"
                             },
                             bodyPartial: '_attribute_widget.tpl'
                         }

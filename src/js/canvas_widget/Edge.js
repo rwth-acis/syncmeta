@@ -94,16 +94,23 @@ define([
 
             var currentViewType = null;
 
+            /**
+             * Set the currently applied view type
+             * @param {string} type
+             */
             this.setCurrentViewType = function(type){
                 currentViewType = type;
             };
 
+            /**
+             * Get the currently applied view type
+             * @returns {string} the view type
+             */
             this.getCurrentViewType = function(){
               return currentViewType;
             };
 
             AbstractEdge.call(this,id,type,source,target,overlayRotate);
-
 
             /**
              * Stores jsPlumb overlays for the edge
@@ -388,29 +395,65 @@ define([
             init();
         }
 
-        Edge.prototype.hide = function(){
-            var connector = this.getJsPlumbConnection();
-            connector.setVisible(false);
-        };
-
+        /**
+         * Get the arrow type of the edge type
+         * @static
+         * @returns {*}
+         */
         Edge.getArrowType = function(){
             return arrowType;
         };
+
+        /**
+         * Get the shape type of the edge type
+         * @static
+         * @returns {*}
+         */
         Edge.getShapeType = function(){
             return shapeType;
         };
+
+        /**
+         * Get the color of the edge type
+         * @static
+         * @returns {*}
+         */
         Edge.getColor = function(){
             return color;
         };
+
+        /**
+         * Get the overlay of the edge type
+         * @static
+         * @returns {*}
+         */
         Edge.getOverlay = function(){
             return overlay;
         };
+
+        /**
+         * Get the overlay position of the edge type
+         * @static
+         * @returns {*}
+         */
         Edge.getOverlayPosition = function(){
             return overlayPosition;
         };
+
+        /**
+         * Get the overlay rotate of the edge type
+         * @static
+         * @returns {*}
+         */
         Edge.getOverlayRotate = function(){
             return overlayRotate;
         };
+
+        /**
+         * Get the attribute definition of the edge type
+         * @static
+         * @returns {*}
+         */
         Edge.getAttributes = function(){
             return attributes;
         };

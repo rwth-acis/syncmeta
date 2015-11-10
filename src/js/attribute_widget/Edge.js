@@ -92,6 +92,7 @@ define([
             init();
 
         }
+
         Edge.prototype.applyAttributeRenaming = function(renamingAttributes) {
             var renAttr, $attr, attributes = this.getAttributes();
             for(var attrKey in attributes){

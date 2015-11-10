@@ -420,7 +420,7 @@ define([
             }
         };
 
-        var init = function(){
+        this.init = function(){
             //Define Node Rightclick Menu
             $.contextMenu({
                 selector: "#"+id,
@@ -1179,7 +1179,7 @@ define([
                 propagateNodeMoveOperation(operation);
             }
         }
-        init();
+        that.init();
 
         if(_iwcot){
             that.registerCallbacks();
@@ -1208,6 +1208,23 @@ define([
     AbstractNode.prototype.toJSON = function(){
         return this._toJSON();
     };
+
+    /**
+     * hide the node and all associated edges
+     */
+    AbstractNode.prototype.hide = function(){
+        this.get$node().hide();
+        jsPlumb.hide(this.get$node());
+    };
+
+    /**
+     * show the node and all associated edges
+     */
+    AbstractNode.prototype.show = function(){
+        this.get$node().show();
+        jsPlumb.show(this.get$node());
+    };
+
 
     return AbstractNode;
 
