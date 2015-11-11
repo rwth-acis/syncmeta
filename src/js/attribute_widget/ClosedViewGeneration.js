@@ -56,7 +56,7 @@ define(['lodash', 'Util'],
                     var refId = null, newEdgeId = null, originalEdge = null;
                     var neighbor = neighbors[neighborId];
                     //node shapes, edge shapes and enums are connected by a bi-dir-association
-                    if(neighbor.getType()=== 'Node Shape' || neighbor.getType()=== 'Edge Shape' || neighbor.getType() === 'Enumeration') {
+                    if(neighbor.getType()=== 'Node Shape' || neighbor.getType()=== 'Edge Shape' /*|| neighbor.getType() === 'Enumeration'*/) {
                         //create the neighbor if he is not in the map dictionary
                         if(!EntityManager.doesMapExists(viewId, neighborId)){
                             addToViewpoint.nodes[newId] = neighborId;
@@ -78,7 +78,7 @@ define(['lodash', 'Util'],
                             };
                         }
 
-                    }
+                    }/*
                     else if((neighbor.getType() === 'Object' || neighbor.getType() === 'Relationship') && EntityManager.doesMapExists(viewId,neighborId)){
                         var edge1 =getEdgeBetween(baseNode, neighbor);
                         if(!EntityManager.doesMapExists(viewId,edge1.getEntityId())) {
@@ -87,10 +87,9 @@ define(['lodash', 'Util'],
                             EntityManager.addToMap(viewId,edge1.getEntityId(), newEdgeId);
                         }
 
-                    }else if(neighbor.getType() === 'Relation'){
+                    }*/else if(neighbor.getType() === 'Relation'){
                         var relationNeighbors = neighbor.getNeighbors();
                         for(var key in relationNeighbors){
-                            //TODO wtf
                             if(relationNeighbors.hasOwnProperty(key) &&
                                 ((relationNeighbors[key].getType() === 'Relationship' && baseNode.getType() === 'Object')
                                 || (relationNeighbors[key].getType() === 'Object' && baseNode.getType() === 'Relationship'))){

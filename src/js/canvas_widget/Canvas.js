@@ -539,11 +539,11 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
                                     items: {
                                         nodes: {
                                             name: "nodes..",
-                                            items: EntityManager.generateVisibilityNodeMenu()
+                                            items: EntityManager.generateVisibilityNodeMenu('hide')
                                         },
                                         edges: {
                                             name: "edges..",
-                                            items: EntityManager.generateVisibilityEdgeMenu()
+                                            items: EntityManager.generateVisibilityEdgeMenu('hide')
                                         }
                                     }
                                 },
@@ -552,11 +552,11 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
                                     items: {
                                         nodes: {
                                             name: "nodes..",
-                                            items: EntityManager.generateVisibilityNodeMenu()
+                                            items: EntityManager.generateVisibilityNodeMenu('show')
                                         },
                                         edges: {
                                             name: "edges..",
-                                            items: EntityManager.generateVisibilityEdgeMenu()
+                                            items: EntityManager.generateVisibilityEdgeMenu('show')
                                         }
                                     }
                                 }

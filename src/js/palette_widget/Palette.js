@@ -88,11 +88,20 @@ define([
                     _separators[1].get$node().show();
                     _tools['ViewObject'].get$node().show();
                     _tools['ViewRelationship'].get$node().show();
+                    _tools['Object'].get$node().hide();
+                    _tools['Enumeration'].get$node().hide();
+                    _tools['Relationship'].get$node().hide();
+                    _tools['Abstract Class'].get$node().hide();
                 }
                 else if(!operation.getFlag() &&  _tools.hasOwnProperty('ViewObject') && _tools.hasOwnProperty('ViewRelationship')) {
                     _separators[1].get$node().hide();
                     _tools['ViewObject'].get$node().hide();
                     _tools['ViewRelationship'].get$node().hide();
+                    _tools['Object'].get$node().show();
+                    _tools['Enumeration'].get$node().show();
+                    _tools['Relationship'].get$node().show();
+                    _tools['Abstract Class'].get$node().show();
+
                 }
 
             }

@@ -591,7 +591,6 @@ define([
                         canvas.createNode(nodeType,left,top,width,height);
                     };
                 }
-
                 var items = {},
                     nodeType,
                     _nodeTypes;
@@ -618,19 +617,22 @@ define([
              * generates the context menu for the show and hide opeations on node types
              * @returns {object}
              */
-            generateVisibilityNodeMenu:function(){
+            generateVisibilityNodeMenu:function(visibilty){
                 var _applyVisibilityCallback = function(nodeType, vis){
-                    if(vis !=='show' && vis !== 'hide') return;
-                    var nodes;
-                    if (_viewId && _layer === CONFIG.LAYER.MODEL) {
-                        nodes = that.getNodesByViewType(nodeType);
-                    } else {
-                        nodes = that.getNodesByType(nodeType);
-                    }
-                    for (var nKey in nodes) {
-                        if (nodes.hasOwnProperty(nKey)) {
-                            nodes[nKey][vis]();
+                    return function() {
+                        if (vis !== 'show' && vis !== 'hide') return;
+                        var nodes;
+                        if (_viewId && _layer === CONFIG.LAYER.MODEL) {
+                            nodes = that.getNodesByViewType(nodeType);
+                        } else {
+                            nodes = that.getNodesByType(nodeType);
                         }
+                        for (var nKey in nodes) {
+                            if (nodes.hasOwnProperty(nKey)) {
+                                nodes[nKey][vis]();
+                            }
+                        }
+                        return false;
                     }
                 };
 
@@ -649,15 +651,9 @@ define([
                 for(nodeType in _nodeTypes){
                     if(_nodeTypes.hasOwnProperty(nodeType)){
                         if(_layer === CONFIG.LAYER.META && !_viewId && (nodeType === 'ViewObject' || nodeType ==='ViewRelationship')) continue;
-                        items[nodeType] = {
+                        items[visibilty+nodeType] = {
                             name: '..' + nodeType,
-                            callback: function(key, options){
-                                if(options.$menu.children('li.hover.visible').text().indexOf('Hide') != -1) {
-                                    _applyVisibilityCallback(key, 'hide');
-                                }else{
-                                    _applyVisibilityCallback(key, 'show');
-                                }
-                            }
+                            callback: _applyVisibilityCallback(nodeType,visibilty)
                         };
                     }
                 }
@@ -704,6 +700,7 @@ define([
                                 }else{
                                     applyVisibilityCallback(key, 'show');
                                 }
+                                return false;
                             }
                         };
                     }

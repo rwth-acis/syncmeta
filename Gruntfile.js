@@ -60,10 +60,10 @@ module.exports = function (grunt) {
 							src : '<%= bowerdir %>/jsPlumb/dist/js/jquery.jsPlumb-1.5.*.js',
 							dest : '<%= distdir %>/js/lib/vendor/jquery.jsPlumb.js'
 						}, {
-							src : '<%= bowerdir %>/jQuery-contextMenu/src/jquery.contextMenu.js',
+							src : '<%= bowerdir %>/jQuery-contextMenu/dist/jquery.contextMenu.js',
 							dest : '<%= distdir %>/js/lib/vendor/jquery.contextMenu.js'
 						}, {
-							src : '<%= bowerdir %>/jQuery-contextMenu/src/jquery.contextMenu.css',
+							src : '<%= bowerdir %>/jQuery-contextMenu/dist/jquery.contextMenu.css',
 							dest : '<%= distdir %>/css/vendor/jquery.contextMenu.css'
 						}, {
 							src : '<%= bowerdir %>/jquery-mousewheel/jquery.mousewheel.js',

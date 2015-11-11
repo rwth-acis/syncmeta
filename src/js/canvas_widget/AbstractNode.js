@@ -1223,6 +1223,7 @@ define([
     AbstractNode.prototype.show = function(){
         this.get$node().show();
         jsPlumb.show(this.get$node());
+        jsPlumb.repaint(this.get$node());
     };
 
 
