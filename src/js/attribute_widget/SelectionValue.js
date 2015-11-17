@@ -72,14 +72,31 @@ define([
 				var KeySelectionValueSelectionValueAttribute = require('attribute_widget/KeySelectionValueSelectionValueAttribute');
 				var ConditionListAttribute = require('attribute_widget/ConditionListAttribute');
                 var ConditionPredicateAttribute = require('attribute_widget/ConditionPredicateAttribute');
+                var makeDeleteCvgOp = function(viewType){
+                    var deleteCvgOp = null;
+                    EntityManager.deleteFromMap(viewType.getViewId(), viewType.getEntityId());
+                    var filtered = {};
+                    var neighbors = viewType.getNeighbors();
+                    for(var nKey in neighbors){
+                        if(neighbors.hasOwnProperty(nKey)){
+                            var type = neighbors[nKey].constructor.name;
+                            if(type !== 'ViewRelationshipNode' && type !== 'ViewObjectNode') {
+                                filtered[nKey] = neighbors[nKey];
+                            }
+                        }
+                    }
+                    if(!$.isEmptyObject(filtered)) {
+                        deleteCvgOp = new DeleteCvgOperation(_(filtered).keys().value());
+                        _iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN, deleteCvgOp.toNonOTOperation());
+                    }
+                };
 
                 var viewType = that.getRootSubjectEntity();
-                var deleteCvgOp = null;
+
                 if(operation.getValue() === 'empty'){
-                    EntityManager.deleteFromMap(viewType.getViewId(), viewType.getEntityId());
-                    deleteCvgOp = new DeleteCvgOperation(_(viewType.getNeighbors()).keys().value());
-                    _iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN, deleteCvgOp.toNonOTOperation());
+                    makeDeleteCvgOp(viewType);
                     return;
+
                 }
                 var  node = EntityManager.find(operation.getValue());
                 var op = null;
@@ -149,10 +166,9 @@ define([
                     }
 
                     if(!fromCallback) {
-                        EntityManager.deleteFromMap(viewType.getViewId(), viewType.getEntityId());
+                        makeDeleteCvgOp(viewType);
                         EntityManager.addToMap(viewType.getViewId(), node.getEntityId(), viewType.getEntityId());
-                        deleteCvgOp = new DeleteCvgOperation(_(viewType.getNeighbors()).keys().value());
-                        _iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN, deleteCvgOp.toNonOTOperation());
+
                         var res = CVG(node, that.getRootSubjectEntity());
                         var performCvgOp = new PerformCvgOperation(res);
                         _iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN, performCvgOp.toNonOTOperation());

@@ -32,8 +32,6 @@ define(['lodash', 'Util'],
             }
         }
 
-
-
         /**
          * the closed-view-generation algorithm
          * looks for neighbors of a base node and generates a json to add the neighbors to the viewpoint model
@@ -78,7 +76,7 @@ define(['lodash', 'Util'],
                             };
                         }
 
-                    }/*
+                    }
                     else if((neighbor.getType() === 'Object' || neighbor.getType() === 'Relationship') && EntityManager.doesMapExists(viewId,neighborId)){
                         var edge1 =getEdgeBetween(baseNode, neighbor);
                         if(!EntityManager.doesMapExists(viewId,edge1.getEntityId())) {
@@ -87,7 +85,7 @@ define(['lodash', 'Util'],
                             EntityManager.addToMap(viewId,edge1.getEntityId(), newEdgeId);
                         }
 
-                    }*/else if(neighbor.getType() === 'Relation'){
+                    }else if(neighbor.getType() === 'Relation'){
                         var relationNeighbors = neighbor.getNeighbors();
                         for(var key in relationNeighbors){
                             if(relationNeighbors.hasOwnProperty(key) &&

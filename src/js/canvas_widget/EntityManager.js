@@ -604,7 +604,11 @@ define([
 
                 for(nodeType in _nodeTypes){
                     if(_nodeTypes.hasOwnProperty(nodeType)){
-                       if(_layer === CONFIG.LAYER.META && !_viewId && (nodeType === 'ViewObject' || nodeType ==='ViewRelationship')) continue;
+                       if(_layer === CONFIG.LAYER.META && !_viewId && (nodeType === 'ViewObject' || nodeType ==='ViewRelationship'))
+                           continue;
+                       if(_layer === CONFIG.LAYER.META &&_viewId && (nodeType ==='Object' || nodeType ==='Relationship' || nodeType === 'Enumeration' || nodeType === 'Abstract Class'))
+                           continue;
+
                         items[nodeType] = {
                             name: '..' + nodeType,
                             callback: makeAddNodeCallback(nodeType,_nodeTypes[nodeType].DEFAULT_WIDTH,_nodeTypes[nodeType].DEFAULT_HEIGHT)
@@ -621,6 +625,7 @@ define([
                 var _applyVisibilityCallback = function(nodeType, vis){
                     return function() {
                         if (vis !== 'show' && vis !== 'hide') return;
+
                         var nodes;
                         if (_viewId && _layer === CONFIG.LAYER.MODEL) {
                             nodes = that.getNodesByViewType(nodeType);
@@ -632,6 +637,13 @@ define([
                                 nodes[nKey][vis]();
                             }
                         }
+                        if(vis === 'hide') {
+                            this.data('show' + nodeType + 'Disabled', true);
+                        }
+                        else {
+                            this.data('show' + nodeType + 'Disabled', false);
+                        }
+
                         return false;
                     }
                 };
@@ -650,10 +662,22 @@ define([
 
                 for(nodeType in _nodeTypes){
                     if(_nodeTypes.hasOwnProperty(nodeType)){
-                        if(_layer === CONFIG.LAYER.META && !_viewId && (nodeType === 'ViewObject' || nodeType ==='ViewRelationship')) continue;
+                        if(_layer === CONFIG.LAYER.META && !_viewId && (nodeType === 'ViewObject' || nodeType ==='ViewRelationship'))
+                            continue;
+                        if(_layer === CONFIG.LAYER.META &&_viewId && (nodeType ==='Object' || nodeType ==='Relationship' || nodeType === 'Enumeration' || nodeType === 'Abstract Class'))
+                            continue;
+
                         items[visibilty+nodeType] = {
                             name: '..' + nodeType,
-                            callback: _applyVisibilityCallback(nodeType,visibilty)
+                            callback: _applyVisibilityCallback(nodeType,visibilty),
+                            disabled:(function(nodeType){
+                                return function() {
+                                    if(visibilty==='hide')
+                                        return this.data(visibilty + nodeType + 'Disabled');
+                                    else
+                                        return !this.data(visibilty + nodeType + 'Disabled');
+                                }
+                            }(nodeType))
                         };
                     }
                 }
@@ -663,18 +687,20 @@ define([
              * generates a the context menu for the show and hide operations on edge types
              * @returns {object}
              */
-            generateVisibilityEdgeMenu:function(){
-                function applyVisibilityCallback(edgeType, vis){
-                    if(vis !=='show' && vis !== 'hide') return;
-                    var edges;
-                    if (_viewId && _layer === CONFIG.LAYER.MODEL) {
-                        edges = that.getEdgesByViewType(edgeType);
-                    } else {
-                        edges = that.getEdgesByType(edgeType);
-                    }
-                    for (var eKey in edges) {
-                        if (edges.hasOwnProperty(eKey)) {
-                            edges[eKey][vis]();
+            generateVisibilityEdgeMenu:function(visibility){
+                function _applyVisibilityCallback(edgeType, vis) {
+                    return function () {
+                        if (vis !== 'show' && vis !== 'hide') return;
+                        var edges;
+                        if (_viewId && _layer === CONFIG.LAYER.MODEL) {
+                            edges = that.getEdgesByViewType(edgeType);
+                        } else {
+                            edges = that.getEdgesByType(edgeType);
+                        }
+                        for (var eKey in edges) {
+                            if (edges.hasOwnProperty(eKey)) {
+                                edges[eKey][vis]();
+                            }
                         }
                     }
                 }
@@ -692,16 +718,9 @@ define([
 
                 for(edgeType in _edgeTypes){
                     if(_edgeTypes.hasOwnProperty(edgeType)){
-                        items[edgeType] = {
+                        items[visibility+edgeType] = {
                             name: '..' + edgeType,
-                            callback: function(key, options){
-                                if(options.$menu.children('li.hover.visible').text().indexOf('Hide') != -1) {
-                                    applyVisibilityCallback(key, 'hide');
-                                }else{
-                                    applyVisibilityCallback(key, 'show');
-                                }
-                                return false;
-                            }
+                            callback: _applyVisibilityCallback(edgeType,visibility)
                         };
                     }
                 }
@@ -1328,7 +1347,6 @@ define([
             getLayer: function(){
                 return _layer;
             }
-
         };
     }
     return new EntityManager();
