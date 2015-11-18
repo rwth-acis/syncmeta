@@ -51,8 +51,7 @@ requirejs([
     'promise!Model'
 ],function($,jsPlumb,IWCOT, Util,ToolSelectOperation,ActivityOperation,JoinOperation, ViewInitOperation, UpdateViewListOperation, DeleteViewOperation,SetViewTypesOperation, InitModelTypesOperation, SetModelAttributeNodeOperation, Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge, ViewObjectNode, ViewObjectNodeTool,ViewRelationshipNode, ViewRelationshipNodeTool, ViewManager, ViewGenerator, metamodel,model) {
 
-    var iwcot;
-    var canvas;
+    var iwcot, canvas;
 
     iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.MAIN);
     canvas = new Canvas($("#canvas"));
@@ -133,8 +132,6 @@ requirejs([
 
                     ViewManager.getViewpointData(viewId).done(function(vvs){
                         ViewGenerator.generate(metamodel,vvs);
-                        //Repaint all jsPlumb connections
-                        jsPlumb.repaintEverything();
                     });
 
                     $('#lblCurrentView').show();
@@ -172,9 +169,6 @@ requirejs([
                 initTools(metamodel);
 
                 ViewGenerator.reset(metamodel);
-
-                //Repaint all jsPlumb connections
-                jsPlumb.repaintEverything();
 
                 $('#lblCurrentView').hide();
                 $lblCurrentViewId.text("");

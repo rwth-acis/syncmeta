@@ -871,7 +871,11 @@ define([
             _isSelected = true;
             this.unhighlight();
             _$node.addClass("selected");
-            Util.delay(100).then(function(){_.each(require('canvas_widget/EntityManager').getEdges(),function(e){e.setZIndex();});});
+            Util.delay(100).then(function(){
+                _.each(require('canvas_widget/EntityManager').getEdges(),function(e){
+                    e.setZIndex();
+                });
+            });
         };
 
         /**
@@ -881,7 +885,11 @@ define([
             _isSelected = false;
             this.highlight(_highlightColor,_highlightUsername);
             _$node.removeClass("selected");
-            Util.delay(100).then(function(){_.each(require('canvas_widget/EntityManager').getEdges(),function(e){e.setZIndex();});});
+            Util.delay(100).then(function(){
+                _.each(require('canvas_widget/EntityManager').getEdges(),function(e){
+                    e.setZIndex();
+                });
+            });
         };
 
         /**

@@ -75,7 +75,7 @@ define([
                         resOperation = new ExportImageOperation(data.requestingComponent,data.data);
                         break;
                     case JoinOperation.TYPE:
-                        resOperation = new JoinOperation(data.user,data.done,data.sender,data.data,data.component);
+                        resOperation = new JoinOperation(data.user,data.done,data.sender,data.data);
                         break;
                     case SetViewTypesOperation.TYPE:
                         resOperation = new SetViewTypesOperation(data.flag);

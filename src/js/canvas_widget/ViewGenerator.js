@@ -1,4 +1,5 @@
-define(['canvas_widget/EntityManager'], /**@lends ViewGenerator*/ function (EntityManager){
+define(['jsplumb',
+    'canvas_widget/EntityManager'], /**@lends ViewGenerator*/ function (jsPlumb, EntityManager){
 
     /**
      * Generates the Views
@@ -208,6 +209,13 @@ define(['canvas_widget/EntityManager'], /**@lends ViewGenerator*/ function (Enti
                 }
             }
         }
+
+        //Repaint all jsPlumb connections
+        jsPlumb.repaintEverything();
+        _.each(EntityManager.getEdges(),function(e){
+            e.setZIndex();
+        });
+
     };
 
     /**
@@ -232,6 +240,14 @@ define(['canvas_widget/EntityManager'], /**@lends ViewGenerator*/ function (Enti
             }
         }
 
+        //Repaint all jsPlumb connections
+        jsPlumb.repaintEverything();
+        _.each(EntityManager.getEdges(),function(e){
+            e.setZIndex();
+        });
+
     };
+
+
     return ViewGenerator;
 });

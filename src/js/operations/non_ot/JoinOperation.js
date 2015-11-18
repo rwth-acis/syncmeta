@@ -14,10 +14,7 @@ define([
      * @param {string} sender jabberId of user sending the message
      * @param {object} data JSON representation of graph instance
      */
-    function JoinOperation(user,done,sender,data,widget){
-
-        var _widget = widget;
-
+    function JoinOperation(user,done,sender,data){
         /**
          * jabberId of joining user
          * @type {string}
@@ -74,10 +71,6 @@ define([
             return _sender;
         };
 
-        this.getComponent = function(){
-            return _widget;
-        };
-
         /**
          * Get JSON representation of graph instance
          * @returns {Object}
@@ -102,7 +95,7 @@ define([
             if(nonOTOperation === null){
                 nonOTOperation = new NonOTOperation(
                     JoinOperation.TYPE,
-                    JSON.stringify({user: _user, done: _done, sender: _sender, data: _data, component:_widget})
+                    JSON.stringify({user: _user, done: _done, sender: _sender, data: _data})
                 );
             }
             return nonOTOperation;

@@ -702,6 +702,12 @@ define([
                                 edges[eKey][vis]();
                             }
                         }
+                        if(vis === 'hide') {
+                            this.data('show' + edgeType + 'Disabled', true);
+                        }
+                        else {
+                            this.data('show' + edgeType + 'Disabled', false);
+                        }
                     }
                 }
                 var that = this;
@@ -720,7 +726,15 @@ define([
                     if(_edgeTypes.hasOwnProperty(edgeType)){
                         items[visibility+edgeType] = {
                             name: '..' + edgeType,
-                            callback: _applyVisibilityCallback(edgeType,visibility)
+                            callback: _applyVisibilityCallback(edgeType,visibility),
+                            disabled:(function(edgeType){
+                                return function() {
+                                    if(visibility==='hide')
+                                        return this.data(visibility + edgeType + 'Disabled');
+                                    else
+                                        return !this.data(visibility + edgeType + 'Disabled');
+                                }
+                            }(edgeType))
                         };
                     }
                 }
