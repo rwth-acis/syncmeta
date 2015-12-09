@@ -494,9 +494,6 @@ define([
 
 
                         if(resOperation instanceof JoinOperation){
-                            if((resOperation.getSender() != space.user[CONFIG.NS.PERSON.JABBERID] && resOperation.getUser()===space.user[CONFIG.NS.PERSON.JABBERID]  && resOperation.getSender() != resOperation.getUser())
-                                || (resOperation.getSender()===space.user[CONFIG.NS.PERSON.JABBERID] && resOperation.getUser()!=space.user[CONFIG.NS.PERSON.JABBERID] && resOperation.getSender() != resOperation.getUser())) break;
-
                             // First step
                             if(!resOperation.isDone()){
 
@@ -512,7 +509,7 @@ define([
                                             clearInterval(_syncInterval);
                                             clearInterval(_purgeInterval);
                                             _ot = new OT(localID);
-                                            sendRemoteNonOTOperation(new JoinOperation(resOperation.getUser(),false,space.user[CONFIG.NS.PERSON.JABBERID],require('canvas_widget/EntityManager').graphToJSON()).toNonOTOperation());
+                                            sendRemoteNonOTOperation(new JoinOperation(resOperation.getUser(),true,space.user[CONFIG.NS.PERSON.JABBERID],require('canvas_widget/EntityManager').graphToJSON()).toNonOTOperation());
                                         },500);
 
                                         //Unlock if no remote message is received within 5 seconds
@@ -546,14 +543,13 @@ define([
                                     if(_joiningState === IWCOT.JOIN_STATE.NOT_JOINED || _joiningState === IWCOT.JOIN_STATE.COMPLETED){
                                         clearTimeout(_joiningTimeout);
                                         _joiningState = IWCOT.JOIN_STATE.REQUESTED;
-                                        sendRemoteNonOTOperation(new JoinOperation(space.user[CONFIG.NS.PERSON.JABBERID],false,space.user[CONFIG.NS.PERSON.JABBERID],{}).toNonOTOperation());
+                                        sendRemoteNonOTOperation(new JoinOperation(space.user[CONFIG.NS.PERSON.JABBERID],true,space.user[CONFIG.NS.PERSON.JABBERID],{}).toNonOTOperation());
                                     }
 
                                 }
 
                                 //Second step
                             } else {
-
                                 // A remote user tries to join..
                                 if(resOperation.getUser() !== space.user[CONFIG.NS.PERSON.JABBERID]){
 
@@ -561,7 +557,7 @@ define([
 
                                     // ..and I already have joined
                                     if(_joiningState === IWCOT.JOIN_STATE.COMPLETED){
-                                        sendRemoteNonOTOperation(new JoinOperation(resOperation.getUser(),true,space.user[CONFIG.NS.PERSON.JABBERID],{}).toNonOTOperation());
+                                        //sendRemoteNonOTOperation(new JoinOperation(resOperation.getUser(),true,space.user[CONFIG.NS.PERSON.JABBERID],{}).toNonOTOperation());
                                         userPosition = _joiningUsers.indexOf(sender);
                                         if(userPosition > -1){
                                             _joiningUsers.splice(userPosition,1);
