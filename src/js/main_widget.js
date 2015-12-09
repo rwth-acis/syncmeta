@@ -573,7 +573,7 @@ requirejs([
     iwcot.registerOnJoinOrLeaveCallback(function(operation){
         var activityOperation;
         if(operation instanceof JoinOperation){
-            if(operation.getUser() === iwcot.getUser()[CONFIG.NS.PERSON.JABBERID]){
+            if(operation.getUser() === iwcot.getUser()[CONFIG.NS.PERSON.JABBERID] && operation.getUser() === iwcot.getUser()[CONFIG.NS.PERSON.JABBERID]){
                 if(operation.isDone()){
                     operation.setData(model);
                     if(metamodel.constructor === Object){
@@ -639,7 +639,7 @@ requirejs([
                     activityOperation = new ActivityOperation(
                         "UserJoinActivity",
                         "-1",
-                        operation.getUser(),
+                        operation.getSender(),
                         "",
                         {}
                     ).toNonOTOperation();
