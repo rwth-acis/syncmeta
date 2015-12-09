@@ -509,7 +509,7 @@ define([
                                             clearInterval(_syncInterval);
                                             clearInterval(_purgeInterval);
                                             _ot = new OT(localID);
-                                            sendRemoteNonOTOperation(new JoinOperation(resOperation.getUser(),false,space.user[CONFIG.NS.PERSON.JABBERID],require('canvas_widget/EntityManager').graphToJSON()).toNonOTOperation());
+                                            sendRemoteNonOTOperation(new JoinOperation(resOperation.getUser(),true,space.user[CONFIG.NS.PERSON.JABBERID],require('canvas_widget/EntityManager').graphToJSON()).toNonOTOperation());
                                         },500);
 
                                         //Unlock if no remote message is received within 5 seconds
@@ -526,7 +526,7 @@ define([
                                                 numOfOperations = _otOperationBuffer.length;
                                                 operations = _otOperationBuffer.splice(0,numOfOperations);
                                                 for(j = 0, numOfOperations = operation.length; j < numOfOperations; j++){
-                                                    sendRemoteNonOTOperation(operations[j]);
+                                                    sendRemoteNonOTOperation(operations[j]).toNonOTOperation();
                                                 }
                                             }
                                         },5000);
@@ -567,7 +567,7 @@ define([
                                             numOfOperations = _otOperationBuffer.length;
                                             operations = _otOperationBuffer.splice(0,numOfOperations);
                                             for(j = 0, numOfOperations = operation.length; j < numOfOperations; j++){
-                                                sendRemoteNonOTOperation(operations[j]);
+                                                sendRemoteNonOTOperation(operations[j]).toNonOTOperation();
                                             }
                                         }
                                         _syncInterval = setInterval(sync,INTERVAL_SYNC);
