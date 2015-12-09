@@ -526,7 +526,7 @@ define([
                                                 numOfOperations = _otOperationBuffer.length;
                                                 operations = _otOperationBuffer.splice(0,numOfOperations);
                                                 for(j = 0, numOfOperations = operation.length; j < numOfOperations; j++){
-                                                    that.propOp(operations[j]);
+                                                    sendRemoteNonOTOperation(operations[j]);
                                                 }
                                             }
                                         },5000);
@@ -567,7 +567,7 @@ define([
                                             numOfOperations = _otOperationBuffer.length;
                                             operations = _otOperationBuffer.splice(0,numOfOperations);
                                             for(j = 0, numOfOperations = operation.length; j < numOfOperations; j++){
-                                                this.propOp(operations[j]);
+                                                sendRemoteNonOTOperation(operations[j]);
                                             }
                                         }
                                         _syncInterval = setInterval(sync,INTERVAL_SYNC);
