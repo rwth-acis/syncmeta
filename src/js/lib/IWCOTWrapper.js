@@ -494,7 +494,9 @@ define([
 
 
                         if(resOperation instanceof JoinOperation){
-                            if(resOperation.getSender() != space.user[CONFIG.NS.PERSON.JABBERID]) break;
+                        if(resOperation.getSender() != space.user[CONFIG.NS.PERSON.JABBERID]
+                            && resOperation.getUser()!=space.user[CONFIG.NS.PERSON.JABBERID]
+                            && resOperation.getSender() != resOperation.getUser()) break;
 
                             // First step
                             if(!resOperation.isDone()){
