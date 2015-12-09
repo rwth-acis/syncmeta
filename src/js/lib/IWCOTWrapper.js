@@ -560,7 +560,7 @@ define([
 
                                     // ..and I already have joined
                                     if(_joiningState === IWCOT.JOIN_STATE.COMPLETED){
-                                        //sendRemoteNonOTOperation(new JoinOperation(resOperation.getUser(),true,space.user[CONFIG.NS.PERSON.JABBERID],{}).toNonOTOperation());
+                                        sendRemoteNonOTOperation(new JoinOperation(resOperation.getUser(),true,space.user[CONFIG.NS.PERSON.JABBERID],{}).toNonOTOperation());
                                         userPosition = _joiningUsers.indexOf(sender);
                                         if(userPosition > -1){
                                             _joiningUsers.splice(userPosition,1);
