@@ -632,10 +632,10 @@ requirejs([
                         {}
                     ).toNonOTOperation();
                     iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,activityOperation);
-                    //model = operation.getData();
+                    model = operation.getData();
                 }
             } else {
-                if(operation.isDone()){
+                //if(operation.isDone()){
                     activityOperation = new ActivityOperation(
                         "UserJoinActivity",
                         "-1",
@@ -644,8 +644,8 @@ requirejs([
                         {}
                     ).toNonOTOperation();
                     iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,activityOperation);
-                } else {
-                }
+                //} else {
+                //}
             }
         }
     });
