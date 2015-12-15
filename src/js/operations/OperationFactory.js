@@ -4,6 +4,7 @@ define([
     'operations/ot/NodeAddOperation',
     'operations/ot/NodeDeleteOperation',
     'operations/ot/NodeMoveOperation',
+    'operations/ot/NodeMoveZOperation',
     'operations/ot/NodeResizeOperation',
     'operations/ot/EdgeAddOperation',
     'operations/ot/EdgeDeleteOperation',
@@ -17,8 +18,16 @@ define([
     'operations/non_ot/ExportMetaModelOperation',
     'operations/non_ot/ExportImageOperation',
     'operations/non_ot/JoinOperation',
-    'operations/non_ot/SetModelAttributeNodeOperation'
-],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportImageOperation,JoinOperation, SetModelAttributeNodeOperation) {
+    'operations/non_ot/SetViewTypesOperation',
+    'operations/non_ot/InitModelTypesOperation',
+    'operations/non_ot/ViewInitOperation',
+    'operations/non_ot/PerformCvgOperation',
+    'operations/non_ot/DeleteCvgOperation',
+    'operations/non_ot/DeleteViewOperation',
+    'operations/non_ot/SetModelAttributeNodeOperation',
+    'operations/non_ot/UpdateViewListOperation'
+
+],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeMoveZOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportImageOperation,JoinOperation,SetViewTypesOperation,InitModelTypesOperation,ViewInitOperation,PerformCvgOperation,DeleteCvgOperation,DeleteViewOperation,SetModelAttributeNodeOperation,UpdateViewListOperation) {
 
     /**
      * OperationFactory
@@ -47,7 +56,7 @@ define([
 
                 switch(type){
                     case EntitySelectOperation.TYPE:
-                        resOperation = new EntitySelectOperation(data.selectedEntityId);
+                        resOperation = new EntitySelectOperation(data.selectedEntityId, data.destination);
                         resOperation.setNonOTOperation(operation);
                         break;
                     case ToolSelectOperation.TYPE:
@@ -68,8 +77,29 @@ define([
                     case JoinOperation.TYPE:
                         resOperation = new JoinOperation(data.user,data.done,data.sender,data.data);
                         break;
+                    case SetViewTypesOperation.TYPE:
+                        resOperation = new SetViewTypesOperation(data.flag);
+                        break;
+                    case InitModelTypesOperation.TYPE:
+                        resOperation = new InitModelTypesOperation(data.vls, data.startViewGeneration);
+                        break;
+                    case ViewInitOperation.TYPE:
+                        resOperation = new ViewInitOperation(data.data, data.viewpoint);
+                        break;
+                    case PerformCvgOperation.TYPE:
+                        resOperation = new PerformCvgOperation(data.json, data.map);
+                        break;
+                    case DeleteCvgOperation.TYPE:
+                        resOperation = new DeleteCvgOperation(data.deleteList);
+                        break;
+                    case DeleteViewOperation.TYPE:
+                        resOperation = new DeleteViewOperation(data.viewId);
+                        break;
                     case SetModelAttributeNodeOperation.TYPE:
                         resOperation = new SetModelAttributeNodeOperation();
+                        break;
+                    case UpdateViewListOperation.TYPE:
+                        resOperation = new UpdateViewListOperation();
                         break;
                 }
                 return resOperation;
@@ -111,7 +141,9 @@ define([
                                                 value.width,
                                                 value.height,
                                                 value.zIndex,
-                                                value.json
+                                                value.json,
+                                                value.viewId,
+                                                value.oType
                                             );
                                             break;
                                         case CONFIG.OPERATION.TYPE.UPDATE:
@@ -136,7 +168,7 @@ define([
                                     );
                                     break;
                                 case CONFIG.IWC.POSITION.NODE.Z:
-                                    resOperation = new NodeMoveOperation(
+                                    resOperation = new NodeMoveZOperation(
                                         entityId,
                                         value.offsetZ
                                     );
@@ -163,7 +195,9 @@ define([
                                         value.type,
                                         value.source,
                                         value.target,
-                                        value.json
+                                        value.json,
+                                        value.viewId,
+                                        value.oType
                                     );
                                     break;
                                 case CONFIG.OPERATION.TYPE.UPDATE:
@@ -207,7 +241,8 @@ define([
                                 entityId,
                                 operation.getValue(),
                                 operation.getType(),
-                                operation.getPosition()
+                                operation.getPosition(),
+                                operation.getFromView()
                             );
                             break;
                     }

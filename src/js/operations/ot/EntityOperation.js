@@ -84,6 +84,7 @@ define([],/** @lends EntityOperation */function() {
             return _entityId;
         };
 
+
         //noinspection JSUnusedGlobalSymbols
         /**
          * Get type of the entity this activity works on

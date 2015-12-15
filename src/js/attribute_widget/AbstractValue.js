@@ -1,12 +1,4 @@
-define([
-    'jqueryui',
-    'jsplumb',
-    'lodash',
-    'iwcw',
-    'operations/ot/ValueChangeOperation',
-    'text!templates/attribute_widget/abstract_value.html'
-],/** @lends AbstractValue */function($,jsPlumb,_,IWCW,ValueChangeOperation,abstractValueHtml) {
-
+define([],/** @lends AbstractValue */function() {
     /**
      * AbstractValue
      * @class attribute_widget.AbstractValue
@@ -18,7 +10,6 @@ define([
      * @constructor
      */
     function AbstractValue(id,name,subjectEntity,rootSubjectEntity){
-        var that = this;
 
         /**
          * The entity identifier

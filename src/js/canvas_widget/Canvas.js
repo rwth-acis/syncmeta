@@ -11,13 +11,16 @@ define([
     'operations/non_ot/ExportDataOperation',
     'operations/non_ot/ExportMetaModelOperation',
     'operations/non_ot/ExportImageOperation',
+    'operations/non_ot/PerformCvgOperation',
+    'operations/non_ot/DeleteCvgOperation',
     'canvas_widget/AbstractEntity',
     'canvas_widget/ModelAttributesNode',
     'canvas_widget/EntityManager',
     'canvas_widget/AbstractCanvas',
     'canvas_widget/MoveTool',
     'jquery.transformable-PATCHED'
-],/** @lends Canvas */function($,jsPlumb,IWCOT,Util,NodeAddOperation,EdgeAddOperation,ToolSelectOperation,EntitySelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportImageOperation,AbstractEntity,ModelAttributesNode,EntityManager,AbstractCanvas,MoveTool) {
+], /** @lends Canvas */
+function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelectOperation, EntitySelectOperation, ActivityOperation, ExportDataOperation, ExportMetaModelOperation, ExportImageOperation,PerformCvgOperation, DeleteCvgOperation, AbstractEntity, ModelAttributesNode, EntityManager, AbstractCanvas, MoveTool) {
 
     Canvas.prototype = new AbstractCanvas();
     Canvas.prototype.constructor = Canvas;
@@ -29,10 +32,10 @@ define([
      * @constructor
      * @param {jQuery} $node jquery Selector of canvas node
      */
-    function Canvas($node){
+    function Canvas($node) {
         var that = this;
 
-        AbstractCanvas.call(this,$node);
+        AbstractCanvas.call(this, $node);
 
         /**
          * jQuery object of DOM node representing the canvas
@@ -40,7 +43,7 @@ define([
          * @private
          */
         var _$node = $node;
-        
+
         /**
          * Current zoom level
          * @type {number}
@@ -99,7 +102,7 @@ define([
          * Apply a Tool Select Operation
          * @param {ToolSelectOperation} operation
          */
-        var processToolSelectOperation = function(operation){
+        var processToolSelectOperation = function (operation) {
             that.mountTool(operation.getSelectedToolName());
         };
 
@@ -107,12 +110,12 @@ define([
          * Apply a Node Add Operation
          * @param {operations.ot.NodeAddOperation} operation
          */
-        var processNodeAddOperation = function(operation){
+        var processNodeAddOperation = function (operation) {
             var node;
-            if(operation.getJSON()){
-                node = EntityManager.createNodeFromJSON(operation.getType(),operation.getEntityId(),operation.getLeft(),operation.getTop(),operation.getWidth(),operation.getHeight(),operation.getZIndex(),operation.getJSON());
+            if (operation.getJSON()) {
+                node = EntityManager.createNodeFromJSON(operation.getType(), operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex(), operation.getJSON());
             } else {
-                node = EntityManager.createNode(operation.getType(),operation.getEntityId(),operation.getLeft(),operation.getTop(),operation.getWidth(),operation.getHeight(),operation.getZIndex());
+                node = EntityManager.createNode(operation.getType(), operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex());
             }
 
             node.draw();
@@ -124,17 +127,17 @@ define([
          * Propagate a Node Add Operation to the remote users and the local widgets
          * @param {operations.ot.NodeAddOperation} operation
          */
-        var propagateNodeAddOperation = function(operation){
+        var propagateNodeAddOperation = function (operation) {
             processNodeAddOperation(operation);
-            if(_iwcot.sendRemoteOTOperation(operation)){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
+            if (_iwcot.sendRemoteOTOperation(operation)) {
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
+                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
                     "NodeAddActivity",
                     operation.getEntityId(),
                     _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
-                    NodeAddOperation.getOperationDescription(operation.getType()),
-                    {nodeType: operation.getType()}
-                ).toNonOTOperation());
+                    NodeAddOperation.getOperationDescription(operation.getType()), {
+                        nodeType : operation.getType()
+                    }).toNonOTOperation());
             }
         };
 
@@ -142,13 +145,13 @@ define([
          * Apply an Edge Add Operation
          * @param {operations.ot.EdgeAddOperation} operation
          */
-        var processEdgeAddOperation = function(operation){
+        var processEdgeAddOperation = function (operation) {
             var edge;
 
-            if(operation.getJSON()){
-                edge = EntityManager.createEdgeFromJSON(operation.getType(),operation.getEntityId(),operation.getSource(),operation.getTarget(),operation.getJSON());
+            if (operation.getJSON()) {
+                edge = EntityManager.createEdgeFromJSON(operation.getType(), operation.getEntityId(), operation.getSource(), operation.getTarget(), operation.getJSON());
             } else {
-                edge = EntityManager.createEdge(operation.getType(),operation.getEntityId(),EntityManager.findNode(operation.getSource()),EntityManager.findNode(operation.getTarget()));
+                edge = EntityManager.createEdge(operation.getType(), operation.getEntityId(), EntityManager.findNode(operation.getSource()), EntityManager.findNode(operation.getTarget()));
             }
 
             edge.connect();
@@ -160,28 +163,26 @@ define([
          * Propagate an Edge Add Operation to the remote users and the local widgets
          * @param {operations.ot.EdgeAddOperation} operation
          */
-        var propagateEdgeAddOperation = function(operation){
+        var propagateEdgeAddOperation = function (operation) {
             var sourceNode = EntityManager.findNode(operation.getSource());
             var targetNode = EntityManager.findNode(operation.getTarget());
 
             processEdgeAddOperation(operation);
-            if(_iwcot.sendRemoteOTOperation(operation)){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
+            if (_iwcot.sendRemoteOTOperation(operation)) {
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
+                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
                     "EdgeAddActivity",
                     operation.getEntityId(),
                     _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
-                    EdgeAddOperation.getOperationDescription(operation.getType(),"",sourceNode.getLabel().getValue().getValue(),sourceNode.getType(),targetNode.getType(),targetNode.getLabel().getValue().getValue()),
-                    {
-                        nodeType: operation.getType(),
-                        sourceNodeId: operation.getSource(),
-                        sourceNodeLabel: sourceNode.getLabel().getValue().getValue(),
-                        sourceNodeType: sourceNode.getType(),
-                        targetNodeId: operation.getTarget(),
-                        targetNodeLabel:targetNode.getLabel().getValue().getValue(),
-                        targetNodeType: targetNode.getType()
-                    }
-                ).toNonOTOperation());
+                    EdgeAddOperation.getOperationDescription(operation.getType(), "", sourceNode.getLabel().getValue().getValue(), sourceNode.getType(), targetNode.getType(), targetNode.getLabel().getValue().getValue()), {
+                        nodeType : operation.getType(),
+                        sourceNodeId : operation.getSource(),
+                        sourceNodeLabel : sourceNode.getLabel().getValue().getValue(),
+                        sourceNodeType : sourceNode.getType(),
+                        targetNodeId : operation.getTarget(),
+                        targetNodeLabel : targetNode.getLabel().getValue().getValue(),
+                        targetNodeType : targetNode.getType()
+                    }).toNonOTOperation());
             }
         };
 
@@ -189,17 +190,63 @@ define([
          * Callback for a remote Node Add Operation
          * @param {operations.ot.NodeAddOperation} operation
          */
-        var remoteNodeAddCallback = function(operation){
-            if(operation instanceof NodeAddOperation){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
-                    "NodeAddActivity",
-                    operation.getEntityId(),
-                    operation.getOTOperation().getSender(),
-                    NodeAddOperation.getOperationDescription(operation.getType()),
-                    {nodeType: operation.getType()}
-                ).toNonOTOperation());
-                processNodeAddOperation(operation);
+        var remoteNodeAddCallback = function (operation) {
+            if (operation instanceof NodeAddOperation) {
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
+
+                if(operation.getViewId() === EntityManager.getViewId()) {
+                    if(operation.getViewId() === EntityManager.getViewId()) {
+                        _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
+                            "NodeAddActivity",
+                            operation.getEntityId(),
+                            operation.getOTOperation().getSender(),
+                            NodeAddOperation.getOperationDescription(operation.getType()), {
+                                nodeType: operation.getType()
+                            }).toNonOTOperation());
+                        processNodeAddOperation(operation);
+                    }
+                } else if(EntityManager.getLayer() === CONFIG.LAYER.MODEL) {
+
+                    var type, node, viewType;
+
+                    if(!operation.getViewId()){
+                        type = operation.getType();
+                    }
+                    else{
+                        type = operation.getOriginType();
+                    }
+
+                    if(EntityManager.getViewId()){
+                        viewType = EntityManager.getNodeType(type).VIEWTYPE;
+                        if(viewType){
+                            type = viewType;
+                        }
+                    }
+                    _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
+                        "NodeAddActivity",
+                        operation.getEntityId(),
+                        operation.getOTOperation().getSender(),
+                        NodeAddOperation.getOperationDescription(type), {
+                            nodeType: type
+                        }).toNonOTOperation());
+
+                    //processNodeAddOperation
+                    if (operation.getJSON()) {
+                        node = EntityManager.createNodeFromJSON(type, operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex(), operation.getJSON());
+                    } else {
+                        node = EntityManager.createNode(type, operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex());
+                    }
+
+                    node.draw();
+                    node.addToCanvas(that);
+
+                    //if we are in a view but the view type got no mapping in this view -> hide the element
+                    if(!viewType && EntityManager.getViewId()){
+                        node.hide();
+                    }
+                    that.remountCurrentTool();
+
+                }
             }
         };
 
@@ -207,28 +254,63 @@ define([
          * Callback for a remote Edge Add Operation
          * @param {operations.ot.EdgeAddOperation} operation
          */
-        var remoteEdgeAddCallback = function(operation){
-            if(operation instanceof EdgeAddOperation){
+        var remoteEdgeAddCallback = function (operation) {
+            if (operation instanceof EdgeAddOperation) {
                 var sourceNode = EntityManager.findNode(operation.getSource());
                 var targetNode = EntityManager.findNode(operation.getTarget());
 
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
-                    "EdgeAddActivity",
-                    operation.getEntityId(),
-                    operation.getOTOperation().getSender(),
-                    EdgeAddOperation.getOperationDescription(operation.getType(),"",sourceNode.getLabel().getValue().getValue(),sourceNode.getType(),targetNode.getLabel().getValue().getValue(),targetNode.getType()),
-                    {
-                        nodeType: operation.getType(),
-                        sourceNodeId: operation.getSource(),
-                        sourceNodeLabel: sourceNode.getLabel().getValue().getValue(),
-                        sourceNodeType: sourceNode.getType(),
-                        targetNodeId: operation.getTarget(),
-                        targetNodeLabel:targetNode.getLabel().getValue().getValue(),
-                        targetNodeType: targetNode.getType()
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
+
+                if(operation.getViewId() === EntityManager.getViewId()) {
+                    _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
+                        "EdgeAddActivity",
+                        operation.getEntityId(),
+                        operation.getOTOperation().getSender(),
+                        EdgeAddOperation.getOperationDescription(operation.getType(), "", sourceNode.getLabel().getValue().getValue(), sourceNode.getType(), targetNode.getLabel().getValue().getValue(), targetNode.getType()), {
+                            nodeType: operation.getType(),
+                            sourceNodeId: operation.getSource(),
+                            sourceNodeLabel: sourceNode.getLabel().getValue().getValue(),
+                            sourceNodeType: sourceNode.getType(),
+                            targetNodeId: operation.getTarget(),
+                            targetNodeLabel: targetNode.getLabel().getValue().getValue(),
+                            targetNodeType: targetNode.getType()
+                        }).toNonOTOperation());
+                    processEdgeAddOperation(operation);
+
+                }
+                else if(EntityManager.getLayer() === CONFIG.LAYER.MODEL){
+                    var type, edge, viewType;
+
+                    if(!operation.getViewId()){
+                        type = operation.getType();
                     }
-                ).toNonOTOperation());
-                processEdgeAddOperation(operation);
+                    else{
+                        type = operation.getOriginType();
+                    }
+
+                    if(EntityManager.getViewId()){
+                        viewType = EntityManager.getEdgeType(type).VIEWTYPE;
+                        if(viewType){
+                            type = viewType;
+                        }
+                    }
+
+
+                    if (operation.getJSON()) {
+                        edge = EntityManager.createEdgeFromJSON(type, operation.getEntityId(), operation.getSource(), operation.getTarget(), operation.getJSON());
+                    } else {
+                        edge = EntityManager.createEdge(type, operation.getEntityId(), EntityManager.findNode(operation.getSource()), EntityManager.findNode(operation.getTarget()));
+                    }
+
+                    edge.connect();
+                    edge.addToCanvas(that);
+
+                    //if we are in a view but the view type got no mapping in this view -> hide the element
+                    if(!viewType && EntityManager.getViewId()){
+                        edge.hide();
+                    }
+                    that.remountCurrentTool();
+                }
             }
         };
 
@@ -236,8 +318,8 @@ define([
          * Callback for a local Tool Select Operation
          * @param {operations.non_ot.ToolSelectOperation} operation
          */
-        var localToolSelectCallback = function(operation){
-            if(operation instanceof ToolSelectOperation){
+        var localToolSelectCallback = function (operation) {
+            if (operation instanceof ToolSelectOperation) {
                 processToolSelectOperation(operation);
             }
         };
@@ -246,10 +328,10 @@ define([
          * Callback for a local Export Data Operation
          * @param {operations.non_ot.ExportDataOperation} operation
          */
-        var localExportDataCallback = function(operation){
-            if(operation instanceof ExportDataOperation){
+        var localExportDataCallback = function (operation) {
+            if (operation instanceof ExportDataOperation) {
                 operation.setData(EntityManager.graphToJSON());
-                _iwcot.sendLocalNonOTOperation(operation.getRequestingComponent(),operation.toNonOTOperation());
+                _iwcot.sendLocalNonOTOperation(operation.getRequestingComponent(), operation.toNonOTOperation());
             }
         };
 
@@ -257,22 +339,20 @@ define([
          * Callback for a local Export Data Operation
          * @param {operations.non_ot.ExportMetaModelOperation} operation
          */
-        var localExportMetaModelCallback = function(operation){
-            if(operation instanceof ExportMetaModelOperation){
-                if(operation.getData() === null){
+        var localExportMetaModelCallback = function (operation) {
+            if (operation instanceof ExportMetaModelOperation) {
+                if (operation.getData() === null) {
                     operation.setData(EntityManager.generateMetaModel());
-                    _iwcot.sendLocalNonOTOperation(operation.getRequestingComponent(),operation.toNonOTOperation());
+                    _iwcot.sendLocalNonOTOperation(operation.getRequestingComponent(), operation.toNonOTOperation());
                 } else {
                     var data = operation.getData();
                     var op = new ActivityOperation(
                         "EditorGenerateActivity",
                         "-1",
                         _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
-                        "..generated new Editor <a href=\""+data.spaceURI+"\" target=\"_blank\">"+data.spaceTitle+"</a>",
-                        {}
-                    ).toNonOTOperation();
+                        "..generated new Editor <a href=\"" + data.spaceURI + "\" target=\"_blank\">" + data.spaceTitle + "</a>", {}).toNonOTOperation();
                     _iwcot.sendRemoteNonOTOperation(op);
-                    _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,op);
+                    _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, op);
                 }
 
             }
@@ -282,11 +362,11 @@ define([
          * Callback for a local Export Data Operation
          * @param {operations.non_ot.ExportImageOperation} operation
          */
-        var localExportImageCallback = function(operation){
-            if(operation instanceof ExportImageOperation){
-                that.toPNG().then(function(url){
+        var localExportImageCallback = function (operation) {
+            if (operation instanceof ExportImageOperation) {
+                that.toPNG().then(function (url) {
                     operation.setData(url);
-                    _iwcot.sendLocalNonOTOperation(operation.getRequestingComponent(),operation.toNonOTOperation());
+                    _iwcot.sendLocalNonOTOperation(operation.getRequestingComponent(), operation.toNonOTOperation());
                 });
             }
         };
@@ -295,9 +375,9 @@ define([
          * Callback for an undone resp. redone Node Add Operation
          * @param {operations.ot.NodeAddOperation} operation
          */
-        var historyNodeAddCallback = function(operation){
-            if(operation instanceof NodeAddOperation){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+        var historyNodeAddCallback = function (operation) {
+            if (operation instanceof NodeAddOperation) {
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
                 processNodeAddOperation(operation);
             }
         };
@@ -306,59 +386,61 @@ define([
          * Callback for an undone resp. redone Edge Add Operation
          * @param {operations.non_ot.EdgeAddOperation} operation
          */
-        var historyEdgeAddCallback = function(operation){
-            if(operation instanceof EdgeAddOperation){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+        var historyEdgeAddCallback = function (operation) {
+            if (operation instanceof EdgeAddOperation) {
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
                 processEdgeAddOperation(operation);
             }
         };
 
-        var init = function(){
+        var init = function () {
             var $canvasFrame = _$node.parent();
 
-            that.addTool(MoveTool.TYPE,new MoveTool());
+            that.addTool(MoveTool.TYPE, new MoveTool());
 
             jsPlumb.importDefaults({
-                ConnectionsDetachable:false
+                ConnectionsDetachable : false
             });
 
             jsPlumb.Defaults.Container = _$node;
 
             _$node.css({
-                width: _canvasWidth,
-                height: _canvasHeight,
-                left: (-_canvasWidth+$canvasFrame.width())/2,
-                top: (-_canvasHeight+$canvasFrame.height())/2
+                width : _canvasWidth,
+                height : _canvasHeight,
+                left : (-_canvasWidth + $canvasFrame.width()) / 2,
+                top : (-_canvasHeight + $canvasFrame.height()) / 2
             });
 
             _$node.draggable({
-                start: function(event, ui) {
-                    _$node.draggable("option","containment",[-_canvasWidth+$canvasFrame.width(),-_canvasHeight+$canvasFrame.height(),0,0]);
-                    _$node.draggable("option","containment",[-_canvasWidth+$canvasFrame.width(),-_canvasHeight+$canvasFrame.height(),0,0]);
+                start : function () {
+                    _$node.draggable("option", "containment", [-_canvasWidth + $canvasFrame.width(), -_canvasHeight + $canvasFrame.height(), 0, 0]);
+                    _$node.draggable("option", "containment", [-_canvasWidth + $canvasFrame.width(), -_canvasHeight + $canvasFrame.height(), 0, 0]);
                 },
-                drag: function(event, ui) {
+                drag : function (event, ui) {
                     //ui.position.left = Math.round(ui.position.left  / _zoom);
                     //ui.position.top = Math.round(ui.position.top / _zoom);
                 }
             });
-            if(_$node.transformable != null){ // since recently, this method doesnt exist anymore.  BUGFIX
-            _$node.transformable({
-                rotatable: false,
-                skewable: false,
-                scalable: false
-            });
+            if (_$node.transformable != null) { // since recently, this method doesnt exist anymore.  BUGFIX
+                _$node.transformable({
+                    rotatable : false,
+                    skewable : false,
+                    scalable : false
+                });
             }
-            _$node.mousewheel(function(event){
-                that.setZoom(that.getZoom()+0.1*event.deltaY);
+            _$node.mousewheel(function (event) {
+                that.setZoom(that.getZoom() + 0.1 * event.deltaY);
                 event.preventDefault();
             });
+
+
         };
 
         /**
          * Get jQuery object of DOM node representing the canvas
          * @returns {jQuery}
          */
-        this.get$node = function(){
+        this.get$node = function () {
             return _$node;
         };
 
@@ -366,7 +448,7 @@ define([
          * Set model attributes
          * @param {canvas_widget.ModelAttributesNode} node
          */
-        this.setModelAttributesNode = function(node){
+        this.setModelAttributesNode = function (node) {
             _modelAttributesNode = node;
         };
 
@@ -374,23 +456,24 @@ define([
          * Get model attributes
          * @returns {canvas_widget.ModelAttributesNode}
          */
-        this.getModelAttributesNode = function(){
+        this.getModelAttributesNode = function () {
             return _modelAttributesNode;
         };
-        
+
         //noinspection JSUnusedGlobalSymbols
         /**
          * Calls an event listener
          */
-        this.callListeners = function(){
-            var i, numOfCallbacks;
+        this.callListeners = function () {
+            var i,
+                numOfCallbacks;
             //noinspection JSAccessibilityCheck
             var args = Array.prototype.splice.call(arguments, 0);
 
             var name = args.shift();
-            if(_listeners.hasOwnProperty(name)){
-                for(i = 0, numOfCallbacks = _listeners[name].length; i < numOfCallbacks; i++){
-                    _listeners[name][i].apply(this,args);
+            if (_listeners.hasOwnProperty(name)) {
+                for (i = 0, numOfCallbacks = _listeners[name].length; i < numOfCallbacks; i++) {
+                    _listeners[name][i].apply(this, args);
                 }
             }
         };
@@ -400,9 +483,9 @@ define([
          * @param {string} name Name of event
          * @param {function} callback Event Listener
          */
-        this.registerListener = function(name,callback){
-            if(CONFIG.CANVAS.LISTENERS.hasOwnProperty(name) && typeof callback === "function"){
-                this.unregisterListener(name,callback);
+        this.registerListener = function (name, callback) {
+            if (CONFIG.CANVAS.LISTENERS.hasOwnProperty(name) && typeof callback === "function") {
+                this.unregisterListener(name, callback);
                 (_listeners[name] || (_listeners[name] = [])).push(callback);
             }
         };
@@ -412,13 +495,14 @@ define([
          * @param {string} name Name of event
          * @param {function} callback Event Listener which has previously been registered
          */
-        this.unregisterListener = function(name,callback){
-            var i, numOfCallbacks;
+        this.unregisterListener = function (name, callback) {
+            var i,
+                numOfCallbacks;
 
-            if(_listeners[name] && typeof callback === "function"){
-                for(i = 0, numOfCallbacks = _listeners[name].length; i < numOfCallbacks; i++){
-                    if(callback === _listeners[name][i]){
-                        _listeners[name].splice(i,1);
+            if (_listeners[name] && typeof callback === "function") {
+                for (i = 0, numOfCallbacks = _listeners[name].length; i < numOfCallbacks; i++) {
+                    if (callback === _listeners[name][i]) {
+                        _listeners[name].splice(i, 1);
                     }
                 }
             }
@@ -427,28 +511,54 @@ define([
         /**
          * Bind events for move tool
          */
-        this.bindMoveToolEvents = function(){
+        this.bindMoveToolEvents = function () {
 
             //Enable Canvas Dragging
             _$node.draggable("enable");
 
             _$node.transformable({
-                rotatable: false,
-                skewable: false,
-                scalable: false
+                rotatable : false,
+                skewable : false,
+                scalable : false
             });
 
             //Define Node Rightclick Menu
             $.contextMenu({
-                selector: '#' + _$node.attr('id'),
-                zIndex: AbstractEntity.CONTEXT_MENU_Z_INDEX,
-                build: function($trigger, e){
-                    if(_selectedEntity === null){
+                selector : '#' + _$node.attr('id'),
+                zIndex : AbstractEntity.CONTEXT_MENU_Z_INDEX,
+                build : function ($trigger, e) {
+                    if (_selectedEntity === null) {
                         return {
-                            items: {
-                                addNode: {
-                                    name: "Add node..",
-                                    items: EntityManager.generateAddNodeMenu(that, e.originalEvent.offsetX, e.originalEvent.offsetY)
+                            items : {
+                                addNode : {
+                                    name : "Add node..",
+                                    items : EntityManager.generateAddNodeMenu(that, e.originalEvent.offsetX, e.originalEvent.offsetY)
+                                },
+                                hide:{
+                                    name:"Hide entities..",
+                                    items: {
+                                        nodes: {
+                                            name: "nodes..",
+                                            items: EntityManager.generateVisibilityNodeMenu('hide')
+                                        },
+                                        edges: {
+                                            name: "edges..",
+                                            items: EntityManager.generateVisibilityEdgeMenu('hide')
+                                        }
+                                    }
+                                },
+                                show:{
+                                    name:"Show entities..",
+                                    items: {
+                                        nodes: {
+                                            name: "nodes..",
+                                            items: EntityManager.generateVisibilityNodeMenu('show')
+                                        },
+                                        edges: {
+                                            name: "edges..",
+                                            items: EntityManager.generateVisibilityEdgeMenu('show')
+                                        }
+                                    }
                                 }
                             }
                         };
@@ -464,10 +574,10 @@ define([
         /**
          * Bind events for move tool
          */
-        this.unbindMoveToolEvents = function(){
+        this.unbindMoveToolEvents = function () {
 
             //Disable Canvas Dragging
-            _$node.draggable( "disable" );
+            _$node.draggable("disable");
 
             _$node.transformable('destroy');
 
@@ -482,24 +592,26 @@ define([
          * Select an entity
          * @param {canvas_widget.AbstractNode|canvas_widget.AbstractEdge} entity
          */
-        this.select = function(entity){
-            if(_selectedEntity != entity){
-                if(_selectedEntity) _selectedEntity.unselect();
-                if(entity) entity.select();
+        this.select = function (entity) {
+            if (_selectedEntity != entity) {
+                if (_selectedEntity)
+                    _selectedEntity.unselect();
+                if (entity)
+                    entity.select();
                 _selectedEntity = entity;
-                var operation = new EntitySelectOperation(entity ? entity.getEntityId() : null);
-                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.toNonOTOperation());
-                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,operation.toNonOTOperation());
+                var operation = new EntitySelectOperation(entity ? entity.getEntityId() : null, CONFIG.WIDGET.NAME.MAIN);
+                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
+                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, operation.toNonOTOperation());
                 _iwcot.sendRemoteNonOTOperation(operation.toNonOTOperation());
                 //this.callListeners(CONFIG.CANVAS.LISTENERS.NODESELECT,entity ? entity.getEntityId() :null);
             }
         };
 
         /**
-        * Get entity currently selected
-        * @return {canvas_widget.AbstractNode|canvas_widget/AbstractEdge}
-        */
-         this.getSelectedEntity = function(){
+         * Get entity currently selected
+         * @return {canvas_widget.AbstractNode|canvas_widget/AbstractEdge}
+         */
+        this.getSelectedEntity = function () {
             return _selectedEntity;
         };
 
@@ -507,8 +619,8 @@ define([
          * Set zoom level (between 0.5 and 2, default is 1)
          * @param {number} zoom
          */
-        this.setZoom = function(zoom){
-            if(zoom < 0.1 || zoom > 2){
+        this.setZoom = function (zoom) {
+            if (zoom < 0.1 || zoom > 2) {
                 return;
             }
             _zoom = zoom;
@@ -530,22 +642,21 @@ define([
          * Get zoom level
          * @returns {number}
          */
-        this.getZoom = function(){
+        this.getZoom = function () {
             return _zoom;
         };
 
         /**
-         * Reset the currently mounted tool back to the Move Tool 
+         * Reset the currently mounted tool back to the Move Tool
          */
-        this.resetTool = function(){
+        this.resetTool = function () {
             var operation = new ToolSelectOperation(MoveTool.TYPE);
 
-            _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE,operation.toNonOTOperation());
+            _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation.toNonOTOperation());
             this.mountTool(MoveTool.TYPE);
             //this.callListeners(CONFIG.CANVAS.LISTENERS.RESET);
         };
 
-        
         /**
          * Create a new node and draw it on the canvas
          * @param {string} type Type of node
@@ -555,12 +666,21 @@ define([
          * @param {number} height Height of node
          * @param {number} [zIndex] Position of node on z-axis
          * @param {object} [json] representation of node
+         * @param {string} identifier the identifier of the node, if null a new id is generated
          * @return {number} id of new node
          */
-        this.createNode = function(type,left,top,width,height,zIndex,json){
-            var id = Util.generateRandomId(24);
+        this.createNode = function (type, left, top, width, height, zIndex, json, identifier) {
+            var id, oType = null;
+            if(identifier)
+                id = identifier;
+            else
+                id= Util.generateRandomId(24);
             zIndex = zIndex || AbstractEntity.maxZIndex + 1;
-            var operation = new NodeAddOperation(id,type,left,top,width,height,zIndex,json||null);
+
+            if(EntityManager.getViewId() !== null && EntityManager.getLayer() === CONFIG.LAYER.MODEL){
+                oType = EntityManager.getViewNodeType(type).getTargetNodeType().TYPE;
+            }
+            var operation = new NodeAddOperation(id, type, left, top, width, height, zIndex, json || null, EntityManager.getViewId(), oType);
             propagateNodeAddOperation(operation);
             return id;
         };
@@ -571,15 +691,23 @@ define([
          * @param {canvas_widget.AbstractNode} source Source node entity id
          * @param {canvas_widget.AbstractNode} target Target node entity id
          * @param {object} [json] representation of edge
+         * @param {string} identifier the identifier of the edge
          * @return {number} id of new edge
          */
-        this.createEdge = function(type,source,target,json){
+        this.createEdge = function (type, source, target, json, identifier) {
             //if(source !== target){
-                var id = Util.generateRandomId(24);
-                var operation = new EdgeAddOperation(id,type,source,target,json||null);
+            var id = null, oType = null;
+            if(identifier)
+                id = identifier;
+            else
+                id = Util.generateRandomId(24);
+            if(EntityManager.getViewId() !== null && EntityManager.getLayer() === CONFIG.LAYER.MODEL){
+                oType = EntityManager.getViewEdgeType(type).getTargetEdgeType().TYPE;
+            }
+            var operation = new EdgeAddOperation(id, type, source, target, json || null, EntityManager.getViewId(), oType);
 
-                propagateEdgeAddOperation(operation);
-                return id;
+            propagateEdgeAddOperation(operation);
+            return id;
             //}
         };
 
@@ -587,8 +715,8 @@ define([
          * Convert current canvas content to PNG image file
          * @return {string} Data-URI of generated PNG image
          */
-        this.toPNG = function(){
-            var $renderedCanvas = $('<canvas></canvas>').insertAfter(_$node).attr('width',_$node.width()).attr('height',_$node.height()),
+        this.toPNG = function () {
+            var $renderedCanvas = $('<canvas></canvas>').insertAfter(_$node).attr('width', _$node.width()).attr('height', _$node.height()),
                 ctx = $renderedCanvas[0].getContext('2d'),
                 deferred = $.Deferred(),
                 promises = [],
@@ -601,20 +729,24 @@ define([
             canvasOffset = _$node.offset();
 
             ctx.beginPath();
-            ctx.rect(0,0,_canvasWidth,_canvasHeight);
+            ctx.rect(0, 0, _canvasWidth, _canvasHeight);
             ctx.fillStyle = _$node.css('backgroundColor');
             ctx.fill();
 
-            _.each(_.sortBy($.makeArray(_$node.contents()),function(e){
-                return $(e).css('zIndex');
-            }),function(e){
+            _.each(_.sortBy($.makeArray(_$node.contents()), function (e) {
+                try{
+                    return $(e).css('zIndex');
+                }catch(e){
+                    return null;
+                }
+            }), function (e) {
                 var $this = $(e);
-                if($this.attr('id') !== 'modelAttributes'){
-                    promises.push(convertNodeTreeToCanvas($this,ctx));
+                if ($this.attr('id') !== 'modelAttributes') {
+                    promises.push(convertNodeTreeToCanvas($this, ctx));
                 }
             });
 
-            $.when.apply($,promises).then(function(){
+            $.when.apply($, promises).then(function () {
                 var tempCanvas = document.createElement("canvas"),
                     tCtx = tempCanvas.getContext("2d"),
                     minLeft = _canvasWidth,
@@ -629,24 +761,24 @@ define([
                     padding = 20,
                     nodeExists = false;
 
-                for(nodeId in nodes){
-                    if(nodes.hasOwnProperty(nodeId)){
+                for (nodeId in nodes) {
+                    if (nodes.hasOwnProperty(nodeId)) {
                         nodeExists = true;
                         appearance = nodes[nodeId].getAppearance();
                         //noinspection JSAccessibilityCheck
-                        minLeft = Math.min(minLeft,appearance.left);
-                        minTop = Math.min(minTop,appearance.top);
+                        minLeft = Math.min(minLeft, appearance.left);
+                        minTop = Math.min(minTop, appearance.top);
                         //noinspection JSAccessibilityCheck
-                        maxRight = Math.max(maxRight,appearance.left + appearance.width);
-                        maxBottom = Math.max(maxBottom,appearance.top + appearance.height);
+                        maxRight = Math.max(maxRight, appearance.left + appearance.width);
+                        maxBottom = Math.max(maxBottom, appearance.top + appearance.height);
                     }
                 }
 
-                if(!nodeExists){
-                    minLeft = _canvasWidth/2;
-                    minTop = _canvasHeight/2;
-                    maxRight = _canvasWidth/2;
-                    maxBottom = _canvasHeight/2;
+                if (!nodeExists) {
+                    minLeft = _canvasWidth / 2;
+                    minTop = _canvasHeight / 2;
+                    maxRight = _canvasWidth / 2;
+                    maxBottom = _canvasHeight / 2;
                 }
 
                 minLeft -= padding;
@@ -660,7 +792,7 @@ define([
                 tempCanvas.width = width;
                 tempCanvas.height = height;
 
-                tCtx.drawImage($renderedCanvas[0],minLeft,minTop,width,height,0,0,width,height);
+                tCtx.drawImage($renderedCanvas[0], minLeft, minTop, width, height, 0, 0, width, height);
 
                 that.setZoom(oldZoom);
                 $("#loading").hide();
@@ -676,74 +808,76 @@ define([
          * @param ctx Canvas context
          * @returns {promise}
          */
-        var convertNodeTreeToCanvas = function($node,ctx){
+        var convertNodeTreeToCanvas = function ($node, ctx) {
 
-            function drawSVGOnCanvas(ctx,svgMarkup,x,y){
-                var svg = new Blob([svgMarkup], {type: "image/svg+xml;charset=utf-8"}),
+            function drawSVGOnCanvas(ctx, svgMarkup, x, y) {
+                var svg = new Blob([svgMarkup], {
+                        type : "image/svg+xml;charset=utf-8"
+                    }),
                     DOMURL = self.URL || self.webkitURL || self,
                     url = DOMURL.createObjectURL(svg),
                     img = new Image(),
                     deferred = $.Deferred();
 
-                img.onload = function() {
+                img.onload = function () {
                     ctx.drawImage(img, x, y);
                     DOMURL.revokeObjectURL(url);
                     deferred.resolve();
                 };
                 img.src = url;
-                setTimeout(function(){
+                setTimeout(function () {
                     deferred.resolve();
-                },500);
+                }, 500);
                 return deferred.promise();
             }
 
-            function convertNodeToSVG($node){
+            function convertNodeToSVG($node) {
 
-                if($node[0].nodeType === Node.TEXT_NODE){
-                    if($.trim($node.text()) === ''){
+                if ($node[0].nodeType === Node.TEXT_NODE) {
+                    if ($.trim($node.text()) === '') {
                         return $.Deferred().resolve().promise();
                     } else {
                         $node = $node.wrap($('<span></span>')).parent();
                     }
                 }
 
-                if(!$node.is(":visible")){
+                if (!$node.is(":visible")) {
                     return $.Deferred().resolve().promise();
                 }
 
                 var height = $node.height(),
                     width = $node.width(),
                     padding = {
-                        left: parseInt($node.css('paddingLeft'),10),
-                        top: parseInt($node.css('paddingTop'),10),
-                        right: parseInt($node.css('paddingRight'),10),
-                        bottom: parseInt($node.css('paddingBottom'),10)
+                        left : parseInt($node.css('paddingLeft'), 10),
+                        top : parseInt($node.css('paddingTop'), 10),
+                        right : parseInt($node.css('paddingRight'), 10),
+                        bottom : parseInt($node.css('paddingBottom'), 10)
                     },
                     border = {
-                        width: parseInt($node.css('borderWidth')),
-                        color: $node.css('borderColor'),
-                        left: {
-                            width: parseInt($node.css('borderLeftWidth')),
-                            color: $node.css('borderLeftColor')
+                        width : parseInt($node.css('borderWidth')),
+                        color : $node.css('borderColor'),
+                        left : {
+                            width : parseInt($node.css('borderLeftWidth')),
+                            color : $node.css('borderLeftColor')
                         },
-                        top: {
-                            width: parseInt($node.css('borderTopWidth')),
-                            color: $node.css('borderTopColor')
+                        top : {
+                            width : parseInt($node.css('borderTopWidth')),
+                            color : $node.css('borderTopColor')
                         },
-                        right: {
-                            width: parseInt($node.css('borderRightWidth')),
-                            color: $node.css('borderRightColor')
+                        right : {
+                            width : parseInt($node.css('borderRightWidth')),
+                            color : $node.css('borderRightColor')
                         },
-                        bottom: {
-                            width: parseInt($node.css('borderBottomWidth')),
-                            color: $node.css('borderBottomColor')
+                        bottom : {
+                            width : parseInt($node.css('borderBottomWidth')),
+                            color : $node.css('borderBottomColor')
                         }
                     },
                     borderMarkup = [],
                     backgroundColor = $node.css('backgroundColor'),
                     color = $node.css('color'),
                     font = $node.css('font'),
-                    fontSize = parseInt($node.css('fontSize'),10),
+                    fontSize = parseInt($node.css('fontSize'), 10),
                     textDecoration = $node.css('textDecoration').split(' ')[0],
                     offset = $node.offset(),
                     value,
@@ -752,44 +886,43 @@ define([
                     textAnchor,
                     contents = $node.contents();
 
-                if($node[0].nodeName.toLowerCase() === 'svg'){
+                if ($node[0].nodeName.toLowerCase() === 'svg') {
 
-                    $node.attr('width',width);
-                    $node.attr('height',height);
+                    $node.attr('width', width);
+                    $node.attr('height', height);
 
                     return drawSVGOnCanvas(
                         ctx,
                         $node[0].outerHTML
-                            .replace(/style="[^"]*"/,"")
-                            .replace(/http:\/\/www\.w3\.org\/1999\/xhtml/g,"http://www.w3.org/2000/svg"),
-                        offset.left-canvasOffset.left,
-                        offset.top-canvasOffset.top
-                    );
+                            .replace(/style="[^"]*"/, "")
+                            .replace(/http:\/\/www\.w3\.org\/1999\/xhtml/g, "http://www.w3.org/2000/svg"),
+                        offset.left - canvasOffset.left,
+                        offset.top - canvasOffset.top);
                 }
 
-                if(contents.length === 1 && contents[0].nodeType === Node.TEXT_NODE){
+                if (contents.length === 1 && contents[0].nodeType === Node.TEXT_NODE) {
                     value = $node.text();
                 } else {
                     value = $node.val();
                 }
 
                 var tagsToReplace = {
-                    '&': '&amp;',
-                    '<': '&lt;',
-                    '>': '&gt;'
+                    '&' : '&amp;',
+                    '<' : '&lt;',
+                    '>' : '&gt;'
                 };
 
-                value = $.trim(value).replace(/[&<>]/g, function(tag) {
+                value = $.trim(value).replace(/[&<>]/g, function (tag) {
                     return tagsToReplace[tag] || tag;
                 });
 
-                switch($node.css('textAlign')){
+                switch ($node.css('textAlign')) {
                     case "right":
                         textX = width;
                         textAnchor = "right";
                         break;
                     case "center":
-                        textX = width/2;
+                        textX = width / 2;
                         textAnchor = "middle";
                         break;
                     default:
@@ -801,51 +934,50 @@ define([
                 }
 
                 textX += padding.left;
-                textY += padding.top + border.width - Math.ceil((height - fontSize)/2) - 1;
+                textY += padding.top + border.width - Math.ceil((height - fontSize) / 2) - 1;
                 height += padding.top + padding.bottom + 2 * border.width;
                 width += padding.left + padding.right + 2 * border.width;
 
-                if(border.color.split(' ').length !== 1 || border.width.split(' ').length !== 1){
+                if (border.color.split(' ').length !== 1 || border.width.split(' ').length !== 1) {
                     border.width = 0;
-                    if(border.left.width > 0){
+                    if (border.left.width > 0) {
                         borderMarkup.push('<line x1="0" y1="0" x2="0" y2="' + height + '" style="stroke:' + border.left.color + '; stroke-width:' + border.left.width + '" />');
                     }
-                    if(border.top.width > 0){
-                        borderMarkup.push('<line x1="0" y1="0" x2="' + width +'" y2="0" style="stroke:' + border.top.color + '; stroke-width:' + border.top.width + '" />');
+                    if (border.top.width > 0) {
+                        borderMarkup.push('<line x1="0" y1="0" x2="' + width + '" y2="0" style="stroke:' + border.top.color + '; stroke-width:' + border.top.width + '" />');
                     }
-                    if(border.right.width > 0){
+                    if (border.right.width > 0) {
                         borderMarkup.push('<line x1="' + width + '" y1="0" x2="' + width + '" y2="' + height + '" style="stroke:' + border.right.color + '; stroke-width:' + border.right.width + '" />');
                     }
-                    if(border.bottom.width > 0){
+                    if (border.bottom.width > 0) {
                         borderMarkup.push('<line x1="0" y1="' + height + '" x2="' + width + '" y2="' + height + '" style="stroke:' + border.bottom.color + '; stroke-width:' + border.bottom.width + '" />');
                     }
                 }
 
                 return drawSVGOnCanvas(
                     ctx,
-                    '<svg xmlns="http://www.w3.org/2000/svg" width="' + width + '" height="' + height + '">'+
-                        '<rect x="0" y="0" width="' + width + '" height="' + height + '" fill="' + backgroundColor + '" style="stroke: ' + border.color + '; stroke-width: ' + border.width + '"/>'+
-                        borderMarkup.join('\n') +
-                        '<text x="' + textX + '" y="' + textY + '" fill="' + color + '" style="text-anchor: ' + textAnchor + '; font: ' + font + '; text-decoration: ' + textDecoration + ';">' + value + '</text>' +
-                        '</svg>',
-                    offset.left-canvasOffset.left,
-                    offset.top-canvasOffset.top
-                );
+                    '<svg xmlns="http://www.w3.org/2000/svg" width="' + width + '" height="' + height + '">' +
+                    '<rect x="0" y="0" width="' + width + '" height="' + height + '" fill="' + backgroundColor + '" style="stroke: ' + border.color + '; stroke-width: ' + border.width + '"/>' +
+                    borderMarkup.join('\n') +
+                    '<text x="' + textX + '" y="' + textY + '" fill="' + color + '" style="text-anchor: ' + textAnchor + '; font: ' + font + '; text-decoration: ' + textDecoration + ';">' + value + '</text>' +
+                    '</svg>',
+                    offset.left - canvasOffset.left,
+                    offset.top - canvasOffset.top);
             }
 
             var contents = $node.contents();
 
-            return convertNodeToSVG($node).then(function(){
+            return convertNodeToSVG($node).then(function () {
                 var promises = [];
-                if(contents.length !== 1 || contents[0].nodeType !== Node.TEXT_NODE){
-                    contents.each(function(){
+                if (contents.length !== 1 || contents[0].nodeType !== Node.TEXT_NODE) {
+                    contents.each(function () {
                         var $this = $(this);
-                        if($node[0].nodeName.toLowerCase() !== 'svg'){
-                            promises.push(convertNodeTreeToCanvas($this,ctx));
+                        if ($node[0].nodeName.toLowerCase() !== 'svg') {
+                            promises.push(convertNodeTreeToCanvas($this, ctx));
                         }
                     });
                 }
-                return $.when.apply($, promises).then(function(){
+                return $.when.apply($, promises).then(function () {
                     return true;
                 });
             });
@@ -854,7 +986,7 @@ define([
         /**
          * Register inter widget communication callbacks
          */
-        this.registerCallbacks = function(){
+        this.registerCallbacks = function () {
             _iwcot.registerOnRemoteDataReceivedCallback(remoteNodeAddCallback);
             _iwcot.registerOnRemoteDataReceivedCallback(remoteEdgeAddCallback);
             _iwcot.registerOnLocalDataReceivedCallback(localToolSelectCallback);
@@ -863,13 +995,17 @@ define([
             _iwcot.registerOnLocalDataReceivedCallback(localExportImageCallback);
             _iwcot.registerOnHistoryChangedCallback(historyNodeAddCallback);
             _iwcot.registerOnHistoryChangedCallback(historyEdgeAddCallback);
-        };
 
+            _iwcot.registerOnLocalDataReceivedCallback(CvgCallback);
+            _iwcot.registerOnLocalDataReceivedCallback(DeleteCvgCallback);
+
+
+        };
 
         /**
          * Unregister inter widget communication callbacks
          */
-        this.unregisterCallbacks = function(){
+        this.unregisterCallbacks = function () {
             _iwcot.unregisterOnRemoteDataReceivedCallback(remoteNodeAddCallback);
             _iwcot.unregisterOnRemoteDataReceivedCallback(remoteEdgeAddCallback);
             _iwcot.unregisterOnLocalDataReceivedCallback(localToolSelectCallback);
@@ -878,11 +1014,44 @@ define([
             _iwcot.unregisterOnLocalDataReceivedCallback(localExportImageCallback);
             _iwcot.unregisterOnHistoryChangedCallback(historyNodeAddCallback);
             _iwcot.unregisterOnHistoryChangedCallback(historyEdgeAddCallback);
+
+            _iwcot.unregisterOnLocalDataReceivedCallback(CvgCallback);
+            _iwcot.unregisterOnLocalDataReceivedCallback(DeleteCvgCallback);
+
         };
+
+        /**
+         * visualizes the results of a CVG operation.
+         * CVG is computed on the attribute widget
+         * @param {operation.non_ot.PerformCvgOperation} operation
+         * @constructor
+         */
+        function CvgCallback(operation){
+            if(operation instanceof PerformCvgOperation){
+                require(['canvas_widget/ClosedViewGeneration'], function(CVG) {
+                    CVG(that, operation.getJSON());
+                });
+            }
+        }
+
+        /**
+         * Deletes the result of a CVG result on the canvas
+         * @param {operation.non_ot.DeleteCvgOperation} operation
+         * @constructor
+         */
+        function DeleteCvgCallback(operation){
+            if(operation instanceof DeleteCvgOperation){
+                var deleteList = operation.getDeleteList();
+                for(var i=0;i<deleteList.length;i++){
+                    var node = EntityManager.findNode(deleteList[i]);
+                    node.triggerDeletion();
+                }
+            }
+        }
 
         init();
 
-        if(_iwcot){
+        if (_iwcot) {
             that.registerCallbacks();
         }
 

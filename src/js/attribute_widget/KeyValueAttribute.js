@@ -153,7 +153,8 @@ define([
         _$node.find(".value").append(_value.get$node());
         _$node.find(".ui-icon-close").click(function(){
             var operation = new AttributeDeleteOperation(that.getEntityId(),that.getSubjectEntityId(),that.getRootSubjectEntity().getEntityId(),KeyValueAttribute.TYPE);
-            propagateAttributeDeleteOperation(operation);
+            propagateAttributeDeleteOperation(operation, CONFIG.WIDGET.NAME.MAIN);
+
         });
 
         if(iwc){

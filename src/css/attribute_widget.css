@@ -1,3 +1,7 @@
+#wrapper {
+    max-height: 200px;
+    overflow: auto;
+}
 .list_attribute ul.list{
     list-style: none;
     padding-left: 10px;
@@ -8,20 +12,27 @@
     margin-left: 10px;
 }
 
-.key_value_attribute {
+.key_value_attribute, 
+.condition_predicate,
+.renaming_attr{
     overflow: auto;
 }
 
-.key_value_attribute div{
+.key_value_attribute div,
+.condition_predicate div,
+.renaming_attr div{
     width: 30%;
     float: left;
 }
 
-.key_value_attribute div input{
+.key_value_attribute div input,
+.condition_predicate div input,
+.renaming_attr div input{
     border: 1px solid #aaaaaa;
 }
 
-.key_value_attribute span.ui-icon{
+.key_value_attribute span.ui-icon,
+.condition_predicate span.ui-icon{
     margin-top: 3px;
 }
 
@@ -77,6 +88,14 @@
 .key_value_attribute input, select {
     width: 150px;
 }
+.condition_predicate input, select{
+    width: 150px;
+}
+
+.renaming_attr input, select {
+    width: 150px;
+}
+
 
 .type {
     font-weight: bold;

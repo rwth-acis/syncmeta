@@ -492,8 +492,8 @@ define([
                         operation.setSender(sender);
                         resOperation = OperationFactory.createOperationFromNonOTOperation(operation);
 
-                        if(resOperation instanceof JoinOperation){
 
+                        if(resOperation instanceof JoinOperation){
                             // First step
                             if(!resOperation.isDone()){
 
@@ -509,7 +509,7 @@ define([
                                             clearInterval(_syncInterval);
                                             clearInterval(_purgeInterval);
                                             _ot = new OT(localID);
-                                            sendRemoteNonOTOperation(new JoinOperation(resOperation.getUser(),false,space.user[CONFIG.NS.PERSON.JABBERID],require('canvas_widget/EntityManager').graphToJSON()).toNonOTOperation());
+                                            sendRemoteNonOTOperation(new JoinOperation(resOperation.getUser(),true,space.user[CONFIG.NS.PERSON.JABBERID],require('canvas_widget/EntityManager').graphToJSON()).toNonOTOperation());
                                         },500);
 
                                         //Unlock if no remote message is received within 5 seconds
@@ -526,7 +526,7 @@ define([
                                                 numOfOperations = _otOperationBuffer.length;
                                                 operations = _otOperationBuffer.splice(0,numOfOperations);
                                                 for(j = 0, numOfOperations = operation.length; j < numOfOperations; j++){
-                                                    that.propOp(operations[j]);
+                                                    sendRemoteNonOTOperation(operations[j]).toNonOTOperation();
                                                 }
                                             }
                                         },5000);
@@ -534,7 +534,7 @@ define([
                                         return;
                                     }
 
-                                //I try to join..
+                                    //I try to join..
                                 } else {
 
                                     console.log("JOINING LOG: GOT RESPONSE ON MY JOINING REQUEST");
@@ -548,9 +548,8 @@ define([
 
                                 }
 
-                            //Second step
+                                //Second step
                             } else {
-
                                 // A remote user tries to join..
                                 if(resOperation.getUser() !== space.user[CONFIG.NS.PERSON.JABBERID]){
 
@@ -558,7 +557,7 @@ define([
 
                                     // ..and I already have joined
                                     if(_joiningState === IWCOT.JOIN_STATE.COMPLETED){
-                                        sendRemoteNonOTOperation(new JoinOperation(resOperation.getUser(),true,space.user[CONFIG.NS.PERSON.JABBERID],{}).toNonOTOperation());
+                                        //sendRemoteNonOTOperation(new JoinOperation(resOperation.getUser(),true,space.user[CONFIG.NS.PERSON.JABBERID],{}).toNonOTOperation());
                                         userPosition = _joiningUsers.indexOf(sender);
                                         if(userPosition > -1){
                                             _joiningUsers.splice(userPosition,1);
@@ -567,7 +566,7 @@ define([
                                             numOfOperations = _otOperationBuffer.length;
                                             operations = _otOperationBuffer.splice(0,numOfOperations);
                                             for(j = 0, numOfOperations = operation.length; j < numOfOperations; j++){
-                                                this.propOp(operations[j]);
+                                                sendRemoteNonOTOperation(operations[j]).toNonOTOperation();
                                             }
                                         }
                                         _syncInterval = setInterval(sync,INTERVAL_SYNC);
@@ -576,7 +575,7 @@ define([
                                         return;
                                     }
 
-                                //I try to join..
+                                    //I try to join..
                                 } else {
 
                                     console.log("JOINING LOG: LOCAL USER FINISHED JOINING");
@@ -1036,7 +1035,7 @@ define([
                         if(typeof _onHistoryCallbacks[i] === 'function'){
                             _onHistoryCallbacks[i](operation,_history.length,_historyPosition);
                         }
-                        
+
                     }
                     return operation;
                 }
@@ -1053,13 +1052,13 @@ define([
     var instance = null;
 
     var instanceRequested = false;
-  
+
     IWC.hasInstance = function(){
-      if(instance === null){
-        return false;
-      } else {
-        return instance;
-      }
+        if(instance === null){
+            return false;
+        } else {
+            return instance;
+        }
     };
     /**
      * Get instance of IWCOTWrapper

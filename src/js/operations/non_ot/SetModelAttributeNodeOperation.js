@@ -27,7 +27,7 @@ define([
             if(nonOTOperation === null){
                 nonOTOperation = new NonOTOperation(
                     SetModelAttributeNodeOperation.TYPE,
-                    null
+                    JSON.stringify({empty:'empty'})
                 );
             }
             return nonOTOperation;

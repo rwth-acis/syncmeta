@@ -68,7 +68,7 @@ div.simple_node div.label {
     cursor: move
 }
 .selected {
-    border: 2px solid #999999;
+    border: 3px solid #2BFF6E;
 }
 #canvas-frame {
     overflow: hidden;
@@ -199,7 +199,6 @@ button[disabled=disabled], button:disabled {
 
 .edge_label .single_value_attribute .value div.val{
     text-align: center;
-
 }
 
 .attributes .list_attribute .name{
@@ -212,7 +211,10 @@ button[disabled=disabled], button:disabled {
     list-style: none;
 }
 
-.attributes .list_attribute ul.list li.key_value_attribute{
+.attributes .list_attribute ul.list li.key_value_attribute,
+.attributes .list_attribute ul.list li.condition_predicate,
+.attributes .list_attribute ul.list li.renaming_attr
+{
     overflow: hidden;
 }
 
@@ -225,9 +227,31 @@ button[disabled=disabled], button:disabled {
     float: left;
     width: 50%;
 }
+.attributes .list_attribute ul.list li.condition_predicate div.property,
+.attributes .list_attribute ul.list li.condition_predicate div.operator,
+.attributes .list_attribute ul.list li.condition_predicate div.val,
+.attributes .list_attribute ul.list li.condition_predicate div.operator2{
+    float: left;
+	margin-left: 3px;
+}
+
+.attributes .list_attribute ul.list li.renaming_attr div.val,
+.attributes .list_attribute ul.list li.renaming_attr div.ref{
+    float: left;
+    margin-left: 3px;
+    width: 50%;
+}
+
+.attributes .list_attribute ul.list li.renaming_attr div.vis{
+    float: right;
+    margin-left: 3px;
+}
 
 .attributes .list_attribute ul.list li.key_value_attribute div.key input,
-.attributes .list_attribute ul.list li.key_value_attribute div.value input{
+.attributes .list_attribute ul.list li.key_value_attribute div.value input,
+.attributes .list_attribute ul.list li.condition_predicate div.val input,
+.attributes .list_attribute ul.list li.renaming_attr div.val input,
+.attributes .list_attribute ul.list li.renaming_attr div.ref input{
     width: 100%;
     border: 0;
     outline: none;
@@ -324,6 +348,15 @@ button[disabled=disabled], button:disabled {
     display: none;
 }
 
+#viewsHide {
+    display: none;
+}
+#viewCtrlContainer {
+    display: none;
+}
+#lblCurrentView {
+    display: none;
+}
 .user_highlight {
     position: absolute;
     top: 100%;

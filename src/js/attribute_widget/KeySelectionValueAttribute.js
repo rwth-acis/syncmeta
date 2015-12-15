@@ -70,6 +70,7 @@ define([
         /**
          * Propagate an Attribute Delete Operation to the remote users and the local widgets
          * @param {operations.ot.AttributeDeleteOperation} operation
+
          */
         var propagateAttributeDeleteOperation = function(operation){
             processAttributeDeleteOperation(operation);
@@ -90,7 +91,7 @@ define([
          * @param {operations.ot.AttributeDeleteOperation} operation
          */
         var attributeDeleteCallback = function(operation){
-            if(operation instanceof AttributeDeleteOperation && operation.getEntityId() === that.getEntity()){
+            if(operation instanceof AttributeDeleteOperation && operation.getEntityId() === that.getEntityId()){
                 processAttributeDeleteOperation(operation);
             }
         };
@@ -159,16 +160,21 @@ define([
             _iwc.unregisterOnDataReceivedCallback(attributeDeleteCallback);
         };
 
+
+
         _$node.find(".key").append(_key.get$node());
         _$node.find(".value").append(_value.get$node());
         _$node.find(".ui-icon-close").click(function(){
             var operation = new AttributeDeleteOperation(that.getEntityId(),that.getSubjectEntityId(),that.getRootSubjectEntity().getEntityId(),KeySelectionValueAttribute.TYPE);
-            propagateAttributeDeleteOperation(operation);
+            propagateAttributeDeleteOperation(operation, CONFIG.WIDGET.NAME.MAIN);
+
         });
 
         if(_iwc){
             that.registerCallbacks();
         }
+		
+
     }
 
     return KeySelectionValueAttribute;

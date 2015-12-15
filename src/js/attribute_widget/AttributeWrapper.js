@@ -3,9 +3,10 @@ define([
     'operations/ot/NodeAddOperation',
     'operations/ot/EdgeAddOperation',
     'operations/non_ot/EntitySelectOperation',
+    'operations/non_ot/DeleteViewOperation',
     'attribute_widget/ModelAttributesNode',
     'attribute_widget/EntityManager'
-],/** @lends AttributeWrapper */function (IWCW,NodeAddOperation,EdgeAddOperation,EntitySelectOperation,ModelAttributesNode,EntityManager) {
+],/** @lends AttributeWrapper */function (IWCW,NodeAddOperation,EdgeAddOperation,EntitySelectOperation,DeleteViewOperation,ModelAttributesNode,EntityManager) {
 
     /**
      * AttributeWrapper
@@ -44,7 +45,7 @@ define([
          */
         var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE);
 
-        var _nodes = {};
+        //var _nodes = {};
 
         /**
          * Callback for a Entity Select Operation
@@ -61,13 +62,35 @@ define([
          * @param {operations.ot.NodeAddOperation} operation
          */
         var nodeAddCallback = function(operation){
-            var node;
-
             if(operation instanceof NodeAddOperation){
-                if(operation.getJSON()){
-                    node = EntityManager.createNodeFromJSON(operation.getType(),operation.getEntityId(),operation.getLeft(),operation.getTop(),operation.getWidth(),operation.getHeight(),operation.getJSON());
+
+
+                var node, type, viewType;
+
+                if (operation.getViewId() === EntityManager.getViewId() || EntityManager.getLayer() === CONFIG.LAYER.META) {
+                    type = operation.getType();
+                }
+                else {
+                    if (!operation.getViewId()) {
+                        type = operation.getType();
+                    }
+                    else {
+                        type = operation.getOriginType();
+                    }
+                    if (EntityManager.getViewId()) {
+                        viewType = EntityManager.getNodeType(type).VIEWTYPE;
+                        if(viewType){
+                            type = viewType;
+                        }
+                    }
+                }
+
+                var json = operation.getJSON();
+                if(json){
+                    node = EntityManager.createNodeFromJSON(type,operation.getEntityId(),operation.getLeft(),operation.getTop(),operation.getWidth(),operation.getHeight(),operation.getJSON());
+                    EntityManager.addToMapIfNotExists(operation.getViewId(), json.origin,operation.getEntityId())
                 } else {
-                    node = EntityManager.createNode(operation.getType(),operation.getEntityId(),operation.getLeft(),operation.getTop(),operation.getWidth(),operation.getHeight());
+                    node = EntityManager.createNode(type,operation.getEntityId(),operation.getLeft(),operation.getTop(),operation.getWidth(),operation.getHeight());
                 }
                 node.addToWrapper(that);
             }
@@ -78,12 +101,31 @@ define([
          * @param {operations.ot.EdgeAddOperation} operation
          */
         var edgeAddCallback = function(operation){
-            var edge;
             if(operation instanceof EdgeAddOperation){
-                if(operation.getJSON()){
-                    edge = EntityManager.createEdgeFromJSON(operation.getType(),operation.getEntityId(),operation.getSource(),operation.getTarget(),operation.getJSON());
+                var edge, type, viewType;
+
+                if (operation.getViewId() === EntityManager.getViewId() || EntityManager.getLayer() === CONFIG.LAYER.META) {
+                    type = operation.getType();
+                }
+                else {
+                    if (!operation.getViewId()) {
+                        type = operation.getType();
+                    }
+                    else {
+                        type = operation.getOriginType();
+                    }
+                    if (EntityManager.getViewId()) {
+                        viewType = EntityManager.getEdgeType(type).VIEWTYPE;
+                        if(viewType){
+                            type = viewType;
+                        }
+                    }
+                }
+                var json = operation.getJSON();
+                if(json){
+                    edge = EntityManager.createEdgeFromJSON(type,operation.getEntityId(),operation.getSource(),operation.getTarget(),json);
                 } else {
-                    edge = EntityManager.createEdge(operation.getType(),operation.getEntityId(),EntityManager.findNode(operation.getSource()),EntityManager.findNode(operation.getTarget()));
+                    edge = EntityManager.createEdge(type,operation.getEntityId(),EntityManager.findNode(operation.getSource()),EntityManager.findNode(operation.getTarget()));
                 }
                 edge.addToWrapper(that);
             }
@@ -132,6 +174,7 @@ define([
             iwc.registerOnDataReceivedCallback(entitySelectCallback);
             iwc.registerOnDataReceivedCallback(nodeAddCallback);
             iwc.registerOnDataReceivedCallback(edgeAddCallback);
+            iwc.registerOnDataReceivedCallback(deleteViewCallback);
         };
 
 
@@ -142,10 +185,18 @@ define([
             iwc.unregisterOnDataReceivedCallback(entitySelectCallback);
             iwc.unregisterOnDataReceivedCallback(nodeAddCallback);
             iwc.unregisterOnDataReceivedCallback(edgeAddCallback);
+            iwc.unregisterOnDataReceivedCallback(deleteViewCallback);
+
         };
 
         if(iwc){
             that.registerCallbacks();
+        }
+
+        function deleteViewCallback(operation){
+            if(operation instanceof DeleteViewOperation){
+                EntityManager.deleteViewFromMap(operation.getViewId());
+            }
         }
 
         this.select(_modelAttributesNode);

@@ -12,17 +12,17 @@
     <Require feature="opensocial-0.8" ></Require>
     <Require feature="openapp" ></Require>
     <Require feature="dynamic-height"></Require>
-    
-    <OAuth>		
-      <Service name="openapp" xmlns:openapp="http://www.role-project.eu/xml/openapp/opensocialext/"		
-               openapp:service="http://purl.org/role/terms/spaceService"		
-               openapp:permitReadAppend="http://purl.org/role/terms/data">		
-        <Request method="" url=""></Request>		
-        <Authorization url=""></Authorization>		
-        <Access method="" url=""></Access>		
-      </Service>		
+	
+	<OAuth>
+      <Service name="openapp" xmlns:openapp="http://www.role-project.eu/xml/openapp/opensocialext/"
+               openapp:service="http://purl.org/role/terms/spaceService"
+               openapp:permitReadAppend="http://purl.org/role/terms/data">
+        <Request method="" url=""></Request>
+        <Authorization url=""></Authorization>
+        <Access method="" url=""></Access>
+      </Service>
     </OAuth>
-    
+	
   </ModulePrefs>
   <Content type="html">
     <![CDATA[
@@ -58,6 +58,7 @@
           timeout();
         })();
     </script>
+    <script src="<%= grunt.config('baseUrl') %>/js/lib/parallel.js"></script>
     <script src="<%= grunt.config('baseUrl') %>/js/config.js"></script>
     <script src="<%= grunt.config('baseUrl') %>/js/lib/vendor/require.js"></script>    
     <%= partial(bodyPartial,null) %>

@@ -55,6 +55,14 @@ define([
         };
 
         /**
+         * Get the options object for the Attribute
+         * @returns {Object}
+         */
+        this.getOptionValue = function(){
+            return  options.hasOwnProperty(_value.getValue()) ? options[_value.getValue()] : null;
+        };
+
+        /**
          * jQuery object of DOM node representing the attribute
          * @type {jQuery}
          * @private

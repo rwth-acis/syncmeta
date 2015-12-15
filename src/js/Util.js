@@ -97,14 +97,14 @@ define(['jqueryui'],/** @lends Util */function($) {
     };
 
     var COLORS = [
-        "#8AFFC8",
-        "#8A9FFF",
-        "#FF8A8A",
-        "#FFC08A",
-        "#FF8AD2",
-        "#8AEBFF",
-        "#C68AFF",
-        "#8EFF8A"
+        "#8AFFC8", //türkis
+        "#8A9FFF", //light blue
+        "#FF8A8A", //Rot
+        "#FFC08A", //Orange
+        "#FF8AD2", //Pink
+        "#8AEBFF", //Blue
+        "#C68AFF", //Lila
+        "#8EFF8A" //green
     ];
 
     /**
@@ -119,6 +119,34 @@ define(['jqueryui'],/** @lends Util */function($) {
     /*function hashCode(s){
      return s.split("").reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a},0);
      };*/
+
+    /**
+     * Get the current state of the primary document store
+     * @returns {*}
+     * @constructor
+     */
+    Util.GetCurrentBaseModel = function () {
+        var resourceSpace = new openapp.oo.Resource(openapp.param.space());
+        var deferred = $.Deferred();
+        resourceSpace.getSubResources({
+            relation : openapp.ns.role + "data",
+            type : CONFIG.NS.MY.MODEL,
+            onAll : function (data) {
+                if (data === null || data.length === 0) {
+                    deferred.resolve([]);
+                } else {
+                    data[0].getRepresentation("rdfjson", function (representation) {
+                        if (!representation) {
+                            deferred.resolve([]);
+                        } else {
+                            deferred.resolve(representation);
+                        }
+                    });
+                }
+            }
+        });
+        return deferred.promise();
+    };
 
     return Util;
 

@@ -120,6 +120,7 @@ define([
         /**
          * Propagate a Value Change Operation to the remote users and the local widgets
          * @param {operations.ot.ValueChangeOperation} operation
+         * @param {string} component the receiver
          */
         var propagateValueChangeOperation = function(operation){
             iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.getOTOperation());
@@ -131,10 +132,11 @@ define([
          * @param value Char that was inserted or deleted
          * @param position Position the change took place
          */
-        var propagateValueChange = function(type,value,position){
+        this.propagateValueChange = function(type,value,position){
             var operation = new ValueChangeOperation(that.getEntityId(),value,type,position);
             processValueChangeOperation(operation);
             propagateValueChangeOperation(operation);
+
         };
 
         /**
@@ -175,10 +177,10 @@ define([
                 _$node[0].selectionStart = left;
                 _$node[0].selectionEnd = left;
                 for(i = 0, len = removedString.length; i <len; i++){
-                    propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,removedString[i],left);
+                    that.propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,removedString[i],left);
                 }
                 for(i = 0, len = addedString.length; i <len; i++){
-                    propagateValueChange(CONFIG.OPERATION.TYPE.INSERT,addedString[i],left+i);
+                    that.propagateValueChange(CONFIG.OPERATION.TYPE.INSERT,addedString[i],left+i);
                 }
             });
             if(iwc){

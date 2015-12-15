@@ -23,8 +23,9 @@ define([
      * @param {string} type Type of edge
      * @param {attribute_widget.AbstractNode} source Source node
      * @param {attribute_widget.AbstractNode} target Target node
+     * @param {string} viewId the identifier of the view the edge belongs to
      */
-    function AbstractEdge(type,id,source,target){
+    function AbstractEdge(type,id,source,target, viewId){
         var that = this;
 
         AbstractEntity.call(this,id);
@@ -35,6 +36,13 @@ define([
          * @private
          */
         var _type = type;
+
+        /**
+         * identifier of the view the edge belongs to
+         * @type {string}
+         * @private
+         */
+        var _viewId = viewId;
 
         /**
          * Label of edge
@@ -194,6 +202,22 @@ define([
         };
 
         /**
+         * return the identifier of the view the edge belongs to
+         * @returns {string}
+         */
+        this.getViewId = function(){
+            return _viewId;
+        };
+
+        /**
+         * sets the identifier the edge belongs to
+         * @param viewId the identifier of the view
+         */
+        this.setViewId = function(viewId){
+            _viewId = viewId;
+        };
+
+        /**
          * Get edge type
          * @returns {string}
          */
@@ -263,7 +287,9 @@ define([
             target.deleteIngoingEdge(this);
             this.removeFromWrapper();
             //this.unregisterCallbacks();
-            require('attribute_widget/EntityManager').deleteEdge(this.getEntityId());
+            var EntityManager = require('attribute_widget/EntityManager');
+            EntityManager.deleteEdge(this.getEntityId());
+            EntityManager.deleteFromMap(this.getViewId(), this.getEntityId());
         };
 
         /**

@@ -14,6 +14,7 @@ define([
             relation: openapp.ns.role + "data",
             type: CONFIG.NS.MY.MODEL,
             onAll: function(data) {
+
                 if(data === null || data.length === 0){
                     deferred.resolve([]);
                 } else {

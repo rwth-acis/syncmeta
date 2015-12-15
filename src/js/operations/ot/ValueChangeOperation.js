@@ -17,10 +17,12 @@ define([
      * @param {number} position Position where the char has been added resp. deleted
      * @constructor
      */
-    function ValueChangeOperation(entityId,value,type,position){
+    function ValueChangeOperation(entityId,value,type,position, fromView){
         var that = this;
 
         EntityOperation.call(this,EntityOperation.TYPES.ValueChangeOperation,entityId,CONFIG.ENTITY.VAL);
+
+        var _fromView = fromView;
 
         /**
          * Char that has been added resp. deleted
@@ -66,10 +68,18 @@ define([
                 CONFIG.ENTITY.VAL+":"+that.getEntityId(),
                 _value,
                 _type,
-                _position
+                _position,
+                _fromView
             );
         };
 
+        this.getFromView = function(){
+          return _fromView;
+        };
+
+        this.setFromView = function(fromView){
+          _fromView = fromView;
+        };
         /**
          * Get char that has been added resp. deleted
          * @returns {string}
@@ -219,8 +229,11 @@ define([
         };
     }
 
-    ValueChangeOperation.getOperationDescription = function(valueKey,entityType,entityName){
-        return ".. changed " + valueKey + " of " + entityType + (entityName ? " " : "") + entityName;
+    ValueChangeOperation.getOperationDescription = function(valueKey,entityType,entityName,viewId){
+        if(!viewId)
+            return ".. changed " + valueKey + " of " + entityType + (entityName ? " " : "") + entityName;
+        else
+            return ".. changed " + valueKey + " of " + entityType + (entityName ? " " : "") + entityName + " in View " + viewId;
     };
 
     return ValueChangeOperation;

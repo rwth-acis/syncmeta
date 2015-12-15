@@ -120,6 +120,7 @@ define([
         /**
          * Propagate a Value Change Operation to the remote users and the local widgets
          * @param {operations.ot.ValueChangeOperation} operation
+
          */
         var propagateValueChangeOperation = function(operation){
             processValueChangeOperation(operation);
@@ -135,6 +136,7 @@ define([
         var propagateValueChange = function(type,value,position){
             var operation = new ValueChangeOperation(that.getEntityId(),value,type,position);
             propagateValueChangeOperation(operation);
+
         };
 
         /**

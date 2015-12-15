@@ -4,8 +4,9 @@
         'lodash',
         'Util',
         'iwcw',
-        'operations/non_ot/ExportMetaModelOperation'
-    ],function($,_,Util,IWCW,ExportMetaModelOperation){
+        'operations/non_ot/ExportMetaModelOperation',
+        'canvas_widget/GenerateViewpointModel'
+    ],function($,_,Util,IWCW,ExportMetaModelOperation,GenerateViewpointModel){
 
         var componentName = "export"+Util.generateRandomId();
 
@@ -60,7 +61,7 @@
                 return deferred.promise();
             }
 
-            function addMetamodelToSpace(spaceURI,metamodel){
+            function addMetamodelToSpace(spaceURI,metamodel, type){
                 var deferred = $.Deferred();
                 var deferred2 = $.Deferred();
                 openapp.resource.post(
@@ -69,7 +70,7 @@
                             deferred.resolve(data.uri);
                         },{
                             "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate":"http://purl.org/role/terms/data",
-                            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type":"my:ns:metamodel"
+                            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type":type
                         });
                 deferred.promise().then(function(dataURI){
                     openapp.resource.put(
@@ -82,7 +83,7 @@
                 });
                 return deferred2.promise();
             }
-
+			
             function storeGeneratedInstanceMeta(spaceURI,spaceTitle){
                 var resourceSpace = new openapp.oo.Resource(openapp.param.space()),
                         deferred = $.Deferred(),
@@ -132,17 +133,31 @@
 
             function getMetaModel(){
                 var deferred = $.Deferred();
-                iwc.registerOnDataReceivedCallback(function(operation){
-                    if(operation instanceof ExportMetaModelOperation){
-                        deferred.resolve(operation.getData());
-                    }
+                Util.GetCurrentBaseModel().done(function(meta){
+                    deferred.resolve(GenerateViewpointModel(meta));
                 });
-                var operation = new ExportMetaModelOperation(componentName,null);
-                iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.toNonOTOperation());
                 return deferred.promise();
             }
 
-            return getMetaModel().then(function(metamodel){
+			function getViewpoints(){
+				var deferred = $.Deferred();
+				 var resourceSpace = new openapp.oo.Resource(openapp.param.space());
+				 resourceSpace.getSubResources({
+						relation: openapp.ns.role + "data", type: CONFIG.NS.MY.VIEW,
+						onAll: function(viewpoints) {
+							deferred.resolve(viewpoints); 
+						} 
+					}); 
+				return deferred.promise();
+			}
+			function GetViewPoint(resource){
+				var deferred = $.Deferred();
+				resource.getRepresentation("rdfjson",function(rep){
+					deferred.resolve(rep); 
+				});
+				return deferred.promise();
+			}
+            return $.when(getMetaModel(), getViewpoints()).then(function(metamodel, viewpoints){
                 return createSpace(spaceLabel,spaceTitle)
                     .then(function(spaceURI){
                         return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/activity.xml")
@@ -153,15 +168,22 @@
                             }).then(function(){
                                 return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/attribute.xml");
                             }).then(function(){
-                                return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/export.xml");
+                                return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/debug.xml");
                             }).then(function(){
-                                return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/imsld_export.xml");
+                                return addMetamodelToSpace(spaceURI,metamodel, CONFIG.NS.MY.METAMODEL);
                             }).then(function(){
-                                return addMetamodelToSpace(spaceURI,metamodel);
-                            }).then(function(){
+								var deferred = $.Deferred();
+								for(var i=0;i<viewpoints.length;i++){
+									GetViewPoint(viewpoints[i]).then(function(viewpoint){
+									    var viewpointmodel = GenerateViewpointModel(viewpoint);
+										addMetamodelToSpace(spaceURI, viewpointmodel, CONFIG.NS.MY.VIEWPOINT);
+									});
+								}
+								deferred.resolve(); 
+								return deferred.promise();
+							}).then(function(){
                                 return storeGeneratedInstanceMeta(spaceURI,spaceTitle);
                             }).then(function(){
-
                                 return {
                                     spaceURI: spaceURI,
                                     spaceTitle: spaceTitle

@@ -14,6 +14,7 @@ define([
 
     AbstractEdge.prototype = new AbstractEntity();
     AbstractEdge.prototype.constructor = AbstractEdge;
+
     /**
      * AbstractEdge
      * @class canvas_widget.AbstractEdge
@@ -149,7 +150,7 @@ define([
          */
         var remoteEntitySelectCallback = function(operation){
             var color;
-            if(operation instanceof EntitySelectOperation){
+            if(operation instanceof EntitySelectOperation && operation.getDestination() === CONFIG.WIDGET.NAME.MAIN){
                 color = _iwcot.getUserColor(operation.getNonOTOperation().getSender());
                 if(!_isSelected){
                     if(operation.getSelectedEntityId() === that.getEntityId()){
@@ -218,14 +219,26 @@ define([
             return $e;
         };
 
-        var initToolEvents = function(){
-
-        };
-
         /**
          * Default paint style of edge
          */
         var _defaultPaintStyle;
+
+        /**
+         * Set the default paint style
+         * @param paintStyle
+         */
+        this.setDefaultPaintStyle = function(paintStyle){
+            _defaultPaintStyle = paintStyle;
+        };
+
+        /**
+         * Get the default paint style
+         * @returns {*}
+         */
+        this.getDefaultPaintStyle = function(){
+            return _defaultPaintStyle;
+        };
 
         /**
          * Send NodeDeleteOperation for node
@@ -275,6 +288,7 @@ define([
          */
         this.removeFromCanvas = function(){
             _canvas = null;
+            $.contextMenu('destroy', '.'+that.getEntityId());
             jsPlumb.detach(_jsPlumbConnection,{fireEvent: false});
             _jsPlumbConnection = null;
         };
@@ -406,7 +420,7 @@ define([
 
         //noinspection JSUnusedGlobalSymbols
         /**
-         * Set jsPlumb object representing the edge
+         * Get jsPlumb object representing the edge
          * @return {Object} jsPlumbConnection
          */
         this.getJsPlumbConnection = function(){
@@ -682,6 +696,8 @@ define([
             _iwcot.registerOnRemoteDataReceivedCallback(remoteEntitySelectCallback);
             _iwcot.registerOnRemoteDataReceivedCallback(remoteEdgeDeleteCallback);
             _iwcot.registerOnHistoryChangedCallback(historyEdgeDeleteCallback);
+
+            _iwcot.registerOnLocalDataReceivedCallback(localEdgeDeleteCallback);
         };
 
         /**
@@ -691,9 +707,15 @@ define([
             _iwcot.unregisterOnRemoteDataReceivedCallback(remoteEntitySelectCallback);
             _iwcot.unregisterOnRemoteDataReceivedCallback(remoteEdgeDeleteCallback);
             _iwcot.unregisterOnHistoryChangedCallback(historyEdgeDeleteCallback);
+
+            _iwcot.unregisterOnLocalDataReceivedCallback(localEdgeDeleteCallback);
         };
 
-        initToolEvents();
+        function localEdgeDeleteCallback(operation){
+            if(operation instanceof EdgeDeleteOperation && that.getEntityId() === operation.getEntityId()){
+                that.triggerDeletion();
+            }
+        }
 
         if(_iwcot){
             that.registerCallbacks();
@@ -706,6 +728,22 @@ define([
      */
     AbstractEdge.prototype.toJSON = function(){
         return this._toJSON();
+    };
+
+    /**
+     * Hide a jsPlumb connection
+     */
+    AbstractEdge.prototype.hide = function(){
+        var connector = this.getJsPlumbConnection();
+        connector.setVisible(false);
+    };
+
+    /**
+     * Show a jsPlumb connection
+     */
+    AbstractEdge.prototype.show = function(){
+        var connector = this.getJsPlumbConnection();
+        connector.setVisible(true);
     };
 
     return AbstractEdge;

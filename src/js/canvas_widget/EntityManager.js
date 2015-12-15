@@ -1,232 +1,352 @@
 define([
-    'lodash',
-    'Util',
-    'canvas_widget/AbstractEntity',
-    'canvas_widget/Node',
-    'canvas_widget/ObjectNode',
-    'canvas_widget/AbstractClassNode',
-    'canvas_widget/RelationshipNode',
-    'canvas_widget/RelationshipGroupNode',
-    'canvas_widget/EnumNode',
-    'canvas_widget/NodeShapeNode',
-    'canvas_widget/EdgeShapeNode',
-    'canvas_widget/ModelAttributesNode',
-    'canvas_widget/Edge',
-    'canvas_widget/GeneralisationEdge',
-    'canvas_widget/BiDirAssociationEdge',
-    'canvas_widget/UniDirAssociationEdge',
-    'text!templates/canvas_widget/circle_node.html',
-    'text!templates/canvas_widget/diamond_node.html',
-    'text!templates/canvas_widget/rectangle_node.html',
-    'text!templates/canvas_widget/rounded_rectangle_node.html',
-    'text!templates/canvas_widget/triangle_node.html',
-    'promise!Metamodel'
-],/** @lends EntityManager */function(_,Util,AbstractEntity,Node,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,ModelAttributesNode,Edge,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,metamodel) {
+		'lodash',
+		'Util',
+		'canvas_widget/AbstractEntity',
+		'canvas_widget/Node',
+		'canvas_widget/ObjectNode',
+		'canvas_widget/AbstractClassNode',
+		'canvas_widget/RelationshipNode',
+		'canvas_widget/RelationshipGroupNode',
+		'canvas_widget/EnumNode',
+		'canvas_widget/NodeShapeNode',
+		'canvas_widget/EdgeShapeNode',
+		'canvas_widget/ModelAttributesNode',
+		'canvas_widget/Edge',
+		'canvas_widget/GeneralisationEdge',
+		'canvas_widget/BiDirAssociationEdge',
+		'canvas_widget/UniDirAssociationEdge',
+        'canvas_widget/ViewObjectNode',
+        'canvas_widget/ViewRelationshipNode',
+        'canvas_widget/ViewNode',
+        'canvas_widget/ViewEdge',
+		'text!templates/canvas_widget/circle_node.html',
+		'text!templates/canvas_widget/diamond_node.html',
+		'text!templates/canvas_widget/rectangle_node.html',
+		'text!templates/canvas_widget/rounded_rectangle_node.html',
+		'text!templates/canvas_widget/triangle_node.html',
+		'promise!Metamodel'
+	], /** @lends EntityManager */
+	function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, ModelAttributesNode, Edge, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNode, ViewRelationshipNode, ViewNode, ViewEdge, circleNodeHtml, diamondNodeHtml, rectangleNodeHtml, roundedRectangleNodeHtml, triangleNodeHtml, metamodel) {
 
-    /**
-     * Predefined node shapes, first is default
-     * @type {{circle: *, diamond: *, rectangle: *, triangle: *}}
-     */
-    var nodeShapeTypes = {
-        "circle": circleNodeHtml,
-        "diamond": diamondNodeHtml,
-        "rectangle": rectangleNodeHtml,
-        "rounded_rectangle": roundedRectangleNodeHtml,
-        "triangle": triangleNodeHtml
-    };
+	/**
+	 * Predefined node shapes, first is default
+	 * @type {{circle: *, diamond: *, rectangle: *, triangle: *}}
+	 */
+	var nodeShapeTypes = {
+		"circle" : circleNodeHtml,
+		"diamond" : diamondNodeHtml,
+		"rectangle" : rectangleNodeHtml,
+		"rounded_rectangle" : roundedRectangleNodeHtml,
+		"triangle" : triangleNodeHtml
+	};
 
-    /**
-     * jQuery object to test for valid color
-     * @type {$}
-     */
-    var $colorTestElement = $('<div></div>');
+	/**
+	 * jQuery object to test for valid color
+	 * @type {$}
+	 */
+	var $colorTestElement = $('<div></div>');
 
-    /**
-     * Different node types
-     * @type {object}
-     */
-    var nodeTypes = {};
+    /** Determines the current layer of syncmeta.
+     *  can be CONFIG.LAYER.MODEL or CONFIG.LAYER.META*/
+    var _layer = null;
 
-    if(metamodel && metamodel.hasOwnProperty("nodes")){
-        var nodes = metamodel.nodes,
+    var _OARP_model = null;
+
+	/**
+	 * Different node types
+	 * @type {object}
+	 */
+	var nodeTypes = {};
+
+    var _initNodeTypes = function(vls){
+        var _nodeTypes = {};
+
+        var nodes = vls.nodes,
             node,
             shape,
             color,
             anchors,
             $shape;
 
-        for(var nodeId in nodes){
-            if(nodes.hasOwnProperty(nodeId)){
+        for (var nodeId in nodes) {
+            if (nodes.hasOwnProperty(nodeId)) {
                 node = nodes[nodeId];
-                if(node.shape.customShape){
+                if (node.shape.customShape) {
                     shape = node.shape.customShape;
                 } else {
                     shape = nodeShapeTypes.hasOwnProperty(node.shape.shape) ? nodeShapeTypes[node.shape.shape] : _.keys(nodeShapeTypes)[0];
                 }
-                if(node.shape.customAnchors){
+                if (node.shape.customAnchors) {
                     try {
-                        if(node.shape.customAnchors){
+                        if (node.shape.customAnchors) {
                             anchors = JSON.parse(node.shape.customAnchors);
                         }
-                        if(!node.shape.customAnchors instanceof Array){
-                            anchors = [ "Perimeter", { shape:"Rectangle", anchorCount: 10} ];
+                        if (!node.shape.customAnchors instanceof Array) {
+                            anchors = ["Perimeter", {
+                                shape : "Rectangle",
+                                anchorCount : 10
+                            }
+                            ];
                         }
-                    } catch (e){
-                        anchors = [ "Perimeter", { shape:"Rectangle", anchorCount: 10} ];
+                    } catch (e) {
+                        anchors = ["Perimeter", {
+                            shape : "Rectangle",
+                            anchorCount : 10
+                        }
+                        ];
                     }
                 } else {
-                    switch(node.shape.shape){
+                    switch (node.shape.shape) {
                         case "circle":
-                            anchors = [ "Perimeter", { shape:"Circle", anchorCount: 10} ];
+                            anchors = ["Perimeter", {
+                                shape : "Circle",
+                                anchorCount : 10
+                            }
+                            ];
                             break;
                         case "diamond":
-                            anchors = [ "Perimeter", { shape:"Diamond", anchorCount: 10} ];
+                            anchors = ["Perimeter", {
+                                shape : "Diamond",
+                                anchorCount : 10
+                            }
+                            ];
                             break;
                         case "rounded_rectangle":
-                            anchors = [ "Perimeter", { shape:"Rectangle", anchorCount: 10} ];
+                            anchors = ["Perimeter", {
+                                shape : "Rectangle",
+                                anchorCount : 10
+                            }
+                            ];
                             break;
                         case "triangle":
-                            anchors = [ "Perimeter", { shape:"Triangle", anchorCount: 10} ];
+                            anchors = ["Perimeter", {
+                                shape : "Triangle",
+                                anchorCount : 10
+                            }
+                            ];
                             break;
                         default:
                         case "rectangle":
-                            anchors = [ "Perimeter", { shape:"Rectangle", anchorCount: 10} ];
+                            anchors = ["Perimeter", {
+                                shape : "Rectangle",
+                                anchorCount : 10
+                            }
+                            ];
                             break;
                     }
                 }
-                color = node.shape.color ? $colorTestElement.css('color','#FFFFFF').css('color',node.shape.color).css('color') : '#FFFFFF';
-                $shape = $(_.template(shape,{color: color, type: node.label}));
+                color = node.shape.color ? $colorTestElement.css('color', '#FFFFFF').css('color', node.shape.color).css('color') : '#FFFFFF';
+                $shape = $(_.template(shape, {
+                    color : color,
+                    type : node.label
+                }));
 
-                nodeTypes[node.label] = Node(node.label,$shape,anchors,node.attributes);
-                nodeTypes[node.label].TYPE = node.label;
-                nodeTypes[node.label].DEFAULT_WIDTH = node.shape.defaultWidth;
-                nodeTypes[node.label].DEFAULT_HEIGHT = node.shape.defaultHeight;
+
+
+                if(node.hasOwnProperty('targetName') && !$.isEmptyObject(nodeTypes) && nodeTypes.hasOwnProperty(node.targetName)){
+                    _nodeTypes[node.label] = ViewNode(node.label, $shape, anchors, node.attributes, nodeTypes[node.targetName], node.conditions, node.conjunction);
+                    nodeTypes[node.targetName].VIEWTYPE = node.label;
+                }
+                else {
+                    _nodeTypes[node.label] = Node(node.label, $shape, anchors, node.attributes);
+                }
+                _nodeTypes[node.label].TYPE = node.label;
+                _nodeTypes[node.label].DEFAULT_WIDTH = node.shape.defaultWidth;
+                _nodeTypes[node.label].DEFAULT_HEIGHT = node.shape.defaultHeight;
             }
         }
-    } else {
-        nodeTypes[ObjectNode.TYPE] = ObjectNode;
-        nodeTypes[AbstractClassNode.TYPE] = AbstractClassNode;
-        nodeTypes[RelationshipNode.TYPE] = RelationshipNode;
-        nodeTypes[RelationshipGroupNode.TYPE] = RelationshipGroupNode;
-        nodeTypes[EnumNode.TYPE] = EnumNode;
-        nodeTypes[NodeShapeNode.TYPE] = NodeShapeNode;
-        nodeTypes[EdgeShapeNode.TYPE] = EdgeShapeNode;
-    }
-
-    /**
-     * Different edge types
-     * @type {object}
-     */
-    var edgeTypes = {};
-    var relations = {};
-
-    if(metamodel && metamodel.hasOwnProperty("edges")){
-        var edges = metamodel.edges, edge;
-        for(var edgeId in edges){
-            if(edges.hasOwnProperty(edgeId)){
+        return _nodeTypes;
+    };
+    var _initEdgeTypes = function(vls){
+        var _edgeTypes = {};
+        var _relations = {};
+        var edges = vls.edges,
+            edge;
+        for (var edgeId in edges) {
+            if (edges.hasOwnProperty(edgeId)) {
                 edge = edges[edgeId];
-                edgeTypes[edge.label] = Edge(edge.label,edge.shape.arrow,edge.shape.shape,edge.shape.color,edge.shape.overlay,edge.shape.overlayPosition,edge.shape.overlayRotate,edge.attributes);
-                relations[edge.label] = edge.relations;
+
+                if(edge.hasOwnProperty('targetName') && !$.isEmptyObject(edgeTypes) && edgeTypes.hasOwnProperty(edge.targetName)){
+                    _edgeTypes[edge.label] = ViewEdge(edge.label, edge.shape.arrow, edge.shape.shape, edge.shape.color, edge.shape.overlay, edge.shape.overlayPosition, edge.shape.overlayRotate, edge.attributes, edgeTypes[edge.targetName], edge.conditions, edge.conjunction);
+                    edgeTypes[edge.targetName].VIEWTYPE = edge.label;
+                }else{
+                    _edgeTypes[edge.label] = Edge(edge.label, edge.shape.arrow, edge.shape.shape, edge.shape.color, edge.shape.overlay, edge.shape.overlayPosition, edge.shape.overlayRotate, edge.attributes);
+                }
+
+                _edgeTypes[edge.label].TYPE = edge.label;
+                _relations[edge.label] = edge.relations;
             }
         }
-    } else {
-        edgeTypes[GeneralisationEdge.TYPE] =  GeneralisationEdge;
-        edgeTypes[BiDirAssociationEdge.TYPE] =  BiDirAssociationEdge;
-        edgeTypes[UniDirAssociationEdge.TYPE] =  UniDirAssociationEdge;
-
-        relations[BiDirAssociationEdge.TYPE] = BiDirAssociationEdge.RELATIONS;
-        relations[UniDirAssociationEdge.TYPE] = UniDirAssociationEdge.RELATIONS;
-        relations[GeneralisationEdge.TYPE] = GeneralisationEdge.RELATIONS;
-    }
+        return {
+            edgeTypes: _edgeTypes,
+            relations: _relations
+        }
+    };
 
     /**
-     * EntityManager
-     * @class canvas_widget.EntityManager
-     * @memberof canvas_widget
-     * @constructor
+     * contains all view node types of the current view
+     * @type {{}}
      */
-    function EntityManager(){
+    var viewNodeTypes = {};
+
+    /**
+     * contains all view edge types of the current view
+     * @type {{}}
+     */
+    var viewEdgeTypes = {};
+
+	if (metamodel && metamodel.hasOwnProperty("nodes")) {
+	    nodeTypes = _initNodeTypes(metamodel);
+        _layer = CONFIG.LAYER.MODEL;
+	} else {
+		nodeTypes[ObjectNode.TYPE] = ObjectNode;
+		nodeTypes[AbstractClassNode.TYPE] = AbstractClassNode;
+		nodeTypes[RelationshipNode.TYPE] = RelationshipNode;
+		nodeTypes[RelationshipGroupNode.TYPE] = RelationshipGroupNode;
+		nodeTypes[EnumNode.TYPE] = EnumNode;
+		nodeTypes[NodeShapeNode.TYPE] = NodeShapeNode;
+		nodeTypes[EdgeShapeNode.TYPE] = EdgeShapeNode;
+
+        //add view types
+        nodeTypes[ViewObjectNode.TYPE] = ViewObjectNode;
+        nodeTypes[ViewRelationshipNode.TYPE] = ViewRelationshipNode;
+
+        _layer = CONFIG.LAYER.META;
+	}
+
+	/**
+	 * Different edge types
+	 * @type {object}
+	 */
+	var edgeTypes = {};
+	var relations = {};
+
+	if (metamodel && metamodel.hasOwnProperty("edges")) {
+		var res = _initEdgeTypes(metamodel);
+        edgeTypes = res.edgeTypes;
+        relations = res.relations;
+	} else {
+		edgeTypes[GeneralisationEdge.TYPE] = GeneralisationEdge;
+		edgeTypes[BiDirAssociationEdge.TYPE] = BiDirAssociationEdge;
+		edgeTypes[UniDirAssociationEdge.TYPE] = UniDirAssociationEdge;
+
+		relations[BiDirAssociationEdge.TYPE] = BiDirAssociationEdge.RELATIONS;
+		relations[UniDirAssociationEdge.TYPE] = UniDirAssociationEdge.RELATIONS;
+		relations[GeneralisationEdge.TYPE] = GeneralisationEdge.RELATIONS;
+	}
+
+	/**
+	 * EntityManager
+	 * @class canvas_widget.EntityManager
+	 * @memberof canvas_widget
+	 * @constructor
+	 */
+	function EntityManager() {
         /**
-         * Model attributes node
-         * @type {canvas_widget.ModelAttributesNode}
+         * the view id indicates if the EntityManager should use View types for modeling or node types
+         * @type {string}
          * @private
          */
-        var _modelAttributesNode = null;
+        var _viewId = null;
+
         /**
-         * Nodes of the graph
-         * @type {{}}
-         * @private
-         */
-        var _nodes = {};
-        /**
-         * Edges of the graph
-         * @type {{}}
-         * @private
-         */
-        var _edges = {};
-        /**
-         * Deleted nodes and edges
-         * @type {{nodes: {}, edges: {}}}
-         * @private
-         */
-        var _recycleBin = {
-            nodes:{},
-            edges:{}
-        };
-        //noinspection JSUnusedGlobalSymbols
-        return {
-            /**
-             * Create a new node
-             * @memberof canvas_widget.EntityManager#
-             * @param {string} type Type of node
-             * @param {string} id Entity identifier of node
-             * @param {number} left x-coordinate of node position
-             * @param {number} top y-coordinate of node position
-             * @param {number} width Width of node
-             * @param {number} height Height of node
-             * @param {number} zIndex Position of node on z-axis
-             * @returns {canvas_widget.AbstractNode}
-             */
-            //TODO: switch id and type
-            createNode: function(type,id,left,top,width,height,zIndex){
-                var node;
-                AbstractEntity.maxZIndex = Math.max(AbstractEntity.maxZIndex,zIndex);
-                AbstractEntity.minZIndex = Math.min(AbstractEntity.minZIndex,zIndex);
-                if(_recycleBin.nodes.hasOwnProperty(id)){
-                    node = _recycleBin.nodes[id];
-                    delete _recycleBin.nodes[id];
-                    _nodes[id] = node;
-                    return node;
+		 * Model attributes node
+		 * @type {canvas_widget.ModelAttributesNode}
+		 * @private
+		 */
+		var _modelAttributesNode = null;
+		/**
+		 * Nodes of the graph
+		 * @type {{}}
+		 * @private
+		 */
+		var _nodes = {};
+		/**
+		 * Edges of the graph
+		 * @type {{}}
+		 * @private
+		 */
+		var _edges = {};
+		/**
+		 * Deleted nodes and edges
+		 * @type {{nodes: {}, edges: {}}}
+		 * @private
+		 */
+		var _recycleBin = {
+			nodes : {},
+			edges : {}
+		};
+
+
+		//noinspection JSUnusedGlobalSymbols
+		return {
+			/**
+			 * Create a new node
+			 * @memberof canvas_widget.EntityManager#
+			 * @param {string} type Type of node
+			 * @param {string} id Entity identifier of node
+			 * @param {number} left x-coordinate of node position
+			 * @param {number} top y-coordinate of node position
+			 * @param {number} width Width of node
+			 * @param {number} height Height of node
+			 * @param {number} zIndex Position of node on z-axis
+             * @param {object} json the json representation
+			 * @returns {canvas_widget.AbstractNode}
+			 */
+			//TODO: switch id and type
+			createNode : function (type, id, left, top, width, height, zIndex,json) {
+				var node;
+				AbstractEntity.maxZIndex = Math.max(AbstractEntity.maxZIndex, zIndex);
+				AbstractEntity.minZIndex = Math.min(AbstractEntity.minZIndex, zIndex);
+				if (_recycleBin.nodes.hasOwnProperty(id)) {
+					node = _recycleBin.nodes[id];
+					delete _recycleBin.nodes[id];
+					_nodes[id] = node;
+                    //Register context menu
+                    node.init();
+					return node;
                 }
-                if(nodeTypes.hasOwnProperty(type)){
-                    node = new nodeTypes[type](id,left,top,width,height,zIndex);
-                    _nodes[id] = node;
-                    return node;
+
+                if(_viewId && viewNodeTypes.hasOwnProperty(type)){
+                    node = viewNodeTypes[type](id, left, top, width, height, zIndex);
                 }
-                return null;
-            },
-            /**
-             * Create model Attributes node
-             * @returns {canvas_widget.ModelAttributesNode}
-             */
-            createModelAttributesNode: function(){
-                if(_modelAttributesNode === null) {
-                    _modelAttributesNode = new ModelAttributesNode("modelAttributes",metamodel.attributes);
-                    return _modelAttributesNode;
+                else if(nodeTypes.hasOwnProperty(type)) {
+                    node = new nodeTypes[type](id, left, top, width, height, zIndex, json);
                 }
-                return null;
-            },
+                _nodes[id] = node;
+                return node;
+			},
+			/**
+			 * Create model Attributes node
+			 * @returns {canvas_widget.ModelAttributesNode}
+			 */
+			createModelAttributesNode : function () {
+				if (_modelAttributesNode === null) {
+					_modelAttributesNode = new ModelAttributesNode("modelAttributes", metamodel.attributes);
+					return _modelAttributesNode;
+				}
+				return null;
+			},
+			/**
+			 * Find node by id
+			 * @memberof canvas_widget.EntityManager#
+			 * @param {string} id Entity id
+			 * @returns {canvas_widget.AbstractNode}
+			 */
+			findNode : function (id) {
+				if (_nodes.hasOwnProperty(id)) {
+					return _nodes[id];
+				}
+				return null;
+			},
             /**
-             * Find node by id
-             * @memberof canvas_widget.EntityManager#
+             * Find node or edge by id
+             * @memberof attribute_widget.EntityManager#
              * @param {string} id Entity id
-             * @returns {canvas_widget.AbstractNode}
+             * @returns {*}
              */
-            findNode: function(id){
-                if(_nodes.hasOwnProperty(id)){
-                    return _nodes[id];
-                }
-                return null;
+            find : function (id) {
+                return this.findNode(id) || this.findEdge(id);
             },
             /**
              * Delete node by id
@@ -258,9 +378,9 @@ define([
                     node,
                     nodesByType = {};
 
-                if(typeof type === 'string'){
-                    type = [type];
-                }
+				if (typeof type === 'string') {
+					type = [type];
+				}
 
                 for(nodeId in _nodes){
                     if(_nodes.hasOwnProperty(nodeId)){
@@ -293,14 +413,18 @@ define([
                     _edges[id] = edge;
                     return edge;
                 }
-                if(edgeTypes.hasOwnProperty(type)){
-                    edge = new edgeTypes[type](id,source,target);
-                    source.addOutgoingEdge(edge);
-                    target.addIngoingEdge(edge);
-                    _edges[id] = edge;
-                    return edge;
+
+                if(_viewId && viewEdgeTypes.hasOwnProperty(type)){
+                    edge = viewEdgeTypes[type](id,source,target);
                 }
-                return null;
+                else if(edgeTypes.hasOwnProperty(type)) {
+                    edge = new edgeTypes[type](id, source, target);
+                }
+                source.addOutgoingEdge(edge);
+                target.addIngoingEdge(edge);
+                _edges[id] = edge;
+                return edge;
+
             },
             /**
              * Find edge by id
@@ -412,7 +536,7 @@ define([
              * @returns {canvas_widget.AbstractNode}
              */
             createNodeFromJSON: function(type,id,left,top,width,height,zIndex,json){
-                var node = this.createNode(type,id,left,top,width,height,zIndex);
+                var node = this.createNode(type,id,left,top,width,height,zIndex,json);
                 if(node){
                     node.getLabel().getValue().setValue(json.label.value.value);
                     for(var attrId in json.attributes){
@@ -420,6 +544,13 @@ define([
                             var attr = node.getAttribute(attrId);
                             if(attr){
                                 attr.setValueFromJSON(json.attributes[attrId]);
+                            }else{
+                                var newId = attrId.replace(/[^\[\]]*/, id);
+                                attr =  node.getAttribute(newId);
+                                if(attr){
+                                    attr.setValueFromJSON(json.attributes[attrId]);
+                                }
+
                             }
                         }
                     }
@@ -464,15 +595,150 @@ define([
                         canvas.createNode(nodeType,left,top,width,height);
                     };
                 }
-
                 var items = {},
-                    nodeType;
+                    nodeType,
+                    _nodeTypes;
 
-                for(nodeType in nodeTypes){
-                    if(nodeTypes.hasOwnProperty(nodeType)){
+                if(_viewId &&  _layer === CONFIG.LAYER.MODEL){
+                    _nodeTypes = viewNodeTypes;
+                }
+                else{
+                    _nodeTypes = nodeTypes;
+                }
+
+                for(nodeType in _nodeTypes){
+                    if(_nodeTypes.hasOwnProperty(nodeType)){
+                       if(_layer === CONFIG.LAYER.META && !_viewId && (nodeType === 'ViewObject' || nodeType ==='ViewRelationship'))
+                           continue;
+                       if(_layer === CONFIG.LAYER.META &&_viewId && (nodeType ==='Object' || nodeType ==='Relationship' || nodeType === 'Enumeration' || nodeType === 'Abstract Class'))
+                           continue;
+
                         items[nodeType] = {
                             name: '..' + nodeType,
-                            callback: makeAddNodeCallback(nodeType,nodeTypes[nodeType].DEFAULT_WIDTH,nodeTypes[nodeType].DEFAULT_HEIGHT)
+                            callback: makeAddNodeCallback(nodeType,_nodeTypes[nodeType].DEFAULT_WIDTH,_nodeTypes[nodeType].DEFAULT_HEIGHT)
+                        };
+                    }
+                }
+                return items;
+            },
+            /**
+             * generates the context menu for the show and hide opeations on node types
+             * @returns {object}
+             */
+            generateVisibilityNodeMenu:function(visibilty){
+                var _applyVisibilityCallback = function(nodeType, vis){
+                    return function() {
+                        if (vis !== 'show' && vis !== 'hide') return;
+
+                        var nodes;
+                        if (_viewId && _layer === CONFIG.LAYER.MODEL) {
+                            nodes = that.getNodesByViewType(nodeType);
+                        } else {
+                            nodes = that.getNodesByType(nodeType);
+                        }
+                        for (var nKey in nodes) {
+                            if (nodes.hasOwnProperty(nKey)) {
+                                nodes[nKey][vis]();
+                            }
+                        }
+                        if(vis === 'hide') {
+                            this.data('show' + nodeType + 'Disabled', true);
+                        }
+                        else {
+                            this.data('show' + nodeType + 'Disabled', false);
+                        }
+
+                        return false;
+                    }
+                };
+
+                var that = this;
+                var items = {},
+                    nodeType,
+                    _nodeTypes;
+
+                if(_viewId &&  _layer === CONFIG.LAYER.MODEL){
+                    _nodeTypes = viewNodeTypes;
+                }
+                else{
+                    _nodeTypes = nodeTypes;
+                }
+
+                for(nodeType in _nodeTypes){
+                    if(_nodeTypes.hasOwnProperty(nodeType)){
+                        if(_layer === CONFIG.LAYER.META && !_viewId && (nodeType === 'ViewObject' || nodeType ==='ViewRelationship'))
+                            continue;
+                        if(_layer === CONFIG.LAYER.META &&_viewId && (nodeType ==='Object' || nodeType ==='Relationship' || nodeType === 'Enumeration' || nodeType === 'Abstract Class'))
+                            continue;
+
+                        items[visibilty+nodeType] = {
+                            name: '..' + nodeType,
+                            callback: _applyVisibilityCallback(nodeType,visibilty),
+                            disabled:(function(nodeType){
+                                return function() {
+                                    if(visibilty==='hide')
+                                        return this.data(visibilty + nodeType + 'Disabled');
+                                    else
+                                        return !this.data(visibilty + nodeType + 'Disabled');
+                                }
+                            }(nodeType))
+                        };
+                    }
+                }
+                return items;
+            },
+            /**
+             * generates a the context menu for the show and hide operations on edge types
+             * @returns {object}
+             */
+            generateVisibilityEdgeMenu:function(visibility){
+                function _applyVisibilityCallback(edgeType, vis) {
+                    return function () {
+                        if (vis !== 'show' && vis !== 'hide') return;
+                        var edges;
+                        if (_viewId && _layer === CONFIG.LAYER.MODEL) {
+                            edges = that.getEdgesByViewType(edgeType);
+                        } else {
+                            edges = that.getEdgesByType(edgeType);
+                        }
+                        for (var eKey in edges) {
+                            if (edges.hasOwnProperty(eKey)) {
+                                edges[eKey][vis]();
+                            }
+                        }
+                        if(vis === 'hide') {
+                            this.data('show' + edgeType + 'Disabled', true);
+                        }
+                        else {
+                            this.data('show' + edgeType + 'Disabled', false);
+                        }
+                    }
+                }
+                var that = this;
+                var items = {},
+                    edgeType,
+                    _edgeTypes;
+
+                if(_viewId &&  _layer === CONFIG.LAYER.MODEL){
+                     _edgeTypes= viewEdgeTypes;
+                }
+                else{
+                    _edgeTypes = edgeTypes;
+                }
+
+                for(edgeType in _edgeTypes){
+                    if(_edgeTypes.hasOwnProperty(edgeType)){
+                        items[visibility+edgeType] = {
+                            name: '..' + edgeType,
+                            callback: _applyVisibilityCallback(edgeType,visibility),
+                            disabled:(function(edgeType){
+                                return function() {
+                                    if(visibility==='hide')
+                                        return this.data(visibility + edgeType + 'Disabled');
+                                    else
+                                        return !this.data(visibility + edgeType + 'Disabled');
+                                }
+                            }(edgeType))
                         };
                     }
                 }
@@ -518,16 +784,21 @@ define([
                         for(i = 0, numOfRelations = relations[connectionType].length; i < numOfRelations; i++){
                             sourceNodeTypes = relations[connectionType][i].sourceTypes;
                             targetNodeTypes = relations[connectionType][i].targetTypes;
-                            if(sourceNodeTypes.indexOf(node.getType()) !== -1){
-                                for(j = 0, numOfTargetTypes = targetNodeTypes.length; j < numOfTargetTypes; j++){
+                            if(sourceNodeTypes.indexOf(node.getType()) !== -1 || (_layer === CONFIG.LAYER.MODEL && _viewId && sourceNodeTypes.indexOf(node.getCurrentViewType()) !== -1)){
+                                for(j = 0, numOfTargetTypes = targetNodeTypes.length;j < numOfTargetTypes; j++){
                                     targetNodeType = targetNodeTypes[j];
                                     targetNodeItems = {};
-                                    targetNodes = this.getNodesByType(targetNodeType);
+                                    if(_viewId && _layer ===CONFIG.LAYER.MODEL){
+                                        targetNodes = this.getNodesByViewType(targetNodeType);
+                                    }else {
+                                        targetNodes = this.getNodesByType(targetNodeType);
+                                    }
                                     existsLinkableTargetNode = false;
                                     for(targetNodeId in targetNodes){
                                         if(targetNodes.hasOwnProperty(targetNodeId)){
                                             targetNode = targetNodes[targetNodeId];
                                             if(targetNode === node) continue;
+                                            if(_layer === CONFIG.LAYER.MODEL && _viewId && targetNode.getCurrentViewType() === null) continue;
                                             targetAppearance = targetNode.getAppearance();
                                             if(!targetNode.getNeighbors().hasOwnProperty(node.getEntityId())){
                                                 targetNodeItems[connectionType+targetNodeType+i+targetNodeId] = {
@@ -933,10 +1204,202 @@ define([
                     });
                 });
                 return deferred.promise();
+            },
+            storeData2: function(){
+                var data = this.graphToJSON();
+                var deferred = $.Deferred();
+                if(!_OARP_model){
+                    var resourceSpace = new openapp.oo.Resource(openapp.param.space());
+                    resourceSpace.getSubResources({
+                        relation: openapp.ns.role + "data",
+                        type: CONFIG.NS.MY.MODEL,
+                        onAll: function(docs){
+                            if(docs.length === 0) {
+                                resourceSpace.create({
+                                    relation: openapp.ns.role + "data",
+                                    type: CONFIG.NS.MY.MODEL,
+                                    representation: data,
+                                    callback: function (resource) {
+                                        _OARP_model = resource;
+                                        deferred.resolve();
+                                    }
+                                });
+                            }else{
+                                _OARP_model = docs[0];
+                            }
+                        }
+                    });
+                }else{
+                    _OARP_model.setRepresentation(data, 'application/json', function(){
+                        deferred.resolve();
+                    });
+                }
+                return deferred.promise();
+            },
+            setOARPmodel:function(resource){
+                _OARP_model = resource;
+            },
+            /**
+             * Delete the Model Attribute Node
+             */
+            deleteModelAttribute : function(){
+                _modelAttributesNode = null;
+            },
+            /**
+             * Clear the  recylce bin
+             */
+            clearBin : function(){
+                _recycleBin = {
+                    nodes : {},
+                    edges : {}
+                };
+            },
+            /**
+             * resets the EntityManager
+             */
+            reset : function(){
+                this.clearBin();
+                _nodes ={};
+                _edges = {};
+                this.deleteModelAttribute();
+            },
+            /**
+             * initializes the node types
+             * @param vls the vvs
+             */
+            initNodeTypes: function(vls){
+                nodeTypes = _initNodeTypes(vls);
+            },
+            /**
+             * initializes the view edge types
+             * @param vls the vvs
+             */
+            initEdgeTypes: function(vls){
+                var res = _initEdgeTypes(vls);
+                edgeTypes = res.edgeTypes;
+                relations = res.relations;
+            },
+            /**
+             * initializes both the node types- and the edge types Object
+             * @param vls the vvs
+             */
+            initModelTypes : function(vls){
+                this.initNodeTypes(vls);
+                this.initEdgeTypes(vls);
+            },
+            /**
+             * Get the node type by its name
+             * @param type the name of the node type
+             * @returns {object}
+             */
+            getNodeType: function(type){
+                return nodeTypes.hasOwnProperty(type) ?  nodeTypes[type] : null;
+            },
+            /**
+             * Get the edge type bt its name
+             * @param {string} type the name of the edge type
+             * @returns {*}
+             */
+            getEdgeType: function(type){
+                return edgeTypes.hasOwnProperty(type) ? edgeTypes[type]: null;
+            },
+            /**
+             * initializes the node types of a view
+             * @param vvs
+             */
+            initViewNodeTypes: function(vvs){
+                //delete the old view type references
+                for(var nodeTypeName in nodeTypes){
+                    if(nodeTypes.hasOwnProperty(nodeTypeName)){
+                        delete  nodeTypes[nodeTypeName].VIEWTYPE;
+                    }
+                }
+                viewNodeTypes = _initNodeTypes(vvs);
+            },
+            /**
+             * initializes the edge types of a view
+             * @param vvs
+             */
+            initViewEdgeTypes: function(vvs){
+                //delete the old view type references
+                for(var edgeTypeName in edgeTypes){
+                    if(edgeTypes.hasOwnProperty(edgeTypeName)){
+                        delete  edgeTypes[edgeTypeName].VIEWTYPE;
+                    }
+                }
+                var res = _initEdgeTypes(vvs);
+                viewEdgeTypes = res.edgeTypes;
+                relations = res.relations;
+            },
+            /**
+             * initializes the node and edge types of view
+             * @param vvs
+             */
+            initViewTypes: function(vvs){
+                this.setViewId(vvs.id);
+                this.initViewNodeTypes(vvs);
+                this.initViewEdgeTypes(vvs);
+            },
+            /**
+             * get a view node type
+             * @param {string} type the name of the view type
+             * @returns {*}
+             */
+            getViewNodeType: function(type){
+                return viewNodeTypes.hasOwnProperty(type) ? viewNodeTypes[type] : null;
+            },
+            /**
+             * get a view edge type
+             * @param {string} type the name of the view edge type
+             * @returns {*}
+             */
+            getViewEdgeType: function(type){
+                return viewEdgeTypes.hasOwnProperty(type) ? viewEdgeTypes[type] : null;
+            },
+            /**
+             * set the identifier of the view
+             * @param {string} viewId
+             */
+            setViewId:function(viewId){
+                _viewId =viewId;
+            },
+            /**
+             * get the identifier of the view
+             * @returns {*}
+             */
+            getViewId: function(){
+                return _viewId;
+            },
+            /**
+             * get nodes by view type
+             * @param {string} type the name of the view type
+             * @returns {object} a map of objects with key as identifier and value as Node
+             */
+            getNodesByViewType : function(type){
+                if(viewNodeTypes.hasOwnProperty(type)){
+                    return this.getNodesByType(viewNodeTypes[type].getTargetNodeType().TYPE);
+                }
+                return null;
+            },
+            /**
+             * get edges by view type
+             * @param {string}type the view type
+             * @returns {*}
+             */
+            getEdgesByViewType:function(type){
+                if(viewEdgeTypes.hasOwnProperty(type)){
+                    return this.getEdgesByType(viewEdgeTypes[type].getTargetEdgeType().TYPE);
+                }
+                return null;
+            },
+            /**
+             * Get the current layer you are operating on
+             * @returns {string} CONFIG.LAYER.META or CONFIG.LAYER.MODEL
+             */
+            getLayer: function(){
+                return _layer;
             }
         };
     }
-
     return new EntityManager();
-
 });

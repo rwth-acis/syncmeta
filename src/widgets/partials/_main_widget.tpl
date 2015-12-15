@@ -9,6 +9,7 @@
   <!--<button id="save_image"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/save_image.png" /></button>-->
   <!--<button id="generate" style="display: none"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/generate.png" /></button>-->
   <span id="feedback"></span>
+  <strong id="lblCurrentView">View:<span id="lblCurrentViewId"></span></strong>
 </div>
 <div id="dialog" style="display:none" title="Generate editor">
     <p><strong>Editor space url:</strong>
@@ -21,12 +22,25 @@
     <p><strong>Editor space title:</strong><input size="32" type="text" id="space_title" /></p>
 </div>
 <div class="button_bar right">
+  <button id="viewsHide"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/viewHide.png"/></button>
+   <button id="viewsShow"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/viewShow.png"/></button>
   <button id="showtype"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/hidetype.png" /></button>
   <button id="hidetype"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/showtype.png" /></button>
   <button id="zoomin"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/zoomin.png" /></button>
   <button id="zoomout"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/zoomout.png" /></button>
   <button id="undo"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/undo.png" /></button>
   <button id="redo"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/redo.png" /></button>
+</div>
+<div id="ViewCtrlContainer" class="button_bar left">
+ <button id="btnCreateViewpoint"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/add196.png" /></button>
+  <input id="txtNameViewpoint" type="text" placeholder="name"  style="display: none;">
+   <select id="ddmViewpointSelection" style="display: none;"></select>
+  <button id="btnAddViewpoint" style="display: none;"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/checked21.png" /></button>
+  <button id="btnCancelCreateViewpoint" style="display: none;"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/times1.png" /></button>
+  <select id="ddmViewSelection"></select>
+   <button id="btnShowView">Show</button>
+   <button id="btnRefreshView" style="display: none;">Refresh</button>
+  <button id="btnDelViewPoint"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/times1.png" /></button>
 </div>
 <div id="canvas-frame">
   <div id="canvas">

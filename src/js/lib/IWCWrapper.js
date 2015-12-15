@@ -232,7 +232,7 @@ define([
         if(BUFFER_ENABLED) setInterval(sendBufferedMessages,INTERVAL_SEND);
 
         return {
-          _iwc: _iwc,
+            _iwc: _iwc,
             /**
              * Connect the iwc client
              * @memberof IWCWrapper#
@@ -336,13 +336,13 @@ define([
     var instance = null;
 
     IWC.hasInstance = function(){
-      if(instance === null){
-        return false;
-      } else {
-        return instance;
-      }
+        if(instance === null){
+            return false;
+        } else {
+            return instance;
+        }
     };
-  
+
     /**
      * Get instance of IWCOTWrapper
      * @param {string} componentName Name of component (widget) using the wrapper

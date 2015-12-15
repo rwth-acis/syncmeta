@@ -12,10 +12,11 @@ define([
     'activity_widget/EditorGenerateActivity',
     'activity_widget/UserJoinActivity',
     'activity_widget/ValueChangeActivity',
+    'activity_widget/ViewApplyActivity',
     'activity_widget/User',
     'operations/non_ot/ActivityOperation',
     'operations/non_ot/EntitySelectOperation'
-],/** @lends ActivityList */function($,_,IWCW,Activity,NodeAddActivity,NodeDeleteActivity,NodeMoveActivity,NodeResizeActivity,EdgeAddActivity,EdgeDeleteActivity,EditorGenerateActivity,UserJoinActivity,ValueChangeActivity,User,ActivityOperation,EntitySelectOperation) {
+],/** @lends ActivityList */function($,_,IWCW,Activity,NodeAddActivity,NodeDeleteActivity,NodeMoveActivity,NodeResizeActivity,EdgeAddActivity,EdgeDeleteActivity,EditorGenerateActivity,UserJoinActivity,ValueChangeActivity,ViewApplyActivity, User,ActivityOperation,EntitySelectOperation) {
 
     /**
      * List of user activities
@@ -176,6 +177,12 @@ define([
                         break;
                     case UserJoinActivity.TYPE:
                         that.addUser(operation.getSender());
+                        break;
+                    case ViewApplyActivity.TYPE:
+                        activity = new ViewApplyActivity(operation.getEntityId(),operation.getSender());
+                        if (userList.hasOwnProperty(activity.getSender())) {
+                            userList[activity.getSender()].get$node().find('.lblViewId').text(activity.getViewId());
+                        }
                         return;
                 }
                 user = that.getUser(operation.getSender());

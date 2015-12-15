@@ -61,6 +61,10 @@ var require = {
 };
 
 CONFIG = {
+    LAYER:{
+        META: "META",
+        MODEL: "MODEL"
+    },
     WIDGET: {
         NAME: {
             MAIN: "MAIN",
@@ -165,7 +169,10 @@ CONFIG = {
         MY: {
             MODEL: "my:ns:model",
             METAMODEL: "my:ns:metamodel",
-            INSTANCE: "my:ns:instance"
+            INSTANCE: "my:ns:instance",
+			VIEWPOINT: "my:ns:viewpoint",
+			VIEW: "my:ns:view",
+            COPY: "my:ns:copy"
         }
     }
 };

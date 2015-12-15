@@ -65,6 +65,7 @@ define([
         var propagateValueChange = function(type,value,position){
             var operation = new ValueChangeOperation(that.getEntityId(),value,type,position);
             propagateValueChangeOperation(operation);
+
         };
         /**
          * Propagate a Value Change Operation to the remote users and the local widgets

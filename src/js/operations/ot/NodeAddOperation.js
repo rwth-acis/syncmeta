@@ -19,12 +19,24 @@ define([
      * @param {number} height Height of node
      * @param {number} zIndex Position of node on z-axis
      * @param {object} json JSON representation of node
+     * @param {string} viewId the identifier of the view
      * @constructor
      */
-    function NodeAddOperation(entityId,type,left,top,width,height,zIndex,json){
+    function NodeAddOperation(entityId,type,left,top,width,height,zIndex,json, viewId, oType){
         var that = this;
 
+
+
         EntityOperation.call(this,EntityOperation.TYPES.NodeAddOperation,entityId,CONFIG.ENTITY.NODE);
+
+        /**
+         * the identifier of the view
+         * @type {string}
+         * @private
+         */
+        var _viewId = viewId;
+
+        var _oType = oType;
 
         /**
          * Type of node to add
@@ -89,7 +101,9 @@ define([
                     width: _width,
                     height: _height,
                     zIndex: _zIndex,
-                    json: _json
+                    json: _json,
+                    viewId:_viewId,
+                    oType: _oType
                 }),
                 CONFIG.OPERATION.TYPE.INSERT,
                 CONFIG.IWC.POSITION.NODE.ADD
@@ -102,6 +116,10 @@ define([
          */
         this.getType = function(){
             return _type;
+        };
+
+        this.getOriginType = function(){
+            return _oType;
         };
 
         /**
@@ -152,6 +170,15 @@ define([
             return _json;
         };
 
+
+        /**
+         * the identifier of the view
+         * @returns {string}
+         */
+        this.getViewId = function(){
+          return _viewId;
+        };
+
         /**
          * Get corresponding ot operation
          * @returns {operations.ot.OTOperation}
@@ -198,12 +225,13 @@ define([
         };
     }
 
-    NodeAddOperation.getOperationDescription = function(nodeType,nodeLabel){
-        if(!nodeLabel){
+    NodeAddOperation.getOperationDescription = function(nodeType,nodeLabel,viewId){
+        if(!nodeLabel && !viewId){
             return "..created a new " + nodeType;
-        } else {
+        } else if(!viewId){
             return "..created " + nodeType + " " + nodeLabel;
-        }
+        }else
+            return ".. created " + nodeType + " " + nodeLabel + " in View " + viewId;
     };
 
     return NodeAddOperation;

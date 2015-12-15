@@ -7,8 +7,10 @@ define([
     'attribute_widget/ObjectNode',
     'attribute_widget/RelationshipNode',
     'attribute_widget/RelationshipGroupNode',
-    'attribute_widget/EnumNode'
-],/** @lends GeneralisationEdge */function($,jsPlumb,_,AbstractEdge,AbstractClassNode,ObjectNode,RelationshipNode,RelationshipGroupNode,EnumNode) {
+    'attribute_widget/EnumNode',
+	'attribute_widget/ViewObjectNode',
+	'attribute_widget/ViewRelationshipNode'
+],/** @lends GeneralisationEdge */function($,jsPlumb,_,AbstractEdge,AbstractClassNode,ObjectNode,RelationshipNode,RelationshipGroupNode,EnumNode,ViewObjectNode,ViewRelationshipNode) {
 
     GeneralisationEdge.TYPE = "Generalisation";
     GeneralisationEdge.RELATIONS = [

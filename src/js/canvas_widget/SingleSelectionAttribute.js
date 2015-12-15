@@ -22,6 +22,8 @@ define([
      * @param {Object} options Selection options as key value object
      */
     function SingleSelectionAttribute(id,name,subjectEntity,options){
+        var that = this;
+
         AbstractAttribute.call(this,id,name,subjectEntity);
 
         /***
@@ -65,12 +67,21 @@ define([
         };
 
         /**
+         * Get the options object for the Attribute
+         * @returns {Object}
+         */
+        this.getOptionValue = function(){
+            return  options.hasOwnProperty(_value.getValue()) ? options[_value.getValue()] : null;
+        };
+
+        /**
          * Get JSON representation of the attribute
          * @returns {Object}
          */
         this.toJSON = function(){
             var json = AbstractAttribute.prototype.toJSON.call(this);
             json.value = _value.toJSON();
+            json.option = that.getOptionValue();
             return json;
         };
 

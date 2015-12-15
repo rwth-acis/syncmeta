@@ -278,7 +278,7 @@ define([
                 color,
                 username;
 
-            if(operation instanceof EntitySelectOperation){
+            if(operation instanceof EntitySelectOperation && operation.getDestination() === CONFIG.WIDGET.NAME.MAIN){
                 senderJabberId = operation.getNonOTOperation().getSender();
                 color = _iwcot.getUserColor(senderJabberId);
                 username = _iwcot.getMembers()[senderJabberId][CONFIG.NS.PERSON.TITLE];
@@ -420,7 +420,7 @@ define([
             }
         };
 
-        var init = function(){
+        this.init = function(){
             //Define Node Rightclick Menu
             $.contextMenu({
                 selector: "#"+id,
@@ -429,13 +429,14 @@ define([
                     var menuItems,
                         offsetClick,
                         offsetCanvas;
+                    var EntityManager = require('canvas_widget/EntityManager');
 
                     offsetClick = $(e.target).offset();
-                    offsetCanvas = that.getCanvas().get$node().offset();
+                   	offsetCanvas = that.getCanvas().get$node().offset();
 
-                    if(_canvas.getSelectedEntity() === null || _canvas.getSelectedEntity() === that){
+					if(_canvas.getSelectedEntity() === null || _canvas.getSelectedEntity() === that){
                         menuItems = _.extend(_contextMenuItemCallback(),{
-                            connectTo: require('canvas_widget/EntityManager').generateConnectToMenu(that),
+                            connectTo: EntityManager.generateConnectToMenu(that),
                             sepMove: "---------",
                             moveToForeground: {
                                 name: "Move to Foreground",
@@ -458,11 +459,9 @@ define([
                                     that.triggerDeletion();
                                 }
                             },
-                            sepAdd: "-----------",
-                            sepAdd2: "-----------",
-                            addNode: {
-                                name: "Add node..",
-                                items: require('canvas_widget/EntityManager').generateAddNodeMenu(that.getCanvas(), e.originalEvent.offsetX+offsetClick.left-offsetCanvas.left, e.originalEvent.offsetY+offsetClick.top-offsetCanvas.top)
+                            quit:{
+                                name:' ',
+                                disabled:true
                             }
                         });
 
@@ -576,7 +575,7 @@ define([
          */
         this.addToCanvas = function(canvas){
             _canvas = canvas;
-            canvas.get$canvas().append(_$node);
+            _canvas.get$canvas().append(_$node);
         };
 
         /**
@@ -588,11 +587,13 @@ define([
         };
 
         /**
-         * Removes edge from canvas
+         * Removes node from canvas
          */
         this.removeFromCanvas = function(){
-            _canvas = null;
             _$node.remove();
+            //destroy the context menu
+            $.contextMenu('destroy', '#'+that.getEntityId());
+            _canvas = null;
         };
 
         /**
@@ -870,7 +871,11 @@ define([
             _isSelected = true;
             this.unhighlight();
             _$node.addClass("selected");
-            Util.delay(100).then(function(){_.each(require('canvas_widget/EntityManager').getEdges(),function(e){e.setZIndex();});});
+            Util.delay(100).then(function(){
+                _.each(require('canvas_widget/EntityManager').getEdges(),function(e){
+                    e.setZIndex();
+                });
+            });
         };
 
         /**
@@ -880,7 +885,11 @@ define([
             _isSelected = false;
             this.highlight(_highlightColor,_highlightUsername);
             _$node.removeClass("selected");
-            Util.delay(100).then(function(){_.each(require('canvas_widget/EntityManager').getEdges(),function(e){e.setZIndex();});});
+            Util.delay(100).then(function(){
+                _.each(require('canvas_widget/EntityManager').getEdges(),function(e){
+                    e.setZIndex();
+                });
+            });
         };
 
         /**
@@ -902,7 +911,23 @@ define([
         this.unhighlight = function(){
             _$node.css({border: ""});
             _$node.find('.user_highlight').remove();
-            Util.delay(100).then(function(){_.each(require('canvas_widget/EntityManager').getEdges(),function(e){e.setZIndex();});});
+            Util.delay(100).then(function(){
+                var EntityManager = null;
+                try{
+                    EntityManager = require('canvas_widget/EntityManager');
+                    _.each(EntityManager.getEdges(),function(e){
+                        e.setZIndex();
+                    });
+                }
+                catch(error){
+                    require(['canvas_widget/EntityManager'], function(EntityManager){
+                        _.each(EntityManager.getEdges(),function(e){
+                            e.setZIndex();
+                        });
+                    });
+                }
+
+            });
         };
 
         /**
@@ -1001,7 +1026,7 @@ define([
                     drag = false;
                     _$node.draggable("option","grid",ev.ctrlKey ? [20,20] : '');
                 },
-                drag: function(ev,ui){
+                drag: function(ev){
                     // ui.position.left = Math.round(ui.position.left  / _canvas.getZoom());
                     // ui.position.top = Math.round(ui.position.top / _canvas.getZoom());
 
@@ -1119,6 +1144,11 @@ define([
             _iwcot.registerOnHistoryChangedCallback(historyNodeMoveZCallback);
             _iwcot.registerOnHistoryChangedCallback(historyNodeResizeCallback);
             _iwcot.registerOnHistoryChangedCallback(historyNodeDeleteCallback);
+
+            _iwcot.registerOnLocalDataReceivedCallback(localNodeDeleteCallback);
+            _iwcot.registerOnLocalDataReceivedCallback(localNodeMoveCallback);
+            _iwcot.registerOnLocalDataReceivedCallback(localNodeResizeCallback);
+
         };
 
         /**
@@ -1134,9 +1164,30 @@ define([
             _iwcot.unregisterOnHistoryChangedCallback(historyNodeMoveZCallback);
             _iwcot.unregisterOnHistoryChangedCallback(historyNodeResizeCallback);
             _iwcot.unregisterOnHistoryChangedCallback(historyNodeDeleteCallback);
+
+            _iwcot.unregisterOnLocalDataReceivedCallback(localNodeDeleteCallback);
+            _iwcot.unregisterOnLocalDataReceivedCallback(localNodeMoveCallback);
+            _iwcot.unregisterOnLocalDataReceivedCallback(localNodeResizeCallback);
         };
 
-        init();
+        function localNodeDeleteCallback(operation){
+            if(operation instanceof NodeDeleteOperation && that.getEntityId() === operation.getEntityId()){
+                that.triggerDeletion();
+            }
+        }
+
+        function localNodeResizeCallback(operation){
+            if(operation instanceof NodeResizeOperation && operation.getEntityId() === that.getEntityId()) {
+                propagateNodeResizeOperation(operation);
+            }
+        }
+
+        function localNodeMoveCallback(operation){
+            if(operation instanceof NodeMoveOperation && operation.getEntityId() === that.getEntityId()) {
+                propagateNodeMoveOperation(operation);
+            }
+        }
+        that.init();
 
         if(_iwcot){
             that.registerCallbacks();
@@ -1165,6 +1216,24 @@ define([
     AbstractNode.prototype.toJSON = function(){
         return this._toJSON();
     };
+
+    /**
+     * hide the node and all associated edges
+     */
+    AbstractNode.prototype.hide = function(){
+        this.get$node().hide();
+        jsPlumb.hide(this.get$node());
+    };
+
+    /**
+     * show the node and all associated edges
+     */
+    AbstractNode.prototype.show = function(){
+        this.get$node().show();
+        jsPlumb.show(this.get$node());
+        jsPlumb.repaint(this.get$node());
+    };
+
 
     return AbstractNode;
 

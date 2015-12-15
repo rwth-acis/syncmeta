@@ -7,9 +7,15 @@ requirejs([
     'jqueryui',
     'jsplumb',
     'iwcotw',
+    'Util',
     'operations/non_ot/ToolSelectOperation',
     'operations/non_ot/ActivityOperation',
     'operations/non_ot/JoinOperation',
+    'operations/non_ot/ViewInitOperation',
+    'operations/non_ot/UpdateViewListOperation',
+    'operations/non_ot/DeleteViewOperation',
+    'operations/non_ot/SetViewTypesOperation',
+    'operations/non_ot/InitModelTypesOperation',
     'operations/non_ot/SetModelAttributeNodeOperation',
     'canvas_widget/Canvas',
     'canvas_widget/EntityManager',
@@ -35,46 +41,341 @@ requirejs([
     'canvas_widget/GeneralisationEdge',
     'canvas_widget/BiDirAssociationEdge',
     'canvas_widget/UniDirAssociationEdge',
+    'canvas_widget/ViewObjectNode',
+    'canvas_widget/ViewObjectNodeTool',
+    'canvas_widget/ViewRelationshipNode',
+    'canvas_widget/ViewRelationshipNodeTool',
+    'canvas_widget/ViewManager',
+    'canvas_widget/ViewGenerator',
     'promise!Metamodel',
     'promise!Model'
-],function($,jsPlumb,IWCOT,ToolSelectOperation,ActivityOperation,JoinOperation,SetModelAttributeNodeOperation,Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge,metamodel,model) {
+],function($,jsPlumb,IWCOT, Util,ToolSelectOperation,ActivityOperation,JoinOperation, ViewInitOperation, UpdateViewListOperation, DeleteViewOperation,SetViewTypesOperation, InitModelTypesOperation, SetModelAttributeNodeOperation, Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge, ViewObjectNode, ViewObjectNodeTool,ViewRelationshipNode, ViewRelationshipNodeTool, ViewManager, ViewGenerator, metamodel,model) {
 
-    var iwcot;
-    var canvas;
+    var iwcot, canvas;
 
     iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.MAIN);
     canvas = new Canvas($("#canvas"));
+    if(metamodel.constructor === Object) {
+        if (metamodel.hasOwnProperty("nodes")) {
+            var nodes = metamodel.nodes, node;
+            for (var nodeId in nodes) {
+                if (nodes.hasOwnProperty(nodeId)) {
+                    node = nodes[nodeId];
+                    canvas.addTool(node.label, new NodeTool(node.label, null, null, node.shape.defaultWidth, node.shape.defaultHeight));
+                }
+            }
+        }
+        if (metamodel.hasOwnProperty("edges")) {
+            var edges = metamodel.edges, edge;
+            for (var edgeId in edges) {
+                if (edges.hasOwnProperty(edgeId)) {
+                    edge = edges[edgeId];
+                    canvas.addTool(edge.label, new EdgeTool(edge.label, edge.relations));
+                }
+            }
+        }
+        ViewManager.GetViewpointList();
 
-    if(metamodel && metamodel.hasOwnProperty("nodes")){
-        var nodes = metamodel.nodes, node;
-        for(var nodeId in nodes){
-            if(nodes.hasOwnProperty(nodeId)){
-                node = nodes[nodeId];
-                canvas.addTool(node.label,new NodeTool(node.label,null,null,node.shape.defaultWidth,node.shape.defaultHeight));
+
+        //Not needed int the model editor
+        $("#btnCreateViewpoint").hide();
+        $('#btnDelViewPoint').hide();
+
+        //init the new tools for the canvas
+        var initTools = function(vvs){
+            //canvas.removeTools();
+            //canvas.addTool(MoveTool.TYPE, new MoveTool());
+            if(vvs && vvs.hasOwnProperty("nodes")){
+                var nodes = vvs.nodes, node;
+                for(var nodeId in nodes){
+                    if(nodes.hasOwnProperty(nodeId)){
+                        node = nodes[nodeId];
+                        canvas.addTool(node.label,new NodeTool(node.label,null,null,node.shape.defaultWidth,node.shape.defaultHeight));
+                    }
+                }
+            }
+
+            if(vvs && vvs.hasOwnProperty("edges")){
+                var edges = vvs.edges, edge;
+                for(var edgeId in edges){
+                    if(edges.hasOwnProperty(edgeId)){
+                        edge = edges[edgeId];
+                        canvas.addTool(edge.label,new EdgeTool(edge.label,edge.relations));
+                    }
+                }
+            }
+        };
+
+        //Modeling layer implementation. View generation process starts here
+        $('#btnShowView').click(function(){
+            //Get identifier of the current selected view
+            var viewId = ViewManager.getViewIdOfSelected();
+            if (viewId === $('#lblCurrentView').text())
+                return;
+            var resource = ViewManager.getViewpointResourceFromViewId(viewId);
+            if(resource != null) {
+                resource.getRepresentation('rdfjson',function(vvs){
+                    //initialize the new node- and edge types for the EntityManager
+                    EntityManager.initViewTypes(vvs);
+
+                    //send the new tools to the palette as well
+                    var operation = new InitModelTypesOperation(vvs, true).toNonOTOperation();
+                    iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation);
+                    iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation);
+
+                    var activityOperation = new ActivityOperation("ViewApplyActivity", vvs.id, iwcot.getUser()[CONFIG.NS.PERSON.JABBERID]);
+                    iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
+                    iwcot.sendRemoteNonOTOperation(activityOperation.toNonOTOperation());
+
+                    //init the tools for canvas
+                    initTools(vvs);
+
+                    ViewManager.getViewpointData(viewId).done(function(vvs){
+                        ViewGenerator.generate(metamodel,vvs);
+                    });
+
+                    $('#lblCurrentView').show();
+                    $('#lblCurrentViewId').text(viewId);
+
+                });
+            }
+
+        });
+
+        //Modelling layer implementation
+        $('#viewsHide').click(function(){
+            $(this).hide();
+            $('#viewsShow').show();
+            $('#ViewCtrlContainer').hide();
+            $('#canvas-frame').css('margin-top','32px');
+            var $lblCurrentViewId = $('#lblCurrentViewId');
+            var viewpointId = $lblCurrentViewId.text();
+            if(viewpointId.length > 0) {
+                //var $loading = $("#loading");
+                //$loading.show();
+
+
+                //reset view
+                var operation = new InitModelTypesOperation(metamodel, true);
+                iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation.toNonOTOperation());
+                iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
+
+                var activityOperation = new ActivityOperation("ViewApplyActivity", '', iwcot.getUser()[CONFIG.NS.PERSON.JABBERID]);
+                iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
+                iwcot.sendRemoteNonOTOperation(activityOperation.toNonOTOperation());
+
+                EntityManager.setViewId(null);
+                EntityManager.initModelTypes(metamodel);
+                initTools(metamodel);
+
+                ViewGenerator.reset(metamodel);
+
+                $('#lblCurrentView').hide();
+                $lblCurrentViewId.text("");
+               // $loading.hide();
+            }
+        });
+
+    }
+    else{
+        //Add Node Tools
+        canvas.addTool(ObjectNode.TYPE, new ObjectNodeTool());
+        canvas.addTool(AbstractClassNode.TYPE, new AbstractClassNodeTool());
+        canvas.addTool(RelationshipNode.TYPE, new RelationshipNodeTool());
+        canvas.addTool(RelationshipGroupNode.TYPE, new RelationshipGroupNodeTool());
+        canvas.addTool(EnumNode.TYPE, new EnumNodeTool());
+        canvas.addTool(NodeShapeNode.TYPE, new NodeShapeNodeTool());
+        canvas.addTool(EdgeShapeNode.TYPE, new EdgeShapeNodeTool());
+
+        //Add Edge Tools
+        canvas.addTool(GeneralisationEdge.TYPE, new GeneralisationEdgeTool());
+        canvas.addTool(BiDirAssociationEdge.TYPE, new BiDirAssociationEdgeTool());
+        canvas.addTool(UniDirAssociationEdge.TYPE, new UniDirAssociationEdgeTool());
+
+        //Add View Types
+        canvas.addTool(ViewObjectNode.TYPE, new ViewObjectNodeTool());
+        canvas.addTool(ViewRelationshipNode.TYPE, new ViewRelationshipNodeTool());
+
+        //Init control elements for views
+        $("#btnCreateViewpoint").click(function () {
+            ShowViewCreateMenu();
+        });
+        $('#btnCancelCreateViewpoint').click(function () {
+            HideCreateMenu();
+        });
+
+        $('#btnShowView').click(function(){
+            var viewId = ViewManager.getViewIdOfSelected();
+            if (viewId === $('#lblCurrentViewId').text())
+                return;
+            $("#loading").show();
+            visualizeView(viewId);
+        });
+
+        $('#btnDelViewPoint').click(function(){
+            var viewId = ViewManager.getViewIdOfSelected();
+            if (viewId !== $('#lblCurrentViewId').text()) {
+                openapp.resource.del(ViewManager.getViewUri(viewId), function () {
+                    ViewManager.deleteView(viewId);
+                    //TODO DeleteView Operation
+                    iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new DeleteViewOperation(viewId).toNonOTOperation());
+                });
+            }
+            else {
+                DeleteView(viewId);
+                $('#viewsHide').click();
+
+            }
+        });
+
+        $('#btnAddViewpoint').click(function () {
+            var viewId = $('#txtNameViewpoint').val();
+            if (ViewManager.existsView(viewId)) {
+                alert('View already exists');
+                return;
+            }
+            resetCanvas();
+            $('#lblCurrentViewId').text(viewId);
+            ViewManager.storeView(viewId, null).then(function (resp) {
+                ViewManager.addView(viewId, null, resp);
+                visualizeView(viewId);
+
+                var operation = new UpdateViewListOperation();
+                iwcot.sendRemoteNonOTOperation(operation.toNonOTOperation());
+                canvas.get$canvas().show();
+                HideCreateMenu();
+            });
+        });
+
+        //Meta-modelling layer implementation
+        $('#viewsHide').click(function(){
+            $(this).hide();
+            $('#viewsShow').show();
+            $('#ViewCtrlContainer').hide();
+            $('#canvas-frame').css('margin-top','32px');
+            var $lblCurrentViewId = $('#lblCurrentViewId');
+            if($lblCurrentViewId.text().length > 0) {
+                var $loading = $("#loading");
+                $loading.show();
+                Util.GetCurrentBaseModel().done(function (model) {
+                    //Disable the view types in the palette
+                    var operation= new SetViewTypesOperation(false);
+                    iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation.toNonOTOperation());
+                    var activityOperation = new ActivityOperation("ViewApplyActivity", '', iwcot.getUser()[CONFIG.NS.PERSON.JABBERID]);
+                    iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
+                    iwcot.sendRemoteNonOTOperation(activityOperation.toNonOTOperation());
+                    resetCanvas();
+                    JSONtoGraph(model);
+                    canvas.resetTool();
+                    $('#lblCurrentView').hide();
+                    $lblCurrentViewId.text("");
+                    EntityManager.setViewId(null);
+                    $loading.hide();
+                })
+            }
+        });
+    }
+
+    //Functions and Callbacks for the view-based modeling approach
+    var ShowViewCreateMenu = function(){
+        $('#btnCreateViewpoint').hide();
+        $('#ddmViewSelection').hide();
+        $('#btnShowView').hide();
+        $('#btnDelViewPoint').hide();
+        $('#txtNameViewpoint').show();
+        $('#btnAddViewpoint').show();
+        $('#btnCancelCreateViewpoint').show();
+    };
+    var HideCreateMenu = function(){
+        $('#btnCreateViewpoint').show();
+        $('#ddmViewSelection').show();
+        $('#btnDelViewPoint').show();
+        $('#btnShowView').show();
+        $('#txtNameViewpoint').hide();
+        $('#btnAddViewpoint').hide();
+        $('#btnCancelCreateViewpoint').hide();
+
+    };
+    function resetCanvas() {
+        var edges = EntityManager.getEdges();
+        for (edgeId in edges) {
+            if (edges.hasOwnProperty(edgeId)) {
+                var edge = EntityManager.findEdge(edgeId);
+                edge.remove();
+                //edge.triggerDeletion();
             }
         }
-    } else {
-        canvas.addTool(ObjectNode.TYPE,new ObjectNodeTool());
-        canvas.addTool(AbstractClassNode.TYPE,new AbstractClassNodeTool());
-        canvas.addTool(RelationshipNode.TYPE,new RelationshipNodeTool());
-        canvas.addTool(RelationshipGroupNode.TYPE,new RelationshipGroupNodeTool());
-        canvas.addTool(EnumNode.TYPE,new EnumNodeTool());
-        canvas.addTool(NodeShapeNode.TYPE,new NodeShapeNodeTool());
-        canvas.addTool(EdgeShapeNode.TYPE,new EdgeShapeNodeTool());
-    }
-    if(metamodel && metamodel.hasOwnProperty("edges")){
-        var edges = metamodel.edges, edge;
-        for(var edgeId in edges){
-            if(edges.hasOwnProperty(edgeId)){
-                edge = edges[edgeId];
-                canvas.addTool(edge.label,new EdgeTool(edge.label,edge.relations));
+        var nodes = EntityManager.getNodes();
+        for (nodeId in nodes) {
+            if (nodes.hasOwnProperty(nodeId)) {
+                var node = EntityManager.findNode(nodeId);
+                //node.triggerDeletion();
+                node.remove();
             }
         }
-    } else {
-        canvas.addTool(GeneralisationEdge.TYPE,new GeneralisationEdgeTool());
-        canvas.addTool(BiDirAssociationEdge.TYPE,new BiDirAssociationEdgeTool());
-        canvas.addTool(UniDirAssociationEdge.TYPE,new UniDirAssociationEdgeTool());
+        EntityManager.deleteModelAttribute();
+        EntityManager.clearBin();
+
     }
+    var visualizeView = function(viewId, viewpointData){
+        ViewManager.getViewResource(viewId).getRepresentation('rdfjson', function(viewData){
+            resetCanvas();
+            ViewToGraph(viewData,viewpointData);
+            $('#lblCurrentView').show();
+            $('#lblCurrentViewId').text(viewData.id);
+            EntityManager.setViewId(viewData.id);
+            canvas.resetTool();
+            $("#loading").hide();
+        });
+    };
+    function ViewToGraph(json, viewpoint) {
+        //Initialize the attribute widget
+        var operation = new ViewInitOperation(json, viewpoint);
+        iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
+
+        //Enable the view types in the palette
+        operation = new SetViewTypesOperation(true);
+        iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation.toNonOTOperation());
+
+        var activityOperation = new ActivityOperation("ViewApplyActivity", json.id, iwcot.getUser()[CONFIG.NS.PERSON.JABBERID]);
+        iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
+        iwcot.sendRemoteNonOTOperation(activityOperation.toNonOTOperation());
+
+        var nodeId, edgeId;
+        for(nodeId in json.nodes){
+            if(json.nodes.hasOwnProperty(nodeId)){
+                var jNode = json.nodes[nodeId];
+                var node = EntityManager.createNodeFromJSON(jNode.type,nodeId,jNode.left,jNode.top,jNode.width,jNode.height,jNode.zIndex,jNode,jNode.viewId);
+                //TODO add origin to nodes
+                //if(jNode.hasOwnProperty('origin'))
+                //    node.setOrigin(jNode.origin);
+                node.addToCanvas(canvas);
+                node.draw();
+            }
+        }
+        for(edgeId in json.edges){
+            if(json.edges.hasOwnProperty(edgeId)){
+                var jEdge = json.edges[edgeId];
+                var edge = EntityManager.createEdgeFromJSON(jEdge.type,edgeId,jEdge.source,jEdge.target,jEdge);
+                //  TODO add origin to edges
+                //if(jEdge.hasOwnProperty('origin'))
+                //    edge.setOrigin(jEdge.origin);
+                edge.addToCanvas(canvas);
+                edge.connect();
+            }
+        }
+    }
+    function DeleteView(viewId){
+        var deferred = $.Deferred();
+        openapp.resource.del(ViewManager.getViewUri(viewId), function () {
+            ViewManager.deleteView(viewId);
+            //TODO delete view operation
+            iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new DeleteViewOperation(viewId).toNonOTOperation());
+            deferred.resolve();
+        });
+        return deferred.promise();
+    }
+    //-------------------------------------------------------------
 
     function JSONtoGraph(json){
         var modelAttributesNode;
@@ -87,15 +388,15 @@ requirejs([
         for(nodeId in json.nodes){
             if(json.nodes.hasOwnProperty(nodeId)){
                 var node = EntityManager.createNodeFromJSON(json.nodes[nodeId].type,nodeId,json.nodes[nodeId].left,json.nodes[nodeId].top,json.nodes[nodeId].width,json.nodes[nodeId].height,json.nodes[nodeId].zIndex,json.nodes[nodeId]);
-                node.draw();
                 node.addToCanvas(canvas);
+                node.draw();
             }
         }
         for(edgeId in json.edges){
             if(json.edges.hasOwnProperty(edgeId)){
                 var edge = EntityManager.createEdgeFromJSON(json.edges[edgeId].type,edgeId,json.edges[edgeId].source,json.edges[edgeId].target,json.edges[edgeId]);
-                edge.connect();
                 edge.addToCanvas(canvas);
+                edge.connect();
             }
         }
     }
@@ -146,6 +447,13 @@ requirejs([
         $("#showtype").show();
     });
 
+    $('#viewsShow').click(function(){
+        $(this).hide();
+        $('#viewsHide').show();
+        $('#ViewCtrlContainer').show();
+        $('#canvas-frame').css('margin-top','64px');
+    });
+
     $("#zoomin").click(function(){
         canvas.setZoom(canvas.getZoom()+0.1);
     });
@@ -157,12 +465,23 @@ requirejs([
     var $feedback = $("#feedback");
     $("#save").click(function(){
         $feedback.text("Saving...");
-        EntityManager.storeData().then(function(){
-            $feedback.text("Saved!");
-            setTimeout(function(){
-                $feedback.text("");
-            },1000);
-        });
+        var viewId = $('#lblCurrentViewId').text();
+        if(viewId.length > 0 && metamodel.constructor !== Object){
+            ViewManager.updateViewContent(viewId, ViewManager.getResource(viewId)).then(function () {
+                //ViewManager.initViewList();
+                $feedback.text("Saved!");
+                setTimeout(function () {
+                    $feedback.text("");
+                }, 1000);
+            });
+        }else {
+            EntityManager.storeData2().then(function () {
+                $feedback.text("Saved!");
+                setTimeout(function () {
+                    $feedback.text("");
+                }, 1000);
+            });
+        }
     });
 
     $("#dialog").dialog({
@@ -200,7 +519,6 @@ requirejs([
         },
         open: function(){
             var name = canvas.getModelAttributesNode().getAttribute("modelAttributes[name]").getValue().getValue();
-            var timeout;
             var $spaceTitle = $("#space_title");
             var $spaceLabel = $("#space_label");
 
@@ -249,13 +567,22 @@ requirejs([
         $("#loading").hide();
     }
 
+
+    ViewManager.initViewList();
+
     iwcot.registerOnJoinOrLeaveCallback(function(operation){
         var activityOperation;
         if(operation instanceof JoinOperation){
-            if(operation.getUser() === iwcot.getUser()[CONFIG.NS.PERSON.JABBERID]){
+            if(operation.getUser() === iwcot.getUser()[CONFIG.NS.PERSON.JABBERID] && operation.getSender() === iwcot.getUser()[CONFIG.NS.PERSON.JABBERID]){
                 if(operation.isDone()){
                     operation.setData(model);
+                    if(metamodel.constructor === Object){
+                        var op = new InitModelTypesOperation(metamodel);
+                        iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, op.toNonOTOperation());
+                        iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, op.toNonOTOperation());
+                    }
                     iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.toNonOTOperation());
+
                     JSONtoGraph(model);
                     if(canvas.getModelAttributesNode() === null) {
                         var modelAttributesNode = EntityManager.createModelAttributesNode();
@@ -263,14 +590,30 @@ requirejs([
                         modelAttributesNode.addToCanvas(canvas);
                     }
                     canvas.resetTool();
+                    $("#loading").hide();
 
                     iwcot.registerOnLocalDataReceivedCallback(function(operation){
                         if(operation instanceof SetModelAttributeNodeOperation){
                             iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new SetModelAttributeNodeOperation().toNonOTOperation());
                         }
+                        else if(operation instanceof UpdateViewListOperation){
+                            iwcot.sendRemoteNonOTOperation(new UpdateViewListOperation().toNonOTOperation());
+                            if(metamodel.constructor === Object){
+                                ViewManager.GetViewpointList();
+                            }else {
+                                ViewManager.initViewList();
+                            }
+                        }
                     });
 
-                    $("#loading").hide();
+                    iwcot.registerOnRemoteDataReceivedCallback(function(operation){
+                        if(operation instanceof UpdateViewListOperation) {
+                            ViewManager.initViewList();
+                        }else if(operation instanceof ActivityOperation){
+                            iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, operation.toNonOTOperation());
+                        }
+                    });
+
 
                     activityOperation = new ActivityOperation(
                         "UserJoinActivity",
@@ -292,22 +635,23 @@ requirejs([
                     model = operation.getData();
                 }
             } else {
-                if(operation.isDone()){
+                //if(operation.isDone()){
                     activityOperation = new ActivityOperation(
                         "UserJoinActivity",
                         "-1",
-                        operation.getUser(),
+                        operation.getSender(),
                         "",
                         {}
                     ).toNonOTOperation();
                     iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,activityOperation);
-                } else {
-                }
+                //} else {
+                //}
             }
         }
     });
 
-    /*$("#save_image").click(function(){
+    /*
+    $("#save_image").click(function(){
         canvas.toPNG().then(function(uri){
             var link = document.createElement('a');
             link.download = "export.png";

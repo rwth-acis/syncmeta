@@ -141,6 +141,10 @@ define([
             _.forEach(json.list,function(val,key){
                 var attribute = new KeyValueAttribute(key,key,that);
                 attribute.setValueFromJSON(json.list[key]);
+                if(attr = that.getAttribute(attribute.getEntityId())){
+                    that.deleteAttribute(attr.getEntityId());
+                    attr.get$node().remove();
+                }
                 that.addAttribute(attribute);
                 _$node.find(".list").append(attribute.get$node());
             });
@@ -169,7 +173,8 @@ define([
         _$node.find(".ui-icon-plus").click(function(){
             var id = Util.generateRandomId();
             var operation = new AttributeAddOperation(id,that.getEntityId(),that.getRootSubjectEntity().getEntityId(),KeyValueAttribute.TYPE);
-            propagateAttributeAddOperation(operation);
+            propagateAttributeAddOperation(operation, CONFIG.WIDGET.NAME.MAIN);
+
         });
 
         if(iwc){
