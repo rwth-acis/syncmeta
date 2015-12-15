@@ -46,7 +46,11 @@ define([
 	 */
 	var $colorTestElement = $('<div></div>');
 
+    /** Determines the current layer of syncmeta.
+     *  can be CONFIG.LAYER.MODEL or CONFIG.LAYER.META*/
     var _layer = null;
+
+    var _OARP_model = null;
 
 	/**
 	 * Different node types
@@ -1200,6 +1204,40 @@ define([
                     });
                 });
                 return deferred.promise();
+            },
+            storeData2: function(){
+                var data = this.graphToJSON();
+                var deferred = $.Deferred();
+                if(!_OARP_model){
+                    var resourceSpace = new openapp.oo.Resource(openapp.param.space());
+                    resourceSpace.getSubResources({
+                        relation: openapp.ns.role + "data",
+                        type: CONFIG.NS.MY.MODEL,
+                        onAll: function(docs){
+                            if(docs.length === 0) {
+                                resourceSpace.create({
+                                    relation: openapp.ns.role + "data",
+                                    type: CONFIG.NS.MY.MODEL,
+                                    representation: data,
+                                    callback: function (resource) {
+                                        _OARP_model = resource;
+                                        deferred.resolve();
+                                    }
+                                });
+                            }else{
+                                _OARP_model = docs[0];
+                            }
+                        }
+                    });
+                }else{
+                    _OARP_model.setRepresentation(data, 'application/json', function(){
+                        deferred.resolve();
+                    });
+                }
+                return deferred.promise();
+            },
+            setOARPmodel:function(resource){
+                _OARP_model = resource;
             },
             /**
              * Delete the Model Attribute Node

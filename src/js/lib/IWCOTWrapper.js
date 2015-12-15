@@ -208,8 +208,6 @@ define([
          */
         var _joiningUsersTimeouts = [];
 
-        var _remoteUsers = {};
-
         /**
          * Callback to cancel joining process if nobody is replying
          */
@@ -505,15 +503,13 @@ define([
                                     console.log("JOINING LOG: REMOTE USER TRIES TO JOIN: " + resOperation.getUser());
 
                                     // ..and I already have joined
-                                    if(_joiningState === IWCOT.JOIN_STATE.COMPLETED && !_remoteUsers.hasOwnProperty(resOperation.getUser())){
-                                        _remoteUsers[resOperation.getUser()] = IWCOT.JOIN_STATE.REQUESTED;
+                                    if(_joiningState === IWCOT.JOIN_STATE.COMPLETED){
                                         _joiningUsers.push(resOperation.getUser());
                                         setTimeout(function(){
                                             clearInterval(_syncInterval);
                                             clearInterval(_purgeInterval);
                                             _ot = new OT(localID);
-
-                                            sendRemoteNonOTOperation(new JoinOperation(resOperation.getUser(),false,space.user[CONFIG.NS.PERSON.JABBERID],require('canvas_widget/EntityManager').graphToJSON()).toNonOTOperation());
+                                            sendRemoteNonOTOperation(new JoinOperation(resOperation.getUser(),true,space.user[CONFIG.NS.PERSON.JABBERID],require('canvas_widget/EntityManager').graphToJSON()).toNonOTOperation());
                                         },500);
 
                                         //Unlock if no remote message is received within 5 seconds
@@ -522,7 +518,6 @@ define([
                                             console.log("JOINING LOG: JOINING REMOTE USER DID NOT REPLY: " + resOperation.getUser());
 
                                             var userPosition = _joiningUsers.indexOf(sender);
-                                            _remoteUsers[resOperation.getUser()] = IWCOT.JOIN_STATE.NOT_JOINED;
 
                                             if(userPosition > -1){
                                                 _joiningUsers.splice(userPosition,1);
@@ -561,10 +556,8 @@ define([
                                     console.log("JOINING LOG: REMOTE USER FINISHED JOINING: " + resOperation.getUser());
 
                                     // ..and I already have joined
-                                    if(_joiningState === IWCOT.JOIN_STATE.COMPLETED &&
-                                        _remoteUsers.hasOwnProperty(resOperation.getUser()) && _remoteUsers[resOperation.getUser()] != IWCOT.JOIN_STATE.COMPLETED){
-                                        sendRemoteNonOTOperation(new JoinOperation(resOperation.getUser(),true,space.user[CONFIG.NS.PERSON.JABBERID],{}).toNonOTOperation());
-                                        _remoteUsers[resOperation.getUser()] = IWCOT.JOIN_STATE.COMPLETED;
+                                    if(_joiningState === IWCOT.JOIN_STATE.COMPLETED){
+                                        //sendRemoteNonOTOperation(new JoinOperation(resOperation.getUser(),true,space.user[CONFIG.NS.PERSON.JABBERID],{}).toNonOTOperation());
                                         userPosition = _joiningUsers.indexOf(sender);
                                         if(userPosition > -1){
                                             _joiningUsers.splice(userPosition,1);
