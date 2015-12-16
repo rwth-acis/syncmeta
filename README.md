@@ -32,9 +32,3 @@ you have to push your latest changes to the `gh-pages` github branch.
 (See [github pages](https://pages.github.com/) for explanation)
 
 _Attention!_, Please be aware that any changes you commit to the gh-pages branch will affect all ROLE spaces that link to widget definitions in this branch. Therefore only push very goodly tested commits to gh-pages.
-
-### Test Space for the Thesis
-[Link](http://role-sandbox.eu/spaces/syncmetaviewtest) to the syncmeta view test space.
-
-[1]: http://dbis.rwth-aachen.de/cms/research/ACIS/SyncMeta
-[2]: http://nodejs.org/

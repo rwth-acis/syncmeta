@@ -58,7 +58,6 @@
           timeout();
         })();
     </script>
-    <script src="<%= grunt.config('baseUrl') %>/js/lib/parallel.js"></script>
     <script src="<%= grunt.config('baseUrl') %>/js/config.js"></script>
     <script src="<%= grunt.config('baseUrl') %>/js/lib/vendor/require.js"></script>    
     <%= partial(bodyPartial,null) %>
