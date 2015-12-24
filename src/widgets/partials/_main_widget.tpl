@@ -24,6 +24,7 @@
     <p><strong>Editor space title:</strong><input size="32" type="text" id="space_title" /></p>
 </div>
 <div class="button_bar right">
+  <button id="guidance_followed" style="visibility:hidden;"></button>
   <button id="showtype"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/hidetype.png" /></button>
   <button id="hidetype"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/showtype.png" /></button>
   <button id="zoomin"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/zoomin.png" /></button>

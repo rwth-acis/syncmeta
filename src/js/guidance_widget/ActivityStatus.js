@@ -6,7 +6,7 @@ define([
 ],function(Util,ConcurrentRegion) {
 
     var ActivityStatus = Class.extend({
-        init: function(logicalGuidanceDefinition, initialNode){
+        init: function(logicalGuidanceDefinition, initialNode, strategy){
             this.id = Util.generateRandomId();
             this.logicalGuidanceDefinition = logicalGuidanceDefinition;
             this.initialNode = initialNode;
@@ -18,6 +18,7 @@ define([
             this.nodeMappings = {};
             this.concurrentRegion = null;
             this.nodeHistory = [];
+            this.strategy = strategy;
         },
         computeExpectedNodes: function(){
             var nodesToResolve = this.logicalGuidanceDefinition.successors(this.currentNode);
@@ -168,17 +169,30 @@ define([
         },
         getNodeMapping: function(guidanceNodeId){
             return this.nodeMappings[guidanceNodeId];
+        },
+        shareActivityOperation: function(joinNode, remainingThreads){
+            var data = {
+                operationType: "CollaborationStrategy:ShareActivity",
+                joinNode: joinNode,
+                remainingThreads: remainingThreads,
+                id: this.id,
+                initialNode: this.initialNode,
+                objectMappings: this.nodeMappings,
+                objectId: this.lastAddedNode,
+                sender: this.strategy.getUserName()
+            };
+            this.strategy.sendGuidanceStrategyOperation(data);
         }
        
     });
 
-    ActivityStatus.createFromShareOperation = function(logicalGuidanceDefinition, operation){
-        var id = operation.getId();
-        var initialNode = operation.getInitialNode();
-        var joinNode = operation.getJoinNode();
-        var objectMappings = operation.getObjectMappings();
-        var remainingThreads = operation.getRemainingThreads();
-        var lastAddedNode = operation.getObjectId();
+    ActivityStatus.createFromShareOperation = function(logicalGuidanceDefinition, opData){
+        var id = opData.id;
+        var initialNode = opData.initialNode;
+        var joinNode = opData.joinNode;
+        var objectMappings = opData.objectMappings;
+        var remainingThreads = opData.remainingThreads;
+        var lastAddedNode = opData.objectId;
         
         var activity = new ActivityStatus(logicalGuidanceDefinition, initialNode);
         activity.nodeMappings = objectMappings;

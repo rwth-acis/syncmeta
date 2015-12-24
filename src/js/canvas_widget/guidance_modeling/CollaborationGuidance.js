@@ -22,6 +22,7 @@ define([
             console.log("Collaborate!!");
             console.log("Scroll to object:" + objectId);
             _canvas.scrollNodeIntoView(objectId);
+            _canvas.guidanceFollowed();
         });
 
         this.get$node = function(){

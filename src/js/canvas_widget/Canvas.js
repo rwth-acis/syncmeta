@@ -18,9 +18,9 @@ define([
     'operations/non_ot/CanvasViewChangeOperation',
     'operations/non_ot/CanvasResizeOperation',
     'operations/non_ot/CanvasZoomOperation',
-    'operations/non_ot/ShareGuidanceActivityOperation',
     'operations/non_ot/RevokeSharedActivityOperation',
     'operations/non_ot/MoveCanvasOperation',
+    'operations/non_ot/GuidanceStrategyOperation',
     'canvas_widget/AbstractEntity',
     'canvas_widget/ModelAttributesNode',
     'canvas_widget/EntityManager',
@@ -33,7 +33,7 @@ define([
     'canvas_widget/guidance_modeling/GhostEdgeGuidance',
     'canvas_widget/guidance_modeling/CollaborationGuidance',
     'jquery.transformable-PATCHED'
-],/** @lends Canvas */function($,jsPlumb,IWCOT,Util,NodeAddOperation,EdgeAddOperation,ToolSelectOperation,EntitySelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,ShowObjectGuidanceOperation,ShowGuidanceBoxOperation,CanvasViewChangeOperation,CanvasResizeOperation,CanvasZoomOperation,ShareGuidanceActivityOperation,RevokeSharedActivityOperation,MoveCanvasOperation,AbstractEntity,ModelAttributesNode,EntityManager,AbstractCanvas,MoveTool,ObjectGuidance,GuidanceBox,SelectToolGuidance, SetPropertyGuidance, GhostEdgeGuidance, CollaborationGuidance) {
+],/** @lends Canvas */function($,jsPlumb,IWCOT,Util,NodeAddOperation,EdgeAddOperation,ToolSelectOperation,EntitySelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,ShowObjectGuidanceOperation,ShowGuidanceBoxOperation,CanvasViewChangeOperation,CanvasResizeOperation,CanvasZoomOperation,RevokeSharedActivityOperation,MoveCanvasOperation,GuidanceStrategyOperation,AbstractEntity,ModelAttributesNode,EntityManager,AbstractCanvas,MoveTool,ObjectGuidance,GuidanceBox,SelectToolGuidance, SetPropertyGuidance, GhostEdgeGuidance, CollaborationGuidance) {
     Canvas.prototype = new AbstractCanvas();
     Canvas.prototype.constructor = Canvas;
     /**
@@ -363,9 +363,10 @@ define([
             }
         };
 
-        var localShareGuidanceActivityOperationCallback = function(operation){
-            if(operation instanceof ShareGuidanceActivityOperation){
-                console.log("Main received local ShareGuidanceActivityOperation!");
+        var localGuidanceStrategyOperationCallback = function(operation){
+            if(operation instanceof GuidanceStrategyOperation){
+                console.log("Main received local GuidanceStrategyOperation!");
+                console.log(operation.getData());
                 //Just forward the message to remote users
                 _iwcot.sendRemoteNonOTOperation(operation.toNonOTOperation());
             }
@@ -379,9 +380,9 @@ define([
             }
         };
 
-        var remoteShareGuidanceActivityOperationCallback = function(operation){
-            if(operation instanceof ShareGuidanceActivityOperation){
-                console.log("Main received remote ShareGuidanceActivityOperation");
+        var remoteGuidanceStrategyOperation = function(operation){
+            if(operation instanceof GuidanceStrategyOperation){
+                console.log("Main received remote GuidanceStrategyOperation");
                 //Just forward the message to the local guidance widget
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.toNonOTOperation());
             }
@@ -740,6 +741,13 @@ define([
         */
          this.getSelectedEntity = function(){
             return _selectedEntity;
+        };
+
+        var _guidanceFollowed = 0;
+        this.guidanceFollowed = function(){
+            _guidanceFollowed++;
+            console.log("Guidance followed");
+            $("#guidance_followed").text(_guidanceFollowed);
         };
 
         /**
@@ -1176,11 +1184,11 @@ define([
             _iwcot.registerOnLocalDataReceivedCallback(localShowGuidanceBoxCallback);
             _iwcot.registerOnHistoryChangedCallback(historyNodeAddCallback);
             _iwcot.registerOnHistoryChangedCallback(historyEdgeAddCallback);
-            _iwcot.registerOnLocalDataReceivedCallback(localShareGuidanceActivityOperationCallback);
-            _iwcot.registerOnRemoteDataReceivedCallback(remoteShareGuidanceActivityOperationCallback);
             _iwcot.registerOnLocalDataReceivedCallback(localRevokeSharedActivityOperationCallback);
             _iwcot.registerOnRemoteDataReceivedCallback(remoteRevokeSharedActivityOperationCallback);
             _iwcot.registerOnLocalDataReceivedCallback(localMoveCanvasOperation);
+            _iwcot.registerOnLocalDataReceivedCallback(localGuidanceStrategyOperationCallback);
+            _iwcot.registerOnRemoteDataReceivedCallback(remoteGuidanceStrategyOperation);
         };
 
 
@@ -1199,17 +1207,17 @@ define([
             _iwcot.unregisterOnLocalDataReceivedCallback(localShowGuidanceBoxCallback);
             _iwcot.unregisterOnHistoryChangedCallback(historyNodeAddCallback);
             _iwcot.unregisterOnHistoryChangedCallback(historyEdgeAddCallback);
-            _iwcot.unregisterOnLocalDataReceivedCallback(localShareGuidanceActivityOperationCallback);
-            _iwcot.unregisterOnRemoteDataReceivedCallback(remoteShareGuidanceActivityOperationCallback);
             _iwcot.unregisterOnLocalDataReceivedCallback(localRevokeSharedActivityOperationCallback);
             _iwcot.unregisterOnRemoteDataReceivedCallback(remoteRevokeSharedActivityOperationCallback);
             _iwcot.unregisterOnLocalDataReceivedCallback(localMoveCanvasOperation);
+            _iwcot.unregisterOnLocalDataReceivedCallback(localGuidanceStrategyOperationCallback);
+            _iwcot.unregisterOnRemoteDataReceivedCallback(remoteGuidanceStrategyOperation);
         };
 
         init();
 
         if(_iwcot){
-            that.registerCallbacks();
+;            that.registerCallbacks();
         }
 
     }

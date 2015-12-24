@@ -16,6 +16,9 @@ define([
             var operation = new ShowGuidanceBoxOperation(label, guidance, entityId);
             this.iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.toNonOTOperation());
         },
+        sendGuidanceStrategyOperation: function(data){
+            //This function is set by the guidance widget
+        },
         onEntitySelect: function(entityId, entityType){
             //Override in child class to react to entity selection events
         },
@@ -37,11 +40,15 @@ define([
         onEdgeDelete: function(id, type){
             //Override in child class to react to edge delete events
         },
+        onGuidanceOperation: function(data){
+            //Override in chlid class to react to messages from guidance strategies
+        },
         buildUi: function(){
             //Override in child class and return the ui (HTML) for this strategy
         }
     });
-
+    
+    //Override in child class to change the name of the strategy
     GuidanceStrategy.NAME = "Guidance Strategy";
 
     return GuidanceStrategy;
