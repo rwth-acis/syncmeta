@@ -129,7 +129,7 @@ define([
                     }
                     break;
             }
-            _$node.val(value).blur();
+            _$node.val(value);
             _$node[0].selectionStart = newSelectionStart;
             _$node[0].selectionEnd = newSelectionEnd;
         };
@@ -259,11 +259,12 @@ define([
                 }
             });
 
-            _$node.autoGrowInput({
-                comfortZone: 10,
-                minWidth: 40,
-                maxWidth: 1000
-            }).trigger("blur");
+            // _$node.autoGrowInput({
+            //     comfortZone: 10,
+            //     minWidth: 40,
+            //     maxWidth: 1000
+            // }).trigger("blur");
+            _$node.trigger("blur");
         };
 
         //noinspection JSUnusedLocalSymbols

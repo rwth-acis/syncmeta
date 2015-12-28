@@ -1,9 +1,14 @@
 <div class="custom_node">
-    <div class="type"><%= type %></div>
+    <div class="type"><%= "<\%= type %\>" %></div>
     <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 100 100" class="fill_parent">
-        <rect x="0" y="0" rx="20" ry="20" width="100" height="100" fill="<%= color %>" stroke="lightgray" stroke-width="2" />
+        <rect x="0" y="0" rx="20" ry="20" width="100" height="100" fill="white" stroke="lightgray" stroke-width="2" />
     </svg>
-    <div class="fill_parent">
-        <div style="position: absolute; left: 50%; top: 50%; -webkit-transform: translateY(-50%) translateX(-50%)" class="property"></div>
+    <div class="fill_parent" style="overflow:hidden">
+    	<table style="width:100%; height:100%">
+		  <tr>
+		    <td style="width:1px; white-space:nowrap; padding:10px;"><i class="fa fa-pencil-square-o fa-2x"></i></td>
+		    <td style="text-align:center" class="property"></td>		
+		  </tr>
+		</table>
     </div>
 </div>

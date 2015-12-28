@@ -167,12 +167,16 @@ define([
          */
         var _outgoingNeighbors = {};
 
+        var _relatedGhostEdges = [];
+
         /**
          * Apply a Node Move Operation
          * @param {operations.ot.NodeMoveOperation} operation
          */
         var processNodeMoveOperation = function(operation){
+            _canvas.hideGuidanceBox();
             that.move(operation.getOffsetX(),operation.getOffsetY(),0);
+            _canvas.showGuidanceBox();
         };
 
         /**
@@ -192,6 +196,7 @@ define([
             hideTraceAwareness();
             if(_iwcot.sendRemoteOTOperation(operation)){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "NodeMoveActivity",
                     operation.getEntityId(),
@@ -226,7 +231,9 @@ define([
          * @param {operations.ot.NodeResizeOperation} operation
          */
         var processNodeResizeOperation = function(operation){
+            _canvas.hideGuidanceBox();
             that.resize(operation.getOffsetX(),operation.getOffsetY());
+            _canvas.showGuidanceBox();
         };
 
         /**
@@ -238,6 +245,7 @@ define([
             hideTraceAwareness();
             if(_iwcot.sendRemoteOTOperation(operation)){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "NodeResizeActivity",
                     operation.getEntityId(),
@@ -264,6 +272,12 @@ define([
                     edge.remove();
                 }
             }
+
+            for(var i = 0; i < _relatedGhostEdges.length; i++){
+                if(typeof _relatedGhostEdges[i].remove == "function")
+                    _relatedGhostEdges[i].remove();
+            }
+
             that.remove();
         };
 
@@ -275,6 +289,8 @@ define([
             processNodeDeleteOperation(operation);
             if(_iwcot.sendRemoteOTOperation(operation)){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "NodeDeleteActivity",
                     operation.getEntityId(),
@@ -340,6 +356,7 @@ define([
         var remoteNodeMoveCallback = function(operation){
             if(operation instanceof NodeMoveOperation && operation.getEntityId() === that.getEntityId()){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "NodeMoveActivity",
                     operation.getEntityId(),
@@ -380,6 +397,7 @@ define([
         var remoteNodeResizeCallback = function(operation){
             if(operation instanceof NodeResizeOperation && operation.getEntityId() === that.getEntityId()){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "NodeResizeActivity",
                     operation.getEntityId(),
@@ -400,6 +418,7 @@ define([
         var remoteNodeDeleteCallback = function(operation){
             if(operation instanceof NodeDeleteOperation && operation.getEntityId() === that.getEntityId()){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "NodeDeleteActivity",
                     operation.getEntityId(),
@@ -418,6 +437,7 @@ define([
         var historyNodeMoveCallback = function(operation){
             if(operation instanceof NodeMoveOperation && operation.getEntityId() === that.getEntityId()){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
                 processNodeMoveOperation(operation);
             }
         };
@@ -440,6 +460,7 @@ define([
         var historyNodeResizeCallback = function(operation){
             if(operation instanceof NodeResizeOperation && operation.getEntityId() === that.getEntityId()){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
                 processNodeResizeOperation(operation);
             }
         };
@@ -451,6 +472,8 @@ define([
         var historyNodeDeleteCallback = function(operation){
             if(operation instanceof NodeDeleteOperation && operation.getEntityId() === that.getEntityId()){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
                 processNodeDeleteOperation(operation);
             }
         };
@@ -727,8 +750,9 @@ define([
             _$awarenessTrace.css({
                 left: _appearance.left + _appearance.width/2,
                 top: _appearance.top + _appearance.height/2,
-                width: _appearance.width,
-                height: _appearance.height
+                width: _appearance.width * 1.2,
+                height: _appearance.height * 1.2,
+                zIndex: _zIndex - 1
             });
             _$node.css({
                 left: _appearance.left,
@@ -985,6 +1009,10 @@ define([
             };
         };
 
+        this.addGhostEdge = function(ghostEdge){
+            _relatedGhostEdges.push(ghostEdge);
+        };
+
         /**
          * Bind events for move tool
          */
@@ -1006,7 +1034,7 @@ define([
             .resizable({
                 containment: "parent",
                 start: function(ev/*,ui*/){
-                    _canvas.hideObjectGuidance();
+                    _canvas.hideGuidanceBox();
                     $sizePreview.show();
                     _$node.css({opacity:0.5});
                     _$node.append($sizePreview);
@@ -1014,7 +1042,7 @@ define([
                     _$node.resizable("option","grid",ev.ctrlKey ? [20,20] : '');
                 },
                 resize:function(ev,ui){
-                    _canvas.hideObjectGuidance();
+                    _canvas.hideGuidanceBox();
                     $sizePreview.text(Math.round(ui.size.width) + "x" + Math.round(ui.size.height));
                     repaint();
                     _$node.resizable("option","aspectRatio",ev.shiftKey);
@@ -1035,7 +1063,7 @@ define([
                     //$(ev.toElement).one('click',function(ev){ev.stopImmediatePropagation();});
                     that.draw();
                     repaint();
-                    _canvas.showObjectGuidance();
+                    _canvas.showGuidanceBox();
                 }
             })
 
@@ -1048,7 +1076,7 @@ define([
                     //ui.position.top = 0;
                     //ui.position.left = 0;
                     _canvas.select(that);
-                    _canvas.hideObjectGuidance();
+                    _canvas.hideGuidanceBox();
                     _$node.css({opacity:0.5});
                     _$node.resizable("disable");
                     drag = false;
@@ -1060,7 +1088,7 @@ define([
 
                     if(drag) repaint();
                     drag = true;
-                    _canvas.hideObjectGuidance();
+                    _canvas.hideGuidanceBox();
                     _$node.draggable("option","grid",ev.ctrlKey ? [20,20] : '');
                 },
                 stop: function(ev,ui){
@@ -1075,7 +1103,7 @@ define([
                     //that.canvas.callListeners(CONFIG.CANVAS.LISTENERS.NODEMOVE,id,offsetX,offsetY);
                     //Avoid node selection on drag stop
                     _$node.draggable("option","grid",'');
-                    _canvas.showObjectGuidance();
+                    _canvas.showGuidanceBox();
                     $(ev.toElement).one('click',function(ev){ev.stopImmediatePropagation();});
                 }
             })

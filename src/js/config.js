@@ -33,6 +33,13 @@ var require = {
         },
         classjs: {
             exports: "Class"
+        },
+        graphlib: {
+            exports: "graphlib",
+            deps: ['lodash']
+        },
+        bootstrap: {
+            deps: ["jquery"]
         }
     },
     paths: {
@@ -60,7 +67,9 @@ var require = {
         ildeApi: "lib/ildeApi",
         swfobject: "lib/vendor/swfobject/swfobject",
         jszip: "lib/vendor/jszip",
-        classjs: "lib/Class"
+        classjs: "lib/Class",
+        graphlib: "lib/vendor/graphlib.core.min",
+        bootstrap: "lib/vendor/bootstrap/dropdown.prefixed"
     }
 };
 
@@ -71,7 +80,8 @@ CONFIG = {
             PALETTE: "PALETTE",
             ATTRIBUTE: "ATTRIBUTE",
             ACTIVITY: "ACTIVITY",
-            GUIDANCE: "GUIDANCE"
+            GUIDANCE: "GUIDANCE",
+            HEATMAP: "HEATMAP"
         }
     },
     ENTITY: {
@@ -172,7 +182,9 @@ CONFIG = {
             METAMODEL: "my:ns:metamodel",
             INSTANCE: "my:ns:instance",
             GUIDANCEMODEL: "my:ns:guidancemodel",
-            GUIDANCERULES: "my:ns:guidancerules"
+            METAMODELPREVIEW: "my:ns:metamodelpreview",
+            GUIDANCEMETAMODEL: "my:ns:guidancemetamodel",
+            LOGICALGUIDANCEDEFINITION: "my:ns:logicalguidancedefinition"
         }
     }
 };

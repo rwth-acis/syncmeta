@@ -77,9 +77,8 @@ define([
                             case "string":
                                 attrObj[attributeId] = new SingleValueAttribute(id+"["+attribute.key.toLowerCase()+"]",attribute.key,that);
                                 //TODO: Add option to set identifier attribute in metamodel
-                                if(attribute.key.toLowerCase() === 'title' || attribute.key.toLowerCase() === "name"){
+                                if(attribute.key.toLowerCase() === 'label' || attribute.key.toLowerCase() === 'title' || attribute.key.toLowerCase() === "name"){
                                     that.setLabel(attrObj[attributeId]);
-                                    key = "label";
                                 }
                                 break;
                             case "integer":
@@ -167,6 +166,10 @@ define([
                 var json = AbstractNode.prototype.toJSON.call(this);
                 json.type = type;
                 return json;
+            };
+
+            this.get$node = function(){
+                return _$node;
             };
 
             init();

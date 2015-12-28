@@ -4,13 +4,13 @@ module.exports = function(grunt) {
 
     // Project configuration.
     //noinspection JSUnusedGlobalSymbols
-    var localConfig = grunt.file.readJSON('.localGruntConfig.json')
+    var localConfig = grunt.file.readJSON('.localGruntConfig.json');
     grunt.initConfig({
 
         pkg: grunt.file.readJSON('package.json'),
 
         baseUrl: localConfig.baseUrl,
-        roleSandboxUrl: localConfig.roleSandboxUrl || "http://role-sandbox.eu",
+        roleSandboxUrl: localConfig.roleSandboxUrl,
 
         bowerdir: grunt.file.readJSON('.bowerrc')['directory'],
         distdir: 'html',
@@ -23,7 +23,7 @@ module.exports = function(grunt) {
                 processContent: function (content/*, srcpath*/) {
                     return grunt.template.process(content);
                 },
-                processContentExclude: ['**/*.{png,gif,jpg}','**/lodash.js']
+                processContentExclude: ['**/*.{png,gif,jpg,svg,otf,woff,woff2,ttf}','**/lodash.js']
             },
             lib: {
                 files: [
@@ -45,7 +45,9 @@ module.exports = function(grunt) {
                     {src: '<%= bowerdir %>/lodash/dist/lodash.js', dest: '<%= distdir %>/js/lib/vendor/lodash.js'},
                     {cwd: '<%= bowerdir %>/swfobject/swfobject/',expand: true, src: ['**'], dest: '<%= distdir %>/js/lib/vendor/swfobject'},
                     {src: '<%= bowerdir %>/FileToDataURI/index.swf', dest: '<%= distdir %>/js/lib/vendor/FileToDataURI.swf'},
-                    {src: '<%= bowerdir %>/jszip/jszip.js', dest: '<%= distdir %>/js/lib/vendor/jszip.js'}
+                    {src: '<%= bowerdir %>/jszip/jszip.js', dest: '<%= distdir %>/js/lib/vendor/jszip.js'},
+                    {src: '<%= bowerdir %>/graphlib/dist/graphlib.core.min.js', dest: '<%= distdir %>/js/lib/vendor/graphlib.core.min.js'},
+                    {cwd: '<%= bowerdir %>/font-awesome/',expand: true, src: ['css/**', 'fonts/**'], dest: '<%= distdir %>/css/vendor/font-awesome/'}
                 ]
             },
             main: {
@@ -54,6 +56,22 @@ module.exports = function(grunt) {
                 ]
             }
         },
+
+        bootstrap_prefix: {
+          my_bootstrap: {
+              options: {
+                  // (Required) List of bootstrap CSS file(s). The first file must be the main bootstrap CSS file. The 
+                  // script parse it to retrieve all the bootstrap CSS classes which are then used to prefix the JS file(s). 
+                  // It's also possible to put minified CSS files in the list. 
+                  cssSource: ['<%= bowerdir %>/bootstrap/dist/css/bootstrap.min.css'],
+     
+                  //(Required) Path to the folder where the prefixed CSS files will be created 
+                  cssDest: '<%= distdir %>/css/vendor/',
+                  jsSource: ['<%= bowerdir %>/bootstrap/js/dropdown.js'],
+                  jsDest: '<%= distdir %>/js/lib/vendor/bootstrap'
+              }
+          }
+       },
 
         watch: {
             scripts: {
@@ -101,7 +119,7 @@ module.exports = function(grunt) {
                             title: "Palette",
                             description: "",
                             width: "160",
-                            height: "700"
+                            height: "400"
                         },
                         bodyPartial: '_palette_widget.tpl'
                     }
@@ -236,14 +254,31 @@ module.exports = function(grunt) {
                         meta: {
                             title: "Guidance widget",
                             description: "",
-                            width: "120",
-                            height: "60"
+                            width: "300",
+                            height: "400"
                         },
                         bodyPartial: '_guidance_widget.tpl'
                     }
                 },
                 files: {
                     'html/guidance.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
+                }
+            },
+
+            heatmap_widget: {
+                options: {
+                    data: {
+                        meta: {
+                            title: "Collaboration Overview",
+                            description: "",
+                            width: "400",
+                            height: "400"
+                        },
+                        bodyPartial: '_heat_map_widget.tpl'
+                    }
+                },
+                files: {
+                    'html/heatmap.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
                 }
             }
         },
@@ -313,6 +348,15 @@ module.exports = function(grunt) {
                     }
                 ]
             }
+        },
+        connect : {
+            server : {
+                options : {
+                    port : 8081,
+                    base : 'html',
+                    keepalive:true
+                }
+            }
         }
 
     });
@@ -329,15 +373,18 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-ssh');
     grunt.loadNpmTasks('grunt-amdcheck');
     grunt.loadNpmTasks('grunt-jsdoc');
+    grunt.loadNpmTasks('grunt-bootstrap-prefix');
     //grunt.loadNpmTasks('grunt-contrib-nodeunit');
+    grunt.loadNpmTasks('grunt-contrib-connect');
 
     // Whenever the "test" task is run, first clean the "tmp" dir, then run this
     // plugin's task(s), then test the result.
-    grunt.registerTask('build', ['clean','requirejs','copy:lib','copy:main','buildwidgets']);
+    grunt.registerTask('build', ['clean','requirejs','copy:lib','copy:main', 'bootstrap_prefix','buildwidgets']);
     grunt.registerTask('deploy', 'Deploy', function(){
         grunt.config.set('baseUrl', localConfig.deployUrl);
         grunt.config.set('roleSandboxUrl', "http://role-sandbox.eu");
-        grunt.task.run(['clean','requirejs','copy:lib','copy:main','buildwidgets'/*,'sftp'*/]);
+        grunt.task.run(['clean','requirejs','copy:lib','copy:main','bootstrap_prefix','buildwidgets'/*,'sftp'*/]);
     });
+    grunt.registerTask('serve',['clean', 'requirejs', 'copy:lib', 'copy:main', 'buildwidgets','connect']);
 
 };

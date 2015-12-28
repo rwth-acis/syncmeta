@@ -2,11 +2,11 @@ define(['guidance_widget/GuidanceStrategy'
 ],function(GuidanceStrategy) {
 
     var NoStrategy = GuidanceStrategy.extend({
-        init: function(guidanceRules, space){
-            this._super(guidanceRules, space);
+        init: function(logicalGuidanceDefinition, space){
+            this._super(logicalGuidanceDefinition, space);
+            this.showGuidanceBox("", []);
         },
         onEntitySelect: function(entityId, entityType){
-            this.showObjectGuidance(entityId, []);
         },
         onUserJoin: function(user){
 
@@ -14,6 +14,7 @@ define(['guidance_widget/GuidanceStrategy'
     });
 
     NoStrategy.NAME = "No Strategy";
+    NoStrategy.ICON = "ban";
 
     return NoStrategy;
 

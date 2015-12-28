@@ -79,6 +79,7 @@ define([
         dashstyle = dashstyle || "";
         Edge.prototype = new AbstractEdge();
         Edge.prototype.constructor = Edge;
+
         /**
          * Edge
          * @class canvas_widget.Edge
@@ -250,6 +251,27 @@ define([
 
             init();
         }
+
+        Edge.getShape = function(){
+            return shape;
+        };
+
+        Edge.getColor = function(){
+            return color;
+        };
+
+        Edge.getType = function(){
+            return type;
+        };
+
+        Edge.getArrowOverlays = function(){
+            var overlays = [];
+            if(arrows().hasOwnProperty(arrowType)){
+                overlays.push(arrows(color)[arrowType]);
+            }
+            return overlays;
+        }
+
         return Edge;
     }
 
