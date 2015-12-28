@@ -1,11 +1,10 @@
 define([
     'iwcw',
 	'Util',
-    'operations/non_ot/ShareGuidanceActivityOperation',
     'operations/non_ot/RevokeSharedActivityOperation',
     'classjs',
     'graphlib'
-],function(IWCW, Util, ShareGuidanceActivityOperation, RevokeSharedActivityOperation) {
+],function(IWCW, Util, RevokeSharedActivityOperation) {
 
     var ConcurrentRegion = Class.extend({
         init: function(activity, logicalGuidanceDefinition, initialNode){
@@ -49,12 +48,9 @@ define([
                 console.log("We are in the current thread");
                 if(!this.started){
                     console.log("Started concurrent region!!");
-                    //Here we have entered the first
-                    //thread and we notify other users that
-                    //we have startet a concurrent region
-                    var operation = new ShareGuidanceActivityOperation(this.activity.id, this.activity.initialNode, this.initialNode, this.activity.nodeMappings, this.remainingThreadIds, this.activity.lastAddedNode);
-                    this.iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.toNonOTOperation());
                     this.started = true;
+                    this.activity.shareActivityOperation(this.initialNode, this.remainingThreadIds);
+
                 }
         		return;
         	}

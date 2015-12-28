@@ -2,7 +2,7 @@ define([
     'operations/non_ot/NonOTOperation'
 ],/** @lends EntitySelectOperation */function(NonOTOperation) {
 
-    ShareGuidanceActivity.TYPE = "ShareGuidanceActivity";
+    GuidanceStrategyOperation.TYPE = "GuidanceStrategyOperation";
 
     /**
      * Entity Select Operation
@@ -11,7 +11,7 @@ define([
      * @constructor
      * @param {string} selectedEntityId Entity id of the selected entity
      */
-    function ShareGuidanceActivity(id, initialNode, joinNode, objectMappings, remainingThreads, objectId){
+    function GuidanceStrategyOperation(data){
 
         /**
          * Corresponding NonOtOperation
@@ -20,28 +20,8 @@ define([
          */
         var _nonOTOperation = null;
 
-        this.getId = function(){
-            return id;
-        };
-
-        this.getInitialNode = function(){
-            return initialNode;
-        };
-
-        this.getJoinNode = function(){
-            return joinNode;
-        };
-
-        this.getObjectMappings = function(){
-            return objectMappings;
-        };
-
-        this.getRemainingThreads = function(){
-            return remainingThreads;
-        };
-
-        this.getObjectId = function(){
-            return objectId;
+        this.getData = function(){
+            return data;
         };
 
         /**
@@ -67,14 +47,9 @@ define([
         this.toNonOTOperation = function(){
             if(_nonOTOperation === null){
                 _nonOTOperation = new NonOTOperation(
-                    ShareGuidanceActivity.TYPE,
+                    GuidanceStrategyOperation.TYPE,
                     JSON.stringify({
-                        id: id,
-                        initialNode: initialNode,
-                        joinNode: joinNode,
-                        objectMappings: objectMappings,
-                        remainingThreads: remainingThreads,
-                        objectId: objectId
+                        data: data
                     })
                 );
             }
@@ -82,6 +57,6 @@ define([
         };
     }
 
-    return ShareGuidanceActivity;
+    return GuidanceStrategyOperation;
 
 });

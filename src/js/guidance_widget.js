@@ -10,18 +10,18 @@ requirejs([
     'iwcw',
     'operations/non_ot/EntitySelectOperation',
     'operations/non_ot/ObjectGuidanceFollowedOperation',
+    'operations/non_ot/GuidanceStrategyOperation',
     'operations/ot/NodeAddOperation',
     'operations/ot/EdgeAddOperation',
     'operations/ot/NodeDeleteOperation',
     'operations/ot/EdgeDeleteOperation',
-    'operations/non_ot/ShareGuidanceActivityOperation',
     'guidance_widget/NoStrategy',
     'guidance_widget/AvoidConflictsStrategy',
     'guidance_widget/CollaborationStrategy',
     'promise!LogicalGuidanceDefinition',
     'promise!Space',
     'bootstrap'
-],function ($, _, require, IWCW, EntitySelectOperation, ObjectGuidanceFollowedOperation, NodeAddOperation, EdgeAddOperation, NodeDeleteOperation, EdgeDeleteOperation, ShareGuidanceActivityOperation, NoStrategy, AvoidConflictsStrategy, CollaborationStrategy, LogicalGuidanceDefinition, Space) {
+],function ($, _, require, IWCW, EntitySelectOperation, ObjectGuidanceFollowedOperation, GuidanceStrategyOperation, NodeAddOperation, EdgeAddOperation, NodeDeleteOperation, EdgeDeleteOperation, NoStrategy, AvoidConflictsStrategy, CollaborationStrategy, LogicalGuidanceDefinition, Space) {
     var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.GUIDANCE);
     var strategies = [
         NoStrategy,
@@ -41,10 +41,7 @@ requirejs([
     }
     $strategies.find("a").click(function(){
         var index = $(this).val();
-        selectedStrategy = new strategies[index](LogicalGuidanceDefinition, Space);
-        $("#guidance-strategy-ui").empty();
-        $("#guidance-strategy-ui").append(selectedStrategy.buildUi());
-        $("#strategyButton").text(strategies[index].NAME);
+        initStrategy(index);
     });
 
     var operationCallback = function(operation){
@@ -66,7 +63,24 @@ requirejs([
         else if (operation instanceof EdgeDeleteOperation){
             selectedStrategy.onEdgeDelete(operation.getEntityId(), operation.getType());
         }
+        else if(operation instanceof GuidanceStrategyOperation){
+            console.log("Received Guidance Strategy Operation");
+            selectedStrategy.onGuidanceOperation(operation.getData());
+        }
     };
+
+    var sendGuidanceStrategyOperation = function(data){
+        var operation = new GuidanceStrategyOperation(data);
+        iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.toNonOTOperation());
+    }
+
+    var initStrategy = function(index){
+        selectedStrategy = new strategies[index](LogicalGuidanceDefinition, Space);
+        selectedStrategy.sendGuidanceStrategyOperation = sendGuidanceStrategyOperation;
+        $("#guidance-strategy-ui").empty();
+        $("#guidance-strategy-ui").append(selectedStrategy.buildUi());
+        $("#strategyButton").text(strategies[index].NAME);
+    }
 
     var registerCallbacks = function(){
         iwc.registerOnDataReceivedCallback(operationCallback);

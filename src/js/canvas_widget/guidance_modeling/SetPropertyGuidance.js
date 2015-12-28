@@ -41,6 +41,10 @@ define([
             }
         });
 
+        _$node.on('show.bs.dropdown', function () {
+          _canvas.guidanceFollowed();
+        });
+
         _$node.find(".property-input").append(_propertyInput.get$node().find(".val").prop("disabled", false));
 
         _$node.hover(function(){

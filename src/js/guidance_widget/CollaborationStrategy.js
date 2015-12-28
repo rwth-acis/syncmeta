@@ -1,5 +1,5 @@
-define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStatus','operations/non_ot/ShareGuidanceActivityOperation', 'operations/non_ot/RevokeSharedActivityOperation','operations/non_ot/CollaborateInActivityOperation', 'operations/non_ot/MoveCanvasOperation', 'text!templates/guidance_modeling/guidance_strategy_ui.html'
-],function(Util,IWCW,GuidanceStrategy, ActivityStatus, ShareGuidanceActivityOperation, RevokeSharedActivityOperation, CollaborateInActivityOperation, MoveCanvasOperation, guidanceStrategyUiHtml) {
+define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/ActivityStatus', 'operations/non_ot/RevokeSharedActivityOperation','operations/non_ot/CollaborateInActivityOperation', 'operations/non_ot/MoveCanvasOperation', 'text!templates/guidance_modeling/guidance_strategy_ui.html'
+],function(Util,IWCW,GuidanceStrategy, ActivityStatus, RevokeSharedActivityOperation, CollaborateInActivityOperation, MoveCanvasOperation, guidanceStrategyUiHtml) {
 
     var CollaborationStrategy = GuidanceStrategy.extend({
         init: function(logicalGuidanceDefinition, space){
@@ -17,31 +17,19 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
 
             for(var i = 0; i < this.initialNodes.length; i++){
                 var nodeId = this.initialNodes[i];
-                this.activityStatusList[Util.generateRandomId()] = new ActivityStatus(this.logicalGuidanceDefinition, nodeId);
+                this.activityStatusList[Util.generateRandomId()] = new ActivityStatus(this.logicalGuidanceDefinition, nodeId, this);
             }
 
             this.iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.GUIDANCE);
-            this.iwc.registerOnDataReceivedCallback(this.onShareGuidanceActivityOperation, this);
             this.iwc.registerOnDataReceivedCallback(this.onRevokeSharedActivityOperation, this);
             this.iwc.registerOnDataReceivedCallback(this.onCollaborateInActivityOperation, this);
         },
         onEntitySelect: function(entityId, entityType){
         },
-        onUserJoin: function(user){
+        getUserName: function(){
+            return this.space.user[CONFIG.NS.PERSON.TITLE];
         },
-        onGuidanceFollowed: function(user, objectId, rule){
-            // if(user == this.space.user[CONFIG.NS.PERSON.JABBERID]){
-            //     console.log("Self follow");
-            // }
-            // else{
-            //     this.avoidObjects[objectId] = {};
-            //     var that = this;
-            //     setTimeout(function(){
-            //         console.log("Timeout!");
-            //         if(that.avoidObjects.hasOwnProperty(objectId))
-            //             delete that.avoidObjects[objectId]
-            //     },10000);
-            // }
+        onUserJoin: function(user){
         },
         checkNodeAddForActivity: function(id, type, activityStatus){
             var activityExpectedNodes = activityStatus.getExpectedNodes();
@@ -80,7 +68,7 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
                 this.currentActivity = null;
                 for(var i = 0; i < this.initialNodes.length; i++){
                     var nodeId = this.initialNodes[i];
-                    var newActivity = new ActivityStatus(this.logicalGuidanceDefinition, nodeId);
+                    var newActivity = new ActivityStatus(this.logicalGuidanceDefinition, nodeId, this);
                     nextNode = this.checkNodeAddForActivity(id, type, newActivity);
                     if(nextNode){
                         this.currentActivity = newActivity;
@@ -221,7 +209,7 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
             var guidanceItem = {
                 "type": "COLLABORATION_GUIDANCE",
                 "activityId": activity.id,
-                "label": "Help",
+                "label": "Help " + activity.userName,
                 "objectId": activity.lastAddedNode
             };
             return guidanceItem;
@@ -237,7 +225,7 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
                 listItem.attr("id", nodeId + "guidance-text");
                 listItem.find(".name").text(node.name);
                 //Get expected start nodes to create the description text
-                var tempActivity = new ActivityStatus(this.logicalGuidanceDefinition, nodeId);
+                var tempActivity = new ActivityStatus(this.logicalGuidanceDefinition, nodeId, this);
                 var expectedNodes = tempActivity.getExpectedNodes();
 
                 listItem.find(".description").text(this.getDescriptionTextForAction(expectedNodes[0]) + " to start this activity.");
@@ -298,13 +286,6 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
                 historyList.append(listItem);
             }
         },
-        onShareGuidanceActivityOperation: function(operation){
-            if(operation instanceof ShareGuidanceActivityOperation){
-                console.log("Received remote share guidance op!!!");
-                var activity = ActivityStatus.createFromShareOperation(this.logicalGuidanceDefinition, operation);
-                this.sharedActivities[activity.id] = activity;
-            }
-        },
         onRevokeSharedActivityOperation: function(operation){
             if(operation instanceof RevokeSharedActivityOperation){
                 console.log("Received remote revoke guidance op!!!");
@@ -323,6 +304,21 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
                     this.currentActivity.computeExpectedNodes();
                     this.showExpectedActions(this.currentActivity.lastAddedNode);
                 }
+            }
+        },
+        onGuidanceOperation: function(data){
+            console.log("onGuidanceOperation called in strategy!");
+            switch(data.operationType){
+                case "CollaborationStrategy:ShareActivity":
+                    // var senderId = operation.getNonOTOperation().getSender();
+                    // console.log(senderId);
+                    // var userName = this.iwc.getUser(senderId)[CONFIG.NS.PERSON.TITLE];
+                    // console.log("Received remote share guidance op!!!");
+                    // console.log(userName);
+                    var activity = ActivityStatus.createFromShareOperation(this.logicalGuidanceDefinition, this, data);
+                    activity.userName = data.sender;
+                    this.sharedActivities[activity.id] = activity;
+                    break;
             }
         }
     });

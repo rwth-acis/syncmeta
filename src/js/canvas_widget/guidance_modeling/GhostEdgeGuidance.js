@@ -78,6 +78,7 @@ define([
                 event.stopPropagation();
                 that.remove();
                 _canvas.createEdge(_currentEdge.getEdgeFunction().getType(),_currentEdge.getSource().getEntityId(),_currentEdge.getTarget().getEntityId());
+                _canvas.guidanceFollowed();
             });
         };
     };

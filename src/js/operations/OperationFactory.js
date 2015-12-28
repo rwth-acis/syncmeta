@@ -27,11 +27,11 @@ define([
     'operations/non_ot/CanvasViewChangeOperation',
     'operations/non_ot/CanvasResizeOperation',
     'operations/non_ot/CanvasZoomOperation',
-    'operations/non_ot/ShareGuidanceActivityOperation',
     'operations/non_ot/RevokeSharedActivityOperation',
     'operations/non_ot/CollaborateInActivityOperation',
-    'operations/non_ot/MoveCanvasOperation'
-],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeMoveZOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,JoinOperation, SetModelAttributeNodeOperation, ShowObjectGuidanceOperation, ShowGuidanceBoxOperation, ObjectGuidanceFollowedOperation, CanvasViewChangeOperation, CanvasResizeOperation, CanvasZoomOperation, ShareGuidanceActivityOperation, RevokeSharedActivityOperation, CollaborateInActivityOperation, MoveCanvasOperation) {
+    'operations/non_ot/MoveCanvasOperation',
+    'operations/non_ot/GuidanceStrategyOperation'
+],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeMoveZOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,JoinOperation, SetModelAttributeNodeOperation, ShowObjectGuidanceOperation, ShowGuidanceBoxOperation, ObjectGuidanceFollowedOperation, CanvasViewChangeOperation, CanvasResizeOperation, CanvasZoomOperation, RevokeSharedActivityOperation, CollaborateInActivityOperation, MoveCanvasOperation, GuidanceStrategyOperation) {
 
     /**
      * OperationFactory
@@ -110,9 +110,6 @@ define([
                     case CanvasZoomOperation.TYPE:
                         resOperation = new CanvasZoomOperation(data.zoom);
                         break;
-                    case ShareGuidanceActivityOperation.TYPE:
-                        resOperation = new ShareGuidanceActivityOperation(data.id, data.initialNode, data.joinNode, data.objectMappings, data.remainingThreads, data.objectId);
-                        break;
                     case RevokeSharedActivityOperation.TYPE:
                         resOperation = new RevokeSharedActivityOperation(data.id);
                         break;
@@ -122,7 +119,10 @@ define([
                     case MoveCanvasOperation.TYPE:
                         resOperation = new MoveCanvasOperation(data.objectId, data.transition);
                         break;
-                        
+                    case GuidanceStrategyOperation.TYPE:
+                        resOperation = new GuidanceStrategyOperation(data.data);
+                        resOperation.setNonOTOperation(operation);
+                        break;
                 }
                 return resOperation;
             },
