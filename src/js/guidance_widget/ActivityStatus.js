@@ -171,7 +171,10 @@ define([
             return this.nodeMappings[guidanceNodeId];
         },
         shareActivityOperation: function(joinNode, remainingThreads){
+<<<<<<< HEAD
             console.log(this);
+=======
+>>>>>>> 677caecad597a7c662cef03221812a85dc5d3bfe
             var data = {
                 operationType: "CollaborationStrategy:ShareActivity",
                 joinNode: joinNode,
