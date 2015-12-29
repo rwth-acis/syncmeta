@@ -15,8 +15,6 @@ define([
     'canvas_widget/GeneralisationEdge',
     'canvas_widget/BiDirAssociationEdge',
     'canvas_widget/UniDirAssociationEdge',
-    'canvas_widget/guidance_modeling/context_node',
-    'canvas_widget/guidance_modeling/object_tool_node',
     'text!templates/canvas_widget/circle_node.html',
     'text!templates/canvas_widget/diamond_node.html',
     'text!templates/canvas_widget/rectangle_node.html',
@@ -31,7 +29,7 @@ define([
     'promise!Metamodel',
     'promise!Guidancemodel',
     'graphlib'
-],/** @lends EntityManager */function(_,Util,AbstractEntity,Node,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,ModelAttributesNode,Edge,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge,ContextNode,ObjectToolNode,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,setPropertyNodeHtml,activityFinalNodeHtml,startActivityNodeHtml,actionNodeHtml,entityNodeHtml,callActivityNodeHtml,metamodel, guidancemodel, graphlib) {
+],/** @lends EntityManager */function(_,Util,AbstractEntity,Node,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,ModelAttributesNode,Edge,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,setPropertyNodeHtml,activityFinalNodeHtml,startActivityNodeHtml,actionNodeHtml,entityNodeHtml,callActivityNodeHtml,metamodel, guidancemodel, graphlib) {
 
     /**
      * Predefined node shapes, first is default

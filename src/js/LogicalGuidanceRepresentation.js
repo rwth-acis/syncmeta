@@ -1,20 +1,18 @@
 define([
     'jqueryui'
-],/** @lends LogicalGuidanceDefinition */function ($) {
+],function ($) {
 
     var resourceSpace = new openapp.oo.Resource(openapp.param.space());
 
     /**
-     * LogicalGuidanceDefinition
-     * @name LogicalGuidanceDefinition
+     * LogicalGuidanceRepresentation
+     * @name LogicalGuidanceRepresentation
      */
-    function LogicalGuidanceDefinition(){
+    function LogicalGuidanceRepresentation(){
         var deferred = $.Deferred();
-        
-        //Get the guidance rules
             resourceSpace.getSubResources({
                 relation: openapp.ns.role + "data",
-                type: CONFIG.NS.MY.LOGICALGUIDANCEDEFINITION,
+                type: CONFIG.NS.MY.LOGICALGUIDANCEREPRESENTATION,
                 onAll: function(data) {
                     if(data === null || data.length === 0){
                         deferred.resolve({});
@@ -29,5 +27,5 @@ define([
         return deferred.promise();
     }
 
-    return LogicalGuidanceDefinition();
+    return LogicalGuidanceRepresentation();
 });

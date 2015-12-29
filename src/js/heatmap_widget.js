@@ -14,10 +14,8 @@ requirejs([
     'operations/ot/NodeResizeOperation',
     'operations/ot/NodeDeleteOperation',
     'operations/non_ot/CanvasViewChangeOperation',
-    'operations/non_ot/CanvasResizeOperation',
-    'operations/non_ot/CanvasZoomOperation',
     'promise!Model'
-],function ($, _, require, IWCOT, NodePreview, NodeAddOperation,NodeMoveOperation,NodeResizeOperation,NodeDeleteOperation, CanvasViewChangeOperation, CanvasResizeOperation, CanvasZoomOperation, model) {
+],function ($, _, require, IWCOT, NodePreview, NodeAddOperation,NodeMoveOperation,NodeResizeOperation,NodeDeleteOperation, CanvasViewChangeOperation, model) {
     var iwc = IWCOT.getInstance(CONFIG.WIDGET.NAME.HEATMAP);
     var $heatmap = $("#heatmap");
     var scaleFactor = $heatmap.width() / 9000;

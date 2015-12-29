@@ -23,7 +23,6 @@ requirejs([
     'palette_widget/BiDirAssociationEdgeTool',
     'palette_widget/UniDirAssociationEdgeTool',
     'palette_widget/GeneralisationEdgeTool',
-    'palette_widget/guidance_modeling_tools/ObjectGuidanceTool',
     'text!templates/canvas_widget/circle_node.html',
     'text!templates/canvas_widget/diamond_node.html',
     'text!templates/canvas_widget/rectangle_node.html',
@@ -32,7 +31,7 @@ requirejs([
     'promise!Model',
     'promise!Metamodel',
     'promise!Guidancemodel'
-],function ($,Util,IWCW,ExportMetaModelOperation,Palette,MoveTool,Separator,NodeTool,ObjectNodeTool,AbstractClassNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,GeneralisationEdgeTool,ObjectGuidanceTool,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,model,metamodel,guidancemodel) {
+],function ($,Util,IWCW,ExportMetaModelOperation,Palette,MoveTool,Separator,NodeTool,ObjectNodeTool,AbstractClassNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,GeneralisationEdgeTool,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,model,metamodel,guidancemodel) {
 
     var componentName = "palette"+Util.generateRandomId();
     var iwc = IWCW.getInstance(componentName);

@@ -5,9 +5,8 @@
         'Util',
         'iwcw',
         'operations/non_ot/ExportMetaModelOperation',
-        'operations/non_ot/ExportGuidanceRulesOperation',
         'operations/non_ot/ExportLogicalGuidanceRepresentationOperation',
-    ],function($,_,Util,IWCW,ExportMetaModelOperation, ExportGuidanceRulesOperation, ExportLogicalGuidanceRepresentationOperation){
+    ],function($,_,Util,IWCW,ExportMetaModelOperation, ExportLogicalGuidanceRepresentationOperation){
 
         var componentName = "export"+Util.generateRandomId();
 
@@ -117,7 +116,7 @@
                             deferred.resolve(data.uri);
                         },{
                             "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate":"http://purl.org/role/terms/data",
-                            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type":CONFIG.NS.MY.LOGICALGUIDANCEDEFINITION
+                            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type":CONFIG.NS.MY.LOGICALGUIDANCEREPRESENTATION
                         });
                 deferred.promise().then(function(dataURI){
                     openapp.resource.put(
@@ -186,18 +185,6 @@
                     }
                 });
                 var operation = new ExportMetaModelOperation(componentName,null);
-                iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.toNonOTOperation());
-                return deferred.promise();
-            }
-
-            function getGuidanceRules(){
-                var deferred = $.Deferred();
-                iwc.registerOnDataReceivedCallback(function(operation){
-                    if(operation instanceof ExportGuidanceRulesOperation){
-                        deferred.resolve(operation.getData());
-                    }
-                });
-                var operation = new ExportGuidanceRulesOperation(componentName,null);
                 iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.toNonOTOperation());
                 return deferred.promise();
             }

@@ -1,14 +1,13 @@
 define([
     'iwcw',
-    'operations/non_ot/ShowObjectGuidanceOperation',
     'operations/non_ot/ShowGuidanceBoxOperation',
     'graphlib',
     'classjs'
-],function(IWCW ,ShowObjectGuidanceOperation, ShowGuidanceBoxOperation, graphlib) {
+],function(IWCW, ShowGuidanceBoxOperation, graphlib) {
 
     var GuidanceStrategy = Class.extend({
-        init: function(logicalGuidanceDefinition, space){
-            this.logicalGuidanceDefinition = graphlib.json.read(logicalGuidanceDefinition);
+        init: function(logicalGuidanceRepresentation, space){
+            this.logicalGuidanceRepresentation = graphlib.json.read(logicalGuidanceRepresentation);
             this.space = space;
             this.iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.GUIDANCE);
         },

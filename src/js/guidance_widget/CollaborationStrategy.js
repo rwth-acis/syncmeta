@@ -2,9 +2,9 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
 ],function(Util,IWCW,GuidanceStrategy, ActivityStatus, RevokeSharedActivityOperation, CollaborateInActivityOperation, MoveCanvasOperation, guidanceStrategyUiHtml) {
 
     var CollaborationStrategy = GuidanceStrategy.extend({
-        init: function(logicalGuidanceDefinition, space){
-            this._super(logicalGuidanceDefinition, space);
-            this.initialNodes = this.logicalGuidanceDefinition.sources();
+        init: function(logicalGuidanceRepresentation, space){
+            this._super(logicalGuidanceRepresentation, space);
+            this.initialNodes = this.logicalGuidanceRepresentation.sources();
             this.nodeMappings = {};
             this.activityStatusList = {};
             this.lastCreatedObjectId = "";
@@ -17,7 +17,7 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
 
             for(var i = 0; i < this.initialNodes.length; i++){
                 var nodeId = this.initialNodes[i];
-                this.activityStatusList[Util.generateRandomId()] = new ActivityStatus(this.logicalGuidanceDefinition, nodeId, this);
+                this.activityStatusList[Util.generateRandomId()] = new ActivityStatus(this.logicalGuidanceRepresentation, nodeId, this);
             }
 
             this.iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.GUIDANCE);
@@ -35,7 +35,7 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
             var activityExpectedNodes = activityStatus.getExpectedNodes();
             for(var i = 0; i < activityExpectedNodes.length; i++){
                 var nodeId = activityExpectedNodes[i];
-                var node = this.logicalGuidanceDefinition.node(nodeId);
+                var node = this.logicalGuidanceRepresentation.node(nodeId);
                 if(node.type == "CREATE_OBJECT_ACTION" && node.objectType == type){
                     return nodeId;
                 }
@@ -46,7 +46,7 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
             var activityExpectedNodes = activityStatus.getExpectedNodes();
             for(var i = 0; i < activityExpectedNodes.length; i++){
                 var nodeId = activityExpectedNodes[i];
-                var node = this.logicalGuidanceDefinition.node(nodeId);
+                var node = this.logicalGuidanceRepresentation.node(nodeId);
                 if(node.type == "CREATE_RELATIONSHIP_ACTION" && node.relationshipType == type){
                     return nodeId;
                 }
@@ -68,7 +68,7 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
                 this.currentActivity = null;
                 for(var i = 0; i < this.initialNodes.length; i++){
                     var nodeId = this.initialNodes[i];
-                    var newActivity = new ActivityStatus(this.logicalGuidanceDefinition, nodeId, this);
+                    var newActivity = new ActivityStatus(this.logicalGuidanceRepresentation, nodeId, this);
                     nextNode = this.checkNodeAddForActivity(id, type, newActivity);
                     if(nextNode){
                         this.currentActivity = newActivity;
@@ -77,7 +77,7 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
                 }
             }
             if(this.currentActivity){
-                var node = this.logicalGuidanceDefinition.node(nextNode);
+                var node = this.logicalGuidanceRepresentation.node(nextNode);
                 this.currentActivity.setNodeMapping(node.createdObjectId, id);
                 this.currentActivity.proceed(nextNode);
             }
@@ -152,7 +152,7 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
                 var activityExpectedNodes = this.currentActivity.getExpectedNodes();
                 for(var i = 0; i < activityExpectedNodes.length; i++){
                     var nodeId = activityExpectedNodes[i];
-                    var node = this.logicalGuidanceDefinition.node(nodeId);
+                    var node = this.logicalGuidanceRepresentation.node(nodeId);
                     switch(node.type){
                         case "SET_PROPERTY_ACTION":
                         guidanceItems.push(this.createSetPropertyGuidanceItem("", node));
@@ -220,12 +220,12 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
             var guidanceList = this.ui.find(".guidance-list")
             for(var i = 0; i < this.initialNodes.length; i++){
                 var nodeId = this.initialNodes[i];
-                var node = this.logicalGuidanceDefinition.node(nodeId);
+                var node = this.logicalGuidanceRepresentation.node(nodeId);
                 var listItem = $("<li class='bs-list-group-item guidance-item'><p><i class='fa fa-puzzle-piece' style='margin-right:5px;'></i><span class='name'></span></p><p><small class='bs-text-muted description'></small></p></li>");
                 listItem.attr("id", nodeId + "guidance-text");
                 listItem.find(".name").text(node.name);
                 //Get expected start nodes to create the description text
-                var tempActivity = new ActivityStatus(this.logicalGuidanceDefinition, nodeId, this);
+                var tempActivity = new ActivityStatus(this.logicalGuidanceRepresentation, nodeId, this);
                 var expectedNodes = tempActivity.getExpectedNodes();
 
                 listItem.find(".description").text(this.getDescriptionTextForAction(expectedNodes[0]) + " to start this activity.");
@@ -241,7 +241,7 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
             }
         },
         getDescriptionTextForAction: function(nodeId){
-            var node = this.logicalGuidanceDefinition.node(nodeId);
+            var node = this.logicalGuidanceRepresentation.node(nodeId);
             switch(node.type){
                 case "CREATE_OBJECT_ACTION":
                     return "Create a new " + node.objectType;
@@ -269,7 +269,7 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
             for(var i = this.activityHistory.length - 1; i >= 0; i--){
                 var activity = this.activityHistory[i];
                 var nodeId = activity.initialNode;
-                var node = this.logicalGuidanceDefinition.node(nodeId);
+                var node = this.logicalGuidanceRepresentation.node(nodeId);
                 var listItem = $("<li class='bs-list-group-item guidance-history-item' style='cursor: pointer;'><p><i class='fa fa-puzzle-piece' style='margin-right:5px;'></i><span class='name'></span></p><p><small class='bs-text-muted description'></small></p></li>");
                 listItem.attr("id", nodeId + "guidance-history-item");
                 listItem.find(".name").text(node.name);
@@ -315,7 +315,7 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
                     // var userName = this.iwc.getUser(senderId)[CONFIG.NS.PERSON.TITLE];
                     // console.log("Received remote share guidance op!!!");
                     // console.log(userName);
-                    var activity = ActivityStatus.createFromShareOperation(this.logicalGuidanceDefinition, this, data);
+                    var activity = ActivityStatus.createFromShareOperation(this.logicalGuidanceRepresentation, this, data);
                     activity.userName = data.sender;
                     this.sharedActivities[activity.id] = activity;
                     break;

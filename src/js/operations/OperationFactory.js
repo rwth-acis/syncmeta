@@ -16,22 +16,17 @@ define([
     'operations/non_ot/ActivityOperation',
     'operations/non_ot/ExportDataOperation',
     'operations/non_ot/ExportMetaModelOperation',
-    'operations/non_ot/ExportGuidanceRulesOperation',
     'operations/non_ot/ExportLogicalGuidanceRepresentationOperation',
     'operations/non_ot/ExportImageOperation',
     'operations/non_ot/JoinOperation',
     'operations/non_ot/SetModelAttributeNodeOperation',
-    'operations/non_ot/ShowObjectGuidanceOperation',
     'operations/non_ot/ShowGuidanceBoxOperation',
-    'operations/non_ot/ObjectGuidanceFollowedOperation',
     'operations/non_ot/CanvasViewChangeOperation',
-    'operations/non_ot/CanvasResizeOperation',
-    'operations/non_ot/CanvasZoomOperation',
     'operations/non_ot/RevokeSharedActivityOperation',
     'operations/non_ot/CollaborateInActivityOperation',
     'operations/non_ot/MoveCanvasOperation',
     'operations/non_ot/GuidanceStrategyOperation'
-],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeMoveZOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,JoinOperation, SetModelAttributeNodeOperation, ShowObjectGuidanceOperation, ShowGuidanceBoxOperation, ObjectGuidanceFollowedOperation, CanvasViewChangeOperation, CanvasResizeOperation, CanvasZoomOperation, RevokeSharedActivityOperation, CollaborateInActivityOperation, MoveCanvasOperation, GuidanceStrategyOperation) {
+],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeMoveZOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,JoinOperation, SetModelAttributeNodeOperation, ShowGuidanceBoxOperation, CanvasViewChangeOperation, RevokeSharedActivityOperation, CollaborateInActivityOperation, MoveCanvasOperation, GuidanceStrategyOperation) {
 
     /**
      * OperationFactory
@@ -75,9 +70,6 @@ define([
                     case ExportMetaModelOperation.TYPE:
                         resOperation = new ExportMetaModelOperation(data.requestingComponent,data.data);
                         break;
-                    case ExportGuidanceRulesOperation.TYPE:
-                        resOperation = new ExportGuidanceRulesOperation(data.requestingComponent,data.data);
-                        break;
                     case ExportLogicalGuidanceRepresentationOperation.TYPE:
                         resOperation = new ExportLogicalGuidanceRepresentationOperation(data.requestingComponent,data.data);
                         break;
@@ -87,15 +79,8 @@ define([
                     case JoinOperation.TYPE:
                         resOperation = new JoinOperation(data.user,data.done,data.sender,data.data);
                         break;
-                    case ShowObjectGuidanceOperation.TYPE:
-                        resOperation = new ShowObjectGuidanceOperation(data.objectId, data.objectGuidanceRules);
-                        break;
                     case ShowGuidanceBoxOperation.TYPE:
                         resOperation = new ShowGuidanceBoxOperation(data.label, data.guidance, data.entityId);
-                        break;
-                    case ObjectGuidanceFollowedOperation.TYPE:
-                        resOperation = new ObjectGuidanceFollowedOperation(data.objectId, data.objectGuidanceRule);
-                        resOperation.setNonOTOperation(operation)
                         break;
                     case SetModelAttributeNodeOperation.TYPE:
                         resOperation = new SetModelAttributeNodeOperation();
@@ -103,12 +88,6 @@ define([
                     case CanvasViewChangeOperation.TYPE:
                         resOperation = new CanvasViewChangeOperation(data.left, data.top, data.width, data.height, data.zoom);
                         resOperation.setNonOTOperation(operation);
-                        break;
-                    case CanvasResizeOperation.TYPE:
-                        resOperation = new CanvasResizeOperation(data.width, data.height);
-                        break;
-                    case CanvasZoomOperation.TYPE:
-                        resOperation = new CanvasZoomOperation(data.zoom);
                         break;
                     case RevokeSharedActivityOperation.TYPE:
                         resOperation = new RevokeSharedActivityOperation(data.id);

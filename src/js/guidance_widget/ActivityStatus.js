@@ -6,12 +6,12 @@ define([
 ],function(Util,ConcurrentRegion) {
 
     var ActivityStatus = Class.extend({
-        init: function(logicalGuidanceDefinition, initialNode, strategy){
+        init: function(logicalGuidanceRepresentation, initialNode, strategy){
             this.id = Util.generateRandomId();
-            this.logicalGuidanceDefinition = logicalGuidanceDefinition;
+            this.logicalGuidanceRepresentation = logicalGuidanceRepresentation;
             this.initialNode = initialNode;
             this.currentNode = initialNode;
-            this.name = logicalGuidanceDefinition.node(initialNode).name || "";
+            this.name = logicalGuidanceRepresentation.node(initialNode).name || "";
             this.computeExpectedNodes();
             this.currentSubActivity = null;
             this.possibleSubActivities = [];
@@ -21,23 +21,23 @@ define([
             this.strategy = strategy;
         },
         computeExpectedNodes: function(){
-            var nodesToResolve = this.logicalGuidanceDefinition.successors(this.currentNode);
+            var nodesToResolve = this.logicalGuidanceRepresentation.successors(this.currentNode);
             var expectedNodes = [];
             this.possibleSubActivities = [];
             while(nodesToResolve.length > 0){
                 var nextNodesToResolve = [];
                 for (var i = 0; i < nodesToResolve.length; i++){
                     var nodeId = nodesToResolve[i];
-                    var node = this.logicalGuidanceDefinition.node(nodeId);
+                    var node = this.logicalGuidanceRepresentation.node(nodeId);
                     if(node.type == "SET_PROPERTY_ACTION"){
                         expectedNodes.push(nodeId);
-                        nextNodesToResolve = nextNodesToResolve.concat(this.logicalGuidanceDefinition.successors(nodeId));
+                        nextNodesToResolve = nextNodesToResolve.concat(this.logicalGuidanceRepresentation.successors(nodeId));
                     }
                     else if(node.type == "MERGE_NODE"){
-                        nextNodesToResolve = nextNodesToResolve.concat(this.logicalGuidanceDefinition.successors(nodeId));
+                        nextNodesToResolve = nextNodesToResolve.concat(this.logicalGuidanceRepresentation.successors(nodeId));
                     }
                     else if(node.type == "CALL_ACTIVITY_ACTION"){
-                        var subActivity = new ActivityStatus(this.logicalGuidanceDefinition, node.initialNodeId, this.strategy);
+                        var subActivity = new ActivityStatus(this.logicalGuidanceRepresentation, node.initialNodeId, this.strategy);
                         subActivity.lastAddedNode = this.lastAddedNode;
                         subActivity.nodeMappings = this.nodeMappings;
                         this.possibleSubActivities.push(subActivity);
@@ -45,19 +45,19 @@ define([
                     }
                     else if(node.type == "CONCURRENCY_NODE"){
                         //Check if it is a fork or a join node
-                        var ingoing = this.logicalGuidanceDefinition.predecessors(nodeId).length;
-                        var outgoing = this.logicalGuidanceDefinition.successors(nodeId).length;
+                        var ingoing = this.logicalGuidanceRepresentation.predecessors(nodeId).length;
+                        var outgoing = this.logicalGuidanceRepresentation.successors(nodeId).length;
                         if(outgoing > ingoing){
                             // Fork node
                             if(!this.concurrentRegion)
-                                this.concurrentRegion = new ConcurrentRegion(this, this.logicalGuidanceDefinition, nodeId);
+                                this.concurrentRegion = new ConcurrentRegion(this, this.logicalGuidanceRepresentation, nodeId);
                             nextNodesToResolve.push(this.concurrentRegion.getCurrentThreadStart());
                         }
                         else{
                             // Join node
                             if(this.concurrentRegion.isLastThread() && this.concurrentRegion.isOwner()){
                                 //If it is the last thread we can take the actions after the join node
-                                nextNodesToResolve = nextNodesToResolve.concat(this.logicalGuidanceDefinition.successors(nodeId));
+                                nextNodesToResolve = nextNodesToResolve.concat(this.logicalGuidanceRepresentation.successors(nodeId));
                             }
                             else{
                                 console.log("Next thread start");
@@ -80,7 +80,7 @@ define([
             this.expectedNodes = expectedNodes;
         },
         proceed: function(nodeId){
-            var node = this.logicalGuidanceDefinition.node(nodeId);
+            var node = this.logicalGuidanceRepresentation.node(nodeId);
             //Are we entering a subactivity?
             if(!this.currentSubActivity && this.possibleSubActivities.length > 0){
                 for(var i = 0; i < this.possibleSubActivities.length; i++){
@@ -151,7 +151,7 @@ define([
         reachesEnd: function(){
             for(var i = 0; i < this.expectedNodes.length; i++){
                 var nodeId = this.expectedNodes[i];
-                var node = this.logicalGuidanceDefinition.node(nodeId);
+                var node = this.logicalGuidanceRepresentation.node(nodeId);
                 if(node.type == "ACTIVITY_FINAL_NODE")
                     return true;
             }
@@ -186,7 +186,7 @@ define([
        
     });
 
-    ActivityStatus.createFromShareOperation = function(logicalGuidanceDefinition, strategy, opData){
+    ActivityStatus.createFromShareOperation = function(logicalGuidanceRepresentation, strategy, opData){
         var id = opData.id;
         var initialNode = opData.initialNode;
         var joinNode = opData.joinNode;
@@ -194,12 +194,12 @@ define([
         var remainingThreads = opData.remainingThreads;
         var lastAddedNode = opData.objectId;
         
-        var activity = new ActivityStatus(logicalGuidanceDefinition, initialNode, strategy);
+        var activity = new ActivityStatus(logicalGuidanceRepresentation, initialNode, strategy);
         activity.nodeMappings = objectMappings;
         activity.id = id;
         activity.lastAddedNode = lastAddedNode;
 
-        var concurrentRegion = new ConcurrentRegion(activity, logicalGuidanceDefinition, joinNode);
+        var concurrentRegion = new ConcurrentRegion(activity, logicalGuidanceRepresentation, joinNode);
         concurrentRegion.remainingThreadIds = remainingThreads;
         concurrentRegion.currentThreadId = remainingThreads[0];
         concurrentRegion.started = true;

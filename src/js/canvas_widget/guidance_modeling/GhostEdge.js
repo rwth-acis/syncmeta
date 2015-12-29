@@ -4,7 +4,7 @@ define([
 'lodash',
 'text!templates/guidance_modeling/ghost_edge.html',
 'bootstrap'
-],/** @lends ContextNode */function($, jsPlumb, _, ghostEdgeHtml) {
+],function($, jsPlumb, _, ghostEdgeHtml) {
     function GhostEdge(canvas, edgeFunction, source, target){
         var _jsPlumbConnection = null;
         var _label = edgeFunction.getType();

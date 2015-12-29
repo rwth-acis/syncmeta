@@ -5,7 +5,7 @@ define([
 'canvas_widget/guidance_modeling/GhostEdge',
 'text!templates/guidance_modeling/ghost_edge.html',
 'bootstrap'
-],/** @lends ContextNode */function($, jsPlumb, _, GhostEdge, ghostEdgeHtml) {
+],function($, jsPlumb, _, GhostEdge, ghostEdgeHtml) {
     function GhostEdgeGuidance(canvas, node1, node2){
         var _button = $(ghostEdgeHtml);
         var _dropdown = _button.find(".bs-dropdown-toggle");

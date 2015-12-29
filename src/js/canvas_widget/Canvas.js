@@ -10,14 +10,10 @@ define([
     'operations/non_ot/ActivityOperation',
     'operations/non_ot/ExportDataOperation',
     'operations/non_ot/ExportMetaModelOperation',
-    'operations/non_ot/ExportGuidanceRulesOperation',
     'operations/non_ot/ExportLogicalGuidanceRepresentationOperation',
     'operations/non_ot/ExportImageOperation',
-    'operations/non_ot/ShowObjectGuidanceOperation',
     'operations/non_ot/ShowGuidanceBoxOperation',
     'operations/non_ot/CanvasViewChangeOperation',
-    'operations/non_ot/CanvasResizeOperation',
-    'operations/non_ot/CanvasZoomOperation',
     'operations/non_ot/RevokeSharedActivityOperation',
     'operations/non_ot/MoveCanvasOperation',
     'operations/non_ot/GuidanceStrategyOperation',
@@ -26,14 +22,13 @@ define([
     'canvas_widget/EntityManager',
     'canvas_widget/AbstractCanvas',
     'canvas_widget/MoveTool',
-    'canvas_widget/guidance_modeling/ObjectGuidance',
     'canvas_widget/guidance_modeling/GuidanceBox',
     'canvas_widget/guidance_modeling/SelectToolGuidance',
     'canvas_widget/guidance_modeling/SetPropertyGuidance',
     'canvas_widget/guidance_modeling/GhostEdgeGuidance',
     'canvas_widget/guidance_modeling/CollaborationGuidance',
     'jquery.transformable-PATCHED'
-],/** @lends Canvas */function($,jsPlumb,IWCOT,Util,NodeAddOperation,EdgeAddOperation,ToolSelectOperation,EntitySelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportGuidanceRulesOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,ShowObjectGuidanceOperation,ShowGuidanceBoxOperation,CanvasViewChangeOperation,CanvasResizeOperation,CanvasZoomOperation,RevokeSharedActivityOperation,MoveCanvasOperation,GuidanceStrategyOperation,AbstractEntity,ModelAttributesNode,EntityManager,AbstractCanvas,MoveTool,ObjectGuidance,GuidanceBox,SelectToolGuidance, SetPropertyGuidance, GhostEdgeGuidance, CollaborationGuidance) {
+],/** @lends Canvas */function($,jsPlumb,IWCOT,Util,NodeAddOperation,EdgeAddOperation,ToolSelectOperation,EntitySelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,ShowGuidanceBoxOperation,CanvasViewChangeOperation,RevokeSharedActivityOperation,MoveCanvasOperation,GuidanceStrategyOperation,AbstractEntity,ModelAttributesNode,EntityManager,AbstractCanvas,MoveTool,GuidanceBox,SelectToolGuidance, SetPropertyGuidance, GhostEdgeGuidance, CollaborationGuidance) {
     Canvas.prototype = new AbstractCanvas();
     Canvas.prototype.constructor = Canvas;
     /**
@@ -109,9 +104,6 @@ define([
          * @type {{left: number, top: number, right: number, bottom: number}}
          */
         var canvasOffset = _$node.offset();
-
-        var _objectGuidanceOperation = null;
-        var _objectGuidanceInstances = [];
 
         var _guidanceBox = null;
         var _guidanceBoxLabel = "";
@@ -333,18 +325,6 @@ define([
             }
         };
 
-        var localExportGuidanceRulesCallback = function(operation){
-            if(operation instanceof ExportGuidanceRulesOperation){
-                if(operation.getData() === null){
-                    operation.setData(EntityManager.generateGuidanceRules());
-                    _iwcot.sendLocalNonOTOperation(operation.getRequestingComponent(),operation.toNonOTOperation());
-                } else {
-                    //Do nothing here
-                }
-
-            }
-        };
-
         var localMoveCanvasOperation = function(operation){
             if(operation instanceof MoveCanvasOperation){
                 that.scrollNodeIntoView(operation.getObjectId(), operation.getTransition());
@@ -553,52 +533,6 @@ define([
                 _ghostEdges[i].remove();
             }
             _ghostEdges = [];
-        };
-
-        this.showObjectGuidance = function(){
-            if(_objectGuidanceOperation === null)
-                return;
-            this.hideObjectGuidance();
-            _objectGuidanceInstances = [];
-            var operation = _objectGuidanceOperation;
-            var srcObject = EntityManager.findNode(operation.getObjectId());
-            if(srcObject === null)
-                return;
-            var rules = operation.getObjectGuidanceRules();
-            var appearance = srcObject.getAppearance();
-            var fixedWidth = 100;
-            var verticalMargin = 40;
-            var horizontalMargin = 10;
-            var left = appearance.left + appearance.width / 2;
-            left -= (rules.length - 1) * (fixedWidth + horizontalMargin) / 2 + fixedWidth / 2;
-            var top = appearance.top + appearance.height + verticalMargin;
-            for(var i = 0; i < rules.length; i++){
-                var rule = rules[i];
-                var id = Util.generateRandomId(24);
-                var $shape = EntityManager.getNodeType(rule.destObjectType).SHAPE.clone();
-                var defaultWidth = EntityManager.getNodeType(rule.destObjectType).DEFAULT_WIDTH || 100;
-                var defaultHeight = EntityManager.getNodeType(rule.destObjectType).DEFAULT_HEIGHT || 50;
-                var height = defaultHeight * (fixedWidth / defaultWidth);
-                var objectGuidance = new ObjectGuidance(id, $shape, left, top, fixedWidth, height, operation.getObjectId(), rule);
-                _objectGuidanceInstances.push(objectGuidance);
-                objectGuidance.addToCanvas(that);
-                objectGuidance.draw();
-                jsPlumb.connect({
-                    source: srcObject.get$node(),
-                    target: objectGuidance.get$node(),
-                    anchors: ["Bottom", "Top"],
-                    connector: "Straight",
-                    endpoint: "Blank",
-                    paintStyle: {lineWidth: 3, strokeStyle : "#456", dashstyle:"1 1"}
-                });
-                left += fixedWidth + horizontalMargin;
-            }
-        };
-
-        this.hideObjectGuidance = function(){
-            for(var i = 0; i < _objectGuidanceInstances.length; i++){
-                jsPlumb.remove(_objectGuidanceInstances[i].get$node());
-            }
         };
 
         /**
@@ -923,11 +857,14 @@ define([
             ctx.fillStyle = _$node.css('backgroundColor');
             ctx.fill();
 
-            _.each(_.sortBy($.makeArray(_$node.contents()),function(e){
+            _.each(_.sortBy($.makeArray(_$node.children()),function(e){
+                console.log(e);
                 return $(e).css('zIndex');
             }),function(e){
                 var $this = $(e);
-                if($this.attr('id') !== 'modelAttributes'){
+                if(typeof($this.attr('id')) === 'undefined' ||
+                    (!$this.attr('id').startsWith('modelAttributes') &&
+                   !$this.attr('id').endsWith('awareness'))){
                     promises.push(convertNodeTreeToCanvas($this,ctx));
                 }
             });
@@ -1178,7 +1115,6 @@ define([
             _iwcot.registerOnLocalDataReceivedCallback(localToolSelectCallback);
             _iwcot.registerOnLocalDataReceivedCallback(localExportDataCallback);
             _iwcot.registerOnLocalDataReceivedCallback(localExportMetaModelCallback);
-            _iwcot.registerOnLocalDataReceivedCallback(localExportGuidanceRulesCallback);
             _iwcot.registerOnLocalDataReceivedCallback(localExportLogicalGuidanceRepresentationCallback);
             _iwcot.registerOnLocalDataReceivedCallback(localExportImageCallback);
             _iwcot.registerOnLocalDataReceivedCallback(localShowGuidanceBoxCallback);
@@ -1201,7 +1137,6 @@ define([
             _iwcot.unregisterOnLocalDataReceivedCallback(localToolSelectCallback);
             _iwcot.unregisterOnLocalDataReceivedCallback(localExportDataCallback);
             _iwcot.unregisterOnLocalDataReceivedCallback(localExportMetaModelCallback);
-            _iwcot.unregisterOnLocalDataReceivedCallback(localExportGuidanceRulesCallback);
             _iwcot.unregisterOnLocalDataReceivedCallback(localExportLogicalGuidanceRepresentationCallback);
             _iwcot.unregisterOnLocalDataReceivedCallback(localExportImageCallback);
             _iwcot.unregisterOnLocalDataReceivedCallback(localShowGuidanceBoxCallback);

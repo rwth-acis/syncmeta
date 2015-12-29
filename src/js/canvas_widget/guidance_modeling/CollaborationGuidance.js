@@ -4,7 +4,7 @@ define([
     'lodash',
     'operations/non_ot/CollaborateInActivityOperation',
     'text!templates/guidance_modeling/collaboration_guidance.html'
-],/** @lends ContextNode */function(IWCOTW, $,_, CollaborateInActivityOperation, selectToolGuidanceHtml) {
+],function(IWCOTW, $,_, CollaborateInActivityOperation, selectToolGuidanceHtml) {
     function CollaborationGuidance(id, label, activityId, objectId, canvas){
         var _iwc = IWCOTW.getInstance(CONFIG.WIDGET.NAME.MAIN);
         var _id = id;

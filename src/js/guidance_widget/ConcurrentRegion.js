@@ -7,13 +7,13 @@ define([
 ],function(IWCW, Util, RevokeSharedActivityOperation) {
 
     var ConcurrentRegion = Class.extend({
-        init: function(activity, logicalGuidanceDefinition, initialNode){
+        init: function(activity, logicalGuidanceRepresentation, initialNode){
             this.activity = activity;
-            this.logicalGuidanceDefinition = logicalGuidanceDefinition;
+            this.logicalGuidanceRepresentation = logicalGuidanceRepresentation;
             this.initialNode = initialNode;
             this.iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.GUIDANCE);
             this.subConcurrentRegion = null;
-            this.threadStartingNodes = this.logicalGuidanceDefinition.successors(initialNode);
+            this.threadStartingNodes = this.logicalGuidanceRepresentation.successors(initialNode);
         	this.currentThreadId = null;
         	this.remainingThreadIds = [];
         	this.threads = [];
@@ -21,7 +21,7 @@ define([
             this.started = false;
             this._isOwner = true;
 
-        	var startingNodes = this.logicalGuidanceDefinition.successors(initialNode);
+        	var startingNodes = this.logicalGuidanceRepresentation.successors(initialNode);
         	for(var i = 0; i < startingNodes.length; i++){
         		this.remainingThreadIds.push(i);
         		this.threads.push(this.findThread(startingNodes[i]));
@@ -83,12 +83,12 @@ define([
         	var nodesInThread = [startNodeId];
         	var nodesToCheck = [];
         	var nextNodesToCheck = [];
-        	nodesToCheck = this.logicalGuidanceDefinition.successors(startNodeId);
+        	nodesToCheck = this.logicalGuidanceRepresentation.successors(startNodeId);
         	while(nodesToCheck.length > 0){
 	        	nextNodesToCheck = [];
 	        	for(var i = 0; i < nodesToCheck.length; i++){
 	        		var nodeId = nodesToCheck[i];
-	        		var node = this.logicalGuidanceDefinition.node(nodeId);
+	        		var node = this.logicalGuidanceRepresentation.node(nodeId);
 	        		if(nodesInThread.indexOf(nodeId) >= 0)
 	        			continue;
 	        		else{
@@ -97,7 +97,7 @@ define([
 	        			}
 	        			else{
 	        				nodesInThread.push(nodeId);
-	        				nextNodesToCheck = nextNodesToCheck.concat(this.logicalGuidanceDefinition.successors(nodeId));
+	        				nextNodesToCheck = nextNodesToCheck.concat(this.logicalGuidanceRepresentation.successors(nodeId));
 	        			}
 	        		}
 	        	}

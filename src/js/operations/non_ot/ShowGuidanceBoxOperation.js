@@ -22,7 +22,6 @@ define([
         var _label = label;
         var _guidance = guidance;
         var _entityId = entityId
-        // var _objectGuidanceRules = objectGuidanceRules;
 
         this.getLabel = function(){
             return _label;
