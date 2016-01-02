@@ -25,7 +25,12 @@ define([
         	for(var i = 0; i < startingNodes.length; i++){
         		this.remainingThreadIds.push(i);
         		this.threads.push(this.findThread(startingNodes[i]));
+                console.log("Thread " + i);
+                console.log(this.logicalGuidanceRepresentation.node(startingNodes[i]).objectType)
         	}
+
+            console.log("Concurrent region threads:");
+            console.log(this.remainingThreadIds);
 
         	this.currentThreadId = this.remainingThreadIds.shift();
 
@@ -37,6 +42,7 @@ define([
         	return this.threadStartingNodes[this.currentThreadId];
         },
         getNextThreadStart: function(nodeId){
+            console.log("Next thread start requested");
         	return this.threadStartingNodes[this.remainingThreadIds[0]];
         },
         isFinished: function(){
@@ -61,12 +67,17 @@ define([
 
         		return;
         	}
+            console.log("These threads remain:");
+            console.log(this.remainingThreadIds)
         	for(var i = 0; i < this.remainingThreadIds.length; i++){
         		var threadId = this.remainingThreadIds[i];
         		//Have we moved to another thread?
         		if(this.threads[threadId].indexOf(nodeId) >= 0){
-        			this.remainingThreadIds.splice(this.remainingThreadIds.indexOf(this.currentThreadId), 1);
+                    console.log("Started action in thread " + threadId);
+        			this.remainingThreadIds.splice(this.remainingThreadIds.indexOf(threadId), 1);
         			this.currentThreadId = threadId;
+                    console.log("Remaining thread ids after moving to the next thread:");
+                    console.log(this.remainingThreadIds);
                     if(this.isLastThread()){
                         console.log("LAST THREAD!");
                         var operation = new RevokeSharedActivityOperation(this.activity.id);

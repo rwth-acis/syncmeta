@@ -385,6 +385,6 @@ module.exports = function(grunt) {
         grunt.config.set('roleSandboxUrl', "http://role-sandbox.eu");
         grunt.task.run(['clean','requirejs','copy:lib','copy:main','bootstrap_prefix','buildwidgets'/*,'sftp'*/]);
     });
-    grunt.registerTask('serve',['clean', 'requirejs', 'copy:lib', 'copy:main', 'buildwidgets','connect']);
+    grunt.registerTask('serve',['build','connect']);
 
 };

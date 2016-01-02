@@ -60,8 +60,6 @@ define([
                                 nextNodesToResolve = nextNodesToResolve.concat(this.logicalGuidanceRepresentation.successors(nodeId));
                             }
                             else{
-                                console.log("Next thread start");
-                                console.log(this.concurrentRegion.getNextThreadStart());
                                 //If it is not the last thread we take the actions of the next thread
                                 nextNodesToResolve.push(this.concurrentRegion.getNextThreadStart());
                             }
