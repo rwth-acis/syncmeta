@@ -14,8 +14,9 @@ requirejs([
     'operations/ot/NodeResizeOperation',
     'operations/ot/NodeDeleteOperation',
     'operations/non_ot/CanvasViewChangeOperation',
-    'promise!Model'
-],function ($, _, require, IWCOT, NodePreview, NodeAddOperation,NodeMoveOperation,NodeResizeOperation,NodeDeleteOperation, CanvasViewChangeOperation, model) {
+    'promise!Model',
+    'promise!Guidancemodel'
+],function ($, _, require, IWCOT, NodePreview, NodeAddOperation,NodeMoveOperation,NodeResizeOperation,NodeDeleteOperation, CanvasViewChangeOperation, model, guidancemodel) {
     var iwc = IWCOT.getInstance(CONFIG.WIDGET.NAME.HEATMAP);
     var $heatmap = $("#heatmap");
     var scaleFactor = $heatmap.width() / 9000;
@@ -24,6 +25,10 @@ requirejs([
     $heatmap.append($window);
     var previewNodes = {};
     var localUserId = iwc.getUser()[CONFIG.NS.PERSON.JABBERID];
+
+    if(guidancemodel.isGuidanceEditor()){
+        model = guidancemodel.guidancemodel;
+    }
 
     var minLeft = 4500;
     var minTop = 4500;
