@@ -19,12 +19,15 @@ define([
             this.concurrentRegion = null;
             this.nodeHistory = [];
             this.strategy = strategy;
+            this.isOwner = true;
         },
         computeExpectedNodes: function(){
             var nodesToResolve = this.logicalGuidanceRepresentation.successors(this.currentNode);
             var expectedNodes = [];
             this.possibleSubActivities = [];
             while(nodesToResolve.length > 0){
+                console.log("Nodes to resolve: ");
+                console.log(nodesToResolve);
                 var nextNodesToResolve = [];
                 for (var i = 0; i < nodesToResolve.length; i++){
                     var nodeId = nodesToResolve[i];
@@ -61,7 +64,9 @@ define([
                             }
                             else{
                                 //If it is not the last thread we take the actions of the next thread
-                                nextNodesToResolve.push(this.concurrentRegion.getNextThreadStart());
+                                var nextThreadStart = this.concurrentRegion.getNextThreadStart();
+                                if(nextThreadStart)
+                                    nextNodesToResolve.push(nextThreadStart);
                             }
                         }
                     }
@@ -96,7 +101,7 @@ define([
             }
             //Are we proceeding in the main activity?
             else{
-                this.subActivity = null;
+                this.currentSubActivity = null;
                 this.nodeHistory.push(this.currentNode);
                 this.currentNode = nodeId;
                 //Check if we are in a concurrent region and have advanced there
@@ -138,7 +143,7 @@ define([
             return expectedNodes;
         },
         reset: function(){
-            this.subActivity = null;
+            this.currentSubActivity = null;
             this.currentNode = this.initialNode;
             this.computeExpectedNodes();
             this.nodeMappings = {};
@@ -179,7 +184,21 @@ define([
                 objectId: this.lastAddedNode,
                 sender: this.strategy.getUserName()
             };
+            this.strategy.sharedActivities[this.id] = this;
             this.strategy.sendGuidanceStrategyOperation(data);
+        },
+        updateSharedActivityOperation: function(removedThreadId){
+            var data = {
+                operationType: "CollaborationStrategy:UpdateSharedActivity",
+                activityId: this.id,
+                removedThreadId: removedThreadId
+            };
+            this.strategy.sendGuidanceStrategyOperation(data);
+        },
+        removeThreadFromConcurrentRegion: function(threadId){
+            if(this.concurrentRegion){
+                this.concurrentRegion.removeOpenThread(threadId);
+            }
         }
        
     });
@@ -196,15 +215,17 @@ define([
         activity.nodeMappings = objectMappings;
         activity.id = id;
         activity.lastAddedNode = lastAddedNode;
+        activity.isOwner = false;
 
         var concurrentRegion = new ConcurrentRegion(activity, logicalGuidanceRepresentation, joinNode);
+        console.log("Created shared activity. Remaining thread ids:");
+        console.log(remainingThreads);
         concurrentRegion.remainingThreadIds = remainingThreads;
-        concurrentRegion.currentThreadId = remainingThreads[0];
         concurrentRegion.started = true;
         concurrentRegion._isOwner = false;
 
         activity.concurrentRegion = concurrentRegion;
-        activity.currentNode = joinNode;
+        activity.currentNode = logicalGuidanceRepresentation.predecessors(joinNode)[0];
         return activity;
     };
 

@@ -171,6 +171,15 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
 
             //Add collaboration guidance
             for(var activityId in this.sharedActivities){
+                //Don't show if we currently work in the activity
+                if(this.currentActivity && this.currentActivity.id == activityId){
+                    continue;
+                }
+
+                //Don't show if we started the activity
+                if(this.sharedActivities[activityId].isOwner)
+                    continue;
+
                 var activity = this.sharedActivities[activityId];
                 guidanceItems.push(this.createCollaborationGuidanceItem(activity));
             }
@@ -300,7 +309,8 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
                 if(this.sharedActivities.hasOwnProperty(operation.getId())){
                     this.addActivityToHistory(this.currentActivity);
                     this.currentActivity = this.sharedActivities[operation.getId()];
-                    delete this.sharedActivities[operation.getId()];
+                    //delete this.sharedActivities[operation.getId()];
+                    this.currentActivity.concurrentRegion.startNextThread();
                     this.currentActivity.computeExpectedNodes();
                     this.showExpectedActions(this.currentActivity.lastAddedNode);
                 }
@@ -310,14 +320,17 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
             console.log("onGuidanceOperation called in strategy!");
             switch(data.operationType){
                 case "CollaborationStrategy:ShareActivity":
-                    // var senderId = operation.getNonOTOperation().getSender();
-                    // console.log(senderId);
-                    // var userName = this.iwc.getUser(senderId)[CONFIG.NS.PERSON.TITLE];
-                    // console.log("Received remote share guidance op!!!");
-                    // console.log(userName);
                     var activity = ActivityStatus.createFromShareOperation(this.logicalGuidanceRepresentation, this, data);
                     activity.userName = data.sender;
                     this.sharedActivities[activity.id] = activity;
+                    break;
+                case "CollaborationStrategy:UpdateSharedActivity":
+                    console.log("Received UpdateSharedActivityOperation!");
+                    var activityId = data.activityId;
+                    if(this.sharedActivities.hasOwnProperty(activityId)){
+                        console.log("Removing thread " + data.removedThreadId);
+                        this.sharedActivities[activityId].removeThreadFromConcurrentRegion(data.removedThreadId);
+                    }
                     break;
             }
         }

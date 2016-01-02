@@ -76,6 +76,7 @@ define([
                     console.log("Started action in thread " + threadId);
         			this.remainingThreadIds.splice(this.remainingThreadIds.indexOf(threadId), 1);
         			this.currentThreadId = threadId;
+                    this.activity.updateSharedActivityOperation(threadId);
                     console.log("Remaining thread ids after moving to the next thread:");
                     console.log(this.remainingThreadIds);
                     if(this.isLastThread()){
@@ -89,6 +90,16 @@ define([
         },
         isLastThread: function(){
         	return this.remainingThreadIds.length == 0;
+        },
+        removeOpenThread: function(threadId){
+            var index = this.remainingThreadIds.indexOf(threadId);
+            if(index >= 0){
+                this.remainingThreadIds.splice(index, 1);
+            }
+        },
+        startNextThread: function(threadId){
+            this.currentThreadId = this.remainingThreadIds.shift();
+            this.activity.updateSharedActivityOperation(this.currentThreadId);
         },
         findThread: function(startNodeId){
         	var nodesInThread = [startNodeId];
