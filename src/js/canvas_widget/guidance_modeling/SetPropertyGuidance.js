@@ -6,10 +6,11 @@ define([
     'canvas_widget/SingleSelectionAttribute',
     'canvas_widget/IntegerAttribute',
     'canvas_widget/BooleanAttribute',
+    'canvas_widget/FileAttribute',
     'text!templates/canvas_widget/abstract_node.html',
     'text!templates/guidance_modeling/set_property_guidance.html',
     'bootstrap'
-],function(IWCOTW, $,_,SingleValueAttribute,SingleSelectionAttribute,IntegerAttribute,BooleanAttribute,abstractNodeHtml, setPropertyGuidanceHtml) {
+],function(IWCOTW, $,_,SingleValueAttribute,SingleSelectionAttribute,IntegerAttribute,BooleanAttribute,FileAttribute,abstractNodeHtml, setPropertyGuidanceHtml) {
     function SetPropertyGuidance(id, label, entity, propertyName, canvas){
         var _iwc = IWCOTW.getInstance(CONFIG.WIDGET.NAME.MAIN);
         var _id = id;
@@ -22,7 +23,6 @@ define([
         var _propertyInput;
 
         var entityAttributes = entity.getAttributes();
-        console.log(SingleValueAttribute.name);
 
         for(var attribId in entityAttributes){
             var attrib = entityAttributes[attribId];
@@ -91,6 +91,24 @@ define([
                 ev.stopPropagation();
             });
         }
+        else if(_entityAttribute instanceof FileAttribute){
+            console.log("is file attribute");
+            _propertyInput = new FileAttribute(entity.getEntityId()+"["+propertyName.toLowerCase()+"]",propertyName,entity, true);
+            //_propertyInput.getValue().setValue(_entityAttribute.getValue().getValue());
+            
+            // _entityAttribute.get$node().find(".val").bind("change", function(){
+            //     _propertyInput.getValue().setValue(_entityAttribute.getValue().getValue());
+            // });
+
+            // _propertyInput.get$node().find(".val").bind("change", function(ev){
+            //     _entityAttribute.getValue().setValue(_propertyInput.getValue().getValue());
+            // });
+
+            _$node.find(".property-input").append(_propertyInput.getValue().get$node());
+            _$node.find(".property-input").click(function(ev){
+                ev.stopPropagation();
+            });
+        }
 
         _propertyInput.get$node().find(".val").keypress(function(ev){
             if(ev.which == 13){
@@ -105,11 +123,11 @@ define([
 
         _$node.hover(function(){
             if(_entityId)
-                _canvas.highlightNode(_entityId);
+                _canvas.highlightEntity(_entityId);
         },
         function(){
             if(_entityId)
-                _canvas.unhighlightNode(_entityId);
+                _canvas.unhighlightEntity(_entityId);
         });
 
         this.get$node = function(){

@@ -508,7 +508,10 @@ define([
                         guidanceItem = new SelectToolGuidance(_guidanceDefinition[i].id, _guidanceDefinition[i].label, _guidanceDefinition[i].tool, that, _guidanceDefinition[i].icon);
                         break;
                     case "SET_PROPERTY_GUIDANCE":
-                        guidanceItem = new SetPropertyGuidance(_guidanceDefinition[i].id, _guidanceDefinition[i].label, EntityManager.findNode(_guidanceDefinition[i].entityId), _guidanceDefinition[i].propertyName, that);
+                        var entity = EntityManager.findNode(_guidanceDefinition[i].entityId);
+                        if(!entity)
+                            entity = EntityManager.findEdge(_guidanceDefinition[i].entityId);
+                        guidanceItem = new SetPropertyGuidance(_guidanceDefinition[i].id, _guidanceDefinition[i].label, entity, _guidanceDefinition[i].propertyName, that);
                         break;
                     case "COLLABORATION_GUIDANCE":
                         guidanceItem = new CollaborationGuidance("", _guidanceDefinition[i].label, _guidanceDefinition[i].activityId, _guidanceDefinition[i].objectId, that);
@@ -733,12 +736,24 @@ define([
             }
         };
 
-        this.highlightNode = function(nodeId){
-            EntityManager.findNode(nodeId).highlight("blue", "Set property");
+        this.highlightEntity = function(entityId){
+            var entity = EntityManager.findNode(entityId);
+
+            if(entity)
+                entity.highlight("blue", "Set property");
+            else{
+                entity = EntityManager.findEdge(entityId);
+                entity.highlight("blue");
+            }
         };
 
-        this.unhighlightNode = function(nodeId){
-            EntityManager.findNode(nodeId).unhighlight();
+        this.unhighlightEntity = function(entityId){
+            var entity = EntityManager.findNode(entityId);
+
+            if(!entity)
+                entity = EntityManager.findEdge(entityId);
+
+            entity.unhighlight();
         };
 
         /**

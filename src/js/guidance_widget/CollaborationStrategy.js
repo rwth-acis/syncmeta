@@ -124,8 +124,13 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
             if(this.currentActivity){
                 nextNode = this.checkEdgeAddForActivity(id, type, this.currentActivity)
             }
-            if(nextNode)
+            if(nextNode){
+                var node = this.logicalGuidanceRepresentation.node(nextNode);
+                console.log("Edge add node");
+                console.log(node);
+                this.currentActivity.setNodeMapping(node.createdRelationshipId, id);
                 this.currentActivity.proceed(nextNode);
+            }
             else
                 this.currentActivity = null;
             
@@ -186,6 +191,10 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
             this.showGuidanceBox(activityName, guidanceItems, entityId);
         },
         createSetPropertyGuidanceItem: function(id, action){
+            console.log("Create set property guidance");
+            console.log(action);
+            console.log("NodeMapping");
+            console.log(this.currentActivity.getNodeMapping(action.sourceObjectId));
             var guidanceItem = {
                 "id": id,
                 "type": "SET_PROPERTY_GUIDANCE",
