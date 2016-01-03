@@ -21,15 +21,15 @@ define([
      * @param {canvas_widget.AbstractEntity} subjectEntity Entity the attribute is assigned to
      * @param {Object} options Selection options as key value object
      */
-    function SingleSelectionAttribute(id,name,subjectEntity,options){
+    function SingleSelectionAttribute(id,name,subjectEntity,options,useAttributeHtml){
         AbstractAttribute.call(this,id,name,subjectEntity);
-
+        useAttributeHtml = typeof useAttributeHtml !== 'undefinded' ? useAttributeHtml : false;
         /***
          * Value object of value
          * @type {canvas_widget.SelectionValue}
          * @private
          */
-        var _value = new SelectionValue(id,name,this,this.getRootSubjectEntity(),options);
+        var _value = new SelectionValue(id,name,this,this.getRootSubjectEntity(),options,useAttributeHtml);
 
         /**
          * jQuery object of DOM node representing the node
@@ -72,6 +72,10 @@ define([
             var json = AbstractAttribute.prototype.toJSON.call(this);
             json.value = _value.toJSON();
             return json;
+        };
+
+        this.getOptions = function(){
+            return options;
         };
 
         /**

@@ -7,8 +7,9 @@ define([
     'canvas_widget/AbstractAttribute',
     'operations/ot/ValueChangeOperation',
     'operations/non_ot/ActivityOperation',
-    'text!templates/canvas_widget/selection_value.html'
-],/** @lends SelectionValue */function($,jsPlumb,_,IWCOT,AbstractValue,AbstractAttribute,ValueChangeOperation,ActivityOperation,selectionValueHtml) {
+    'text!templates/canvas_widget/selection_value.html',
+    'text!templates/attribute_widget/selection_value.html'
+],/** @lends SelectionValue */function($,jsPlumb,_,IWCOT,AbstractValue,AbstractAttribute,ValueChangeOperation,ActivityOperation,selectionValueHtml,attributeSelectionValueHtml) {
 
     SelectionValue.prototype = new AbstractValue();
     SelectionValue.prototype.constructor = SelectionValue;
@@ -24,8 +25,9 @@ define([
      * @param {canvas_widget.AbstractNode|canvas_widget.AbstractEdge} rootSubjectEntity Topmost entity in the chain of entity the attribute is assigned to
      * @param {Object} options Selection options
      */
-    function SelectionValue(id,name,subjectEntity,rootSubjectEntity,options){
+    function SelectionValue(id,name,subjectEntity,rootSubjectEntity,options,useAttributeHtml){
         var that = this;
+        useAttributeHtml = typeof useAttributeHtml !== 'undefinded' ? useAttributeHtml : false;
 
         AbstractValue.call(this,id,name,subjectEntity,rootSubjectEntity);
 
@@ -35,6 +37,10 @@ define([
          * @private
          */
         var _value = _.keys(options)[0];
+
+        if(useAttributeHtml){
+            selectionValueHtml = attributeSelectionValueHtml;
+        }
 
         /**
          * jQuery object of DOM node representing the node
@@ -128,13 +134,29 @@ define([
             }
         };
 
+        var propagateValueChange = function(type,value,position){
+            var operation = new ValueChangeOperation(that.getEntityId(),value,type,position);
+            propagateValueChangeOperation(operation);
+        };
+
+        var init = function(){
+            _$node.off();
+            _$node.change(function(){
+                propagateValueChange(CONFIG.OPERATION.TYPE.UPDATE,$(this).val(),0);
+            });
+        };
+
         /**
          * Set value
          * @param {string} value
          */
         this.setValue = function(value){
             _value = value;
-            _$node.text(options[value]);
+            if(useAttributeHtml){
+                _$node.val(value);
+            }
+            else
+                _$node.text(options[value]);
         };
 
         /**
@@ -189,6 +211,7 @@ define([
             _iwcot.unregisterOnHistoryChangedCallback(historyValueChangeCallback);
         };
 
+        init();
         if(_iwcot){
             that.registerCallbacks();
         }

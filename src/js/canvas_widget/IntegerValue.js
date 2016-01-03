@@ -7,8 +7,9 @@ define([
     'canvas_widget/AbstractAttribute',
     'operations/ot/ValueChangeOperation',
     'operations/non_ot/ActivityOperation',
-    'text!templates/canvas_widget/integer_value.html'
-],/** @lends IntegerValue */function($,jsPlumb,_,IWCOT,AbstractValue,AbstractAttribute,ValueChangeOperation,ActivityOperation,integerValueHtml) {
+    'text!templates/canvas_widget/integer_value.html',
+    'text!templates/attribute_widget/integer_value.html'
+],/** @lends IntegerValue */function($,jsPlumb,_,IWCOT,AbstractValue,AbstractAttribute,ValueChangeOperation,ActivityOperation,integerValueHtml, attributeIntegerValueHtml) {
 
     IntegerValue.prototype = new AbstractValue();
     IntegerValue.prototype.constructor = IntegerValue;
@@ -23,8 +24,11 @@ define([
      * @param {canvas_widget.AbstractEntity} subjectEntity Entity the attribute is assigned to
      * @param {canvas_widget.AbstractNode|canvas_widget.AbstractEdge} rootSubjectEntity Topmost entity in the chain of entity the attribute is assigned to
      */
-    function IntegerValue(id,name,subjectEntity,rootSubjectEntity){
+    function IntegerValue(id,name,subjectEntity,rootSubjectEntity, useAttributeHtml){
         var that = this;
+
+        if(useAttributeHtml)
+            integerValueHtml = attributeIntegerValueHtml;
 
         AbstractValue.call(this,id,name,subjectEntity,rootSubjectEntity);
 
@@ -139,13 +143,32 @@ define([
             }
         };
 
+        var propagateValueChange = function(type,value,position){
+            var operation = new ValueChangeOperation(that.getEntityId(),value,type,position);
+            propagateValueChangeOperation(operation);
+        };
+
+        var init = function(){
+            _$node.off();
+            _$node.change(function(){
+                var value = parseInt(_$node.val());
+                if(isNaN(value)){
+                    value = 0;
+                }
+                propagateValueChange(CONFIG.OPERATION.TYPE.UPDATE,value,0);
+            });
+        };
+
         /**
          * Set value
          * @param {number} value
          */
         this.setValue = function(value){
             _value = value;
-            _$node.text(value);
+            if(useAttributeHtml)
+                _$node.val(value);
+            else
+                _$node.text(value);
         };
 
         /**
@@ -200,6 +223,7 @@ define([
             _iwcot.unregisterOnHistoryChangedCallback(historyValueChangeCallback);
         };
 
+        init();
         if(_iwcot){
             that.registerCallbacks();
         }
