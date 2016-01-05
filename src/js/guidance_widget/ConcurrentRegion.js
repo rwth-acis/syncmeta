@@ -26,7 +26,6 @@ define([
         		this.remainingThreadIds.push(i);
         		this.threads.push(this.findThread(startingNodes[i]));
                 console.log("Thread " + i);
-                console.log(this.logicalGuidanceRepresentation.node(startingNodes[i]).objectType)
         	}
 
             console.log("Concurrent region threads:");

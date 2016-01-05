@@ -43,6 +43,7 @@ define([
                         var subActivity = new ActivityStatus(this.logicalGuidanceRepresentation, node.initialNodeId, this.strategy);
                         subActivity.lastAddedNode = this.lastAddedNode;
                         subActivity.nodeMappings = this.nodeMappings;
+                        subActivity.parentActivityNode = nodeId;
                         this.possibleSubActivities.push(subActivity);
                         expectedNodes = expectedNodes.concat(subActivity.getExpectedNodes());
                     }
@@ -77,6 +78,7 @@ define([
                 nodesToResolve = nextNodesToResolve;
             }
             
+            //Filter out duplicates
             expectedNodes = expectedNodes.filter(function(item, pos, self) {
                 return self.indexOf(item) == pos;
             });
@@ -91,7 +93,7 @@ define([
                     if(subActivity.getExpectedNodes().indexOf(nodeId) >= 0){
                         this.currentSubActivity = subActivity;
                         this.nodeHistory.push(this.currentNode);
-                        this.currentNode = subActivity.initialNode;
+                        this.currentNode = subActivity.parentActivityNode;
                     }
                 }
             }
