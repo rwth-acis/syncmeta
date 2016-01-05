@@ -93,16 +93,18 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
         },
         onNodeDelete: function(id, type){
             var lastCreatedEntityId = this.createdEntityHistory[this.createdEntityHistory.length - 1];
-            if(lastCreatedEntityId == id){
+            if(lastCreatedEntityId == id && this.currentActivity){
                 this.currentActivity.revertLastAction();
                 this.createdEntityHistory.pop();
                 this.lastCreatedObjectId = this.createdEntityHistory[this.createdEntityHistory.length - 1];
                 this.showExpectedActions(this.lastCreatedObjectId);
             }
             else{
+                var updateGuidance = false;
                 if(this.currentActivity){
                     if(!this.checkActivityValidityAfterNodeDelete(this.currentActivity, id)){
                         this.currentActivity = null;
+                        updateGuidance = true;
                     }
                 }
                 var newHistoryList = [];
@@ -112,9 +114,20 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
                         newHistoryList.push(activity);
                     }
                 }
+
                 this.activityHistory = newHistoryList;
                 this.redrawHistoryList();
-                this.showGuidanceBox("", []);
+
+                for(activityId in this.sharedActivities){
+                    var sharedActivity = this.sharedActivities[activityId];
+                    if(!this.checkActivityValidityAfterNodeDelete(sharedActivity, id)){
+                        delete this.sharedActivities[activityId];
+                        updateGuidance = true;
+                    }
+                }
+
+                if(updateGuidance)
+                    this.showExpectedActions(this.lastCreatedObjectId);
             }
         },
         onEdgeAdd: function(id, type){
