@@ -51,7 +51,7 @@ define([
             _propertyInput.getValue().get$node().bind("change", function(ev){
                 _entityAttribute.getValue().setValue(_propertyInput.getValue().getValue());
             });
-            console.log(_propertyInput.getValue().get$node());
+
             _$node.find(".property-input").append(_propertyInput.getValue().get$node());
             _$node.find(".property-input").click(function(ev){
                 ev.stopPropagation();
@@ -92,7 +92,6 @@ define([
             });
         }
         else if(_entityAttribute instanceof FileAttribute){
-            console.log("is file attribute");
             _propertyInput = new FileAttribute(entity.getEntityId()+"["+propertyName.toLowerCase()+"]",propertyName,entity, true);
             //_propertyInput.getValue().setValue(_entityAttribute.getValue().getValue());
             

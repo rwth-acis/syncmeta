@@ -139,8 +139,6 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
             }
             if(nextNode){
                 var node = this.logicalGuidanceRepresentation.node(nextNode);
-                console.log("Edge add node");
-                console.log(node);
                 this.currentActivity.setNodeMapping(node.createdRelationshipId, id);
                 this.currentActivity.proceed(nextNode);
             }
@@ -150,7 +148,6 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
             this.showExpectedActions(this.lastCreatedObjectId);
         },
         onEdgeDelete: function(id, type){
-            console.log("Edge delete!!!");
             var lastCreatedEntityId = this.createdEntityHistory[this.createdEntityHistory.length - 1];
             if(lastCreatedEntityId == id){
                 this.currentActivity.revertLastAction();
@@ -204,10 +201,6 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
             this.showGuidanceBox(activityName, guidanceItems, entityId);
         },
         createSetPropertyGuidanceItem: function(id, action){
-            console.log("Create set property guidance");
-            console.log(action);
-            console.log("NodeMapping");
-            console.log(this.currentActivity.getNodeMapping(action.sourceObjectId));
             var guidanceItem = {
                 "id": id,
                 "type": "SET_PROPERTY_GUIDANCE",
@@ -319,7 +312,6 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
         },
         onRevokeSharedActivityOperation: function(operation){
             if(operation instanceof RevokeSharedActivityOperation){
-                console.log("Received remote revoke guidance op!!!");
                 if(this.sharedActivities.hasOwnProperty(operation.getId())){
                     delete this.sharedActivities[operation.getId()];
                 }
@@ -327,7 +319,6 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
         },
         onCollaborateInActivityOperation: function(operation){
             if(operation instanceof CollaborateInActivityOperation){
-                console.log("I want to collaborate!!!");
                 if(this.sharedActivities.hasOwnProperty(operation.getId())){
                     this.addActivityToHistory(this.currentActivity);
                     this.currentActivity = this.sharedActivities[operation.getId()];
@@ -339,7 +330,6 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
             }
         },
         onGuidanceOperation: function(data){
-            console.log("onGuidanceOperation called in strategy!");
             switch(data.operationType){
                 case "CollaborationStrategy:ShareActivity":
                     var activity = ActivityStatus.createFromShareOperation(this.logicalGuidanceRepresentation, this, data);
@@ -347,10 +337,8 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
                     this.sharedActivities[activity.id] = activity;
                     break;
                 case "CollaborationStrategy:UpdateSharedActivity":
-                    console.log("Received UpdateSharedActivityOperation!");
                     var activityId = data.activityId;
                     if(this.sharedActivities.hasOwnProperty(activityId)){
-                        console.log("Removing thread " + data.removedThreadId);
                         this.sharedActivities[activityId].removeThreadFromConcurrentRegion(data.removedThreadId);
                     }
                     break;

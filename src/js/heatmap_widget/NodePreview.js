@@ -15,8 +15,7 @@ define([
             this.draw();
 
             this.$node.addClass(id);
-            console.log("Color");
-            console.log(color);
+
             if(color){
 
                 this.setColor(color);
@@ -68,14 +67,12 @@ define([
             });
         },
         setColor: function(color){
-            console.log("Set color");
             this.$node.find(".background").css({
                 opacity: 1,
                 "background-color": color
             });
         },
         resetColor: function(){
-            console.log("ResetColor!");
             this.$node.find(".background").css({
                 opacity: 0
             });

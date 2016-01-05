@@ -106,6 +106,7 @@ define([
         var remoteValueChangeCallback = function(operation){
             if(operation instanceof ValueChangeOperation && operation.getEntityId() === that.getEntityId()){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "ValueChangeActivity",
                     that.getEntityId(),
@@ -129,6 +130,7 @@ define([
         var localValueChangeCallback = function(operation){
             if(operation instanceof ValueChangeOperation && operation.getEntityId() === that.getEntityId()){
                 propagateValueChangeOperation(operation);
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
             }
         };
 
@@ -139,6 +141,7 @@ define([
         var historyValueChangeCallback = function(operation){
             if(operation instanceof ValueChangeOperation && operation.getEntityId() === that.getEntityId()){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
                 processValueChangeOperation(operation);
             }
         };

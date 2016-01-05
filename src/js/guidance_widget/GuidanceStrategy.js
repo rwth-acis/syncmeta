@@ -18,14 +18,21 @@ define([
         sendGuidanceStrategyOperation: function(data){
             //This function is set by the guidance widget
         },
+        onValueChange: function(id, value, type, position){
+            //Override in child class to react to value change events
+        },
         onEntitySelect: function(entityId, entityType){
             //Override in child class to react to entity selection events
         },
-        onUserJoin: function(user){
-            //Override in child class to react to user join events   
+        onNodeMove: function(id, offsetX, offsetY){
+            //Override in child class to react to node move events
         },
-        onGuidanceFollowed: function(guidanceId){
-            //Override in child class to react to guidance followed events
+        onNodeMoveZ: function(id, offsetX, offsetY){
+            //Override in child class to react to node move z events
+        },
+        onNodeResize: function(id, offsetX, offsetY){
+            console.log("Node resize in strategy!");
+            //Override in child class to react to node resize events
         },
         onNodeAdd: function(id, type){
             //Override in child class to react to node add events

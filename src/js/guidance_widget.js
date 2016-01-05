@@ -14,13 +14,17 @@ requirejs([
     'operations/ot/EdgeAddOperation',
     'operations/ot/NodeDeleteOperation',
     'operations/ot/EdgeDeleteOperation',
+    'operations/ot/ValueChangeOperation',
+    'operations/ot/NodeMoveOperation',
+    'operations/ot/NodeMoveZOperation',
+    'operations/ot/NodeResizeOperation',
     'guidance_widget/NoStrategy',
     'guidance_widget/AvoidConflictsStrategy',
     'guidance_widget/CollaborationStrategy',
     'promise!LogicalGuidanceRepresentation',
     'promise!Space',
     'bootstrap'
-],function ($, _, require, IWCW, EntitySelectOperation, GuidanceStrategyOperation, NodeAddOperation, EdgeAddOperation, NodeDeleteOperation, EdgeDeleteOperation, NoStrategy, AvoidConflictsStrategy, CollaborationStrategy, LogicalGuidanceRepresentation, Space) {
+],function ($, _, require, IWCW, EntitySelectOperation, GuidanceStrategyOperation, NodeAddOperation, EdgeAddOperation, NodeDeleteOperation, EdgeDeleteOperation, ValueChangeOperation, NodeMoveOperation, NodeMoveZOperation, NodeResizeOperation, NoStrategy, AvoidConflictsStrategy, CollaborationStrategy, LogicalGuidanceRepresentation, Space) {
     var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.GUIDANCE);
     var strategies = [
         NoStrategy,
@@ -54,14 +58,24 @@ requirejs([
             selectedStrategy.onEdgeAdd(operation.getEntityId(), operation.getType());
         }
         else if (operation instanceof NodeDeleteOperation){
-            console.log("Received node delete!");
             selectedStrategy.onNodeDelete(operation.getEntityId(), operation.getType());
         }
         else if (operation instanceof EdgeDeleteOperation){
             selectedStrategy.onEdgeDelete(operation.getEntityId(), operation.getType());
         }
+        else if (operation instanceof ValueChangeOperation){
+            selectedStrategy.onValueChange(operation.getEntityId(), operation.getValue(), operation.getType(), operation.getPosition());
+        }
+        else if (operation instanceof NodeMoveOperation){
+            selectedStrategy.onNodeMove(operation.getEntityId(), operation.getOffsetX(), operation.getOffsetY());
+        }
+        else if (operation instanceof NodeMoveZOperation){
+            selectedStrategy.onNodeMoveZ(operation.getEntityId(), operation.getOffsetZ());
+        }
+        else if (operation instanceof NodeResizeOperation){
+            selectedStrategy.onNodeResize(operation.getEntityId(), operation.getOffsetX(), operation.getOffsetY());
+        }
         else if(operation instanceof GuidanceStrategyOperation){
-            console.log("Received Guidance Strategy Operation");
             selectedStrategy.onGuidanceOperation(operation.getData());
         }
     };

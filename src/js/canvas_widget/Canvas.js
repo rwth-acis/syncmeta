@@ -345,8 +345,6 @@ define([
 
         var localGuidanceStrategyOperationCallback = function(operation){
             if(operation instanceof GuidanceStrategyOperation){
-                console.log("Main received local GuidanceStrategyOperation!");
-                console.log(operation.getData());
                 //Just forward the message to remote users
                 _iwcot.sendRemoteNonOTOperation(operation.toNonOTOperation());
             }
@@ -354,7 +352,6 @@ define([
 
         var localRevokeSharedActivityOperationCallback = function(operation){
             if(operation instanceof RevokeSharedActivityOperation){
-                console.log("Main received local RevokeSharedActivityOperation!");
                 //Just forward the message to remote users
                 _iwcot.sendRemoteNonOTOperation(operation.toNonOTOperation());
             }
@@ -362,7 +359,6 @@ define([
 
         var remoteGuidanceStrategyOperation = function(operation){
             if(operation instanceof GuidanceStrategyOperation){
-                console.log("Main received remote GuidanceStrategyOperation");
                 //Just forward the message to the local guidance widget
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.toNonOTOperation());
             }
@@ -370,7 +366,6 @@ define([
 
         var remoteRevokeSharedActivityOperationCallback = function(operation){
             if(operation instanceof RevokeSharedActivityOperation){
-                console.log("Main received remote RevokeSharedActivityOperation");
                 //Just forward the message to the local guidance widget
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.toNonOTOperation());
             }
@@ -680,13 +675,6 @@ define([
             return _selectedEntity;
         };
 
-        var _guidanceFollowed = 0;
-        this.guidanceFollowed = function(){
-            _guidanceFollowed++;
-            console.log("Guidance followed");
-            $("#guidance_followed").text(_guidanceFollowed);
-        };
-
         /**
          * Set zoom level (between 0.5 and 2, default is 1)
          * @param {number} zoom
@@ -816,8 +804,7 @@ define([
             var frameOffset = $("#canvas-frame").offset();
             var frameWidth = $("#canvas-frame").width();
             var frameHeight = $("#canvas-frame").height();
-            console.log("frame offset");
-            console.log(frameOffset);
+
             var node = null;
             if(!nodeId)
                 node = _selectedEntity;
@@ -829,15 +816,11 @@ define([
             var nodeOffset = node.get$node().offset();
             var nodeWidth = node.get$node().width();
             var nodeHeight = node.get$node().height();
-            console.log(nodeOffset);
+
             var scrollX = nodeOffset.left - frameOffset.left;
             var scrollY = nodeOffset.top - frameOffset.top;
             var canvasTop = _$node.position().top;
             var canvasLeft = _$node.position().left;
-            console.log(canvasTop);
-            console.log("Scroll!!");
-            console.log(canvasTop - scrollY);
-            console.log(canvasLeft - scrollX);
 
 
             _$node.animate({
@@ -873,7 +856,6 @@ define([
             ctx.fill();
 
             _.each(_.sortBy($.makeArray(_$node.children()),function(e){
-                console.log(e);
                 return $(e).css('zIndex');
             }),function(e){
                 var $this = $(e);

@@ -26,8 +26,6 @@ define([
             var expectedNodes = [];
             this.possibleSubActivities = [];
             while(nodesToResolve.length > 0){
-                console.log("Nodes to resolve: ");
-                console.log(nodesToResolve);
                 var nextNodesToResolve = [];
                 for (var i = 0; i < nodesToResolve.length; i++){
                     var nodeId = nodesToResolve[i];
@@ -121,7 +119,6 @@ define([
                 return;
             }
             if(this.currentSubActivity){
-                console.log("Revert subactivity action!");
                 this.currentSubActivity.revertLastAction();
             }
             else{
@@ -220,8 +217,6 @@ define([
         activity.isOwner = false;
 
         var concurrentRegion = new ConcurrentRegion(activity, logicalGuidanceRepresentation, joinNode);
-        console.log("Created shared activity. Remaining thread ids:");
-        console.log(remainingThreads);
         concurrentRegion.remainingThreadIds = remainingThreads;
         concurrentRegion.started = true;
         concurrentRegion._isOwner = false;

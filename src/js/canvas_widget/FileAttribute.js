@@ -30,8 +30,6 @@ define([
          * @private
          */
         var _value = new FileValue(id,name,this,this.getRootSubjectEntity(), useAttributeHtml);
-        console.log("Value:");
-        console.log(_value.get$node().html());
 
         /**
          * jQuery object of DOM node representing the node

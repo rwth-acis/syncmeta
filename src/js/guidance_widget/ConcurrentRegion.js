@@ -25,11 +25,8 @@ define([
         	for(var i = 0; i < startingNodes.length; i++){
         		this.remainingThreadIds.push(i);
         		this.threads.push(this.findThread(startingNodes[i]));
-                console.log("Thread " + i);
         	}
 
-            console.log("Concurrent region threads:");
-            console.log(this.remainingThreadIds);
 
         	this.currentThreadId = this.remainingThreadIds.shift();
 
@@ -41,7 +38,6 @@ define([
         	return this.threadStartingNodes[this.currentThreadId];
         },
         getNextThreadStart: function(nodeId){
-            console.log("Next thread start requested");
         	return this.threadStartingNodes[this.remainingThreadIds[0]];
         },
         isFinished: function(){
@@ -50,9 +46,7 @@ define([
         update: function(nodeId){
         	//Check if we are still in the current thread
         	if(this.threads[this.currentThreadId].indexOf(nodeId) >=0){
-                console.log("We are in the current thread");
                 if(!this.started){
-                    console.log("Started concurrent region!!");
                     this.started = true;
                     this.activity.shareActivityOperation(this.initialNode, this.remainingThreadIds);
 
@@ -66,20 +60,16 @@ define([
 
         		return;
         	}
-            console.log("These threads remain:");
-            console.log(this.remainingThreadIds)
+
         	for(var i = 0; i < this.remainingThreadIds.length; i++){
         		var threadId = this.remainingThreadIds[i];
         		//Have we moved to another thread?
         		if(this.threads[threadId].indexOf(nodeId) >= 0){
-                    console.log("Started action in thread " + threadId);
         			this.remainingThreadIds.splice(this.remainingThreadIds.indexOf(threadId), 1);
         			this.currentThreadId = threadId;
                     this.activity.updateSharedActivityOperation(threadId);
-                    console.log("Remaining thread ids after moving to the next thread:");
-                    console.log(this.remainingThreadIds);
+
                     if(this.isLastThread()){
-                        console.log("LAST THREAD!");
                         var operation = new RevokeSharedActivityOperation(this.activity.id);
                         this.iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.toNonOTOperation());
                     }

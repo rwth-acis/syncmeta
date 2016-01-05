@@ -46,8 +46,6 @@ requirejs([
     iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.MAIN);
     canvas = new Canvas($("#canvas"));
 
-    console.log(guidancemodel);
-
     if(guidancemodel.isGuidanceEditor()){
         //Set the model which is shown by the editor to the guidancemodel
         model = guidancemodel.guidancemodel;

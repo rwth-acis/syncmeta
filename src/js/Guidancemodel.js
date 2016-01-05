@@ -33,7 +33,6 @@ define([
 
             guidancemodeling.isCreateObjectNodeLabel = function(label){
                 var match = /Create (.*?) object/.exec(label);
-                console.log(match);
                 if(match)
                     return match[1];
                 else
@@ -58,8 +57,6 @@ define([
 
             guidancemodeling.isSetPropertyNodeLabel = function(label){
                 var match = /Set property for (.*)/.exec(label);
-                console.log("Match");
-                console.log(match);
                 if(match)
                     return match[1];
                 else

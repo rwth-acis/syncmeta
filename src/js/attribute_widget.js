@@ -23,8 +23,6 @@ requirejs([
     }
 
     function JSONtoGraph(json){
-        console.log("jsontograph");
-        console.log(json);
         var modelAttributesNode;
         var nodeId, edgeId;
         if(json.attributes){
