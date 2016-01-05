@@ -12,6 +12,16 @@ button.selected {
     border: 1px solid #999999;
     background-color: #EEEEEE;
 }
+button .icon > div {
+    zoom: 0.1;
+    -moz-transform: scale(0.2,0.2);
+    -moz-transform-origin: left center;
+}
+
+button span{
+    padding-left: 10px;
+}
+
 hr {
     border-width: 0 0 1px 0;
     border-color: #CCCCCC;
