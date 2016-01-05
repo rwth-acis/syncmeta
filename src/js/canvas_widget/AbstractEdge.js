@@ -177,6 +177,7 @@ define([
         var remoteEdgeDeleteCallback = function(operation){
             if(operation instanceof EdgeDeleteOperation && operation.getEntityId() == that.getEntityId()){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "EdgeDeleteActivity",
                     operation.getEntityId(),

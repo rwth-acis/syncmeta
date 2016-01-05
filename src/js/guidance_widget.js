@@ -54,6 +54,7 @@ requirejs([
             selectedStrategy.onEdgeAdd(operation.getEntityId(), operation.getType());
         }
         else if (operation instanceof NodeDeleteOperation){
+            console.log("Received node delete!");
             selectedStrategy.onNodeDelete(operation.getEntityId(), operation.getType());
         }
         else if (operation instanceof EdgeDeleteOperation){

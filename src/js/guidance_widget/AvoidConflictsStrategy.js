@@ -2,7 +2,7 @@ define(['Util','guidance_widget/CollaborationStrategy'
 ],function(Util,CollaborationStrategy) {
 
     var AvoidConflictsStrategy = CollaborationStrategy.extend({
-        onShareGuidanceActivityOperation: function(operation){
+        onGuidanceOperation: function(data){
         	//Do not accept any collaboration guidance
         	return;
         }
