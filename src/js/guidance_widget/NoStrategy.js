@@ -5,11 +5,6 @@ define(['guidance_widget/GuidanceStrategy'
         init: function(logicalGuidanceRepresentation, space){
             this._super(logicalGuidanceRepresentation, space);
             this.showGuidanceBox("", []);
-        },
-        onEntitySelect: function(entityId, entityType){
-        },
-        onUserJoin: function(user){
-
         }
     });
 

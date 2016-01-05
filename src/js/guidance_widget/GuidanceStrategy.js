@@ -31,7 +31,6 @@ define([
             //Override in child class to react to node move z events
         },
         onNodeResize: function(id, offsetX, offsetY){
-            console.log("Node resize in strategy!");
             //Override in child class to react to node resize events
         },
         onNodeAdd: function(id, type){

@@ -24,12 +24,8 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
             this.iwc.registerOnDataReceivedCallback(this.onRevokeSharedActivityOperation, this);
             this.iwc.registerOnDataReceivedCallback(this.onCollaborateInActivityOperation, this);
         },
-        onEntitySelect: function(entityId, entityType){
-        },
         getUserName: function(){
             return this.space.user[CONFIG.NS.PERSON.TITLE];
-        },
-        onUserJoin: function(user){
         },
         checkNodeAddForActivity: function(id, type, activityStatus){
             var activityExpectedNodes = activityStatus.getExpectedNodes();
@@ -322,7 +318,6 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
                 if(this.sharedActivities.hasOwnProperty(operation.getId())){
                     this.addActivityToHistory(this.currentActivity);
                     this.currentActivity = this.sharedActivities[operation.getId()];
-                    //delete this.sharedActivities[operation.getId()];
                     this.currentActivity.concurrentRegion.startNextThread();
                     this.currentActivity.computeExpectedNodes();
                     this.showExpectedActions(this.currentActivity.lastAddedNode);
