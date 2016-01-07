@@ -23,6 +23,7 @@ define([
      */
 
     function SingleSelectionAttribute(id,name,subjectEntity,options,useAttributeHtml){
+        var that = this;
         AbstractAttribute.call(this,id,name,subjectEntity);
         useAttributeHtml = typeof useAttributeHtml !== 'undefinded' ? useAttributeHtml : false;
         /***

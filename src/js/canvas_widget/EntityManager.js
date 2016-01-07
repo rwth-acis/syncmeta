@@ -74,113 +74,109 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
     var _initNodeTypes = function(vls) {
         var _nodeTypes = {};
 
-        var nodes = vls.nodes, node;
+        var nodes = vls.nodes, node, shape, anchors;
+
+        // Start creating nodes based on metamodel
         for (var nodeId in nodes) {
             if (nodes.hasOwnProperty(nodeId)) {
 
-                // Start creating nodes based on metamodel
-                for (var nodeId in nodes) {
-                    if (nodes.hasOwnProperty(nodeId)) {
-
-                        node = nodes[nodeId];
-                        if (node.shape.customShape) {
-                            shape = node.shape.customShape;
-                        } else {
-                            shape = nodeShapeTypes.hasOwnProperty(node.shape.shape) ? nodeShapeTypes[node.shape.shape] : _.keys(nodeShapeTypes)[0];
-                        }
-                        if (node.shape.customAnchors) {
-                            try {
-                                if (node.shape.customAnchors) {
-                                    anchors = JSON.parse(node.shape.customAnchors);
-                                }
-                                if (!node.shape.customAnchors instanceof Array) {
-                                    anchors = ["Perimeter", {
-                                        shape: "Rectangle",
-                                        anchorCount: 10
-                                    }
-                                    ];
-                                }
-                            } catch (e) {
-                                anchors = ["Perimeter", {
-                                    shape: "Rectangle",
-                                    anchorCount: 10
-                                }
-                                ];
-                            }
-                        } else {
-                            switch (node.shape.shape) {
-                                case "circle":
-                                    anchors = ["Perimeter", {
-                                        shape: "Circle",
-                                        anchorCount: 10
-                                    }
-                                    ];
-                                    break;
-                                case "diamond":
-                                    anchors = ["Perimeter", {
-                                        shape: "Diamond",
-                                        anchorCount: 10
-                                    }
-                                    ];
-                                    break;
-                                case "rounded_rectangle":
-                                    anchors = ["Perimeter", {
-                                        shape: "Rectangle",
-                                        anchorCount: 10
-                                    }
-                                    ];
-                                    break;
-                                case "triangle":
-                                    anchors = ["Perimeter", {
-                                        shape: "Triangle",
-                                        anchorCount: 10
-                                    }
-                                    ];
-                                    break;
-                                default:
-                                case "rectangle":
-                                    anchors = ["Perimeter", {
-                                        shape: "Rectangle",
-                                        anchorCount: 10
-                                    }
-                                    ];
-                                    break;
-                            }
-                        }
-
-                        if (node.hasOwnProperty('targetName') && !$.isEmptyObject(nodeTypes) && nodeTypes.hasOwnProperty(node.targetName)) {
-                            _nodeTypes[node.label] = ViewNode(node.label, $shape, anchors, node.attributes, nodeTypes[node.targetName], node.conditions, node.conjunction);
-                            nodeTypes[node.targetName].VIEWTYPE = node.label;
-                        }
-                        else {
-                            _nodeTypes[node.label] = Node(node.label, $shape, anchors, node.attributes);
-                        }
-                        _nodeTypes[node.label].TYPE = node.label;
-                        _nodeTypes[node.label].DEFAULT_WIDTH = node.shape.defaultWidth;
-                        _nodeTypes[node.label].DEFAULT_HEIGHT = node.shape.defaultHeight;
-
-
-
-                        color = node.shape.color ? $colorTestElement.css('color', '#FFFFFF').css('color', node.shape.color).css('color') : '#FFFFFF';
-
-                        $shape = $(_.template(shape, {color: color, type: node.label}));
-
-                        _nodeTypes[node.label].SHAPE = $shape;
-                        /*
-                         nodeTypes[node.label] = Node(node.label, $shape, anchors, node.attributes, node.jsplumb);
-                         nodeTypes[node.label].TYPE = node.label;
-                         nodeTypes[node.label].SHAPE = $shape;
-                         nodeTypes[node.label].DEFAULT_WIDTH = node.shape.defaultWidth;
-                         nodeTypes[node.label].DEFAULT_HEIGHT = node.shape.defaultHeight;*/
-                    }
-
-
+                node = nodes[nodeId];
+                if (node.shape.customShape) {
+                    shape = node.shape.customShape;
+                } else {
+                    shape = nodeShapeTypes.hasOwnProperty(node.shape.shape) ? nodeShapeTypes[node.shape.shape] : _.keys(nodeShapeTypes)[0];
                 }
-                return _nodeTypes;
+                if (node.shape.customAnchors) {
+                    try {
+                        if (node.shape.customAnchors) {
+                            anchors = JSON.parse(node.shape.customAnchors);
+                        }
+                        if (!node.shape.customAnchors instanceof Array) {
+                            anchors = ["Perimeter", {
+                                shape: "Rectangle",
+                                anchorCount: 10
+                            }
+                            ];
+                        }
+                    } catch (e) {
+                        anchors = ["Perimeter", {
+                            shape: "Rectangle",
+                            anchorCount: 10
+                        }
+                        ];
+                    }
+                } else {
+                    switch (node.shape.shape) {
+                        case "circle":
+                            anchors = ["Perimeter", {
+                                shape: "Circle",
+                                anchorCount: 10
+                            }
+                            ];
+                            break;
+                        case "diamond":
+                            anchors = ["Perimeter", {
+                                shape: "Diamond",
+                                anchorCount: 10
+                            }
+                            ];
+                            break;
+                        case "rounded_rectangle":
+                            anchors = ["Perimeter", {
+                                shape: "Rectangle",
+                                anchorCount: 10
+                            }
+                            ];
+                            break;
+                        case "triangle":
+                            anchors = ["Perimeter", {
+                                shape: "Triangle",
+                                anchorCount: 10
+                            }
+                            ];
+                            break;
+                        default:
+                        case "rectangle":
+                            anchors = ["Perimeter", {
+                                shape: "Rectangle",
+                                anchorCount: 10
+                            }
+                            ];
+                            break;
+                    }
+                }
+                var $shape = $(_.template(shape, {color: color, type: node.label}));
+                var color = node.shape.color ? $colorTestElement.css('color', '#FFFFFF').css('color', node.shape.color).css('color') : '#FFFFFF';
+
+                if (node.hasOwnProperty('targetName') && !$.isEmptyObject(nodeTypes) && nodeTypes.hasOwnProperty(node.targetName)) {
+                    _nodeTypes[node.label] = ViewNode(node.label, $shape, anchors, node.attributes, nodeTypes[node.targetName], node.conditions, node.conjunction);
+                    nodeTypes[node.targetName].VIEWTYPE = node.label;
+                }
+                else {
+                    _nodeTypes[node.label] = Node(node.label, $shape, anchors, node.attributes);
+                }
+                _nodeTypes[node.label].TYPE = node.label;
+                _nodeTypes[node.label].DEFAULT_WIDTH = node.shape.defaultWidth;
+                _nodeTypes[node.label].DEFAULT_HEIGHT = node.shape.defaultHeight;
+
+
+
+
+
+                _nodeTypes[node.label].SHAPE = $shape;
+                /*
+                 nodeTypes[node.label] = Node(node.label, $shape, anchors, node.attributes, node.jsplumb);
+                 nodeTypes[node.label].TYPE = node.label;
+                 nodeTypes[node.label].SHAPE = $shape;
+                 nodeTypes[node.label].DEFAULT_WIDTH = node.shape.defaultWidth;
+                 nodeTypes[node.label].DEFAULT_HEIGHT = node.shape.defaultHeight;*/
             }
 
+
         }
-    };
+        return _nodeTypes;
+    }
+
 
 
     /**
@@ -1884,6 +1880,17 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                             innerDeferred.resolve();
                         }
                     });
+                    innerDeferred.then(function(){
+                        resourceSpace.create({
+                            relation: openapp.ns.role + "data",
+                            type: type,
+                            representation: representation,
+                            callback: function(){
+                                deferred.resolve();
+                            }
+                        });
+                    });
+                    return deferred.promise();
                 };
 
                 for(var i=0; i < resourcesToSave.length; i++){

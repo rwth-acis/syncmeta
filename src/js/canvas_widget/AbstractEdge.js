@@ -151,7 +151,7 @@ define([
          */
         var remoteEntitySelectCallback = function(operation){
             var color;
-            if(operation instanceof EntitySelectOperation && operation.getDestination() === CONFIG.WIDGET.NAME.MAIN){
+            if(operation instanceof EntitySelectOperation){
                 color = _iwcot.getUserColor(operation.getNonOTOperation().getSender());
                 if(!_isSelected){
                     if(operation.getSelectedEntityId() === that.getEntityId()){

@@ -223,13 +223,13 @@
                          return addMetamodelToSpace(spaceURI,metamodel, CONFIG.NS.MY.METAMODEL);
                       }).then(function(){
                        var deferred = $.Deferred();
-                        for(var i=0;i<viewpoints.length;i++){
-                        GetViewPoint(viewpoints[i]).then(function(viewpoint){
-                           var viewpointmodel = GenerateViewpointModel(viewpoint);
-                            addMetamodelToSpace(spaceURI, viewpointmodel, CONFIG.NS.MY.VIEWPOINT);
-                        });
-                        	}
-                       deferred.resolve();
+                            for(var i=0;i<viewpoints.length;i++){
+                                GetViewPoint(viewpoints[i]).then(function(viewpoint){
+                                var viewpointmodel = GenerateViewpointModel(viewpoint);
+                                addMetamodelToSpace(spaceURI, viewpointmodel, CONFIG.NS.MY.VIEWPOINT);
+                                });
+                            }
+                        deferred.resolve();
                         return deferred.promise();
                        })
                        .then(function(){
@@ -238,7 +238,7 @@
                             return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/heatmap.xml");
                        }).then(function(){
                             return addLogicalGuidanceRepresentationToSpace(spaceURI, logicalGuidanceRepresentation);
-                        })then(function(){
+                        }).then(function(){
                                return {
                                   spaceURI: spaceURI,
                                   spaceTitle: spaceTitle

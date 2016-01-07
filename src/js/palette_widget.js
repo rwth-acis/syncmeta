@@ -5,9 +5,6 @@
 
 requirejs([
     'jqueryui',
-    'Util',
-    'iwcw',
-    'operations/non_ot/ExportMetaModelOperation',
     'palette_widget/Palette',
     'palette_widget/MoveTool',
     'palette_widget/Separator',

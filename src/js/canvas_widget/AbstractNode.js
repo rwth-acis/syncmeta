@@ -313,7 +313,7 @@ define([
                 color,
                 username;
 
-            if(operation instanceof EntitySelectOperation && operation.getDestination() === CONFIG.WIDGET.NAME.MAIN){
+            if(operation instanceof EntitySelectOperation){
                 senderJabberId = operation.getNonOTOperation().getSender();
                 color = _iwcot.getUserColor(senderJabberId);
                 username = _iwcot.getMembers()[senderJabberId][CONFIG.NS.PERSON.TITLE];

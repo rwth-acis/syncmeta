@@ -31,7 +31,7 @@ define([
     'canvas_widget/guidance_modeling/CollaborationGuidance',
     'jquery.transformable-PATCHED'
 ], /** @lends Canvas */
-function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelectOperation, EntitySelectOperation, ActivityOperation, ExportDataOperation, ExportMetaModelOperation, ExportImageOperation,PerformCvgOperation, DeleteCvgOperation,ShowGuidanceBoxOperation,CanvasViewChangeOperation,RevokeSharedActivityOperation,MoveCanvasOperation,GuidanceStrategyOperation, AbstractEntity, ModelAttributesNode, EntityManager, AbstractCanvas, MoveTool, GuidanceBox,SelectToolGuidance, SetPropertyGuidance, GhostEdgeGuidance,CollaborationGuidance) {
+function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelectOperation, EntitySelectOperation, ActivityOperation, ExportDataOperation, ExportMetaModelOperation,ExportLogicalGuidanceRepresentationOperation, ExportImageOperation,PerformCvgOperation, DeleteCvgOperation,ShowGuidanceBoxOperation,CanvasViewChangeOperation,RevokeSharedActivityOperation,MoveCanvasOperation,GuidanceStrategyOperation, AbstractEntity, ModelAttributesNode, EntityManager, AbstractCanvas, MoveTool, GuidanceBox,SelectToolGuidance, SetPropertyGuidance, GhostEdgeGuidance,CollaborationGuidance) {
 
     Canvas.prototype = new AbstractCanvas();
     Canvas.prototype.constructor = Canvas;
