@@ -11,8 +11,8 @@ define([
      * @constructor
      * @param {string} selectedEntityId Entity id of the selected entity
      */
-    function EntitySelectOperation(selectedEntityId, destination){
-        var _destination = destination;
+
+    function EntitySelectOperation(selectedEntityId, selectedEntityType){
         /**
          * Entity id of the selected entity
          * @type {string}
@@ -20,6 +20,7 @@ define([
          */
         var _selectedEntityId = selectedEntityId;
 
+        var _selectedEntityType = selectedEntityType;
         /**
          * Corresponding NonOtOperation
          * @type {operations.non_ot.NonOTOperation}
@@ -35,8 +36,8 @@ define([
             return _selectedEntityId;
         };
 
-        this.getDestination = function(){
-            return _destination;
+        this.getSelectedEntityType = function(){
+            return _selectedEntityType;
         };
 
         /**
@@ -63,8 +64,10 @@ define([
             if(_nonOTOperation === null){
                 _nonOTOperation = new NonOTOperation(
                     EntitySelectOperation.TYPE,
-                    JSON.stringify({selectedEntityId: _selectedEntityId,
-                                    destination:_destination})
+                    JSON.stringify({
+                        selectedEntityId: _selectedEntityId,
+                        selectedEntityType: _selectedEntityType
+                    })
                 );
             }
             return _nonOTOperation;

@@ -1,5 +1,4 @@
-define([
-		'lodash',
+define(['lodash',
 		'attribute_widget/Node',
 		'attribute_widget/ObjectNode',
 		'attribute_widget/AbstractClassNode',
@@ -17,9 +16,11 @@ define([
 		'attribute_widget/ViewRelationshipNode',
         'attribute_widget/ViewNode',
         'attribute_widget/ViewEdge',
-		'promise!Metamodel'
-	], /** @lends EntityManager */
-	function (_, Node, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, ModelAttributesNode, Edge, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNode, ViewRelationshipNode, ViewNode, ViewEdge, metamodel) {
+		'promise!Metamodel',
+        'promise!Guidancemodel'
+
+], /** @lends EntityManager */
+	function (_, Node, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, ModelAttributesNode, Edge, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNode, ViewRelationshipNode, ViewNode, ViewEdge, metamodel,guidancemodel) {
 
     var _layer = null;
 
@@ -35,15 +36,14 @@ define([
     var edgeTypes = {};
     var relations = {};
 
-
-    var _initNodeTypes = function(vls){
+    var _initNodeTypes = function(vls) {
         var nodes = vls.nodes,
             node;
         var _nodeTypes = {};
         for (var nodeId in nodes) {
             if (nodes.hasOwnProperty(nodeId)) {
                 node = nodes[nodeId];
-                if(node.hasOwnProperty('targetName') && !$.isEmptyObject(nodeTypes) && nodeTypes.hasOwnProperty(node.targetName)){
+                if (node.hasOwnProperty('targetName') && !$.isEmptyObject(nodeTypes) && nodeTypes.hasOwnProperty(node.targetName)) {
                     _nodeTypes[node.label] = ViewNode(node.label, node.attributes, nodeTypes[node.targetName]);
                     nodeTypes[node.targetName].VIEWTYPE = node.label;
                 }
@@ -54,8 +54,12 @@ define([
         }
         return _nodeTypes;
     };
-    var _initEdgeTypes = function(vls){
 
+    //Set the metamodel to the guidance metamodel for guidance modeling
+    if(guidancemodel.isGuidanceEditor()){
+        metamodel = guidancemodel.guidancemetamodel;
+    }
+    var _initEdgeTypes = function(vls){
         var edges = vls.edges,
             edge;
         var _edgeTypes = {}, _relations = {};
@@ -77,6 +81,9 @@ define([
             relations:_relations
         }
     };
+
+
+
 	if (metamodel && metamodel.hasOwnProperty("nodes")) {
 		nodeTypes = _initNodeTypes(metamodel);
         _layer = CONFIG.LAYER.MODEL;

@@ -13,12 +13,17 @@ requirejs([
     'operations/non_ot/InitModelTypesOperation',
     'operations/non_ot/ViewInitOperation',
     'operations/non_ot/SetModelAttributeNodeOperation',
-    'promise!Model'
-],function ($,IWCW,AttributeWrapper,EntityManager, ViewGenerator, JoinOperation,InitModelTypesOperation,ViewInitOperation, SetModelAttributeNodeOperation, model) {
+    'promise!Model',
+    'promise!Guidancemodel'
+],function ($,IWCW,AttributeWrapper,EntityManager, ViewGenerator, JoinOperation,InitModelTypesOperation,ViewInitOperation, SetModelAttributeNodeOperation, model,guidancemodel) {
 
     var wrapper = new AttributeWrapper($("#wrapper"));
 
     var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE);
+
+    if(guidancemodel.isGuidanceEditor()){
+        model = guidancemodel.guidancemodel;
+    }
 
     function JSONtoGraph(json){
         var modelAttributesNode;

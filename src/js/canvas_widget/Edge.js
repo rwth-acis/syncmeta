@@ -73,13 +73,14 @@ define([
      * @param attributes
      * @returns {Edge}
      */
-    function makeEdge(type,arrowType,shapeType,color,overlay,overlayPosition,overlayRotate,attributes){
+    function makeEdge(type,arrowType,shapeType,color,dashstyle,overlay,overlayPosition,overlayRotate,attributes){
         var shape = shapes.hasOwnProperty(shapeType) ? shapes[shapeType] : _.values(shapes)[0];
         color = color ? $colorTestElement.css('color','#aaaaaa').css('color',color).css('color') : '#aaaaaa';
 
-
+        dashstyle = dashstyle || "";
         Edge.prototype = new AbstractEdge();
         Edge.prototype.constructor = Edge;
+
         /**
          * Edge
          * @class canvas_widget.Edge
@@ -252,7 +253,12 @@ define([
                 var connectOptions = {
                     source: source.get$node(),
                     target: target.get$node(),
-                    paintStyle:that.getDefaultPaintStyle(),
+
+                    paintStyle:{
+                        strokeStyle: color,
+                        lineWidth: 2,
+                        dashstyle: dashstyle
+                    },
                     endpoint: "Blank",
                     anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
                     connector: shape,
@@ -418,9 +424,15 @@ define([
          * @static
          * @returns {*}
          */
+
+        Edge.getShape = function(){
+            return shape;
+        };
+
         Edge.getColor = function(){
             return color;
         };
+
 
         /**
          * Get the overlay of the edge type
@@ -457,6 +469,19 @@ define([
         Edge.getAttributes = function(){
             return attributes;
         };
+
+        Edge.getType = function(){
+            return type;
+        };
+
+        Edge.getArrowOverlays = function(){
+            var overlays = [];
+            if(arrows().hasOwnProperty(arrowType)){
+                overlays.push(arrows(color)[arrowType]);
+            }
+            return overlays;
+        }
+
 
         return Edge;
     }

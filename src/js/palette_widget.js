@@ -5,6 +5,9 @@
 
 requirejs([
     'jqueryui',
+    'Util',
+    'iwcw',
+    'operations/non_ot/ExportMetaModelOperation',
     'palette_widget/Palette',
     'palette_widget/MoveTool',
     'palette_widget/Separator',
@@ -20,13 +23,26 @@ requirejs([
     'palette_widget/GeneralisationEdgeTool',
 	'palette_widget/ViewObjectNodeTool',
 	'palette_widget/ViewRelationshipNodeTool',
-    'promise!Metamodel'
-],function ($,Palette,MoveTool,Separator,ObjectNodeTool,AbstractClassNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,GeneralisationEdgeTool,ViewObjectNodeTool,ViewRelationshipNodeTool,metamodel) {
+    'text!templates/canvas_widget/circle_node.html',
+    'text!templates/canvas_widget/diamond_node.html',
+    'text!templates/canvas_widget/rectangle_node.html',
+    'text!templates/canvas_widget/rounded_rectangle_node.html',
+    'text!templates/canvas_widget/triangle_node.html',
+    'promise!Model',
+    'promise!Metamodel',
+    'promise!Guidancemodel'
+],function ($,Palette,MoveTool,Separator,ObjectNodeTool,AbstractClassNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,GeneralisationEdgeTool,ViewObjectNodeTool,ViewRelationshipNodeTool,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,model,metamodel,guidancemodel) {
 
    var palette = new Palette($("#palette"),$("#info"));
 
     palette.addTool(new MoveTool());
     palette.addSeparator(new Separator());
+
+    //Set the metamodel to the guidance metamodel in the guidance editor
+    if(guidancemodel.isGuidanceEditor()){
+        metamodel = guidancemodel.guidancemetamodel;
+    }
+
     if(metamodel.constructor === Object){
         if(metamodel.hasOwnProperty('nodes')) {
             palette.initNodePalette(metamodel);
@@ -36,33 +52,55 @@ requirejs([
         }
     }
     else{
-        palette.addTool(new AbstractClassNodeTool());
-        palette.addTool(new ObjectNodeTool());
-        palette.addTool(new RelationshipNodeTool());
-        palette.addTool(new RelationshipGroupNodeTool());
-        palette.addTool(new EnumNodeTool());
-        palette.addTool(new NodeShapeNodeTool());
-        palette.addTool(new EdgeShapeNodeTool());
+        //Create node tools for metamodeling
+            palette.addTool(new AbstractClassNodeTool());
+            palette.addTool(new ObjectNodeTool());
+            palette.addTool(new RelationshipNodeTool());
+            palette.addTool(new RelationshipGroupNodeTool());
+            palette.addTool(new EnumNodeTool());
+            palette.addTool(new NodeShapeNodeTool());
+            palette.addTool(new EdgeShapeNodeTool());
 
-        var sep = new Separator();
-        palette.addSeparator(sep);
-        sep.get$node().hide();
 
-        var viewObjectTool = new ViewObjectNodeTool();
-        palette.addTool(viewObjectTool);
-        viewObjectTool.get$node().hide();
+            var sep = new Separator();
+            palette.addSeparator(sep);
+            sep.get$node().hide();
 
-        var viewRelNodeTool = new ViewRelationshipNodeTool();
-        palette.addTool(viewRelNodeTool);
-        viewRelNodeTool.get$node().hide();
+            var viewObjectTool = new ViewObjectNodeTool();
+            palette.addTool(viewObjectTool);
+            viewObjectTool.get$node().hide();
 
-        palette.addSeparator(new Separator());
+            var viewRelNodeTool = new ViewRelationshipNodeTool();
+            palette.addTool(viewRelNodeTool);
+            viewRelNodeTool.get$node().hide();
 
-        palette.addTool(new BiDirAssociationEdgeTool());
-        palette.addTool(new UniDirAssociationEdgeTool());
-        palette.addTool(new GeneralisationEdgeTool());
+            palette.addSeparator(new Separator());
+            palette.addTool(new BiDirAssociationEdgeTool());
+            palette.addTool(new UniDirAssociationEdgeTool());
+            palette.addTool(new GeneralisationEdgeTool());
+
+
     }
-	
+
+    //var componentName = "palette"+Util.generateRandomId();
+    //var iwc = IWCW.getInstance(componentName);
+    /**
+     * Predefined node shapes, first is default
+     * @type {{circle: *, diamond: *, rectangle: *, triangle: *}}
+     */
+    var nodeShapeTypes = {
+        "circle": circleNodeHtml,
+        "diamond": diamondNodeHtml,
+        "rectangle": rectangleNodeHtml,
+        "rounded_rectangle": roundedRectangleNodeHtml,
+        "triangle": triangleNodeHtml
+    };
+
+    /**
+     * jQuery object to test for valid color
+     * @type {$}
+     */
+    var $colorTestElement = $('<div></div>');
 	
     $("#q").draggable({
         axis: "y",

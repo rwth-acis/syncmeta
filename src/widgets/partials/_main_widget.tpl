@@ -1,5 +1,8 @@
 <link rel="stylesheet" type="text/css" href="<%= grunt.config('baseUrl') %>/css/vendor/jquery-ui.css">
 <link rel="stylesheet" type="text/css" href="<%= grunt.config('baseUrl') %>/css/vendor/jquery.contextMenu.css">
+<link rel="stylesheet" type="text/css" href="<%= grunt.config('baseUrl') %>/css/vendor/bootstrap.min.prefixed.css">
+<!-- <link rel="stylesheet" type="text/css" href="<%= grunt.config('baseUrl') %>/css/vendor/font-awesome/css/font-awesome.min.css"> -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 <link rel="stylesheet" type="text/css" href="<%= grunt.config('baseUrl') %>/css/style.css">
 <link rel="stylesheet" type="text/css" href="<%= grunt.config('baseUrl') %>/css/main_widget.css">
 <script src="<%= grunt.config('baseUrl') %>/js/main_widget.js"></script>

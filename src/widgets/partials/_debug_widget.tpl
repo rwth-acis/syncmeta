@@ -7,6 +7,9 @@
                 $deleteModel = $("#delete-model").prop('disabled', true),
                 $exportModel = $("#export-model").prop('disabled', true),
                 $importModel = $("#import-model"),
+                $deleteGuidancemodel = $("#delete-guidance-model").prop('disabled', true),
+                $exportGuidancemodel = $("#export-guidance-model").prop('disabled', true),
+                $importGuidancemodel = $("#import-guidance-model"),
                 $fileObject = $("#file-object"),
                 $feedback = $("#feedback"),
                 feedbackTimeout,
@@ -117,6 +120,22 @@
                 });
             });
 
+            $deleteGuidancemodel.click(function(){
+                getData(CONFIG.NS.MY.GUIDANCEMODEL).then(function(modelUris){
+                    if(modelUris.length > 0){
+                        _.map(modelUris,function(uri){
+                            openapp.resource.del(uri,function(){
+                                $exportGuidancemodel.prop('disabled', true);
+                                $deleteGuidancemodel.prop('disabled', true);
+                                feedback("Done!");
+                            });
+                        });
+                    } else {
+                        feedback("No Model!");
+                    }
+                });
+            });
+
             $exportModel.click(function(){
                 getData(CONFIG.NS.MY.MODEL).then(function(modelUris){
                     if(modelUris.length > 0){
@@ -134,6 +153,21 @@
 
             $exportMetamodel.click(function(){
                 getData(CONFIG.NS.MY.METAMODEL).then(function(modelUris){
+                    if(modelUris.length > 0){
+                        $.get(modelUris[0]+"/:representation").done(function(data){
+                            var link = document.createElement('a');
+                            link.download = "export.json";
+                            link.href = 'data:,'+encodeURI(JSON.stringify(data,null,4));
+                            link.click();
+                        });
+                    } else {
+                        feedback("No Model!");
+                    }
+                });
+            });
+
+            $exportGuidancemodel.click(function(){
+                getData(CONFIG.NS.MY.GUIDANCEMODEL).then(function(modelUris){
                     if(modelUris.length > 0){
                         $.get(modelUris[0]+"/:representation").done(function(data){
                             var link = document.createElement('a');
@@ -191,6 +225,28 @@
                 });
             });
 
+            $importGuidancemodel.click(function(){
+                getData(CONFIG.NS.MY.GUIDANCEMODEL).then(function(modelUris){
+                    if(modelUris.length > 0){
+                        _.map(modelUris,function(uri){
+                            openapp.resource.del(uri);
+                        });
+                    }
+                    getFileContent().then(function(data){
+                        resourceSpace.create({
+                            relation: openapp.ns.role + "data",
+                            type: CONFIG.NS.MY.GUIDANCEMODEL,
+                            representation: data,
+                            callback: function(){
+                                $exportGuidancemodel.prop('disabled', false);
+                                $deleteGuidancemodel.prop('disabled', false);
+                                feedback("Done!");
+                            }
+                        });
+                    });
+                });
+            });
+
 
 
             var checkExistence = function(){
@@ -211,6 +267,18 @@
                     } else {
                         $exportMetamodel.prop('disabled', false);
                         $deleteMetamodel.prop('disabled', false);
+                    }
+                });
+
+                getData(CONFIG.NS.MY.GUIDANCEMODEL).then(function(modelUris){
+                    if(modelUris.length === 0){
+                        console.log("No guidance model found!");
+                        $exportGuidancemodel.prop('disabled', true);
+                        $deleteGuidancemodel.prop('disabled', true);
+                    } else {
+                        console.log("Activate!");
+                        $exportGuidancemodel.prop('disabled', false);
+                        $deleteGuidancemodel.prop('disabled', false);
                     }
                 });
             };
@@ -262,6 +330,9 @@
 <button id="import-meta-model" title="Refresh the role space to apply the new VLS.">Import</button>
 <button id="export-meta-model" title="Download the VLS as JSON">Export </button>
 <button id="delete-meta-model" title="Refresh the role space.">Delete</button>
+<button id="import-guidance-model">Import Guidancemodel</button>
+<button id="export-guidance-model">Export Guidancemodel</button>
+<button id="delete-guidance-model">Delete Guidancemodel</button>
 </div>
 <p class="hint">After import or delete refresh the canvas widget to apply the new model. After deleting and importing a new VLS refresh the whole role space.</p>
 <p id="feedback"></p>

@@ -2,8 +2,10 @@ define([
     'iwc',
     'operations/ot/OTOperation',
     'operations/non_ot/NonOTOperation',
-    'operations/OperationFactory'
-],/** @lends IWC */function(IIWC,OTOperation,NonOTOperation,OperationFactory){
+    'operations/OperationFactory',
+    'Util',
+    'promise!Space'
+],/** @lends IWC */function(IIWC,OTOperation,NonOTOperation,OperationFactory, Util, Space){
 
     var PAYLOAD_DATA_TYPE = {
         OT_OPERATION: "OTOperation",
@@ -51,6 +53,8 @@ define([
          * @private
          */
         var _onDataReceivedCallbacks = [];
+
+        var _onDataReceivedCallers = [];
 
         /**
          * Stores (for each user) the times an inocming messages has been received to drop duplicate (same time) messages
@@ -180,7 +184,8 @@ define([
                         //adjustHistory(remoteOp);
                         for(i = 0, numOfCallbacks = _onDataReceivedCallbacks.length; i < numOfCallbacks; i++){
                             if(typeof _onDataReceivedCallbacks[i] === 'function'){
-                                _onDataReceivedCallbacks[i](resOperation);
+                                var caller = _onDataReceivedCallers[i] || this;
+                                _onDataReceivedCallbacks[i].call(caller, resOperation);
                             }
                         }
                         break;
@@ -191,7 +196,8 @@ define([
                         //adjustHistory(remoteOp);
                         for(i = 0, numOfCallbacks = _onDataReceivedCallbacks.length; i < numOfCallbacks; i++){
                             if(typeof _onDataReceivedCallbacks[i] === 'function'){
-                                _onDataReceivedCallbacks[i](resOperation);
+                                var caller = _onDataReceivedCallers[i] || this;
+                                _onDataReceivedCallbacks[i].call(caller, resOperation);
                             }
                         }
                         break;
@@ -299,15 +305,19 @@ define([
                     sender: operation.getSender()
                 });
             },
+            getUserColor: function(jabberId){
+                return Util.getColor(Space.members[jabberId].globalId);
+            },
             /**
              * Register callback for local data receive events
              * @memberof IWCWrapper#
              * @param {function} callback
              */
-            registerOnDataReceivedCallback: function(callback){
+            registerOnDataReceivedCallback: function(callback, caller){
                 if(typeof callback === "function"){
                     this.unregisterOnDataReceivedCallback(callback);
                     _onDataReceivedCallbacks.push(callback);
+                    _onDataReceivedCallers.push(caller);
                 }
             },
             /**
@@ -322,9 +332,14 @@ define([
                     for(i = 0, numOfCallbacks = _onDataReceivedCallbacks.length; i < numOfCallbacks; i++){
                         if(callback === _onDataReceivedCallbacks[i]){
                             _onDataReceivedCallbacks.splice(i,1);
+                            _onDataReceivedCallers.splice(i, 1);
                         }
                     }
                 }
+            },
+
+            getUser: function(){
+                return Space.user;
             }
         };
     }

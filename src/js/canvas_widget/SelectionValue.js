@@ -124,7 +124,8 @@ define([
 		 */
 		var remoteValueChangeCallback = function (operation) {
 			if (operation instanceof ValueChangeOperation && operation.getEntityId() === that.getEntityId()) {
-				_iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
 				processValueChangeOperation(operation);
 			}
 		};
@@ -135,6 +136,7 @@ define([
 		 */
 		var localValueChangeCallback = function (operation) {
 			if (operation instanceof ValueChangeOperation && operation.getEntityId() === that.getEntityId()) {
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
 				propagateValueChangeOperation(operation);
 			}
 		};
@@ -145,7 +147,8 @@ define([
 		 */
 		var historyValueChangeCallback = function (operation) {
 			if (operation instanceof ValueChangeOperation && operation.getEntityId() === that.getEntityId()) {
-				_iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
 				processValueChangeOperation(operation);
 			}
 		};
