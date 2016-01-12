@@ -49,6 +49,14 @@ div.custom_node .fill_parent{
     width: inherit;
     height: inherit;
 }
+/*adjust label of custom nodes*/
+div.custom_node .fill_parent > div {
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translateY(-50%) translateX(-50%);
+    -moz-transform: translateY(-50%) translateX(-50%);
+}
+
 div.simple_node {
     height: inherit;
     width: inherit;

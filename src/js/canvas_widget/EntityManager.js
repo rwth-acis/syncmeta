@@ -145,8 +145,8 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                             break;
                     }
                 }
-                var $shape = $(_.template(shape, {color: color, type: node.label}));
                 var color = node.shape.color ? $colorTestElement.css('color', '#FFFFFF').css('color', node.shape.color).css('color') : '#FFFFFF';
+                var $shape = $(_.template(shape, {color: color, type: node.label}));
 
                 if (node.hasOwnProperty('targetName') && !$.isEmptyObject(nodeTypes) && nodeTypes.hasOwnProperty(node.targetName)) {
                     _nodeTypes[node.label] = ViewNode(node.label, $shape, anchors, node.attributes, nodeTypes[node.targetName], node.conditions, node.conjunction);
@@ -175,26 +175,18 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
 
         }
         return _nodeTypes;
-    }
-
-
-
-    /**
-     * jQuery object to test for valid color
-     * @type {$}
-     */
-    var $colorTestElement = $('<div></div>');
-
-
+    };
 
     /**
      * Guidance modeling specific objects
+     * Unused
      */
+     /*
     var objectContextTypes = {};
     var relationshipContextTypes = {};
     var objectToolTypes = {};
     var edgesByLabel = {};
-    var objectToolNodeTypes = {};
+    var objectToolNodeTypes = {};*/
 
 
     var _initEdgeTypes = function(vls){
@@ -389,9 +381,6 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
             find : function (id) {
                 return this.findNode(id) || this.findEdge(id);
             },
-            getNodeType: function(type){
-                return nodeTypes[type];
-            },
             /**
              * Delete node by id
              * @memberof canvas_widget.EntityManager#
@@ -469,9 +458,6 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                 _edges[id] = edge;
                 return edge;
 
-            },
-            getEdgeType: function(type){
-                return edgeTypes[type];
             },
             /**
              * Find edge by id
@@ -1310,7 +1296,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                         targets: targets,
                         labels: labels
                     };
-                }
+                };
 
                 var getEntitySuccessor = function(nodeId){
                     var targets = [];
@@ -1323,7 +1309,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                         }
                     }
                     return "";
-                }
+                };
 
                 var getEntityPredecessorsForCreateRelationshipAction = function(nodeId){
                     var entities = {
@@ -1373,7 +1359,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                             return attribute.value.value;
                     }
                     return "";
-                }
+                };
 
                 for(var nodeId in nodes){
                     var node = nodes[nodeId];
@@ -1507,7 +1493,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                             };
                             guidanceRules.objectToolRules.push(objectToolRule);
                         }
-                    };
+                    }
                 }
                 return guidanceRules;
             },
@@ -2094,6 +2080,10 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
             getLayer: function() {
                 return _layer;
             },
+            /**
+             * Get the relations between nodes and edges types
+             * @returns {{}}
+             */
             getRelations: function(){
                 return relations;
             }

@@ -83,7 +83,7 @@ define([
             this.expectedNodes = expectedNodes;
         },
         proceed: function(nodeId){
-            var node = this.logicalGuidanceRepresentation.node(nodeId);
+            //var node = this.logicalGuidanceRepresentation.node(nodeId);
             //Are we entering a subactivity?
             if(!this.currentSubActivity && this.possibleSubActivities.length > 0){
                 for(var i = 0; i < this.possibleSubActivities.length; i++){

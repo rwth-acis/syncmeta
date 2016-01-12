@@ -822,6 +822,10 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
         this.showGhostEdge = function(sourceId, targetId, relationshipType){
             var source = EntityManager.findNode(sourceId);
             var target = EntityManager.findNode(targetId);
+            if(!source || !target) {
+                console.error('GhostEdge guidance not possible. Bad params: src' + source + ' target: ' + target + ' type: ' + relationshipType);
+                return;
+            }
             var ghostEdgeGuidance = null;
             //Check if there already is a ghost edge between the two nodes
             for(var i = 0; i < _ghostEdges.length; i++){

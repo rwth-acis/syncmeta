@@ -83,7 +83,7 @@ requirejs([
     var sendGuidanceStrategyOperation = function(data){
         var operation = new GuidanceStrategyOperation(data);
         iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.toNonOTOperation());
-    }
+    };
 
     var initStrategy = function(index){
         selectedStrategy = new strategies[index](LogicalGuidanceRepresentation, Space);
@@ -91,7 +91,7 @@ requirejs([
         $("#guidance-strategy-ui").empty();
         $("#guidance-strategy-ui").append(selectedStrategy.buildUi());
         $("#strategyButton").text(strategies[index].NAME);
-    }
+    };
 
     var registerCallbacks = function(){
         iwc.registerOnDataReceivedCallback(operationCallback);
