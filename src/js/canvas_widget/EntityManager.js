@@ -207,10 +207,10 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                 edge = edges[edgeId];
 
                 if(edge.hasOwnProperty('targetName') && !$.isEmptyObject(edgeTypes) && edgeTypes.hasOwnProperty(edge.targetName)){
-                    _edgeTypes[edge.label] = ViewEdge(edge.label, edge.shape.arrow, edge.shape.shape, edge.shape.color, edge.shape.overlay, edge.shape.overlayPosition, edge.shape.overlayRotate, edge.attributes, edgeTypes[edge.targetName], edge.conditions, edge.conjunction);
+                    _edgeTypes[edge.label] = ViewEdge(edge.label, edge.shape.arrow, edge.shape.shape, edge.shape.color,edge.shape.dashstyle, edge.shape.overlay, edge.shape.overlayPosition, edge.shape.overlayRotate, edge.attributes, edgeTypes[edge.targetName], edge.conditions, edge.conjunction);
                     edgeTypes[edge.targetName].VIEWTYPE = edge.label;
                 }else{
-                    _edgeTypes[edge.label] = Edge(edge.label, edge.shape.arrow, edge.shape.shape, edge.shape.color, edge.shape.overlay, edge.shape.overlayPosition, edge.shape.overlayRotate, edge.attributes);
+                    _edgeTypes[edge.label] = Edge(edge.label, edge.shape.arrow, edge.shape.shape, edge.shape.color,edge.shape.dashstyle, edge.shape.overlay, edge.shape.overlayPosition, edge.shape.overlayRotate, edge.attributes);
                 }
 
                 _edgeTypes[edge.label].TYPE = edge.label;

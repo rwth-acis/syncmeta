@@ -17,8 +17,7 @@ define([
             toolName,
             toolLabel,
             toolDescription||"Click on an empty part of the canvas to add a node",
-            //toolIcon||"class.png"
-            "class.png"
+            toolIcon||"class.png"
         );
     }
 

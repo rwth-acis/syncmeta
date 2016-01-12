@@ -1,10 +1,10 @@
 define(function () {
 
-    function makeViewEdge(type, arrowType,shapeType,color,overlay,overlayPosition,overlayRotate,attributes, edgeType, conditions, conj){
+    function makeViewEdge(type, arrowType,shapeType,color,dashstyle,overlay,overlayPosition,overlayRotate,attributes, edgeType, conditions, conj){
 
         function ViewEdge(id, source, target){
             var viewEdge = new edgeType(id, source, target);
-            viewEdge.restyle(arrowType, color, shapeType, overlay, overlayPosition, overlayRotate, attributes);
+            viewEdge.restyle(arrowType, color, shapeType,dashstyle, overlay, overlayPosition, overlayRotate, attributes);
             viewEdge.setCurrentViewType(type);
             return viewEdge;
         }

@@ -115,9 +115,10 @@ define([
             }
         });
 
-        _$node.on('show.bs.dropdown', function () {
-          _canvas.guidanceFollowed();
-        });
+        //guidanceFollowed does not exists, seems to be unnecessary and obsolete
+        /*_$node.on('show.bs.dropdown', function () {
+         _canvas.guidanceFollowed();
+        });*/
 
 
         _$node.hover(function(){
@@ -133,7 +134,7 @@ define([
             return _$node;
         };
 
-    };
+    }
 
     return SetPropertyGuidance;
 

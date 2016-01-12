@@ -70,7 +70,7 @@ define([
             if(_currentEdge)
                 _currentEdge.remove();
             _currentEdge = edge;
-            _button.find(".label").text(_currentEdge.getLabel())
+            _button.find(".label").text(_currentEdge.getLabel());
 
             var createEdgeButton = _button.find(".create-edge-button");
             createEdgeButton.off("click");
@@ -78,10 +78,11 @@ define([
                 event.stopPropagation();
                 that.remove();
                 _canvas.createEdge(_currentEdge.getEdgeFunction().getType(),_currentEdge.getSource().getEntityId(),_currentEdge.getTarget().getEntityId());
-                _canvas.guidanceFollowed();
+                //guidanceFollowed does not exists, seems to be unnecessary and obsolete
+                //_canvas.guidanceFollowed();
             });
         };
-    };
+    }
 
     return GhostEdgeGuidance;
 

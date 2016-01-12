@@ -67,6 +67,7 @@ define([
      * @param arrowType
      * @param shapeType
      * @param color
+     * @param dashstyle
      * @param overlay
      * @param overlayPosition
      * @param overlayRotate
@@ -480,7 +481,7 @@ define([
                 overlays.push(arrows(color)[arrowType]);
             }
             return overlays;
-        }
+        };
 
 
         return Edge;
