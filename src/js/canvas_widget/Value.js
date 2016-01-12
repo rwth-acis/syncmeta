@@ -268,12 +268,12 @@ define([
                 }
             });
 
-            // _$node.autoGrowInput({
-            //     comfortZone: 10,
-            //     minWidth: 40,
-            //     maxWidth: 1000
-            // }).trigger("blur");
-            _$node.trigger("blur");
+            //automatically determines the size of input
+             _$node.autoGrowInput({
+                 comfortZone: 10,
+                 minWidth: 40,
+                 maxWidth: 1000
+             }).trigger("blur");
         };
 
         //noinspection JSUnusedLocalSymbols
