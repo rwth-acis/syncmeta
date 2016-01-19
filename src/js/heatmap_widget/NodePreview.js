@@ -4,7 +4,7 @@ define([
     'classjs'
 ],function(_, heatspotHtml) {
 
-    var NodePreview = Class.extend({
+    return Class.extend({
         init: function(id, x, y, width, height, scaleFactor, color){
             this.$node = $(heatspotHtml);
             this.originalX = x;
@@ -21,7 +21,7 @@ define([
                 this.setColor(color);
             }
 
-            var that = this;
+            //var that = this;
 
             // this.interval = setInterval(function(){
             //     that.opacity -= 0.01;
@@ -39,7 +39,7 @@ define([
             this.$node.remove();
         },
         moveX: function(x){
-            this.originalX += x,
+            this.originalX += x;
             this.draw();
         },
         moveY: function(y){
@@ -79,7 +79,4 @@ define([
         }
        
     });
-
-    return NodePreview;
-
 });

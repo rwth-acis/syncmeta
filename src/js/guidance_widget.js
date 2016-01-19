@@ -46,16 +46,23 @@ requirejs([
         var index = $(this).val();
         initStrategy(index);
     });
+    var getOriginType = function(operation){
+        if(operation.getViewId() !== null)
+            return  operation.getOriginType();
+        else
+            return operation.getType();
+    };
 
     var operationCallback = function(operation){
         if(operation instanceof EntitySelectOperation){
             selectedStrategy.onEntitySelect(operation.getSelectedEntityId(), operation.getSelectedEntityType());
         }
         else if(operation instanceof NodeAddOperation){
-            selectedStrategy.onNodeAdd(operation.getEntityId(), operation.getType());
+            selectedStrategy.onNodeAdd(operation.getEntityId(), getOriginType(operation));
         }
         else if (operation instanceof EdgeAddOperation){
-            selectedStrategy.onEdgeAdd(operation.getEntityId(), operation.getType());
+
+            selectedStrategy.onEdgeAdd(operation.getEntityId(), getOriginType(operation));
         }
         else if (operation instanceof NodeDeleteOperation){
             selectedStrategy.onNodeDelete(operation.getEntityId(), operation.getType());
@@ -88,8 +95,9 @@ requirejs([
     var initStrategy = function(index){
         selectedStrategy = new strategies[index](LogicalGuidanceRepresentation, Space);
         selectedStrategy.sendGuidanceStrategyOperation = sendGuidanceStrategyOperation;
-        $("#guidance-strategy-ui").empty();
-        $("#guidance-strategy-ui").append(selectedStrategy.buildUi());
+        var $guidanceStrategyUi = $("#guidance-strategy-ui");
+        $guidanceStrategyUi.empty();
+        $guidanceStrategyUi.append(selectedStrategy.buildUi());
         $("#strategyButton").text(strategies[index].NAME);
     };
 

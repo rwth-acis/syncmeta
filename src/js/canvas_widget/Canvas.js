@@ -585,11 +585,23 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
             appearance.top += entityAppearance.height + 10;
             appearance.left += entityAppearance.width / 2;
             _guidanceBox = new GuidanceBox(Util.generateRandomId(), _guidanceBoxLabel, appearance.left, appearance.top);
+            var inView = false;
+            if(EntityManager.getViewId() != null && EntityManager.getLayer() === CONFIG.LAYER.MODEL){
+                inView = true;
+            }
             for(var i = 0; i < _guidanceDefinition.length; i++){
                 var guidanceItem = null;
                 switch(_guidanceDefinition[i].type){
                     case "SELECT_TOOL_GUIDANCE":
-                        guidanceItem = new SelectToolGuidance(_guidanceDefinition[i].id, _guidanceDefinition[i].label, _guidanceDefinition[i].tool, that, _guidanceDefinition[i].icon);
+                        var tool;
+                        if(inView && EntityManager.getNodeType(_guidanceDefinition[i].tool).VIEWTYPE === null)
+                            continue;
+                        else if(inView)
+                            tool = EntityManager.getNodeType(_guidanceDefinition[i].tool).VIEWTYPE;
+                        else
+                            tool = _guidanceDefinition[i].tool;
+
+                        guidanceItem = new SelectToolGuidance(_guidanceDefinition[i].id, _guidanceDefinition[i].label, tool, that, _guidanceDefinition[i].icon);
                         break;
                     case "SET_PROPERTY_GUIDANCE":
                         var entity = EntityManager.findNode(_guidanceDefinition[i].entityId);
@@ -601,7 +613,16 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
                         guidanceItem = new CollaborationGuidance("", _guidanceDefinition[i].label, _guidanceDefinition[i].activityId, _guidanceDefinition[i].objectId, that);
                         break;
                     case "GHOST_EDGE_GUIDANCE":
-                        that.showGhostEdge(_guidanceDefinition[i].sourceId, _guidanceDefinition[i].targetId, _guidanceDefinition[i].relationshipType);
+                        var relationshipType;
+                        if(inView && EntityManager.getEdgeType(_guidanceDefinition[i].relationshipType).VIEWTYPE === undefined)
+                            continue;
+                        else if(inView){
+                            relationshipType = EntityManager.getEdgeType(_guidanceDefinition[i].relationshipType).VIEWTYPE;
+                        }
+                        else {
+                            relationshipType = _guidanceDefinition[i].relationshipType;
+                        }
+                        that.showGhostEdge(_guidanceDefinition[i].sourceId, _guidanceDefinition[i].targetId, relationshipType);
                         break;
                 }
                 if(guidanceItem)
@@ -823,7 +844,7 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
             var source = EntityManager.findNode(sourceId);
             var target = EntityManager.findNode(targetId);
             if(!source || !target) {
-                console.error('GhostEdge guidance not possible. Bad params: src' + source + ' target: ' + target + ' type: ' + relationshipType);
+                //console.error('GhostEdge guidance not possible. Bad params: src' + source + ' target: ' + target + ' type: ' + relationshipType);
                 return;
             }
             var ghostEdgeGuidance = null;
@@ -1270,9 +1291,6 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
             _iwcot.registerOnLocalDataReceivedCallback(DeleteCvgCallback);
         };
 
-
-
-
         /**
          * Unregister inter widget communication callbacks
          */
@@ -1334,7 +1352,7 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
 
 
         if(_iwcot){
-;            that.registerCallbacks();
+            that.registerCallbacks();
         }
 
     }

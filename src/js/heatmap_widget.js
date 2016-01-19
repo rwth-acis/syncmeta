@@ -20,9 +20,10 @@ requirejs([
     var iwc = IWCOT.getInstance(CONFIG.WIDGET.NAME.HEATMAP);
     var $heatmap = $("#heatmap");
     var scaleFactor = $heatmap.width() / 9000;
-    var $window = $("<div style='position:absolute; z-index:10000; width:50px; height:50px; border-style:groove; border-width: 1px;'></div>");
+    var $window = $("<div id='viewpoint' style='position:absolute; z-index:10000; width:50px; height:50px; border-style:groove; border-width: 1px;'></div>");
     $window.hide();
     $heatmap.append($window);
+    //$('#viewpoint').draggable({ cursor: "move", containment:'#heatmap'});
     var previewNodes = {};
     var localUserId = iwc.getUser()[CONFIG.NS.PERSON.JABBERID];
 
@@ -43,22 +44,23 @@ requirejs([
     };
 
     var operationCallback = function(operation){
+        var id, node, senderJabberId;
         if(operation instanceof NodeAddOperation){
-            var senderJabberId = operation.getOTOperation().getSender();
+            senderJabberId = operation.getOTOperation().getSender();
             var color = null;
             if(senderJabberId != localUserId)
                 color = iwc.getUserColor(senderJabberId);
-            var node = addNodePreview(operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), color);
+            node = addNodePreview(operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), color);
             updateBoundingBox(node);
             updateZoom();
         }
         else if (operation instanceof NodeMoveOperation){
-            var id = operation.getEntityId();
+            id = operation.getEntityId();
             if(previewNodes.hasOwnProperty(id)){
-                var node = previewNodes[id];
+                node = previewNodes[id];
                 node.moveX(operation.getOffsetX());
                 node.moveY(operation.getOffsetY());
-                var senderJabberId = operation.getOTOperation().getSender();
+                senderJabberId = operation.getOTOperation().getSender();
                 updateColor(node, senderJabberId);
                 updateBoundingBox(node);
                 updateZoom();
@@ -66,21 +68,21 @@ requirejs([
 
         }
         else if (operation instanceof NodeResizeOperation){
-            var id = operation.getEntityId();
+            id = operation.getEntityId();
             if(previewNodes.hasOwnProperty(id)){
-                var node = previewNodes[id];
+                node = previewNodes[id];
                 node.changeWidth(operation.getOffsetX());
                 node.changeHeight(operation.getOffsetY());
-                var senderJabberId = operation.getOTOperation().getSender();
+                senderJabberId = operation.getOTOperation().getSender();
                 updateColor(node, senderJabberId);
                 updateBoundingBox(node);
                 updateZoom();
             }
         }
         else if (operation instanceof NodeDeleteOperation){
-            var id = operation.getEntityId();
+            id = operation.getEntityId();
             if(previewNodes.hasOwnProperty(id)){
-                var node = previewNodes[id];
+                node = previewNodes[id];
                 node.remove();
                 delete previewNodes[id];
             }
@@ -153,11 +155,13 @@ requirejs([
     registerCallbacks();
 
     for(var nodeId in model.nodes){
-        var node = model.nodes[nodeId];
-        var nodePreview = addNodePreview(nodeId, node.left, node.top, node.width, node.height, scaleFactor, null);
-        updateColor(nodePreview, localUserId);
-        updateBoundingBox(nodePreview);
-    };
+        if(model.nodes.hasOwnProperty(nodeId)) {
+            var node = model.nodes[nodeId];
+            var nodePreview = addNodePreview(nodeId, node.left, node.top, node.width, node.height, scaleFactor, null);
+            updateColor(nodePreview, localUserId);
+            updateBoundingBox(nodePreview);
+        }
+    }
     updateZoom();
 
 });
