@@ -186,7 +186,7 @@ module.exports = function(grunt) {
                         meta: {
                             title: "Debug",
                             description: "",
-                            width: "100",
+                            width: "400",
                             height: "300"
                         },
                         bodyPartial: '_debug_widget.tpl'
@@ -280,6 +280,23 @@ module.exports = function(grunt) {
                 files: {
                     'html/heatmap.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
                 }
+            },
+            viewcontrol_widget: {
+                options: {
+                    data: {
+                        meta: {
+                            title: "View Control",
+                            description: "",
+                            width: "400",
+                            height: "500"
+                        },
+                        bodyPartial: '_viewcontrol_widget.tpl'
+                    }
+                },
+                files: {
+                    'html/viewcontrol.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
+                }
+
             }
         },
 
