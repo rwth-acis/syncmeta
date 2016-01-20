@@ -8,47 +8,10 @@ define([
     'canvas_widget/FileAttribute',
     'canvas_widget/SingleValueAttribute',
     'canvas_widget/SingleSelectionAttribute',
-    'canvas_widget/AbstractEdge'
-],/** @lends makeEdge */function(require,$,jsPlumb,_,BooleanAttribute,IntegerAttribute,FileAttribute,SingleValueAttribute,SingleSelectionAttribute,AbstractEdge) {
+    'canvas_widget/AbstractEdge',
+    'canvas_widget/Arrows'
+],/** @lends makeEdge */function(require,$,jsPlumb,_,BooleanAttribute,IntegerAttribute,FileAttribute,SingleValueAttribute,SingleSelectionAttribute,AbstractEdge,Arrows) {
 
-    var arrows = function(color){
-        return {
-            //"bidirassociation": [], //No overlays for bi-dir-association
-            "unidirassociation": ["Arrow", {
-                width:20,
-                length:30,
-                location:1,
-                foldback: 0.1,
-                paintStyle: {
-                    fillStyle: "#ffffff",
-                    outlineWidth: 2,
-                    outlineColor: color
-                }
-            }],
-            "generalisation": ["Arrow", {
-                width:20,
-                length:30,
-                location:1,
-                foldback: 1,
-                paintStyle: {
-                    fillStyle: "#ffffff",
-                    outlineWidth: 2,
-                    outlineColor: color
-                }
-            }],
-            "diamond": ["Arrow", {
-                width:20,
-                length:20,
-                location:1,
-                foldback: 2,
-                paintStyle: {
-                    fillStyle: "#ffffff",
-                    outlineWidth: 2,
-                    outlineColor: color
-                }
-            }]
-        };
-    };
 
     var shapes = {
         'straight': ["Straight", {gap: 0}],
@@ -144,8 +107,8 @@ define([
             var init = function(){
                 var attribute, attributeId, attrObj;
 
-                if(arrows().hasOwnProperty(arrowType)){
-                    overlays.push(arrows(color)[arrowType]);
+                if(Arrows().hasOwnProperty(arrowType)){
+                    overlays.push(Arrows(color)[arrowType]);
                 }
 
                 if(overlay){
@@ -255,11 +218,7 @@ define([
                     source: source.get$node(),
                     target: target.get$node(),
 
-                    paintStyle:{
-                        strokeStyle: color,
-                        lineWidth: 2,
-                        dashstyle: dashstyle
-                    },
+                    paintStyle:that.getDefaultPaintStyle(),
                     endpoint: "Blank",
                     anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
                     connector: shape,
@@ -306,8 +265,8 @@ define([
 
                 color = color ? $colorTestElement.css('color','#aaaaaa').css('color',color).css('color') : '#aaaaaa';
 
-                if(arrows().hasOwnProperty(arrowType)){
-                    overlays.push(arrows(color)[arrowType]);
+                if(Arrows().hasOwnProperty(arrowType)){
+                    overlays.push(Arrows(color)[arrowType]);
                 }
 
                 if(overlay){
@@ -480,8 +439,8 @@ define([
 
         Edge.getArrowOverlays = function(){
             var overlays = [];
-            if(arrows().hasOwnProperty(arrowType)){
-                overlays.push(arrows(color)[arrowType]);
+            if(Arrows().hasOwnProperty(arrowType)){
+                overlays.push(Arrows(color)[arrowType]);
             }
             return overlays;
         };

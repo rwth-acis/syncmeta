@@ -1,11 +1,11 @@
 define([
-'jqueryui',
-'jsplumb',
-'lodash',
-'canvas_widget/EntityManager',
-'canvas_widget/guidance_modeling/GhostEdge',
-'text!templates/guidance_modeling/ghost_edge.html',
-'bootstrap'
+    'jqueryui',
+    'jsplumb',
+    'lodash',
+    'canvas_widget/EntityManager',
+    'canvas_widget/guidance_modeling/GhostEdge',
+    'text!templates/guidance_modeling/ghost_edge.html',
+    'bootstrap'
 ],function($, jsPlumb, _, EntityManager, GhostEdge, ghostEdgeHtml) {
     function GhostEdgeGuidance(canvas, node1, node2){
         var _button = $(ghostEdgeHtml);
@@ -43,7 +43,7 @@ define([
             });
             listItem.find("a").text(edge.getLabel());
             _dropdownList.append(listItem);
-            
+
             if(_edges.length == 1){
                 this.setCurrentEdge(edge);
             }
@@ -78,12 +78,12 @@ define([
             createEdgeButton.click(function(event){
                 event.stopPropagation();
                 that.remove();
-                if(EntityManager.getViewId() !== null && EntityManager.getLayer() === CONFIG.LAYER.MODEL){
-                    _canvas.createEdge(_currentEdge.getEdgeFunction().VIEWTYPE, _currentEdge.getSource().getEntityId(), _currentEdge.getTarget().getEntityId());
-                }
-                else {
-                    _canvas.createEdge(_currentEdge.getEdgeFunction().getType(), _currentEdge.getSource().getEntityId(), _currentEdge.getTarget().getEntityId());
-                }
+                //if(EntityManager.getViewId() !== null && EntityManager.getLayer() === CONFIG.LAYER.MODEL){
+                //    _canvas.createEdge(_currentEdge.getEdgeFunction().VIEWTYPE, _currentEdge.getSource().getEntityId(), _currentEdge.getTarget().getEntityId());
+                //}
+                //else {
+                _canvas.createEdge(_currentEdge.getEdgeFunction().getType(), _currentEdge.getSource().getEntityId(), _currentEdge.getTarget().getEntityId());
+                //}
                 //guidanceFollowed does not exists, seems to be unnecessary and obsolete
                 //_canvas.guidanceFollowed();
             });

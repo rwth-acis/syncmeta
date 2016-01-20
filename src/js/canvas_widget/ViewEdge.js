@@ -1,4 +1,4 @@
-define(function () {
+define(['canvas_widget/Arrows'],function (Arrows) {
 
     function makeViewEdge(type, arrowType,shapeType,color,dashstyle,overlay,overlayPosition,overlayRotate,attributes, edgeType, conditions, conj){
 
@@ -43,6 +43,16 @@ define(function () {
         };
         ViewEdge.getType = function(){
             return type;
+        };
+        ViewEdge.getArrowOverlays = function(){
+            var overlays = [];
+            if(Arrows().hasOwnProperty(arrowType)){
+                overlays.push(Arrows(color)[arrowType]);
+            }
+            return overlays;
+        };
+        ViewEdge.getShape = function(){
+            return this.getTargetEdgeType().getShape();
         };
 
         return ViewEdge;
