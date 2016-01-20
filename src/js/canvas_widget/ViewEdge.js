@@ -41,6 +41,9 @@ define(function () {
         ViewEdge.getTargetEdgeType = function(){
           return edgeType;
         };
+        ViewEdge.getType = function(){
+            return type;
+        };
 
         return ViewEdge;
     }

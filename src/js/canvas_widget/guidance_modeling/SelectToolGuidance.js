@@ -2,8 +2,9 @@ define([
     'iwcotw',
     'jqueryui',
     'lodash',
+    'canvas_widget/EntityManager',
     'text!templates/guidance_modeling/select_tool_guidance.html'
-],function(IWCOTW, $,_, selectToolGuidanceHtml) {
+],function(IWCOTW, $,_, EntityManager, selectToolGuidanceHtml) {
     function SelectToolGuidance(id, label, tool, canvas, icon){
         //var _iwc = IWCOTW.getInstance(CONFIG.WIDGET.NAME.MAIN);
         //var _id = id;
@@ -13,7 +14,16 @@ define([
         var _$node = $(_.template(selectToolGuidanceHtml, {text: label, icon: icon || 'plus-circle'}));
 
         _$node.click(function(){
-            _canvas.mountTool(tool);
+            if(EntityManager.getViewId() !== null && EntityManager.getLayer() === CONFIG.LAYER.MODEL) {
+                if(EntityManager.getNodeType(tool) !== null) {
+                    _canvas.mountTool(EntityManager.getNodeType(tool).VIEWTYPE);
+                }else{
+                    _canvas.mountTool(tool);
+                }
+            }
+            else
+                _canvas.mountTool(tool);
+
             _canvas.hideGuidanceBox();
            //guidanceFollowed does not exists, seems to be unnecessary and obsolete
            // _canvas.guidanceFollowed();

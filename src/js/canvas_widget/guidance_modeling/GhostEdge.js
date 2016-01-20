@@ -70,7 +70,7 @@ define([
         this.getTarget = function(){
             return target;
         }; 
-    };
+    }
 
     return GhostEdge;
 

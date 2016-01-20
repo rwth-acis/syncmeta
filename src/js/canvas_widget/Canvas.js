@@ -862,8 +862,12 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
                 ghostEdgeGuidance = new GhostEdgeGuidance(that, source, target);
                 _ghostEdges.push(ghostEdgeGuidance);
             }
-            ghostEdgeGuidance.addEdge(EntityManager.getEdgeType(relationshipType), source, target);
-
+            if(EntityManager.getViewId() !== null && EntityManager.getLayer() === CONFIG.LAYER.MODEL){
+                ghostEdgeGuidance.addEdge(EntityManager.getViewEdgeType(relationshipType).getTargetEdgeType(), source, target);
+            }
+            else {
+                ghostEdgeGuidance.addEdge(EntityManager.getEdgeType(relationshipType), source, target);
+            }
             for(var i = 0; i < _ghostEdges.length; i++){
                 _ghostEdges[i].show();
             }

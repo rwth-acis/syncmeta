@@ -295,12 +295,13 @@ define([
              * @param arrowType
              * @param color
              * @param shapeType
+             * @param dashstyle
              * @param overlay
              * @param overlayPosition
              * @param overlayRotate
              * @param attributes
              */
-            this.restyle = function(arrowType, color, shapeType, overlay, overlayPosition, overlayRotate, attributes){
+            this.restyle = function(arrowType, color, shapeType, dashstyle, overlay, overlayPosition, overlayRotate, attributes){
                 overlays = [];
 
                 color = color ? $colorTestElement.css('color','#aaaaaa').css('color',color).css('color') : '#aaaaaa';
@@ -381,7 +382,9 @@ define([
 
                 var paintStyle ={
                     strokeStyle: color,
-                    lineWidth: 2
+                    lineWidth: 2,
+                    dashstyle: dashstyle
+
                 };
 
 
