@@ -7,6 +7,7 @@ requirejs([
     'jqueryui',
     'jsplumb',
     'iwcotw',
+    'lib/yjs-sync',
     'Util',
     'operations/non_ot/ToolSelectOperation',
     'operations/non_ot/ActivityOperation',
@@ -50,11 +51,13 @@ requirejs([
     'promise!Metamodel',
     'promise!Model',
     'promise!Guidancemodel'
-],function($,jsPlumb,IWCOT, Util,ToolSelectOperation,ActivityOperation,JoinOperation, ViewInitOperation, UpdateViewListOperation, DeleteViewOperation,SetViewTypesOperation, InitModelTypesOperation, SetModelAttributeNodeOperation, Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge, ViewObjectNode, ViewObjectNodeTool,ViewRelationshipNode, ViewRelationshipNodeTool, ViewManager, ViewGenerator, metamodel,model,guidancemodel) {
+],function($,jsPlumb,IWCOT, yjsSync,Util,ToolSelectOperation,ActivityOperation,JoinOperation, ViewInitOperation, UpdateViewListOperation, DeleteViewOperation,SetViewTypesOperation, InitModelTypesOperation, SetModelAttributeNodeOperation, Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge, ViewObjectNode, ViewObjectNodeTool,ViewRelationshipNode, ViewRelationshipNodeTool, ViewManager, ViewGenerator, metamodel,model,guidancemodel) {
     var iwcot, canvas;
 
     iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.MAIN);
     canvas = new Canvas($("#canvas"));
+
+    yjsSync();
 
     if(guidancemodel.isGuidanceEditor()){
         //Set the model which is shown by the editor to the guidancemodel

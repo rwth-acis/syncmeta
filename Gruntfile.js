@@ -47,7 +47,13 @@ module.exports = function(grunt) {
                     {src: '<%= bowerdir %>/FileToDataURI/index.swf', dest: '<%= distdir %>/js/lib/vendor/FileToDataURI.swf'},
                     {src: '<%= bowerdir %>/jszip/jszip.js', dest: '<%= distdir %>/js/lib/vendor/jszip.js'},
                     {src: '<%= bowerdir %>/graphlib/dist/graphlib.core.min.js', dest: '<%= distdir %>/js/lib/vendor/graphlib.core.min.js'},
-                    {cwd: '<%= bowerdir %>/font-awesome/',expand: true, src: ['css/**', 'fonts/**'], dest: '<%= distdir %>/css/vendor/font-awesome/'}
+                    {cwd: '<%= bowerdir %>/font-awesome/',expand: true, src: ['css/**', 'fonts/**'], dest: '<%= distdir %>/css/vendor/font-awesome/'},
+                    {cwd:'<%= bowerdir %>/yjs',expand:true, src: ['*.js'], dest:'<%=distdir%>/js/lib/vendor/yjs'},
+                    {cwd:'<%= bowerdir %>/y-array',expand:true, src: ['*.js'], dest:'<%=distdir%>/js/lib/vendor/y-array'},
+                    {cwd:'<%= bowerdir %>/y-map',expand:true, src: ['*.js'], dest:'<%=distdir%>/js/lib/vendor/y-map'},
+                    {cwd:'<%= bowerdir %>/y-text',expand:true,src: ['*.js'], dest:'<%=distdir%>/js/lib/vendor/y-text'},
+                    {cwd:'<%= bowerdir %>/y-websockets-client',expand:true, src: ['*.js'], dest:'<%=distdir%>/js/lib/vendor/y-websockets-client'},
+                    {cwd:'<%= bowerdir %>/y-memory',expand:true, src: ['*.js'], dest:'<%=distdir%>/js/lib/vendor/y-memory'}
                 ]
             },
             main: {

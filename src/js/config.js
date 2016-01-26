@@ -69,7 +69,8 @@ var require = {
         jszip: "lib/vendor/jszip",
         classjs: "lib/Class",
         graphlib: "lib/vendor/graphlib.core.min",
-        bootstrap: "lib/vendor/bootstrap/dropdown.prefixed"
+        bootstrap: "lib/vendor/bootstrap/dropdown.prefixed",
+        yjs: "lib/vendor/yjs/y"
     }
 };
 

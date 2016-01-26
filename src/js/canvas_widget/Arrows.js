@@ -1,6 +1,3 @@
-/**
- * Created by mario on 1/20/16.
- */
 define(function () {
     return  function(color){
         return {
