@@ -16,6 +16,7 @@ define([
     'operations/non_ot/ActivityOperation',
     'operations/non_ot/ExportDataOperation',
     'operations/non_ot/ExportMetaModelOperation',
+    'operations/non_ot/ExportLogicalGuidanceRepresentationOperation',
     'operations/non_ot/ExportImageOperation',
     'operations/non_ot/JoinOperation',
     'operations/non_ot/SetViewTypesOperation',
@@ -25,9 +26,15 @@ define([
     'operations/non_ot/DeleteCvgOperation',
     'operations/non_ot/DeleteViewOperation',
     'operations/non_ot/SetModelAttributeNodeOperation',
-    'operations/non_ot/UpdateViewListOperation'
+    'operations/non_ot/UpdateViewListOperation',
+    'operations/non_ot/ShowGuidanceBoxOperation',
+    'operations/non_ot/CanvasViewChangeOperation',
+    'operations/non_ot/RevokeSharedActivityOperation',
+    'operations/non_ot/CollaborateInActivityOperation',
+    'operations/non_ot/MoveCanvasOperation',
+    'operations/non_ot/GuidanceStrategyOperation'
 
-],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeMoveZOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportImageOperation,JoinOperation,SetViewTypesOperation,InitModelTypesOperation,ViewInitOperation,PerformCvgOperation,DeleteCvgOperation,DeleteViewOperation,SetModelAttributeNodeOperation,UpdateViewListOperation) {
+],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeMoveZOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,JoinOperation,SetViewTypesOperation,InitModelTypesOperation,ViewInitOperation,PerformCvgOperation,DeleteCvgOperation,DeleteViewOperation,SetModelAttributeNodeOperation,UpdateViewListOperation,ShowGuidanceBoxOperation, CanvasViewChangeOperation, RevokeSharedActivityOperation,CollaborateInActivityOperation, MoveCanvasOperation, GuidanceStrategyOperation) {
 
     /**
      * OperationFactory
@@ -56,7 +63,7 @@ define([
 
                 switch(type){
                     case EntitySelectOperation.TYPE:
-                        resOperation = new EntitySelectOperation(data.selectedEntityId, data.destination);
+                        resOperation = new EntitySelectOperation(data.selectedEntityId, data.selectedEntityType);
                         resOperation.setNonOTOperation(operation);
                         break;
                     case ToolSelectOperation.TYPE:
@@ -70,6 +77,9 @@ define([
                         break;
                     case ExportMetaModelOperation.TYPE:
                         resOperation = new ExportMetaModelOperation(data.requestingComponent,data.data);
+                        break;
+                    case ExportLogicalGuidanceRepresentationOperation.TYPE:
+                        resOperation = new ExportLogicalGuidanceRepresentationOperation(data.requestingComponent,data.data);
                         break;
                     case ExportImageOperation.TYPE:
                         resOperation = new ExportImageOperation(data.requestingComponent,data.data);
@@ -94,12 +104,31 @@ define([
                         break;
                     case DeleteViewOperation.TYPE:
                         resOperation = new DeleteViewOperation(data.viewId);
+
+                    case ShowGuidanceBoxOperation.TYPE:
+                        resOperation = new ShowGuidanceBoxOperation(data.label, data.guidance, data.entityId);
                         break;
                     case SetModelAttributeNodeOperation.TYPE:
                         resOperation = new SetModelAttributeNodeOperation();
                         break;
                     case UpdateViewListOperation.TYPE:
                         resOperation = new UpdateViewListOperation();
+                    case CanvasViewChangeOperation.TYPE:
+                        resOperation = new CanvasViewChangeOperation(data.left, data.top, data.width, data.height, data.zoom);
+                        resOperation.setNonOTOperation(operation);
+                        break;
+                    case RevokeSharedActivityOperation.TYPE:
+                        resOperation = new RevokeSharedActivityOperation(data.id);
+                        break;
+                    case CollaborateInActivityOperation.TYPE:
+                        resOperation = new CollaborateInActivityOperation(data.id);
+                        break;
+                    case MoveCanvasOperation.TYPE:
+                        resOperation = new MoveCanvasOperation(data.objectId, data.transition);
+                        break;
+                    case GuidanceStrategyOperation.TYPE:
+                        resOperation = new GuidanceStrategyOperation(data.data);
+                        resOperation.setNonOTOperation(operation);
                         break;
                 }
                 return resOperation;

@@ -68,8 +68,6 @@ define([
                 onAll: function(membersObj){
                     var promise;
 
-                    console.log(membersObj);
-
                     for(var i = 0, numOfMembers = membersObj.length; i<numOfMembers; i++){
                         promise = resourceGetPromise(membersObj[i].info.subject["http://www.w3.org/2002/07/owl#sameAs"][0].value);
                         promiseArray.push(promise);

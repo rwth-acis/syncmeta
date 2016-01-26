@@ -48,13 +48,21 @@ requirejs([
     'canvas_widget/ViewManager',
     'canvas_widget/ViewGenerator',
     'promise!Metamodel',
-    'promise!Model'
-],function($,jsPlumb,IWCOT, Util,ToolSelectOperation,ActivityOperation,JoinOperation, ViewInitOperation, UpdateViewListOperation, DeleteViewOperation,SetViewTypesOperation, InitModelTypesOperation, SetModelAttributeNodeOperation, Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge, ViewObjectNode, ViewObjectNodeTool,ViewRelationshipNode, ViewRelationshipNodeTool, ViewManager, ViewGenerator, metamodel,model) {
-
+    'promise!Model',
+    'promise!Guidancemodel'
+],function($,jsPlumb,IWCOT, Util,ToolSelectOperation,ActivityOperation,JoinOperation, ViewInitOperation, UpdateViewListOperation, DeleteViewOperation,SetViewTypesOperation, InitModelTypesOperation, SetModelAttributeNodeOperation, Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge, ViewObjectNode, ViewObjectNodeTool,ViewRelationshipNode, ViewRelationshipNodeTool, ViewManager, ViewGenerator, metamodel,model,guidancemodel) {
     var iwcot, canvas;
 
     iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.MAIN);
     canvas = new Canvas($("#canvas"));
+
+    if(guidancemodel.isGuidanceEditor()){
+        //Set the model which is shown by the editor to the guidancemodel
+        model = guidancemodel.guidancemodel;
+        //Set the metamodel to the guidance metamodel
+        metamodel = guidancemodel.guidancemetamodel;
+    }
+
     if(metamodel.constructor === Object) {
         if (metamodel.hasOwnProperty("nodes")) {
             var nodes = metamodel.nodes, node;
@@ -224,7 +232,6 @@ requirejs([
             else {
                 DeleteView(viewId);
                 $('#viewsHide').click();
-
             }
         });
 
@@ -364,6 +371,7 @@ requirejs([
                 edge.connect();
             }
         }
+
     }
     function DeleteView(viewId){
         var deferred = $.Deferred();
@@ -463,8 +471,10 @@ requirejs([
     });
 
     var $feedback = $("#feedback");
-    $("#save").click(function(){
+
+    var saveFunction = function(){
         $feedback.text("Saving...");
+
         var viewId = $('#lblCurrentViewId').text();
         if(viewId.length > 0 && metamodel.constructor !== Object){
             ViewManager.updateViewContent(viewId, ViewManager.getResource(viewId)).then(function () {
@@ -475,13 +485,18 @@ requirejs([
                 }, 1000);
             });
         }else {
-            EntityManager.storeData2().then(function () {
+            EntityManager.storeData().then(function(){
                 $feedback.text("Saved!");
-                setTimeout(function () {
+                setTimeout(function(){
                     $feedback.text("");
-                }, 1000);
+                },1000);
             });
         }
+
+
+    };
+    $("#save").click(function(){
+        saveFunction();
     });
 
     $("#dialog").dialog({
@@ -547,7 +562,7 @@ requirejs([
         if(readyToSave){
             readyToSave = false;
             setTimeout(function(){
-                $("#save").click();
+                saveFunction();
             },500);
             setTimeout(function(){
                 readyToSave = true;

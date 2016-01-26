@@ -134,6 +134,7 @@ define([
             processEdgeDeleteOperation(operation);
             if(_iwcot.sendRemoteOTOperation(operation)){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "EdgeDeleteActivity",
                     operation.getEntityId(),
@@ -150,7 +151,7 @@ define([
          */
         var remoteEntitySelectCallback = function(operation){
             var color;
-            if(operation instanceof EntitySelectOperation && operation.getDestination() === CONFIG.WIDGET.NAME.MAIN){
+            if(operation instanceof EntitySelectOperation){
                 color = _iwcot.getUserColor(operation.getNonOTOperation().getSender());
                 if(!_isSelected){
                     if(operation.getSelectedEntityId() === that.getEntityId()){
@@ -177,6 +178,7 @@ define([
         var remoteEdgeDeleteCallback = function(operation){
             if(operation instanceof EdgeDeleteOperation && operation.getEntityId() == that.getEntityId()){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "EdgeDeleteActivity",
                     operation.getEntityId(),
@@ -195,6 +197,7 @@ define([
         var historyEdgeDeleteCallback = function(operation){
             if(operation instanceof EdgeDeleteOperation && operation.getEntityId() == that.getEntityId()){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
                 processEdgeDeleteOperation(operation);
             }
         };

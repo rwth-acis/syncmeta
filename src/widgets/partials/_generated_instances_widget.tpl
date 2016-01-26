@@ -5,8 +5,9 @@
         'Util',
         'iwcw',
         'operations/non_ot/ExportMetaModelOperation',
+        'operations/non_ot/ExportLogicalGuidanceRepresentationOperation',
         'canvas_widget/GenerateViewpointModel'
-    ],function($,_,Util,IWCW,ExportMetaModelOperation,GenerateViewpointModel){
+    ],function($,_,Util,IWCW,ExportMetaModelOperation,ExportLogicalGuidanceRepresentationOperation,GenerateViewpointModel){
 
         var componentName = "export"+Util.generateRandomId();
 
@@ -83,7 +84,54 @@
                 });
                 return deferred2.promise();
             }
-			
+
+
+            function addGuidanceRulesToSpace(spaceURI, guidanceRules){
+                var deferred = $.Deferred();
+                var deferred2 = $.Deferred();
+                openapp.resource.post(
+                        spaceURI,
+                        function(data){
+                            deferred.resolve(data.uri);
+                        },{
+                            "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate":"http://purl.org/role/terms/data",
+                            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type":"my:ns:guidancerules"
+                        });
+                deferred.promise().then(function(dataURI){
+                    openapp.resource.put(
+                            dataURI,
+                            function(){
+                                deferred2.resolve();
+                            },{
+                                "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate":"http://purl.org/openapp/representation"
+                            },JSON.stringify(guidanceRules));
+                });
+                return deferred2.promise();
+            }
+
+            function addLogicalGuidanceRepresentationToSpace(spaceURI, logicalGuidanceRepresentation){
+                var deferred = $.Deferred();
+                var deferred2 = $.Deferred();
+                openapp.resource.post(
+                        spaceURI,
+                        function(data){
+                            deferred.resolve(data.uri);
+                        },{
+                            "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate":"http://purl.org/role/terms/data",
+                            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type":CONFIG.NS.MY.LOGICALGUIDANCEREPRESENTATION
+                        });
+                deferred.promise().then(function(dataURI){
+                    openapp.resource.put(
+                            dataURI,
+                            function(){
+                                deferred2.resolve();
+                            },{
+                                "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate":"http://purl.org/openapp/representation"
+                            },JSON.stringify(logicalGuidanceRepresentation));
+                });
+                return deferred2.promise();
+            }
+
             function storeGeneratedInstanceMeta(spaceURI,spaceTitle){
                 var resourceSpace = new openapp.oo.Resource(openapp.param.space()),
                         deferred = $.Deferred(),
@@ -157,40 +205,61 @@
 				});
 				return deferred.promise();
 			}
-            return $.when(getMetaModel(), getViewpoints()).then(function(metamodel, viewpoints){
+
+            return $.when(getMetaModel(), getViewpoints(),getLogicalGuidanceRepresentation())
+                .then(function(metamodel, viewpoints,logicalGuidanceRepresentation){
                 return createSpace(spaceLabel,spaceTitle)
                     .then(function(spaceURI){
-                        return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/activity.xml")
-                            .then(function(){
-                                return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/widget.xml");
+                         return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/activity.xml")
+                             .then(function(){
+                                  return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/widget.xml");
+                             }).then(function(){
+                      return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/palette.xml");
+                             }).then(function(){
+                      return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/attribute.xml");
                             }).then(function(){
-                                return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/palette.xml");
-                            }).then(function(){
-                                return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/attribute.xml");
-                            }).then(function(){
-                                return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/debug.xml");
-                            }).then(function(){
-                                return addMetamodelToSpace(spaceURI,metamodel, CONFIG.NS.MY.METAMODEL);
-                            }).then(function(){
-								var deferred = $.Deferred();
-								for(var i=0;i<viewpoints.length;i++){
-									GetViewPoint(viewpoints[i]).then(function(viewpoint){
-									    var viewpointmodel = GenerateViewpointModel(viewpoint);
-										addMetamodelToSpace(spaceURI, viewpointmodel, CONFIG.NS.MY.VIEWPOINT);
-									});
-								}
-								deferred.resolve(); 
-								return deferred.promise();
-							}).then(function(){
-                                return storeGeneratedInstanceMeta(spaceURI,spaceTitle);
-                            }).then(function(){
-                                return {
-                                    spaceURI: spaceURI,
-                                    spaceTitle: spaceTitle
+                      return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/debug.xml");
+                      }).then(function(){
+                         return addMetamodelToSpace(spaceURI,metamodel, CONFIG.NS.MY.METAMODEL);
+                      }).then(function(){
+                       var deferred = $.Deferred();
+                            for(var i=0;i<viewpoints.length;i++){
+                                GetViewPoint(viewpoints[i]).then(function(viewpoint){
+                                var viewpointmodel = GenerateViewpointModel(viewpoint);
+                                addMetamodelToSpace(spaceURI, viewpointmodel, CONFIG.NS.MY.VIEWPOINT);
+                                });
+                            }
+                        deferred.resolve();
+                        return deferred.promise();
+                       })
+                       .then(function(){
+                            return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/guidance.xml");
+                       }).then(function(){
+                            return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/heatmap.xml");
+                       }).then(function(){
+                            return addLogicalGuidanceRepresentationToSpace(spaceURI, logicalGuidanceRepresentation);
+                        }).then(function(){
+                               return {
+                                  spaceURI: spaceURI,
+                                  spaceTitle: spaceTitle
                                 };
-                            });
-                    });
-            });
+                       });
+
+
+                    })
+                   });
+
+            function getLogicalGuidanceRepresentation(){
+                var deferred = $.Deferred();
+                iwc.registerOnDataReceivedCallback(function(operation){
+                    if(operation instanceof ExportLogicalGuidanceRepresentationOperation){
+                        deferred.resolve(operation.getData());
+                    }
+                });
+                var operation = new ExportLogicalGuidanceRepresentationOperation(componentName,null);
+                iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.toNonOTOperation());
+                return deferred.promise();
+            }
 
         }
 

@@ -27,8 +27,9 @@ define([
 	 * @param {canvas_widget.AbstractNode|canvas_widget.AbstractEdge} rootSubjectEntity Topmost entity in the chain of entity the attribute is assigned to
 	 * @param {Object} options Selection options
 	 */
-	function SelectionValue(id, name, subjectEntity, rootSubjectEntity, options) {
-		var that = this;
+    function SelectionValue(id,name,subjectEntity,rootSubjectEntity,options,useAttributeHtml){
+        var that = this;
+        useAttributeHtml = typeof useAttributeHtml !== 'undefinded' ? useAttributeHtml : false;
 
 		AbstractValue.call(this, id, name, subjectEntity, rootSubjectEntity);
 
@@ -38,6 +39,10 @@ define([
 		 * @private
 		 */
 		var _value = _.keys(options)[0];
+
+        if(useAttributeHtml){
+            selectionValueHtml = attributeSelectionValueHtml;
+        }
 
 		/**
 		 * jQuery object of DOM node representing the node
@@ -124,7 +129,8 @@ define([
 		 */
 		var remoteValueChangeCallback = function (operation) {
 			if (operation instanceof ValueChangeOperation && operation.getEntityId() === that.getEntityId()) {
-				_iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
 				processValueChangeOperation(operation);
 			}
 		};
@@ -135,6 +141,7 @@ define([
 		 */
 		var localValueChangeCallback = function (operation) {
 			if (operation instanceof ValueChangeOperation && operation.getEntityId() === that.getEntityId()) {
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
 				propagateValueChangeOperation(operation);
 			}
 		};
@@ -145,7 +152,8 @@ define([
 		 */
 		var historyValueChangeCallback = function (operation) {
 			if (operation instanceof ValueChangeOperation && operation.getEntityId() === that.getEntityId()) {
-				_iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
 				processValueChangeOperation(operation);
 			}
 		};
@@ -155,8 +163,13 @@ define([
 		 * @param {string} value
 		 */
 		this.setValue = function (value) {
-			_value = value;
-			_$node.text(options[value]);
+            _value = value;
+            if(useAttributeHtml){
+                _$node.val(value);
+            }
+            else
+                _$node.text(options[value]);
+
 		};
 
 		/**

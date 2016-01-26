@@ -21,10 +21,11 @@ define([
      * @param attributes
      * @returns {Node}
      */
-    function makeNode(type,$shape,anchors,attributes){
+    function makeNode(type,$shape,anchors,attributes, jsplumb){
 
         Node.prototype = new AbstractNode();
         Node.prototype.constructor = Node;
+
         /**
          * Node
          * @class canvas_widget.Node
@@ -79,6 +80,7 @@ define([
                 for(attributeId in attributes){
                     if(attributes.hasOwnProperty(attributeId)){
                         attribute = attributes[attributeId];
+                        var key = attribute.key.toLowerCase();
                         switch(attribute.value){
                             case "boolean":
                                 attrObj[attributeId] = new BooleanAttribute(id+"["+attribute.key.toLowerCase()+"]",attribute.key,that);
@@ -86,7 +88,7 @@ define([
                             case "string":
                                 attrObj[attributeId] = new SingleValueAttribute(id+"["+attribute.key.toLowerCase()+"]",attribute.key,that);
                                 //TODO: Add option to set identifier attribute in metamodel
-                                if(attribute.key.toLowerCase() === 'title' || attribute.key.toLowerCase() === "name"){
+                                if(attribute.key.toLowerCase() === 'label' || attribute.key.toLowerCase() === 'title' || attribute.key.toLowerCase() === "name"){
                                     that.setLabel(attrObj[attributeId]);
                                 }
                                 break;
@@ -101,7 +103,7 @@ define([
                                     attrObj[attributeId] = new SingleSelectionAttribute(id+"["+attribute.key.toLowerCase()+"]",attribute.key,that,attribute.options);
                                 }
                         }
-                        _$node.find("."+attribute.key.toLowerCase()).append(attrObj[attributeId].get$node());
+                        _$node.find("."+key).append(attrObj[attributeId].get$node());
                     }
                 }
                 that.setAttributes(attrObj);
@@ -139,6 +141,9 @@ define([
                         console.log("element is ", info.element, "maxConnections is", info.maxConnections);
                     }
                 });
+
+                if(jsplumb)
+                    jsPlumb.addEndpoint(_$node, jsplumb.endpoint, {uuid: id + "_eps1"});
             };
 
 
@@ -158,6 +163,9 @@ define([
                         console.log("user tried to drop connection", info.connection, "on element", info.element, "with max connections", info.maxConnections);
                     }
                 });
+
+                if(jsplumb)
+                    jsPlumb.addEndpoint(_$node, jsplumb.endpoint, {uuid: id + "_ept1"});
             };
 
             /**
@@ -179,20 +187,21 @@ define([
                 return json;
             };
 
+
             /**
              * set a new shape for the node
              * @param $shape
              */
-            this.set$shape = function($shape){
+            this.set$shape = function($shape) {
                 _$template.remove();
                 var _$shape = $shape.clone();
 
                 var attributes = that.getAttributes();
-                for(var attrKey in attributes){
-                    if(attributes.hasOwnProperty(attrKey)){
+                for (var attrKey in attributes) {
+                    if (attributes.hasOwnProperty(attrKey)) {
                         var attribute = attributes[attrKey];
-                        var $tmp = _$shape.find('.'+attribute.getName().toLowerCase());
-                        if($tmp.length > 0){
+                        var $tmp = _$shape.find('.' + attribute.getName().toLowerCase());
+                        if ($tmp.length > 0) {
                             //initialize the value again
                             attribute.getValue().init();
                             $tmp.append(attribute.get$node());
@@ -202,6 +211,10 @@ define([
                 }
                 _$template = _$shape;
                 _$node.append(_$shape);
+            };
+
+            this.get$node = function(){
+                return _$node;
             };
 
             init();

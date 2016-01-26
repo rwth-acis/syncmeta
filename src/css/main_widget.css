@@ -14,6 +14,13 @@
     overflow: visible;
     border: 2px solid transparent;
 }
+.trace_awareness {
+    z-index: 0;
+    position: absolute;
+    overflow: visible;
+    opacity: 0;
+    pointer-events: none;
+}
 div.class_node{
     height: inherit;
     width: inherit;
@@ -29,8 +36,8 @@ div.default_node {
     width: inherit;
 }
 div.custom_node {
-    height: inherit;
-    width: inherit;
+    height: 100%;
+    width: 100%;
     position: relative;
 }
 div.custom_node .fill_parent{
@@ -42,6 +49,14 @@ div.custom_node .fill_parent{
     width: inherit;
     height: inherit;
 }
+/*adjust label of custom nodes*/
+div.custom_node .fill_parent > div {
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translateY(-50%) translateX(-50%);
+    -moz-transform: translateY(-50%) translateX(-50%);
+}
+
 div.simple_node {
     height: inherit;
     width: inherit;
@@ -364,4 +379,13 @@ button[disabled=disabled], button:disabled {
     font-size: 12px;
     font-weight: bold;
     white-space: nowrap;
+}
+
+.ghost-edge {
+    opacity: 0.3;
+    z-index: 30000;
+}
+
+.ghost-edge-overlay {
+    z-index: 31000;
 }

@@ -37,7 +37,8 @@ define([
 
             function makeNeighborhoodFilter(nodeId){
                 return function(n){
-                    return n.getEntityId() !== nodeId && !n.getNeighbors().hasOwnProperty(nodeId);
+                    return true;
+                    //return n.getEntityId() !== nodeId && !n.getNeighbors().hasOwnProperty(nodeId);
                 };
             }
 
@@ -126,7 +127,6 @@ define([
                 if(typeof originalEvent !== 'undefined'){ //Was the connection established using Drag'n Drop?
                     jsPlumb.detach(info.connection,{fireEvent: false});
                     that.getCanvas().createEdge(that.getName(),info.sourceId,info.targetId);
-                    //that.canvas.callListeners(CONFIG.CANVAS.LISTENERS.EDGEADD,that.name,info.sourceId,info.targetId);
                 }
                 return true;
             });

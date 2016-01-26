@@ -8,47 +8,10 @@ define([
     'canvas_widget/FileAttribute',
     'canvas_widget/SingleValueAttribute',
     'canvas_widget/SingleSelectionAttribute',
-    'canvas_widget/AbstractEdge'
-],/** @lends makeEdge */function(require,$,jsPlumb,_,BooleanAttribute,IntegerAttribute,FileAttribute,SingleValueAttribute,SingleSelectionAttribute,AbstractEdge) {
+    'canvas_widget/AbstractEdge',
+    'canvas_widget/Arrows'
+],/** @lends makeEdge */function(require,$,jsPlumb,_,BooleanAttribute,IntegerAttribute,FileAttribute,SingleValueAttribute,SingleSelectionAttribute,AbstractEdge,Arrows) {
 
-    var arrows = function(color){
-        return {
-            //"bidirassociation": [], //No overlays for bi-dir-association
-            "unidirassociation": ["Arrow", {
-                width:20,
-                length:30,
-                location:1,
-                foldback: 0.1,
-                paintStyle: {
-                    fillStyle: "#ffffff",
-                    outlineWidth: 2,
-                    outlineColor: color
-                }
-            }],
-            "generalisation": ["Arrow", {
-                width:20,
-                length:30,
-                location:1,
-                foldback: 1,
-                paintStyle: {
-                    fillStyle: "#ffffff",
-                    outlineWidth: 2,
-                    outlineColor: color
-                }
-            }],
-            "diamond": ["Arrow", {
-                width:20,
-                length:20,
-                location:1,
-                foldback: 2,
-                paintStyle: {
-                    fillStyle: "#ffffff",
-                    outlineWidth: 2,
-                    outlineColor: color
-                }
-            }]
-        };
-    };
 
     var shapes = {
         'straight': ["Straight", {gap: 0}],
@@ -67,19 +30,21 @@ define([
      * @param arrowType
      * @param shapeType
      * @param color
+     * @param dashstyle
      * @param overlay
      * @param overlayPosition
      * @param overlayRotate
      * @param attributes
      * @returns {Edge}
      */
-    function makeEdge(type,arrowType,shapeType,color,overlay,overlayPosition,overlayRotate,attributes){
+    function makeEdge(type,arrowType,shapeType,color,dashstyle,overlay,overlayPosition,overlayRotate,attributes){
         var shape = shapes.hasOwnProperty(shapeType) ? shapes[shapeType] : _.values(shapes)[0];
         color = color ? $colorTestElement.css('color','#aaaaaa').css('color',color).css('color') : '#aaaaaa';
 
-
+        dashstyle = dashstyle || "";
         Edge.prototype = new AbstractEdge();
         Edge.prototype.constructor = Edge;
+
         /**
          * Edge
          * @class canvas_widget.Edge
@@ -142,8 +107,8 @@ define([
             var init = function(){
                 var attribute, attributeId, attrObj;
 
-                if(arrows().hasOwnProperty(arrowType)){
-                    overlays.push(arrows(color)[arrowType]);
+                if(Arrows().hasOwnProperty(arrowType)){
+                    overlays.push(Arrows(color)[arrowType]);
                 }
 
                 if(overlay){
@@ -252,6 +217,7 @@ define([
                 var connectOptions = {
                     source: source.get$node(),
                     target: target.get$node(),
+
                     paintStyle:that.getDefaultPaintStyle(),
                     endpoint: "Blank",
                     anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
@@ -288,18 +254,19 @@ define([
              * @param arrowType
              * @param color
              * @param shapeType
+             * @param dashstyle
              * @param overlay
              * @param overlayPosition
              * @param overlayRotate
              * @param attributes
              */
-            this.restyle = function(arrowType, color, shapeType, overlay, overlayPosition, overlayRotate, attributes){
+            this.restyle = function(arrowType, color, shapeType, dashstyle, overlay, overlayPosition, overlayRotate, attributes){
                 overlays = [];
 
                 color = color ? $colorTestElement.css('color','#aaaaaa').css('color',color).css('color') : '#aaaaaa';
 
-                if(arrows().hasOwnProperty(arrowType)){
-                    overlays.push(arrows(color)[arrowType]);
+                if(Arrows().hasOwnProperty(arrowType)){
+                    overlays.push(Arrows(color)[arrowType]);
                 }
 
                 if(overlay){
@@ -374,7 +341,9 @@ define([
 
                 var paintStyle ={
                     strokeStyle: color,
-                    lineWidth: 2
+                    lineWidth: 2,
+                    dashstyle: dashstyle
+
                 };
 
 
@@ -418,9 +387,15 @@ define([
          * @static
          * @returns {*}
          */
+
+        Edge.getShape = function(){
+            return shape;
+        };
+
         Edge.getColor = function(){
             return color;
         };
+
 
         /**
          * Get the overlay of the edge type
@@ -457,6 +432,19 @@ define([
         Edge.getAttributes = function(){
             return attributes;
         };
+
+        Edge.getType = function(){
+            return type;
+        };
+
+        Edge.getArrowOverlays = function(){
+            var overlays = [];
+            if(Arrows().hasOwnProperty(arrowType)){
+                overlays.push(Arrows(color)[arrowType]);
+            }
+            return overlays;
+        };
+
 
         return Edge;
     }

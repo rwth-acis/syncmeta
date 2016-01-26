@@ -20,7 +20,8 @@ define([
      * @param {string} name Name of attribute
      * @param {canvas_widget.AbstractEntity} subjectEntity Entity the attribute is assigned to
      */
-    function IntegerAttribute(id,name,subjectEntity){
+    function IntegerAttribute(id,name,subjectEntity, useAttributeHtml){
+        useAttributeHtml = typeof(useAttributeHtml) !== 'undefined' ? useAttributeHtml : false;
         AbstractAttribute.call(this,id,name,subjectEntity);
 
         /***
@@ -28,7 +29,7 @@ define([
          * @type {canvas_widget.IntegerValue}
          * @private
          */
-        var _value = new IntegerValue(id,name,this,this.getRootSubjectEntity());
+        var _value = new IntegerValue(id,name,this,this.getRootSubjectEntity(), useAttributeHtml);
 
         /**
          * jQuery object of DOM node representing the node

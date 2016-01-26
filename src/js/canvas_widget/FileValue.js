@@ -7,8 +7,9 @@ define([
     'canvas_widget/AbstractAttribute',
     'operations/ot/ValueChangeOperation',
     'operations/non_ot/ActivityOperation',
-    'text!templates/canvas_widget/file_value.html'
-],/** @lends FileValue */function($,jsPlumb,_,IWCOT,AbstractValue,AbstractAttribute,ValueChangeOperation,ActivityOperation,fileValueHtml) {
+    'text!templates/canvas_widget/file_value.html',
+    'text!templates/attribute_widget/file_value.html'
+],/** @lends FileValue */function($,jsPlumb,_,IWCOT,AbstractValue,AbstractAttribute,ValueChangeOperation,ActivityOperation,fileValueHtml, attributeFileValueHtml) {
 
     FileValue.prototype = new AbstractValue();
     FileValue.prototype.constructor = FileValue;
@@ -23,8 +24,12 @@ define([
      * @param {canvas_widget.AbstractEntity} subjectEntity Entity the attribute is assigned to
      * @param {canvas_widget.AbstractNode|canvas_widget.AbstractEdge} rootSubjectEntity Topmost entity in the chain of entity the attribute is assigned to
      */
-    function FileValue(id,name,subjectEntity,rootSubjectEntity){
+    function FileValue(id,name,subjectEntity,rootSubjectEntity, useAttributeHtml){
         var that = this;
+
+        if(useAttributeHtml)
+            fileValueHtml = attributeFileValueHtml;
+
 
         AbstractValue.call(this,id,name,subjectEntity,rootSubjectEntity);
 
@@ -40,7 +45,16 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(fileValueHtml,{value: _value}));
+        var _$node;
+
+        if(useAttributeHtml)
+            _$node = $(_.template(fileValueHtml,{name: name}));
+        else
+            _$node = $(_.template(fileValueHtml,{value: _value}));
+
+        var _$selectFile = _$node.find('.select_file');
+
+        var _$manageFile = _$node.find('.manage_file');
 
         /**
          * Inter widget communication wrapper
@@ -63,12 +77,36 @@ define([
             return chain;
         };
 
+        var uploadFile = function(name,type,data) {
+            var resourceSpace = new openapp.oo.Resource(openapp.param.space());
+
+            resourceSpace.create({
+                relation: openapp.ns.role + "data",
+                type: "my:ns:file",
+                representation: {
+                    name: name,
+                    type: type,
+                    data: data
+                },
+                callback: function(d){
+                    if(d.uri){
+                        propagateValueChange(CONFIG.OPERATION.TYPE.UPDATE, d.uri,0);
+                    }
+                }
+            });
+        };
+
         /**
          * Apply a Value Change Operation
          * @param {operations.ot.ValueChangeOperation} operation
          */
         var processValueChangeOperation = function(operation){
             that.setValue(operation.getValue());
+        };
+
+        var propagateValueChange = function(type,value,position){
+            var operation = new ValueChangeOperation(that.getEntityId(),value,type,position);
+            propagateValueChangeOperation(operation);
         };
 
         /**
@@ -102,6 +140,7 @@ define([
         var remoteValueChangeCallback = function(operation){
             if(operation instanceof ValueChangeOperation && operation.getEntityId() === that.getEntityId()){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "ValueChangeActivity",
                     that.getEntityId(),
@@ -125,6 +164,7 @@ define([
         var localValueChangeCallback = function(operation){
             if(operation instanceof ValueChangeOperation && operation.getEntityId() === that.getEntityId()){
                 propagateValueChangeOperation(operation);
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
             }
         };
 
@@ -136,7 +176,47 @@ define([
             if(operation instanceof ValueChangeOperation && operation.getEntityId() === that.getEntityId()){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
                 processValueChangeOperation(operation);
+                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
             }
+        };
+
+        var init = function(){
+            if(!useAttributeHtml)
+                return;
+
+            _$selectFile.find('#file_object').change(function(){
+                var files = $(this)[0].files,
+                    file;
+
+                if (!files || files.length === 0) return;
+                file = files[0];
+                if(file.size > 1048576){
+                    alert("Chosen file is too large. Maximum size: 1MB");
+                }
+            });
+
+            _$selectFile.find("#file_submit").click(function() {
+                var fileReader,
+                    files = _$selectFile.find('#file_object')[0].files,
+                    file;
+
+                if (!files || files.length === 0) return;
+                file = files[0];
+
+                fileReader = new FileReader();
+                fileReader.onload = function (e) {
+                    uploadFile(file.name,file.type,e.target.result);
+                };
+                fileReader.readAsDataURL(file);
+            });
+
+            _$manageFile.find('#file_delete').click(function(){
+                //openapp.resource.del(_value);
+                propagateValueChange(CONFIG.OPERATION.TYPE.UPDATE,"",0);
+            });
+
+            _$selectFile.show();
+            _$manageFile.hide();
         };
 
         /**
@@ -209,6 +289,8 @@ define([
         if(_iwcot){
             that.registerCallbacks();
         }
+
+        init();
     }
 
     return FileValue;
