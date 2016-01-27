@@ -17,6 +17,7 @@ define([
      * @param {String} target Entity id of target node
      * @param {object} json JSON representation of edge
      * @param {string} viewId the identifier of the view
+     * @param {string} oType oType the original Type, only set in views
      * @constructor
      */
     function EdgeAddOperation(entityId,type,source,target,json, viewId,oType){
@@ -167,6 +168,18 @@ define([
             );
         };
     }
+
+    EdgeAddOperation.prototype.toJSON = function(){
+      return {
+          id:this.getEntityId(),
+          type:this.getType(),
+          source:this.getSource(),
+          target:this.getTarget(),
+          json:this.getJSON(),
+          viewId:this.getViewId(),
+          otype:this.getOriginType()
+      }
+    };
 
     EdgeAddOperation.getOperationDescription = function(edgeType,edgeLabel,sourceNodeType,sourceNodeLabel,targetNodeType,targetNodeLabel,viewId){
         if(!edgeLabel && !viewId){

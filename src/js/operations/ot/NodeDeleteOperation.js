@@ -236,6 +236,12 @@ define([
         };
     }
 
+    NodeDeleteOperation.prototype.toJSON = function(){
+        return {
+            id:this.getEntityId()
+        }
+    };
+
     NodeDeleteOperation.getOperationDescription = function(nodeType,nodeLabel,viewId){
         if(!nodeLabel && !viewId){
             return "..deleted " + nodeType;

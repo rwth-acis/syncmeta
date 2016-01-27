@@ -118,6 +118,14 @@ define([
         }
     };
 
+    NodeResizeOperation.prototype.toJSON = function(){
+        return {
+            id:this.getEntityId(),
+            offsetX:this.getOffsetX(),
+            offsetY:this.getOffsetY()
+        }
+    };
+
     return NodeResizeOperation;
 
 });

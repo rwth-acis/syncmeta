@@ -123,6 +123,9 @@ define([
          * @param {operations.ot.EdgeDeleteOperation} operation
          */
         var processEdgeDeleteOperation = function(operation){
+            if(y)
+                delete y.share.edges[that.getEntityId()];
+
             that.remove();
         };
 
@@ -132,17 +135,17 @@ define([
          */
         var propagateEdgeDeleteOperation = function(operation){
             processEdgeDeleteOperation(operation);
-            if(_iwcot.sendRemoteOTOperation(operation)){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
-                    "EdgeDeleteActivity",
-                    operation.getEntityId(),
-                    _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
-                    EdgeDeleteOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
-                    {}
-                ).toNonOTOperation());
-            }
+
+            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+            _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
+                "EdgeDeleteActivity",
+                operation.getEntityId(),
+                _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
+                EdgeDeleteOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
+                {}
+            ).toNonOTOperation());
+
         };
 
         /**
@@ -249,7 +252,13 @@ define([
         this.triggerDeletion = function(){
             _canvas.select(null);
             var operation = new EdgeDeleteOperation(id,that.getType(),that.getSource().getEntityId(),that.getTarget().getEntityId());
-            propagateEdgeDeleteOperation(operation);
+
+            if(y){
+                y.share.edges[id].set("EdgeDeleteOperation", operation.toJSON());
+            }
+            else {
+                propagateEdgeDeleteOperation(operation);
+            }
             //that.canvas.callListeners(CONFIG.CANVAS.LISTENERS.NODEDELETE,nodeId);
         };
 
@@ -614,7 +623,7 @@ define([
             require('canvas_widget/EntityManager').deleteEdge(this.getEntityId());
         };
 
-         /**
+        /**
          * Get JSON representation of the edge
          * @returns {Object}
          * @private
@@ -647,10 +656,10 @@ define([
                 $(_jsPlumbConnection.getOverlay("label").canvas).find("input").prop("disabled",false).css('pointerEvents','');
 
                 /*$(_jsPlumbConnection.getOverlay("label").canvas).find("input[type=text]").autoGrowInput({
-                    comfortZone: 10,
-                    minWidth: 40,
-                    maxWidth: 100
-                }).trigger("blur");*/
+                 comfortZone: 10,
+                 minWidth: 40,
+                 maxWidth: 100
+                 }).trigger("blur");*/
             }
             //Define Edge Rightclick Menu
             $.contextMenu({
@@ -697,7 +706,7 @@ define([
          */
         this.registerCallbacks = function(){
             _iwcot.registerOnRemoteDataReceivedCallback(remoteEntitySelectCallback);
-            _iwcot.registerOnRemoteDataReceivedCallback(remoteEdgeDeleteCallback);
+            //_iwcot.registerOnRemoteDataReceivedCallback(remoteEdgeDeleteCallback);
             _iwcot.registerOnHistoryChangedCallback(historyEdgeDeleteCallback);
 
             _iwcot.registerOnLocalDataReceivedCallback(localEdgeDeleteCallback);
@@ -723,6 +732,29 @@ define([
         if(_iwcot){
             that.registerCallbacks();
         }
+
+        this.registerYjsObserver = function() {
+            y.share.edges[id].observe(function (events) {
+                for (i in events) {
+                    console.log("Yjs log: The following event-type was thrown: " + events[i].type);
+                    console.log("Yjs log: The event was executed on: " + events[i].name);
+                    console.log("Yjs log: The event object has more information:");
+                    console.log(events[i]);
+
+                    var operation;
+                    var data = y.share.edges[id].get(events[i].name);
+                    switch (events[i].name) {
+                        case 'EdgeDeleteOperation':
+                        {
+                            operation = new EdgeDeleteOperation(data.id);
+                            propagateEdgeDeleteOperation(operation);
+                            break;
+                        }
+                    }
+                }
+            });
+        }
+
     }
 
     /**

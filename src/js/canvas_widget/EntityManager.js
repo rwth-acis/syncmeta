@@ -181,12 +181,12 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
      * Guidance modeling specific objects
      * Unused
      */
-     /*
-    var objectContextTypes = {};
-    var relationshipContextTypes = {};
-    var objectToolTypes = {};
-    var edgesByLabel = {};
-    var objectToolNodeTypes = {};*/
+    /*
+     var objectContextTypes = {};
+     var relationshipContextTypes = {};
+     var objectToolTypes = {};
+     var edgesByLabel = {};
+     var objectToolNodeTypes = {};*/
 
 
     var _initEdgeTypes = function(vls){
@@ -542,12 +542,12 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
              */
             createModelAttributesNodeFromJSON: function(json){
                 var node = this.createModelAttributesNode();
-                if(node){
+                if (node) {
                     node.getLabel().getValue().setValue(json.label.value.value);
-                    for(var attrId in json.attributes){
-                        if(json.attributes.hasOwnProperty(attrId)){
+                    for (var attrId in json.attributes) {
+                        if (json.attributes.hasOwnProperty(attrId)) {
                             var attr = node.getAttribute(attrId);
-                            if(attr){
+                            if (attr) {
                                 attr.setValueFromJSON(json.attributes[attrId]);
                             }
                         }

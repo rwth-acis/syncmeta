@@ -175,6 +175,12 @@ define([
         }
     };
 
+    EdgeDeleteOperation.prototype.toJSON = function(){
+        return {
+            id:this.getEntityId()
+        }
+    };
+
     return EdgeDeleteOperation;
 
 });

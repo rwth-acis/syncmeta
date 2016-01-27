@@ -20,12 +20,11 @@ define([
      * @param {number} zIndex Position of node on z-axis
      * @param {object} json JSON representation of node
      * @param {string} viewId the identifier of the view
+     * @param {string} oType the original Type, only set in views
      * @constructor
      */
     function NodeAddOperation(entityId,type,left,top,width,height,zIndex,json, viewId, oType){
         var that = this;
-
-
 
         EntityOperation.call(this,EntityOperation.TYPES.NodeAddOperation,entityId,CONFIG.ENTITY.NODE);
 
@@ -170,7 +169,6 @@ define([
             return _json;
         };
 
-
         /**
          * the identifier of the view
          * @returns {string}
@@ -232,6 +230,21 @@ define([
             return "..created " + nodeType + " " + nodeLabel;
         }else
             return ".. created " + nodeType + " " + nodeLabel + " in View " + viewId;
+    };
+
+    NodeAddOperation.prototype.toJSON= function(){
+        return {
+            id:this.getEntityId(),
+            type: this.getType(),
+            left: this.getLeft(),
+            top: this.getTop(),
+            width: this.getWidth(),
+            height: this.getHeight(),
+            zIndex: this.getZIndex(),
+            json: this.getJSON(),
+            viewId:this.getViewId(),
+            oType: this.getOriginType()
+        }
     };
 
     return NodeAddOperation;

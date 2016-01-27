@@ -175,8 +175,9 @@ define([
          */
         var processNodeMoveOperation = function(operation){
             _canvas.hideGuidanceBox();
-            that.move(operation.getOffsetX(),operation.getOffsetY(),0);
+            that.move(operation.getOffsetX(), operation.getOffsetY(), 0);
             _canvas.showGuidanceBox();
+
         };
 
         /**
@@ -194,18 +195,17 @@ define([
         var propagateNodeMoveOperation = function(operation){
             processNodeMoveOperation(operation);
             hideTraceAwareness();
-            if(_iwcot.sendRemoteOTOperation(operation)){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
-                    "NodeMoveActivity",
-                    operation.getEntityId(),
-                    _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
-                    NodeMoveOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
-                    {nodeType: that.getType()}
-                ).toNonOTOperation());
-            }
+            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
+            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+            _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
+                "NodeMoveActivity",
+                operation.getEntityId(),
+                _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
+                NodeMoveOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
+                {nodeType: that.getType()}
+            ).toNonOTOperation());
+
         };
 
         /**
@@ -215,17 +215,17 @@ define([
         var propagateNodeMoveZOperation = function(operation){
             processNodeMoveZOperation(operation);
             hideTraceAwareness();
-            if(_iwcot.sendRemoteOTOperation(operation)){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
-                    "NodeMoveActivity",
-                    operation.getEntityId(),
-                    _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
-                    NodeMoveOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
-                    {nodeType: that.getType()}
-                ).toNonOTOperation());
-            }
+            //if(_iwcot.sendRemoteOTOperation(operation)){
+            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+            _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
+                "NodeMoveActivity",
+                operation.getEntityId(),
+                _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
+                NodeMoveOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
+                {nodeType: that.getType()}
+            ).toNonOTOperation());
+            //}
         };
 
         /**
@@ -245,18 +245,18 @@ define([
         var propagateNodeResizeOperation = function(operation){
             processNodeResizeOperation(operation);
             hideTraceAwareness();
-            if(_iwcot.sendRemoteOTOperation(operation)){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
-                    "NodeResizeActivity",
-                    operation.getEntityId(),
-                    _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
-                    NodeResizeOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
-                    {nodeType: that.getType()}
-                ).toNonOTOperation());
-            }
+            //if(_iwcot.sendRemoteOTOperation(operation)){
+            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
+            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+            _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
+                "NodeResizeActivity",
+                operation.getEntityId(),
+                _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
+                NodeResizeOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
+                {nodeType: that.getType()}
+            ).toNonOTOperation());
+            //}
         };
 
         //noinspection JSUnusedLocalSymbols
@@ -264,23 +264,29 @@ define([
          * Apply a Node Delete Operation
          * @param {operations.ot.NodeDeleteOperation} operation
          */
-        var processNodeDeleteOperation = function(operation){
+        var processNodeDeleteOperation = function(operation) {
             var edges = that.getEdges(),
                 edgeId,
                 edge;
 
-            for(edgeId in edges){
-                if(edges.hasOwnProperty(edgeId)){
+            for (edgeId in edges) {
+                if (edges.hasOwnProperty(edgeId)) {
+                    if (y) {
+                        delete y.share.edges[edgeId];
+                    }
                     edge = edges[edgeId];
                     edge.remove();
+
                 }
             }
 
-            for(var i = 0; i < _relatedGhostEdges.length; i++){
-                if(typeof _relatedGhostEdges[i].remove == "function")
+            for (var i = 0; i < _relatedGhostEdges.length; i++) {
+                if (typeof _relatedGhostEdges[i].remove == "function")
                     _relatedGhostEdges[i].remove();
             }
-
+            if (y){
+                delete y.share.nodes[that.getEntityId()];
+            }
             that.remove();
         };
 
@@ -290,18 +296,17 @@ define([
          */
         var propagateNodeDeleteOperation = function(operation){
             processNodeDeleteOperation(operation);
-            if(_iwcot.sendRemoteOTOperation(operation)){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
-                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
-                    "NodeDeleteActivity",
-                    operation.getEntityId(),
-                    _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
-                    NodeDeleteOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
-                    {}
-                ).toNonOTOperation());
-            }
+            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
+            _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
+                "NodeDeleteActivity",
+                operation.getEntityId(),
+                _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
+                NodeDeleteOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
+                {}
+            ).toNonOTOperation());
+
         };
 
         /**
@@ -500,9 +505,9 @@ define([
                     var EntityManager = require('canvas_widget/EntityManager');
 
                     offsetClick = $(e.target).offset();
-                   	offsetCanvas = that.getCanvas().get$node().offset();
+                    offsetCanvas = that.getCanvas().get$node().offset();
 
-					if(_canvas.getSelectedEntity() === null || _canvas.getSelectedEntity() === that){
+                    if(_canvas.getSelectedEntity() === null || _canvas.getSelectedEntity() === that){
                         menuItems = _.extend(_contextMenuItemCallback(),{
                             connectTo: EntityManager.generateConnectToMenu(that),
                             sepMove: "---------",
@@ -510,14 +515,24 @@ define([
                                 name: "Move to Foreground",
                                 callback: function(/*key, opt*/){
                                     var operation = new NodeMoveZOperation(that.getEntityId(),++AbstractEntity.maxZIndex-_zIndex);
-                                    propagateNodeMoveZOperation(operation);
+                                    if(y){
+                                        y.share.nodes[that.getEntityId()].set('NodeMoveZOperation',operation.toJSON());
+                                    }
+                                    else {
+                                        propagateNodeMoveZOperation(operation);
+                                    }
                                 }
                             },
                             moveToBackground: {
                                 name: "Move to Background",
                                 callback: function(/*key, opt*/){
                                     var operation = new NodeMoveZOperation(that.getEntityId(),--AbstractEntity.minZIndex-_zIndex);
-                                    propagateNodeMoveZOperation(operation);
+                                    if(y){
+                                        y.share.nodes[that.getEntityId()].set('NodeMoveZOperation',operation.toJSON());
+                                    }
+                                    else {
+                                        propagateNodeMoveZOperation(operation);
+                                    }
                                 }
                             },
                             sepDelete: "---------",
@@ -559,11 +574,11 @@ define([
             //    edges = that.getEdges();
             jsPlumb.repaint(_$node);
             /*for(edgeId in edges){
-                if(edges.hasOwnProperty(edgeId)){
-                    edges[edgeId].repaintOverlays();
-                    edges[edgeId].setZIndex();
-                }
-            }*/
+             if(edges.hasOwnProperty(edgeId)){
+             edges[edgeId].repaintOverlays();
+             edges[edgeId].setZIndex();
+             }
+             }*/
             _.each(require('canvas_widget/EntityManager').getEdges(),function(e){e.setZIndex();});
         };
 
@@ -598,7 +613,12 @@ define([
             }
             //noinspection JSAccessibilityCheck
             var operation = new NodeDeleteOperation(id,that.getType(),_appearance.left,_appearance.top,_appearance.width,_appearance.height,_zIndex,that.toJSON());
-            propagateNodeDeleteOperation(operation);
+            if(y){
+                y.share.nodes[id].set('NodeDeleteOperation', operation.toJSON());
+            }
+            else {
+                propagateNodeDeleteOperation(operation);
+            }
             //that.canvas.callListeners(CONFIG.CANVAS.LISTENERS.NODEDELETE,nodeId);
         };
 
@@ -1066,94 +1086,104 @@ define([
             _$node.on("click",function(){
                 _canvas.select(that);
             })
-            //Enable Node Resizing
-            .resizable({
-                containment: "parent",
-                start: function(ev/*,ui*/){
-                    _canvas.hideGuidanceBox();
-                    $sizePreview.show();
-                    _$node.css({opacity:0.5});
-                    _$node.append($sizePreview);
-                    _$node.resizable("option","aspectRatio",ev.shiftKey);
-                    _$node.resizable("option","grid",ev.ctrlKey ? [20,20] : '');
-                },
-                resize:function(ev,ui){
-                    _canvas.hideGuidanceBox();
-                    $sizePreview.text(Math.round(ui.size.width) + "x" + Math.round(ui.size.height));
-                    repaint();
-                    _$node.resizable("option","aspectRatio",ev.shiftKey);
-                    _$node.resizable("option","grid",ev.ctrlKey ? [20,20] : '');
-                },
-                stop:function(ev,ui){
-                    $sizePreview.hide();
-                    _$node.css({opacity:''});
-                    var $target = ui.helper;
-                    $target.css({width: ui.originalSize.width, height: ui.originalSize.height});
-                    var offsetX = ui.size.width-ui.originalSize.width;
-                    var offsetY = ui.size.height-ui.originalSize.height;
-                    var operation = new NodeResizeOperation(id,offsetX,offsetY);
-                    propagateNodeResizeOperation(operation);
-                    //that.canvas.callListeners(CONFIG.CANVAS.LISTENERS.NODERESIZE,id,offsetX,offsetY);
-                    _$node.resizable("option","aspectRatio",false);
-                    _$node.resizable("option","grid",'');
-                    //$(ev.toElement).one('click',function(ev){ev.stopImmediatePropagation();});
-                    that.draw();
-                    repaint();
-                    _canvas.showGuidanceBox();
-                }
-            })
+                //Enable Node Resizing
+                .resizable({
+                    containment: "parent",
+                    start: function(ev/*,ui*/){
+                        _canvas.hideGuidanceBox();
+                        $sizePreview.show();
+                        _$node.css({opacity:0.5});
+                        _$node.append($sizePreview);
+                        _$node.resizable("option","aspectRatio",ev.shiftKey);
+                        _$node.resizable("option","grid",ev.ctrlKey ? [20,20] : '');
+                    },
+                    resize:function(ev,ui){
+                        _canvas.hideGuidanceBox();
+                        $sizePreview.text(Math.round(ui.size.width) + "x" + Math.round(ui.size.height));
+                        repaint();
+                        _$node.resizable("option","aspectRatio",ev.shiftKey);
+                        _$node.resizable("option","grid",ev.ctrlKey ? [20,20] : '');
+                    },
+                    stop:function(ev,ui){
+                        $sizePreview.hide();
+                        _$node.css({opacity:''});
+                        var $target = ui.helper;
+                        $target.css({width: ui.originalSize.width, height: ui.originalSize.height});
+                        var offsetX = ui.size.width-ui.originalSize.width;
+                        var offsetY = ui.size.height-ui.originalSize.height;
+                        var operation = new NodeResizeOperation(id,offsetX,offsetY);
+                        if(y){
+                            y.share.nodes[that.getEntityId()].set('NodeResizeOperation', operation.toJSON());
+                        }
+                        else {
+                            propagateNodeResizeOperation(operation);
+                        }
+                        //that.canvas.callListeners(CONFIG.CANVAS.LISTENERS.NODERESIZE,id,offsetX,offsetY);
+                        _$node.resizable("option","aspectRatio",false);
+                        _$node.resizable("option","grid",'');
+                        //$(ev.toElement).one('click',function(ev){ev.stopImmediatePropagation();});
+                        that.draw();
+                        repaint();
+                        _canvas.showGuidanceBox();
+                    }
+                })
 
-            //Enable Node Dragging
-            .draggable({
-                containment: "parent",
-                start: function(ev,ui){
-                    originalPos.top = ui.position.top;
-                    originalPos.left = ui.position.left;
-                    //ui.position.top = 0;
-                    //ui.position.left = 0;
-                    _canvas.select(that);
-                    _canvas.hideGuidanceBox();
-                    _$node.css({opacity:0.5});
-                    _$node.resizable("disable");
-                    drag = false;
-                    _$node.draggable("option","grid",ev.ctrlKey ? [20,20] : '');
-                },
-                drag: function(ev){
-                    // ui.position.left = Math.round(ui.position.left  / _canvas.getZoom());
-                    // ui.position.top = Math.round(ui.position.top / _canvas.getZoom());
+                //Enable Node Dragging
+                .draggable({
+                    containment: "parent",
+                    start: function(ev,ui){
+                        originalPos.top = ui.position.top;
+                        originalPos.left = ui.position.left;
+                        //ui.position.top = 0;
+                        //ui.position.left = 0;
+                        _canvas.select(that);
+                        _canvas.hideGuidanceBox();
+                        _$node.css({opacity:0.5});
+                        _$node.resizable("disable");
+                        drag = false;
+                        _$node.draggable("option","grid",ev.ctrlKey ? [20,20] : '');
+                    },
+                    drag: function(ev){
+                        // ui.position.left = Math.round(ui.position.left  / _canvas.getZoom());
+                        // ui.position.top = Math.round(ui.position.top / _canvas.getZoom());
 
-                    if(drag) repaint();
-                    drag = true;
-                    _canvas.hideGuidanceBox();
-                    _$node.draggable("option","grid",ev.ctrlKey ? [20,20] : '');
-                },
-                stop: function(ev,ui){
-                    _$node.css({opacity:''});
-                    _$node.resizable("enable");
-                    var id = _$node.attr("id");
-                    //_$node.css({top: originalPos.top / _canvas.getZoom(), left: originalPos.left / _canvas.getZoom()});
-                    var offsetX = Math.round((ui.position.left - originalPos.left) / _canvas.getZoom());
-                    var offsetY = Math.round((ui.position.top - originalPos.top) / _canvas.getZoom());
-                    var operation = new NodeMoveOperation(id,offsetX,offsetY);
-                    propagateNodeMoveOperation(operation);
-                    //that.canvas.callListeners(CONFIG.CANVAS.LISTENERS.NODEMOVE,id,offsetX,offsetY);
-                    //Avoid node selection on drag stop
-                    _$node.draggable("option","grid",'');
-                    _canvas.showGuidanceBox();
-                    $(ev.toElement).one('click',function(ev){ev.stopImmediatePropagation();});
-                }
-            })
+                        if(drag) repaint();
+                        drag = true;
+                        _canvas.hideGuidanceBox();
+                        _$node.draggable("option","grid",ev.ctrlKey ? [20,20] : '');
+                    },
+                    stop: function(ev,ui){
+                        _$node.css({opacity:''});
+                        _$node.resizable("enable");
+                        var id = _$node.attr("id");
+                        //_$node.css({top: originalPos.top / _canvas.getZoom(), left: originalPos.left / _canvas.getZoom()});
+                        var offsetX = Math.round((ui.position.left - originalPos.left) / _canvas.getZoom());
+                        var offsetY = Math.round((ui.position.top - originalPos.top) / _canvas.getZoom());
+                        var operation = new NodeMoveOperation(id,offsetX,offsetY);
+                        if(y){
+                            y.share.nodes[id].set('NodeMoveOperation',operation.toJSON());
+                        }
+                        else {
+                            propagateNodeMoveOperation(operation);
+                        }
+                        //that.canvas.callListeners(CONFIG.CANVAS.LISTENERS.NODEMOVE,id,offsetX,offsetY);
+                        //Avoid node selection on drag stop
+                        _$node.draggable("option","grid",'');
+                        _canvas.showGuidanceBox();
+                        $(ev.toElement).one('click',function(ev){ev.stopImmediatePropagation();});
+                    }
+                })
 
-            //Enable Node Rightclick menu
-            .contextMenu(true)
+                //Enable Node Rightclick menu
+                .contextMenu(true)
 
-            .transformable({
-                rotatable: false,
-                skewable: false,
-                scalable: false
-            })
+                .transformable({
+                    rotatable: false,
+                    skewable: false,
+                    scalable: false
+                })
 
-            .find("input").prop("disabled",false).css('pointerEvents','');
+                .find("input").prop("disabled",false).css('pointerEvents','');
 
         };
 
@@ -1164,20 +1194,20 @@ define([
             //Disable Node Selection
             _$node.off("click")
 
-            //$canvas.find(".node.ui-draggable").draggable( "option", "disabled", true);
+                //$canvas.find(".node.ui-draggable").draggable( "option", "disabled", true);
 
-            //Disable Node Resizing
-            .resizable().resizable("destroy")
+                //Disable Node Resizing
+                .resizable().resizable("destroy")
 
-            //Disable Node Draggin
-            .draggable().draggable("destroy")
+                //Disable Node Draggin
+                .draggable().draggable("destroy")
 
-            //Disable Node Rightclick Menu
-            .contextMenu(false)
+                //Disable Node Rightclick Menu
+                .contextMenu(false)
 
-            .transformable('destroy')
+                .transformable('destroy')
 
-            .find("input").prop("disabled",true).css('pointerEvents','none');
+                .find("input").prop("disabled",true).css('pointerEvents','none');
         };
 
         /**
@@ -1229,10 +1259,10 @@ define([
          * Register inter widget communication callbacks
          */
         this.registerCallbacks = function(){
-            _iwcot.registerOnRemoteDataReceivedCallback(remoteNodeMoveCallback);
-            _iwcot.registerOnRemoteDataReceivedCallback(remoteNodeMoveZCallback);
-            _iwcot.registerOnRemoteDataReceivedCallback(remoteNodeResizeCallback);
-            _iwcot.registerOnRemoteDataReceivedCallback(remoteNodeDeleteCallback);
+            //_iwcot.registerOnRemoteDataReceivedCallback(remoteNodeMoveCallback);
+            //_iwcot.registerOnRemoteDataReceivedCallback(remoteNodeMoveZCallback);
+            //_iwcot.registerOnRemoteDataReceivedCallback(remoteNodeResizeCallback);
+            // _iwcot.registerOnRemoteDataReceivedCallback(remoteNodeDeleteCallback);
             _iwcot.registerOnRemoteDataReceivedCallback(remoteEntitySelectCallback);
             _iwcot.registerOnHistoryChangedCallback(historyNodeMoveCallback);
             _iwcot.registerOnHistoryChangedCallback(historyNodeMoveZCallback);
@@ -1285,6 +1315,43 @@ define([
 
         if(_iwcot){
             that.registerCallbacks();
+        }
+
+        this.registerYjsObserver = function() {
+            y.share.nodes[id].observe(function (events) {
+                for (i in events) {
+                    console.log("Yjs log: The following event-type was thrown: " + events[i].type);
+                    console.log("Yjs log: The event was executed on: " + events[i].name);
+                    console.log("Yjs log: The event object has more information:");
+                    console.log(events[i]);
+
+                    var operation;
+                    var data = y.share.nodes[id].get(events[i].name);
+                    switch (events[i].name) {
+                        case 'NodeDeleteOperation':
+                        {
+                            operation = new NodeDeleteOperation(data.id);
+                            propagateNodeDeleteOperation(operation);
+                            break;
+                        }
+                        case 'NodeMoveOperation':{
+                            operation = new NodeMoveOperation(data.id, data.offsetX, data.offsetY);
+                            propagateNodeMoveOperation(operation);
+                            break;
+                        }
+                        case 'NodeMoveZOperation':{
+                            operation =  new NodeMoveZOperation(data.id,data.offsetZ);
+                            propagateNodeMoveZOperation(operation);
+                            break;
+                        }
+                        case 'NodeResizeOperation':{
+                            operation = new NodeResizeOperation(data.id, data.offsetX, data.offsetY);
+                            processNodeResizeOperation(operation);
+                            break;
+                        }
+                    }
+                }
+            });
         }
     }
 

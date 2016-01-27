@@ -101,6 +101,12 @@ define([
         }
     };
 
+    NodeMoveZOperation.prototype.toJSON =function(){
+        return {
+            id:this.getEntityId(),
+            offsetZ:this.getOffsetZ()
+        }
+    };
     return NodeMoveZOperation;
 
 });

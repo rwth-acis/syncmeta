@@ -1,5 +1,6 @@
-define(['yjs'],function () {
+define(['jqueryui','yjs'],function ($) {
     return function() {
+        var deferred = $.Deferred();
         Y({
             db: {
                 name: 'memory' // store the shared data in memory
@@ -9,12 +10,15 @@ define(['yjs'],function () {
                 room: 'syncmetaroom'
             },
             share: { // specify the shared content
-                model: 'Map'
+                canvas: 'Map',
+                nodes:'Map',
+                edges:'Map'
             },
             sourceDir: '<%= grunt.config("baseUrl") %>/js/lib/vendor'
         }).then(function (y) {
-            console.log('yjs log: Yjs Initialized successfully!');
             window.y = y;
+            deferred.resolve();
         });
+        return deferred.promise();
     };
 });
