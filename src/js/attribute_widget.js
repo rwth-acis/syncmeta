@@ -28,7 +28,7 @@ requirejs([
     function JSONtoGraph(json){
         var modelAttributesNode;
         var nodeId, edgeId;
-        if(json.attributes){
+        if(json.attributes && !_.isEmpty(json.attributes)){
             modelAttributesNode = EntityManager.createModelAttributesNodeFromJSON(json.attributes);
             wrapper.setModelAttributesNode(modelAttributesNode);
             modelAttributesNode.addToWrapper(wrapper);

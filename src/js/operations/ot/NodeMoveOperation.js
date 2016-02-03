@@ -4,6 +4,7 @@ define([
     'operations/ot/OTOperation'
 ],/** @lends NodeMoveOperation */function(require,EntityOperation,OTOperation) {
 
+    NodeMoveOperation.TYPE ="NodeMoveOperation";
     NodeMoveOperation.prototype = new EntityOperation();
 	NodeMoveOperation.prototype.constructor = NodeMoveOperation;
     /**

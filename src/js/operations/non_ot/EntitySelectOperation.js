@@ -10,6 +10,7 @@ define([
      * @memberof operations.non_ot
      * @constructor
      * @param {string} selectedEntityId Entity id of the selected entity
+     * @param {string} selectedEntityType
      */
 
     function EntitySelectOperation(selectedEntityId, selectedEntityType){
@@ -73,6 +74,14 @@ define([
             return _nonOTOperation;
         };
     }
+
+    EntitySelectOperation.prototype.toJSON = function(){
+        return {
+            selectedEntityId: this.getSelectedEntityId(),
+            selectedEntityType: this.getSelectedEntityType()
+        };
+    };
+
 
     return EntitySelectOperation;
 

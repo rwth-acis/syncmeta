@@ -69,7 +69,14 @@ define([
             return AbstractNode.prototype.toJSON.call(this);
         };
 
-        this.addAttribute(new KeySelectionValueSelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File"},{"hidden":"Hide","top":"Top","center":"Center","bottom":"Bottom"}));
+        var attr=new KeySelectionValueSelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File"},{"hidden":"Hide","top":"Top","center":"Center","bottom":"Bottom"});
+        this.addAttribute(attr);
+
+        this.registerYjsMap = function(map){
+            AbstractNode.prototype.registerYjsMap.call(this,map);
+            attr.registerYjsMap(map);
+
+        };
 
         $node.find(".label").append(this.getLabel().get$node());
 

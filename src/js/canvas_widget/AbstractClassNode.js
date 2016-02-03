@@ -72,7 +72,14 @@ define([
             return json;
         };
 
-        this.addAttribute(new KeySelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File"}));
+        var attr= new KeySelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File"});
+        this.addAttribute(attr);
+
+        this.registerYjsMap = function(map){
+            AbstractNode.prototype.registerYjsMap.call(this,map);
+            attr.registerYjsMap(map);
+
+        };
 
         _$node.find(".label").append(this.getLabel().get$node());
 

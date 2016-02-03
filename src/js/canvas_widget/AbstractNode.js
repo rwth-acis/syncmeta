@@ -37,6 +37,8 @@ define([
     function AbstractNode(id,type,left,top,width,height,zIndex){
         var that = this;
 
+        var _ymap = null;
+
         AbstractEntity.call(this,id);
 
         /**
@@ -271,9 +273,6 @@ define([
 
             for (edgeId in edges) {
                 if (edges.hasOwnProperty(edgeId)) {
-                    if (y) {
-                        delete y.share.edges[edgeId];
-                    }
                     edge = edges[edgeId];
                     edge.remove();
 
@@ -284,8 +283,8 @@ define([
                 if (typeof _relatedGhostEdges[i].remove == "function")
                     _relatedGhostEdges[i].remove();
             }
-            if (y){
-                delete y.share.nodes[that.getEntityId()];
+            if (_ymap){
+                _ymap = null;
             }
             that.remove();
         };
@@ -516,7 +515,7 @@ define([
                                 callback: function(/*key, opt*/){
                                     var operation = new NodeMoveZOperation(that.getEntityId(),++AbstractEntity.maxZIndex-_zIndex);
                                     if(y){
-                                        y.share.nodes[that.getEntityId()].set('NodeMoveZOperation',operation.toJSON());
+                                        _ymap.set(NodeMoveZOperation.TYPE,operation.toJSON());
                                     }
                                     else {
                                         propagateNodeMoveZOperation(operation);
@@ -527,8 +526,8 @@ define([
                                 name: "Move to Background",
                                 callback: function(/*key, opt*/){
                                     var operation = new NodeMoveZOperation(that.getEntityId(),--AbstractEntity.minZIndex-_zIndex);
-                                    if(y){
-                                        y.share.nodes[that.getEntityId()].set('NodeMoveZOperation',operation.toJSON());
+                                    if(_ymap){
+                                        _ymap.set(NodeMoveZOperation.TYPE,operation.toJSON());
                                     }
                                     else {
                                         propagateNodeMoveZOperation(operation);
@@ -614,7 +613,7 @@ define([
             //noinspection JSAccessibilityCheck
             var operation = new NodeDeleteOperation(id,that.getType(),_appearance.left,_appearance.top,_appearance.width,_appearance.height,_zIndex,that.toJSON());
             if(y){
-                y.share.nodes[id].set('NodeDeleteOperation', operation.toJSON());
+                _ymap.set(NodeDeleteOperation.TYPE, operation.toJSON());
             }
             else {
                 propagateNodeDeleteOperation(operation);
@@ -978,6 +977,14 @@ define([
                     e.setZIndex();
                 });
             });
+
+            if(y){
+                var operation = new EntitySelectOperation(that ? that.getEntityId() : null, that ? that.getType() : null);
+                _ymap.set(EntitySelectOperation.TYPE, operation.toJSON());
+            }
+            _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
+            _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, operation.toNonOTOperation());
+            _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.toNonOTOperation());
         };
 
         /**
@@ -1113,7 +1120,7 @@ define([
                         var offsetY = ui.size.height-ui.originalSize.height;
                         var operation = new NodeResizeOperation(id,offsetX,offsetY);
                         if(y){
-                            y.share.nodes[that.getEntityId()].set('NodeResizeOperation', operation.toJSON());
+                            _ymap.set('NodeResizeOperation', operation.toJSON());
                         }
                         else {
                             propagateNodeResizeOperation(operation);
@@ -1160,8 +1167,8 @@ define([
                         var offsetX = Math.round((ui.position.left - originalPos.left) / _canvas.getZoom());
                         var offsetY = Math.round((ui.position.top - originalPos.top) / _canvas.getZoom());
                         var operation = new NodeMoveOperation(id,offsetX,offsetY);
-                        if(y){
-                            y.share.nodes[id].set('NodeMoveOperation',operation.toJSON());
+                        if(_ymap){
+                            _ymap.set(NodeMoveOperation.TYPE,operation.toJSON());
                         }
                         else {
                             propagateNodeMoveOperation(operation);
@@ -1263,7 +1270,7 @@ define([
             //_iwcot.registerOnRemoteDataReceivedCallback(remoteNodeMoveZCallback);
             //_iwcot.registerOnRemoteDataReceivedCallback(remoteNodeResizeCallback);
             // _iwcot.registerOnRemoteDataReceivedCallback(remoteNodeDeleteCallback);
-            _iwcot.registerOnRemoteDataReceivedCallback(remoteEntitySelectCallback);
+            //_iwcot.registerOnRemoteDataReceivedCallback(remoteEntitySelectCallback);
             _iwcot.registerOnHistoryChangedCallback(historyNodeMoveCallback);
             _iwcot.registerOnHistoryChangedCallback(historyNodeMoveZCallback);
             _iwcot.registerOnHistoryChangedCallback(historyNodeResizeCallback);
@@ -1317,8 +1324,13 @@ define([
             that.registerCallbacks();
         }
 
-        this.registerYjsObserver = function() {
-            y.share.nodes[id].observe(function (events) {
+        this.getYjsMap = function(){
+            return _ymap;
+        };
+
+        this._registerYjsMap = function(ymap) {
+            _ymap = ymap;
+            _ymap.observe(function (events) {
                 for (i in events) {
                     console.log("Yjs log: The following event-type was thrown: " + events[i].type);
                     console.log("Yjs log: The event was executed on: " + events[i].name);
@@ -1326,33 +1338,42 @@ define([
                     console.log(events[i]);
 
                     var operation;
-                    var data = y.share.nodes[id].get(events[i].name);
+                    var data = _ymap.get(events[i].name);
                     switch (events[i].name) {
-                        case 'NodeDeleteOperation':
+                        case NodeDeleteOperation.TYPE:
                         {
                             operation = new NodeDeleteOperation(data.id);
                             propagateNodeDeleteOperation(operation);
                             break;
                         }
-                        case 'NodeMoveOperation':{
+                        case NodeMoveOperation.TYPE:{
                             operation = new NodeMoveOperation(data.id, data.offsetX, data.offsetY);
                             propagateNodeMoveOperation(operation);
                             break;
                         }
-                        case 'NodeMoveZOperation':{
+                        case NodeMoveZOperation.TYPE:{
                             operation =  new NodeMoveZOperation(data.id,data.offsetZ);
                             propagateNodeMoveZOperation(operation);
                             break;
                         }
-                        case 'NodeResizeOperation':{
+                        case NodeResizeOperation.TYPE:
+                        {
                             operation = new NodeResizeOperation(data.id, data.offsetX, data.offsetY);
                             processNodeResizeOperation(operation);
                             break;
                         }
+                        case EntitySelectOperation.TYPE:{
+                            operation = new EntitySelectOperation(data.selectedEntityId, data.selectedEntityType);
+                            remoteEntitySelectCallback(operation);
+                            break;
+
+                        }
                     }
                 }
             });
-        }
+        };
+
+
     }
 
     /**
@@ -1395,7 +1416,9 @@ define([
         jsPlumb.repaint(this.get$node());
     };
 
-
+    AbstractNode.prototype.registerYjsMap = function(map){
+        this._registerYjsMap(map);
+    };
     return AbstractNode;
 
 });

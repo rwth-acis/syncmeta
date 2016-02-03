@@ -32,6 +32,8 @@ define([
 
         AbstractEntity.call(this,id);
 
+        var _ymap = null;
+
         /**
          * Type of edge
          * @type {string}
@@ -123,9 +125,6 @@ define([
          * @param {operations.ot.EdgeDeleteOperation} operation
          */
         var processEdgeDeleteOperation = function(operation){
-            if(y)
-                delete y.share.edges[that.getEntityId()];
-
             that.remove();
         };
 
@@ -253,8 +252,8 @@ define([
             _canvas.select(null);
             var operation = new EdgeDeleteOperation(id,that.getType(),that.getSource().getEntityId(),that.getTarget().getEntityId());
 
-            if(y){
-                y.share.edges[id].set("EdgeDeleteOperation", operation.toJSON());
+            if(_ymap){
+                _ymap.set(EdgeDeleteOperation.TYPE, operation.toJSON());
             }
             else {
                 propagateEdgeDeleteOperation(operation);
@@ -562,6 +561,13 @@ define([
                     }
                 }
             }
+            if(_ymap){
+                var operation = new EntitySelectOperation(that ? that.getEntityId() : null, that ? that.getType() : null);
+                _ymap.set(EntitySelectOperation.TYPE, operation.toJSON());
+            }
+            _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
+            _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, operation.toNonOTOperation());
+            _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.toNonOTOperation());
         };
 
         /**
@@ -621,6 +627,8 @@ define([
             this.removeFromCanvas();
             //this.unregisterCallbacks();
             require('canvas_widget/EntityManager').deleteEdge(this.getEntityId());
+            if(_ymap)
+                _ymap =null;
         };
 
         /**
@@ -683,7 +691,7 @@ define([
                 }
             });
 
-            $("."+id).contextMenu(true);
+            //$("."+id).contextMenu(true);
 
         };
 
@@ -698,14 +706,14 @@ define([
                 $(_jsPlumbConnection.getOverlay("label").canvas).find("input").prop("disabled",true).css('pointerEvents','none');
             }
 
-            $("."+id).contextMenu(false);
+            //$("."+id).contextMenu(false);
         };
 
         /**
          * Register inter widget communication callbacks
          */
         this.registerCallbacks = function(){
-            _iwcot.registerOnRemoteDataReceivedCallback(remoteEntitySelectCallback);
+            //_iwcot.registerOnRemoteDataReceivedCallback(remoteEntitySelectCallback);
             //_iwcot.registerOnRemoteDataReceivedCallback(remoteEdgeDeleteCallback);
             _iwcot.registerOnHistoryChangedCallback(historyEdgeDeleteCallback);
 
@@ -733,8 +741,9 @@ define([
             that.registerCallbacks();
         }
 
-        this.registerYjsObserver = function() {
-            y.share.edges[id].observe(function (events) {
+        this.registerYjsMap = function(ymap) {
+            _ymap =ymap;
+            _ymap.observe(function (events) {
                 for (i in events) {
                     console.log("Yjs log: The following event-type was thrown: " + events[i].type);
                     console.log("Yjs log: The event was executed on: " + events[i].name);
@@ -742,10 +751,14 @@ define([
                     console.log(events[i]);
 
                     var operation;
-                    var data = y.share.edges[id].get(events[i].name);
+                    var data = _ymap.get(events[i].name);
                     switch (events[i].name) {
-                        case 'EdgeDeleteOperation':
-                        {
+                        case EntitySelectOperation.TYPE:{
+                            operation = new EntitySelectOperation(data.selectedEntityId,data.selectedEntityType);
+                            remoteEntitySelectCallback(operation);
+                            break;
+                        }
+                        case EdgeDeleteOperation.TYPE:{
                             operation = new EdgeDeleteOperation(data.id);
                             propagateEdgeDeleteOperation(operation);
                             break;

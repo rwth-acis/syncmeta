@@ -7,7 +7,7 @@ define(['jqueryui','yjs'],function ($) {
             },
             connector: {
                 name: 'websockets-client', // use the websockets connector
-                room: 'syncmetaroom'
+                room: 'syncmetaroom123'
             },
             share: { // specify the shared content
                 canvas: 'Map',

@@ -70,8 +70,14 @@ define([
             json.type = EnumNode.TYPE;
             return json;
         };
+        var attr= new SingleValueListAttribute("[attributes]","Attributes",this);
+        this.addAttribute(attr);
 
-        this.addAttribute(new SingleValueListAttribute("[attributes]","Attributes",this));
+        this.registerYjsMap = function(map){
+            AbstractNode.prototype.registerYjsMap.call(this,map);
+            attr.registerYjsMap(map);
+
+        };
 
         _$node.find(".label").append(this.getLabel().get$node());
 

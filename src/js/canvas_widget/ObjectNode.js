@@ -69,10 +69,15 @@ define([
         this.toJSON = function(){
             return AbstractNode.prototype.toJSON.call(this);
         };
+        var attr = new KeySelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File"});
+        this.addAttribute(attr);
 
-        //this.addAttribute(new SingleValueAttribute(this.getEntityId()+"[color]","Color",this));
-        //this.addAttribute(new SingleSelectionAttribute(this.getEntityId()+"[shape]","Shape",this,{"rectangle":"Rectangle","circle":"Circle"}));
-        this.addAttribute(new KeySelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File"}));
+
+        this.registerYjsMap = function(map){
+            AbstractNode.prototype.registerYjsMap.call(this,map);
+            attr.registerYjsMap(map);
+
+        };
 
         _$node.find(".label").append(this.getLabel().get$node());
 
@@ -89,7 +94,7 @@ define([
             return {
                 addShape: {
                     name: "Add Node Shape",
-                        callback: function(){
+                    callback: function(){
                         var canvas = that.getCanvas(),
                             appearance = that.getAppearance(),
                             nodeId;
@@ -108,7 +113,7 @@ define([
                                 edge = edges[edgeId];
                                 if( (edge instanceof BiDirAssociationEdge &&
                                     (edge.getTarget() === that && edge.getSource() instanceof NodeShapeNode ||
-                                        edge.getSource() === that && edge.getTarget() instanceof NodeShapeNode)) ||
+                                    edge.getSource() === that && edge.getTarget() instanceof NodeShapeNode)) ||
 
                                     (edge instanceof UniDirAssociationEdge && edge.getTarget() instanceof NodeShapeNode) ){
 
@@ -122,10 +127,10 @@ define([
                 sepConvertTo: "---------",
                 convertTo: {
                     name: "Convert to..",
-                        items: {
+                    items: {
                         abstractClassNode: {
                             name: "..Abstract Class",
-                                callback: function(){
+                            callback: function(){
                                 var canvas = that.getCanvas(),
                                     appearance = that.getAppearance(),
                                     nodeId;
@@ -160,7 +165,7 @@ define([
                         },
                         relationshipNode: {
                             name: "..Relationship",
-                                callback: function(){
+                            callback: function(){
                                 var canvas = that.getCanvas(),
                                     appearance = that.getAppearance(),
                                     nodeId;

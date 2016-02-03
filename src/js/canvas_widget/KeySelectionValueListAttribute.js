@@ -73,8 +73,14 @@ define([
          * @param {operations.ot.AttributeAddOperation} operation
          */
         var propagateAttributeAddOperation = function(operation){
-            processAttributeAddOperation(operation);
-            _iwcot.sendRemoteOTOperation(operation);
+            //processAttributeAddOperation(operation);
+            //_iwcot.sendRemoteOTOperation(operation);
+            var ynode = that.getRootSubjectEntity().getYjsMap();
+            if(ynode){
+                ynode.set(operation.getEntityId(), Y.Map).then(function(){
+                    ynode.set(AttributeAddOperation.TYPE, operation.toJSON());
+                });
+            }
         };
 
         /**
@@ -94,8 +100,15 @@ define([
          * @param {operations.ot.AttributeDeleteOperation} operation
          */
         var propagateAttributeDeleteOperation = function(operation){
-            processAttributeDeleteOperation(operation);
-            _iwcot.sendRemoteOTOperation(operation);
+            //processAttributeDeleteOperation(operation);
+            //_iwcot.sendRemoteOTOperation(operation);
+            var ynode = that.getRootSubjectEntity().getYjsMap();
+            if(ynode){
+                ynode.set(operation.getEntityId(), Y.Map).then(function(){
+                    ynode.set(AttributeDeleteOperation.TYPE, operation.toJSON());
+                });
+            }
+
         };
 
         /**
@@ -251,7 +264,7 @@ define([
          * Register inter widget communication callbacks
          */
         this.registerCallbacks = function(){
-            _iwcot.registerOnRemoteDataReceivedCallback(remoteAttributeAddCallback);
+            //_iwcot.registerOnRemoteDataReceivedCallback(remoteAttributeAddCallback);
             _iwcot.registerOnRemoteDataReceivedCallback(remoteAttributeDeleteCallback);
             _iwcot.registerOnLocalDataReceivedCallback(localAttributeAddCallback);
             _iwcot.registerOnLocalDataReceivedCallback(localAttributeDeleteCallback);
@@ -281,6 +294,33 @@ define([
 
         if(_iwcot){
             that.registerCallbacks();
+        }
+
+       this.registerYjsMap = function(map){
+           map.observe(function(events){
+                for (var i in events) {
+                    console.log("Yjs log: The following event-type was thrown: " + events[i].type);
+                    console.log("Yjs log: The event was executed on: " + events[i].name);
+                    console.log("Yjs log: The event object has more information:");
+                    console.log(events[i]);
+
+                    var operation;
+                    var data = map.get(events[i].name);
+                    switch (events[i].name) {
+                        case AttributeAddOperation.TYPE:
+                        {
+                            operation = new AttributeAddOperation(data.entityId, data.subjectEntityId, data.rootSubjectEntityId,data.type);
+                            remoteAttributeAddCallback(operation);
+                            break;
+                        }
+                        case AttributeDeleteOperation.TYPE:{
+                            operation = new AttributeDeleteOperation(data.entityId, data.subjectEntityId, data.rootSubjectEntityId,data.type);
+                            remoteAttributeDeleteCallback(operation);
+                            break;
+                        }
+                    }
+                }
+            });
         }
     }
 

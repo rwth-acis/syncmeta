@@ -146,9 +146,9 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
                 node.refreshTraceAwareness(_iwcot.getUserColor(senderJabberId));
             }
             if(y){
-                y.share.nodes.set(node.getEntityId(), Y.Map).then(function(map){
-                    y.share.nodes[node.getEntityId()] = map;
-                    node.registerYjsObserver();
+                y.share.nodes.get(node.getEntityId()).then(function(map){
+                    //y.share.nodes[node.getEntityId()] = map;
+                    node.registerYjsMap(map);
 
                     node.draw();
                     node.addToCanvas(that);
@@ -197,7 +197,10 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
             }
 
             if(y){
-                y.share.edges.set(edge.getEntityId(), Y.Map).done(function(){
+                y.share.edges.get(edge.getEntityId()).then(function(map){
+                    //y.share.edges[edge.getEntityId()] = map;
+                    edge.registerYjsMap(map);
+
                     edge.connect();
                     edge.addToCanvas(that);
                     that.remountCurrentTool();
@@ -958,7 +961,9 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
             }
             var operation = new NodeAddOperation(id, type, left, top, width, height, zIndex, json || null, EntityManager.getViewId(), oType);
             if(y){
-                y.share.canvas.set('NodeAddOperation', operation.toJSON());
+                y.share.nodes.set(id, Y.Map).then(function(){
+                    y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
+                })
             }else {
                 propagateNodeAddOperation(operation);
             }
@@ -986,7 +991,9 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
             }
             var operation = new EdgeAddOperation(id, type, source, target, json || null, EntityManager.getViewId(), oType);
             if(y){
-                y.share.canvas.set('EdgeAddOperation', operation.toJSON());
+                y.share.edges.set(id, Y.Map).then(function(){
+                    y.share.canvas.set(EdgeAddOperation.TYPE, operation.toJSON());
+                })
             } else {
                 propagateEdgeAddOperation(operation);
             }
@@ -1393,12 +1400,12 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
                     var operation;
                     var data = y.share.canvas.get(events[i].name);
                     switch(events[i].name){
-                        case 'NodeAddOperation':{
+                        case NodeAddOperation.TYPE:{
                             operation = new NodeAddOperation(data.id,data.type,data.left, data.top,data.width,data.height,data.zIndex,data.json,data.viewId,data.oType);
                             propagateNodeAddOperation(operation);
                             break;
                         }
-                        case 'EdgeAddOperation':{
+                        case EdgeAddOperation.TYPE:{
                             operation = new EdgeAddOperation(data.id,data.type, data.source, data.target,data.json,data.viewId,data.oType);
                             propagateEdgeAddOperation(operation);
                             break;

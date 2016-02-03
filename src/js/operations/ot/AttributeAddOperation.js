@@ -4,6 +4,8 @@ define([
     'operations/ot/OTOperation'
 ],/** @lends AttributeAddOperation */function(require,EntityOperation,OTOperation) {
 
+    AttributeAddOperation.TYPE = "AttributeAddOperation";
+    
     AttributeAddOperation.prototype = new EntityOperation();
     AttributeAddOperation.prototype.constructor = AttributeAddOperation;
     /**
@@ -125,6 +127,15 @@ define([
             );
         };
     }
+
+    AttributeAddOperation.prototype.toJSON = function(){
+        return {
+            entityId:this.getEntityId(),
+            type: this.getType(),
+            subjectEntityId: this.getSubjectEntityId(),
+            rootSubjectEntityId: this.getRootSubjectEntityId()
+        }
+    };
 
     return AttributeAddOperation;
 

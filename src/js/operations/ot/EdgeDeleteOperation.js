@@ -4,6 +4,7 @@ define([
     'operations/ot/OTOperation'
 ],/** @lends EdgeDeleteOperation */function(require,EntityOperation,OTOperation) {
 
+    EdgeDeleteOperation.TYPE = "EdgeDeleteOperation";
     EdgeDeleteOperation.prototype = new EntityOperation();
 	EdgeDeleteOperation.prototype.constructor = EdgeDeleteOperation;
     /**

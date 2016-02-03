@@ -4,11 +4,10 @@ define([
     'jsplumb',
     'lodash',
     'canvas_widget/AbstractNode',
-    'canvas_widget/KeySelectionValueListAttribute',
     'canvas_widget/BooleanAttribute',
     'canvas_widget/SingleMultiLineValueAttribute',
     'text!templates/canvas_widget/relationship_group_node.html'
-],/** @lends RelationshipGroupNode */function(require,$,jsPlumb,_,AbstractNode,KeySelectionValueListAttribute,BooleanAttribute,SingleMultiLineValueAttribute,relationshipGroupNodeHtml) {
+],/** @lends RelationshipGroupNode */function(require,$,jsPlumb,_,AbstractNode,BooleanAttribute,SingleMultiLineValueAttribute,relationshipGroupNodeHtml) {
 
     RelationshipGroupNode.TYPE = "Relation";
     RelationshipGroupNode.DEFAULT_WIDTH = 150;
@@ -71,8 +70,6 @@ define([
             json.type = RelationshipGroupNode.TYPE;
             return json;
         };
-
-        //this.addAttribute(new KeySelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File"}));
 
         _$node.find(".label").append(this.getLabel().get$node());
 
