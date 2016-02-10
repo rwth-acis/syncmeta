@@ -1329,6 +1329,9 @@ define([
         };
 
         this._registerYjsMap = function(ymap) {
+
+            _label.registerYType(ymap);
+
             _ymap = ymap;
             _ymap.observe(function (events) {
                 for (i in events) {

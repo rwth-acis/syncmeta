@@ -961,8 +961,11 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
             }
             var operation = new NodeAddOperation(id, type, left, top, width, height, zIndex, json || null, EntityManager.getViewId(), oType);
             if(y){
-                y.share.nodes.set(id, Y.Map).then(function(){
-                    y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
+                y.share.nodes.set(id, Y.Map).then(function(map){
+                    //create the label element of the node
+                    map.set(id+"[label]", Y.Text).then(function(){
+                        y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
+                    });
                 })
             }else {
                 propagateNodeAddOperation(operation);

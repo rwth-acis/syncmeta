@@ -4,11 +4,9 @@ define([
     'jsplumb',
     'lodash',
     'canvas_widget/AbstractNode',
-    'canvas_widget/SingleValueAttribute',
-    'canvas_widget/SingleSelectionAttribute',
     'canvas_widget/KeySelectionValueListAttribute',
     'text!templates/canvas_widget/object_node.html'
-],/** @lends ObjectNode */function(require,$,jsPlumb,_,AbstractNode,SingleValueAttribute,SingleSelectionAttribute,KeySelectionValueListAttribute,objectNodeHtml) {
+],/** @lends ObjectNode */function(require,$,jsPlumb,_,AbstractNode,KeySelectionValueListAttribute,objectNodeHtml) {
 
     ObjectNode.TYPE = "Object";
     ObjectNode.DEFAULT_WIDTH = 150;

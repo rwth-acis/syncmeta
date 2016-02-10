@@ -23,8 +23,11 @@ define([
      * @param {Object} options Selection options
      */
     function KeySelectionValueAttribute(id,name,subjectEntity,options){
+        var that = this;
 
         AbstractAttribute.call(this,id,name,subjectEntity);
+
+        var _ymap = null;
 
         //noinspection UnnecessaryLocalVariableJS
         /**
@@ -114,6 +117,19 @@ define([
         this.setValueFromJSON = function(json){
             _key.setValueFromJSON(json.key);
             _value.setValueFromJSON(json.value);
+        };
+
+
+        this.registerYMap = function(map){
+            var deferred = $.Deferred();
+            $.when(that.registerYTypeForValue(map,_key) ,that.registerYTypeForValue(map, _value)).done(function(){
+                deferred.resolve();
+            });
+            return deferred.promise();
+        };
+
+        this.getYMap = function(){
+            return _ymap;
         };
 
         _$node.find(".key").append(_key.get$node());

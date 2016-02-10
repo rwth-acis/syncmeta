@@ -12,7 +12,8 @@ define(['jqueryui','yjs'],function ($) {
             share: { // specify the shared content
                 canvas: 'Map',
                 nodes:'Map',
-                edges:'Map'
+                edges:'Map',
+                text:"Text"
             },
             sourceDir: '<%= grunt.config("baseUrl") %>/js/lib/vendor'
         }).then(function (y) {

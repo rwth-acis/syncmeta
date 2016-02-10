@@ -26,6 +26,8 @@ define([
     function Value(id,name,subjectEntity,rootSubjectEntity){
         var that = this;
 
+        var _ytext = null;
+
         AbstractValue.call(this,id,name,subjectEntity,rootSubjectEntity);
 
         /**
@@ -140,7 +142,8 @@ define([
          */
         var processValueChangeOperation = function(operation){
             _value = calcNewValue(operation);
-            commitUpdate(operation.getType(),_value,operation.getPosition(),operation.getRemote());
+            //commitUpdate(operation.getType(),_value,operation.getPosition(),operation.getRemote());
+
         };
 
         /**
@@ -152,25 +155,37 @@ define([
             operation.setRemote(false);
             processValueChangeOperation(operation);
             operation.setRemote(true);
-            if(_iwcot.sendRemoteOTOperation(operation)){
-                if(!operation.getFromView()) {
-                    _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
-                        "ValueChangeActivity",
-                        that.getEntityId(),
-                        _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
-                        ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(), that.getRootSubjectEntity().getType(), that.getRootSubjectEntity().getLabel().getValue().getValue()),
-                        {
-                            value: calcNewValue(operation),
-                            subjectEntityName: that.getSubjectEntity().getName(),
-                            rootSubjectEntityType: that.getRootSubjectEntity().getType(),
-                            rootSubjectEntityId: that.getRootSubjectEntity().getEntityId()
-                        }
-                    ).toNonOTOperation());
+            //if(_iwcot.sendRemoteOTOperation(operation)){
+
+            _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
+                "ValueChangeActivity",
+                that.getEntityId(),
+                _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
+                ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(), that.getRootSubjectEntity().getType(), that.getRootSubjectEntity().getLabel().getValue().getValue()),
+                {
+                    value: calcNewValue(operation),
+                    subjectEntityName: that.getSubjectEntity().getName(),
+                    rootSubjectEntityType: that.getRootSubjectEntity().getType(),
+                    rootSubjectEntityId: that.getRootSubjectEntity().getEntityId()
+                }
+            ).toNonOTOperation());
+
+            if(_ytext){
+                switch(operation.getType()){
+                    case 'insert':
+                    {
+                        _ytext.insert(operation.getPosition(), operation.getValue());
+                        break;
+                    }
+                    case 'delete':{
+                        _ytext.delete(operation.getPosition(), operation.getValue().length);
+                        break;
+                    }
                 }
             }
-            if(operation.getFromView()){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
-            }
+
+            //}
+
         };
 
         /**
@@ -269,11 +284,11 @@ define([
             });
 
             //automatically determines the size of input
-             _$node.autoGrowInput({
-                 comfortZone: 10,
-                 minWidth: 40,
-                 maxWidth: 1000
-             }).trigger("blur");
+            _$node.autoGrowInput({
+                comfortZone: 10,
+                minWidth: 40,
+                maxWidth: 1000
+            }).trigger("blur");
         };
 
         //noinspection JSUnusedLocalSymbols
@@ -297,31 +312,31 @@ define([
                     propagateValueChange(CONFIG.OPERATION.TYPE.INSERT,character,selectionStart);
                 }
             }).keydown(function(ev){
-                    if (ev.which === $.ui.keyCode.BACKSPACE || ev.which === $.ui.keyCode.DELETE) {
-                        var selectionStart, selectionEnd;
-                        var deletedChar;
+                if (ev.which === $.ui.keyCode.BACKSPACE || ev.which === $.ui.keyCode.DELETE) {
+                    var selectionStart, selectionEnd;
+                    var deletedChar;
 
-                        ev.preventDefault();
-                        ev.stopPropagation();
-                        selectionStart = this.selectionStart;
-                        selectionEnd = this.selectionEnd;
-                        if(selectionStart == selectionEnd){
-                            if (ev.which === $.ui.keyCode.BACKSPACE) {
-                                deletedChar = $(this).val()[selectionStart-1];
-                                propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart-1);
-                            } else if (ev.which === $.ui.keyCode.DELETE) {
-                                deletedChar = $(this).val()[selectionStart];
-                                propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart);
-                            }
-                        } else {
-                            while(selectionStart < selectionEnd){
-                                deletedChar = $(this).val()[selectionStart];
-                                propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart);
-                                selectionEnd--;
-                            }
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    selectionStart = this.selectionStart;
+                    selectionEnd = this.selectionEnd;
+                    if(selectionStart == selectionEnd){
+                        if (ev.which === $.ui.keyCode.BACKSPACE) {
+                            deletedChar = $(this).val()[selectionStart-1];
+                            propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart-1);
+                        } else if (ev.which === $.ui.keyCode.DELETE) {
+                            deletedChar = $(this).val()[selectionStart];
+                            propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart);
+                        }
+                    } else {
+                        while(selectionStart < selectionEnd){
+                            deletedChar = $(this).val()[selectionStart];
+                            propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart);
+                            selectionEnd--;
                         }
                     }
-                });
+                }
+            });
 
         };
 
@@ -373,7 +388,7 @@ define([
          */
         this.registerCallbacks = function(){
             _iwcot.registerOnLocalDataReceivedCallback(localValueChangeCallback);
-            _iwcot.registerOnRemoteDataReceivedCallback(remoteValueChangeCallback);
+            //_iwcot.registerOnRemoteDataReceivedCallback(remoteValueChangeCallback);
             _iwcot.registerOnHistoryChangedCallback(historyValueChangeCallback);
         };
 
@@ -382,8 +397,31 @@ define([
          */
         this.unregisterCallbacks = function(){
             _iwcot.unregisterOnLocalDataReceivedCallback(localValueChangeCallback);
-            _iwcot.unregisterOnRemoteDataReceivedCallback(remoteValueChangeCallback);
+            //_iwcot.unregisterOnRemoteDataReceivedCallback(remoteValueChangeCallback);
             _iwcot.unregisterOnHistoryChangedCallback(historyValueChangeCallback);
+        };
+
+
+        this.registerYType = function(ytext){
+            _ytext =ytext;
+
+            if(_ytext){
+                _ytext.bind(_$node[0]);
+                _ytext.observe(function(events) {
+                    for (var i in events) {
+                        console.log("Yjs log: The following event-type was thrown: " + events[i].type);
+                        console.log("Yjs log: The event was executed on: " + events[i].name);
+                        console.log("Yjs log: The event object has more information:");
+                        console.log(events[i]);
+
+                        var event = events[i];
+                        var operation = new ValueChangeOperation(that.getEntityId(), event.value, event.type, event.index);
+                        //_iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
+
+
+                    }
+                });
+            }
         };
 
         that.init();
@@ -391,6 +429,7 @@ define([
         if(_iwcot){
             that.registerCallbacks();
         }
+
     }
 
     return Value;
