@@ -82,26 +82,25 @@ define([
         var propagateValueChangeOperation = function(operation){
             operation.setEntityIdChain(getEntityIdChain());
             processValueChangeOperation(operation);
-            if(_iwcot.sendRemoteOTOperation(operation)){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                if(!operation.getFromView()) {
-                    _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
-                        "ValueChangeActivity",
-                        that.getEntityId(),
-                        _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
-                        ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(), that.getRootSubjectEntity().getType(), that.getRootSubjectEntity().getLabel().getValue().getValue()),
-                        {
-                            value: operation.getValue(),
-                            subjectEntityName: that.getSubjectEntity().getName(),
-                            rootSubjectEntityType: that.getRootSubjectEntity().getType(),
-                            rootSubjectEntityId: that.getRootSubjectEntity().getEntityId()
-                        }
-                    ).toNonOTOperation());
-                }
+            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+            if(!operation.getFromView()) {
+                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
+                    "ValueChangeActivity",
+                    that.getEntityId(),
+                    _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
+                    ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(), that.getRootSubjectEntity().getType(), that.getRootSubjectEntity().getLabel().getValue().getValue()),
+                    {
+                        value: operation.getValue(),
+                        subjectEntityName: that.getSubjectEntity().getName(),
+                        rootSubjectEntityType: that.getRootSubjectEntity().getType(),
+                        rootSubjectEntityId: that.getRootSubjectEntity().getEntityId()
+                    }
+                ).toNonOTOperation());
             }
-            if(operation.getFromView()){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
+            if(that.getRootSubjectEntity().getYMap()){
+                that.getRootSubjectEntity().getYMap().set(that.getEntityId(), operation.toJSON());
             }
+
         };
 
         /**
@@ -217,7 +216,7 @@ define([
          * Register inter widget communication callbacks
          */
         this.registerCallbacks = function(){
-            _iwcot.registerOnRemoteDataReceivedCallback(remoteValueChangeCallback);
+            //_iwcot.registerOnRemoteDataReceivedCallback(remoteValueChangeCallback);
             _iwcot.registerOnLocalDataReceivedCallback(localValueChangeCallback);
             _iwcot.registerOnHistoryChangedCallback(historyValueChangeCallback);
         };
@@ -226,15 +225,26 @@ define([
          * Unregister inter widget communication callbacks
          */
         this.unregisterCallbacks = function(){
-            _iwcot.unregisterOnRemoteDataReceivedCallback(remoteValueChangeCallback);
+            //_iwcot.unregisterOnRemoteDataReceivedCallback(remoteValueChangeCallback);
             _iwcot.unregisterOnLocalDataReceivedCallback(localValueChangeCallback);
             _iwcot.unregisterOnHistoryChangedCallback(historyValueChangeCallback);
+        };
+
+        this.registerYType = function(){
+            //observer
+            that.getRootSubjectEntity().getYMap().observePath([that.getEntityId()],function(events) {
+                //TODO check that remove if statement. Why is events undefined ?????
+                if(events)
+                    remoteValueChangeCallback(new ValueChangeOperation(events.entityId, events.value, events.type, events.position));
+            });
         };
 
         init();
         if(_iwcot){
             that.registerCallbacks();
         }
+
+
     }
 
     return IntegerValue;

@@ -73,7 +73,7 @@ define([
 
         this.registerYjsMap = function(map){
             AbstractNode.prototype.registerYjsMap.call(this,map);
-            attr.registerYjsMap(map);
+            attr.registerYjsMap();
 
         };
 

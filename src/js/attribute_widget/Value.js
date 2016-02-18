@@ -134,7 +134,7 @@ define([
          */
         this.propagateValueChange = function(type,value,position){
             var operation = new ValueChangeOperation(that.getEntityId(),value,type,position);
-            processValueChangeOperation(operation);
+            //processValueChangeOperation(operation);
             propagateValueChangeOperation(operation);
 
         };

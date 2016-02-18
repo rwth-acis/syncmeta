@@ -10,6 +10,7 @@ define(['jqueryui','yjs'],function ($) {
                 room: 'syncmetaroom123'
             },
             share: { // specify the shared content
+                users:'Map',
                 canvas: 'Map',
                 nodes:'Map',
                 edges:'Map',

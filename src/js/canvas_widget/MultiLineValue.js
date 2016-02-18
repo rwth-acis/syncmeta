@@ -107,19 +107,21 @@ define([
             operation.setRemote(false);
             processValueChangeOperation(operation);
             operation.setRemote(true);
-            if(_iwcot.sendRemoteOTOperation(operation)){
-                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
-                    "ValueChangeActivity",
-                    that.getEntityId(),
-                    _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
-                    ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(),that.getRootSubjectEntity().getType(),that.getRootSubjectEntity().getLabel().getValue().getValue()),
-                    {
-                        value: calcNewValue(operation),
-                        subjectEntityName: that.getSubjectEntity().getName(),
-                        rootSubjectEntityType: that.getRootSubjectEntity().getType(),
-                        rootSubjectEntityId: that.getRootSubjectEntity().getEntityId()
-                    }
-                ).toNonOTOperation());
+            _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
+                "ValueChangeActivity",
+                that.getEntityId(),
+                _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
+                ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(),that.getRootSubjectEntity().getType(),that.getRootSubjectEntity().getLabel().getValue().getValue()),
+                {
+                    value: calcNewValue(operation),
+                    subjectEntityName: that.getSubjectEntity().getName(),
+                    rootSubjectEntityType: that.getRootSubjectEntity().getType(),
+                    rootSubjectEntityId: that.getRootSubjectEntity().getEntityId()
+                }
+            ).toNonOTOperation());
+
+            if(that.getRootSubjectEntity().getYMap()){
+                that.getRootSubjectEntity().getYMap().set(that.getEntityId(),operation.toJSON());
             }
         };
 
@@ -312,7 +314,7 @@ define([
          */
         this.registerCallbacks = function(){
             _iwcot.registerOnLocalDataReceivedCallback(localValueChangeCallback);
-            _iwcot.registerOnRemoteDataReceivedCallback(remoteValueChangeCallback);
+            //_iwcot.registerOnRemoteDataReceivedCallback(remoteValueChangeCallback);
             _iwcot.registerOnHistoryChangedCallback(historyValueChangeCallback);
         };
 
@@ -321,8 +323,17 @@ define([
          */
         this.unregisterCallbacks = function(){
             _iwcot.unregisterOnLocalDataReceivedCallback(localValueChangeCallback);
-            _iwcot.unregisterOnRemoteDataReceivedCallback(remoteValueChangeCallback);
+            //_iwcot.unregisterOnRemoteDataReceivedCallback(remoteValueChangeCallback);
             _iwcot.unregisterOnHistoryChangedCallback(historyValueChangeCallback);
+        };
+
+        this.registerYType = function(){
+            //observer
+            that.getRootSubjectEntity().getYMap().observePath([that.getEntityId()],function(events) {
+                //TODO check that remove if statement. Why is events undefined ?????
+                if(events)
+                    remoteValueChangeCallback(new ValueChangeOperation(events.entityId, events.value, events.type, events.position));
+            });
         };
 
         init();
@@ -330,6 +341,7 @@ define([
         if(_iwcot){
             that.registerCallbacks();
         }
+
     }
 
     return MultiLineValue;

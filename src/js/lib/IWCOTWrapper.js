@@ -509,7 +509,7 @@ define([
                                             clearInterval(_syncInterval);
                                             clearInterval(_purgeInterval);
                                             _ot = new OT(localID);
-                                            sendRemoteNonOTOperation(new JoinOperation(resOperation.getUser(),true,space.user[CONFIG.NS.PERSON.JABBERID],require('canvas_widget/EntityManager').graphToJSON()).toNonOTOperation());
+                                            //sendRemoteNonOTOperation(new JoinOperation(resOperation.getUser(),true,space.user[CONFIG.NS.PERSON.JABBERID],require('canvas_widget/EntityManager').graphToJSON()).toNonOTOperation());
                                         },500);
 
                                         //Unlock if no remote message is received within 5 seconds
@@ -543,7 +543,7 @@ define([
                                     if(_joiningState === IWCOT.JOIN_STATE.NOT_JOINED || _joiningState === IWCOT.JOIN_STATE.COMPLETED){
                                         clearTimeout(_joiningTimeout);
                                         _joiningState = IWCOT.JOIN_STATE.REQUESTED;
-                                        sendRemoteNonOTOperation(new JoinOperation(space.user[CONFIG.NS.PERSON.JABBERID],true,space.user[CONFIG.NS.PERSON.JABBERID],{}).toNonOTOperation());
+                                        //sendRemoteNonOTOperation(new JoinOperation(space.user[CONFIG.NS.PERSON.JABBERID],true,space.user[CONFIG.NS.PERSON.JABBERID],{}).toNonOTOperation());
                                     }
 
                                 }
@@ -705,13 +705,13 @@ define([
 
             for(i = 0, numOfCallbacks = _onJoinOrLeaveCallbacks.length; i < numOfCallbacks; i++){
                 if(typeof _onJoinOrLeaveCallbacks[i] === 'function'){
-                    _onJoinOrLeaveCallbacks[i](new JoinOperation(space.user[CONFIG.NS.PERSON.JABBERID],true,space.user[CONFIG.NS.PERSON.JABBERID],{}));
+                    //_onJoinOrLeaveCallbacks[i](new JoinOperation(space.user[CONFIG.NS.PERSON.JABBERID],true,space.user[CONFIG.NS.PERSON.JABBERID],{}));
                 }
             }
         };
         _joiningTimeout = setTimeout(_joiningTimeoutCallback,5000);
         console.log("JOINING LOG: LOCAL USER TRIES TO JOIN");
-        sendRemoteNonOTOperation(new JoinOperation(space.user[CONFIG.NS.PERSON.JABBERID],false,space.user[CONFIG.NS.PERSON.JABBERID],{}).toNonOTOperation());
+        //sendRemoteNonOTOperation(new JoinOperation(space.user[CONFIG.NS.PERSON.JABBERID],false,space.user[CONFIG.NS.PERSON.JABBERID],{}).toNonOTOperation());
 
         //var sendBufferTimer = new IWCOT.PausableInterval(sendBufferedMessages,INTERVAL_SEND);
         if(BUFFER_ENABLED) setInterval(sendBufferedLocalMessages,INTERVAL_SEND_LOCAL);

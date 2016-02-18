@@ -65,16 +65,13 @@ define([
          * @param {operations.ot.AttributeAddOperation} operation
          */
         var processAttributeAddOperation = function(operation){
-            var ynode = that.getRootSubjectEntity().getYjsMap();
+            var ynode = that.getRootSubjectEntity().getYMap();
             if (ynode) {
-                ynode.get(operation.getEntityId()).then(function (map) {
+                ynode.get(operation.getEntityId()+'[key]').then(function (ytext) {
                     var attribute = new KeySelectionValueAttribute(operation.getEntityId(), "Attribute", that, _options);
-                    attribute.registerYMap(map).done(function(){
-                        that.addAttribute(attribute);
-                        _$node.find(".list").append(attribute.get$node());
-                    });
-
-
+                    attribute.registerYMap(ytext);
+                    that.addAttribute(attribute);
+                    _$node.find(".list").append(attribute.get$node());
 
                 });
             }
@@ -101,18 +98,10 @@ define([
         var propagateAttributeAddOperation = function(operation){
             //processAttributeAddOperation(operation);
             //_iwcot.sendRemoteOTOperation(operation);
-            var ynode = that.getRootSubjectEntity().getYjsMap();
+            var ynode = that.getRootSubjectEntity().getYMap();
             if(ynode){
-                ynode.set(operation.getEntityId(), Y.Map).then(function(map){
-                    $.when(createYTypeForValueOfAttribute(map,operation.getEntityId()+'[key]', Y.Text),
-                        createYTypeForValueOfAttribute(map,operation.getEntityId()+'[value]', Y.Map)).done(function(){
-                            ynode.set(AttributeAddOperation.TYPE, operation.toJSON());
-
-                        });
-                    //map.set(operation.getEntityId()+'[key]', Y.Text);
-                    //map.set(operation.getEntityId()+'[value]', Y.Map);
-                    //ynode.set(AttributeAddOperation.TYPE, operation.toJSON());
-
+                $.when(createYTypeForValueOfAttribute(ynode,operation.getEntityId()+'[key]', Y.Text)).done(function(){
+                    ynode.set(AttributeAddOperation.TYPE, operation.toJSON());
                 });
             }
         };
@@ -136,7 +125,7 @@ define([
         var propagateAttributeDeleteOperation = function(operation){
             //processAttributeDeleteOperation(operation);
             //_iwcot.sendRemoteOTOperation(operation);
-            var ynode = that.getRootSubjectEntity().getYjsMap();
+            var ynode = that.getRootSubjectEntity().getYMap();
             if(ynode){
                 ynode.set(operation.getEntityId(), Y.Map).then(function(){
                     ynode.set(AttributeDeleteOperation.TYPE, operation.toJSON());
@@ -152,7 +141,7 @@ define([
         var remoteAttributeAddCallback = function(operation){
             if(operation instanceof AttributeAddOperation && operation.getRootSubjectEntityId() === that.getRootSubjectEntity().getEntityId() && operation.getSubjectEntityId() === that.getEntityId()){
                 _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                processAttributeAddOperation(operation,true);
+                processAttributeAddOperation(operation);
             }
         };
 
@@ -299,7 +288,7 @@ define([
          */
         this.registerCallbacks = function(){
             //_iwcot.registerOnRemoteDataReceivedCallback(remoteAttributeAddCallback);
-            _iwcot.registerOnRemoteDataReceivedCallback(remoteAttributeDeleteCallback);
+            //_iwcot.registerOnRemoteDataReceivedCallback(remoteAttributeDeleteCallback);
             _iwcot.registerOnLocalDataReceivedCallback(localAttributeAddCallback);
             _iwcot.registerOnLocalDataReceivedCallback(localAttributeDeleteCallback);
             _iwcot.registerOnHistoryChangedCallback(historyAttributeAddCallback);
@@ -310,8 +299,8 @@ define([
          * Unregister inter widget communication callbacks
          */
         this.unregisterCallbacks = function(){
-            _iwcot.unregisterOnRemoteDataReceivedCallback(remoteAttributeAddCallback);
-            _iwcot.unregisterOnRemoteDataReceivedCallback(remoteAttributeDeleteCallback);
+            //_iwcot.unregisterOnRemoteDataReceivedCallback(remoteAttributeAddCallback);
+            //_iwcot.unregisterOnRemoteDataReceivedCallback(remoteAttributeDeleteCallback);
             _iwcot.unregisterOnLocalDataReceivedCallback(localAttributeAddCallback);
             _iwcot.unregisterOnLocalDataReceivedCallback(localAttributeDeleteCallback);
             _iwcot.unregisterOnHistoryChangedCallback(historyAttributeAddCallback);
@@ -334,8 +323,8 @@ define([
             return _ymap;
         };
 
-        this.registerYjsMap = function(map){
-            map.observe(function(events){
+        this.registerYjsMap = function(){
+            that.getRootSubjectEntity().getYMap().observe(function(events){
                 for (var i in events) {
                     console.log("Yjs log: The following event-type was thrown: " + events[i].type);
                     console.log("Yjs log: The event was executed on: " + events[i].name);
@@ -343,7 +332,7 @@ define([
                     console.log(events[i]);
 
                     var operation;
-                    var data = map.get(events[i].name);
+                    var data = that.getRootSubjectEntity().getYMap().get(events[i].name);
                     switch (events[i].name) {
                         case AttributeAddOperation.TYPE:
                         {

@@ -102,6 +102,10 @@ define([
         };
     }
 
+    JoinOperation.prototype.toJSON = function(){
+        return {user: this.getUser()};
+    };
+
     return JoinOperation;
 
 });

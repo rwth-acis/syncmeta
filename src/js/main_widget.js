@@ -50,8 +50,9 @@ requirejs([
     'canvas_widget/ViewGenerator',
     'promise!Metamodel',
     'promise!Model',
-    'promise!Guidancemodel'
-],function($,jsPlumb,IWCOT, yjsSync,Util,ToolSelectOperation,ActivityOperation,JoinOperation, ViewInitOperation, UpdateViewListOperation, DeleteViewOperation,SetViewTypesOperation, InitModelTypesOperation, SetModelAttributeNodeOperation, Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge, ViewObjectNode, ViewObjectNodeTool,ViewRelationshipNode, ViewRelationshipNodeTool, ViewManager, ViewGenerator, metamodel,model,guidancemodel) {
+    'promise!Guidancemodel',
+    'promise!Space'
+],function($,jsPlumb,IWCOT, yjsSync,Util,ToolSelectOperation,ActivityOperation,JoinOperation, ViewInitOperation, UpdateViewListOperation, DeleteViewOperation,SetViewTypesOperation, InitModelTypesOperation, SetModelAttributeNodeOperation, Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge, ViewObjectNode, ViewObjectNodeTool,ViewRelationshipNode, ViewRelationshipNodeTool, ViewManager, ViewGenerator, metamodel,model,guidancemodel,space) {
 
     var iwcot;
     iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.MAIN);
@@ -634,10 +635,6 @@ requirejs([
 
         iwcot.registerOnHistoryChangedCallback(saveCallback);
 
-        if (iwcot.getJoiningState() === IWCOT.JOIN_STATE.COMPLETED) {
-            $("#loading").hide();
-        }
-
 
         ViewManager.initViewList();
 
@@ -661,7 +658,7 @@ requirejs([
                             modelAttributesNode.addToCanvas(canvas);
                         }
                         canvas.resetTool();
-                        $("#loading").hide();
+                        //$("#loading").hide();
 
                         iwcot.registerOnLocalDataReceivedCallback(function (operation) {
                             if (operation instanceof SetModelAttributeNodeOperation) {
@@ -720,6 +717,67 @@ requirejs([
                 }
             }
         });
+        var userList = {};
+
+        y.share.users.observe(function(events){
+            for(var i in events) {
+                console.log("Yjs log: The following event-type was thrown: " + events[i].type);
+                console.log("Yjs log: The event was executed on: " + events[i].name);
+                console.log("Yjs log: The event object has more information:");
+                console.log(events[i]);
+
+                var operation;
+                var activityOperation;
+                var data = y.share.users.get(events[i].name);
+                switch (events[i].name) {
+                    case JoinOperation.TYPE:
+                    {
+                        operation = new JoinOperation(data.user);
+                        //remote user
+                        if(space.user[CONFIG.NS.PERSON.JABBERID] !== data.user && !userList.hasOwnProperty(data.user)){
+                            userList[data.user] = 'remote';
+                            y.share.users.set(JoinOperation.TYPE, new JoinOperation(space.user[CONFIG.NS.PERSON.JABBERID]).toJSON());
+                            activityOperation = new ActivityOperation(
+                                "UserJoinActivity",
+                                "-1",
+                                operation.getUser(),
+                                "",
+                                {}
+                            ).toNonOTOperation();
+                            iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation);
+                        }
+                        break;
+                    }
+                }
+            }
+        });
+        //local user
+        y.share.users.set(JoinOperation.TYPE, new JoinOperation(space.user[CONFIG.NS.PERSON.JABBERID]).toJSON());
+        userList[space.user[CONFIG.NS.PERSON.JABBERID]] = 'local';
+        var activityOperation;
+        activityOperation = new ActivityOperation(
+            "UserJoinActivity",
+            "-1",
+            space.user[CONFIG.NS.PERSON.JABBERID],
+            "",
+            {}
+        ).toNonOTOperation();
+
+        //remote users already joined
+        iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation);
+        for(var jabberid in space.members){
+            if(space.members.hasOwnProperty(jabberid) && !userList.hasOwnProperty(jabberid)){
+                activityOperation = new ActivityOperation(
+                    "UserJoinActivity",
+                    "-1",
+                    jabberid,
+                    "",
+                    {}
+                ).toNonOTOperation();
+                iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation);
+            }
+        }
+        $("#loading").hide();
 
         /*
          $("#save_image").click(function(){

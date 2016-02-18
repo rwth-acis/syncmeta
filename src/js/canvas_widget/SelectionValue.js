@@ -30,8 +30,6 @@ function ($, jsPlumb, _, IWCOT, AbstractValue, AbstractAttribute, ValueChangeOpe
     function SelectionValue(id,name,subjectEntity,rootSubjectEntity,options,useAttributeHtml){
         var that = this;
 
-        var _ymap = null;
-
         useAttributeHtml = typeof useAttributeHtml !== 'undefinded' ? useAttributeHtml : false;
 
         AbstractValue.call(this, id, name, subjectEntity, rootSubjectEntity);
@@ -124,8 +122,8 @@ function ($, jsPlumb, _, IWCOT, AbstractValue, AbstractAttribute, ValueChangeOpe
                     rootSubjectEntityId : that.getRootSubjectEntity().getEntityId()
                 }).toNonOTOperation());
             //}
-            if(_ymap){
-                _ymap.set(ValueChangeOperation.TYPE, operation.toJSON());
+            if(that.getRootSubjectEntity().getYMap()){
+                that.getRootSubjectEntity().getYMap().set(that.getEntityId(), operation.toJSON());
             }
         };
 
@@ -234,27 +232,12 @@ function ($, jsPlumb, _, IWCOT, AbstractValue, AbstractAttribute, ValueChangeOpe
             that.registerCallbacks();
         }
 
-        this.registerYType = function(yType){
-            _ymap = yType;
+        this.registerYType = function(){
             //observer
-            _ymap.observe(function(events) {
-                for (var i in events) {
-                    console.log("Yjs log: The following event-type was thrown: " + events[i].type);
-                    console.log("Yjs log: The event was executed on: " + events[i].name);
-                    console.log("Yjs log: The event object has more information:");
-                    console.log(events[i]);
-
-                    var operation;
-                    var data= _ymap.get(events[i].name);
-                    switch(events[i].name){
-                        case ValueChangeOperation.TYPE:{
-                            operation = new ValueChangeOperation(data.entityId,data.value,data.type,data.position);
-                            remoteValueChangeCallback(operation);
-                            break;
-                        }
-                    }
-
-                }
+            that.getRootSubjectEntity().getYMap().observePath([that.getEntityId()],function(events) {
+                //TODO check that! remove if statement. Why is events undefined ?????
+                if(events)
+                    remoteValueChangeCallback(new ValueChangeOperation(events.entityId, events.value, events.type, events.position));
             });
         }
     }

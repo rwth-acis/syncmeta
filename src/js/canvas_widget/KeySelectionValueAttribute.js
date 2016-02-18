@@ -36,7 +36,7 @@ define([
          * @private
          */
         var _options = options;
-        
+
         /**
          * Value object of key
          * @type {canvas_widget.Value}
@@ -120,11 +120,13 @@ define([
         };
 
 
-        this.registerYMap = function(map){
+        this.registerYMap = function(ytext){
             var deferred = $.Deferred();
-            $.when(that.registerYTypeForValue(map,_key) ,that.registerYTypeForValue(map, _value)).done(function(){
-                deferred.resolve();
-            });
+            //$.when(that.registerYTypeForValue(map,_key)).done(function(){
+            _key.registerYType(ytext);
+            _value.registerYType();
+            //    deferred.resolve();
+            //});
             return deferred.promise();
         };
 

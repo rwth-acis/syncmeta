@@ -960,6 +960,7 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
                 oType = EntityManager.getViewNodeType(type).getTargetNodeType().TYPE;
             }
             var operation = new NodeAddOperation(id, type, left, top, width, height, zIndex, json || null, EntityManager.getViewId(), oType);
+
             if(y){
                 y.share.nodes.set(id, Y.Map).then(function(map){
                     //create the label element of the node
@@ -1408,8 +1409,9 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
                             propagateNodeAddOperation(operation);
                             break;
                         }
-                        case EdgeAddOperation.TYPE:{
-                            operation = new EdgeAddOperation(data.id,data.type, data.source, data.target,data.json,data.viewId,data.oType);
+                        case EdgeAddOperation.TYPE:
+                        {
+                            operation = new EdgeAddOperation(data.id, data.type, data.source, data.target, data.json, data.viewId, data.oType);
                             propagateEdgeAddOperation(operation);
                             break;
                         }

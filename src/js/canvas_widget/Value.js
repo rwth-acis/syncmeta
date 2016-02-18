@@ -142,7 +142,7 @@ define([
          */
         var processValueChangeOperation = function(operation){
             _value = calcNewValue(operation);
-            //commitUpdate(operation.getType(),_value,operation.getPosition(),operation.getRemote());
+            commitUpdate(operation.getType(),_value,operation.getPosition(),operation.getRemote());
 
         };
 
@@ -153,9 +153,9 @@ define([
         var propagateValueChangeOperation = function(operation){
             operation.setEntityIdChain(getEntityIdChain());
             operation.setRemote(false);
-            processValueChangeOperation(operation);
+            //processValueChangeOperation(operation);
             operation.setRemote(true);
-            //if(_iwcot.sendRemoteOTOperation(operation)){
+
 
             _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
                 "ValueChangeActivity",
@@ -170,6 +170,13 @@ define([
                 }
             ).toNonOTOperation());
 
+
+            if(that.getRootSubjectEntity().getYMap()){
+                that.getRootSubjectEntity().getYMap().set(that.getEntityId(), operation.toJSON());
+            }
+
+            /*
+            // TODO kein ytext mehr. später! propagation zur attribute widget tricky with ytext use ymap for now.
             if(_ytext){
                 switch(operation.getType()){
                     case 'insert':
@@ -182,10 +189,8 @@ define([
                         break;
                     }
                 }
-            }
-
-            //}
-
+                var text = _ytext.toString();
+            }*/
         };
 
         /**
@@ -207,8 +212,8 @@ define([
          */
         var remoteValueChangeCallback = function(operation){
             if(operation instanceof ValueChangeOperation && operation.getEntityId() === that.getEntityId()){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+                //_iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                //_iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
                 _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "ValueChangeActivity",
                     that.getEntityId(),
@@ -403,25 +408,16 @@ define([
 
 
         this.registerYType = function(ytext){
-            _ytext =ytext;
-
-            if(_ytext){
-                _ytext.bind(_$node[0]);
-                _ytext.observe(function(events) {
-                    for (var i in events) {
-                        console.log("Yjs log: The following event-type was thrown: " + events[i].type);
-                        console.log("Yjs log: The event was executed on: " + events[i].name);
-                        console.log("Yjs log: The event object has more information:");
-                        console.log(events[i]);
-
-                        var event = events[i];
-                        var operation = new ValueChangeOperation(that.getEntityId(), event.value, event.type, event.index);
-                        //_iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
-
-
-                    }
-                });
-            }
+            that.getRootSubjectEntity().getYMap().observePath([that.getEntityId()],function(events) {
+                if(events){
+                    remoteValueChangeCallback(new ValueChangeOperation(events.entityId, events.value, events.type, events.position));
+                }
+            });
+            /*
+            _ytext= ytext;
+            _ytext.observe(function(events){
+                var e = events;
+            });*/
         };
 
         that.init();

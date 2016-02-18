@@ -1324,7 +1324,7 @@ define([
             that.registerCallbacks();
         }
 
-        this.getYjsMap = function(){
+        this.getYMap = function(){
             return _ymap;
         };
 

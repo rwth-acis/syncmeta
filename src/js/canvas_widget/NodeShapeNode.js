@@ -73,12 +73,19 @@ define([
             return json;
         };
 
-        this.addAttribute(new SingleSelectionAttribute(this.getEntityId()+"[shape]","Shape",this,{"circle":"Circle","diamond":"Diamond","rectangle":"Rectangle","rounded_rectangle":"Rounded Rectangle","triangle":"Triangle"}));
-        this.addAttribute(new SingleColorValueAttribute(this.getEntityId()+"[color]","Color",this));
-        this.addAttribute(new IntegerAttribute(this.getEntityId()+"[defaultWidth]","Default Width",this));
-        this.addAttribute(new IntegerAttribute(this.getEntityId()+"[defaultHeight]","Default Height",this));
-        this.addAttribute(new SingleMultiLineValueAttribute(this.getEntityId()+"[customShape]","Custom Shape",this));
-        this.addAttribute(new SingleValueAttribute(this.getEntityId()+"[customAnchors]","Custom Anchors",this));
+        var attrShapeSelect = new SingleSelectionAttribute(this.getEntityId()+"[shape]","Shape",this,{"circle":"Circle","diamond":"Diamond","rectangle":"Rectangle","rounded_rectangle":"Rounded Rectangle","triangle":"Triangle"});
+        var attrWidth = new IntegerAttribute(this.getEntityId()+"[defaultWidth]","Default Width",this);
+        var attrHeight = new IntegerAttribute(this.getEntityId()+"[defaultHeight]","Default Height",this);
+        var attrColor = new SingleColorValueAttribute(this.getEntityId()+"[color]","Color",this);
+        var attrCustomShape = new SingleMultiLineValueAttribute(this.getEntityId()+"[customShape]","Custom Shape",this);
+        var attrAnchors = new SingleValueAttribute(this.getEntityId()+"[customAnchors]","Custom Anchors",this);
+
+        this.addAttribute(attrShapeSelect);
+        this.addAttribute(attrColor);
+        this.addAttribute(attrWidth);
+        this.addAttribute(attrHeight);
+        this.addAttribute(attrCustomShape);
+        this.addAttribute(attrAnchors);
 
         _$node.find(".label").append(this.getLabel().get$node());
 
@@ -86,6 +93,18 @@ define([
             if(_attributes.hasOwnProperty(attributeKey)){
                 _$attributeNode.append(_attributes[attributeKey].get$node());
             }
+        }
+
+
+
+        this.registerYjsMap = function(map){
+            AbstractNode.prototype.registerYjsMap.call(this,map);
+            attrShapeSelect.getValue().registerYType();
+            attrColor.getValue().registerYType();
+            attrWidth.getValue().registerYType();
+            attrHeight.getValue().registerYType();
+            attrAnchors.getValue().registerYType();
+            attrCustomShape.getValue().registerYType();
         }
 
     }

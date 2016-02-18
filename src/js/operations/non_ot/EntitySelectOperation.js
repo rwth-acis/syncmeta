@@ -13,7 +13,7 @@ define([
      * @param {string} selectedEntityType
      */
 
-    function EntitySelectOperation(selectedEntityId, selectedEntityType){
+    function EntitySelectOperation(selectedEntityId, selectedEntityType, userId){
         /**
          * Entity id of the selected entity
          * @type {string}
