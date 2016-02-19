@@ -1,12 +1,10 @@
 define([
-    'iwcotw',
     'jqueryui',
     'lodash',
     'canvas_widget/EntityManager',
     'text!templates/guidance_modeling/select_tool_guidance.html'
-],function(IWCOTW, $,_, EntityManager, selectToolGuidanceHtml) {
+],function($,_, EntityManager, selectToolGuidanceHtml) {
     function SelectToolGuidance(id, label, tool, canvas, icon){
-        //var _iwc = IWCOTW.getInstance(CONFIG.WIDGET.NAME.MAIN);
         //var _id = id;
         //var _label = label;
         //var _tool = tool;

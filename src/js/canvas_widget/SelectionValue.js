@@ -2,7 +2,7 @@ define([
     'jqueryui',
     'jsplumb',
     'lodash',
-    'iwcotw',
+    'iwcw',
     'canvas_widget/AbstractValue',
     'canvas_widget/AbstractAttribute',
     'operations/ot/ValueChangeOperation',
@@ -11,7 +11,7 @@ define([
     'canvas_widget/LogicalConjunctions',
     'text!templates/canvas_widget/selection_value.html'
 ], /** @lends SelectionValue */
-function ($, jsPlumb, _, IWCOT, AbstractValue, AbstractAttribute, ValueChangeOperation, ActivityOperation, LogicalOperator, LogicalConjunctions,selectionValueHtml) {
+function ($, jsPlumb, _, IWCW, AbstractValue, AbstractAttribute, ValueChangeOperation, ActivityOperation, LogicalOperator, LogicalConjunctions,selectionValueHtml) {
 
     SelectionValue.prototype = new AbstractValue();
     SelectionValue.prototype.constructor = SelectionValue;
@@ -60,7 +60,7 @@ function ($, jsPlumb, _, IWCOT, AbstractValue, AbstractAttribute, ValueChangeOpe
          * @type {Object}
          * @private
          */
-        var _iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.MAIN);
+        var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
 
         /**
          * Get chain of entities the attribute is assigned to
@@ -109,12 +109,12 @@ function ($, jsPlumb, _, IWCOT, AbstractValue, AbstractAttribute, ValueChangeOpe
         var propagateValueChangeOperation = function (operation) {
             operation.setEntityIdChain(getEntityIdChain());
             processValueChangeOperation(operation);
-            //if (_iwcot.sendRemoteOTOperation(operation)) {
-            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
-            _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
+            //if (_iwcw.sendRemoteOTOperation(operation)) {
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
+            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
                 "ValueChangeActivity",
                 that.getEntityId(),
-                _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
+                _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
                 ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(), that.getRootSubjectEntity().getType(), that.getRootSubjectEntity().getLabel().getValue().getValue()), {
                     value : operation.getValue(),
                     subjectEntityName : that.getSubjectEntity().getName(),
@@ -133,8 +133,8 @@ function ($, jsPlumb, _, IWCOT, AbstractValue, AbstractAttribute, ValueChangeOpe
          */
         var remoteValueChangeCallback = function (operation) {
             if (operation instanceof ValueChangeOperation && operation.getEntityId() === that.getEntityId()) {
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
                 processValueChangeOperation(operation);
             }
         };
@@ -145,7 +145,7 @@ function ($, jsPlumb, _, IWCOT, AbstractValue, AbstractAttribute, ValueChangeOpe
          */
         var localValueChangeCallback = function (operation) {
             if (operation instanceof ValueChangeOperation && operation.getEntityId() === that.getEntityId()) {
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
                 propagateValueChangeOperation(operation);
             }
         };
@@ -156,8 +156,8 @@ function ($, jsPlumb, _, IWCOT, AbstractValue, AbstractAttribute, ValueChangeOpe
          */
         var historyValueChangeCallback = function (operation) {
             if (operation instanceof ValueChangeOperation && operation.getEntityId() === that.getEntityId()) {
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
                 processValueChangeOperation(operation);
             }
         };
@@ -214,21 +214,21 @@ function ($, jsPlumb, _, IWCOT, AbstractValue, AbstractAttribute, ValueChangeOpe
          * Register inter widget communication callbacks
          */
         this.registerCallbacks = function () {
-            //_iwcot.registerOnRemoteDataReceivedCallback(remoteValueChangeCallback);
-            _iwcot.registerOnLocalDataReceivedCallback(localValueChangeCallback);
-            _iwcot.registerOnHistoryChangedCallback(historyValueChangeCallback);
+            //_iwcw.registerOnRemoteDataReceivedCallback(remoteValueChangeCallback);
+            _iwcw.registerOnDataReceivedCallback(localValueChangeCallback);
+            //_iwcw.registerOnHistoryChangedCallback(historyValueChangeCallback);
         };
 
         /**
          * Unregister inter widget communication callbacks
          */
         this.unregisterCallbacks = function () {
-           // _iwcot.unregisterOnRemoteDataReceivedCallback(remoteValueChangeCallback);
-            _iwcot.unregisterOnLocalDataReceivedCallback(localValueChangeCallback);
-            _iwcot.unregisterOnHistoryChangedCallback(historyValueChangeCallback);
+           // _iwcw.unregisterOnRemoteDataReceivedCallback(remoteValueChangeCallback);
+            _iwcw.unregisterOnDataReceivedCallback(localValueChangeCallback);
+            //_iwcw.unregisterOnHistoryChangedCallback(historyValueChangeCallback);
         };
 
-        if (_iwcot) {
+        if (_iwcw) {
             that.registerCallbacks();
         }
 

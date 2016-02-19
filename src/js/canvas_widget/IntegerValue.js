@@ -2,14 +2,14 @@ define([
     'jqueryui',
     'jsplumb',
     'lodash',
-    'iwcotw',
+    'iwcw',
     'canvas_widget/AbstractValue',
     'canvas_widget/AbstractAttribute',
     'operations/ot/ValueChangeOperation',
     'operations/non_ot/ActivityOperation',
     'text!templates/canvas_widget/integer_value.html',
     'text!templates/attribute_widget/integer_value.html'
-],/** @lends IntegerValue */function($,jsPlumb,_,IWCOT,AbstractValue,AbstractAttribute,ValueChangeOperation,ActivityOperation,integerValueHtml, attributeIntegerValueHtml) {
+],/** @lends IntegerValue */function($,jsPlumb,_,IWCW,AbstractValue,AbstractAttribute,ValueChangeOperation,ActivityOperation,integerValueHtml, attributeIntegerValueHtml) {
 
     IntegerValue.prototype = new AbstractValue();
     IntegerValue.prototype.constructor = IntegerValue;
@@ -51,7 +51,7 @@ define([
          * @type {Object}
          * @private
          */
-        var _iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.MAIN);
+        var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
 
         /**
          * Get chain of entities the attribute is assigned to
@@ -82,12 +82,12 @@ define([
         var propagateValueChangeOperation = function(operation){
             operation.setEntityIdChain(getEntityIdChain());
             processValueChangeOperation(operation);
-            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
             if(!operation.getFromView()) {
-                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
+                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
                     "ValueChangeActivity",
                     that.getEntityId(),
-                    _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
+                    _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
                     ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(), that.getRootSubjectEntity().getType(), that.getRootSubjectEntity().getLabel().getValue().getValue()),
                     {
                         value: operation.getValue(),
@@ -109,9 +109,9 @@ define([
          */
         var remoteValueChangeCallback = function(operation){
             if(operation instanceof ValueChangeOperation && operation.getEntityId() === that.getEntityId()){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "ValueChangeActivity",
                     that.getEntityId(),
                     operation.getOTOperation().getSender(),
@@ -134,7 +134,7 @@ define([
         var localValueChangeCallback = function(operation){
             if(operation instanceof ValueChangeOperation && operation.getEntityId() === that.getEntityId()){
                 propagateValueChangeOperation(operation);
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
             }
         };
 
@@ -144,8 +144,8 @@ define([
          */
         var historyValueChangeCallback = function(operation){
             if(operation instanceof ValueChangeOperation && operation.getEntityId() === that.getEntityId()){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
                 processValueChangeOperation(operation);
             }
         };
@@ -216,18 +216,18 @@ define([
          * Register inter widget communication callbacks
          */
         this.registerCallbacks = function(){
-            //_iwcot.registerOnRemoteDataReceivedCallback(remoteValueChangeCallback);
-            _iwcot.registerOnLocalDataReceivedCallback(localValueChangeCallback);
-            _iwcot.registerOnHistoryChangedCallback(historyValueChangeCallback);
+            //_iwcw.registerOnRemoteDataReceivedCallback(remoteValueChangeCallback);
+            _iwcw.registerOnDataReceivedCallback(localValueChangeCallback);
+            //_iwcw.registerOnHistoryChangedCallback(historyValueChangeCallback);
         };
 
         /**
          * Unregister inter widget communication callbacks
          */
         this.unregisterCallbacks = function(){
-            //_iwcot.unregisterOnRemoteDataReceivedCallback(remoteValueChangeCallback);
-            _iwcot.unregisterOnLocalDataReceivedCallback(localValueChangeCallback);
-            _iwcot.unregisterOnHistoryChangedCallback(historyValueChangeCallback);
+            //_iwcw.unregisterOnRemoteDataReceivedCallback(remoteValueChangeCallback);
+            _iwcw.unregisterOnDataReceivedCallback(localValueChangeCallback);
+            //_iwcw.unregisterOnHistoryChangedCallback(historyValueChangeCallback);
         };
 
         this.registerYType = function(){
@@ -240,7 +240,7 @@ define([
         };
 
         init();
-        if(_iwcot){
+        if(_iwcw){
             that.registerCallbacks();
         }
 

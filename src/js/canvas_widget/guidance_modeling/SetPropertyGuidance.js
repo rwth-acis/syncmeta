@@ -1,5 +1,4 @@
 define([
-    'iwcotw',
     'jqueryui',
     'lodash',
     'canvas_widget/SingleValueAttribute',
@@ -10,9 +9,8 @@ define([
     'text!templates/canvas_widget/abstract_node.html',
     'text!templates/guidance_modeling/set_property_guidance.html',
     'bootstrap'
-],function(IWCOTW, $,_,SingleValueAttribute,SingleSelectionAttribute,IntegerAttribute,BooleanAttribute,FileAttribute,abstractNodeHtml, setPropertyGuidanceHtml) {
+],function($,_,SingleValueAttribute,SingleSelectionAttribute,IntegerAttribute,BooleanAttribute,FileAttribute,abstractNodeHtml, setPropertyGuidanceHtml) {
     function SetPropertyGuidance(id, label, entity, propertyName, canvas){
-        var _iwc = IWCOTW.getInstance(CONFIG.WIDGET.NAME.MAIN);
         var _id = id;
         var _label = label;
         var _entityId = entity.getEntityId();

@@ -1,7 +1,7 @@
 define([
     'jqueryui',
     'jsplumb',
-    'iwcotw',
+    'iwcw',
     'Util',
     'operations/ot/NodeAddOperation',
     'operations/ot/EdgeAddOperation',
@@ -31,7 +31,7 @@ define([
     'canvas_widget/guidance_modeling/CollaborationGuidance',
     'jquery.transformable-PATCHED'
 ], /** @lends Canvas */
-function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelectOperation, EntitySelectOperation, ActivityOperation, ExportDataOperation, ExportMetaModelOperation,ExportLogicalGuidanceRepresentationOperation, ExportImageOperation,PerformCvgOperation, DeleteCvgOperation,ShowGuidanceBoxOperation,CanvasViewChangeOperation,RevokeSharedActivityOperation,MoveCanvasOperation,GuidanceStrategyOperation, AbstractEntity, ModelAttributesNode, EntityManager, AbstractCanvas, MoveTool, GuidanceBox,SelectToolGuidance, SetPropertyGuidance, GhostEdgeGuidance,CollaborationGuidance) {
+function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelectOperation, EntitySelectOperation, ActivityOperation, ExportDataOperation, ExportMetaModelOperation,ExportLogicalGuidanceRepresentationOperation, ExportImageOperation,PerformCvgOperation, DeleteCvgOperation,ShowGuidanceBoxOperation,CanvasViewChangeOperation,RevokeSharedActivityOperation,MoveCanvasOperation,GuidanceStrategyOperation, AbstractEntity, ModelAttributesNode, EntityManager, AbstractCanvas, MoveTool, GuidanceBox,SelectToolGuidance, SetPropertyGuidance, GhostEdgeGuidance,CollaborationGuidance) {
 
     Canvas.prototype = new AbstractCanvas();
     Canvas.prototype.constructor = Canvas;
@@ -94,7 +94,7 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
          * Inter widget communication wrapper
          * @type {Object}
          */
-        var _iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.MAIN);
+        var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
 
         /**
          * Entity currently selected
@@ -142,8 +142,8 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
 
             if(isRemote){
                 var senderJabberId = operation.getOTOperation().getSender();
-                color = _iwcot.getUserColor(senderJabberId);
-                node.refreshTraceAwareness(_iwcot.getUserColor(senderJabberId));
+                color = _iwcw.getUserColor(senderJabberId);
+                node.refreshTraceAwareness(_iwcw.getUserColor(senderJabberId));
             }
             if(y){
                 y.share.nodes.get(node.getEntityId()).then(function(map){
@@ -169,14 +169,14 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
         var propagateNodeAddOperation = function (operation) {
             processNodeAddOperation(operation);
 
-            //if(_iwcot.sendRemoteOTOperation(operation)){
-            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
-            _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
+            //if(_iwcw.sendRemoteOTOperation(operation)){
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
+            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                 "NodeAddActivity",
                 operation.getEntityId(),
-                _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
+                _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
                 NodeAddOperation.getOperationDescription(operation.getType()), {
                     nodeType : operation.getType()
                 }).toNonOTOperation());
@@ -222,13 +222,13 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
 
             processEdgeAddOperation(operation);
 
-            //if(_iwcot.sendRemoteOTOperation(operation)){
-            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-            _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
+            //if(_iwcw.sendRemoteOTOperation(operation)){
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                 "EdgeAddActivity",
                 operation.getEntityId(),
-                _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
+                _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
                 EdgeAddOperation.getOperationDescription(operation.getType(), "", sourceNode.getLabel().getValue().getValue(), sourceNode.getType(), targetNode.getType(), targetNode.getLabel().getValue().getValue()), {
                     nodeType : operation.getType(),
                     sourceNodeId : operation.getSource(),
@@ -248,12 +248,12 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
 
         var remoteNodeAddCallback = function (operation) {
             if (operation instanceof NodeAddOperation) {
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
                 if(operation.getViewId() === EntityManager.getViewId()) {
                     if(operation.getViewId() === EntityManager.getViewId()) {
-                        _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
+                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
                             "NodeAddActivity",
                             operation.getEntityId(),
                             operation.getOTOperation().getSender(),
@@ -279,7 +279,7 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
                             type = viewType;
                         }
                     }
-                    _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
+                    _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
                         "NodeAddActivity",
                         operation.getEntityId(),
                         operation.getOTOperation().getSender(),
@@ -310,7 +310,7 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
         var sendViewChangeOperation = function(){
             var canvasFrame = $("#canvas-frame");
             var operation = new CanvasViewChangeOperation(_$node.position().left, _$node.position().top, canvasFrame.width(), canvasFrame.height(), _zoom);
-            _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.toNonOTOperation());
+            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.toNonOTOperation());
         }
 
         /**
@@ -322,10 +322,10 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
                 var sourceNode = EntityManager.findNode(operation.getSource());
                 var targetNode = EntityManager.findNode(operation.getTarget());
 
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
 
                 if(operation.getViewId() === EntityManager.getViewId()) {
-                    _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
+                    _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
                         "EdgeAddActivity",
                         operation.getEntityId(),
                         operation.getOTOperation().getSender(),
@@ -406,7 +406,7 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
         var localExportDataCallback = function (operation) {
             if (operation instanceof ExportDataOperation) {
                 operation.setData(EntityManager.graphToJSON());
-                _iwcot.sendLocalNonOTOperation(operation.getRequestingComponent(), operation.toNonOTOperation());
+                _iwcw.sendLocalNonOTOperation(operation.getRequestingComponent(), operation.toNonOTOperation());
             }
         };
 
@@ -418,16 +418,17 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
             if (operation instanceof ExportMetaModelOperation) {
                 if (operation.getData() === null) {
                     operation.setData(EntityManager.generateMetaModel());
-                    _iwcot.sendLocalNonOTOperation(operation.getRequestingComponent(), operation.toNonOTOperation());
+                    _iwcw.sendLocalNonOTOperation(operation.getRequestingComponent(), operation.toNonOTOperation());
                 } else {
                     var data = operation.getData();
                     var op = new ActivityOperation(
                         "EditorGenerateActivity",
                         "-1",
-                        _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
+                        _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
                         "..generated new Editor <a href=\"" + data.spaceURI + "\" target=\"_blank\">" + data.spaceTitle + "</a>", {}).toNonOTOperation();
-                    _iwcot.sendRemoteNonOTOperation(op);
-                    _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, op);
+                    //TODO
+                    //_iwcw.sendRemoteNonOTOperation(op);
+                    _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, op);
                 }
 
             }
@@ -443,7 +444,7 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
             if(operation instanceof ExportLogicalGuidanceRepresentationOperation){
                 if(operation.getData() === null){
                     operation.setData(EntityManager.generateLogicalGuidanceRepresentation());
-                    _iwcot.sendLocalNonOTOperation(operation.getRequestingComponent(),operation.toNonOTOperation());
+                    _iwcw.sendLocalNonOTOperation(operation.getRequestingComponent(),operation.toNonOTOperation());
                 } else {
                     //Do nothing here
                 }
@@ -454,28 +455,30 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
         var localGuidanceStrategyOperationCallback = function(operation){
             if(operation instanceof GuidanceStrategyOperation){
                 //Just forward the message to remote users
-                _iwcot.sendRemoteNonOTOperation(operation.toNonOTOperation());
+                //TODO
+                //_iwcw.sendRemoteNonOTOperation(operation.toNonOTOperation());
             }
         };
 
         var localRevokeSharedActivityOperationCallback = function(operation){
             if(operation instanceof RevokeSharedActivityOperation){
                 //Just forward the message to remote users
-                _iwcot.sendRemoteNonOTOperation(operation.toNonOTOperation());
+                //TODO
+                //_iwcw.sendRemoteNonOTOperation(operation.toNonOTOperation());
             }
         };
 
         var remoteGuidanceStrategyOperation = function(operation){
             if(operation instanceof GuidanceStrategyOperation){
                 //Just forward the message to the local guidance widget
-                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.toNonOTOperation());
+                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.toNonOTOperation());
             }
         };
 
         var remoteRevokeSharedActivityOperationCallback = function(operation){
             if(operation instanceof RevokeSharedActivityOperation){
                 //Just forward the message to the local guidance widget
-                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.toNonOTOperation());
+                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.toNonOTOperation());
             }
         };
 
@@ -487,7 +490,7 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
             if (operation instanceof ExportImageOperation) {
                 that.toPNG().then(function (url) {
                     operation.setData(url);
-                    _iwcot.sendLocalNonOTOperation(operation.getRequestingComponent(), operation.toNonOTOperation());
+                    _iwcw.sendLocalNonOTOperation(operation.getRequestingComponent(), operation.toNonOTOperation());
                 });
             }
         };
@@ -499,9 +502,9 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
 
         var historyNodeAddCallback = function(operation){
             if(operation instanceof NodeAddOperation){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
                 processNodeAddOperation(operation);
             }
         };
@@ -513,8 +516,8 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
 
         var historyEdgeAddCallback = function(operation){
             if(operation instanceof EdgeAddOperation){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
                 processEdgeAddOperation(operation);
             }
         };
@@ -823,11 +826,17 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
                     entity.select();
                 _selectedEntity = entity;
 
-                var operation = new EntitySelectOperation(entity ? entity.getEntityId() : null, entity ? entity.getType() : null);
-                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.toNonOTOperation());
-                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,operation.toNonOTOperation());
-                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.toNonOTOperation());
-                _iwcot.sendRemoteNonOTOperation(operation.toNonOTOperation());
+                var operation = new EntitySelectOperation(entity ? entity.getEntityId() : null, entity ? entity.getType() : null,_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.toNonOTOperation());
+                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,operation.toNonOTOperation());
+                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.toNonOTOperation());
+
+                if(entity)
+                    entity.getYMap().set(EntitySelectOperation.TYPE, operation.toJSON());
+
+
+                //_iwcw.sendRemoteNonOTOperation(operation.toNonOTOperation());
+
                 //this.callListeners(CONFIG.CANVAS.LISTENERS.NODESELECT,entity ? entity.getEntityId() :null);
             }
         };
@@ -931,7 +940,7 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
         this.resetTool = function () {
             var operation = new ToolSelectOperation(MoveTool.TYPE);
 
-            _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation.toNonOTOperation());
+            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation.toNonOTOperation());
             this.mountTool(MoveTool.TYPE);
             //this.callListeners(CONFIG.CANVAS.LISTENERS.RESET);
         };
@@ -1313,52 +1322,56 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
          * Register inter widget communication callbacks
          */
         this.registerCallbacks = function () {
-            _iwcot.registerOnRemoteDataReceivedCallback(remoteNodeAddCallback);
-            _iwcot.registerOnRemoteDataReceivedCallback(remoteEdgeAddCallback);
-            _iwcot.registerOnLocalDataReceivedCallback(localToolSelectCallback);
-            _iwcot.registerOnLocalDataReceivedCallback(localExportDataCallback);
-            _iwcot.registerOnLocalDataReceivedCallback(localExportMetaModelCallback);
-            _iwcot.registerOnLocalDataReceivedCallback(localExportLogicalGuidanceRepresentationCallback);
-            _iwcot.registerOnLocalDataReceivedCallback(localExportImageCallback);
-            _iwcot.registerOnLocalDataReceivedCallback(localShowGuidanceBoxCallback);
-            _iwcot.registerOnHistoryChangedCallback(historyNodeAddCallback);
-            _iwcot.registerOnHistoryChangedCallback(historyEdgeAddCallback);
+            //_iwcw.registerOnRemoteDataReceivedCallback(remoteNodeAddCallback);
+            //_iwcw.registerOnRemoteDataReceivedCallback(remoteEdgeAddCallback);
+            _iwcw.registerOnDataReceivedCallback(localToolSelectCallback);
+            _iwcw.registerOnDataReceivedCallback(localExportDataCallback);
+            _iwcw.registerOnDataReceivedCallback(localExportMetaModelCallback);
+            _iwcw.registerOnDataReceivedCallback(localExportLogicalGuidanceRepresentationCallback);
+            _iwcw.registerOnDataReceivedCallback(localExportImageCallback);
+            _iwcw.registerOnDataReceivedCallback(localShowGuidanceBoxCallback);
+           // _iwcw.registerOnHistoryChangedCallback(historyNodeAddCallback);
+            //_iwcw.registerOnHistoryChangedCallback(historyEdgeAddCallback);
 
-            _iwcot.registerOnLocalDataReceivedCallback(localRevokeSharedActivityOperationCallback);
-            _iwcot.registerOnRemoteDataReceivedCallback(remoteRevokeSharedActivityOperationCallback);
-            _iwcot.registerOnLocalDataReceivedCallback(localMoveCanvasOperation);
-            _iwcot.registerOnLocalDataReceivedCallback(localGuidanceStrategyOperationCallback);
-            _iwcot.registerOnRemoteDataReceivedCallback(remoteGuidanceStrategyOperation);
+            _iwcw.registerOnDataReceivedCallback(localRevokeSharedActivityOperationCallback);
+            //TODO
+            //_iwcw.registerOnRemoteDataReceivedCallback(remoteRevokeSharedActivityOperationCallback);
+            _iwcw.registerOnDataReceivedCallback(localMoveCanvasOperation);
+            _iwcw.registerOnDataReceivedCallback(localGuidanceStrategyOperationCallback);
+            //TODO
+            //_iwcw.registerOnRemoteDataReceivedCallback(remoteGuidanceStrategyOperation);
 
-            _iwcot.registerOnLocalDataReceivedCallback(CvgCallback);
-            _iwcot.registerOnLocalDataReceivedCallback(DeleteCvgCallback);
+            _iwcw.registerOnDataReceivedCallback(CvgCallback);
+            _iwcw.registerOnDataReceivedCallback(DeleteCvgCallback);
         };
 
         /**
          * Unregister inter widget communication callbacks
          */
         this.unregisterCallbacks = function () {
-            _iwcot.unregisterOnRemoteDataReceivedCallback(remoteNodeAddCallback);
-            _iwcot.unregisterOnRemoteDataReceivedCallback(remoteEdgeAddCallback);
-            _iwcot.unregisterOnLocalDataReceivedCallback(localToolSelectCallback);
-            _iwcot.unregisterOnLocalDataReceivedCallback(localExportDataCallback);
-            _iwcot.unregisterOnLocalDataReceivedCallback(localExportMetaModelCallback);
-            _iwcot.unregisterOnLocalDataReceivedCallback(localExportLogicalGuidanceRepresentationCallback);
-            _iwcot.unregisterOnLocalDataReceivedCallback(localExportImageCallback);
-            _iwcot.unregisterOnLocalDataReceivedCallback(localShowGuidanceBoxCallback);
-            _iwcot.unregisterOnHistoryChangedCallback(historyNodeAddCallback);
-            _iwcot.unregisterOnHistoryChangedCallback(historyEdgeAddCallback);
+            //_iwcw.unregisterOnRemoteDataReceivedCallback(remoteNodeAddCallback);
+            //_iwcw.unregisterOnRemoteDataReceivedCallback(remoteEdgeAddCallback);
+            _iwcw.unregisterOnDataReceivedCallback(localToolSelectCallback);
+            _iwcw.unregisterOnDataReceivedCallback(localExportDataCallback);
+            _iwcw.unregisterOnDataReceivedCallback(localExportMetaModelCallback);
+            _iwcw.unregisterOnDataReceivedCallback(localExportLogicalGuidanceRepresentationCallback);
+            _iwcw.unregisterOnDataReceivedCallback(localExportImageCallback);
+            _iwcw.unregisterOnDataReceivedCallback(localShowGuidanceBoxCallback);
+            //_iwcw.unregisterOnHistoryChangedCallback(historyNodeAddCallback);
+            //_iwcw.unregisterOnHistoryChangedCallback(historyEdgeAddCallback);
 
 
-            _iwcot.unregisterOnLocalDataReceivedCallback(CvgCallback);
-            _iwcot.unregisterOnLocalDataReceivedCallback(DeleteCvgCallback);
+            _iwcw.unregisterOnDataReceivedCallback(CvgCallback);
+            _iwcw.unregisterOnDataReceivedCallback(DeleteCvgCallback);
 
 
-            _iwcot.unregisterOnLocalDataReceivedCallback(localRevokeSharedActivityOperationCallback);
-            _iwcot.unregisterOnRemoteDataReceivedCallback(remoteRevokeSharedActivityOperationCallback);
-            _iwcot.unregisterOnLocalDataReceivedCallback(localMoveCanvasOperation);
-            _iwcot.unregisterOnLocalDataReceivedCallback(localGuidanceStrategyOperationCallback);
-            _iwcot.unregisterOnRemoteDataReceivedCallback(remoteGuidanceStrategyOperation);
+            _iwcw.unregisterOnLocalDataReceivedCallback(localRevokeSharedActivityOperationCallback);
+            //TODO see registerCallbacks method
+            //_iwcw.unregisterOnRemoteDataReceivedCallback(remoteRevokeSharedActivityOperationCallback);
+            _iwcw.unregisterOnLocalDataReceivedCallback(localMoveCanvasOperation);
+            _iwcw.unregisterOnLocalDataReceivedCallback(localGuidanceStrategyOperationCallback);
+            //TODO see registerCallbacks method
+            //_iwcw.unregisterOnRemoteDataReceivedCallback(remoteGuidanceStrategyOperation);
 
         };
 
@@ -1420,7 +1433,7 @@ function ($, jsPlumb, IWCOT, Util, NodeAddOperation, EdgeAddOperation, ToolSelec
             })
 
         }
-        if(_iwcot){
+        if(_iwcw){
             that.registerCallbacks();
         }
 

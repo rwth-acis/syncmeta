@@ -2,14 +2,14 @@ define([
     'jqueryui',
     'jsplumb',
     'lodash',
-    'iwcotw',
+    'iwcw',
     'Util',
     'operations/ot/AttributeAddOperation',
     'operations/ot/AttributeDeleteOperation',
     'canvas_widget/AbstractAttribute',
     'canvas_widget/KeySelectionValueAttribute',
     'text!templates/canvas_widget/list_attribute.html'
-],/** @lends KeySelectionValueListAttribute */function($,jsPlumb,_,IWCOT,Util,AttributeAddOperation,AttributeDeleteOperation,AbstractAttribute,KeySelectionValueAttribute,keySelectionValueListAttributeHtml) {
+],/** @lends KeySelectionValueListAttribute */function($,jsPlumb,_,IWCW,Util,AttributeAddOperation,AttributeDeleteOperation,AbstractAttribute,KeySelectionValueAttribute,keySelectionValueListAttributeHtml) {
 
     KeySelectionValueListAttribute.TYPE = "KeySelectionValueListAttribute";
 
@@ -28,9 +28,7 @@ define([
      */
     function KeySelectionValueListAttribute(id,name,subjectEntity,options){
         var that = this;
-
-
-
+        
         AbstractAttribute.call(this,id,name,subjectEntity);
 
         /**
@@ -58,7 +56,7 @@ define([
          * Inter widget communication wrapper
          * @type {Object}
          */
-        var _iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.MAIN);
+        var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
 
         /**
          * Apply an Attribute Add Operation
@@ -97,7 +95,7 @@ define([
          */
         var propagateAttributeAddOperation = function(operation){
             //processAttributeAddOperation(operation);
-            //_iwcot.sendRemoteOTOperation(operation);
+            //_iwcw.sendRemoteOTOperation(operation);
             var ynode = that.getRootSubjectEntity().getYMap();
             if(ynode){
                 $.when(createYTypeForValueOfAttribute(ynode,operation.getEntityId()+'[key]', Y.Text)).done(function(){
@@ -124,7 +122,7 @@ define([
          */
         var propagateAttributeDeleteOperation = function(operation){
             //processAttributeDeleteOperation(operation);
-            //_iwcot.sendRemoteOTOperation(operation);
+            //_iwcw.sendRemoteOTOperation(operation);
             var ynode = that.getRootSubjectEntity().getYMap();
             if(ynode){
                 ynode.set(operation.getEntityId(), Y.Map).then(function(){
@@ -140,7 +138,7 @@ define([
          */
         var remoteAttributeAddCallback = function(operation){
             if(operation instanceof AttributeAddOperation && operation.getRootSubjectEntityId() === that.getRootSubjectEntity().getEntityId() && operation.getSubjectEntityId() === that.getEntityId()){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
                 processAttributeAddOperation(operation);
             }
         };
@@ -151,7 +149,7 @@ define([
          */
         var remoteAttributeDeleteCallback = function(operation){
             if(operation instanceof AttributeDeleteOperation && operation.getRootSubjectEntityId() === that.getRootSubjectEntity().getEntityId() && operation.getSubjectEntityId() === that.getEntityId()){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
                 processAttributeDeleteOperation(operation);
             }
         };
@@ -182,7 +180,7 @@ define([
          */
         var historyAttributeAddCallback = function(operation){
             if(operation instanceof AttributeAddOperation && operation.getRootSubjectEntityId() === that.getRootSubjectEntity().getEntityId() && operation.getSubjectEntityId() === that.getEntityId()){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
                 processAttributeAddOperation(operation);
             }
         };
@@ -193,7 +191,7 @@ define([
          */
         var historyAttributeDeleteCallback = function(operation){
             if(operation instanceof AttributeDeleteOperation && operation.getRootSubjectEntityId() === that.getRootSubjectEntity().getEntityId() && operation.getSubjectEntityId() === that.getEntityId()){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
                 processAttributeDeleteOperation(operation);
             }
         };
@@ -287,24 +285,24 @@ define([
          * Register inter widget communication callbacks
          */
         this.registerCallbacks = function(){
-            //_iwcot.registerOnRemoteDataReceivedCallback(remoteAttributeAddCallback);
-            //_iwcot.registerOnRemoteDataReceivedCallback(remoteAttributeDeleteCallback);
-            _iwcot.registerOnLocalDataReceivedCallback(localAttributeAddCallback);
-            _iwcot.registerOnLocalDataReceivedCallback(localAttributeDeleteCallback);
-            _iwcot.registerOnHistoryChangedCallback(historyAttributeAddCallback);
-            _iwcot.registerOnHistoryChangedCallback(historyAttributeDeleteCallback);
+            //_iwcw.registerOnRemoteDataReceivedCallback(remoteAttributeAddCallback);
+            //_iwcw.registerOnRemoteDataReceivedCallback(remoteAttributeDeleteCallback);
+            _iwcw.registerOnDataReceivedCallback(localAttributeAddCallback);
+            _iwcw.registerOnDataReceivedCallback(localAttributeDeleteCallback);
+            //_iwcw.registerOnHistoryChangedCallback(historyAttributeAddCallback);
+            //_iwcw.registerOnHistoryChangedCallback(historyAttributeDeleteCallback);
         };
 
         /**
          * Unregister inter widget communication callbacks
          */
         this.unregisterCallbacks = function(){
-            //_iwcot.unregisterOnRemoteDataReceivedCallback(remoteAttributeAddCallback);
-            //_iwcot.unregisterOnRemoteDataReceivedCallback(remoteAttributeDeleteCallback);
-            _iwcot.unregisterOnLocalDataReceivedCallback(localAttributeAddCallback);
-            _iwcot.unregisterOnLocalDataReceivedCallback(localAttributeDeleteCallback);
-            _iwcot.unregisterOnHistoryChangedCallback(historyAttributeAddCallback);
-            _iwcot.unregisterOnHistoryChangedCallback(historyAttributeDeleteCallback);
+            //_iwcw.unregisterOnRemoteDataReceivedCallback(remoteAttributeAddCallback);
+            //_iwcw.unregisterOnRemoteDataReceivedCallback(remoteAttributeDeleteCallback);
+            _iwcw.unregisterOnDataReceivedCallback(localAttributeAddCallback);
+            _iwcw.unregisterOnDataReceivedCallback(localAttributeDeleteCallback);
+            //_iwcw.unregisterOnHistoryChangedCallback(historyAttributeAddCallback);
+            //_iwcw.unregisterOnHistoryChangedCallback(historyAttributeDeleteCallback);
         };
 
         _$node.find(".name").text(this.getName());
@@ -315,7 +313,7 @@ define([
             }
         }
 
-        if(_iwcot){
+        if(_iwcw){
             that.registerCallbacks();
         }
 

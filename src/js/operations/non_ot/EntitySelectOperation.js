@@ -13,7 +13,7 @@ define([
      * @param {string} selectedEntityType
      */
 
-    function EntitySelectOperation(selectedEntityId, selectedEntityType, userId){
+    function EntitySelectOperation(selectedEntityId, selectedEntityType, jabberId){
         /**
          * Entity id of the selected entity
          * @type {string}
@@ -21,7 +21,10 @@ define([
          */
         var _selectedEntityId = selectedEntityId;
 
+        var _jabberId = jabberId;
+
         var _selectedEntityType = selectedEntityType;
+
         /**
          * Corresponding NonOtOperation
          * @type {operations.non_ot.NonOTOperation}
@@ -39,6 +42,10 @@ define([
 
         this.getSelectedEntityType = function(){
             return _selectedEntityType;
+        };
+
+        this.getJabberId = function(){
+            return _jabberId;
         };
 
         /**
@@ -78,7 +85,8 @@ define([
     EntitySelectOperation.prototype.toJSON = function(){
         return {
             selectedEntityId: this.getSelectedEntityId(),
-            selectedEntityType: this.getSelectedEntityType()
+            selectedEntityType: this.getSelectedEntityType(),
+            jabberId:this.getJabberId()
         };
     };
 

@@ -6,7 +6,7 @@
 requirejs([
     'jqueryui',
     'jsplumb',
-    'iwcotw',
+    'iwcw',
     'lib/yjs-sync',
     'Util',
     'operations/non_ot/ToolSelectOperation',
@@ -50,12 +50,11 @@ requirejs([
     'canvas_widget/ViewGenerator',
     'promise!Metamodel',
     'promise!Model',
-    'promise!Guidancemodel',
-    'promise!Space'
-],function($,jsPlumb,IWCOT, yjsSync,Util,ToolSelectOperation,ActivityOperation,JoinOperation, ViewInitOperation, UpdateViewListOperation, DeleteViewOperation,SetViewTypesOperation, InitModelTypesOperation, SetModelAttributeNodeOperation, Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge, ViewObjectNode, ViewObjectNodeTool,ViewRelationshipNode, ViewRelationshipNodeTool, ViewManager, ViewGenerator, metamodel,model,guidancemodel,space) {
+    'promise!Guidancemodel'
+],function($,jsPlumb,IWCW, yjsSync,Util,ToolSelectOperation,ActivityOperation,JoinOperation, ViewInitOperation, UpdateViewListOperation, DeleteViewOperation,SetViewTypesOperation, InitModelTypesOperation, SetModelAttributeNodeOperation, Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge, ViewObjectNode, ViewObjectNodeTool,ViewRelationshipNode, ViewRelationshipNodeTool, ViewManager, ViewGenerator,metamodel,model,guidancemodel,space) {
 
-    var iwcot;
-    iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.MAIN);
+    var _iwcw;
+    _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
 
     yjsSync().done(function(){
         console.log('yjs log: Yjs Initialized successfully!');
@@ -69,6 +68,28 @@ requirejs([
     function InitMainWidget() {
 
         var canvas = new Canvas($("#canvas"));
+        y.share.users.observe(function(events){
+            for(var i in events) {
+                console.log("Yjs log: The following event-type was thrown: " + events[i].type);
+                console.log("Yjs log: The event was executed on: " + events[i].name);
+                console.log("Yjs log: The event object has more information:");
+                console.log(events[i]);
+
+                var activityOperation;
+                var data = y.share.users.get(events[i].name);
+                if(!data && events[i].name !== _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]){
+                    y.share.users.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], true);
+                }
+                activityOperation = new ActivityOperation(
+                    "UserJoinActivity",
+                    "-1",
+                    events[i].name,
+                    "",
+                    {}
+                ).toNonOTOperation();
+                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation);
+            }
+        });
 
         if (guidancemodel.isGuidanceEditor()) {
             //Set the model which is shown by the editor to the guidancemodel
@@ -142,12 +163,13 @@ requirejs([
 
                         //send the new tools to the palette as well
                         var operation = new InitModelTypesOperation(vvs, true).toNonOTOperation();
-                        iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation);
-                        iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation);
+                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation);
+                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation);
 
-                        var activityOperation = new ActivityOperation("ViewApplyActivity", vvs.id, iwcot.getUser()[CONFIG.NS.PERSON.JABBERID]);
-                        iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
-                        iwcot.sendRemoteNonOTOperation(activityOperation.toNonOTOperation());
+                        var activityOperation = new ActivityOperation("ViewApplyActivity", vvs.id, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
+                        //TODO
+                        //_iwcw.sendRemoteNonOTOperation(activityOperation.toNonOTOperation());
 
                         //init the tools for canvas
                         initTools(vvs);
@@ -179,12 +201,14 @@ requirejs([
 
                     //reset view
                     var operation = new InitModelTypesOperation(metamodel, true);
-                    iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation.toNonOTOperation());
-                    iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
+                    _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation.toNonOTOperation());
+                    _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
 
-                    var activityOperation = new ActivityOperation("ViewApplyActivity", '', iwcot.getUser()[CONFIG.NS.PERSON.JABBERID]);
-                    iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
-                    iwcot.sendRemoteNonOTOperation(activityOperation.toNonOTOperation());
+                    var activityOperation = new ActivityOperation("ViewApplyActivity", '', _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+                    _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
+
+                    //TODO
+                    //_iwcw.sendRemoteNonOTOperation(activityOperation.toNonOTOperation());
 
                     EntityManager.setViewId(null);
                     EntityManager.initModelTypes(metamodel);
@@ -240,7 +264,7 @@ requirejs([
                     openapp.resource.del(ViewManager.getViewUri(viewId), function () {
                         ViewManager.deleteView(viewId);
                         //TODO DeleteView Operation
-                        iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new DeleteViewOperation(viewId).toNonOTOperation());
+                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new DeleteViewOperation(viewId).toNonOTOperation());
                     });
                 }
                 else {
@@ -261,8 +285,10 @@ requirejs([
                     ViewManager.addView(viewId, null, resp);
                     visualizeView(viewId);
 
-                    var operation = new UpdateViewListOperation();
-                    iwcot.sendRemoteNonOTOperation(operation.toNonOTOperation());
+                    //TODO
+                    //var operation = new UpdateViewListOperation();
+                    //_iwcw.sendRemoteNonOTOperation(operation.toNonOTOperation());
+
                     canvas.get$canvas().show();
                     HideCreateMenu();
                 });
@@ -281,10 +307,13 @@ requirejs([
                     Util.GetCurrentBaseModel().done(function (model) {
                         //Disable the view types in the palette
                         var operation = new SetViewTypesOperation(false);
-                        iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation.toNonOTOperation());
-                        var activityOperation = new ActivityOperation("ViewApplyActivity", '', iwcot.getUser()[CONFIG.NS.PERSON.JABBERID]);
-                        iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
-                        iwcot.sendRemoteNonOTOperation(activityOperation.toNonOTOperation());
+                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation.toNonOTOperation());
+                        var activityOperation = new ActivityOperation("ViewApplyActivity", '', _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
+
+                        //TODO
+                        //_iwcw.sendRemoteNonOTOperation(activityOperation.toNonOTOperation());
+
                         resetCanvas();
                         JSONtoGraph(model);
                         canvas.resetTool();
@@ -355,15 +384,16 @@ requirejs([
         function ViewToGraph(json, viewpoint) {
             //Initialize the attribute widget
             var operation = new ViewInitOperation(json, viewpoint);
-            iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
+            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
 
             //Enable the view types in the palette
             operation = new SetViewTypesOperation(true);
-            iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation.toNonOTOperation());
+            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation.toNonOTOperation());
 
-            var activityOperation = new ActivityOperation("ViewApplyActivity", json.id, iwcot.getUser()[CONFIG.NS.PERSON.JABBERID]);
-            iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
-            iwcot.sendRemoteNonOTOperation(activityOperation.toNonOTOperation());
+            var activityOperation = new ActivityOperation("ViewApplyActivity", json.id, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
+            //TODO
+            //_iwcw.sendRemoteNonOTOperation(activityOperation.toNonOTOperation());
 
             var nodeId, edgeId;
             for (nodeId in json.nodes) {
@@ -396,7 +426,7 @@ requirejs([
             openapp.resource.del(ViewManager.getViewUri(viewId), function () {
                 ViewManager.deleteView(viewId);
                 //TODO delete view operation
-                iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new DeleteViewOperation(viewId).toNonOTOperation());
+                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new DeleteViewOperation(viewId).toNonOTOperation());
                 deferred.resolve();
             });
             return deferred.promise();
@@ -469,17 +499,19 @@ requirejs([
         var $undo = $("#undo");
         var $redo = $("#redo");
         $undo.click(function () {
-            iwcot.undo();
+            _iwcw.undo();
         }).prop('disabled', true);
 
         $redo.click(function () {
-            iwcot.redo();
+            _iwcw.redo();
         }).prop('disabled', true);
 
-        iwcot.registerOnHistoryChangedCallback(function (operation, length, position) {
+        //TODO
+        /*
+        _iwcw.registerOnHistoryChangedCallback(function (operation, length, position) {
             $undo.prop('disabled', position == -1);
             $redo.prop('disabled', position == length - 1);
-        });
+        });*/
 
         $("#q").draggable({
             axis: "y",
@@ -572,12 +604,12 @@ requirejs([
                         var operation = new ActivityOperation(
                             "EditorGenerateActivity",
                             "-1",
-                            iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
+                            _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
                             "..generated new Editor <a href=\"" + spaceObj.spaceURI + "\" target=\"_blank\">" + spaceObj.spaceTitle + "</a>",
                             {}
                         ).toNonOTOperation();
-                        iwcot.sendRemoteNonOTOperation(operation);
-                        iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, operation);
+                        //_iwcw.sendRemoteNonOTOperation(operation);
+                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, operation);
 
                         $("#space_link").text(spaceObj.spaceURI).attr({href: spaceObj.spaceURI}).show();
                         $("#space_link_text").show();
@@ -633,23 +665,25 @@ requirejs([
             }
         };
 
-        iwcot.registerOnHistoryChangedCallback(saveCallback);
+        //_iwcw.registerOnHistoryChangedCallback(saveCallback);
 
 
         ViewManager.initViewList();
 
-        iwcot.registerOnJoinOrLeaveCallback(function (operation) {
+        //TODO
+        /*
+        _iwcw.registerOnJoinOrLeaveCallback(function (operation) {
             var activityOperation;
             if (operation instanceof JoinOperation) {
-                if (operation.getUser() === iwcot.getUser()[CONFIG.NS.PERSON.JABBERID] && operation.getSender() === iwcot.getUser()[CONFIG.NS.PERSON.JABBERID]) {
+                if (operation.getUser() === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] && operation.getSender() === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]) {
                     if (operation.isDone()) {
                         operation.setData(model);
                         if (metamodel.constructor === Object) {
                             var op = new InitModelTypesOperation(metamodel);
-                            iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, op.toNonOTOperation());
-                            iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, op.toNonOTOperation());
+                            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, op.toNonOTOperation());
+                            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, op.toNonOTOperation());
                         }
-                        iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
+                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
 
                         JSONtoGraph(model);
                         if (canvas.getModelAttributesNode() === null) {
@@ -660,12 +694,12 @@ requirejs([
                         canvas.resetTool();
                         //$("#loading").hide();
 
-                        iwcot.registerOnLocalDataReceivedCallback(function (operation) {
+                        _iwcw.registerOnLocalDataReceivedCallback(function (operation) {
                             if (operation instanceof SetModelAttributeNodeOperation) {
-                                iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new SetModelAttributeNodeOperation().toNonOTOperation());
+                                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new SetModelAttributeNodeOperation().toNonOTOperation());
                             }
                             else if (operation instanceof UpdateViewListOperation) {
-                                iwcot.sendRemoteNonOTOperation(new UpdateViewListOperation().toNonOTOperation());
+                                _iwcw.sendRemoteNonOTOperation(new UpdateViewListOperation().toNonOTOperation());
                                 if (metamodel.constructor === Object) {
                                     ViewManager.GetViewpointList();
                                 } else {
@@ -674,11 +708,11 @@ requirejs([
                             }
                         });
 
-                        iwcot.registerOnRemoteDataReceivedCallback(function (operation) {
+                        _iwcw.registerOnRemoteDataReceivedCallback(function (operation) {
                             if (operation instanceof UpdateViewListOperation) {
                                 ViewManager.initViewList();
                             } else if (operation instanceof ActivityOperation) {
-                                iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, operation.toNonOTOperation());
+                                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, operation.toNonOTOperation());
                             }
                         });
 
@@ -690,7 +724,7 @@ requirejs([
                             "",
                             {}
                         ).toNonOTOperation();
-                        iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation);
+                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation);
                     } else {
                         activityOperation = new ActivityOperation(
                             "UserJoinActivity",
@@ -699,7 +733,7 @@ requirejs([
                             "",
                             {}
                         ).toNonOTOperation();
-                        iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation);
+                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation);
                         model = operation.getData();
                     }
                 } else {
@@ -711,72 +745,19 @@ requirejs([
                         "",
                         {}
                     ).toNonOTOperation();
-                    iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation);
+                    _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation);
                     //} else {
                     //}
                 }
             }
         });
-        var userList = {};
+        */
 
-        y.share.users.observe(function(events){
-            for(var i in events) {
-                console.log("Yjs log: The following event-type was thrown: " + events[i].type);
-                console.log("Yjs log: The event was executed on: " + events[i].name);
-                console.log("Yjs log: The event object has more information:");
-                console.log(events[i]);
-
-                var operation;
-                var activityOperation;
-                var data = y.share.users.get(events[i].name);
-                switch (events[i].name) {
-                    case JoinOperation.TYPE:
-                    {
-                        operation = new JoinOperation(data.user);
-                        //remote user
-                        if(space.user[CONFIG.NS.PERSON.JABBERID] !== data.user && !userList.hasOwnProperty(data.user)){
-                            userList[data.user] = 'remote';
-                            y.share.users.set(JoinOperation.TYPE, new JoinOperation(space.user[CONFIG.NS.PERSON.JABBERID]).toJSON());
-                            activityOperation = new ActivityOperation(
-                                "UserJoinActivity",
-                                "-1",
-                                operation.getUser(),
-                                "",
-                                {}
-                            ).toNonOTOperation();
-                            iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation);
-                        }
-                        break;
-                    }
-                }
-            }
-        });
         //local user
-        y.share.users.set(JoinOperation.TYPE, new JoinOperation(space.user[CONFIG.NS.PERSON.JABBERID]).toJSON());
-        userList[space.user[CONFIG.NS.PERSON.JABBERID]] = 'local';
-        var activityOperation;
-        activityOperation = new ActivityOperation(
-            "UserJoinActivity",
-            "-1",
-            space.user[CONFIG.NS.PERSON.JABBERID],
-            "",
-            {}
-        ).toNonOTOperation();
+        //y.share.users.set(JoinOperation.TYPE, new JoinOperation(space.user[CONFIG.NS.PERSON.JABBERID],false).toJSON());
+        y.share.users.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],false);
 
-        //remote users already joined
-        iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation);
-        for(var jabberid in space.members){
-            if(space.members.hasOwnProperty(jabberid) && !userList.hasOwnProperty(jabberid)){
-                activityOperation = new ActivityOperation(
-                    "UserJoinActivity",
-                    "-1",
-                    jabberid,
-                    "",
-                    {}
-                ).toNonOTOperation();
-                iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation);
-            }
-        }
+
         $("#loading").hide();
 
         /*

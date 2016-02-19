@@ -4,7 +4,7 @@ define([
     'jsplumb',
     'lodash',
     'Util',
-    'iwcotw',
+    'iwcw',
     'operations/ot/NodeDeleteOperation',
     'operations/ot/NodeMoveOperation',
     'operations/ot/NodeMoveZOperation',
@@ -16,7 +16,7 @@ define([
     'text!templates/canvas_widget/abstract_node.html',
     'text!templates/canvas_widget/awareness_trace.html',
     'jquery.transformable-PATCHED'
-],/** @lends AbstractNode */function(require,$,jsPlumb,_,Util,IWCOT,NodeDeleteOperation,NodeMoveOperation,NodeMoveZOperation,NodeResizeOperation,ActivityOperation,EntitySelectOperation,AbstractEntity,SingleValueAttribute,abstractNodeHtml,awarenessTraceHtml) {
+],/** @lends AbstractNode */function(require,$,jsPlumb,_,Util,IWCW,NodeDeleteOperation,NodeMoveOperation,NodeMoveZOperation,NodeResizeOperation,ActivityOperation,EntitySelectOperation,AbstractEntity,SingleValueAttribute,abstractNodeHtml,awarenessTraceHtml) {
 
     AbstractNode.prototype = new AbstractEntity();
     AbstractNode.prototype.constructor = AbstractNode;
@@ -105,7 +105,7 @@ define([
          * @type {Object}
          * @private
          */
-        var _iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.MAIN);
+        var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
 
         /**
          * Attributes of node
@@ -197,13 +197,13 @@ define([
         var propagateNodeMoveOperation = function(operation){
             processNodeMoveOperation(operation);
             hideTraceAwareness();
-            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
-            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-            _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                 "NodeMoveActivity",
                 operation.getEntityId(),
-                _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
+                _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
                 NodeMoveOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
                 {nodeType: that.getType()}
             ).toNonOTOperation());
@@ -217,13 +217,13 @@ define([
         var propagateNodeMoveZOperation = function(operation){
             processNodeMoveZOperation(operation);
             hideTraceAwareness();
-            //if(_iwcot.sendRemoteOTOperation(operation)){
-            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-            _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
+            //if(_iwcw.sendRemoteOTOperation(operation)){
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                 "NodeMoveActivity",
                 operation.getEntityId(),
-                _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
+                _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
                 NodeMoveOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
                 {nodeType: that.getType()}
             ).toNonOTOperation());
@@ -247,14 +247,14 @@ define([
         var propagateNodeResizeOperation = function(operation){
             processNodeResizeOperation(operation);
             hideTraceAwareness();
-            //if(_iwcot.sendRemoteOTOperation(operation)){
-            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
-            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-            _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
+            //if(_iwcw.sendRemoteOTOperation(operation)){
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                 "NodeResizeActivity",
                 operation.getEntityId(),
-                _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
+                _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
                 NodeResizeOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
                 {nodeType: that.getType()}
             ).toNonOTOperation());
@@ -295,13 +295,13 @@ define([
          */
         var propagateNodeDeleteOperation = function(operation){
             processNodeDeleteOperation(operation);
-            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
-            _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
+            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                 "NodeDeleteActivity",
                 operation.getEntityId(),
-                _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
+                _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
                 NodeDeleteOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
                 {}
             ).toNonOTOperation());
@@ -318,9 +318,11 @@ define([
                 username;
 
             if(operation instanceof EntitySelectOperation){
-                senderJabberId = operation.getNonOTOperation().getSender();
-                color = _iwcot.getUserColor(senderJabberId);
-                username = _iwcot.getMembers()[senderJabberId][CONFIG.NS.PERSON.TITLE];
+                senderJabberId = operation.getJabberId();
+                if(senderJabberId === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
+                    return;
+                color = _iwcw.getUserColor(senderJabberId);
+                username = _iwcw.getMembers()[senderJabberId][CONFIG.NS.PERSON.TITLE];
                 if(!_isSelected){
                     if(operation.getSelectedEntityId() === that.getEntityId()){
                         _highlightColor = color;
@@ -362,17 +364,17 @@ define([
          */
         var remoteNodeMoveCallback = function(operation){
             if(operation instanceof NodeMoveOperation && operation.getEntityId() === that.getEntityId()){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "NodeMoveActivity",
                     operation.getEntityId(),
                     operation.getOTOperation().getSender(),
                     NodeMoveOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
                     {nodeType: that.getType()}
                 ).toNonOTOperation());
-                color = _iwcot.getUserColor(operation.getOTOperation().getSender());
+                color = _iwcw.getUserColor(operation.getOTOperation().getSender());
                 refreshTraceAwareness(color);
                 processNodeMoveOperation(operation);
             }
@@ -384,16 +386,16 @@ define([
          */
         var remoteNodeMoveZCallback = function(operation){
             if(operation instanceof NodeMoveZOperation && operation.getEntityId() === that.getEntityId()){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "NodeMoveActivity",
                     operation.getEntityId(),
                     operation.getOTOperation().getSender(),
                     NodeMoveOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
                     {nodeType: that.getType()}
                 ).toNonOTOperation());
-                color = _iwcot.getUserColor(operation.getOTOperation().getSender());
+                color = _iwcw.getUserColor(operation.getOTOperation().getSender());
                 refreshTraceAwareness(color);
                 processNodeMoveZOperation(operation);
             }
@@ -405,17 +407,17 @@ define([
          */
         var remoteNodeResizeCallback = function(operation){
             if(operation instanceof NodeResizeOperation && operation.getEntityId() === that.getEntityId()){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "NodeResizeActivity",
                     operation.getEntityId(),
                     operation.getOTOperation().getSender(),
                     NodeResizeOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
                     {nodeType: that.getType()}
                 ).toNonOTOperation());
-                color = _iwcot.getUserColor(operation.getOTOperation().getSender());
+                color = _iwcw.getUserColor(operation.getOTOperation().getSender());
                 refreshTraceAwareness(color);
                 processNodeResizeOperation(operation);
             }
@@ -427,10 +429,10 @@ define([
          */
         var remoteNodeDeleteCallback = function(operation){
             if(operation instanceof NodeDeleteOperation && operation.getEntityId() === that.getEntityId()){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
-                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
+                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "NodeDeleteActivity",
                     operation.getEntityId(),
                     operation.getOTOperation().getSender(),
@@ -447,9 +449,9 @@ define([
          */
         var historyNodeMoveCallback = function(operation){
             if(operation instanceof NodeMoveOperation && operation.getEntityId() === that.getEntityId()){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
                 processNodeMoveOperation(operation);
             }
         };
@@ -460,8 +462,8 @@ define([
          */
         var historyNodeMoveZCallback = function(operation){
             if(operation instanceof NodeMoveZOperation && operation.getEntityId() === that.getEntityId()){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
                 processNodeMoveZOperation(operation);
             }
         };
@@ -472,9 +474,9 @@ define([
          */
         var historyNodeResizeCallback = function(operation){
             if(operation instanceof NodeResizeOperation && operation.getEntityId() === that.getEntityId()){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
                 processNodeResizeOperation(operation);
             }
         };
@@ -485,9 +487,9 @@ define([
          */
         var historyNodeDeleteCallback = function(operation){
             if(operation instanceof NodeDeleteOperation && operation.getEntityId() === that.getEntityId()){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
                 processNodeDeleteOperation(operation);
             }
         };
@@ -977,14 +979,6 @@ define([
                     e.setZIndex();
                 });
             });
-
-            if(y){
-                var operation = new EntitySelectOperation(that ? that.getEntityId() : null, that ? that.getType() : null);
-                _ymap.set(EntitySelectOperation.TYPE, operation.toJSON());
-            }
-            _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
-            _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, operation.toNonOTOperation());
-            _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.toNonOTOperation());
         };
 
         /**
@@ -1266,19 +1260,20 @@ define([
          * Register inter widget communication callbacks
          */
         this.registerCallbacks = function(){
-            //_iwcot.registerOnRemoteDataReceivedCallback(remoteNodeMoveCallback);
-            //_iwcot.registerOnRemoteDataReceivedCallback(remoteNodeMoveZCallback);
-            //_iwcot.registerOnRemoteDataReceivedCallback(remoteNodeResizeCallback);
-            // _iwcot.registerOnRemoteDataReceivedCallback(remoteNodeDeleteCallback);
-            //_iwcot.registerOnRemoteDataReceivedCallback(remoteEntitySelectCallback);
-            _iwcot.registerOnHistoryChangedCallback(historyNodeMoveCallback);
-            _iwcot.registerOnHistoryChangedCallback(historyNodeMoveZCallback);
-            _iwcot.registerOnHistoryChangedCallback(historyNodeResizeCallback);
-            _iwcot.registerOnHistoryChangedCallback(historyNodeDeleteCallback);
+            //_iwcw.registerOnRemoteDataReceivedCallback(remoteNodeMoveCallback);
+            //_iwcw.registerOnRemoteDataReceivedCallback(remoteNodeMoveZCallback);
+            //_iwcw.registerOnRemoteDataReceivedCallback(remoteNodeResizeCallback);
+            // _iwcw.registerOnRemoteDataReceivedCallback(remoteNodeDeleteCallback);
+            //_iwcw.registerOnRemoteDataReceivedCallback(remoteEntitySelectCallback);
 
-            _iwcot.registerOnLocalDataReceivedCallback(localNodeDeleteCallback);
-            _iwcot.registerOnLocalDataReceivedCallback(localNodeMoveCallback);
-            _iwcot.registerOnLocalDataReceivedCallback(localNodeResizeCallback);
+            //_iwcw.registerOnHistoryChangedCallback(historyNodeMoveCallback);
+            //_iwcw.registerOnHistoryChangedCallback(historyNodeMoveZCallback);
+            //_iwcw.registerOnHistoryChangedCallback(historyNodeResizeCallback);
+            //_iwcw.registerOnHistoryChangedCallback(historyNodeDeleteCallback);
+
+            _iwcw.registerOnDataReceivedCallback(localNodeDeleteCallback);
+            _iwcw.registerOnDataReceivedCallback(localNodeMoveCallback);
+            _iwcw.registerOnDataReceivedCallback(localNodeResizeCallback);
 
         };
 
@@ -1286,19 +1281,20 @@ define([
          * Unregister inter widget communication callbacks
          */
         this.unregisterCallbacks = function(){
-            _iwcot.unregisterOnRemoteDataReceivedCallback(remoteNodeMoveCallback);
-            _iwcot.unregisterOnRemoteDataReceivedCallback(remoteNodeMoveZCallback);
-            _iwcot.unregisterOnRemoteDataReceivedCallback(remoteNodeResizeCallback);
-            _iwcot.unregisterOnRemoteDataReceivedCallback(remoteNodeDeleteCallback);
-            _iwcot.unregisterOnRemoteDataReceivedCallback(remoteEntitySelectCallback);
-            _iwcot.unregisterOnHistoryChangedCallback(historyNodeMoveCallback);
-            _iwcot.unregisterOnHistoryChangedCallback(historyNodeMoveZCallback);
-            _iwcot.unregisterOnHistoryChangedCallback(historyNodeResizeCallback);
-            _iwcot.unregisterOnHistoryChangedCallback(historyNodeDeleteCallback);
+            //_iwcw.unregisterOnRemoteDataReceivedCallback(remoteNodeMoveCallback);
+            //_iwcw.unregisterOnRemoteDataReceivedCallback(remoteNodeMoveZCallback);
+            //_iwcw.unregisterOnRemoteDataReceivedCallback(remoteNodeResizeCallback);
+            //_iwcw.unregisterOnRemoteDataReceivedCallback(remoteNodeDeleteCallback);
+            //_iwcw.unregisterOnRemoteDataReceivedCallback(remoteEntitySelectCallback);
 
-            _iwcot.unregisterOnLocalDataReceivedCallback(localNodeDeleteCallback);
-            _iwcot.unregisterOnLocalDataReceivedCallback(localNodeMoveCallback);
-            _iwcot.unregisterOnLocalDataReceivedCallback(localNodeResizeCallback);
+            //_iwcw.unregisterOnHistoryChangedCallback(historyNodeMoveCallback);
+            //_iwcw.unregisterOnHistoryChangedCallback(historyNodeMoveZCallback);
+            //_iwcw.unregisterOnHistoryChangedCallback(historyNodeResizeCallback);
+            //_iwcw.unregisterOnHistoryChangedCallback(historyNodeDeleteCallback);
+
+            _iwcw.unregisterOnDataReceivedCallback(localNodeDeleteCallback);
+            _iwcw.unregisterOnDataReceivedCallback(localNodeMoveCallback);
+            _iwcw.unregisterOnDataReceivedCallback(localNodeResizeCallback);
         };
 
         function localNodeDeleteCallback(operation){
@@ -1320,7 +1316,7 @@ define([
         }
         that.init();
 
-        if(_iwcot){
+        if(_iwcw){
             that.registerCallbacks();
         }
 
@@ -1366,7 +1362,7 @@ define([
                             break;
                         }
                         case EntitySelectOperation.TYPE:{
-                            operation = new EntitySelectOperation(data.selectedEntityId, data.selectedEntityType);
+                            operation = new EntitySelectOperation(data.selectedEntityId, data.selectedEntityType, data.jabberId);
                             remoteEntitySelectCallback(operation);
                             break;
 

@@ -103,7 +103,7 @@ define([
     }
 
     JoinOperation.prototype.toJSON = function(){
-        return {user: this.getUser()};
+        return {user: this.getUser(), done : this.isDone(), sender:this.getSender()};
     };
 
     return JoinOperation;

@@ -38,6 +38,8 @@ define([
          */
         var INTERVAL_SEND  = 25;
 
+
+
         //noinspection JSMismatchedCollectionQueryUpdate
         /**
          * Buffer for local messages
@@ -124,25 +126,31 @@ define([
          */
         var sendBufferedMessages = function(){
             var intent;
-            var data = _messageBuffer.splice(0,_messageBuffer.length);
-            //sendBufferTimer.pause();
-            if(data.length == 1){
-                intent = encapsulateMessage(CONFIG.WIDGET.NAME.MAIN,CONFIG.IWC.FLAG.PUBLISH_LOCAL, CONFIG.IWC.ACTION.DATA, data[0]);
-                if (IIWC.util.validateIntent(intent)) {
+            var data = null;
 
-                    console.log("=== " + intent.flags.toString().replace(/PUBLISH_/g,"") + " INTENT TRANSMITTED AT COMPONENT " + componentName + " ===");
-                    console.log(intent);
+            for(var receiver in _messageBuffer) {
+                if (_messageBuffer.hasOwnProperty(receiver)) {
+                    data = _messageBuffer[receiver].splice(0,_messageBuffer[receiver].length);
+                    //sendBufferTimer.pause();
+                    if (data.length == 1) {
+                        intent = encapsulateMessage(receiver, CONFIG.IWC.FLAG.PUBLISH_LOCAL, CONFIG.IWC.ACTION.DATA, data[0]);
+                        if (IIWC.util.validateIntent(intent)) {
 
-                    _iwc.publish(intent);
-                }
-            } else if(data.length > 1){
-                intent = encapsulateMessage(CONFIG.WIDGET.NAME.MAIN,CONFIG.IWC.FLAG.PUBLISH_LOCAL, CONFIG.IWC.ACTION.DATA_ARRAY, data);
-                if (IIWC.util.validateIntent(intent)) {
+                            console.log("=== " + intent.flags.toString().replace(/PUBLISH_/g, "") + " INTENT TRANSMITTED AT COMPONENT " + componentName + " ===");
+                            console.log(intent);
 
-                    console.log("=== " + intent.flags.toString().replace(/PUBLISH_/g,"") + " INTENT TRANSMITTED AT COMPONENT " + componentName + " ===");
-                    console.log(intent);
+                            _iwc.publish(intent);
+                        }
+                    } else if (data.length > 1) {
+                        intent = encapsulateMessage(receiver, CONFIG.IWC.FLAG.PUBLISH_LOCAL, CONFIG.IWC.ACTION.DATA_ARRAY, data);
+                        if (IIWC.util.validateIntent(intent)) {
 
-                    _iwc.publish(intent);
+                            console.log("=== " + intent.flags.toString().replace(/PUBLISH_/g, "") + " INTENT TRANSMITTED AT COMPONENT " + componentName + " ===");
+                            console.log(intent);
+
+                            _iwc.publish(intent);
+                        }
+                    }
                 }
             }
             //sendBufferTimer.resume();
@@ -266,8 +274,12 @@ define([
 
                 if(BUFFER_ENABLED){
                     //sendBufferTimer.pause();
-                    _messageBuffer.push(data);
-                    //sendBufferTimer.resume();
+                    if(_messageBuffer.hasOwnProperty(receiver)){
+                        _messageBuffer[receiver].push(data);
+                    } else {
+                        _messageBuffer[receiver] = [data];
+                    }
+                            //sendBufferTimer.resume();
                 } else {
                     intent = encapsulateMessage(receiver, CONFIG.IWC.FLAG.PUBLISH_LOCAL, CONFIG.IWC.ACTION.DATA, data);
                     if (IIWC.util.validateIntent(intent)) {
@@ -337,9 +349,11 @@ define([
                     }
                 }
             },
-
             getUser: function(){
                 return Space.user;
+            },
+            getMembers: function(){
+                return Space.members;
             }
         };
     }

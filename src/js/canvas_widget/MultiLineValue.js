@@ -2,13 +2,13 @@ define([
     'jqueryui',
     'jsplumb',
     'lodash',
-    'iwcotw',
+    'iwcw',
     'canvas_widget/AbstractValue',
     'canvas_widget/AbstractAttribute',
     'operations/ot/ValueChangeOperation',
     'operations/non_ot/ActivityOperation',
     'text!templates/canvas_widget/multi_line_value.html'
-],/** @lends MultiLineValue */function($,jsPlumb,_,IWCOT,AbstractValue,AbstractAttribute,ValueChangeOperation,ActivityOperation,multiLineValueHtml) {
+],/** @lends MultiLineValue */function($,jsPlumb,_,IWCW,AbstractValue,AbstractAttribute,ValueChangeOperation,ActivityOperation,multiLineValueHtml) {
 
     MultiLineValue.prototype = new AbstractValue();
     MultiLineValue.prototype.constructor = MultiLineValue;
@@ -47,7 +47,7 @@ define([
          * @type {Object}
          * @private
          */
-        var _iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.MAIN);
+        var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
 
         /**
          * Get chain of entities the attribute is assigned to
@@ -107,10 +107,10 @@ define([
             operation.setRemote(false);
             processValueChangeOperation(operation);
             operation.setRemote(true);
-            _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
+            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                 "ValueChangeActivity",
                 that.getEntityId(),
-                _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
+                _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
                 ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(),that.getRootSubjectEntity().getType(),that.getRootSubjectEntity().getLabel().getValue().getValue()),
                 {
                     value: calcNewValue(operation),
@@ -134,7 +134,7 @@ define([
         var propagateValueChange = function(type,value,position){
             var operation = new ValueChangeOperation(that.getEntityId(),value,type,position);
             propagateValueChangeOperation(operation);
-            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
         };
 
         /**
@@ -143,8 +143,8 @@ define([
          */
         var remoteValueChangeCallback = function(operation){
             if(operation instanceof ValueChangeOperation && operation.getEntityId() === that.getEntityId()){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "ValueChangeActivity",
                     that.getEntityId(),
                     operation.getOTOperation().getSender(),
@@ -176,7 +176,7 @@ define([
          */
         var historyValueChangeCallback = function(operation){
             if(operation instanceof ValueChangeOperation && operation.getEntityId() === that.getEntityId()){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
                 processValueChangeOperation(operation);
             }
         };
@@ -313,18 +313,18 @@ define([
          * Register inter widget communication callbacks
          */
         this.registerCallbacks = function(){
-            _iwcot.registerOnLocalDataReceivedCallback(localValueChangeCallback);
-            //_iwcot.registerOnRemoteDataReceivedCallback(remoteValueChangeCallback);
-            _iwcot.registerOnHistoryChangedCallback(historyValueChangeCallback);
+            _iwcw.registerOnDataReceivedCallback(localValueChangeCallback);
+            //_iwcw.registerOnRemoteDataReceivedCallback(remoteValueChangeCallback);
+            //_iwcw.registerOnHistoryChangedCallback(historyValueChangeCallback);
         };
 
         /**
          * Unregister inter widget communication callbacks
          */
         this.unregisterCallbacks = function(){
-            _iwcot.unregisterOnLocalDataReceivedCallback(localValueChangeCallback);
-            //_iwcot.unregisterOnRemoteDataReceivedCallback(remoteValueChangeCallback);
-            _iwcot.unregisterOnHistoryChangedCallback(historyValueChangeCallback);
+            _iwcw.unregisterOnDataReceivedCallback(localValueChangeCallback);
+            //_iwcw.unregisterOnRemoteDataReceivedCallback(remoteValueChangeCallback);
+            //_iwcw.unregisterOnHistoryChangedCallback(historyValueChangeCallback);
         };
 
         this.registerYType = function(){
@@ -338,7 +338,7 @@ define([
 
         init();
 
-        if(_iwcot){
+        if(_iwcw){
             that.registerCallbacks();
         }
 
