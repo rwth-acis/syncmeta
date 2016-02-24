@@ -58,7 +58,9 @@ requirejs([
 
     yjsSync().done(function(){
         console.log('yjs log: Yjs Initialized successfully!');
+        y.share.users.set(y.db.userId,_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
         InitMainWidget();
+
 
     }).fail(function(error){
         console.log("yjs log: Yjs intialization failed!");
@@ -68,22 +70,35 @@ requirejs([
     function InitMainWidget() {
 
         var canvas = new Canvas($("#canvas"));
-        y.share.users.observe(function(events){
+        y.share.join.observe(function(events){
             for(var i in events) {
-                console.log("Yjs log: The following event-type was thrown: " + events[i].type);
-                console.log("Yjs log: The event was executed on: " + events[i].name);
-                console.log("Yjs log: The event object has more information:");
-                console.log(events[i]);
-
+                var event = events[i];
                 var activityOperation;
-                var data = y.share.users.get(events[i].name);
-                if(!data && events[i].name !== _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]){
-                    y.share.users.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], true);
+                var done = y.share.join.get(event.name);
+                if(!done && event.name !== _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]){
+                    y.share.join.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], true);
+                }else if(event.name === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] && !done){
+                    if (metamodel.constructor === Object) {
+                        var op = new InitModelTypesOperation(metamodel);
+                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, op.toNonOTOperation());
+                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, op.toNonOTOperation());
+                    }
+                    //TODO
+                    //_iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
+
+                    JSONtoGraph(model);
+                    if (canvas.getModelAttributesNode() === null) {
+                        var modelAttributesNode = EntityManager.createModelAttributesNode();
+                        canvas.setModelAttributesNode(modelAttributesNode);
+                        modelAttributesNode.addToCanvas(canvas);
+                    }
+                    canvas.resetTool();
+                    $("#loading").hide();
                 }
                 activityOperation = new ActivityOperation(
                     "UserJoinActivity",
                     "-1",
-                    events[i].name,
+                    event.name,
                     "",
                     {}
                 ).toNonOTOperation();
@@ -435,18 +450,51 @@ requirejs([
         //-------------------------------------------------------------
 
         function JSONtoGraph(json) {
+            var registerAttributesOfEntity = function(map,attrId){
+                var deferred = $.Deferred();
+                var promise = map.get(attrId);
+                if(promise === undefined){
+                    map.set(attrId, Y.Text).then(function(){
+                        deferred.resolve();
+                    });
+                    return deferred.promise();
+                }else{
+                    return null;
+                }
+            };
             var registerEntityToYjs = function(ymap,entity,callback) {
                 var promise = y.share[ymap].get(entity.getEntityId());
                 if(promise === undefined){
                     y.share[ymap].set(entity.getEntityId(), Y.Map).then(function(map){
-                        entity.registerYjsMap(map);
-                        callback(entity);
+                        var p = registerAttributesOfEntity(map,entity.getEntityId()+'[label]');
+                            if(p!== null) {
+                                p.done(function () {
+                                    entity.registerYjsMap(map);
+                                    if(callback)
+                                        callback(entity);
+                                });
+                            }else{
+                                entity.registerYjsMap(map);
+                                if(callback)
+                                    callback(entity);
+                            }
+
                     })
                 }
                 else{
                     promise.then(function(map){
-                        entity.registerYjsMap(map);
-                        callback(entity);
+                        var p = registerAttributesOfEntity(map,entity.getEntityId()+'[label]');
+                        if(p!== null) {
+                            p.done(function () {
+                                entity.registerYjsMap(map);
+                                if(callback)
+                                    callback(entity);
+                            });
+                        }else{
+                            entity.registerYjsMap(map);
+                            if(callback)
+                                callback(entity);
+                        }
                     })
                 }
             };
@@ -469,13 +517,10 @@ requirejs([
                 if (json.nodes.hasOwnProperty(nodeId)) {
                     var node = EntityManager.createNodeFromJSON(json.nodes[nodeId].type, nodeId, json.nodes[nodeId].left, json.nodes[nodeId].top, json.nodes[nodeId].width, json.nodes[nodeId].height, json.nodes[nodeId].zIndex, json.nodes[nodeId]);
                     node.addToCanvas(canvas);
+                    node.draw();
+
                     if(y){
-                        registerEntityToYjs("nodes",node,function(n){
-                            n.draw();
-                        })
-                    }
-                    else {
-                        node.draw();
+                        registerEntityToYjs("nodes",node);
                     }
                 }
             }
@@ -483,35 +528,36 @@ requirejs([
                 if (json.edges.hasOwnProperty(edgeId)) {
                     var edge = EntityManager.createEdgeFromJSON(json.edges[edgeId].type, edgeId, json.edges[edgeId].source, json.edges[edgeId].target, json.edges[edgeId]);
                     edge.addToCanvas(canvas);
+                    edge.connect();
 
                     if(y){
-                        registerEntityToYjs("edges",edge, function(e){
-                            e.connect();
-                        })
+                        registerEntityToYjs("edges",edge);
                     }
-                    else {
-                        edge.connect();
-                    }
+
                 }
             }
         }
 
+
+
         var $undo = $("#undo");
         var $redo = $("#redo");
         $undo.click(function () {
+            //TODO
             _iwcw.undo();
         }).prop('disabled', true);
 
         $redo.click(function () {
+            //TODO
             _iwcw.redo();
         }).prop('disabled', true);
 
         //TODO
         /*
-        _iwcw.registerOnHistoryChangedCallback(function (operation, length, position) {
-            $undo.prop('disabled', position == -1);
-            $redo.prop('disabled', position == length - 1);
-        });*/
+         _iwcw.registerOnHistoryChangedCallback(function (operation, length, position) {
+         $undo.prop('disabled', position == -1);
+         $redo.prop('disabled', position == length - 1);
+         });*/
 
         $("#q").draggable({
             axis: "y",
@@ -672,93 +718,92 @@ requirejs([
 
         //TODO
         /*
-        _iwcw.registerOnJoinOrLeaveCallback(function (operation) {
-            var activityOperation;
-            if (operation instanceof JoinOperation) {
-                if (operation.getUser() === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] && operation.getSender() === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]) {
-                    if (operation.isDone()) {
-                        operation.setData(model);
-                        if (metamodel.constructor === Object) {
-                            var op = new InitModelTypesOperation(metamodel);
-                            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, op.toNonOTOperation());
-                            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, op.toNonOTOperation());
-                        }
-                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
+         _iwcw.registerOnJoinOrLeaveCallback(function (operation) {
+         var activityOperation;
+         if (operation instanceof JoinOperation) {
+         if (operation.getUser() === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] && operation.getSender() === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]) {
+         if (operation.isDone()) {
+         operation.setData(model);
+         if (metamodel.constructor === Object) {
+         var op = new InitModelTypesOperation(metamodel);
+         _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, op.toNonOTOperation());
+         _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, op.toNonOTOperation());
+         }
+         _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
 
-                        JSONtoGraph(model);
-                        if (canvas.getModelAttributesNode() === null) {
-                            var modelAttributesNode = EntityManager.createModelAttributesNode();
-                            canvas.setModelAttributesNode(modelAttributesNode);
-                            modelAttributesNode.addToCanvas(canvas);
-                        }
-                        canvas.resetTool();
-                        //$("#loading").hide();
+         JSONtoGraph(model);
+         if (canvas.getModelAttributesNode() === null) {
+         var modelAttributesNode = EntityManager.createModelAttributesNode();
+         canvas.setModelAttributesNode(modelAttributesNode);
+         modelAttributesNode.addToCanvas(canvas);
+         }
+         canvas.resetTool();
+         //$("#loading").hide();
 
-                        _iwcw.registerOnLocalDataReceivedCallback(function (operation) {
-                            if (operation instanceof SetModelAttributeNodeOperation) {
-                                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new SetModelAttributeNodeOperation().toNonOTOperation());
-                            }
-                            else if (operation instanceof UpdateViewListOperation) {
-                                _iwcw.sendRemoteNonOTOperation(new UpdateViewListOperation().toNonOTOperation());
-                                if (metamodel.constructor === Object) {
-                                    ViewManager.GetViewpointList();
-                                } else {
-                                    ViewManager.initViewList();
-                                }
-                            }
-                        });
+         _iwcw.registerOnLocalDataReceivedCallback(function (operation) {
+         if (operation instanceof SetModelAttributeNodeOperation) {
+         _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new SetModelAttributeNodeOperation().toNonOTOperation());
+         }
+         else if (operation instanceof UpdateViewListOperation) {
+         _iwcw.sendRemoteNonOTOperation(new UpdateViewListOperation().toNonOTOperation());
+         if (metamodel.constructor === Object) {
+         ViewManager.GetViewpointList();
+         } else {
+         ViewManager.initViewList();
+         }
+         }
+         });
 
-                        _iwcw.registerOnRemoteDataReceivedCallback(function (operation) {
-                            if (operation instanceof UpdateViewListOperation) {
-                                ViewManager.initViewList();
-                            } else if (operation instanceof ActivityOperation) {
-                                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, operation.toNonOTOperation());
-                            }
-                        });
+         _iwcw.registerOnRemoteDataReceivedCallback(function (operation) {
+         if (operation instanceof UpdateViewListOperation) {
+         ViewManager.initViewList();
+         } else if (operation instanceof ActivityOperation) {
+         _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, operation.toNonOTOperation());
+         }
+         });
 
 
-                        activityOperation = new ActivityOperation(
-                            "UserJoinActivity",
-                            "-1",
-                            operation.getUser(),
-                            "",
-                            {}
-                        ).toNonOTOperation();
-                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation);
-                    } else {
-                        activityOperation = new ActivityOperation(
-                            "UserJoinActivity",
-                            "-1",
-                            operation.getSender(),
-                            "",
-                            {}
-                        ).toNonOTOperation();
-                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation);
-                        model = operation.getData();
-                    }
-                } else {
-                    //if(operation.isDone()){
-                    activityOperation = new ActivityOperation(
-                        "UserJoinActivity",
-                        "-1",
-                        operation.getSender(),
-                        "",
-                        {}
-                    ).toNonOTOperation();
-                    _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation);
-                    //} else {
-                    //}
-                }
-            }
-        });
-        */
+         activityOperation = new ActivityOperation(
+         "UserJoinActivity",
+         "-1",
+         operation.getUser(),
+         "",
+         {}
+         ).toNonOTOperation();
+         _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation);
+         } else {
+         activityOperation = new ActivityOperation(
+         "UserJoinActivity",
+         "-1",
+         operation.getSender(),
+         "",
+         {}
+         ).toNonOTOperation();
+         _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation);
+         model = operation.getData();
+         }
+         } else {
+         //if(operation.isDone()){
+         activityOperation = new ActivityOperation(
+         "UserJoinActivity",
+         "-1",
+         operation.getSender(),
+         "",
+         {}
+         ).toNonOTOperation();
+         _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation);
+         //} else {
+         //}
+         }
+         }
+         });
+         */
 
         //local user
-        //y.share.users.set(JoinOperation.TYPE, new JoinOperation(space.user[CONFIG.NS.PERSON.JABBERID],false).toJSON());
-        y.share.users.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],false);
+        y.share.join.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],false);
 
 
-        $("#loading").hide();
+
 
         /*
          $("#save_image").click(function(){

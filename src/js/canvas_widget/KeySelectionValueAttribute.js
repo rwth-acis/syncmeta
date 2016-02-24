@@ -121,13 +121,13 @@ define([
 
 
         this.registerYMap = function(ytext){
-            var deferred = $.Deferred();
+            //var deferred = $.Deferred();
             //$.when(that.registerYTypeForValue(map,_key)).done(function(){
             _key.registerYType(ytext);
             _value.registerYType();
             //    deferred.resolve();
             //});
-            return deferred.promise();
+            //return deferred.promise();
         };
 
         this.getYMap = function(){

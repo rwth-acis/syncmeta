@@ -132,7 +132,7 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
          * @param {operations.ot.NodeAddOperation} operation
          * @param {boolean} isRemote
          */
-        var processNodeAddOperation = function(operation, isRemote){
+        var processNodeAddOperation = function(operation){
             var node;
             if (operation.getJSON()) {
                 node = EntityManager.createNodeFromJSON(operation.getType(), operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex(), operation.getJSON());
@@ -140,14 +140,12 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                 node = EntityManager.createNode(operation.getType(), operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex());
             }
 
-            if(isRemote){
-                var senderJabberId = operation.getOTOperation().getSender();
-                color = _iwcw.getUserColor(senderJabberId);
-                node.refreshTraceAwareness(_iwcw.getUserColor(senderJabberId));
+            if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()){
+                var color = _iwcw.getUserColor(operation.getJabberId());
+                node.refreshTraceAwareness(color);
             }
             if(y){
                 y.share.nodes.get(node.getEntityId()).then(function(map){
-                    //y.share.nodes[node.getEntityId()] = map;
                     node.registerYjsMap(map);
 
                     node.draw();
@@ -169,7 +167,6 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
         var propagateNodeAddOperation = function (operation) {
             processNodeAddOperation(operation);
 
-            //if(_iwcw.sendRemoteOTOperation(operation)){
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
@@ -180,7 +177,6 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                 NodeAddOperation.getOperationDescription(operation.getType()), {
                     nodeType : operation.getType()
                 }).toNonOTOperation());
-            //}
         };
 
         /**
@@ -198,9 +194,7 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
 
             if(y){
                 y.share.edges.get(edge.getEntityId()).then(function(map){
-                    //y.share.edges[edge.getEntityId()] = map;
                     edge.registerYjsMap(map);
-
                     edge.connect();
                     edge.addToCanvas(that);
                     that.remountCurrentTool();
@@ -249,19 +243,17 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
         var remoteNodeAddCallback = function (operation) {
             if (operation instanceof NodeAddOperation) {
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
                 if(operation.getViewId() === EntityManager.getViewId()) {
-                    if(operation.getViewId() === EntityManager.getViewId()) {
-                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
-                            "NodeAddActivity",
-                            operation.getEntityId(),
-                            operation.getOTOperation().getSender(),
-                            NodeAddOperation.getOperationDescription(operation.getType()), {
-                                nodeType: operation.getType()
-                            }).toNonOTOperation());
-                        processNodeAddOperation(operation);
-                    }
+                    _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
+                        "NodeAddActivity",
+                        operation.getEntityId(),
+                        operation.getJabberId(),
+                        NodeAddOperation.getOperationDescription(operation.getType()), {
+                            nodeType: operation.getType()
+                        }).toNonOTOperation());
+                    processNodeAddOperation(operation);
+
                 } else if(EntityManager.getLayer() === CONFIG.LAYER.MODEL) {
 
                     var type, node, viewType;
@@ -282,7 +274,7 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                     _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
                         "NodeAddActivity",
                         operation.getEntityId(),
-                        operation.getOTOperation().getSender(),
+                        operation.getJabberId(),
                         NodeAddOperation.getOperationDescription(type), {
                             nodeType: type
                         }).toNonOTOperation());
@@ -311,7 +303,7 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
             var canvasFrame = $("#canvas-frame");
             var operation = new CanvasViewChangeOperation(_$node.position().left, _$node.position().top, canvasFrame.width(), canvasFrame.height(), _zoom);
             _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.toNonOTOperation());
-        }
+        };
 
         /**
          * Callback for a remote Edge Add Operation
@@ -328,7 +320,7 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                     _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
                         "EdgeAddActivity",
                         operation.getEntityId(),
-                        operation.getOTOperation().getSender(),
+                        operation.getJabberId(),
                         EdgeAddOperation.getOperationDescription(operation.getType(), "", sourceNode.getLabel().getValue().getValue(), sourceNode.getType(), targetNode.getLabel().getValue().getValue(), targetNode.getType()), {
                             nodeType: operation.getType(),
                             sourceNodeId: operation.getSource(),
@@ -824,21 +816,22 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                     _selectedEntity.unselect();
                 if (entity)
                     entity.select();
-                _selectedEntity = entity;
-
-                var operation = new EntitySelectOperation(entity ? entity.getEntityId() : null, entity ? entity.getType() : null,_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
-                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.toNonOTOperation());
-                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,operation.toNonOTOperation());
-                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.toNonOTOperation());
-
-                if(entity)
-                    entity.getYMap().set(EntitySelectOperation.TYPE, operation.toJSON());
-
-
-                //_iwcw.sendRemoteNonOTOperation(operation.toNonOTOperation());
-
-                //this.callListeners(CONFIG.CANVAS.LISTENERS.NODESELECT,entity ? entity.getEntityId() :null);
             }
+            var operation = new EntitySelectOperation(entity ? entity.getEntityId() : null, entity ? entity.getType() : null,_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.toNonOTOperation());
+            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,operation.toNonOTOperation());
+            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.toNonOTOperation());
+
+            if(entity === null) {
+                if(_selectedEntity)
+                    _selectedEntity.getYMap().set(EntitySelectOperation.TYPE, operation.toJSON());
+            }
+            else {
+                entity.getYMap().set(EntitySelectOperation.TYPE, operation.toJSON());
+
+            }
+            _selectedEntity = entity;
+
         };
 
         /**
@@ -945,6 +938,13 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
             //this.callListeners(CONFIG.CANVAS.LISTENERS.RESET);
         };
 
+        var createYTypeForValueOfAttribute = function(map,id, yType){
+            var deferred = $.Deferred();
+            map.set(id, yType).then(function(){
+                deferred.resolve();
+            });
+            deferred.promise();
+        };
         /**
          * Create a new node and draw it on the canvas
          * @param {string} type Type of node
@@ -973,8 +973,32 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
             if(y){
                 y.share.nodes.set(id, Y.Map).then(function(map){
                     //create the label element of the node
+                    map.set('left', left);
+                    map.set('top', top);
+                    map.set('width', width);
+                    map.set('height',height);
+                    map.set('zIndex', zIndex);
+
                     map.set(id+"[label]", Y.Text).then(function(){
-                        y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
+                        if(type === 'Node Shape' && EntityManager.getLayer() === CONFIG.LAYER.META){
+                            var attrColorPromise = createYTypeForValueOfAttribute(map, id+"[color]", Y.Text);
+                            var attrAnchorsPromise = createYTypeForValueOfAttribute(map, id+"[customAnchors]", Y.Text);
+                            var attrCustomShapePromise = createYTypeForValueOfAttribute(map, id+"[customShape]", Y.Text);
+                            $.when(attrColorPromise, attrAnchorsPromise,attrCustomShapePromise).done(function(){
+                                y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
+                            });
+                        }
+                        else if(type === 'Edge Shape' && EntityManager.getLayer() === CONFIG.LAYER.META){
+                            var attrColorPromise = createYTypeForValueOfAttribute(map, id+"[color]", Y.Text);
+                            var attrOverlayPromise = createYTypeForValueOfAttribute(map, id+"[overlay]", Y.Text);
+
+                            $.when(attrColorPromise, attrOverlayPromise).done(function(){
+                                y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
+                            });
+                        }
+                        else {
+                            y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
+                        }
                     });
                 })
             }else {
@@ -993,7 +1017,6 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
          * @return {number} id of new edge
          */
         this.createEdge = function (type, source, target, json, identifier) {
-            //if(source !== target){
             var id = null, oType = null;
             if(identifier)
                 id = identifier;
@@ -1004,14 +1027,15 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
             }
             var operation = new EdgeAddOperation(id, type, source, target, json || null, EntityManager.getViewId(), oType);
             if(y){
-                y.share.edges.set(id, Y.Map).then(function(){
-                    y.share.canvas.set(EdgeAddOperation.TYPE, operation.toJSON());
+                y.share.edges.set(id, Y.Map).then(function(map){
+                    map.set(id+"[label]", Y.Text).then(function() {
+                        y.share.canvas.set(EdgeAddOperation.TYPE, operation.toJSON());
+                    });
                 })
             } else {
                 propagateEdgeAddOperation(operation);
             }
             return id;
-            //}
         };
 
         this.scrollNodeIntoView  = function(nodeId){
@@ -1322,15 +1346,13 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
          * Register inter widget communication callbacks
          */
         this.registerCallbacks = function () {
-            //_iwcw.registerOnRemoteDataReceivedCallback(remoteNodeAddCallback);
-            //_iwcw.registerOnRemoteDataReceivedCallback(remoteEdgeAddCallback);
             _iwcw.registerOnDataReceivedCallback(localToolSelectCallback);
             _iwcw.registerOnDataReceivedCallback(localExportDataCallback);
             _iwcw.registerOnDataReceivedCallback(localExportMetaModelCallback);
             _iwcw.registerOnDataReceivedCallback(localExportLogicalGuidanceRepresentationCallback);
             _iwcw.registerOnDataReceivedCallback(localExportImageCallback);
             _iwcw.registerOnDataReceivedCallback(localShowGuidanceBoxCallback);
-           // _iwcw.registerOnHistoryChangedCallback(historyNodeAddCallback);
+            // _iwcw.registerOnHistoryChangedCallback(historyNodeAddCallback);
             //_iwcw.registerOnHistoryChangedCallback(historyEdgeAddCallback);
 
             _iwcw.registerOnDataReceivedCallback(localRevokeSharedActivityOperationCallback);
@@ -1349,8 +1371,6 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
          * Unregister inter widget communication callbacks
          */
         this.unregisterCallbacks = function () {
-            //_iwcw.unregisterOnRemoteDataReceivedCallback(remoteNodeAddCallback);
-            //_iwcw.unregisterOnRemoteDataReceivedCallback(remoteEdgeAddCallback);
             _iwcw.unregisterOnDataReceivedCallback(localToolSelectCallback);
             _iwcw.unregisterOnDataReceivedCallback(localExportDataCallback);
             _iwcw.unregisterOnDataReceivedCallback(localExportMetaModelCallback);
@@ -1409,23 +1429,21 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
         if(y){
             y.share.canvas.observe(function(events){
                 for(i in events){
-                    console.log("Yjs log: The following event-type was thrown: "+events[i].type);
-                    console.log("Yjs log: The event was executed on: "+events[i].name);
-                    console.log("Yjs log: The event object has more information:");
-                    console.log(events[i]);
-
+                    var event =events[i];
                     var operation;
-                    var data = y.share.canvas.get(events[i].name);
-                    switch(events[i].name){
+                    var data = y.share.canvas.get(event.name);
+                    var jabberId = y.share.users.get(event.object.map[event.name][0]);
+
+                    switch(event.name){
                         case NodeAddOperation.TYPE:{
-                            operation = new NodeAddOperation(data.id,data.type,data.left, data.top,data.width,data.height,data.zIndex,data.json,data.viewId,data.oType);
-                            propagateNodeAddOperation(operation);
+                            operation = new NodeAddOperation(data.id,data.type,data.left, data.top,data.width,data.height,data.zIndex,data.json,data.viewId,data.oType,jabberId);
+                            remoteNodeAddCallback(operation);
                             break;
                         }
                         case EdgeAddOperation.TYPE:
                         {
-                            operation = new EdgeAddOperation(data.id, data.type, data.source, data.target, data.json, data.viewId, data.oType);
-                            propagateEdgeAddOperation(operation);
+                            operation = new EdgeAddOperation(data.id, data.type, data.source, data.target, data.json, data.viewId, data.oType,jabberId);
+                            remoteEdgeAddCallback(operation);
                             break;
                         }
                     }

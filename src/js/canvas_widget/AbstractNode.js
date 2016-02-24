@@ -203,7 +203,7 @@ define([
             _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                 "NodeMoveActivity",
                 operation.getEntityId(),
-                _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
+                operation.getJabberId(),
                 NodeMoveOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
                 {nodeType: that.getType()}
             ).toNonOTOperation());
@@ -254,7 +254,7 @@ define([
             _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                 "NodeResizeActivity",
                 operation.getEntityId(),
-                _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
+                operation.getJabberId(),
                 NodeResizeOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
                 {nodeType: that.getType()}
             ).toNonOTOperation());
@@ -370,12 +370,14 @@ define([
                 _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "NodeMoveActivity",
                     operation.getEntityId(),
-                    operation.getOTOperation().getSender(),
+                    operation.getJabberId(),
                     NodeMoveOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
                     {nodeType: that.getType()}
                 ).toNonOTOperation());
-                color = _iwcw.getUserColor(operation.getOTOperation().getSender());
-                refreshTraceAwareness(color);
+                if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()) {
+                    color = _iwcw.getUserColor(operation.getJabberId());
+                    refreshTraceAwareness(color);
+                }
                 processNodeMoveOperation(operation);
             }
         };
@@ -391,12 +393,14 @@ define([
                 _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "NodeMoveActivity",
                     operation.getEntityId(),
-                    operation.getOTOperation().getSender(),
+                    operation.getJabberId(),
                     NodeMoveOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
                     {nodeType: that.getType()}
                 ).toNonOTOperation());
-                color = _iwcw.getUserColor(operation.getOTOperation().getSender());
-                refreshTraceAwareness(color);
+                if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()) {
+                    var color = _iwcw.getUserColor(operation.getJabberId());
+                    refreshTraceAwareness(color);
+                }
                 processNodeMoveZOperation(operation);
             }
         };
@@ -413,12 +417,14 @@ define([
                 _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "NodeResizeActivity",
                     operation.getEntityId(),
-                    operation.getOTOperation().getSender(),
+                    operation.getJabberId(),
                     NodeResizeOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
                     {nodeType: that.getType()}
                 ).toNonOTOperation());
-                color = _iwcw.getUserColor(operation.getOTOperation().getSender());
-                refreshTraceAwareness(color);
+                if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()) {
+                    var color = _iwcw.getUserColor(operation.getJabberId());
+                    refreshTraceAwareness(color);
+                }
                 processNodeResizeOperation(operation);
             }
         };
@@ -428,6 +434,11 @@ define([
          * @param {operations.ot.NodeDeleteOperation} operation
          */
         var remoteNodeDeleteCallback = function(operation){
+            var jabberId = y.share.users.get(_ymap.map[NodeDeleteOperation.TYPE][0]);
+
+            if(jabberId === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
+                _ymap.delete();
+
             if(operation instanceof NodeDeleteOperation && operation.getEntityId() === that.getEntityId()){
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
@@ -435,7 +446,7 @@ define([
                 _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "NodeDeleteActivity",
                     operation.getEntityId(),
-                    operation.getOTOperation().getSender(),
+                    jabberId,
                     NodeDeleteOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
                     {}
                 ).toNonOTOperation());
@@ -529,6 +540,7 @@ define([
                                 callback: function(/*key, opt*/){
                                     var operation = new NodeMoveZOperation(that.getEntityId(),--AbstractEntity.minZIndex-_zIndex);
                                     if(_ymap){
+                                        _ymap.set('zIndex', zIndex + operation.getOffsetZ());
                                         _ymap.set(NodeMoveZOperation.TYPE,operation.toJSON());
                                     }
                                     else {
@@ -821,6 +833,7 @@ define([
         this.resize = function(offsetX,offsetY){
             _appearance.width += offsetX;
             _appearance.height += offsetY;
+
             this._draw();
             repaint();
         };
@@ -1114,7 +1127,11 @@ define([
                         var offsetY = ui.size.height-ui.originalSize.height;
                         var operation = new NodeResizeOperation(id,offsetX,offsetY);
                         if(y){
-                            _ymap.set('NodeResizeOperation', operation.toJSON());
+                            if(_ymap){
+                                _ymap.set('width',_appearance.width +offsetX);
+                                _ymap.set('height',_appearance.height+offsetY);
+                                _ymap.set('NodeResizeOperation', operation.toJSON());
+                            }
                         }
                         else {
                             propagateNodeResizeOperation(operation);
@@ -1160,8 +1177,10 @@ define([
                         //_$node.css({top: originalPos.top / _canvas.getZoom(), left: originalPos.left / _canvas.getZoom()});
                         var offsetX = Math.round((ui.position.left - originalPos.left) / _canvas.getZoom());
                         var offsetY = Math.round((ui.position.top - originalPos.top) / _canvas.getZoom());
-                        var operation = new NodeMoveOperation(id,offsetX,offsetY);
+                        var operation = new NodeMoveOperation(id,offsetX,offsetY,_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
                         if(_ymap){
+                            _ymap.set('top', _appearance.top + offsetX);
+                            _ymap.set('left',_appearance.left+offsetY);
                             _ymap.set(NodeMoveOperation.TYPE,operation.toJSON());
                         }
                         else {
@@ -1260,60 +1279,24 @@ define([
          * Register inter widget communication callbacks
          */
         this.registerCallbacks = function(){
-            //_iwcw.registerOnRemoteDataReceivedCallback(remoteNodeMoveCallback);
-            //_iwcw.registerOnRemoteDataReceivedCallback(remoteNodeMoveZCallback);
-            //_iwcw.registerOnRemoteDataReceivedCallback(remoteNodeResizeCallback);
-            // _iwcw.registerOnRemoteDataReceivedCallback(remoteNodeDeleteCallback);
-            //_iwcw.registerOnRemoteDataReceivedCallback(remoteEntitySelectCallback);
-
+            //TODO
             //_iwcw.registerOnHistoryChangedCallback(historyNodeMoveCallback);
             //_iwcw.registerOnHistoryChangedCallback(historyNodeMoveZCallback);
             //_iwcw.registerOnHistoryChangedCallback(historyNodeResizeCallback);
             //_iwcw.registerOnHistoryChangedCallback(historyNodeDeleteCallback);
-
-            _iwcw.registerOnDataReceivedCallback(localNodeDeleteCallback);
-            _iwcw.registerOnDataReceivedCallback(localNodeMoveCallback);
-            _iwcw.registerOnDataReceivedCallback(localNodeResizeCallback);
-
         };
 
         /**
          * Unregister inter widget communication callbacks
          */
         this.unregisterCallbacks = function(){
-            //_iwcw.unregisterOnRemoteDataReceivedCallback(remoteNodeMoveCallback);
-            //_iwcw.unregisterOnRemoteDataReceivedCallback(remoteNodeMoveZCallback);
-            //_iwcw.unregisterOnRemoteDataReceivedCallback(remoteNodeResizeCallback);
-            //_iwcw.unregisterOnRemoteDataReceivedCallback(remoteNodeDeleteCallback);
-            //_iwcw.unregisterOnRemoteDataReceivedCallback(remoteEntitySelectCallback);
-
+            //TODO
             //_iwcw.unregisterOnHistoryChangedCallback(historyNodeMoveCallback);
             //_iwcw.unregisterOnHistoryChangedCallback(historyNodeMoveZCallback);
             //_iwcw.unregisterOnHistoryChangedCallback(historyNodeResizeCallback);
             //_iwcw.unregisterOnHistoryChangedCallback(historyNodeDeleteCallback);
-
-            _iwcw.unregisterOnDataReceivedCallback(localNodeDeleteCallback);
-            _iwcw.unregisterOnDataReceivedCallback(localNodeMoveCallback);
-            _iwcw.unregisterOnDataReceivedCallback(localNodeResizeCallback);
         };
 
-        function localNodeDeleteCallback(operation){
-            if(operation instanceof NodeDeleteOperation && that.getEntityId() === operation.getEntityId()){
-                that.triggerDeletion();
-            }
-        }
-
-        function localNodeResizeCallback(operation){
-            if(operation instanceof NodeResizeOperation && operation.getEntityId() === that.getEntityId()) {
-                propagateNodeResizeOperation(operation);
-            }
-        }
-
-        function localNodeMoveCallback(operation){
-            if(operation instanceof NodeMoveOperation && operation.getEntityId() === that.getEntityId()) {
-                propagateNodeMoveOperation(operation);
-            }
-        }
         that.init();
 
         if(_iwcw){
@@ -1325,54 +1308,48 @@ define([
         };
 
         this._registerYjsMap = function(ymap) {
-
-            _label.registerYType(ymap);
+            ymap.get(that.getEntityId()+'[label]').then(function(ytext){
+                _label.registerYType(ytext);
+            });
 
             _ymap = ymap;
             _ymap.observe(function (events) {
-                for (i in events) {
-                    console.log("Yjs log: The following event-type was thrown: " + events[i].type);
-                    console.log("Yjs log: The event was executed on: " + events[i].name);
-                    console.log("Yjs log: The event object has more information:");
-                    console.log(events[i]);
-
+                for (var i in events) {
+                    var event = events[i];
                     var operation;
-                    var data = _ymap.get(events[i].name);
-                    switch (events[i].name) {
-                        case NodeDeleteOperation.TYPE:
-                        {
+                    var data = _ymap.get(event.name);
+                    var jabberId = y.share.users.get(event.object.map[event.name][0]);
+
+                    switch (event.name){
+                        case NodeDeleteOperation.TYPE:{
                             operation = new NodeDeleteOperation(data.id);
-                            propagateNodeDeleteOperation(operation);
+                            remoteNodeDeleteCallback(operation);
                             break;
                         }
                         case NodeMoveOperation.TYPE:{
-                            operation = new NodeMoveOperation(data.id, data.offsetX, data.offsetY);
-                            propagateNodeMoveOperation(operation);
+                            operation = new NodeMoveOperation(data.id, data.offsetX, data.offsetY, jabberId);
+                            remoteNodeMoveCallback(operation);
                             break;
                         }
                         case NodeMoveZOperation.TYPE:{
-                            operation =  new NodeMoveZOperation(data.id,data.offsetZ);
-                            propagateNodeMoveZOperation(operation);
+                            operation =  new NodeMoveZOperation(data.id,data.offsetZ, jabberId);
+                            remoteNodeMoveZCallback(operation);
                             break;
                         }
-                        case NodeResizeOperation.TYPE:
-                        {
-                            operation = new NodeResizeOperation(data.id, data.offsetX, data.offsetY);
-                            processNodeResizeOperation(operation);
+                        case NodeResizeOperation.TYPE:{
+                            operation = new NodeResizeOperation(data.id, data.offsetX, data.offsetY,jabberId);
+                            remoteNodeResizeCallback(operation);
                             break;
                         }
                         case EntitySelectOperation.TYPE:{
-                            operation = new EntitySelectOperation(data.selectedEntityId, data.selectedEntityType, data.jabberId);
+                            operation = new EntitySelectOperation(data.selectedEntityId, data.selectedEntityType, jabberId);
                             remoteEntitySelectCallback(operation);
                             break;
-
                         }
                     }
                 }
             });
         };
-
-
     }
 
     /**

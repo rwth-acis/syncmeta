@@ -154,7 +154,7 @@ define([
         var remoteEntitySelectCallback = function(operation){
             var color;
             if(operation instanceof EntitySelectOperation){
-                color = _iwcw.getUserColor(operation.getNonOTOperation().getSender());
+                color = _iwcw.getUserColor(operation.getJabberId());
                 if(!_isSelected){
                     if(operation.getSelectedEntityId() === that.getEntityId()){
                         _highlightColor = color;
@@ -178,13 +178,18 @@ define([
          * @param {operations.ot.EdgeDeleteOperation} operation
          */
         var remoteEdgeDeleteCallback = function(operation){
+            var jabberId = y.share.users.get(_ymap.map[EdgeDeleteOperation.TYPE][0]);
+
+            if(jabberId === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
+                _ymap.delete();
+
             if(operation instanceof EdgeDeleteOperation && operation.getEntityId() == that.getEntityId()){
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
                 _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "EdgeDeleteActivity",
                     operation.getEntityId(),
-                    operation.getOTOperation().getSender(),
+                    jabberId,
                     EdgeDeleteOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
                     {}
                 ).toNonOTOperation());
@@ -713,54 +718,47 @@ define([
          * Register inter widget communication callbacks
          */
         this.registerCallbacks = function(){
-            //_iwcw.registerOnRemoteDataReceivedCallback(remoteEntitySelectCallback);
-            //_iwcw.registerOnRemoteDataReceivedCallback(remoteEdgeDeleteCallback);
+            //TODO
             //_iwcw.registerOnHistoryChangedCallback(historyEdgeDeleteCallback);
-
-            _iwcw.registerOnDataReceivedCallback(localEdgeDeleteCallback);
         };
 
         /**
          * Unregister inter widget communication callbacks
          */
         this.unregisterCallbacks = function(){
-            _iwcw.unregisterOnRemoteDataReceivedCallback(remoteEntitySelectCallback);
-            _iwcw.unregisterOnRemoteDataReceivedCallback(remoteEdgeDeleteCallback);
-            _iwcw.unregisterOnHistoryChangedCallback(historyEdgeDeleteCallback);
-
-            _iwcw.unregisterOnDataReceivedCallback(localEdgeDeleteCallback);
+            //TODO
+            //_iwcw.unregisterOnHistoryChangedCallback(historyEdgeDeleteCallback);
         };
 
-        function localEdgeDeleteCallback(operation){
-            if(operation instanceof EdgeDeleteOperation && that.getEntityId() === operation.getEntityId()){
-                that.triggerDeletion();
-            }
-        }
+
 
         if(_iwcw){
             that.registerCallbacks();
         }
-
+        this.getYMap = function(){
+            return _ymap;
+        };
         this.registerYjsMap = function(ymap) {
             _ymap =ymap;
-            _ymap.observe(function (events) {
-                for (i in events) {
-                    console.log("Yjs log: The following event-type was thrown: " + events[i].type);
-                    console.log("Yjs log: The event was executed on: " + events[i].name);
-                    console.log("Yjs log: The event object has more information:");
-                    console.log(events[i]);
+            _ymap.get(that.getEntityId()+'[label]').then(function(ytext){
+                _label.registerYType(ytext);
 
+            });
+            _ymap.observe(function (events) {
+                for (var i in events) {
                     var operation;
-                    var data = _ymap.get(events[i].name);
-                    switch (events[i].name) {
+                    var event = events[i];
+                    var data = _ymap.get(event.name);
+                    var jabberId= y.share.users.get(event.object.map[event.name][0]);
+                    switch (event.name) {
                         case EntitySelectOperation.TYPE:{
-                            operation = new EntitySelectOperation(data.selectedEntityId,data.selectedEntityType);
+                            operation = new EntitySelectOperation(data.selectedEntityId,data.selectedEntityType, jabberId);
                             remoteEntitySelectCallback(operation);
                             break;
                         }
                         case EdgeDeleteOperation.TYPE:{
                             operation = new EdgeDeleteOperation(data.id);
-                            propagateEdgeDeleteOperation(operation);
+                            remoteEdgeDeleteCallback(operation);
                             break;
                         }
                     }

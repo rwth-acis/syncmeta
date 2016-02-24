@@ -80,26 +80,24 @@ define([
          */
         var propagateValueChangeOperation = function(operation){
             operation.setEntityIdChain(getEntityIdChain());
-            processValueChangeOperation(operation);
-            if(_iwcw.sendRemoteOTOperation(operation)){
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                if(!operation.getFromView()) {
-                    _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
-                        "ValueChangeActivity",
-                        that.getEntityId(),
-                        _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
-                        ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(), that.getRootSubjectEntity().getType(), that.getRootSubjectEntity().getLabel().getValue().getValue()),
-                        {
-                            value: operation.getValue(),
-                            subjectEntityName: that.getSubjectEntity().getName(),
-                            rootSubjectEntityType: that.getRootSubjectEntity().getType(),
-                            rootSubjectEntityId: that.getRootSubjectEntity().getEntityId()
-                        }
-                    ).toNonOTOperation());
+            //processValueChangeOperation(operation);
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
+                "ValueChangeActivity",
+                that.getEntityId(),
+                _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
+                ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(), that.getRootSubjectEntity().getType(), that.getRootSubjectEntity().getLabel().getValue().getValue()),
+                {
+                    value: operation.getValue(),
+                    subjectEntityName: that.getSubjectEntity().getName(),
+                    rootSubjectEntityType: that.getRootSubjectEntity().getType(),
+                    rootSubjectEntityId: that.getRootSubjectEntity().getEntityId()
                 }
-            }
-            if(operation.getFromView()){
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
+            ).toNonOTOperation());
+
+            var ynode = that.getRootSubjectEntity().getYMap();
+            if(ynode){
+                ynode.set(that.getEntityId(), operation.toJSON());
             }
         };
 
@@ -117,7 +115,7 @@ define([
                     operation.getOTOperation().getSender(),
                     ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(),that.getRootSubjectEntity().getType(),that.getRootSubjectEntity().getLabel().getValue().getValue()),
                     {
-                        value: calcNewValue(operation),
+                        value: operation.getValue(),
                         subjectEntityName: that.getSubjectEntity().getName(),
                         rootSubjectEntityType: that.getRootSubjectEntity().getType(),
                         rootSubjectEntityId: that.getRootSubjectEntity().getEntityId()
@@ -224,6 +222,14 @@ define([
             //_iwcw.unregisterOnRemoteDataReceivedCallback(remoteValueChangeCallback);
             _iwcw.unregisterOnDataReceivedCallback(localValueChangeCallback);
             //_iwcw.unregisterOnHistoryChangedCallback(historyValueChangeCallback);
+        };
+
+        this.registerYType = function(){
+            that.getRootSubjectEntity().getYMap().observePath([that.getEntityId()],function(events) {
+                if(events) {
+                    remoteValueChangeCallback(new ValueChangeOperation(events.entityId, events.value, events.type, events.position));
+                }
+            });
         };
 
         init();

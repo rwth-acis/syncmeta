@@ -108,8 +108,7 @@ function ($, jsPlumb, _, IWCW, AbstractValue, AbstractAttribute, ValueChangeOper
          */
         var propagateValueChangeOperation = function (operation) {
             operation.setEntityIdChain(getEntityIdChain());
-            processValueChangeOperation(operation);
-            //if (_iwcw.sendRemoteOTOperation(operation)) {
+            //processValueChangeOperation(operation);
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
             _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
                 "ValueChangeActivity",
@@ -121,7 +120,7 @@ function ($, jsPlumb, _, IWCW, AbstractValue, AbstractAttribute, ValueChangeOper
                     rootSubjectEntityType : that.getRootSubjectEntity().getType(),
                     rootSubjectEntityId : that.getRootSubjectEntity().getEntityId()
                 }).toNonOTOperation());
-            //}
+
             if(that.getRootSubjectEntity().getYMap()){
                 that.getRootSubjectEntity().getYMap().set(that.getEntityId(), operation.toJSON());
             }

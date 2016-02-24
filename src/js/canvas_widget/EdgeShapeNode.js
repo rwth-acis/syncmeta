@@ -73,12 +73,36 @@ define([
             return json;
         };
 
-        this.addAttribute(new SingleSelectionAttribute(this.getEntityId()+"[arrow]","Arrow",this,{"bidirassociation":"---","unidirassociation":"-->","generalisation":"--▷","diamond":"-◁▷"}));
-        this.addAttribute(new SingleSelectionAttribute(this.getEntityId()+"[shape]","Shape",this,{"straight":"Straight","curved":"Curved","segmented":"Segmented"}));
-        this.addAttribute(new SingleColorValueAttribute(this.getEntityId()+"[color]","Color",this));
-        this.addAttribute(new SingleValueAttribute(this.getEntityId()+"[overlay]","Overlay Text",this));
-        this.addAttribute(new SingleSelectionAttribute(this.getEntityId()+"[overlayPosition]","Overlay Position",this,{"hidden":"Hide","top":"Top","center":"Center","bottom":"Bottom"}));
-        this.addAttribute(new BooleanAttribute(this.getEntityId()+"[overlayRotate]","Autoflip Overlay",this));
+        var attrArrow = new SingleSelectionAttribute(this.getEntityId()+"[arrow]","Arrow",this,{"bidirassociation":"---","unidirassociation":"-->","generalisation":"--▷","diamond":"-◁▷"});
+        var attrShape = new SingleSelectionAttribute(this.getEntityId()+"[shape]","Shape",this,{"straight":"Straight","curved":"Curved","segmented":"Segmented"});
+        var attrColor = new SingleColorValueAttribute(this.getEntityId()+"[color]","Color",this);
+        var attrOverlay= new SingleValueAttribute(this.getEntityId()+"[overlay]","Overlay Text",this);
+        var attrOverlayPos= new SingleSelectionAttribute(this.getEntityId()+"[overlayPosition]","Overlay Position",this,{"hidden":"Hide","top":"Top","center":"Center","bottom":"Bottom"});
+        var attrOverlayRotate = new BooleanAttribute(this.getEntityId()+"[overlayRotate]","Autoflip Overlay",this);
+
+        this.addAttribute(attrArrow);
+        this.addAttribute(attrShape);
+        this.addAttribute(attrColor);
+        this.addAttribute(attrOverlay);
+        this.addAttribute(attrOverlayPos);
+        this.addAttribute(attrOverlayRotate);
+
+        this.registerYjsMap = function(map){
+            AbstractNode.prototype.registerYjsMap.call(this,map);
+
+            attrArrow.getValue().registerYType();
+            attrShape.getValue().registerYType();
+
+            map.get(that.getEntityId()+"[color]").then(function(ytext){
+                attrColor.getValue().registerYType(ytext);
+            });
+            map.get(that.getEntityId()+"[overlay]").then(function(ytext){
+                attrOverlay.getValue().registerYType(ytext);
+            });
+
+            attrOverlayPos.getValue().registerYType();
+            attrOverlayRotate.getValue().registerYType();
+        };
 
         _$node.find(".label").append(this.getLabel().get$node());
 

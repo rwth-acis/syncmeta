@@ -63,7 +63,7 @@ define([
 
                 switch(type){
                     case EntitySelectOperation.TYPE:
-                        resOperation = new EntitySelectOperation(data.selectedEntityId, data.selectedEntityType);
+                        resOperation = new EntitySelectOperation(data.selectedEntityId, data.selectedEntityType, data.jabberId);
                         resOperation.setNonOTOperation(operation);
                         break;
                     case ToolSelectOperation.TYPE:
@@ -172,7 +172,8 @@ define([
                                                 value.zIndex,
                                                 value.json,
                                                 value.viewId,
-                                                value.oType
+                                                value.oType,
+                                                value.jabberId
                                             );
                                             break;
                                         case CONFIG.OPERATION.TYPE.UPDATE:
@@ -193,20 +194,23 @@ define([
                                     resOperation = new NodeMoveOperation(
                                         entityId,
                                         value.offsetX,
-                                        value.offsetY
+                                        value.offsetY,
+                                        value.jabberId
                                     );
                                     break;
                                 case CONFIG.IWC.POSITION.NODE.Z:
                                     resOperation = new NodeMoveZOperation(
                                         entityId,
-                                        value.offsetZ
+                                        value.offsetZ,
+                                        value.jabberId
                                     );
                                     break;
                                 case CONFIG.IWC.POSITION.NODE.DIM:
                                     resOperation = new NodeResizeOperation(
                                         entityId,
                                         value.offsetX,
-                                        value.offsetY
+                                        value.offsetY,
+                                        value.jabberId
                                     );
                                     break;
                             }
@@ -226,7 +230,8 @@ define([
                                         value.target,
                                         value.json,
                                         value.viewId,
-                                        value.oType
+                                        value.oType,
+                                        value.jabberId
                                     );
                                     break;
                                 case CONFIG.OPERATION.TYPE.UPDATE:

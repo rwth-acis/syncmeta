@@ -24,7 +24,7 @@ define([
      * @param {string} oType the original Type, only set in views
      * @constructor
      */
-    function NodeAddOperation(entityId,type,left,top,width,height,zIndex,json, viewId, oType){
+    function NodeAddOperation(entityId,type,left,top,width,height,zIndex,json, viewId, oType,jabberId){
         var that = this;
 
         EntityOperation.call(this,EntityOperation.TYPES.NodeAddOperation,entityId,CONFIG.ENTITY.NODE);
@@ -35,6 +35,8 @@ define([
          * @private
          */
         var _viewId = viewId;
+
+        var _jabberId= jabberId;
 
         var _oType = oType;
 
@@ -103,7 +105,8 @@ define([
                     zIndex: _zIndex,
                     json: _json,
                     viewId:_viewId,
-                    oType: _oType
+                    oType: _oType,
+                    jabberId:_jabberId
                 }),
                 CONFIG.OPERATION.TYPE.INSERT,
                 CONFIG.IWC.POSITION.NODE.ADD
@@ -178,6 +181,10 @@ define([
           return _viewId;
         };
 
+        this.getJabberId = function(){
+            return _jabberId;
+        };
+
         /**
          * Get corresponding ot operation
          * @returns {operations.ot.OTOperation}
@@ -244,7 +251,8 @@ define([
             zIndex: this.getZIndex(),
             json: this.getJSON(),
             viewId:this.getViewId(),
-            oType: this.getOriginType()
+            oType: this.getOriginType(),
+            jabberId: this.getJabberId()
         }
     };
 

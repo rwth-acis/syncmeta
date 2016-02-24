@@ -17,7 +17,7 @@ define([
      * @param {number} offsetY Offset in y-direction
      * @constructor
      */
-    function NodeMoveOperation(entityId,offsetX,offsetY){
+    function NodeMoveOperation(entityId,offsetX,offsetY,jabberId){
         var that = this;
 
         EntityOperation.call(this,EntityOperation.TYPES.NodeMoveOperation,entityId,CONFIG.ENTITY.NODE);
@@ -28,6 +28,8 @@ define([
          * @private
          */
         var _offsetX = offsetX;
+
+        var _jabberId = jabberId;
 
         /**
          * Offset in y-direction
@@ -45,7 +47,8 @@ define([
                 CONFIG.ENTITY.NODE+":"+that.getEntityId(),
                 JSON.stringify({
                     offsetX: _offsetX,
-                    offsetY: _offsetY
+                    offsetY: _offsetY,
+                    jabberId:_jabberId
                 }),
                 CONFIG.OPERATION.TYPE.UPDATE,
                 CONFIG.IWC.POSITION.NODE.POS
@@ -58,6 +61,10 @@ define([
          */
         this.getOffsetX = function(){
             return _offsetX;
+        };
+
+        this.getJabberId = function(){
+            return _jabberId;
         };
 
         /**
@@ -124,7 +131,8 @@ define([
         return {
             id:this.getEntityId(),
             offsetX:this.getOffsetX(),
-            offsetY:this.getOffsetY()
+            offsetY:this.getOffsetY(),
+            jabberId: this.getJabberId()
         }
     };
 

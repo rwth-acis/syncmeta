@@ -66,7 +66,7 @@ define([
          */
         var propagateAttributeAddOperation = function(operation){
             processAttributeAddOperation(operation);
-            _iwcw.sendRemoteOTOperation(operation);
+            //_iwcw.sendRemoteOTOperation(operation);
         };
 
         /**

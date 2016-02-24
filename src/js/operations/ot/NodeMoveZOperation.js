@@ -16,10 +16,12 @@ define([
      * @param {number} offsetZ Offset in z-direction
      * @constructor
      */
-    function NodeMoveZOperation(entityId,offsetZ){
+    function NodeMoveZOperation(entityId,offsetZ,jabberId){
         var that = this;
 
         EntityOperation.call(this,EntityOperation.TYPES.NodeMoveZOperation,entityId,CONFIG.ENTITY.NODE);
+
+        var _jabberId = jabberId;
 
         /**
          * Offset in y-direction
@@ -36,7 +38,8 @@ define([
             return new OTOperation(
                 CONFIG.ENTITY.NODE+":"+that.getEntityId(),
                 JSON.stringify({
-                    offsetZ: _offsetZ
+                    offsetZ: _offsetZ,
+                    jabberId:_jabberId
                 }),
                 CONFIG.OPERATION.TYPE.UPDATE,
                 CONFIG.IWC.POSITION.NODE.Z
@@ -49,6 +52,10 @@ define([
          */
         this.getOffsetZ = function(){
             return _offsetZ;
+        };
+
+        this.getJabberId = function(){
+            return _jabberId;
         };
 
         /**
@@ -105,7 +112,8 @@ define([
     NodeMoveZOperation.prototype.toJSON =function(){
         return {
             id:this.getEntityId(),
-            offsetZ:this.getOffsetZ()
+            offsetZ:this.getOffsetZ(),
+            jabberId:this.getJabberId()
         }
     };
     return NodeMoveZOperation;

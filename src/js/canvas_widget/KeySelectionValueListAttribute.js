@@ -317,9 +317,6 @@ define([
             that.registerCallbacks();
         }
 
-        this.getYMap = function(){
-            return _ymap;
-        };
 
         this.registerYjsMap = function(){
             that.getRootSubjectEntity().getYMap().observe(function(events){

@@ -55,9 +55,22 @@ define([
          * @param {operations.ot.AttributeAddOperation} operation
          */
         var processAttributeAddOperation = function(operation){
-            var attribute = new SingleValueAttribute(operation.getEntityId(),"Attribute",that);
-            that.addAttribute(attribute);
-            _$node.find(".list").append(attribute.get$node());
+            var ynode = that.getRootSubjectEntity().getYMap();
+            if(ynode){
+                ynode.get(operation.getEntityId()).then(function (ytext) {
+                    var attribute = new SingleValueAttribute(operation.getEntityId(),"Attribute",that);
+                    attribute.registerYType(ytext);
+                    that.addAttribute(attribute);
+                    _$node.find(".list").append(attribute.get$node());
+                });
+            }
+            else{
+                var attribute = new SingleValueAttribute(operation.getEntityId(),"Attribute",that);
+                that.addAttribute(attribute);
+                _$node.find(".list").append(attribute.get$node());
+            }
+
+
         };
 
         /**
@@ -67,9 +80,9 @@ define([
         var propagateAttributeAddOperation = function(operation){
             //processAttributeAddOperation(operation);
             //_iwcw.sendRemoteOTOperation(operation);
-            var ynode = that.getRootSubjectEntity().getYjsMap();
+            var ynode = that.getRootSubjectEntity().getYMap();
             if(ynode){
-                ynode.set(operation.getEntityId(), Y.Map).then(function(){
+                ynode.set(operation.getEntityId(), Y.Text).then(function(){
                     ynode.set(AttributeAddOperation.TYPE, operation.toJSON());
                 });
             }
@@ -94,7 +107,7 @@ define([
         var propagateAttributeDeleteOperation = function(operation){
             //processAttributeDeleteOperation(operation);
             //_iwcw.sendRemoteOTOperation(operation);
-            var ynode = that.getRootSubjectEntity().getYjsMap();
+            var ynode = that.getRootSubjectEntity().getYMap();
             if(ynode){
                 ynode.set(operation.getEntityId(), Y.Map).then(function(){
                     ynode.set(AttributeDeleteOperation.TYPE, operation.toJSON());

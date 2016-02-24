@@ -11,6 +11,7 @@ define([
      * @constructor
      * @param {string} selectedEntityId Entity id of the selected entity
      * @param {string} selectedEntityType
+     * @param {string} jabberId
      */
 
     function EntitySelectOperation(selectedEntityId, selectedEntityType, jabberId){

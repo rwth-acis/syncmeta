@@ -100,11 +100,18 @@ define([
         this.registerYjsMap = function(map){
             AbstractNode.prototype.registerYjsMap.call(this,map);
             attrShapeSelect.getValue().registerYType();
-            attrColor.getValue().registerYType();
             attrWidth.getValue().registerYType();
             attrHeight.getValue().registerYType();
-            attrAnchors.getValue().registerYType();
-            attrCustomShape.getValue().registerYType();
+
+            map.get(that.getEntityId()+"[color]").then(function(ytext){
+                attrColor.getValue().registerYType(ytext);
+            });
+            map.get(that.getEntityId()+"[customAnchors]").then(function(ytext){
+                attrAnchors.getValue().registerYType(ytext);
+            });
+            map.get(that.getEntityId()+"[customShape]").then(function(ytext){
+                attrCustomShape.getValue().registerYType(ytext);
+            });
         }
 
     }

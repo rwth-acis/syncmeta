@@ -123,7 +123,7 @@ define([
          * @param {operations.ot.ValueChangeOperation} operation
          */
         var propagateValueChangeOperation = function(operation){
-            processValueChangeOperation(operation);
+            //processValueChangeOperation(operation);
             iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.getOTOperation());
         };
 

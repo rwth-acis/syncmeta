@@ -1,6 +1,6 @@
 /**
- * Namespace for activity widget.
- * @namespace activity_widget
+ * Namespace for heatmap widget.
+ * @namespace heatmap_widget
  */
 
 requirejs([
@@ -46,7 +46,7 @@ requirejs([
     var operationCallback = function(operation){
         var id, node, senderJabberId;
         if(operation instanceof NodeAddOperation){
-            senderJabberId = operation.getOTOperation().getSender();
+            senderJabberId = operation.getJabberId();
             var color = null;
             if(senderJabberId != localUserId)
                 color = iwc.getUserColor(senderJabberId);
@@ -60,7 +60,7 @@ requirejs([
                 node = previewNodes[id];
                 node.moveX(operation.getOffsetX());
                 node.moveY(operation.getOffsetY());
-                senderJabberId = operation.getOTOperation().getSender();
+                senderJabberId = operation.getJabberId();
                 updateColor(node, senderJabberId);
                 updateBoundingBox(node);
                 updateZoom();
@@ -73,7 +73,7 @@ requirejs([
                 node = previewNodes[id];
                 node.changeWidth(operation.getOffsetX());
                 node.changeHeight(operation.getOffsetY());
-                senderJabberId = operation.getOTOperation().getSender();
+                senderJabberId = operation.getJabberId();
                 updateColor(node, senderJabberId);
                 updateBoundingBox(node);
                 updateZoom();

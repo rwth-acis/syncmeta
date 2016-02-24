@@ -82,12 +82,8 @@ define([
             _value.setValueFromJSON(json.value);
         };
 
-        this.registerYType = function(map){
-            var deferred = $.Deferred();
-            that.registerYTypeForValue(map, _value).done(function(){
-                deferred.resolve();
-            });
-            return deferred.promise();
+        this.registerYType = function(ytext){
+            _value.registerYType(ytext);
 
         };
 

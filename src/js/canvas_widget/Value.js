@@ -152,31 +152,11 @@ define([
          */
         var propagateValueChangeOperation = function(operation){
             operation.setEntityIdChain(getEntityIdChain());
-            operation.setRemote(false);
+
+            //operation.setRemote(false);
             //processValueChangeOperation(operation);
-            operation.setRemote(true);
+            //operation.setRemote(true);
 
-
-            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
-                "ValueChangeActivity",
-                that.getEntityId(),
-                _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
-                ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(), that.getRootSubjectEntity().getType(), that.getRootSubjectEntity().getLabel().getValue().getValue()),
-                {
-                    value: calcNewValue(operation),
-                    subjectEntityName: that.getSubjectEntity().getName(),
-                    rootSubjectEntityType: that.getRootSubjectEntity().getType(),
-                    rootSubjectEntityId: that.getRootSubjectEntity().getEntityId()
-                }
-            ).toNonOTOperation());
-
-
-            if(that.getRootSubjectEntity().getYMap()){
-                that.getRootSubjectEntity().getYMap().set(that.getEntityId(), operation.toJSON());
-            }
-
-            /*
-            // TODO kein ytext mehr. später! propagation zur attribute widget tricky with ytext use ymap for now.
             if(_ytext){
                 switch(operation.getType()){
                     case 'insert':
@@ -189,8 +169,7 @@ define([
                         break;
                     }
                 }
-                var text = _ytext.toString();
-            }*/
+            }
         };
 
         /**
@@ -393,7 +372,7 @@ define([
          */
         this.registerCallbacks = function(){
             _iwcw.registerOnDataReceivedCallback(localValueChangeCallback);
-            //_iwcw.registerOnRemoteDataReceivedCallback(remoteValueChangeCallback);
+            //TODO
            // _iwcw.registerOnHistoryChangedCallback(historyValueChangeCallback);
         };
 
@@ -402,22 +381,43 @@ define([
          */
         this.unregisterCallbacks = function(){
             _iwcw.unregisterOnDataReceivedCallback(localValueChangeCallback);
-            //_iwcw.unregisterOnRemoteDataReceivedCallback(remoteValueChangeCallback);
+            //TODO
             //_iwcw.unregisterOnHistoryChangedCallback(historyValueChangeCallback);
         };
 
 
         this.registerYType = function(ytext){
-            that.getRootSubjectEntity().getYMap().observePath([that.getEntityId()],function(events) {
-                if(events){
-                    remoteValueChangeCallback(new ValueChangeOperation(events.entityId, events.value, events.type, events.position));
+
+
+            _ytext= ytext;
+            _ytext.bind(_$node[0]);
+
+            _ytext.observe(function(events){
+                for(var i in events){
+                    var event = events[i];
+                    //TODO i can not find out who triggered the delete
+                    //var jabberId = y.share.users.get(JSON.parse(event.object.idArray[event.index])[0]);
+                    var operation = new ValueChangeOperation(that.getEntityId(), event.value, event.type, event.index);
+
+                    //if(jabberId !== _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]) {
+                        _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
+                    //}
+
+                    _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
+                        "ValueChangeActivity",
+                        that.getEntityId(),
+                        //TODO
+                        null,
+                        ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(), that.getRootSubjectEntity().getType(), that.getRootSubjectEntity().getLabel().getValue().getValue()),
+                        {
+                            value: '',
+                            subjectEntityName: that.getSubjectEntity().getName(),
+                            rootSubjectEntityType: that.getRootSubjectEntity().getType(),
+                            rootSubjectEntityId: that.getRootSubjectEntity().getEntityId()
+                        }
+                    ).toNonOTOperation());
                 }
             });
-            /*
-            _ytext= ytext;
-            _ytext.observe(function(events){
-                var e = events;
-            });*/
         };
 
         that.init();

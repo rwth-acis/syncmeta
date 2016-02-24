@@ -314,7 +314,6 @@ define([
          */
         this.registerCallbacks = function(){
             _iwcw.registerOnDataReceivedCallback(localValueChangeCallback);
-            //_iwcw.registerOnRemoteDataReceivedCallback(remoteValueChangeCallback);
             //_iwcw.registerOnHistoryChangedCallback(historyValueChangeCallback);
         };
 
@@ -323,14 +322,12 @@ define([
          */
         this.unregisterCallbacks = function(){
             _iwcw.unregisterOnDataReceivedCallback(localValueChangeCallback);
-            //_iwcw.unregisterOnRemoteDataReceivedCallback(remoteValueChangeCallback);
             //_iwcw.unregisterOnHistoryChangedCallback(historyValueChangeCallback);
         };
 
         this.registerYType = function(){
             //observer
             that.getRootSubjectEntity().getYMap().observePath([that.getEntityId()],function(events) {
-                //TODO check that remove if statement. Why is events undefined ?????
                 if(events)
                     remoteValueChangeCallback(new ValueChangeOperation(events.entityId, events.value, events.type, events.position));
             });
