@@ -358,7 +358,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                     _modelAttributesNode = new ModelAttributesNode("modelAttributes", metamodel.attributes);
                     return _modelAttributesNode;
                 }
-                return null;
+                return _modelAttributesNode;
             },
             /**
              * Find node by id

@@ -1031,6 +1031,10 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                     map.set(id+"[label]", Y.Text).then(function() {
                         y.share.canvas.set(EdgeAddOperation.TYPE, operation.toJSON());
                     });
+                    map.set('id',id);
+                    map.set('source', source);
+                    map.set('target', target);
+
                 })
             } else {
                 propagateEdgeAddOperation(operation);
@@ -1352,8 +1356,7 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
             _iwcw.registerOnDataReceivedCallback(localExportLogicalGuidanceRepresentationCallback);
             _iwcw.registerOnDataReceivedCallback(localExportImageCallback);
             _iwcw.registerOnDataReceivedCallback(localShowGuidanceBoxCallback);
-            // _iwcw.registerOnHistoryChangedCallback(historyNodeAddCallback);
-            //_iwcw.registerOnHistoryChangedCallback(historyEdgeAddCallback);
+
 
             _iwcw.registerOnDataReceivedCallback(localRevokeSharedActivityOperationCallback);
             //TODO
@@ -1377,8 +1380,6 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
             _iwcw.unregisterOnDataReceivedCallback(localExportLogicalGuidanceRepresentationCallback);
             _iwcw.unregisterOnDataReceivedCallback(localExportImageCallback);
             _iwcw.unregisterOnDataReceivedCallback(localShowGuidanceBoxCallback);
-            //_iwcw.unregisterOnHistoryChangedCallback(historyNodeAddCallback);
-            //_iwcw.unregisterOnHistoryChangedCallback(historyEdgeAddCallback);
 
 
             _iwcw.unregisterOnDataReceivedCallback(CvgCallback);
@@ -1428,26 +1429,30 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
 
         if(y){
             y.share.canvas.observe(function(events){
-                for(i in events){
+                var triggerSave = false;
+                for(var i in events){
                     var event =events[i];
                     var operation;
                     var data = y.share.canvas.get(event.name);
                     var jabberId = y.share.users.get(event.object.map[event.name][0]);
-
+                    if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] === jabberId) {
+                        triggerSave = true;
+                    }
                     switch(event.name){
                         case NodeAddOperation.TYPE:{
                             operation = new NodeAddOperation(data.id,data.type,data.left, data.top,data.width,data.height,data.zIndex,data.json,data.viewId,data.oType,jabberId);
                             remoteNodeAddCallback(operation);
                             break;
                         }
-                        case EdgeAddOperation.TYPE:
-                        {
+                        case EdgeAddOperation.TYPE:{
                             operation = new EdgeAddOperation(data.id, data.type, data.source, data.target, data.json, data.viewId, data.oType,jabberId);
                             remoteEdgeAddCallback(operation);
                             break;
                         }
                     }
                 }
+                if(triggerSave)
+                    $('#save').click();
             })
 
         }

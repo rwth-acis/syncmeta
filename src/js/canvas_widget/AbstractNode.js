@@ -37,6 +37,10 @@ define([
     function AbstractNode(id,type,left,top,width,height,zIndex){
         var that = this;
 
+        /**y-map instances which belongs to the node
+         * @type {y-map}
+         * @private
+         * */
         var _ymap = null;
 
         AbstractEntity.call(this,id);
@@ -1275,33 +1279,9 @@ define([
             jsPlumb.unmakeTarget(_$node);
         };
 
-        /**
-         * Register inter widget communication callbacks
-         */
-        this.registerCallbacks = function(){
-            //TODO
-            //_iwcw.registerOnHistoryChangedCallback(historyNodeMoveCallback);
-            //_iwcw.registerOnHistoryChangedCallback(historyNodeMoveZCallback);
-            //_iwcw.registerOnHistoryChangedCallback(historyNodeResizeCallback);
-            //_iwcw.registerOnHistoryChangedCallback(historyNodeDeleteCallback);
-        };
-
-        /**
-         * Unregister inter widget communication callbacks
-         */
-        this.unregisterCallbacks = function(){
-            //TODO
-            //_iwcw.unregisterOnHistoryChangedCallback(historyNodeMoveCallback);
-            //_iwcw.unregisterOnHistoryChangedCallback(historyNodeMoveZCallback);
-            //_iwcw.unregisterOnHistoryChangedCallback(historyNodeResizeCallback);
-            //_iwcw.unregisterOnHistoryChangedCallback(historyNodeDeleteCallback);
-        };
 
         that.init();
 
-        if(_iwcw){
-            that.registerCallbacks();
-        }
 
         this.getYMap = function(){
             return _ymap;
@@ -1314,11 +1294,16 @@ define([
 
             _ymap = ymap;
             _ymap.observe(function (events) {
+                var triggerSave = false;
                 for (var i in events) {
                     var event = events[i];
                     var operation;
                     var data = _ymap.get(event.name);
                     var jabberId = y.share.users.get(event.object.map[event.name][0]);
+
+                    if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] === jabberId && event.name !== EntitySelectOperation.TYPE) {
+                        triggerSave = true;
+                    }
 
                     switch (event.name){
                         case NodeDeleteOperation.TYPE:{
@@ -1348,6 +1333,9 @@ define([
                         }
                     }
                 }
+                if(triggerSave)
+                    $('#save').click();
+
             });
         };
     }

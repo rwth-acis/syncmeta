@@ -86,7 +86,7 @@ requirejs([
                     //TODO
                     //_iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
 
-                    JSONtoGraph(model);
+                    JSONtoGraph2(model);
                     if (canvas.getModelAttributesNode() === null) {
                         var modelAttributesNode = EntityManager.createModelAttributesNode();
                         canvas.setModelAttributesNode(modelAttributesNode);
@@ -448,56 +448,55 @@ requirejs([
         }
 
         //-------------------------------------------------------------
-
-        function JSONtoGraph(json) {
-            var registerAttributesOfEntity = function(map,attrId){
-                var deferred = $.Deferred();
-                var promise = map.get(attrId);
-                if(promise === undefined){
-                    map.set(attrId, Y.Text).then(function(){
-                        deferred.resolve();
-                    });
-                    return deferred.promise();
-                }else{
-                    return null;
-                }
-            };
-            var registerEntityToYjs = function(ymap,entity,callback) {
-                var promise = y.share[ymap].get(entity.getEntityId());
-                if(promise === undefined){
-                    y.share[ymap].set(entity.getEntityId(), Y.Map).then(function(map){
-                        var p = registerAttributesOfEntity(map,entity.getEntityId()+'[label]');
-                            if(p!== null) {
-                                p.done(function () {
-                                    entity.registerYjsMap(map);
-                                    if(callback)
-                                        callback(entity);
-                                });
-                            }else{
-                                entity.registerYjsMap(map);
-                                if(callback)
-                                    callback(entity);
-                            }
-
-                    })
-                }
-                else{
-                    promise.then(function(map){
-                        var p = registerAttributesOfEntity(map,entity.getEntityId()+'[label]');
-                        if(p!== null) {
-                            p.done(function () {
-                                entity.registerYjsMap(map);
-                                if(callback)
-                                    callback(entity);
-                            });
-                        }else{
+        var registerAttributesOfEntity = function(map,attrId){
+            var deferred = $.Deferred();
+            var promise = map.get(attrId);
+            if(promise === undefined){
+                map.set(attrId, Y.Text).then(function(){
+                    deferred.resolve();
+                });
+                return deferred.promise();
+            }else{
+                return null;
+            }
+        };
+        var registerEntityToYjs = function(ymap,entity,callback) {
+            if(y.share[ymap].opContents.hasOwnProperty(entity.getEntityId())){
+                y.share[ymap].get(entity.getEntityId()).then(function(map){
+                    var p = registerAttributesOfEntity(map,entity.getEntityId()+'[label]');
+                    if(p!== null) {
+                        p.done(function () {
                             entity.registerYjsMap(map);
                             if(callback)
                                 callback(entity);
-                        }
-                    })
-                }
-            };
+                        });
+                    }else{
+                        entity.registerYjsMap(map);
+                        if(callback)
+                            callback(entity);
+                    }
+                });
+            }
+            else{
+                y.share[ymap].set(entity.getEntityId(), Y.Map).then(function(map){
+                    var p = registerAttributesOfEntity(map,entity.getEntityId()+'[label]');
+                    if(p!== null) {
+                        p.done(function () {
+                            entity.registerYjsMap(map);
+                            if(callback)
+                                callback(entity);
+                        });
+                    }else{
+                        entity.registerYjsMap(map);
+                        if(callback)
+                            callback(entity);
+                    }
+
+                })
+            }
+        };
+
+        function JSONtoGraph(json) {
             var modelAttributesNode;
             var nodeId, edgeId;
             if (json.attributes && !_.isEmpty(json.attributes)) {
@@ -538,26 +537,139 @@ requirejs([
             }
         }
 
+        function JSONtoGraph2(json){
+            var modelAttributesNode;
+            if (json.attributes && !_.isEmpty(json.attributes)) {
+                if (y.share.nodes.opContents.hasOwnProperty('modelAttributes')) {
+                    y.share.nodes.get('modelAttributes').then(function (map) {
+                        modelAttributesNode = EntityManager.createModelAttributesNodeFromJSON(json.attributes);
+                        canvas.setModelAttributesNode(modelAttributesNode);
+                        modelAttributesNode.addToCanvas(canvas);
 
+                        var p = registerAttributesOfEntity(map,modelAttributesNode.getEntityId()+'[label]');
+                        if(p!== null) {
+                            p.done(function () {
+                                modelAttributesNode.registerYjsMap(map);
+                            });
+                        }else{
+                            modelAttributesNode.registerYjsMap(map);
+                        }
+                    });
+                } else {
+                    y.share.nodes.set('modelAttributes', Y.Map).then(function (map) {
+                        modelAttributesNode = EntityManager.createModelAttributesNodeFromJSON(json.attributes);
+                        canvas.setModelAttributesNode(modelAttributesNode);
+                        var p = registerAttributesOfEntity(map,modelAttributesNode.getEntityId()+'[label]');
+                        if(p!== null) {
+                            p.done(function () {
+                                modelAttributesNode.registerYjsMap(map);
+                            });
+                        }else{
+                            modelAttributesNode.registerYjsMap(map);
+                        }
+                    });
+
+                }
+            }
+
+            function createNode(nodeId,jsonNode){
+                var deferred = $.Deferred();
+                if(y.share.nodes.opContents.hasOwnProperty(nodeId)){
+                    y.share.nodes.get(nodeId).then(function(map){
+                        var node = EntityManager.createNodeFromJSON(jsonNode.type, nodeId, map.get('left'), map.get('top'), map.get('width'), map.get('height'), map.get('zIndex'), jsonNode);
+
+                        var p = registerAttributesOfEntity(map,node.getEntityId()+'[label]');
+                        if(p!== null) {
+                            p.done(function () {
+                                node.registerYjsMap(map);
+                                node.addToCanvas(canvas);
+                                node.draw();
+                                canvas.resetTool();
+                                deferred.resolve(nodeId);
+                            });
+                        }else{
+                            node.registerYjsMap(map);
+                            node.addToCanvas(canvas);
+                            node.draw();
+                            canvas.resetTool();
+                            deferred.resolve(nodeId);
+                        }
+
+                    })
+                }else{
+                    y.share.nodes.set(nodeId, Y.Map).then(function(map){
+                        var node = EntityManager.createNodeFromJSON(jsonNode.type, nodeId, jsonNode.left, jsonNode.top, jsonNode.width, jsonNode.height, jsonNode.zIndex, jsonNode);
+                        var p = registerAttributesOfEntity(map,node.getEntityId()+'[label]');
+
+                        map.set('left',  jsonNode.left);
+                        map.set('top', jsonNode.top);
+                        map.set('width', jsonNode.width);
+                        map.set('height',jsonNode.height);
+                        map.set('zIndex',jsonNode.zIndex);
+
+                        if(p!== null) {
+                            p.done(function () {
+                                node.registerYjsMap(map);
+                                node.addToCanvas(canvas);
+                                node.draw();
+                                canvas.resetTool();
+                                deferred.resolve(nodeId);
+                            });
+                        }else{
+                            node.registerYjsMap(map);
+                            node.addToCanvas(canvas);
+                            node.draw();
+                            canvas.resetTool();
+                            deferred.resolve(nodeId);
+                        }
+                    })
+                }
+                return deferred.promise();
+            }
+
+            var numberOfNodes = _.keys(json.nodes).length;
+            var createdNodes=0;
+            function createNodes(nodes){
+                var deferred = $.Deferred();
+                for(var nodeId in nodes){
+                    if(nodes.hasOwnProperty(nodeId)){
+                        createNode(nodeId, nodes[nodeId]).done(function(nId){
+                            createdNodes++;
+                            deferred.notify(createdNodes);
+                        });
+                    }
+                }
+                return deferred.promise();
+            }
+
+            createNodes(json.nodes).then(null, null, function(createdNodes){
+                if(createdNodes === numberOfNodes){
+                    for (edgeId in json.edges) {
+                        if (json.edges.hasOwnProperty(edgeId)) {
+                            var edge = EntityManager.createEdgeFromJSON(json.edges[edgeId].type, edgeId, json.edges[edgeId].source, json.edges[edgeId].target, json.edges[edgeId]);
+                            edge.addToCanvas(canvas);
+                            edge.connect();
+                            if(y){
+                                registerEntityToYjs("edges",edge);
+                            }
+                            canvas.resetTool();
+                        }
+                    }
+                }
+            });
+        }
 
         var $undo = $("#undo");
         var $redo = $("#redo");
+
         $undo.click(function () {
-            //TODO
             _iwcw.undo();
         }).prop('disabled', true);
 
         $redo.click(function () {
-            //TODO
             _iwcw.redo();
         }).prop('disabled', true);
 
-        //TODO
-        /*
-         _iwcw.registerOnHistoryChangedCallback(function (operation, length, position) {
-         $undo.prop('disabled', position == -1);
-         $redo.prop('disabled', position == length - 1);
-         });*/
 
         $("#q").draggable({
             axis: "y",
@@ -711,9 +823,6 @@ requirejs([
             }
         };
 
-        //_iwcw.registerOnHistoryChangedCallback(saveCallback);
-
-
         ViewManager.initViewList();
 
         //TODO
@@ -801,8 +910,6 @@ requirejs([
 
         //local user
         y.share.join.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],false);
-
-
 
 
         /*
