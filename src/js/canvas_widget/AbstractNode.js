@@ -1003,7 +1003,7 @@ define([
          */
         this.unselect = function(){
             _isSelected = false;
-            this.highlight(_highlightColor,_highlightUsername);
+             this.highlight(_highlightColor,_highlightUsername);
             _$node.removeClass("selected");
             Util.delay(100).then(function(){
                 _.each(require('canvas_widget/EntityManager').getEdges(),function(e){
@@ -1019,6 +1019,16 @@ define([
          */
         this.highlight = function(color,username){
             if(color && username){
+
+                //unhighlight everything else
+                $('.node').css({border: "2px solid transparent"});
+                $('.user_highlight').remove();
+
+                //Or
+
+
+
+
                 _$node.css({border: "2px solid " + color});
                 _$node.append($('<div></div>').addClass('user_highlight').css('color',color).text(username));
                 Util.delay(100).then(function(){_.each(require('canvas_widget/EntityManager').getEdges(),function(e){e.setZIndex();});});
@@ -1183,8 +1193,8 @@ define([
                         var offsetY = Math.round((ui.position.top - originalPos.top) / _canvas.getZoom());
                         var operation = new NodeMoveOperation(id,offsetX,offsetY,_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
                         if(_ymap){
-                            _ymap.set('top', _appearance.top + offsetX);
-                            _ymap.set('left',_appearance.left+offsetY);
+                            _ymap.set('top', _appearance.top + offsetY);
+                            _ymap.set('left',_appearance.left+offsetX);
                             _ymap.set(NodeMoveOperation.TYPE,operation.toJSON());
                         }
                         else {

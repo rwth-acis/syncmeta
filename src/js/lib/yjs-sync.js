@@ -1,4 +1,4 @@
-define(['jqueryui','yjs'],function ($) {
+define(['jqueryui','promise!Space','yjs'],function ($,space) {
     return function() {
         var deferred = $.Deferred();
         Y({
@@ -7,7 +7,7 @@ define(['jqueryui','yjs'],function ($) {
             },
             connector: {
                 name: 'websockets-client', // use the websockets connector
-                room: 'syncmetaroom123456'
+                room: space.title
             },
             share: { // specify the shared content
                 users:'Map',

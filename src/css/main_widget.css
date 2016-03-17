@@ -379,6 +379,7 @@ button[disabled=disabled], button:disabled {
     font-size: 12px;
     font-weight: bold;
     white-space: nowrap;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 
 .ghost-edge {

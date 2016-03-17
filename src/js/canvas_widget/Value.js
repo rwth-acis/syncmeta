@@ -387,10 +387,14 @@ define([
 
 
         this.registerYType = function(ytext){
-
-
             _ytext= ytext;
             _ytext.bind(_$node[0]);
+
+            if(that.getValue() !== _ytext.toString()){
+                if(_ytext.toString().length > 0)
+                    _ytext.delete(0, _ytext.toString().length);
+                _ytext.insert(0, that.getValue());
+            }
 
             _ytext.observe(function(events){
                 for(var i in events){

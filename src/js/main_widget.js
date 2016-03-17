@@ -51,7 +51,7 @@ requirejs([
     'promise!Metamodel',
     'promise!Model',
     'promise!Guidancemodel'
-],function($,jsPlumb,IWCW, yjsSync,Util,ToolSelectOperation,ActivityOperation,JoinOperation, ViewInitOperation, UpdateViewListOperation, DeleteViewOperation,SetViewTypesOperation, InitModelTypesOperation, SetModelAttributeNodeOperation, Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge, ViewObjectNode, ViewObjectNodeTool,ViewRelationshipNode, ViewRelationshipNodeTool, ViewManager, ViewGenerator,metamodel,model,guidancemodel,space) {
+],function($,jsPlumb,IWCW, yjsSync,Util,ToolSelectOperation,ActivityOperation,JoinOperation, ViewInitOperation, UpdateViewListOperation, DeleteViewOperation,SetViewTypesOperation, InitModelTypesOperation, SetModelAttributeNodeOperation, Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge, ViewObjectNode, ViewObjectNodeTool,ViewRelationshipNode, ViewRelationshipNodeTool, ViewManager, ViewGenerator,metamodel,model,guidancemodel) {
 
     var _iwcw;
     _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
@@ -87,6 +87,7 @@ requirejs([
                     //_iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
 
                     JSONtoGraph2(model);
+
                     if (canvas.getModelAttributesNode() === null) {
                         var modelAttributesNode = EntityManager.createModelAttributesNode();
                         canvas.setModelAttributesNode(modelAttributesNode);
@@ -496,6 +497,8 @@ requirejs([
             }
         };
 
+
+
         function JSONtoGraph(json) {
             var modelAttributesNode;
             var nodeId, edgeId;
@@ -538,6 +541,11 @@ requirejs([
         }
 
         function JSONtoGraph2(json){
+            function deleteAllNodes(){
+                for(var key in model.nodes){
+                    y.share.nodes.delete(key);
+                }
+            }
             var modelAttributesNode;
             if (json.attributes && !_.isEmpty(json.attributes)) {
                 if (y.share.nodes.opContents.hasOwnProperty('modelAttributes')) {
@@ -572,56 +580,66 @@ requirejs([
                 }
             }
 
+
+            function Callback(deferred,map, jsonNode,nodeId){
+                var node = EntityManager.createNodeFromJSON(
+                    jsonNode.type,
+                    nodeId,
+                    map.get('left')? map.get('left'): jsonNode.left,
+                    map.get('top') ? map.get('top'): jsonNode.top,
+                    map.get('width') ? map.get('width') : jsonNode.width,
+                    map.get('height') ? map.get('height') : jsonNode.height,
+                    map.get('zIndex') ? map.get('zIndex'): jsonNode.zIndex,
+                    jsonNode);
+
+                var p = registerAttributesOfEntity(map,node.getEntityId()+'[label]');
+
+                if(EntityManager.getLayer()===CONFIG.LAYER.META){
+                    if(jsonNode.type === "Edge Shape"){
+                        registerAttributesOfEntity(map,nodeId+'[color]');
+                        registerAttributesOfEntity(map,nodeId+'[overlay]');
+
+                    }else if(jsonNode.type === "Node Shape"){
+                        registerAttributesOfEntity(map,nodeId  +'[color]');
+                        registerAttributesOfEntity(map,nodeId+'[customAnchors]');
+                        registerAttributesOfEntity(map,nodeId+'[customShape]');
+                    }
+                }
+
+                if(p!== null) {
+                    p.done(function () {
+                        node.registerYjsMap(map);
+                        node.addToCanvas(canvas);
+                        node.draw();
+                        canvas.resetTool();
+                        deferred.resolve(nodeId);
+                    });
+                }else{
+                    node.registerYjsMap(map);
+                    node.addToCanvas(canvas);
+                    node.draw();
+                    canvas.resetTool();
+                    deferred.resolve(nodeId);
+                }
+
+            }
+
             function createNode(nodeId,jsonNode){
                 var deferred = $.Deferred();
                 if(y.share.nodes.opContents.hasOwnProperty(nodeId)){
                     y.share.nodes.get(nodeId).then(function(map){
-                        var node = EntityManager.createNodeFromJSON(jsonNode.type, nodeId, map.get('left'), map.get('top'), map.get('width'), map.get('height'), map.get('zIndex'), jsonNode);
-
-                        var p = registerAttributesOfEntity(map,node.getEntityId()+'[label]');
-                        if(p!== null) {
-                            p.done(function () {
-                                node.registerYjsMap(map);
-                                node.addToCanvas(canvas);
-                                node.draw();
-                                canvas.resetTool();
-                                deferred.resolve(nodeId);
-                            });
-                        }else{
-                            node.registerYjsMap(map);
-                            node.addToCanvas(canvas);
-                            node.draw();
-                            canvas.resetTool();
-                            deferred.resolve(nodeId);
-                        }
-
+                        Callback(deferred, map, jsonNode,nodeId);
                     })
                 }else{
                     y.share.nodes.set(nodeId, Y.Map).then(function(map){
-                        var node = EntityManager.createNodeFromJSON(jsonNode.type, nodeId, jsonNode.left, jsonNode.top, jsonNode.width, jsonNode.height, jsonNode.zIndex, jsonNode);
-                        var p = registerAttributesOfEntity(map,node.getEntityId()+'[label]');
 
                         map.set('left',  jsonNode.left);
                         map.set('top', jsonNode.top);
                         map.set('width', jsonNode.width);
                         map.set('height',jsonNode.height);
                         map.set('zIndex',jsonNode.zIndex);
+                        Callback(deferred,map,jsonNode,nodeId);
 
-                        if(p!== null) {
-                            p.done(function () {
-                                node.registerYjsMap(map);
-                                node.addToCanvas(canvas);
-                                node.draw();
-                                canvas.resetTool();
-                                deferred.resolve(nodeId);
-                            });
-                        }else{
-                            node.registerYjsMap(map);
-                            node.addToCanvas(canvas);
-                            node.draw();
-                            canvas.resetTool();
-                            deferred.resolve(nodeId);
-                        }
                     })
                 }
                 return deferred.promise();
