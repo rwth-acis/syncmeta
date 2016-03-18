@@ -218,6 +218,30 @@ define([
             };
 
             init();
+
+            this.registerYjsMap = function(map){
+                AbstractNode.prototype.registerYjsMap.call(this,map);
+                var registerYText = function(ymap, val){
+                    ymap.get(val.getEntityId()).then(function(ytext){
+                        val.registerYType(ytext);
+                    });
+                };
+                var attr = that.getAttributes();
+                for(var key in attr){
+                    if(attr.hasOwnProperty(key)){
+                        var val = attr[key].getValue();
+                        if(val.hasOwnProperty('registerYType')){
+                            if(val.constructor.name !== "Value" ){
+                                val.registerYType();
+                            }
+                            else{
+                                registerYText(map,val);
+                            }
+                        }
+                    }
+                }
+
+            }
         }
 
         /**
@@ -236,6 +260,10 @@ define([
          */
         Node.getAnchors = function(){
             return anchors;
+        };
+
+        Node.getAttributes = function(){
+            return attributes;
         };
 
         return Node;

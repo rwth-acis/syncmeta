@@ -35,6 +35,7 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
 
     Canvas.prototype = new AbstractCanvas();
     Canvas.prototype.constructor = Canvas;
+
     /**
      * Canvas
      * @class canvas_widget.Canvas
@@ -139,11 +140,11 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
             } else {
                 node = EntityManager.createNode(operation.getType(), operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex());
             }
-
             if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()){
                 var color = _iwcw.getUserColor(operation.getJabberId());
                 node.refreshTraceAwareness(color);
             }
+
             if(y){
                 y.share.nodes.get(node.getEntityId()).then(function(map){
                     node.registerYjsMap(map);
@@ -151,7 +152,7 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                     node.draw();
                     node.addToCanvas(that);
                     that.remountCurrentTool();
-                })
+                });
             }
             else {
                 node.draw();
@@ -943,8 +944,9 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
             map.set(id, yType).then(function(){
                 deferred.resolve();
             });
-            deferred.promise();
+            return deferred.promise();
         };
+
         /**
          * Create a new node and draw it on the canvas
          * @param {string} type Type of node
@@ -979,27 +981,47 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                     map.set('height',height);
                     map.set('zIndex', zIndex);
 
-                    map.set(id+"[label]", Y.Text).then(function(){
-                        if(type === 'Node Shape' && EntityManager.getLayer() === CONFIG.LAYER.META){
-                            var attrColorPromise = createYTypeForValueOfAttribute(map, id+"[color]", Y.Text);
-                            var attrAnchorsPromise = createYTypeForValueOfAttribute(map, id+"[customAnchors]", Y.Text);
-                            var attrCustomShapePromise = createYTypeForValueOfAttribute(map, id+"[customShape]", Y.Text);
-                            $.when(attrColorPromise, attrAnchorsPromise,attrCustomShapePromise).done(function(){
-                                y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
-                            });
-                        }
-                        else if(type === 'Edge Shape' && EntityManager.getLayer() === CONFIG.LAYER.META){
-                            var attrColorPromise = createYTypeForValueOfAttribute(map, id+"[color]", Y.Text);
-                            var attrOverlayPromise = createYTypeForValueOfAttribute(map, id+"[overlay]", Y.Text);
+                    if(EntityManager.getLayer() === CONFIG.LAYER.META) {
+                        map.set(id + "[label]", Y.Text).then(function () {
+                            if (type === 'Node Shape') {
+                                var attrColorPromise = createYTypeForValueOfAttribute(map, id + "[color]", Y.Text);
+                                var attrAnchorsPromise = createYTypeForValueOfAttribute(map, id + "[customAnchors]", Y.Text);
+                                var attrCustomShapePromise = createYTypeForValueOfAttribute(map, id + "[customShape]", Y.Text);
+                                $.when(attrColorPromise, attrAnchorsPromise, attrCustomShapePromise).done(function () {
+                                    y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
+                                });
+                            }
+                            else if (type === 'Edge Shape') {
+                                var attrColorPromise = createYTypeForValueOfAttribute(map, id + "[color]", Y.Text);
+                                var attrOverlayPromise = createYTypeForValueOfAttribute(map, id + "[overlay]", Y.Text);
 
-                            $.when(attrColorPromise, attrOverlayPromise).done(function(){
+                                $.when(attrColorPromise, attrOverlayPromise).done(function () {
+                                    y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
+                                });
+                            }
+                            else {
+                                y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
+                            }
+                        });
+                    }
+                    else{
+                        var attributes = EntityManager.getNodeType(type).getAttributes();
+                        var attrPromises = [];
+                        for(var attrKey in attributes){
+                            if(attributes.hasOwnProperty(attrKey)&& attributes[attrKey].value === 'string'){
+                                var attrId =  id+'['+attributes[attrKey].key+']';
+                                attrPromises.push(createYTypeForValueOfAttribute(map,attrId, Y.Text));
+                            }
+                        }
+                        if(attrPromises.length > 0) {
+                            $.when.apply(null, attrPromises).done(function () {
                                 y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
                             });
                         }
                         else {
                             y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
                         }
-                    });
+                    }
                 })
             }else {
                 propagateNodeAddOperation(operation);

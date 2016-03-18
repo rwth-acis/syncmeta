@@ -71,6 +71,13 @@ define([
             return json;
         };
 
+        this.registerYjsMap = function(map){
+            AbstractNode.prototype.registerYjsMap.call(this,map);
+            map.get(that.getLabel().getValue().getEntityId()).then(function(ytext){
+                that.getLabel().getValue().registerYType(ytext);
+            });
+        };
+
         _$node.find(".label").append(this.getLabel().get$node());
 
         for(var attributeKey in _attributes){

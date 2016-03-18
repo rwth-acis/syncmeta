@@ -158,11 +158,6 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                 _nodeTypes[node.label].TYPE = node.label;
                 _nodeTypes[node.label].DEFAULT_WIDTH = node.shape.defaultWidth;
                 _nodeTypes[node.label].DEFAULT_HEIGHT = node.shape.defaultHeight;
-
-
-
-
-
                 _nodeTypes[node.label].SHAPE = $shape;
                 /*
                  nodeTypes[node.label] = Node(node.label, $shape, anchors, node.attributes, node.jsplumb);

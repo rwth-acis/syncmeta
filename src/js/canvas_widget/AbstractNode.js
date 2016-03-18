@@ -1298,10 +1298,6 @@ define([
         };
 
         this._registerYjsMap = function(ymap) {
-            ymap.get(that.getEntityId()+'[label]').then(function(ytext){
-                _label.registerYType(ytext);
-            });
-
             _ymap = ymap;
             _ymap.observe(function (events) {
                 var triggerSave = false;

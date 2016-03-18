@@ -738,11 +738,10 @@ define([
         this.getYMap = function(){
             return _ymap;
         };
-        this.registerYjsMap = function(ymap) {
+        this._registerYjsMap = function(ymap) {
             _ymap =ymap;
             _ymap.get(that.getEntityId()+'[label]').then(function(ytext){
                 _label.registerYType(ytext);
-
             });
             _ymap.observe(function (events) {
                 for (var i in events) {
@@ -790,6 +789,10 @@ define([
     AbstractEdge.prototype.show = function(){
         var connector = this.getJsPlumbConnection();
         connector.setVisible(true);
+    };
+
+    AbstractEdge.prototype.registerYjsMap = function(map){
+        this._registerYjsMap(map);
     };
 
     return AbstractEdge;

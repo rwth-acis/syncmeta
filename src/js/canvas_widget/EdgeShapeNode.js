@@ -90,6 +90,10 @@ define([
         this.registerYjsMap = function(map){
             AbstractNode.prototype.registerYjsMap.call(this,map);
 
+            map.get(that.getLabel().getValue().getEntityId()).then(function(ytext){
+                that.getLabel().getValue().registerYType(ytext);
+            });
+
             attrArrow.getValue().registerYType();
             attrShape.getValue().registerYType();
 

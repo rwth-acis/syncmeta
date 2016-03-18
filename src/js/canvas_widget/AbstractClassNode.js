@@ -77,7 +77,11 @@ define([
 
         this.registerYjsMap = function(map){
             AbstractNode.prototype.registerYjsMap.call(this,map);
+            map.get(that.getLabel().getValue().getEntityId()).then(function(ytext){
+                that.getLabel().getValue().registerYType(ytext);
+            });
             attr.registerYjsMap(map);
+
 
         };
 
