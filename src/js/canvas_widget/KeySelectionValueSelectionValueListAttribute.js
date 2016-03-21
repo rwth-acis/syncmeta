@@ -45,7 +45,7 @@ define([
          * @private
          */
         var _options2 = options2;
-        
+
         /**
          * List of attributes
          * @type {Object}
@@ -315,16 +315,27 @@ define([
             that.registerCallbacks();
         }
 
-        this.registerYjsMap = function(map){
-            map.observe(function(events){
-                for (var i in events) {
-                    console.log("Yjs log: The following event-type was thrown: " + events[i].type);
-                    console.log("Yjs log: The event was executed on: " + events[i].name);
-                    console.log("Yjs log: The event object has more information:");
-                    console.log(events[i]);
+        this.registerYjsMap = function(){
 
+            function registerAttribute(attr,ymap){
+                ymap.get(attr.getKey().getEntityId()).then(function(ytext){
+                    attr.registerYType(ytext);
+                });
+            }
+
+            var ymap = that.getRootSubjectEntity().getYMap();
+            var attrs = that.getAttributes();
+            for(var key in attrs){
+                if(attrs.hasOwnProperty(key)){
+                    var attr = attrs[key];
+                    registerAttribute(attr,ymap);
+                }
+            }
+
+            ymap.observe(function(events){
+                for (var i in events) {
                     var operation;
-                    var data = map.get(events[i].name);
+                    var data = ymap.get(events[i].name);
                     switch (events[i].name) {
                         case AttributeAddOperation.TYPE:
                         {

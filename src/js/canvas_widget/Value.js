@@ -399,19 +399,19 @@ define([
             _ytext.observe(function(events){
                 for(var i in events){
                     var event = events[i];
-                    //TODO i can not find out who triggered the delete
+                    //TODO i can not find out who triggered the delete :(
                     //var jabberId = y.share.users.get(JSON.parse(event.object.idArray[event.index])[0]);
                     var operation = new ValueChangeOperation(that.getEntityId(), event.value, event.type, event.index);
 
                     //if(jabberId !== _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]) {
                         _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
                     //}
-
+                    _value = _ytext.toString();
                     _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
                         "ValueChangeActivity",
                         that.getEntityId(),
                         //TODO
-                        null,
+                        jabberId,
                         ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(), that.getRootSubjectEntity().getType(), that.getRootSubjectEntity().getLabel().getValue().getValue()),
                         {
                             value: '',

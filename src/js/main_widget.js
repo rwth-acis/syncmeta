@@ -461,40 +461,48 @@ requirejs([
             return deferred.promise();
         };
         function JSONtoGraph2(json){
-            /*TODO rework model Attributes Node for Meta und modeling layer
-             var modelAttributesNode;
-             if (json.attributes && !_.isEmpty(json.attributes)) {
-             if (y.share.nodes.opContents.hasOwnProperty('modelAttributes')) {
-             y.share.nodes.get('modelAttributes').then(function (map) {
-             modelAttributesNode = EntityManager.createModelAttributesNodeFromJSON(json.attributes);
-             canvas.setModelAttributesNode(modelAttributesNode);
-             modelAttributesNode.addToCanvas(canvas);
+            function createModelAttributeCallback(map){
+                var promises = [];
+                var modelAttributesNode = EntityManager.createModelAttributesNodeFromJSON(json.attributes);
 
-             var p = registerAttributesOfEntity(map,modelAttributesNode.getEntityId()+'[label]');
-             if(p!== null) {
-             p.done(function () {
-             modelAttributesNode.registerYjsMap(map);
-             });
-             }else{
-             modelAttributesNode.registerYjsMap(map);
-             }
-             });
-             } else {
-             y.share.nodes.set('modelAttributes', Y.Map).then(function (map) {
-             modelAttributesNode = EntityManager.createModelAttributesNodeFromJSON(json.attributes);
-             canvas.setModelAttributesNode(modelAttributesNode);
-             var p = registerAttributesOfEntity(map,modelAttributesNode.getEntityId()+'[label]');
-             if(p!== null) {
-             p.done(function () {
-             modelAttributesNode.registerYjsMap(map);
-             });
-             }else{
-             modelAttributesNode.registerYjsMap(map);
-             }
-             });
 
-             }
-             }*/
+                var attrs = modelAttributesNode.getAttributes();
+                for(var key in attrs){
+                    if(attrs.hasOwnProperty(key)){
+                        var val = attrs[key].getValue();
+                        if(val.constructor.name === "Value" || val.constructor.name === "MultiLineValue"){
+                            promises.push(createYTextAttribute(map,val));
+                        }
+                    }
+                }
+
+
+                if(promises.length >0) {
+                    $.when.apply(null, promises).done(function () {
+                        modelAttributesNode.registerYMap(map);
+                        canvas.setModelAttributesNode(modelAttributesNode);
+                        modelAttributesNode.addToCanvas(canvas);
+                    });
+                }else{
+                    modelAttributesNode.registerYMap(map);
+                    canvas.setModelAttributesNode(modelAttributesNode);
+                    modelAttributesNode.addToCanvas(canvas);
+                }
+
+            }
+
+            if (json.attributes && !_.isEmpty(json.attributes)) {
+                if (y.share.nodes.opContents.hasOwnProperty('modelAttributes')) {
+                    y.share.nodes.get('modelAttributes').then(function (map) {
+                        createModelAttributeCallback(map);
+                    });
+                } else {
+                    y.share.nodes.set('modelAttributes', Y.Map).then(function (map) {
+                        createModelAttributeCallback(map);
+                    });
+
+                }
+            }
 
 
             function createNodeCallback(deferred,map, jsonNode,nodeId){
@@ -510,6 +518,7 @@ requirejs([
 
 
                 var promises = [];
+                var attrs, attr;
                 if(EntityManager.getLayer()===CONFIG.LAYER.META){
                     promises.push(createYTextAttribute(map,node.getLabel()));
                     if(jsonNode.type === "Edge Shape"){
@@ -521,9 +530,27 @@ requirejs([
                         promises.push(createYTextAttribute(map,node.getAttribute(nodeId+'[customAnchors]')));
                         promises.push(createYTextAttribute(map,node.getAttribute(nodeId+'[customShape]')));
                     }
+                    else if(jsonNode.type === 'Object' || jsonNode.type === 'Relationship' || jsonNode.type === 'Abstract Class'){
+                        attrs = node.getAttribute('[attributes]').getAttributes();
+                        for(var attrKey in attrs){
+                            if(attrs.hasOwnProperty(attrKey)) {
+                                attr = attrs[attrKey];
+                                promises.push(createYTextAttribute(map, attr.getKey()));
+                            }
+                        }
+                    }
+                    else if(jsonNode.type==='Enumeration'){
+                        attrs = node.getAttribute('[attributes]').getAttributes();
+                        for(var attrKey2 in attrs){
+                            if(attrs.hasOwnProperty(attrKey2)) {
+                                attr = attrs[attrKey2];
+                                promises.push(createYTextAttribute(map, attr.getValue()));
+                            }
+                        }
+                    }
                 }
                 else{
-                    var attrs = node.getAttributes();
+                    attrs = node.getAttributes();
                     for(var key in attrs){
                         if(attrs.hasOwnProperty(key)){
                             var val = attrs[key].getValue();
@@ -550,8 +577,8 @@ requirejs([
                     canvas.resetTool();
                     deferred.resolve(nodeId);
                 }
-
             }
+
             function createNode(nodeId,jsonNode){
                 var deferred = $.Deferred();
                 if(y.share.nodes.opContents.hasOwnProperty(nodeId)){
@@ -580,7 +607,7 @@ requirejs([
                 var deferred = $.Deferred();
                 for(var nodeId in nodes){
                     if(nodes.hasOwnProperty(nodeId)){
-                        createNode(nodeId, nodes[nodeId]).done(function(nId){
+                        createNode(nodeId, nodes[nodeId]).done(function(){
                             createdNodes++;
                             deferred.notify(createdNodes);
                         });

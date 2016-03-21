@@ -26,7 +26,7 @@ define([
      * @param {object} [attr] model attributes
      */
     function ModelAttributesNode(id,attr){
-
+        var that = this;
         AbstractNode.call(this,id,ModelAttributesNode.TYPE,0,0,0,0,0);
 
         /**
@@ -107,6 +107,26 @@ define([
             }
         }
 
+        this.registerYMap = function(map) {
+            function registerAttribute(attr){
+                that.getYMap().get(attr.getValue().getEntityId()).then(function(ytext){
+                    attr.getValue().registerYType(ytext);
+                })
+            }
+
+            AbstractNode.prototype.registerYjsMap.call(this, map);
+            var attrs = this.getAttributes();
+            for(var key in attrs){
+                if(attrs.hasOwnProperty(key)){
+                    var attr = attrs[key];
+                    if(attr instanceof SingleValueAttribute || attr instanceof SingleMultiLineValueAttribute){
+                        registerAttribute(attr);
+                    }else if(!(attr instanceof FileAttribute)){
+                        attr.getValue().registerYType();
+                    }
+                }
+            }
+        };
     }
 
     return ModelAttributesNode;
