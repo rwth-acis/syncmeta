@@ -7,8 +7,9 @@ define([
     'canvas_widget/AbstractAttribute',
     'operations/ot/ValueChangeOperation',
     'operations/non_ot/ActivityOperation',
+    'operations/non_ot/BindYTextOperation',
     'text!templates/canvas_widget/value.html'
-],/** @lends Value */function($,jsPlumb,_,IWCW,AbstractValue,AbstractAttribute,ValueChangeOperation,ActivityOperation,valueHtml) {
+],/** @lends Value */function($,jsPlumb,_,IWCW,AbstractValue,AbstractAttribute,ValueChangeOperation,ActivityOperation,BindYTextOperation,valueHtml) {
 
     Value.prototype = new AbstractValue();
     Value.prototype.constructor = Value;
@@ -395,23 +396,25 @@ define([
                     _ytext.delete(0, _ytext.toString().length);
                 _ytext.insert(0, that.getValue());
             }
+            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new BindYTextOperation(that.getEntityId()).toNonOTOperation());
 
             _ytext.observe(function(events){
                 for(var i in events){
                     var event = events[i];
                     //TODO i can not find out who triggered the delete :(
                     //var jabberId = y.share.users.get(JSON.parse(event.object.idArray[event.index])[0]);
-                    var operation = new ValueChangeOperation(that.getEntityId(), event.value, event.type, event.index);
 
-                    //if(jabberId !== _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]) {
-                        _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
-                    //}
+                    //No longer needed. the attribute widgets has his own Yjs instance
+                    //var operation = new ValueChangeOperation(that.getEntityId(), event.value, event.type, event.index);
+                    //_iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
+
+
                     _value = _ytext.toString();
                     _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
                         "ValueChangeActivity",
                         that.getEntityId(),
                         //TODO
-                        jabberId,
+                        null,
                         ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(), that.getRootSubjectEntity().getType(), that.getRootSubjectEntity().getLabel().getValue().getValue()),
                         {
                             value: '',

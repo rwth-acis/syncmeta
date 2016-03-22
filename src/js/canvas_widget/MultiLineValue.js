@@ -7,8 +7,9 @@ define([
     'canvas_widget/AbstractAttribute',
     'operations/ot/ValueChangeOperation',
     'operations/non_ot/ActivityOperation',
+    'operations/non_ot/BindYTextOperation',
     'text!templates/canvas_widget/multi_line_value.html'
-],/** @lends MultiLineValue */function($,jsPlumb,_,IWCW,AbstractValue,AbstractAttribute,ValueChangeOperation,ActivityOperation,multiLineValueHtml) {
+],/** @lends MultiLineValue */function($,jsPlumb,_,IWCW,AbstractValue,AbstractAttribute,ValueChangeOperation,ActivityOperation,BindYTextOperation,multiLineValueHtml) {
 
     MultiLineValue.prototype = new AbstractValue();
     MultiLineValue.prototype.constructor = MultiLineValue;
@@ -25,6 +26,8 @@ define([
      */
     function MultiLineValue(id,name,subjectEntity,rootSubjectEntity){
         var that = this;
+
+        var _ytext= null;
 
         AbstractValue.call(this,id,name,subjectEntity,rootSubjectEntity);
 
@@ -325,13 +328,46 @@ define([
             //_iwcw.unregisterOnHistoryChangedCallback(historyValueChangeCallback);
         };
 
-        this.registerYType = function(){
-            //observer
-            that.getRootSubjectEntity().getYMap().observePath([that.getEntityId()],function(events) {
-                if(events)
-                    remoteValueChangeCallback(new ValueChangeOperation(events.entityId, events.value, events.type, events.position));
+        this.registerYType = function(ytext){
+            _ytext= ytext;
+            _ytext.bind(_$node[0]);
+
+            if(that.getValue() !== _ytext.toString()){
+                if(_ytext.toString().length > 0)
+                    _ytext.delete(0, _ytext.toString().length);
+                _ytext.insert(0, that.getValue());
+            }
+            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new BindYTextOperation(that.getEntityId()).toNonOTOperation());
+
+            _ytext.observe(function(events){
+                for(var i in events){
+                    var event = events[i];
+                    //TODO i can not find out who triggered the delete :(
+                    //var jabberId = y.share.users.get(JSON.parse(event.object.idArray[event.index])[0]);
+
+                    //No longer needed. the attribute widgets has his own Yjs instance
+                    //var operation = new ValueChangeOperation(that.getEntityId(), event.value, event.type, event.index);
+                    //_iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
+
+
+                    _value = _ytext.toString();
+                    _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
+                        "ValueChangeActivity",
+                        that.getEntityId(),
+                        //TODO
+                        null,
+                        ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(), that.getRootSubjectEntity().getType(), that.getRootSubjectEntity().getLabel().getValue().getValue()),
+                        {
+                            value: '',
+                            subjectEntityName: that.getSubjectEntity().getName(),
+                            rootSubjectEntityType: that.getRootSubjectEntity().getType(),
+                            rootSubjectEntityId: that.getRootSubjectEntity().getEntityId()
+                        }
+                    ).toNonOTOperation());
+                }
             });
         };
+
 
         init();
 

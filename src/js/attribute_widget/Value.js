@@ -5,8 +5,9 @@ define([
     'iwcw',
     'attribute_widget/AbstractValue',
     'operations/ot/ValueChangeOperation',
+    'operations/non_ot/BindYTextOperation',
     'text!templates/attribute_widget/value.html'
-],/** @lends Value */function($,jsPlumb,_,IWCW,AbstractValue,ValueChangeOperation,valueHtml) {
+],/** @lends Value */function($,jsPlumb,_,IWCW,AbstractValue,ValueChangeOperation,BindYTextOperation,valueHtml) {
 
     Value.prototype = new AbstractValue();
     Value.prototype.constructor = Value;
@@ -277,6 +278,7 @@ define([
          */
         this.registerCallbacks = function(){
             iwc.registerOnDataReceivedCallback(valueChangeCallback);
+            iwc.registerOnDataReceivedCallback(bindYTextCallback);
         };
 
         /**
@@ -284,7 +286,29 @@ define([
          */
         this.unregisterCallbacks = function(){
             iwc.unregisterOnDataReceivedCallback(valueChangeCallback);
+            iwc.unregisterOnDataReceivedCallback(bindYTextCallback);
+
         };
+
+        function bindYTextCallback(operation) {
+            if (operation instanceof BindYTextOperation && operation.getEntityId() === that.getEntityId()) {
+                var entityId= that.getRootSubjectEntity().getEntityId();
+                if(y.share.nodes.opContents.hasOwnProperty(entityId)){
+                    y.share.nodes.get(entityId).then(function(ymap){
+                        ymap.get(operation.getEntityId()).then(function(ytext){
+                            ytext.bind(_$node[0]);
+                        })
+                    })
+                }
+                else if(y.share.edges.opContents.hasOwnProperty(entityId)){
+                    y.share.edges.get(entityId).then(function(ymap){
+                        ymap.get(operation.getEntityId()).then(function(ytext){
+                            ytext.bind(_$node[0]);
+                        })
+                    })
+                }
+            }
+        }
 
         init();
     }

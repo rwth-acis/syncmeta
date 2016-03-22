@@ -32,9 +32,10 @@ define([
     'operations/non_ot/RevokeSharedActivityOperation',
     'operations/non_ot/CollaborateInActivityOperation',
     'operations/non_ot/MoveCanvasOperation',
-    'operations/non_ot/GuidanceStrategyOperation'
+    'operations/non_ot/GuidanceStrategyOperation',
+    'operations/non_ot/BindYTextOperation'
 
-],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeMoveZOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,JoinOperation,SetViewTypesOperation,InitModelTypesOperation,ViewInitOperation,PerformCvgOperation,DeleteCvgOperation,DeleteViewOperation,SetModelAttributeNodeOperation,UpdateViewListOperation,ShowGuidanceBoxOperation, CanvasViewChangeOperation, RevokeSharedActivityOperation,CollaborateInActivityOperation, MoveCanvasOperation, GuidanceStrategyOperation) {
+],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeMoveZOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,JoinOperation,SetViewTypesOperation,InitModelTypesOperation,ViewInitOperation,PerformCvgOperation,DeleteCvgOperation,DeleteViewOperation,SetModelAttributeNodeOperation,UpdateViewListOperation,ShowGuidanceBoxOperation, CanvasViewChangeOperation, RevokeSharedActivityOperation,CollaborateInActivityOperation, MoveCanvasOperation, GuidanceStrategyOperation,BindYTextOperation) {
 
     /**
      * OperationFactory
@@ -104,7 +105,6 @@ define([
                         break;
                     case DeleteViewOperation.TYPE:
                         resOperation = new DeleteViewOperation(data.viewId);
-
                     case ShowGuidanceBoxOperation.TYPE:
                         resOperation = new ShowGuidanceBoxOperation(data.label, data.guidance, data.entityId);
                         break;
@@ -128,6 +128,10 @@ define([
                         break;
                     case GuidanceStrategyOperation.TYPE:
                         resOperation = new GuidanceStrategyOperation(data.data);
+                        resOperation.setNonOTOperation(operation);
+                        break;
+                    case BindYTextOperation.TYPE:
+                        resOperation = new BindYTextOperation(data.entityId);
                         resOperation.setNonOTOperation(operation);
                         break;
                 }

@@ -491,6 +491,7 @@ requirejs([
 
             }
 
+
             if (json.attributes && !_.isEmpty(json.attributes)) {
                 if (y.share.nodes.opContents.hasOwnProperty('modelAttributes')) {
                     y.share.nodes.get('modelAttributes').then(function (map) {

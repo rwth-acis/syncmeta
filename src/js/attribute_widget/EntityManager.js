@@ -82,8 +82,6 @@ define(['lodash',
         }
     };
 
-
-
 	if (metamodel && metamodel.hasOwnProperty("nodes")) {
 		nodeTypes = _initNodeTypes(metamodel);
         _layer = CONFIG.LAYER.MODEL;
@@ -102,8 +100,6 @@ define(['lodash',
 		nodeTypes[ViewObjectNode.TYPE] = ViewObjectNode;
 		nodeTypes[ViewRelationshipNode.TYPE] = ViewRelationshipNode;
 	}
-
-
 
 	if (metamodel && metamodel.hasOwnProperty("edges")) {
 		var res = _initEdgeTypes(metamodel);
