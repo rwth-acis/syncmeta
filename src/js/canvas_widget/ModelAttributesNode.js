@@ -114,7 +114,7 @@ define([
                 })
             }
 
-            AbstractNode.prototype.registerYjsMap.call(this, map);
+            AbstractNode.prototype.registerYMap.call(this, map);
             var attrs = this.getAttributes();
             for(var key in attrs){
                 if(attrs.hasOwnProperty(key)){

@@ -73,11 +73,12 @@ define([
         var attr= new SingleValueListAttribute("[attributes]","Attributes",this);
         this.addAttribute(attr);
 
-        this.registerYjsMap = function(map){
-            AbstractNode.prototype.registerYjsMap.call(this,map);
-            attr.registerYjsMap(map);
-
+        this.registerYMap = function(map,disableYText){
+            AbstractNode.prototype.registerYMap.call(this,map);
+            if(!disableYText)
+                attr.registerYMap(map,disableYText);
         };
+
 
         _$node.find(".label").append(this.getLabel().get$node());
 

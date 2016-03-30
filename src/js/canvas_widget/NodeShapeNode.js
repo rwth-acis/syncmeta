@@ -97,15 +97,20 @@ define([
 
 
 
-        this.registerYjsMap = function(map){
-            AbstractNode.prototype.registerYjsMap.call(this,map);
-            map.get(that.getLabel().getValue().getEntityId()).then(function(ytext){
-                that.getLabel().getValue().registerYType(ytext);
-            });
+        this.registerYMap = function(map,disableYText){
+            AbstractNode.prototype.registerYMap.call(this,map);
+
             attrShapeSelect.getValue().registerYType();
             attrWidth.getValue().registerYType();
             attrHeight.getValue().registerYType();
+            if(!disableYText)
+                registerYTextAttributes(map);
 
+        };
+        var registerYTextAttributes = function(map) {
+            map.get(that.getLabel().getValue().getEntityId()).then(function(ytext){
+                that.getLabel().getValue().registerYType(ytext);
+            });
             map.get(that.getEntityId()+"[color]").then(function(ytext){
                 attrColor.getValue().registerYType(ytext);
             });
@@ -117,7 +122,7 @@ define([
             });
         }
 
-    }
+        }
 
     return NodeShapeNode;
 

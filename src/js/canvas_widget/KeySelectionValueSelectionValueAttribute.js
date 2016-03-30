@@ -42,7 +42,7 @@ define([
          * @private
          */
         var _options2 = options2;
-        
+
         /**
          * Value object of key
          * @type {canvas_widget.Value}
@@ -151,7 +151,8 @@ define([
         };
 
         this.registerYType = function(ytext){
-            _key.registerYType(ytext);
+            if(ytext)
+                _key.registerYType(ytext);
             _value.registerYType();
             _value2.registerYType();
         };

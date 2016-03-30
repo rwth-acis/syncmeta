@@ -299,19 +299,21 @@ define([
         if(_iwcw){
             that.registerCallbacks();
         }
-        this.registerYjsMap = function(){
+        this.registerYMap = function(disableYText){
             var ymap = that.getRootSubjectEntity().getYMap();
+            if(!disableYText) {
+                function registerAttribute(attr, ymap) {
+                    ymap.get(attr.getValue().getEntityId()).then(function (ytext) {
+                        attr.registerYType(ytext);
+                    });
+                }
 
-            function registerAttribute(attr,ymap){
-                ymap.get(attr.getValue().getEntityId()).then(function(ytext){
-                    attr.registerYType(ytext);
-                });
-            }
-            var attrs = that.getAttributes();
-            for(var key in attrs){
-                if(attrs.hasOwnProperty(key)){
-                    var attr = attrs[key];
-                    registerAttribute(attr,ymap);
+                var attrs = that.getAttributes();
+                for (var key in attrs) {
+                    if (attrs.hasOwnProperty(key)) {
+                        var attr = attrs[key];
+                        registerAttribute(attr, ymap);
+                    }
                 }
             }
 

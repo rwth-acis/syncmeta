@@ -27,7 +27,7 @@ define([
      * @param {Object} options Selection options
      * @param {Object} options2 Selection options
      */
-    function KeySelectionValueSelectionValueListAttribute(id,name,subjectEntity,options,options2){
+    function KeySelectionValueSelectionValueListAttribute(id,name,subjectEntity,options,options2) {
         var that = this;
 
         AbstractAttribute.call(this,id,name,subjectEntity);
@@ -315,30 +315,33 @@ define([
             that.registerCallbacks();
         }
 
-        this.registerYjsMap = function(){
+        this.registerYMap = function(disableYText){
+            var ymap = that.getRootSubjectEntity().getYMap();
 
-            function registerAttribute(attr,ymap){
-                ymap.get(attr.getKey().getEntityId()).then(function(ytext){
-                    attr.registerYType(ytext);
-                });
+            function registerAttribute(attr, ymap, disableYText) {
+                if(!disableYText)
+                    ymap.get(attr.getKey().getEntityId()).then(function (ytext) {
+                        attr.registerYType(ytext);
+                    });
+                else
+                    attr.registerYType(null);
             }
 
-            var ymap = that.getRootSubjectEntity().getYMap();
             var attrs = that.getAttributes();
-            for(var key in attrs){
-                if(attrs.hasOwnProperty(key)){
+            for (var key in attrs) {
+                if (attrs.hasOwnProperty(key)) {
                     var attr = attrs[key];
-                    registerAttribute(attr,ymap);
+                    registerAttribute(attr, ymap, disableYText);
                 }
             }
+
 
             ymap.observe(function(events){
                 for (var i in events) {
                     var operation;
                     var data = ymap.get(events[i].name);
                     switch (events[i].name) {
-                        case AttributeAddOperation.TYPE:
-                        {
+                        case AttributeAddOperation.TYPE:{
                             operation = new AttributeAddOperation(data.entityId, data.subjectEntityId, data.rootSubjectEntityId,data.type);
                             remoteAttributeAddCallback(operation);
                             break;

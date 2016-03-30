@@ -184,9 +184,7 @@ define([
                     that.propagateValueChange(CONFIG.OPERATION.TYPE.INSERT,addedString[i],left+i);
                 }
             });
-            if(iwc){
-                that.registerCallbacks();
-            }
+
         };
 
         //noinspection JSUnusedLocalSymbols
@@ -297,6 +295,11 @@ define([
                     y.share.nodes.get(entityId).then(function(ymap){
                         ymap.get(operation.getEntityId()).then(function(ytext){
                             ytext.bind(_$node[0]);
+                            if(that.getValue() !== ytext.toString()){
+                                if(ytext.toString().length > 0)
+                                    ytext.delete(0, ytext.toString().length-1);
+                                ytext.insert(0, that.getValue());
+                            }
                         })
                     })
                 }
@@ -304,13 +307,21 @@ define([
                     y.share.edges.get(entityId).then(function(ymap){
                         ymap.get(operation.getEntityId()).then(function(ytext){
                             ytext.bind(_$node[0]);
+                            if(that.getValue() !== ytext.toString()){
+                                if(ytext.toString().length > 0)
+                                    ytext.delete(0, ytext.toString().length-1);
+                                ytext.insert(0, that.getValue());
+                            }
                         })
                     })
                 }
             }
         }
 
-        init();
+        //init();
+        if(iwc){
+            that.registerCallbacks();
+        }
     }
 
     return Value;

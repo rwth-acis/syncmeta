@@ -450,15 +450,29 @@ requirejs([
 
         //-------------------------------------------------------------
         var createYTextAttribute = function(map,val){
-            var deferred = $.Deferred();
+            //var deferred = $.Deferred();
             var promise = map.get(val.getEntityId());
             if(promise === undefined){
-                map.set(val.getEntityId(), Y.Text).then(function(){
-                    deferred.resolve();
+                map.set(val.getEntityId(), Y.Text).then(function(ytext){
+                    if(!val.hasOwnProperty('registerYType'))
+                        val.getValue().registerYType(ytext);
+                    else
+                        val.registerYType(ytext);
+                    //deferred.resolve();
                 });
             }
-            else deferred.resolve();
-            return deferred.promise();
+            else {
+                map.get(val.getEntityId()).then(function(ytext){
+                    if(!val.hasOwnProperty('registerYType'))
+                        val.getValue().registerYType(ytext);
+                    else
+                        val.registerYType(ytext);
+
+                    //deferred.resolve();
+
+                })
+            }
+            //return deferred.promise();
         };
         function JSONtoGraph2(json){
             function createModelAttributeCallback(map){
@@ -492,7 +506,7 @@ requirejs([
             }
 
 
-            if (json.attributes && !_.isEmpty(json.attributes)) {
+            if (json.attributes && !_.isEmpty(json.attributes))     {
                 if (y.share.nodes.opContents.hasOwnProperty('modelAttributes')) {
                     y.share.nodes.get('modelAttributes').then(function (map) {
                         createModelAttributeCallback(map);
@@ -521,22 +535,29 @@ requirejs([
                 var promises = [];
                 var attrs, attr;
                 if(EntityManager.getLayer()===CONFIG.LAYER.META){
-                    promises.push(createYTextAttribute(map,node.getLabel()));
+                    //promises.push(createYTextAttribute(map,node.getLabel()));
+                    createYTextAttribute(map,node.getLabel());
                     if(jsonNode.type === "Edge Shape"){
-                        promises.push(createYTextAttribute(map,node.getAttribute(nodeId+'[color]')));
-                        promises.push(createYTextAttribute(map,node.getAttribute(nodeId+'[overlay]')));
+                        //promises.push(createYTextAttribute(map,node.getAttribute(nodeId+'[color]')));
+                        createYTextAttribute(map,node.getAttribute(nodeId+'[color]'));
+                        //promises.push(createYTextAttribute(map,node.getAttribute(nodeId+'[overlay]')));
+                        createYTextAttribute(map,node.getAttribute(nodeId+'[overlay]'));
 
                     }else if(jsonNode.type === "Node Shape"){
-                        promises.push(createYTextAttribute(map,node.getAttribute(nodeId  +'[color]')));
-                        promises.push(createYTextAttribute(map,node.getAttribute(nodeId+'[customAnchors]')));
-                        promises.push(createYTextAttribute(map,node.getAttribute(nodeId+'[customShape]')));
+                        //promises.push(createYTextAttribute(map,node.getAttribute(nodeId  +'[color]')));
+                        createYTextAttribute(map,node.getAttribute(nodeId  +'[color]'));
+                        //promises.push(createYTextAttribute(map,node.getAttribute(nodeId+'[customAnchors]')));
+                        createYTextAttribute(map,node.getAttribute(nodeId+'[customAnchors]'));
+                        //promises.push(createYTextAttribute(map,node.getAttribute(nodeId+'[customShape]')));
+                        createYTextAttribute(map,node.getAttribute(nodeId+'[customShape]'));
                     }
                     else if(jsonNode.type === 'Object' || jsonNode.type === 'Relationship' || jsonNode.type === 'Abstract Class'){
                         attrs = node.getAttribute('[attributes]').getAttributes();
                         for(var attrKey in attrs){
                             if(attrs.hasOwnProperty(attrKey)) {
                                 attr = attrs[attrKey];
-                                promises.push(createYTextAttribute(map, attr.getKey()));
+                                //promises.push(createYTextAttribute(map, attr.getKey()));
+                                createYTextAttribute(map, attr.getKey());
                             }
                         }
                     }
@@ -545,7 +566,8 @@ requirejs([
                         for(var attrKey2 in attrs){
                             if(attrs.hasOwnProperty(attrKey2)) {
                                 attr = attrs[attrKey2];
-                                promises.push(createYTextAttribute(map, attr.getValue()));
+                                //promises.push(createYTextAttribute(map, attr.getValue()));
+                                createYTextAttribute(map, attr.getValue());
                             }
                         }
                     }
@@ -556,7 +578,8 @@ requirejs([
                         if(attrs.hasOwnProperty(key)){
                             var val = attrs[key].getValue();
                             if(val.constructor.name === "Value" ){
-                                promises.push(createYTextAttribute(map,val));
+                                //promises.push(createYTextAttribute(map,val));
+                                createYTextAttribute(map,val);
                             }
                         }
                     }
@@ -565,17 +588,15 @@ requirejs([
 
                 if(promises.length >0) {
                     $.when.apply(null, promises).done(function () {
-                        node.registerYjsMap(map);
+                        node.registerYMap(map,true);
                         node.addToCanvas(canvas);
                         node.draw();
-                        canvas.resetTool();
                         deferred.resolve(nodeId);
                     });
                 }else{
-                    node.registerYjsMap(map);
+                    node.registerYMap(map,true);
                     node.addToCanvas(canvas);
                     node.draw();
-                    canvas.resetTool();
                     deferred.resolve(nodeId);
                 }
             }
@@ -634,14 +655,14 @@ requirejs([
 
                 if(promises.length >0) {
                     $.when.apply(null, promises).done(function () {
-                        edge.registerYjsMap(map);
+                        edge.registerYMap(map);
                         edge.addToCanvas(canvas);
                         edge.connect();
                         canvas.resetTool();
 
                     });
                 }else{
-                    edge.registerYjsMap(map);
+                    edge.registerYMap(map);
                     edge.addToCanvas(canvas);
                     edge.connect();
                     canvas.resetTool();
@@ -662,6 +683,7 @@ requirejs([
 
             createNodes(json.nodes).then(null, null, function(createdNodes){
                 if(createdNodes === numberOfNodes){
+                    canvas.resetTool();
                     for (edgeId in json.edges) {
                         if (json.edges.hasOwnProperty(edgeId)) {
                             //create edge

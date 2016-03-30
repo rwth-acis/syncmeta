@@ -361,8 +361,8 @@ define([
 
             };
 
-            this.registerYjsMap = function(map){
-                AbstractEdge.prototype.registerYjsMap.call(this,map);
+            this.registerYMap = function(map){
+                AbstractEdge.prototype.registerYMap.call(this,map);
                 var registerYText = function(ymap, val){
                     ymap.get(val.getEntityId()).then(function(ytext){
                         val.registerYType(ytext);

@@ -219,8 +219,8 @@ define([
 
             init();
 
-            this.registerYjsMap = function(map){
-                AbstractNode.prototype.registerYjsMap.call(this,map);
+            this.registerYMap = function(map){
+                AbstractNode.prototype.registerYMap.call(this,map);
                 var registerYText = function(ymap, val){
                     ymap.get(val.getEntityId()).then(function(ytext){
                         val.registerYType(ytext);

@@ -87,16 +87,19 @@ define([
         this.addAttribute(attrOverlayPos);
         this.addAttribute(attrOverlayRotate);
 
-        this.registerYjsMap = function(map){
-            AbstractNode.prototype.registerYjsMap.call(this,map);
-
+        this.registerYMap = function(map,disableYText){
+            AbstractNode.prototype.registerYMap.call(this,map);
+            attrArrow.getValue().registerYType();
+            attrShape.getValue().registerYType();
+            attrOverlayPos.getValue().registerYType();
+            attrOverlayRotate.getValue().registerYType();
+            if(!disableYText)
+                registerYTextAttributes(map);
+        };
+        function registerYTextAttributes(map){
             map.get(that.getLabel().getValue().getEntityId()).then(function(ytext){
                 that.getLabel().getValue().registerYType(ytext);
             });
-
-            attrArrow.getValue().registerYType();
-            attrShape.getValue().registerYType();
-
             map.get(that.getEntityId()+"[color]").then(function(ytext){
                 attrColor.getValue().registerYType(ytext);
             });
@@ -104,10 +107,7 @@ define([
                 attrOverlay.getValue().registerYType(ytext);
             });
 
-            attrOverlayPos.getValue().registerYType();
-            attrOverlayRotate.getValue().registerYType();
-        };
-
+        }
         _$node.find(".label").append(this.getLabel().get$node());
 
         for(var attributeKey in _attributes){

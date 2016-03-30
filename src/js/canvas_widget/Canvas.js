@@ -147,7 +147,7 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
 
             if(y){
                 y.share.nodes.get(node.getEntityId()).then(function(map){
-                    node.registerYjsMap(map);
+                    node.registerYMap(map);
 
                     node.draw();
                     node.addToCanvas(that);
@@ -195,7 +195,7 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
 
             if(y){
                 y.share.edges.get(edge.getEntityId()).then(function(map){
-                    edge.registerYjsMap(map);
+                    edge.registerYMap(map);
                     edge.connect();
                     edge.addToCanvas(that);
                     that.remountCurrentTool();

@@ -121,7 +121,8 @@ define([
 
 
         this.registerYMap = function(ytext){
-            _key.registerYType(ytext);
+            if(ytext)
+                _key.registerYType(ytext);
             _value.registerYType();
         };
 

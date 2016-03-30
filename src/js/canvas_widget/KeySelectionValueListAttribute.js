@@ -318,21 +318,27 @@ define([
         }
 
 
-        this.registerYjsMap = function(){
-            function registerAttribute(attr,ymap){
-                ymap.get(attr.getKey().getEntityId()).then(function(ytext){
-                        attr.registerYMap(ytext);
+        this.registerYMap = function(disableYText){
+            var ymap = that.getRootSubjectEntity().getYMap();
+            function registerAttribute(attr, ymap,disableYText) {
+                if(!disableYText) {
+                    ymap.get(attr.getKey().getEntityId()).then(function (ytext) {
+                        attr.registerYMap(ytext, disableYText);
                     });
+                }
+                else
+                    attr.registerYMap(null);
+
             }
 
-            var ymap = that.getRootSubjectEntity().getYMap();
             var attrs = that.getAttributes();
-            for(var key in attrs){
-                if(attrs.hasOwnProperty(key)){
+            for (var key in attrs) {
+                if (attrs.hasOwnProperty(key)) {
                     var attr = attrs[key];
-                    registerAttribute(attr,ymap);
+                    registerAttribute(attr, ymap,disableYText);
                 }
             }
+
 
             ymap.observe(function(events){
                 for (var i in events) {

@@ -1297,7 +1297,7 @@ define([
             return _ymap;
         };
 
-        this._registerYjsMap = function(ymap) {
+        this._registerYMap = function(ymap) {
             _ymap = ymap;
             _ymap.observe(function (events) {
                 var triggerSave = false;
@@ -1386,8 +1386,8 @@ define([
         jsPlumb.repaint(this.get$node());
     };
 
-    AbstractNode.prototype.registerYjsMap = function(map){
-        this._registerYjsMap(map);
+    AbstractNode.prototype.registerYMap = function(map){
+        this._registerYMap(map);
     };
     return AbstractNode;
 

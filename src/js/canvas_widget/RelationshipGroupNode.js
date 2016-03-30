@@ -71,12 +71,17 @@ define([
             return json;
         };
 
-        this.registerYjsMap = function(map){
-            AbstractNode.prototype.registerYjsMap.call(this,map);
+        this.registerYMap = function(map, disableYText){
+            AbstractNode.prototype.registerYMap.call(this,map);
+            if(!disableYText)
+                registerYTextAttributes(map);
+        };
+
+        function registerYTextAttributes(map){
             map.get(that.getLabel().getValue().getEntityId()).then(function(ytext){
                 that.getLabel().getValue().registerYType(ytext);
             });
-        };
+        }
 
         _$node.find(".label").append(this.getLabel().get$node());
 

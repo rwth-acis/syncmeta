@@ -184,9 +184,7 @@ define([
                     propagateValueChange(CONFIG.OPERATION.TYPE.INSERT,addedString[i],left+i);
                 }
             });
-            if(iwc){
-                that.registerCallbacks();
-            }
+
         };
 
         //noinspection JSUnusedLocalSymbols
@@ -210,31 +208,31 @@ define([
                     propagateValueChange(CONFIG.OPERATION.TYPE.INSERT,character,selectionStart);
                 }
             }).keydown(function(ev){
-                    if (ev.which === $.ui.keyCode.BACKSPACE || ev.which === $.ui.keyCode.DELETE) {
-                        var selectionStart, selectionEnd;
-                        var deletedChar;
+                if (ev.which === $.ui.keyCode.BACKSPACE || ev.which === $.ui.keyCode.DELETE) {
+                    var selectionStart, selectionEnd;
+                    var deletedChar;
 
-                        ev.preventDefault();
-                        ev.stopPropagation();
-                        selectionStart = this.selectionStart;
-                        selectionEnd = this.selectionEnd;
-                        if(selectionStart == selectionEnd){
-                            if (ev.which === $.ui.keyCode.BACKSPACE) {
-                                deletedChar = $(this).val()[selectionStart-1];
-                                propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart-1);
-                            } else if (ev.which === $.ui.keyCode.DELETE) {
-                                deletedChar = $(this).val()[selectionStart];
-                                propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart);
-                            }
-                        } else {
-                            while(selectionStart < selectionEnd){
-                                deletedChar = $(this).val()[selectionStart];
-                                propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart);
-                                selectionEnd--;
-                            }
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    selectionStart = this.selectionStart;
+                    selectionEnd = this.selectionEnd;
+                    if(selectionStart == selectionEnd){
+                        if (ev.which === $.ui.keyCode.BACKSPACE) {
+                            deletedChar = $(this).val()[selectionStart-1];
+                            propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart-1);
+                        } else if (ev.which === $.ui.keyCode.DELETE) {
+                            deletedChar = $(this).val()[selectionStart];
+                            propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart);
+                        }
+                    } else {
+                        while(selectionStart < selectionEnd){
+                            deletedChar = $(this).val()[selectionStart];
+                            propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart);
+                            selectionEnd--;
                         }
                     }
-                });
+                }
+            });
             if(iwc){
                 that.registerCallbacks();
             }
@@ -277,7 +275,7 @@ define([
          * Register inter widget communication callbacks
          */
         this.registerCallbacks = function(){
-            iwc.registerOnDataReceivedCallback(valueChangeCallback);
+            //iwc.registerOnDataReceivedCallback(valueChangeCallback);
             iwc.registerOnDataReceivedCallback(bindYTextCallback);
 
         };
@@ -286,7 +284,7 @@ define([
          * Unregister inter widget communication callbacks
          */
         this.unregisterCallbacks = function(){
-            iwc.unregisterOnDataReceivedCallback(valueChangeCallback);
+            //iwc.unregisterOnDataReceivedCallback(valueChangeCallback);
             iwc.unregisterOnDataReceivedCallback(bindYTextCallback);
 
         };
@@ -298,6 +296,13 @@ define([
                     y.share.nodes.get(entityId).then(function(ymap){
                         ymap.get(operation.getEntityId()).then(function(ytext){
                             ytext.bind(_$node[0]);
+
+                            if(that.getValue() !== ytext.toString()){
+                                if(ytext.toString().length > 0)
+                                    ytext.delete(0, ytext.toString().length-1);
+                                ytext.insert(0, that.getValue());
+                            }
+
                         })
                     })
                 }
@@ -305,13 +310,22 @@ define([
                     y.share.edges.get(entityId).then(function(ymap){
                         ymap.get(operation.getEntityId()).then(function(ytext){
                             ytext.bind(_$node[0]);
+
+                            if(that.getValue() !== ytext.toString()){
+                                if(ytext.toString().length > 0)
+                                    ytext.delete(0, ytext.toString().length-1);
+                                ytext.insert(0, that.getValue());
+                            }
+
                         })
                     })
                 }
             }
         }
-
-        init();
+        if(iwc){
+            that.registerCallbacks();
+        }
+        //init();
     }
 
     return MultiLineValue;

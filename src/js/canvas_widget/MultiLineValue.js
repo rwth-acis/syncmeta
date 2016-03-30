@@ -332,11 +332,6 @@ define([
             _ytext= ytext;
             _ytext.bind(_$node[0]);
 
-            if(that.getValue() !== _ytext.toString()){
-                if(_ytext.toString().length > 0)
-                    _ytext.delete(0, _ytext.toString().length);
-                _ytext.insert(0, that.getValue());
-            }
             _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new BindYTextOperation(that.getEntityId()).toNonOTOperation());
 
             _ytext.observe(function(events){
@@ -369,7 +364,7 @@ define([
         };
 
 
-        init();
+        //init();
 
         if(_iwcw){
             that.registerCallbacks();

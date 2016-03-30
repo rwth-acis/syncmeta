@@ -738,7 +738,7 @@ define([
         this.getYMap = function(){
             return _ymap;
         };
-        this._registerYjsMap = function(ymap) {
+        this._registerYMap = function(ymap) {
             _ymap =ymap;
             _ymap.get(that.getEntityId()+'[label]').then(function(ytext){
                 _label.registerYType(ytext);
@@ -791,8 +791,8 @@ define([
         connector.setVisible(true);
     };
 
-    AbstractEdge.prototype.registerYjsMap = function(map){
-        this._registerYjsMap(map);
+    AbstractEdge.prototype.registerYMap = function(map){
+        this._registerYMap(map);
     };
 
     return AbstractEdge;

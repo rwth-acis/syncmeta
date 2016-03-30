@@ -13,6 +13,7 @@ define([
 
     Value.prototype = new AbstractValue();
     Value.prototype.constructor = Value;
+
     /**
      * Value
      * @class canvas_widget.Value
@@ -393,11 +394,11 @@ define([
 
             if(that.getValue() !== _ytext.toString()){
                 if(_ytext.toString().length > 0)
-                    _ytext.delete(0, _ytext.toString().length);
+                    _ytext.delete(0, _ytext.toString().length-1);
                 _ytext.insert(0, that.getValue());
             }
-            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new BindYTextOperation(that.getEntityId()).toNonOTOperation());
 
+            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new BindYTextOperation(that.getEntityId()).toNonOTOperation());
             _ytext.observe(function(events){
                 for(var i in events){
                     var event = events[i];
@@ -427,7 +428,7 @@ define([
             });
         };
 
-        that.init();
+        //that.init();
 
         if(_iwcw){
             that.registerCallbacks();
