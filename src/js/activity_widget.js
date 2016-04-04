@@ -10,6 +10,8 @@ requirejs([
 
     new ActivityList($("#user_list"),$("#activity_list"));
 
+    if(CONFIG.TEST_MODE)
+        require(['./../test/ActivityWidgetTest']);
 
     $("#q").draggable({
         axis: "y",

@@ -35,5 +35,9 @@
   },
   "resolutions": {
     "lodash": "~2.4.1"
+  },
+  "devDependencies": {
+    "mocha": "^2.4.5",
+    "chai": "^3.5.0"
   }
 }

@@ -98,6 +98,9 @@ requirejs([
      * @type {$}
      */
     var $colorTestElement = $('<div></div>');
+
+    if(CONFIG.TEST_MODE)
+        require(['./../test/PaletteWidgetTest']);
 	
     $("#q").draggable({
         axis: "y",

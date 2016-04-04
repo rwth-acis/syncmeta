@@ -135,6 +135,8 @@ requirejs([
     iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN, operation.toNonOTOperation());
 
     $("#loading").hide();
+    if(CONFIG.TEST_MODE)
+        require(['./../test/AttributeWidgetTest']);
     //--------------------------------------------------------------------------
 
     $("#q").draggable({

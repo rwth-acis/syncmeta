@@ -606,6 +606,8 @@ requirejs([
                     }
                     canvas.resetTool();
                     $("#loading").hide();
+                    if(CONFIG.TEST_MODE)
+                        require(['./../test/CanvasWidgetTest']);
 
                     iwcot.registerOnLocalDataReceivedCallback(function(operation){
                         if(operation instanceof SetModelAttributeNodeOperation){

@@ -8,6 +8,7 @@
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-amdcheck": "^0.2.1",
+    "grunt-bootstrap-prefix": "~0.1.0",
     "grunt-contrib-clean": "~0.5.0",
     "grunt-contrib-connect": "^0.11.2",
     "grunt-contrib-copy": "~0.4.1",
@@ -17,7 +18,7 @@
     "grunt-contrib-uglify": "~0.2.4",
     "grunt-contrib-watch": "~0.5.3",
     "grunt-jsdoc": "~0.5.1",
-    "grunt-ssh": "~0.7.0",
-    "grunt-bootstrap-prefix": "~0.1.0"
+    "grunt-shell": "^1.2.1",
+    "grunt-ssh": "~0.7.0"
   }
 }

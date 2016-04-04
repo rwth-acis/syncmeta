@@ -47,7 +47,10 @@ module.exports = function(grunt) {
                     {src: '<%= bowerdir %>/FileToDataURI/index.swf', dest: '<%= distdir %>/js/lib/vendor/FileToDataURI.swf'},
                     {src: '<%= bowerdir %>/jszip/jszip.js', dest: '<%= distdir %>/js/lib/vendor/jszip.js'},
                     {src: '<%= bowerdir %>/graphlib/dist/graphlib.core.min.js', dest: '<%= distdir %>/js/lib/vendor/graphlib.core.min.js'},
-                    {cwd: '<%= bowerdir %>/font-awesome/',expand: true, src: ['css/**', 'fonts/**'], dest: '<%= distdir %>/css/vendor/font-awesome/'}
+                    {cwd: '<%= bowerdir %>/font-awesome/',expand: true, src: ['css/**', 'fonts/**'], dest: '<%= distdir %>/css/vendor/font-awesome/'},
+                    {src: '<%= bowerdir %>/chai/chai.js', dest: '<%= distdir %>/js/lib/vendor/test/chai.js'},
+                    {src: '<%= bowerdir %>/mocha/mocha.js', dest: '<%= distdir %>/js/lib/vendor/test/mocha.js'}
+
                 ]
             },
             main: {
@@ -374,6 +377,17 @@ module.exports = function(grunt) {
                     keepalive:true
                 }
             }
+        },
+        shell:{
+            'mocha-phantomjs': {
+                command: function(url){
+                    return 'mocha-phantomjs' + url;
+                },
+                options: {
+                    stdout: true,
+                    stderr: true
+                }
+            }
         }
 
     });
@@ -393,6 +407,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-bootstrap-prefix');
     //grunt.loadNpmTasks('grunt-contrib-nodeunit');
     grunt.loadNpmTasks('grunt-contrib-connect');
+    grunt.loadNpmTasks('grunt-shell');
 
     // Whenever the "test" task is run, first clean the "tmp" dir, then run this
     // plugin's task(s), then test the result.
@@ -403,5 +418,9 @@ module.exports = function(grunt) {
         grunt.task.run(['clean','requirejs','copy:lib','copy:main','bootstrap_prefix','buildwidgets'/*,'sftp'*/]);
     });
     grunt.registerTask('serve',['build','connect']);
+
+    grunt.registerTask('test', function(url){
+         grunt.task.run('shell:mocha-phantomjs:'+url);
+    })
 
 };
