@@ -32,12 +32,12 @@
     "bootstrap": "~3.3.5",
     "font-awesome": "~4.4.0",
     "graphlib": "*",
-    "yjs": "~0.8.9",
-    "y-websockets-client": "~0.7.11",
-    "y-map": "~0.7.3",
-    "y-text": "~0.7.1",
-    "y-array": "~0.7.5",
-    "y-memory": "~0.7.0"
+    "yjs": "^10.0.3",
+    "y-map": "^8.0.4",
+    "y-array": "^8.1.2",
+    "y-websockets-client": "^8.0.5",
+    "y-text": "^8.0.4",
+    "y-memory": "^8.0.3"
   },
   "resolutions": {
     "lodash": "~2.4.1"
