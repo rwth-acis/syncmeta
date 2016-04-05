@@ -793,8 +793,8 @@ define([
         connector.setVisible(true);
     };
 
-    AbstractEdge.prototype.registerYMap = function(map){
-        this._registerYMap(map);
+    AbstractEdge.prototype.registerYMap = function(map,disableYText){
+        this._registerYMap(map,disableYText);
     };
 
     return AbstractEdge;

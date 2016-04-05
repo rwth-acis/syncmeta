@@ -691,10 +691,10 @@ requirejs([
             }
             function registerEdges(edges){
                 var deferred = $.Deferred();
-                for (edgeId in json.edges) {
-                    if (json.edges.hasOwnProperty(edgeId)) {
+                for (edgeId in edges) {
+                    if (edges.hasOwnProperty(edgeId)) {
                         //create edge
-                        var edge = EntityManager.createEdgeFromJSON(json.edges[edgeId].type, edgeId, json.edges[edgeId].source, json.edges[edgeId].target, json.edges[edgeId]);
+                        var edge = EntityManager.createEdgeFromJSON(edges[edgeId].type, edgeId, edges[edgeId].source, edges[edgeId].target, edges[edgeId]);
 
                         //register it to Yjs and draw it to the canvas
                         registerEdge(edge).done(function(){
