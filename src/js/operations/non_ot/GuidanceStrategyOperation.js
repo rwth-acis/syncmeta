@@ -9,7 +9,7 @@ define([
      * @class operations.non_ot.EntitySelectOperation
      * @memberof operations.non_ot
      * @constructor
-     * @param {string} selectedEntityId Entity id of the selected entity
+     * @param {string} data
      */
     function GuidanceStrategyOperation(data){
 
@@ -56,6 +56,10 @@ define([
             return _nonOTOperation;
         };
     }
+
+    GuidanceStrategyOperation.prototype.toJSON = function(){
+        return {data:this.getData()}
+    };
 
     return GuidanceStrategyOperation;
 

@@ -738,11 +738,13 @@ define([
         this.getYMap = function(){
             return _ymap;
         };
-        this._registerYMap = function(ymap) {
+        this._registerYMap = function(ymap,disableYText) {
             _ymap =ymap;
-            _ymap.get(that.getEntityId()+'[label]').then(function(ytext){
-                _label.registerYType(ytext);
-            });
+            if(!disableYText) {
+                _ymap.get(that.getEntityId() + '[label]').then(function (ytext) {
+                    _label.registerYType(ytext);
+                });
+            }
             _ymap.observe(function (events) {
                 for (var i in events) {
                     var operation;

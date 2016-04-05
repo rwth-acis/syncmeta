@@ -57,6 +57,10 @@ define([
         };
     }
 
+    RevokeSharedActivityOperation.prototype.toJSON = function(){
+        return {id:this.getId()};
+    };
+
     return RevokeSharedActivityOperation;
 
 });

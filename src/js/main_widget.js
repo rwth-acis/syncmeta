@@ -506,7 +506,7 @@ requirejs([
             }
 
 
-            if (json.attributes && !_.isEmpty(json.attributes))     {
+            if (json.attributes && !_.isEmpty(json.attributes)){
                 if (y.share.nodes.opContents.hasOwnProperty('modelAttributes')) {
                     y.share.nodes.get('modelAttributes').then(function (map) {
                         createModelAttributeCallback(map);
@@ -623,7 +623,10 @@ requirejs([
             }
 
             var numberOfNodes = _.keys(json.nodes).length;
+            var numberOfEdges = _.keys(json.edges).length;
+
             var createdNodes=0;
+            var createdEdges=0;
 
             function createNodes(nodes){
                 var deferred = $.Deferred();
@@ -638,16 +641,18 @@ requirejs([
                 return deferred.promise();
             }
 
-            function registerEdgeCallback(edge, map){
+            function registerEdgeCallback(deferred,edge, map){
                 var promises = [];
-                promises.push(createYTextAttribute(map,edge.getLabel()));
+                //promises.push(createYTextAttribute(map,edge.getLabel()));
+                createYTextAttribute(map,edge.getLabel());
                 if(EntityManager.getLayer() === CONFIG.LAYER.MODEL){
                     var attrs = edge.getAttributes();
                     for(var key in attrs){
                         if(attrs.hasOwnProperty(key)){
                             var val = attrs[key].getValue();
                             if(val.constructor.name === "Value" ){
-                                promises.push(createYTextAttribute(map,val));
+                                //promises.push(createYTextAttribute(map,val));
+                                createYTextAttribute(map,val);
                             }
                         }
                     }
@@ -655,44 +660,62 @@ requirejs([
 
                 if(promises.length >0) {
                     $.when.apply(null, promises).done(function () {
-                        edge.registerYMap(map);
+                        edge.registerYMap(map,true);
                         edge.addToCanvas(canvas);
                         edge.connect();
-                        canvas.resetTool();
+                        deferred.resolve();
+                        //canvas.resetTool();
 
                     });
                 }else{
-                    edge.registerYMap(map);
+                    edge.registerYMap(map,true);
                     edge.addToCanvas(canvas);
                     edge.connect();
-                    canvas.resetTool();
+                    deferred.resolve();
+                    //canvas.resetTool();
                 }
             }
             function registerEdge(edge){
+                var deferred = $.Deferred();
                 if(y.share.edges.opContents.hasOwnProperty(edge.getEntityId())){
                     y.share.edges.get(edge.getEntityId()).then(function(map){
-                        registerEdgeCallback(edge,map);
+                        registerEdgeCallback(deferred, edge,map);
                     })
                 }else{
                     y.share.edges.set(edge.getEntityId(), Y.Map).then(function(map){
-                        registerEdgeCallback(edge,map);
+                        registerEdgeCallback(deferred,edge,map);
                     })
                 }
+                return deferred.promise();
 
+            }
+            function registerEdges(edges){
+                var deferred = $.Deferred();
+                for (edgeId in json.edges) {
+                    if (json.edges.hasOwnProperty(edgeId)) {
+                        //create edge
+                        var edge = EntityManager.createEdgeFromJSON(json.edges[edgeId].type, edgeId, json.edges[edgeId].source, json.edges[edgeId].target, json.edges[edgeId]);
+
+                        //register it to Yjs and draw it to the canvas
+                        registerEdge(edge).done(function(){
+                            createdEdges++;
+                            deferred.notify(createdEdges);
+                        });
+                    }
+                }
+                return deferred.promise();
             }
 
             createNodes(json.nodes).then(null, null, function(createdNodes){
                 if(createdNodes === numberOfNodes){
-                    canvas.resetTool();
-                    for (edgeId in json.edges) {
-                        if (json.edges.hasOwnProperty(edgeId)) {
-                            //create edge
-                            var edge = EntityManager.createEdgeFromJSON(json.edges[edgeId].type, edgeId, json.edges[edgeId].source, json.edges[edgeId].target, json.edges[edgeId]);
-
-                            //register it to Yjs and draw it to the canvas
-                            registerEdge(edge);
+                    //canvas.resetTool();
+                    registerEdges(json.edges).then(null,null, function(createdEdges){
+                        if(createdEdges=== numberOfEdges) {
+                            canvas.resetTool();
+                            console.info('SYNCMETA:Created nodes:' + createdNodes + ' created Edges: ' + createdEdges);
                         }
-                    }
+                    })
+
                 }
             });
         }

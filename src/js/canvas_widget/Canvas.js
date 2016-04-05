@@ -1381,12 +1381,8 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
 
 
             _iwcw.registerOnDataReceivedCallback(localRevokeSharedActivityOperationCallback);
-            //TODO
-            //_iwcw.registerOnRemoteDataReceivedCallback(remoteRevokeSharedActivityOperationCallback);
             _iwcw.registerOnDataReceivedCallback(localMoveCanvasOperation);
             _iwcw.registerOnDataReceivedCallback(localGuidanceStrategyOperationCallback);
-            //TODO
-            //_iwcw.registerOnRemoteDataReceivedCallback(remoteGuidanceStrategyOperation);
 
             _iwcw.registerOnDataReceivedCallback(CvgCallback);
             _iwcw.registerOnDataReceivedCallback(DeleteCvgCallback);
@@ -1403,18 +1399,12 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
             _iwcw.unregisterOnDataReceivedCallback(localExportImageCallback);
             _iwcw.unregisterOnDataReceivedCallback(localShowGuidanceBoxCallback);
 
-
             _iwcw.unregisterOnDataReceivedCallback(CvgCallback);
             _iwcw.unregisterOnDataReceivedCallback(DeleteCvgCallback);
 
-
             _iwcw.unregisterOnLocalDataReceivedCallback(localRevokeSharedActivityOperationCallback);
-            //TODO see registerCallbacks method
-            //_iwcw.unregisterOnRemoteDataReceivedCallback(remoteRevokeSharedActivityOperationCallback);
             _iwcw.unregisterOnLocalDataReceivedCallback(localMoveCanvasOperation);
             _iwcw.unregisterOnLocalDataReceivedCallback(localGuidanceStrategyOperationCallback);
-            //TODO see registerCallbacks method
-            //_iwcw.unregisterOnRemoteDataReceivedCallback(remoteGuidanceStrategyOperation);
 
         };
 
@@ -1457,18 +1447,39 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                     var operation;
                     var data = y.share.canvas.get(event.name);
                     var jabberId = y.share.users.get(event.object.map[event.name][0]);
-                    if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] === jabberId) {
-                        triggerSave = true;
-                    }
+
                     switch(event.name){
                         case NodeAddOperation.TYPE:{
                             operation = new NodeAddOperation(data.id,data.type,data.left, data.top,data.width,data.height,data.zIndex,data.json,data.viewId,data.oType,jabberId);
                             remoteNodeAddCallback(operation);
+                            if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] === jabberId) {
+                                triggerSave = true;
+                            }
                             break;
                         }
-                        case EdgeAddOperation.TYPE:{
-                            operation = new EdgeAddOperation(data.id, data.type, data.source, data.target, data.json, data.viewId, data.oType,jabberId);
+                        case EdgeAddOperation.TYPE:
+                        {
+                            operation = new EdgeAddOperation(data.id, data.type, data.source, data.target, data.json, data.viewId, data.oType, jabberId);
                             remoteEdgeAddCallback(operation);
+                            if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] === jabberId) {
+                                triggerSave = true;
+                            }
+                            break;
+                        }
+                        case RevokeSharedActivityOperation.TYPE:
+                        {
+                            if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== jabberId) {
+                                operation = new RevokeSharedActivityOperation(data.id);
+                                remoteRevokeSharedActivityOperationCallback(operation);
+                            }
+                            break;
+                        }
+                        case remoteGuidanceStrategyOperation.TYPE:
+                        {
+                            if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== jabberId) {
+                                operation = new GuidanceStrategyOperation(data.data);
+                                remoteGuidanceStrategyOperation(operation);
+                            }
                             break;
                         }
                     }
