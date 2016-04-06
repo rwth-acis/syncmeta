@@ -94,11 +94,9 @@ define([
          * @param {operations.ot.AttributeAddOperation} operation
          */
         var propagateAttributeAddOperation = function(operation){
-            //processAttributeAddOperation(operation);
-            //_iwcw.sendRemoteOTOperation(operation);
             var ynode = that.getRootSubjectEntity().getYMap();
             if(ynode){
-                $.when(createYTypeForValueOfAttribute(ynode,operation.getEntityId()+'[key]', Y.Text)).done(function(){
+                ynode.set(operation.getEntityId()+'[key]', Y.Text).then(function(){
                     ynode.set(AttributeAddOperation.TYPE, operation.toJSON());
                 });
             }
@@ -121,13 +119,11 @@ define([
          * @param {operations.ot.AttributeDeleteOperation} operation
          */
         var propagateAttributeDeleteOperation = function(operation){
-            //processAttributeDeleteOperation(operation);
-            //_iwcw.sendRemoteOTOperation(operation);
-            var ynode = that.getRootSubjectEntity().getYMap();
-            if(ynode){
-                ynode.set(operation.getEntityId(), Y.Map).then(function(){
-                    ynode.set(AttributeDeleteOperation.TYPE, operation.toJSON());
-                });
+            var ymap = that.getRootSubjectEntity().getYMap();
+            if(ymap){
+                ymap.delete(operation.getEntityId());
+                ymap.delete(operation.getEntityId()+'[key]');
+                ymap.set(AttributeDeleteOperation.TYPE, operation.toJSON());
             }
 
         };

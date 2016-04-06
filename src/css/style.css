@@ -7,6 +7,7 @@
     /*noinspection CssUnknownTarget*/
     background: white url('<%= grunt.config("baseUrl") %>/img/loading.gif') no-repeat center center;
     z-index: 32032;
+    opacity: 0.75;
 }
 
 #oauthPersonalize, #oauthPersonalizeDone, #oauthPersonalizeComplete{

@@ -73,8 +73,12 @@ define([
          * @param {operations.ot.AttributeAddOperation} operation
          */
         var propagateAttributeAddOperation = function(operation){
-            processAttributeAddOperation(operation);
-            _iwcw.sendRemoteOTOperation(operation);
+            var ymap = that.getRootSubjectEntity().getYMap();
+            if(ymap){
+                ymap.set(that.getEntityId()+"[val]", Y.Text).then(function(){
+                    ymap.set(AttributeAddOperation.TYPE, operation.toJSON());
+                });
+            }
         };
 
         /**
@@ -94,8 +98,12 @@ define([
          * @param {operations.ot.AttributeDeleteOperation} operation
          */
         var propagateAttributeDeleteOperation = function(operation){
-            processAttributeDeleteOperation(operation);
-            _iwcw.sendRemoteOTOperation(operation);
+            var ymap = that.getRootSubjectEntity().getYMap();
+            if(ymap){
+                ymap.delete(operation.getEntityId());
+                ymap.delete(operation.getEntityId()+'[val]');
+                ymap.set(AttributeDeleteOperation.TYPE, operation.toJSON());
+            }
         };
 
         /**
@@ -255,8 +263,6 @@ define([
          * Register inter widget communication callbacks
          */
         this.registerCallbacks = function(){
-            //_iwcw.registerOnRemoteDataReceivedCallback(remoteAttributeAddCallback);
-            //_iwcw.registerOnRemoteDataReceivedCallback(remoteAttributeDeleteCallback);
             _iwcw.registerOnDataReceivedCallback(localAttributeAddCallback);
             _iwcw.registerOnDataReceivedCallback(localAttributeDeleteCallback);
             //_iwcw.registerOnHistoryChangedCallback(historyAttributeAddCallback);
@@ -267,8 +273,6 @@ define([
          * Unregister inter widget communication callbacks
          */
         this.unregisterCallbacks = function(){
-            //_iwcw.unregisterOnRemoteDataReceivedCallback(remoteAttributeAddCallback);
-            //_iwcw.unregisterOnRemoteDataReceivedCallback(remoteAttributeDeleteCallback);
             _iwcw.unregisterOnDataReceivedCallback(localAttributeAddCallback);
             _iwcw.unregisterOnDataReceivedCallback(localAttributeDeleteCallback);
             //_iwcw.unregisterOnHistoryChangedCallback(historyAttributeAddCallback);
@@ -285,6 +289,48 @@ define([
 
         if(_iwcw){
             that.registerCallbacks();
+        }
+        this.registerYMap = function(disableYText){
+            var ymap = that.getRootSubjectEntity().getYMap();
+            function registerAttribute(attr, ymap,disableYText) {
+                if(!disableYText) {
+                    ymap.get(attr.getKey().getEntityId()).then(function (ytext) {
+                        attr.registerYMap(ytext, disableYText);
+                    });
+                }
+                else
+                    attr.registerYMap(null);
+
+            }
+
+            var attrs = that.getAttributes();
+            for (var key in attrs) {
+                if (attrs.hasOwnProperty(key)) {
+                    var attr = attrs[key];
+                    registerAttribute(attr, ymap,disableYText);
+                }
+            }
+
+
+            ymap.observe(function(events){
+                for (var i in events) {
+                    var operation;
+                    var data = that.getRootSubjectEntity().getYMap().get(events[i].name);
+                    switch (events[i].name) {
+                        case AttributeAddOperation.TYPE:
+                        {
+                            operation = new AttributeAddOperation(data.entityId, data.subjectEntityId, data.rootSubjectEntityId,data.type);
+                            remoteAttributeAddCallback(operation);
+                            break;
+                        }
+                        case AttributeDeleteOperation.TYPE:{
+                            operation = new AttributeDeleteOperation(data.entityId, data.subjectEntityId, data.rootSubjectEntityId,data.type);
+                            remoteAttributeDeleteCallback(operation);
+                            break;
+                        }
+                    }
+                }
+            });
         }
     }
 

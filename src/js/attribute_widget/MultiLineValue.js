@@ -299,7 +299,7 @@ define([
 
                             if(that.getValue() !== ytext.toString()){
                                 if(ytext.toString().length > 0)
-                                    ytext.delete(0, ytext.toString().length-1);
+                                    ytext.delete(0, ytext.toString().length);
                                 ytext.insert(0, that.getValue());
                             }
 
@@ -313,7 +313,7 @@ define([
 
                             if(that.getValue() !== ytext.toString()){
                                 if(ytext.toString().length > 0)
-                                    ytext.delete(0, ytext.toString().length-1);
+                                    ytext.delete(0, ytext.toString().length);
                                 ytext.insert(0, that.getValue());
                             }
 

@@ -123,9 +123,9 @@ define([
             //_iwcw.sendRemoteOTOperation(operation);
             var ynode = that.getRootSubjectEntity().getYMap();
             if(ynode){
-                ynode.set(operation.getEntityId(), Y.Map).then(function(){
-                    ynode.set(AttributeDeleteOperation.TYPE, operation.toJSON());
-                });
+                ynode.delete(operation.getEntityId());
+                ynode.delete(operation.getEntityId()+'[key]');
+                ynode.set(AttributeDeleteOperation.TYPE, operation.toJSON());
             }
         };
 

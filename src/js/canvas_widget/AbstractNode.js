@@ -440,8 +440,8 @@ define([
         var remoteNodeDeleteCallback = function(operation){
             var jabberId = y.share.users.get(_ymap.map[NodeDeleteOperation.TYPE][0]);
 
-            if(jabberId === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
-                _ymap.delete();
+            if(jabberId !== _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
+                y.share.nodes.delete(operation.getEntityId());
 
             if(operation instanceof NodeDeleteOperation && operation.getEntityId() === that.getEntityId()){
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
@@ -630,7 +630,7 @@ define([
             }
             //noinspection JSAccessibilityCheck
             var operation = new NodeDeleteOperation(id,that.getType(),_appearance.left,_appearance.top,_appearance.width,_appearance.height,_zIndex,that.toJSON());
-            if(y){
+            if(_ymap){
                 _ymap.set(NodeDeleteOperation.TYPE, operation.toJSON());
             }
             else {

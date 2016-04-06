@@ -107,7 +107,7 @@ define([
             }
         }
 
-        this.registerYMap = function(map) {
+        this.registerYMap = function(map,disableYText) {
             function registerAttribute(attr){
                 that.getYMap().get(attr.getValue().getEntityId()).then(function(ytext){
                     attr.getValue().registerYType(ytext);
@@ -119,9 +119,9 @@ define([
             for(var key in attrs){
                 if(attrs.hasOwnProperty(key)){
                     var attr = attrs[key];
-                    if(attr instanceof SingleValueAttribute || attr instanceof SingleMultiLineValueAttribute){
+                    if(!disableYText &&  (attr instanceof SingleValueAttribute || attr instanceof SingleMultiLineValueAttribute)){
                         registerAttribute(attr);
-                    }else if(!(attr instanceof FileAttribute)){
+                    }else if(!attr instanceof FileAttribute && !attr instanceof SingleValueAttribute && !attr instanceof SingleMultiLineValueAttribute){
                         attr.getValue().registerYType();
                     }
                 }

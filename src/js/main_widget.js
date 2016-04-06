@@ -94,7 +94,6 @@ requirejs([
                         modelAttributesNode.addToCanvas(canvas);
                     }
                     canvas.resetTool();
-                    $("#loading").hide();
                 }
                 activityOperation = new ActivityOperation(
                     "UserJoinActivity",
@@ -493,12 +492,12 @@ requirejs([
 
                 if(promises.length >0) {
                     $.when.apply(null, promises).done(function () {
-                        modelAttributesNode.registerYMap(map);
+                        modelAttributesNode.registerYMap(map,true);
                         canvas.setModelAttributesNode(modelAttributesNode);
                         modelAttributesNode.addToCanvas(canvas);
                     });
                 }else{
-                    modelAttributesNode.registerYMap(map);
+                    modelAttributesNode.registerYMap(map,true);
                     canvas.setModelAttributesNode(modelAttributesNode);
                     modelAttributesNode.addToCanvas(canvas);
                 }
@@ -713,6 +712,8 @@ requirejs([
                         if(createdEdges=== numberOfEdges) {
                             canvas.resetTool();
                             console.info('SYNCMETA:Created nodes:' + createdNodes + ' created Edges: ' + createdEdges);
+                            $("#loading").hide();
+
                         }
                     })
 

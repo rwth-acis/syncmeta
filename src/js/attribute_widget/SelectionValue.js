@@ -117,7 +117,12 @@ define([
                         }
 
                         var optVal =  viewType.getAttribute(viewType.getEntityId()+ '[target]').getOptionValue();
-                        viewType.getLabel().getValue().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT, optVal, 0);
+                        var ytextLabel = viewType.getLabel().getValue().getYText();
+                        if(ytextLabel.toString() !== optVal) {
+                            if(ytextLabel.toString().length > 0)
+                                ytextLabel.delete(0, ytextLabel.toString().length);
+                            ytextLabel.insert(0,optVal);
+                        }
 
                         attributeList = {};
                         //the attributes of the new target
@@ -132,8 +137,9 @@ define([
 
                                 viewTypeAttribute.propagateAttributeAddOperation(op, CONFIG.WIDGET.NAME.MAIN);
                                 attr = viewTypeAttribute.getAttribute(id);
-                                attr.getKey().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT, refAttr.getKey().getValue(), 0);
-                                attr.getRef().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT, refAttr.getKey().getValue(), 0);
+                                //attr.getKey().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT, refAttr.getKey().getValue(), 0);
+                                attr.getKey().getValue().getYText().insert(0, refAttr.getKey().getValue());
+                                //attr.getRef().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT, refAttr.getKey().getValue(), 0);
 
                                 attributeList[id] = refAttr.getKey().getValue();
                             }
@@ -176,8 +182,6 @@ define([
                     else{
                         EntityManager.addToMap(viewType.getViewId(), node.getEntityId(), viewType.getEntityId());
                     }
-
-
                 }
             }
         };

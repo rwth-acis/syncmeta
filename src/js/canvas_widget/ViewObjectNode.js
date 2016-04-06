@@ -81,6 +81,7 @@ define([
 
             var conjSelection = new SingleSelectionAttribute(id+'[conjunction]', 'Conjunction', that, LogicalConjunctions);
             that.addAttribute(conjSelection);
+            conjSelection.getValue().registerYType();
             that.get$node().find('.attributes').append(conjSelection.get$node());
 
             if(_fromResource){
@@ -103,20 +104,34 @@ define([
                         var cla = new ConditionListAttribute("[condition]", "Conditions", that, targetAttrList, LogicalOperator, LogicalConjunctions);
                         cla.setValueFromJSON(conditonList);
                         that.addAttribute(cla);
+                        cla.registerYMap();
                         that.get$node().find('.attributes').append(cla.get$node());
                     }
                 }
                 _fromResource = null;
             }
             that.addAttribute(attribute);
-
+            attribute.getValue().registerYType();
 			that.get$node().find('.attributes').prepend(attribute.get$node());
 
 		});
 		        
 		var attributeList = new RenamingListAttribute("[attributes]","Attributes",this,{"show":"Visible","hide":"Hidden"});
 		this.addAttribute(attributeList);
-		
+
+
+        var registerYTextAttributes = function(map){
+            map.get(that.getLabel().getValue().getEntityId()).then(function(ytext){
+                that.getLabel().getValue().registerYType(ytext);
+            });
+        };
+        this.registerYMap = function(map, disableYText){
+          AbstractNode.prototype.registerYMap.call(this,map);
+            if(!disableYText)
+                registerYTextAttributes(map);
+            attributeList.registerYMap(disableYText);
+        };
+
         _$node.find(".label").append(this.getLabel().get$node());
 
         for(var attributeKey in _attributes){

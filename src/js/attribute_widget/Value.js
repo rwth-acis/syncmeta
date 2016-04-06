@@ -25,6 +25,8 @@ define([
     function Value(id,name,subjectEntity,rootSubjectEntity){
         var that = this;
 
+        var _ytext= null;
+
         AbstractValue.prototype.constructor.call(this,id,name,subjectEntity,rootSubjectEntity);
 
         /**
@@ -294,10 +296,11 @@ define([
                 if(y.share.nodes.opContents.hasOwnProperty(entityId)){
                     y.share.nodes.get(entityId).then(function(ymap){
                         ymap.get(operation.getEntityId()).then(function(ytext){
+                            _ytext = ytext;
                             ytext.bind(_$node[0]);
                             if(that.getValue() !== ytext.toString()){
                                 if(ytext.toString().length > 0)
-                                    ytext.delete(0, ytext.toString().length-1);
+                                    ytext.delete(0, ytext.toString().length);
                                 ytext.insert(0, that.getValue());
                             }
                         })
@@ -306,10 +309,11 @@ define([
                 else if(y.share.edges.opContents.hasOwnProperty(entityId)){
                     y.share.edges.get(entityId).then(function(ymap){
                         ymap.get(operation.getEntityId()).then(function(ytext){
+                            _ytext = ytext;
                             ytext.bind(_$node[0]);
                             if(that.getValue() !== ytext.toString()){
                                 if(ytext.toString().length > 0)
-                                    ytext.delete(0, ytext.toString().length-1);
+                                    ytext.delete(0, ytext.toString().length);
                                 ytext.insert(0, that.getValue());
                             }
                         })
@@ -317,6 +321,10 @@ define([
                 }
             }
         }
+
+        this.getYText = function(){
+            return _ytext;
+        };
 
         //init();
         if(iwc){

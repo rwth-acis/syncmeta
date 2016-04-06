@@ -180,8 +180,8 @@ define([
         var remoteEdgeDeleteCallback = function(operation){
             var jabberId = y.share.users.get(_ymap.map[EdgeDeleteOperation.TYPE][0]);
 
-            if(jabberId === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
-                _ymap.delete();
+            if(jabberId !== _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
+                y.share.edges.delete(operation.getEntityId());
 
             if(operation instanceof EdgeDeleteOperation && operation.getEntityId() == that.getEntityId()){
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
