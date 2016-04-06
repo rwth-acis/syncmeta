@@ -941,7 +941,7 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
 
         var createYTypeForValueOfAttribute = function(map,id, yType){
             var deferred = $.Deferred();
-            map.set(id, yType).then(function(){
+            map.set(id.toLowerCase(), yType).then(function(){
                 deferred.resolve();
             });
             return deferred.promise();
