@@ -504,7 +504,6 @@ requirejs([
 
             }
 
-
             if (json.attributes && !_.isEmpty(json.attributes)){
                 if (y.share.nodes.opContents.hasOwnProperty('modelAttributes')) {
                     y.share.nodes.get('modelAttributes').then(function (map) {
@@ -517,7 +516,6 @@ requirejs([
 
                 }
             }
-
 
             function createNodeCallback(deferred,map, jsonNode,nodeId){
                 var node = EntityManager.createNodeFromJSON(
@@ -599,7 +597,6 @@ requirejs([
                     deferred.resolve(nodeId);
                 }
             }
-
             function createNode(nodeId,jsonNode){
                 var deferred = $.Deferred();
                 if(y.share.nodes.opContents.hasOwnProperty(nodeId)){
@@ -623,7 +620,6 @@ requirejs([
 
             var numberOfNodes = _.keys(json.nodes).length;
             var numberOfEdges = _.keys(json.edges).length;
-
             var createdNodes=0;
             var createdEdges=0;
 
@@ -704,21 +700,29 @@ requirejs([
                 }
                 return deferred.promise();
             }
-
-            createNodes(json.nodes).then(null, null, function(createdNodes){
-                if(createdNodes === numberOfNodes){
-                    //canvas.resetTool();
-                    registerEdges(json.edges).then(null,null, function(createdEdges){
-                        if(createdEdges=== numberOfEdges) {
+            if(numberOfNodes>0) {
+                createNodes(json.nodes).then(null, null, function (createdNodes) {
+                    if (createdNodes === numberOfNodes) {
+                        //canvas.resetTool();
+                        console.info('SYNCMETA:Created nodes:' + createdNodes);
+                        if (numberOfEdges > 0) {
+                            registerEdges(json.edges).then(null, null, function (createdEdges) {
+                                if (createdEdges === numberOfEdges) {
+                                    canvas.resetTool();
+                                    console.info('SYNCMETA:Created Edges: ' + createdEdges);
+                                    $("#loading").hide();
+                                }
+                            })
+                        } else {
                             canvas.resetTool();
-                            console.info('SYNCMETA:Created nodes:' + createdNodes + ' created Edges: ' + createdEdges);
                             $("#loading").hide();
-
                         }
-                    })
-
-                }
-            });
+                    }
+                });
+            }else{
+                canvas.resetTool();
+                $("#loading").hide();
+            }
         }
 
         var $undo = $("#undo");
