@@ -85,6 +85,7 @@ function (require, $, jsPlumb, _, AbstractNode, SingleSelectionAttribute, Renami
 
             var conjSelection = new SingleSelectionAttribute(id+'[conjunction]', 'Conjunction', that, LogicalConjunctions);
             that.addAttribute(conjSelection);
+			conjSelection.getValue().registerYType();
             that.get$node().find('.attributes').append(conjSelection.get$node());
 
             if(_fromResource){
@@ -105,22 +106,37 @@ function (require, $, jsPlumb, _, AbstractNode, SingleSelectionAttribute, Renami
                         }
                         var cla = new ConditionListAttribute("[condition]", "Conditions", that, targetAttrList, LogicalOperator, LogicalConjunctions);
                         cla.setValueFromJSON(conditonList);
-                        that.addAttribute(cla);
+						cla.registerYMap();
+						that.addAttribute(cla);
                         that.get$node().find('.attributes').append(cla.get$node());
                     }
                 }
                 _fromResource = null;
             }
 			that.addAttribute(attribute);
+			attribute.getValue().registerYType();
 			that.get$node().find('.attributes').prepend(attribute.get$node());
 		});
-		this.addAttribute(new RenamingListAttribute("[attributes]", "Attributes", this, {
-				"hidden" : "Show",
-				"top" : "Show Top",
-				"center" : "Show Center",
-				"bottom" : "Show Bottom",
-                "hide": "Hide"
-			}));
+		var attributeList = new RenamingListAttribute("[attributes]", "Attributes", this, {
+			"hidden" : "Show",
+			"top" : "Show Top",
+			"center" : "Show Center",
+			"bottom" : "Show Bottom",
+			"hide": "Hide"
+		});
+		this.addAttribute(attributeList);
+
+		var registerYTextAttributes = function(map){
+			map.get(that.getLabel().getValue().getEntityId()).then(function(ytext){
+				that.getLabel().getValue().registerYType(ytext);
+			});
+		};
+		this.registerYMap = function(map, disableYText){
+			AbstractNode.prototype.registerYMap.call(this,map);
+			if(!disableYText)
+				registerYTextAttributes(map);
+			attributeList.registerYMap(disableYText);
+		};
 
 		$node.find(".label").append(this.getLabel().get$node());
 

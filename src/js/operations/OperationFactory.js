@@ -105,6 +105,7 @@ define([
                         break;
                     case DeleteViewOperation.TYPE:
                         resOperation = new DeleteViewOperation(data.viewId);
+                        break;
                     case ShowGuidanceBoxOperation.TYPE:
                         resOperation = new ShowGuidanceBoxOperation(data.label, data.guidance, data.entityId);
                         break;
@@ -113,6 +114,7 @@ define([
                         break;
                     case UpdateViewListOperation.TYPE:
                         resOperation = new UpdateViewListOperation();
+                        break;
                     case CanvasViewChangeOperation.TYPE:
                         resOperation = new CanvasViewChangeOperation(data.left, data.top, data.width, data.height, data.zoom);
                         resOperation.setNonOTOperation(operation);
@@ -131,7 +133,7 @@ define([
                         resOperation.setNonOTOperation(operation);
                         break;
                     case BindYTextOperation.TYPE:
-                        resOperation = new BindYTextOperation(data.entityId);
+                        resOperation = new BindYTextOperation(data.entityId,data.data);
                         resOperation.setNonOTOperation(operation);
                         break;
                 }
@@ -261,7 +263,8 @@ define([
                                         entityId,
                                         value.subjectEntityId,
                                         value.rootSubjectEntityId,
-                                        value.type
+                                        value.type,
+                                        value.data
                                     );
                                     break;
                                 case CONFIG.OPERATION.TYPE.UPDATE:

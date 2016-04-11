@@ -63,9 +63,21 @@ define([
          * @param {operations.ot.AttributeAddOperation} operation
          */
         var processAttributeAddOperation = function(operation){
-            var attribute = new RenamingAttribute(operation.getEntityId(),"Attribute",that,_options);
-            that.addAttribute(attribute);
-            _$node.find(".list").append(attribute.get$node());
+            var _ymap = that.getRootSubjectEntity().getYMap();
+            if(_ymap)
+                _ymap.get(operation.getEntityId()+'[val]').then(function(ytext){
+                    var attribute = new RenamingAttribute(operation.getEntityId(),"Attribute",that,_options);
+                    that.addAttribute(attribute);
+                    attribute.getRef().setValue(operation.getData());
+                    attribute.getKey().setValue(operation.getData());
+                    attribute.registerYMap(ytext);
+                    _$node.find(".list").append(attribute.get$node());
+                });
+            else {
+                var attribute = new RenamingAttribute(operation.getEntityId(),"Attribute",that,_options);
+                that.addAttribute(attribute);
+                _$node.find(".list").append(attribute.get$node());
+            }
         };
 
         /**
@@ -75,7 +87,7 @@ define([
         var propagateAttributeAddOperation = function(operation){
             var ymap = that.getRootSubjectEntity().getYMap();
             if(ymap){
-                ymap.set(that.getEntityId()+"[val]", Y.Text).then(function(){
+                ymap.set(operation.getEntityId()+"[val]", Y.Text).then(function(){
                     ymap.set(AttributeAddOperation.TYPE, operation.toJSON());
                 });
             }
@@ -319,7 +331,7 @@ define([
                     switch (events[i].name) {
                         case AttributeAddOperation.TYPE:
                         {
-                            operation = new AttributeAddOperation(data.entityId, data.subjectEntityId, data.rootSubjectEntityId,data.type);
+                            operation = new AttributeAddOperation(data.entityId, data.subjectEntityId, data.rootSubjectEntityId,data.type,data.data);
                             remoteAttributeAddCallback(operation);
                             break;
                         }

@@ -86,7 +86,7 @@ requirejs([
                     //TODO
                     //_iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
 
-                    JSONtoGraph2(model);
+                    JSONtoGraph(model);
 
                     if (canvas.getModelAttributesNode() === null) {
                         var modelAttributesNode = EntityManager.createModelAttributesNode();
@@ -473,7 +473,7 @@ requirejs([
             }
             //return deferred.promise();
         };
-        function JSONtoGraph2(json){
+        function JSONtoGraph(json){
             function createModelAttributeCallback(map){
                 var promises = [];
                 var modelAttributesNode = EntityManager.createModelAttributesNodeFromJSON(json.attributes);

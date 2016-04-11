@@ -156,9 +156,9 @@ define([
             operation.setEntityIdChain(getEntityIdChain());
 
             //operation.setRemote(false);
-            //processValueChangeOperation(operation);
+            processValueChangeOperation(operation);
             //operation.setRemote(true);
-
+            /*
             if(_ytext){
                 switch(operation.getType()){
                     case 'insert':
@@ -171,7 +171,7 @@ define([
                         break;
                     }
                 }
-            }
+            }*/
         };
 
         /**
@@ -398,7 +398,7 @@ define([
                 _ytext.insert(0, that.getValue());
             }*/
 
-            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new BindYTextOperation(that.getEntityId()).toNonOTOperation());
+            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new BindYTextOperation(that.getEntityId(),_value).toNonOTOperation());
             _ytext.observe(function(events){
                 for(var i in events){
                     var event = events[i];

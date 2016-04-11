@@ -941,7 +941,7 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
 
         var createYTypeForValueOfAttribute = function(map,id, yType){
             var deferred = $.Deferred();
-            map.set(id.toLowerCase(), yType).then(function(){
+            map.set(id, yType).then(function(){
                 deferred.resolve();
             });
             return deferred.promise();
@@ -1010,7 +1010,7 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                         for(var attrKey in attributes){
                             if(attributes.hasOwnProperty(attrKey)&& attributes[attrKey].value === 'string'){
                                 var attrId =  id+'['+attributes[attrKey].key+']';
-                                attrPromises.push(createYTypeForValueOfAttribute(map,attrId, Y.Text));
+                                attrPromises.push(createYTypeForValueOfAttribute(map,attrId.toLowerCase(), Y.Text));
                             }
                         }
                         if(attrPromises.length > 0) {

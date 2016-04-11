@@ -12,13 +12,15 @@ define([
      * @param {string} entityId Entity id
      */
 
-    function BindYTextOperation(entityId){
+    function BindYTextOperation(entityId,data){
         /**
          * Entity id of the selected entity
          * @type {string}
          * @private
          */
         var _entityId = entityId;
+
+        var _data = data;
 
         /**
          * Corresponding NonOtOperation
@@ -33,6 +35,10 @@ define([
          */
         this.getEntityId = function(){
             return _entityId;
+        };
+
+        this.getData = function(){
+            return _data;
         };
 
         /**
@@ -60,7 +66,8 @@ define([
                 _nonOTOperation = new NonOTOperation(
                     BindYTextOperation.TYPE,
                     JSON.stringify({
-                        entityId: _entityId
+                        entityId: _entityId,
+                        data:_data
                     })
                 );
             }

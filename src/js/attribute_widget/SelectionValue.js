@@ -69,7 +69,7 @@ define([
                 var PerformCvgOperation = require('operations/non_ot/PerformCvgOperation');
 				var AttributeAddOperation = require('operations/ot/AttributeAddOperation');
 				var AttributeDeleteOperation = require('operations/ot/AttributeDeleteOperation');
-				var KeySelectionValueSelectionValueAttribute = require('attribute_widget/KeySelectionValueSelectionValueAttribute');
+				var RenamingAttribute = require('attribute_widget/RenamingAttribute');
 				var ConditionListAttribute = require('attribute_widget/ConditionListAttribute');
                 var ConditionPredicateAttribute = require('attribute_widget/ConditionPredicateAttribute');
                 var makeDeleteCvgOp = function(viewType){
@@ -111,8 +111,8 @@ define([
                         for (var key1 in viewTypeAttrList) {
                             if (viewTypeAttrList.hasOwnProperty(key1)) {
                                 attr = viewTypeAttrList[key1];
-                                op = new AttributeDeleteOperation(attr.getEntityId(), attr.getSubjectEntityId(), attr.getRootSubjectEntity().getEntityId(), KeySelectionValueSelectionValueAttribute.TYPE);
-                                attr.propagateAttributeDeleteOperation(op, CONFIG.WIDGET.NAME.MAIN);
+                                op = new AttributeDeleteOperation(attr.getEntityId(), attr.getSubjectEntityId(), attr.getRootSubjectEntity().getEntityId(), RenamingAttribute.TYPE);
+                                attr.propagateAttributeDeleteOperation(op);
                             }
                         }
 
@@ -133,15 +133,8 @@ define([
                                 var refAttr = targetAttributes[key2];
                                 var id = refAttr.getEntityId();
 
-                                op = new AttributeAddOperation(id, viewTypeAttribute.getEntityId(), viewTypeAttribute.getRootSubjectEntity().getEntityId(), KeySelectionValueSelectionValueAttribute.TYPE);
-
-                                viewTypeAttribute.propagateAttributeAddOperation(op, CONFIG.WIDGET.NAME.MAIN);
-                                attr = viewTypeAttribute.getAttribute(id);
-                                //attr.getKey().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT, refAttr.getKey().getValue(), 0);
-                                attr.getKey().getValue().getYText().insert(0, refAttr.getKey().getValue());
-                                //attr.getRef().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT, refAttr.getKey().getValue(), 0);
-
-                                attributeList[id] = refAttr.getKey().getValue();
+                                op = new AttributeAddOperation(id, viewTypeAttribute.getEntityId(), viewTypeAttribute.getRootSubjectEntity().getEntityId(), RenamingAttribute.TYPE, refAttr.getKey().getValue());
+                                viewTypeAttribute.propagateAttributeAddOperation(op);
                             }
                         }
                     }
