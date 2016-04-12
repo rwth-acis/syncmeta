@@ -11,7 +11,8 @@ define(['jqueryui','promise!Space','yjs'],function ($,space) {
             },
             share: { // specify the shared content
                 users:'Map',
-                history:'Array',
+                undo:'Array',
+                redo:'Array',
                 join:'Map',
                 canvas: 'Map',
                 nodes:'Map',
