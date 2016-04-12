@@ -489,6 +489,14 @@ define([
             _iwc.unregisterOnDataReceivedCallback(nodeDeleteCallback);
         };
 
+        this._registerYType = function(){
+            y.share.nodes.get(that.getEntityId()).then(function (ymap) {
+                ymap.get(that.getLabel().getValue().getEntityId()).then(function(ytext){
+                    that.getLabel().getValue().registerYType(ytext);
+                })
+            })
+        };
+
         if(_iwc){
             that.registerCallbacks();
         }
@@ -499,6 +507,10 @@ define([
     };
     AbstractNode.prototype.get$node = function(){
         return this._get$node();
+    };
+
+    AbstractNode.prototype.registerYType = function(){
+        this._registerYType();
     };
 
     return AbstractNode;

@@ -29,6 +29,8 @@ define([
      */
     function NodeShapeNode(id,left,top,width,height){
 
+        var that = this;
+
         AbstractNode.call(this,id,NodeShapeNode.TYPE,left,top,width,height);
 
         /**
@@ -67,6 +69,26 @@ define([
         this.addAttribute(new SingleValueAttribute(this.getEntityId()+"[customAnchors]","Custom Anchors",this));
 
         _$node.find(".label").append(this.getLabel().get$node());
+
+        this.registerYType = function(){
+            var registerValue = function(ymap, value){
+                ymap.get(value.getEntityId()).then(function(ytext){
+                    value.registerYType(ytext);
+                })
+            };
+
+            AbstractNode.prototype.registerYType.call(this);
+            y.share.nodes.get(that.getEntityId()).then(function(ymap){
+                var colorAttr = that.getAttribute(that.getEntityId()+'[color]');
+                registerValue(ymap, colorAttr.getValue());
+
+                var customShapeAttr = that.getAttribute(that.getEntityId()+"[customShape]");
+                registerValue(ymap, customShapeAttr.getValue());
+
+                var customAnchorAttr = that.getAttribute(that.getEntityId()+"[customAnchors]");
+                registerValue(ymap, customShapeAttr.getValue());
+            });
+        };
 
         for(var attributeKey in attributes){
             if(attributes.hasOwnProperty(attributeKey)){

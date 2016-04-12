@@ -40,18 +40,21 @@ requirejs([
             if (json.attributes && !_.isEmpty(json.attributes)) {
                 modelAttributesNode = EntityManager.createModelAttributesNodeFromJSON(json.attributes);
                 wrapper.setModelAttributesNode(modelAttributesNode);
+                modelAttributesNode.registerYType();
                 modelAttributesNode.addToWrapper(wrapper);
                 //wrapper.select(modelAttributesNode);
             }
             for (nodeId in json.nodes) {
                 if (json.nodes.hasOwnProperty(nodeId)) {
                     var node = EntityManager.createNodeFromJSON(json.nodes[nodeId].type, nodeId, json.nodes[nodeId].left, json.nodes[nodeId].top, json.nodes[nodeId].width, json.nodes[nodeId].height, json.nodes[nodeId]);
+                    node.registerYType();
                     node.addToWrapper(wrapper);
                 }
             }
             for (edgeId in json.edges) {
                 if (json.edges.hasOwnProperty(edgeId)) {
                     var edge = EntityManager.createEdgeFromJSON(json.edges[edgeId].type, edgeId, json.edges[edgeId].source, json.edges[edgeId].target, json.edges[edgeId]);
+                    edge.registerYType();
                     edge.addToWrapper(wrapper);
                 }
             }

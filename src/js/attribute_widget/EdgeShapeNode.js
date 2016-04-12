@@ -28,6 +28,7 @@ define([
      * @param {number} height Height of node
      */
     function EdgeShapeNode(id,left,top,width,height){
+        var that=this;
 
         AbstractNode.call(this,id,EdgeShapeNode.TYPE,left,top,width,height);
 
@@ -67,6 +68,24 @@ define([
         this.addAttribute(new BooleanAttribute(this.getEntityId()+"[overlayRotate]","Autoflip Overlay",this));
 
         _$node.find(".label").append(this.getLabel().get$node());
+
+
+        this.registerYType = function(){
+            var registerValue = function(ymap, value){
+                ymap.get(value.getEntityId()).then(function(ytext){
+                    value.registerYType(ytext);
+                })
+            };
+
+            AbstractNode.prototype.registerYType.call(this);
+            y.share.nodes.get(that.getEntityId()).then(function(ymap){
+                var colorAttr = that.getAttribute(that.getEntityId()+'[color]');
+                registerValue(ymap, colorAttr.getValue());
+
+                var customShapeAttr = that.getAttribute(that.getEntityId()+"[overlay]");
+                registerValue(ymap, customShapeAttr.getValue());
+            });
+        };
 
         for(var attributeKey in attributes){
             if(attributes.hasOwnProperty(attributeKey)){

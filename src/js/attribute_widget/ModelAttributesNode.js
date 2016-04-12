@@ -89,6 +89,15 @@ define([
             this.addAttribute(new SingleMultiLineValueAttribute(this.getEntityId()+"[description]","Description",this));
         }
 
+        this.registerYType = function(){
+            //TODO
+            if(attr){
+
+            }else{
+
+            }
+        };
+
         _$node.find(".label").hide();
 
         for(var attributeKey in attributes){

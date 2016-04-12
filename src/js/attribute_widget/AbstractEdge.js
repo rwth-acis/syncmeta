@@ -320,6 +320,14 @@ define([
             iwc.unregisterOnDataReceivedCallback(edgeDeleteCallback);
         };
 
+        this._registerYType = function(){
+            y.share.edges.get(that.getEntityId()).then(function (ymap) {
+                ymap.get(that.getLabel().getValue().getEntityId()).then(function(ytext){
+                    that.getLabel().getValue().registerYType(ytext);
+                })
+            })
+        };
+
         _$node.find(".label").append(this.getLabel().get$node());
 
         if(iwc){
@@ -333,6 +341,10 @@ define([
      */
     AbstractEdge.prototype.get$node = function(){
         return this._get$node();
+    };
+
+    AbstractEdge.prototype.registerYType = function(){
+        this._registerYType();
     };
 
     return AbstractEdge;

@@ -25,6 +25,7 @@ define([
      * @constructor
      */
     function RelationshipNode(id,left,top,width,height){
+        var that = this;
         AbstractNode.call(this,id,RelationshipNode.TYPE,left,top,width,height);
 
         /**
@@ -56,6 +57,25 @@ define([
         var _attributes = this.getAttributes();
 
         this.addAttribute(new KeySelectionValueSelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File"},{"hidden":"Hide","top":"Top","center":"Center","bottom":"Bottom"}));
+
+        this.registerYType = function(){
+            var registerValue = function(ymap, value){
+                ymap.get(value.getEntityId()).then(function(ytext){
+                    value.registerYType(ytext);
+                })
+            };
+
+            AbstractNode.prototype.registerYType.call(this);
+            y.share.nodes.get(that.getEntityId()).then(function(ymap){
+                var attrs = _attributes["[attributes]"].getAttributes();
+                for(var attributeKey in attrs){
+                    if(attrs.hasOwnProperty(attributeKey)){
+                        var attr = attrs[attributeKey];
+                        registerValue(ymap,attr.getKey());
+                    }
+                }
+            });
+        };
 
         _$node.find(".label").append(this.getLabel().get$node());
 

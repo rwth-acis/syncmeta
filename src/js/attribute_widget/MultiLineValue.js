@@ -25,6 +25,8 @@ define([
     function MultiLineValue(id,name,subjectEntity,rootSubjectEntity){
         var that = this;
 
+        var _ytext = null;
+
         AbstractValue.prototype.constructor.call(this,id,name,subjectEntity,rootSubjectEntity);
 
         /**
@@ -322,6 +324,33 @@ define([
                 }
             }
         }
+
+        var initData = function(ytext, data){
+            if(data){
+                if (data !== ytext.toString()) {
+                    if (ytext.toString().length > 0)
+                        ytext.delete(0, ytext.toString().length);
+                    ytext.insert(0, data);
+                }
+            }
+            else {
+                if (that.getValue() !== ytext.toString()) {
+                    if (ytext.toString().length > 0)
+                        ytext.delete(0, ytext.toString().length);
+                    ytext.insert(0, that.getValue());
+                }
+            }
+        };
+        this.registerYType = function(ytext){
+            _ytext = ytext;
+            _ytext.bind(_$node[0]);
+            initData(ytext);
+        };
+
+        this.getYText = function(){
+            return _ytext;
+        };
+
         if(iwc){
             that.registerCallbacks();
         }

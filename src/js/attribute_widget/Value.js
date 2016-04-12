@@ -290,25 +290,28 @@ define([
 
         };
 
+
+        var initData = function(ytext, data){
+            if(data){
+                if (data !== ytext.toString()) {
+                    if (ytext.toString().length > 0)
+                        ytext.delete(0, ytext.toString().length);
+                    ytext.insert(0, data);
+                }
+            }
+            else {
+                if (that.getValue() !== ytext.toString()) {
+                    if (ytext.toString().length > 0)
+                        ytext.delete(0, ytext.toString().length);
+                    ytext.insert(0, that.getValue());
+                }
+            }
+        };
+
         function bindYTextCallback(operation) {
             if (operation instanceof BindYTextOperation && operation.getEntityId() === that.getEntityId()) {
                 var entityId= that.getRootSubjectEntity().getEntityId();
-                var initData = function(ytext, data){
-                    if(data){
-                        if (data !== ytext.toString()) {
-                            if (ytext.toString().length > 0)
-                                ytext.delete(0, ytext.toString().length);
-                            ytext.insert(0, data);
-                        }
-                    }
-                    else {
-                        if (that.getValue() !== ytext.toString()) {
-                            if (ytext.toString().length > 0)
-                                ytext.delete(0, ytext.toString().length);
-                            ytext.insert(0, that.getValue());
-                        }
-                    }
-                };
+
 
                 if(y.share.nodes.opContents.hasOwnProperty(entityId)){
                     y.share.nodes.get(entityId).then(function(ymap){
@@ -336,6 +339,11 @@ define([
             return _ytext;
         };
 
+        this.registerYType = function(ytext){
+            _ytext = ytext;
+            _ytext.bind(_$node[0]);
+            initData(ytext);
+        };
         //init();
         if(iwc){
             that.registerCallbacks();
