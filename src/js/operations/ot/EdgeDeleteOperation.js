@@ -178,7 +178,11 @@ define([
 
     EdgeDeleteOperation.prototype.toJSON = function(){
         return {
-            id:this.getEntityId()
+            id:this.getEntityId(),
+            type:this.getType(),
+            source:this.getSource(),
+            target:this.getTarget(),
+            json:this.getJSON()
         }
     };
 

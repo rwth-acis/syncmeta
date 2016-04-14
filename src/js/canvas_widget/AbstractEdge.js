@@ -7,10 +7,11 @@ define([
     'operations/ot/EdgeDeleteOperation',
     'operations/non_ot/ActivityOperation',
     'operations/non_ot/EntitySelectOperation',
+    'canvas_widget/HistoryManager',
     'canvas_widget/AbstractEntity',
     'canvas_widget/SingleValueAttribute',
     'text!templates/canvas_widget/abstract_edge.html'
-],/** @lends AbstractEdge */function (require,$,jsPlumb,_,IWCW,EdgeDeleteOperation,ActivityOperation,EntitySelectOperation,AbstractEntity,SingleValueAttribute,abstractEdgeHtml) {
+],/** @lends AbstractEdge */function (require,$,jsPlumb,_,IWCW,EdgeDeleteOperation,ActivityOperation,EntitySelectOperation,HistoryManager,AbstractEntity,SingleValueAttribute,abstractEdgeHtml) {
 
     AbstractEdge.prototype = new AbstractEntity();
     AbstractEdge.prototype.constructor = AbstractEdge;
@@ -758,8 +759,9 @@ define([
                             break;
                         }
                         case EdgeDeleteOperation.TYPE:{
-                            operation = new EdgeDeleteOperation(data.id);
+                            operation = new EdgeDeleteOperation(data.id,data.type,data.source,data.target,data.json);
                             remoteEdgeDeleteCallback(operation);
+                            HistoryManager.add(operation);
                             break;
                         }
                     }

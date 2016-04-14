@@ -1451,7 +1451,7 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
 
                     switch(event.name){
                         case NodeAddOperation.TYPE:{
-                            operation = new NodeAddOperation(data.id,data.type,data.left, data.top,data.width,data.height,data.zIndex,data.json,data.viewId,data.oType,jabberId);
+                            operation = new NodeAddOperation(data.id,data.type,data.left, data.top,data.width,data.height,data.zIndex,data.json,data.viewId,data.oType);
                             remoteNodeAddCallback(operation);
                             HistoryManager.add(operation);
                             if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] === jabberId) {
@@ -1459,25 +1459,23 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                             }
                             break;
                         }
-                        case EdgeAddOperation.TYPE:
-                        {
+                        case EdgeAddOperation.TYPE:{
                             operation = new EdgeAddOperation(data.id, data.type, data.source, data.target, data.json, data.viewId, data.oType, jabberId);
                             remoteEdgeAddCallback(operation);
+                            HistoryManager.add(operation);
                             if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] === jabberId) {
                                 triggerSave = true;
                             }
                             break;
                         }
-                        case RevokeSharedActivityOperation.TYPE:
-                        {
+                        case RevokeSharedActivityOperation.TYPE:{
                             if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== jabberId) {
                                 operation = new RevokeSharedActivityOperation(data.id);
                                 remoteRevokeSharedActivityOperationCallback(operation);
                             }
                             break;
                         }
-                        case remoteGuidanceStrategyOperation.TYPE:
-                        {
+                        case GuidanceStrategyOperation.TYPE:{
                             if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== jabberId) {
                                 operation = new GuidanceStrategyOperation(data.data);
                                 remoteGuidanceStrategyOperation(operation);

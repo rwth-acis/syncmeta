@@ -21,11 +21,10 @@ define([
      * @param {string} oType oType the original Type, only set in views
      * @constructor
      */
-    function EdgeAddOperation(entityId,type,source,target,json, viewId,oType,jabberId){
+    function EdgeAddOperation(entityId,type,source,target,json, viewId,oType){
         var that = this;
 
         var _oType = oType;
-        var _jabberId = jabberId;
 
         this.getOriginType = function(){
           return _oType;
@@ -82,8 +81,7 @@ define([
                     target: _target,
                     json: _json,
                     viewId: _viewId,
-                    oType:_oType,
-                    jabberId:_jabberId
+                    oType:_oType
                 }),
                 CONFIG.OPERATION.TYPE.INSERT,
                 CONFIG.IWC.POSITION.EDGE.ADD
@@ -128,10 +126,6 @@ define([
          */
         this.getJSON = function(){
             return _json;
-        };
-
-        this.getJabberId =function(){
-            return _jabberId;
         };
 
         /**
@@ -184,8 +178,7 @@ define([
           target:this.getTarget(),
           json:this.getJSON(),
           viewId:this.getViewId(),
-          otype:this.getOriginType(),
-          jabberId:this.getJabberId()
+          otype:this.getOriginType()
       }
     };
 

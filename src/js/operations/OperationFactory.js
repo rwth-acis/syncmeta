@@ -178,9 +178,7 @@ define([
                                                 value.zIndex,
                                                 value.json,
                                                 value.viewId,
-                                                value.oType,
-                                                value.jabberId
-                                            );
+                                                value.oType);
                                             break;
                                         case CONFIG.OPERATION.TYPE.UPDATE:
                                             resOperation = new NodeDeleteOperation(
@@ -200,24 +198,18 @@ define([
                                     resOperation = new NodeMoveOperation(
                                         entityId,
                                         value.offsetX,
-                                        value.offsetY,
-                                        value.jabberId
-                                    );
+                                        value.offsetY);
                                     break;
                                 case CONFIG.IWC.POSITION.NODE.Z:
                                     resOperation = new NodeMoveZOperation(
                                         entityId,
-                                        value.offsetZ,
-                                        value.jabberId
-                                    );
+                                        value.offsetZ);
                                     break;
                                 case CONFIG.IWC.POSITION.NODE.DIM:
                                     resOperation = new NodeResizeOperation(
                                         entityId,
                                         value.offsetX,
-                                        value.offsetY,
-                                        value.jabberId
-                                    );
+                                        value.offsetY);
                                     break;
                             }
                             break;
@@ -236,9 +228,7 @@ define([
                                         value.target,
                                         value.json,
                                         value.viewId,
-                                        value.oType,
-                                        value.jabberId
-                                    );
+                                        value.oType);
                                     break;
                                 case CONFIG.OPERATION.TYPE.UPDATE:
                                     resOperation = new EdgeDeleteOperation(

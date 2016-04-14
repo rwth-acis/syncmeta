@@ -17,7 +17,7 @@ define([
      * @param {number} offsetY Offset in y-direction
      * @constructor
      */
-    function NodeResizeOperation(entityId,offsetX,offsetY,jabberId){
+    function NodeResizeOperation(entityId,offsetX,offsetY){
         var that = this;
 
         EntityOperation.call(this,EntityOperation.TYPES.NodeResizeOperation,entityId,CONFIG.ENTITY.NODE);
@@ -47,8 +47,7 @@ define([
                 CONFIG.ENTITY.NODE+":"+that.getEntityId(),
                 JSON.stringify({
                     offsetX: _offsetX,
-                    offsetY: _offsetY,
-                    jabberId:_jabberId
+                    offsetY: _offsetY
                 }),
                 CONFIG.OPERATION.TYPE.UPDATE,
                 CONFIG.IWC.POSITION.NODE.DIM
@@ -69,10 +68,6 @@ define([
          */
         this.getOffsetY = function(){
             return _offsetY;
-        };
-
-        this.getJabberId = function(){
-            return _jabberId;
         };
 
         /**
@@ -130,8 +125,7 @@ define([
         return {
             id:this.getEntityId(),
             offsetX:this.getOffsetX(),
-            offsetY:this.getOffsetY(),
-            jabberId:this.getJabberId()
+            offsetY:this.getOffsetY()
         }
     };
 

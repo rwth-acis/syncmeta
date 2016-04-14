@@ -239,7 +239,14 @@ define([
 
     NodeDeleteOperation.prototype.toJSON = function(){
         return {
-            id:this.getEntityId()
+            id:this.getEntityId(),
+            type: this.getType(),
+            left: this.getLeft(),
+            top: this.getTop(),
+            width: this.getWidth(),
+            height: this.getHeight(),
+            zIndex: this.getZIndex(),
+            json: this.getJSON()
         }
     };
 
