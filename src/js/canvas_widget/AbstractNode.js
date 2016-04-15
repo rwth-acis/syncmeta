@@ -1316,25 +1316,29 @@ define([
                         case NodeDeleteOperation.TYPE:{
                             operation = new NodeDeleteOperation(data.id,data.type,data.left, data.top,data.width,data.height,data.zIndex,data.json);
                             remoteNodeDeleteCallback(operation);
-                            HistoryManager.add(operation);
+                            if(!data.historyFlag)
+                                HistoryManager.add(operation);
                             break;
                         }
                         case NodeMoveOperation.TYPE:{
                             operation = new NodeMoveOperation(data.id, data.offsetX, data.offsetY, jabberId);
                             remoteNodeMoveCallback(operation);
-                            HistoryManager.add(operation);
+                            if(!data.historyFlag)
+                                HistoryManager.add(operation);
                             break;
                         }
                         case NodeMoveZOperation.TYPE:{
                             operation =  new NodeMoveZOperation(data.id,data.offsetZ, jabberId);
                             remoteNodeMoveZCallback(operation);
-                            HistoryManager.add(operation);
+                            if(!data.historyFlag)
+                                HistoryManager.add(operation);
                             break;
                         }
                         case NodeResizeOperation.TYPE:{
                             operation = new NodeResizeOperation(data.id, data.offsetX, data.offsetY,jabberId);
                             remoteNodeResizeCallback(operation);
-                            HistoryManager.add(operation);
+                            if(!data.historyFlag)
+                                HistoryManager.add(operation);
                             break;
                         }
                         case EntitySelectOperation.TYPE:{

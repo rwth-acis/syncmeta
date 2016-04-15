@@ -6,7 +6,7 @@ define(['jqueryui',
     'operations/ot/NodeMoveOperation',
     'operations/ot/NodeMoveZOperation',
     'operations/ot/NodeResizeOperation'
-],function ($,NodeAddOperation, EdgeAddOperation,NodeDeleteOperation,EdgeDeleteOperation,NodeMoveOperation,NodeMoveZOperation,NodeResizeOperation) {
+],function ($, NodeAddOperation, EdgeAddOperation,NodeDeleteOperation,EdgeDeleteOperation,NodeMoveOperation,NodeMoveZOperation,NodeResizeOperation) {
     function HistoryManager(){
 
         var $undo= $('#undo');
@@ -14,51 +14,81 @@ define(['jqueryui',
         var $redo=$('#redo');
 
         var propagateHistoryOperationFromJson = function(json){
-            var operation = null;
+            var EntityManager = require('canvas_widget/EntityManager');
+            var operation = null, data =null, entity;
             switch(json.TYPE){
                 case NodeDeleteOperation.TYPE:{
-                    y.share.nodes.get(json.id).then(function(ymap){
-                        operation = new NodeDeleteOperation(json.id,json.type, json.left,json.top, json.width, json.height,json.zIndex,json.json);
-                        ymap.set(NodeDeleteOperation.TYPE, operation.toJSON());
-                    });
+                    entity = EntityManager.findNode(json.id);
+                    if(entity) {
+                        operation = new NodeDeleteOperation(json.id, json.type, json.left, json.top, json.width, json.height, json.zIndex, json.json);
+                        y.share.nodes.get(json.id).then(function (ymap) {
+                            data = operation.toJSON();
+                            data.historyFlag = true;
+                            ymap.set(NodeDeleteOperation.TYPE, data);
+                        });
+                    }
                     break;
                 }
                 case NodeAddOperation.TYPE:{
                     operation =  new NodeAddOperation(json.id,json.type, json.left,json.top, json.width, json.height,json.zIndex,json.json);
-                    y.share.canvas.set(NodeAddOperation.TYPE,operation.toJSON());
+                    data = operation.toJSON();
+                    data.historyFlag = true;
+                    y.share.canvas.set(NodeAddOperation.TYPE,data);
                     break;
                 }
                 case EdgeAddOperation.TYPE:{
                     operation =  new EdgeAddOperation(json.id,json.type,json.source,json.target,json.json);
-                    y.share.canvas.set(EdgeAddOperation.TYPE,operation.toJSON());
+                    data = operation.toJSON();
+                    data.historyFlag = true;
+                    y.share.canvas.set(EdgeAddOperation.TYPE,data);
                     break;
                 }
                 case EdgeDeleteOperation.TYPE:{
-                    operation = new EdgeDeleteOperation(json.id, json.type, json.source, json.target, json.json);
-                    y.share.edges.get(json.id).then(function (ymap) {
-                        ymap.set(EdgeDeleteOperation.TYPE, operation.toJSON());
-                    });
+                    entity = EntityManager.findEdge(json.id);
+                    if(entity) {
+                        operation = new EdgeDeleteOperation(json.id, json.type, json.source, json.target, json.json);
+                        y.share.edges.get(json.id).then(function (ymap) {
+                            data = operation.toJSON();
+                            data.historyFlag = true;
+                            ymap.set(EdgeDeleteOperation.TYPE, data);
+                        });
+                    }
                     break;
                 }
                 case NodeMoveOperation.TYPE:{
-                    operation =  new NodeMoveOperation(json.id,json.offsetX,json.offsetY);
-                    y.share.node.get(json.id).then(function(ymap){
-                        ymap.set(NodeMoveOperation.TYPE,operation.toJSON());
-                    });
+                    entity = EntityManager.findNode(json.id);
+                    if(entity) {
+                        operation = new NodeMoveOperation(json.id, json.offsetX, json.offsetY);
+                        y.share.nodes.get(json.id).then(function (ymap) {
+                            data = operation.toJSON();
+                            data.historyFlag = true;
+                            ymap.set(NodeMoveOperation.TYPE, data);
+                        });
+                    }
                     break;
                 }
                 case NodeMoveZOperation.TYPE:{
-                    operation =  new NodeMoveZOperation(json.id,json.offsetZ);
-                    y.share.node.get(json.id).then(function(ymap){
-                        ymap.set(NodeMoveZOperation.TYPE,operation.toJSON());
-                    });
+                    entity = EntityManager.findNode(json.id);
+                    if(entity) {
+                        operation = new NodeMoveZOperation(json.id, json.offsetZ);
+                        y.share.nodes.get(json.id).then(function (ymap) {
+                            data = operation.toJSON();
+                            data.historyFlag = true;
+                            ymap.set(NodeMoveZOperation.TYPE, data);
+                        });
+                    }
                     break;
                 }
                 case NodeResizeOperation.TYPE:{
-                    operation =  new NodeResizeOperation(json.id,json.offsetX,json.offsetY);
-                    y.share.nodes.get(json.id).then(function(ymap){
-                        ymap.set(NodeResizeOperation.TYPE, operation.toJSON());
-                    });
+                    entity = EntityManager.findNode(json.id);
+                    if(entity) {
+                        operation = new NodeResizeOperation(json.id, json.offsetX, json.offsetY);
+                        y.share.nodes.get(json.id).then(function (ymap) {
+                            data = operation.toJSON();
+                            data.historyFlag = true;
+                            ymap.set(NodeResizeOperation.TYPE, data);
+                        });
+                    }
                     break;
                 }
             }
@@ -79,7 +109,14 @@ define(['jqueryui',
                 if(y.share.undo.length>0){
                     var jsonOp = y.share.undo.get(y.share.undo.length-1);
                     y.share.undo.delete(y.share.undo.length-1);
+                    if(y.share.undo.length===0){
+                        $undo.prop('disabled', true);
+                    }
                     var operation = propagateHistoryOperationFromJson(jsonOp);
+                    if(!operation) {
+                        this.undo();
+                        return;
+                    }
                     var inverseOp = operation.inverse();
                     var json = inverseOp.toJSON();
                     json.TYPE =  inverseOp.constructor.name;
@@ -96,7 +133,14 @@ define(['jqueryui',
                 if(y.share.redo.length>0) {
                     var jsonOp = y.share.redo.get(y.share.redo.length-1);
                     y.share.redo.delete(y.share.redo.length-1);
+                    if(y.share.redo.length===0){
+                        $redo.prop('disabled', true);
+                    }
                     var operation = propagateHistoryOperationFromJson(jsonOp);
+                    if(!operation) {
+                        this.redo();
+                        return;
+                    }
                     var inverseOp = operation.inverse();
                     var json = inverseOp.toJSON();
                     json.TYPE =  inverseOp.constructor.name;

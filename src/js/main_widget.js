@@ -731,11 +731,15 @@ requirejs([
 
         $undo.click(function () {
             HistoryManager.undo();
-        }).prop('disabled', true);
+        });
+        if(y.share.undo.length === 0)
+            $undo.prop('disabled', true);
 
         $redo.click(function () {
             HistoryManager.redo();
-        }).prop('disabled', true);
+        });
+        if(y.share.redo.length === 0)
+            $redo.prop('disabled', true);
 
 
         $("#q").draggable({

@@ -15,9 +15,10 @@ define([
      * @param {String} entityId Entity id of the entity this activity works on
      * @param {number} offsetX Offset in x-direction
      * @param {number} offsetY Offset in y-direction
+     * @param {string} jabberId the jabberId of the user
      * @constructor
      */
-    function NodeMoveOperation(entityId,offsetX,offsetY){
+    function NodeMoveOperation(entityId,offsetX,offsetY,jabberId){
         var that = this;
 
         EntityOperation.call(this,EntityOperation.TYPES.NodeMoveOperation,entityId,CONFIG.ENTITY.NODE);
@@ -37,6 +38,13 @@ define([
         var _offsetY = offsetY;
 
         /**
+         * jabber id of the user
+         * @type {string}
+         * @private
+         */
+        var _jabberId = jabberId;
+
+        /**
          * Create OTOperation for operation
          * @returns {operations.ot.OTOperation}
          */
@@ -45,7 +53,8 @@ define([
                 CONFIG.ENTITY.NODE+":"+that.getEntityId(),
                 JSON.stringify({
                     offsetX: _offsetX,
-                    offsetY: _offsetY
+                    offsetY: _offsetY,
+                    jabberId:_jabberId
                 }),
                 CONFIG.OPERATION.TYPE.UPDATE,
                 CONFIG.IWC.POSITION.NODE.POS
@@ -66,6 +75,14 @@ define([
          */
         this.getOffsetY = function(){
             return _offsetY;
+        };
+
+        /**
+         * Get the JabberId
+         * @returns {string}
+         */
+        this.getJabberId = function(){
+            return _jabberId;
         };
 
         /**
@@ -104,7 +121,8 @@ define([
             return new NodeMoveOperation(
                 this.getEntityId(),
                 -this.getOffsetX(),
-                -this.getOffsetY()
+                -this.getOffsetY(),
+                this.getJabberId()
             );
         };
     }
@@ -124,7 +142,8 @@ define([
         return {
             id:this.getEntityId(),
             offsetX:this.getOffsetX(),
-            offsetY:this.getOffsetY()
+            offsetY:this.getOffsetY(),
+            jabberId:this.getJabberId()
         }
     };
 

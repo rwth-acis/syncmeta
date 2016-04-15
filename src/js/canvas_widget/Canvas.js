@@ -246,7 +246,7 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
             if (operation instanceof NodeAddOperation) {
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
-                if(operation.getViewId() === EntityManager.getViewId()) {
+                if(operation.getViewId() === EntityManager.getViewId() || EntityManager.getLayer() === CONFIG.LAYER.META) {
                     _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
                         "NodeAddActivity",
                         operation.getEntityId(),
@@ -318,7 +318,7 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
 
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
 
-                if(operation.getViewId() === EntityManager.getViewId()) {
+                if(operation.getViewId() === EntityManager.getViewId() || EntityManager.getLayer() === CONFIG.LAYER.META) {
                     _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
                         "EdgeAddActivity",
                         operation.getEntityId(),
@@ -1451,9 +1451,10 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
 
                     switch(event.name){
                         case NodeAddOperation.TYPE:{
-                            operation = new NodeAddOperation(data.id,data.type,data.left, data.top,data.width,data.height,data.zIndex,data.json,data.viewId,data.oType);
+                            operation = new NodeAddOperation(data.id,data.type,data.left, data.top,data.width,data.height,data.zIndex,data.json,data.viewId,data.oType,jabberId);
                             remoteNodeAddCallback(operation);
-                            HistoryManager.add(operation);
+                            if(!data.historyFlag)
+                                HistoryManager.add(operation);
                             if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] === jabberId) {
                                 triggerSave = true;
                             }
@@ -1462,7 +1463,8 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                         case EdgeAddOperation.TYPE:{
                             operation = new EdgeAddOperation(data.id, data.type, data.source, data.target, data.json, data.viewId, data.oType, jabberId);
                             remoteEdgeAddCallback(operation);
-                            HistoryManager.add(operation);
+                            if(!data.historyFlag)
+                                HistoryManager.add(operation);
                             if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] === jabberId) {
                                 triggerSave = true;
                             }

@@ -761,7 +761,8 @@ define([
                         case EdgeDeleteOperation.TYPE:{
                             operation = new EdgeDeleteOperation(data.id,data.type,data.source,data.target,data.json);
                             remoteEdgeDeleteCallback(operation);
-                            HistoryManager.add(operation);
+                            if(!data.historyFlag)
+                                HistoryManager.add(operation);
                             break;
                         }
                     }
