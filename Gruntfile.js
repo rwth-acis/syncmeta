@@ -27,8 +27,6 @@ module.exports = function(grunt) {
             },
             lib: {
                 files: [
-                    {cwd: '<%= bowerdir %>/coweb-jsoe/coweb/jsoe/',expand: true, src: ['**'], dest: '<%= distdir %>/js/lib/vendor/coweb/jsoe/'},
-                    {cwd: '<%= bowerdir %>/coweb-jsoe/', expand: true, src: ['org/requirejs/i18n.js'], dest: '<%= distdir %>/js/lib/vendor/'},
                     {src: '<%= bowerdir %>/iwc/index.js', dest: '<%= distdir %>/js/lib/vendor/iwc.js'},
                     {src: '<%= bowerdir %>/jquery/jquery.js', dest: '<%= distdir %>/js/lib/vendor/jquery.js'},
                     {src: '<%= bowerdir %>/jquery-migrate/jquery-migrate.js', dest: '<%= distdir %>/js/lib/vendor/jquery-migrate.js'},
@@ -43,8 +41,6 @@ module.exports = function(grunt) {
                     {src: '<%= bowerdir %>/requirejs-text/text.js', dest: '<%= distdir %>/js/lib/vendor/requirejs-text.js'},
                     {src: '<%= bowerdir %>/requirejs-promise/requirejs-promise.js', dest: '<%= distdir %>/js/lib/vendor/requirejs-promise.js'},
                     {src: '<%= bowerdir %>/lodash/dist/lodash.js', dest: '<%= distdir %>/js/lib/vendor/lodash.js'},
-                    {cwd: '<%= bowerdir %>/swfobject/swfobject/',expand: true, src: ['**'], dest: '<%= distdir %>/js/lib/vendor/swfobject'},
-                    {src: '<%= bowerdir %>/FileToDataURI/index.swf', dest: '<%= distdir %>/js/lib/vendor/FileToDataURI.swf'},
                     {src: '<%= bowerdir %>/jszip/jszip.js', dest: '<%= distdir %>/js/lib/vendor/jszip.js'},
                     {src: '<%= bowerdir %>/graphlib/dist/graphlib.core.min.js', dest: '<%= distdir %>/js/lib/vendor/graphlib.core.min.js'},
                     {cwd: '<%= bowerdir %>/font-awesome/',expand: true, src: ['css/**', 'fonts/**'], dest: '<%= distdir %>/css/vendor/font-awesome/'},
@@ -53,7 +49,9 @@ module.exports = function(grunt) {
                     {cwd:'<%= bowerdir %>/y-map',expand:true, src: ['*.js'], dest:'<%=distdir%>/js/lib/vendor/y-map'},
                     {cwd:'<%= bowerdir %>/y-text',expand:true,src: ['*.js'], dest:'<%=distdir%>/js/lib/vendor/y-text'},
                     {cwd:'<%= bowerdir %>/y-websockets-client',expand:true, src: ['*.js'], dest:'<%=distdir%>/js/lib/vendor/y-websockets-client'},
-                    {cwd:'<%= bowerdir %>/y-memory',expand:true, src: ['*.js'], dest:'<%=distdir%>/js/lib/vendor/y-memory'}
+                    {cwd:'<%= bowerdir %>/y-memory',expand:true, src: ['*.js'], dest:'<%=distdir%>/js/lib/vendor/y-memory'},
+                    {src: '<%= bowerdir %>/chai/chai.js', dest: '<%= distdir %>/js/lib/vendor/test/chai.js'},
+                    {src: '<%= bowerdir %>/mocha/mocha.js', dest: '<%= distdir %>/js/lib/vendor/test/mocha.js'}
                 ]
             },
             main: {

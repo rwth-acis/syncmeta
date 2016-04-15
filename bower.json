@@ -13,7 +13,6 @@
     "tests"
   ],
   "dependencies": {
-    "coweb-jsoe": "https://github.com/opencoweb/coweb-jsoe/raw/master/dist/jsoe/coweb-jsoe-0.8.3.tar",
     "iwc": "http://dbis.rwth-aachen.de/gadgets/iwc/lib/iwc.js",
     "jquery": "~2.0.3",
     "jquery-ui": "~1.10.3",
@@ -25,8 +24,6 @@
     "lodash": "~2.4.1",
     "requirejs-text": "~2.0.10",
     "requirejs-promise": "*",
-    "FileToDataURI": "https://github.com/Aymkdn/FileToDataURI/blob/master/FileToDataURI.swf",
-    "swfobject": "*",
     "jquery-mousewheel": "~3.1.9",
     "jszip": "~2.0.0",
     "bootstrap": "~3.3.5",
@@ -41,5 +38,9 @@
   },
   "resolutions": {
     "lodash": "~2.4.1"
+  },
+  "devDependencies": {
+    "mocha": "^2.4.5",
+    "chai": "^3.5.0"
   }
 }

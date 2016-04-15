@@ -18,8 +18,8 @@ requirejs([
     'palette_widget/BiDirAssociationEdgeTool',
     'palette_widget/UniDirAssociationEdgeTool',
     'palette_widget/GeneralisationEdgeTool',
-	'palette_widget/ViewObjectNodeTool',
-	'palette_widget/ViewRelationshipNodeTool',
+    'palette_widget/ViewObjectNodeTool',
+    'palette_widget/ViewRelationshipNodeTool',
     'text!templates/canvas_widget/circle_node.html',
     'text!templates/canvas_widget/diamond_node.html',
     'text!templates/canvas_widget/rectangle_node.html',
@@ -30,7 +30,7 @@ requirejs([
     'promise!Guidancemodel'
 ],function ($,Palette,MoveTool,Separator,ObjectNodeTool,AbstractClassNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,GeneralisationEdgeTool,ViewObjectNodeTool,ViewRelationshipNodeTool,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,model,metamodel,guidancemodel) {
 
-   var palette = new Palette($("#palette"),$("#info"));
+    var palette = new Palette($("#palette"),$("#info"));
 
     palette.addTool(new MoveTool());
     palette.addSeparator(new Separator());
@@ -50,31 +50,31 @@ requirejs([
     }
     else{
         //Create node tools for metamodeling
-            palette.addTool(new AbstractClassNodeTool());
-            palette.addTool(new ObjectNodeTool());
-            palette.addTool(new RelationshipNodeTool());
-            palette.addTool(new RelationshipGroupNodeTool());
-            palette.addTool(new EnumNodeTool());
-            palette.addTool(new NodeShapeNodeTool());
-            palette.addTool(new EdgeShapeNodeTool());
+        palette.addTool(new AbstractClassNodeTool());
+        palette.addTool(new ObjectNodeTool());
+        palette.addTool(new RelationshipNodeTool());
+        palette.addTool(new RelationshipGroupNodeTool());
+        palette.addTool(new EnumNodeTool());
+        palette.addTool(new NodeShapeNodeTool());
+        palette.addTool(new EdgeShapeNodeTool());
 
 
-            var sep = new Separator();
-            palette.addSeparator(sep);
-            sep.get$node().hide();
+        var sep = new Separator();
+        palette.addSeparator(sep);
+        sep.get$node().hide();
 
-            var viewObjectTool = new ViewObjectNodeTool();
-            palette.addTool(viewObjectTool);
-            viewObjectTool.get$node().hide();
+        var viewObjectTool = new ViewObjectNodeTool();
+        palette.addTool(viewObjectTool);
+        viewObjectTool.get$node().hide();
 
-            var viewRelNodeTool = new ViewRelationshipNodeTool();
-            palette.addTool(viewRelNodeTool);
-            viewRelNodeTool.get$node().hide();
+        var viewRelNodeTool = new ViewRelationshipNodeTool();
+        palette.addTool(viewRelNodeTool);
+        viewRelNodeTool.get$node().hide();
 
-            palette.addSeparator(new Separator());
-            palette.addTool(new BiDirAssociationEdgeTool());
-            palette.addTool(new UniDirAssociationEdgeTool());
-            palette.addTool(new GeneralisationEdgeTool());
+        palette.addSeparator(new Separator());
+        palette.addTool(new BiDirAssociationEdgeTool());
+        palette.addTool(new UniDirAssociationEdgeTool());
+        palette.addTool(new GeneralisationEdgeTool());
 
 
     }
@@ -98,7 +98,11 @@ requirejs([
      * @type {$}
      */
     var $colorTestElement = $('<div></div>');
-	
+
+
+    if(CONFIG.TEST_MODE)
+        require(['./../test/PaletteWidgetTest']);
+
     $("#q").draggable({
         axis: "y",
         start: function(){

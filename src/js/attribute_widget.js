@@ -146,6 +146,9 @@ requirejs([
         var operation = new SetModelAttributeNodeOperation();
         iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN, operation.toNonOTOperation());
 
+        if(CONFIG.TEST_MODE)
+            require(['./../test/AttributeWidgetTest']);
+
         $("#loading").hide();
         //--------------------------------------------------------------------------
 
