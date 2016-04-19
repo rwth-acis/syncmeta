@@ -288,15 +288,39 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                         node = EntityManager.createNode(type, operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex());
                     }
 
-                    node.draw();
-                    node.addToCanvas(that);
 
-                    //if we are in a view but the view type got no mapping in this view -> hide the element
-                    if(!viewType && EntityManager.getViewId()){
-                        node.hide();
+                    if(y){
+                        y.share.nodes.get(node.getEntityId()).then(function(map){
+                            node.registerYMap(map);
+
+                            node.draw();
+                            node.addToCanvas(that);
+                            //if we are in a view but the view type got no mapping in this view -> hide the element
+                            if(!viewType && EntityManager.getViewId()){
+                                node.hide();
+                            }else{
+                                if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()){
+                                    var color = _iwcw.getUserColor(operation.getJabberId());
+                                    node.refreshTraceAwareness(color);
+                                }
+                            }
+                            that.remountCurrentTool();
+                        });
                     }
-                    that.remountCurrentTool();
-
+                    else {
+                        node.draw();
+                        node.addToCanvas(that);
+                        //if we are in a view but the view type got no mapping in this view -> hide the element
+                        if(!viewType && EntityManager.getViewId()){
+                            node.hide();
+                        }else{
+                            if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()){
+                                var color = _iwcw.getUserColor(operation.getJabberId());
+                                node.refreshTraceAwareness(color);
+                            }
+                        }
+                        that.remountCurrentTool();
+                    }
                 }
             }
         };

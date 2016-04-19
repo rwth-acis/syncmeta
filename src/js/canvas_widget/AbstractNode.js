@@ -441,8 +441,8 @@ define([
         var remoteNodeDeleteCallback = function(operation){
             var jabberId = y.share.users.get(_ymap.map[NodeDeleteOperation.TYPE][0]);
 
-            if(jabberId !== _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
-                y.share.nodes.delete(operation.getEntityId());
+            //if(jabberId !== _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
+            //    y.share.nodes.delete(operation.getEntityId());
 
             if(operation instanceof NodeDeleteOperation && operation.getEntityId() === that.getEntityId()){
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
