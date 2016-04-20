@@ -126,15 +126,6 @@ define([
             return _value2;
         };
 
-		/*
-		 this.setValue3 = function(value){
-            _value3 = value;
-        };
-		
-		this.getValue3 = function(){
-            return _value3;
-        };
-		*/
 
         /**
          * Get jQuery object of the DOM node representing the attribute

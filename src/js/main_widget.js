@@ -416,33 +416,8 @@ requirejs([
 
             var activityOperation = new ActivityOperation("ViewApplyActivity", json.id, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
             _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
-            //TODO
-            //_iwcw.sendRemoteNonOTOperation(activityOperation.toNonOTOperation());
 
-            var nodeId, edgeId;
-            for (nodeId in json.nodes) {
-                if (json.nodes.hasOwnProperty(nodeId)) {
-                    var jNode = json.nodes[nodeId];
-                    var node = EntityManager.createNodeFromJSON(jNode.type, nodeId, jNode.left, jNode.top, jNode.width, jNode.height, jNode.zIndex, jNode, jNode.viewId);
-                    //TODO add origin to nodes
-                    //if(jNode.hasOwnProperty('origin'))
-                    //    node.setOrigin(jNode.origin);
-                    node.addToCanvas(canvas);
-                    node.draw();
-                }
-            }
-            for (edgeId in json.edges) {
-                if (json.edges.hasOwnProperty(edgeId)) {
-                    var jEdge = json.edges[edgeId];
-                    var edge = EntityManager.createEdgeFromJSON(jEdge.type, edgeId, jEdge.source, jEdge.target, jEdge);
-                    //  TODO add origin to edges
-                    //if(jEdge.hasOwnProperty('origin'))
-                    //    edge.setOrigin(jEdge.origin);
-                    edge.addToCanvas(canvas);
-                    edge.connect();
-                }
-            }
-
+            JSONtoGraph(json);
         }
 
         function DeleteView(viewId) {

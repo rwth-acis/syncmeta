@@ -3,10 +3,10 @@ define([
     'jqueryui',
     'lodash',
     'canvas_widget/AbstractNode',
-	'canvas_widget/SingleSelectionAttribute',
+    'canvas_widget/SingleSelectionAttribute',
     'canvas_widget/RenamingListAttribute',
-	'canvas_widget/ConditionListAttribute',
-	'canvas_widget/ViewTypesUtil',
+    'canvas_widget/ConditionListAttribute',
+    'canvas_widget/ViewTypesUtil',
     'canvas_widget/LogicalOperator',
     'canvas_widget/LogicalConjunctions',
     'text!templates/canvas_widget/viewobject_node.html'
@@ -75,9 +75,9 @@ define([
             return AbstractNode.prototype.toJSON.call(this);
         };
 
-		ViewTypesUtil.GetCurrentBaseModel().then(function(model){
-			var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes,['Object']);
-			var attribute = new SingleSelectionAttribute(id+"[target]", "Target", that, selectionValues);
+        ViewTypesUtil.GetCurrentBaseModel().then(function(model){
+            var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes,['Object']);
+            var attribute = new SingleSelectionAttribute(id+"[target]", "Target", that, selectionValues);
 
             var conjSelection = new SingleSelectionAttribute(id+'[conjunction]', 'Conjunction', that, LogicalConjunctions);
             that.addAttribute(conjSelection);
@@ -112,12 +112,12 @@ define([
             }
             that.addAttribute(attribute);
             attribute.getValue().registerYType();
-			that.get$node().find('.attributes').prepend(attribute.get$node());
+            that.get$node().find('.attributes').prepend(attribute.get$node());
 
-		});
-		        
-		var attributeList = new RenamingListAttribute("[attributes]","Attributes",this,{"show":"Visible","hide":"Hidden"});
-		this.addAttribute(attributeList);
+        });
+
+        var attributeList = new RenamingListAttribute("[attributes]","Attributes",this,{"show":"Visible","hide":"Hidden"});
+        this.addAttribute(attributeList);
 
 
         var registerYTextAttributes = function(map){
@@ -126,7 +126,7 @@ define([
             });
         };
         this.registerYMap = function(map, disableYText){
-          AbstractNode.prototype.registerYMap.call(this,map);
+            AbstractNode.prototype.registerYMap.call(this,map);
             if(!disableYText)
                 registerYTextAttributes(map);
             attributeList.registerYMap(disableYText);
@@ -148,14 +148,18 @@ define([
             return {
                 addShape: {
                     name: "Add Node Shape",
-                        callback: function(){
+                    callback: function(){
                         var canvas = that.getCanvas(),
                             appearance = that.getAppearance(),
                             nodeId;
 
                         //noinspection JSAccessibilityCheck
                         nodeId = canvas.createNode(NodeShapeNode.TYPE,appearance.left + appearance.width + 50,appearance.top,150,100);
-                        canvas.createEdge(BiDirAssociationEdge.TYPE,that.getEntityId(),nodeId, null, null, viewId);
+                        //TODO can do better
+                        setTimeout(function(){
+                            canvas.createEdge(BiDirAssociationEdge.TYPE,that.getEntityId(),nodeId, null, null, viewId);
+                        },1000);
+
                     },
                     disabled: function() {
                         var edges = that.getEdges(),
@@ -167,7 +171,7 @@ define([
                                 edge = edges[edgeId];
                                 if( (edge instanceof BiDirAssociationEdge &&
                                     (edge.getTarget() === that && edge.getSource() instanceof NodeShapeNode ||
-                                        edge.getSource() === that && edge.getTarget() instanceof NodeShapeNode)) ||
+                                    edge.getSource() === that && edge.getTarget() instanceof NodeShapeNode)) ||
 
                                     (edge instanceof UniDirAssociationEdge && edge.getTarget() instanceof NodeShapeNode) ){
 

@@ -161,7 +161,10 @@ function (require, $, jsPlumb, _, AbstractNode, SingleSelectionAttribute, Renami
 
 						//noinspection JSAccessibilityCheck
 						nodeId = canvas.createNode(EdgeShapeNode.TYPE, appearance.left + appearance.width + 50, appearance.top, 150, 100);
-						canvas.createEdge(BiDirAssociationEdge.TYPE, that.getEntityId(), nodeId, null, null, viewId);
+                        //TODO can do better
+                        setTimeout(function(){
+                            canvas.createEdge(BiDirAssociationEdge.TYPE, that.getEntityId(), nodeId, null, null, viewId);
+                        },1000);
 					},
 					disabled : function () {
 						var edges = that.getEdges(),

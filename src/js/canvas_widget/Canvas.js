@@ -1074,9 +1074,31 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
             }
             var operation = new EdgeAddOperation(id, type, source, target, json || null, EntityManager.getViewId(), oType);
             if(y){
+
                 y.share.edges.set(id, Y.Map).then(function(map){
+
                     map.set(id+"[label]", Y.Text).then(function() {
-                        y.share.canvas.set(EdgeAddOperation.TYPE, operation.toJSON());
+                        if(EntityManager.getLayer()=== CONFIG.LAYER.MODEL){
+                            var attributes = EntityManager.getEdgeType(type).getAttributes();
+                            var attrPromises = [];
+                            for(var attrKey in attributes){
+                                if(attributes.hasOwnProperty(attrKey)&& attributes[attrKey].value === 'string'){
+                                    var attrId =  id+'['+attributes[attrKey].key+']';
+                                    attrPromises.push(createYTypeForValueOfAttribute(map,attrId.toLowerCase(), Y.Text));
+                                }
+                            }
+                            if(attrPromises.length > 0) {
+                                $.when.apply(null, attrPromises).done(function () {
+                                    y.share.canvas.set(EdgeAddOperation.TYPE, operation.toJSON());
+                                });
+                            }
+                            else {
+                                y.share.canvas.set(EdgeAddOperation.TYPE, operation.toJSON());
+                            }
+                        }
+                        else{
+                            y.share.canvas.set(EdgeAddOperation.TYPE, operation.toJSON());
+                        }
                     });
                     map.set('id',id);
                     map.set('source', source);

@@ -15,17 +15,21 @@ define(['lodash',
                     }
                 }
                 origin = null;
-                for(var edgeKey in _json.edges){
-                    if(_json.edges.hasOwnProperty(edgeKey)) {
-                        var edge = _json.edges[edgeKey];
-                        var edgeJson = null;
-                        if (_json.edges[edgeKey].hasOwnProperty('origin') && baseModel.edges.hasOwnProperty(_json.edges[edgeKey].origin)) {
-                            edgeJson = baseModel.edges[_json.edges[edgeKey].origin];
-                            origin = _json.edges[edgeKey].origin;
+                //TODO timeout here very ugly solution need to wait for till all nodes are created but they are created in yjs callback
+                setTimeout(function(){
+                    for(var edgeKey in _json.edges){
+                        if(_json.edges.hasOwnProperty(edgeKey)) {
+                            var edge = _json.edges[edgeKey];
+                            var edgeJson = null;
+                            if (_json.edges[edgeKey].hasOwnProperty('origin') && baseModel.edges.hasOwnProperty(_json.edges[edgeKey].origin)) {
+                                edgeJson = baseModel.edges[_json.edges[edgeKey].origin];
+                                origin = _json.edges[edgeKey].origin;
+                            }
+                            _canvas.createEdge(edge.type, edge.source, edge.target, edgeJson, edgeKey, $('#lblCurrentView').text());
                         }
-                        _canvas.createEdge(edge.type, edge.source, edge.target, edgeJson, edgeKey, $('#lblCurrentView').text());
                     }
-                }
+                },1000);
+
             });
         }
         return CVG;
