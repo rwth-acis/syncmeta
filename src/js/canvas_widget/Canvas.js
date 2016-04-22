@@ -132,7 +132,7 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
         /**
          * Apply a Node Add Operation
          * @param {operations.ot.NodeAddOperation} operation
-         * @param {boolean} isRemote
+         * @param {Y.Map} ymap
          */
         var processNodeAddOperation = function(operation,ymap){
             var node;
@@ -171,6 +171,7 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
         /**
          * Propagate a Node Add Operation to the remote users and the local widgets
          * @param {operations.ot.NodeAddOperation} operation
+         * @param {Y.Map} ymap
          */
         var propagateNodeAddOperation = function (operation, ymap) {
             processNodeAddOperation(operation,ymap);
@@ -191,6 +192,7 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
         /**
          * Apply an Edge Add Operation
          * @param {operations.ot.EdgeAddOperation} operation
+         * @param {Y.Map} ymap
          */
         var processEdgeAddOperation = function (operation,ymap) {
             var edge;
@@ -226,6 +228,7 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
         /**
          * Propagate an Edge Add Operation to the remote users and the local widgets
          * @param {operations.ot.EdgeAddOperation} operation
+         * @param {Y.Map} ymap
          */
         var propagateEdgeAddOperation = function (operation,ymap) {
             var sourceNode = EntityManager.findNode(operation.getSource());
@@ -535,28 +538,6 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
          * Callback for an undone resp. redone Node Add Operation
          * @param {operations.ot.NodeAddOperation} operation
          */
-
-        var historyNodeAddCallback = function(operation){
-            if(operation instanceof NodeAddOperation){
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
-                processNodeAddOperation(operation);
-            }
-        };
-
-        /**
-         * Callback for an undone resp. redone Edge Add Operation
-         * @param {operations.non_ot.EdgeAddOperation} operation
-         */
-
-        var historyEdgeAddCallback = function(operation){
-            if(operation instanceof EdgeAddOperation){
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-                processEdgeAddOperation(operation);
-            }
-        };
 
         var init = function () {
             var $canvasFrame = _$node.parent();
@@ -940,8 +921,8 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
             else {
                 ghostEdgeGuidance.addEdge(EntityManager.getEdgeType(relationshipType), source, target);
             }
-            for(var i = 0; i < _ghostEdges.length; i++){
-                _ghostEdges[i].show();
+            for(var j = 0; j < _ghostEdges.length; j++){
+                _ghostEdges[j].show();
             }
         };
 
@@ -1501,7 +1482,7 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
         /**
          * visualizes the results of a CVG operation.
          * CVG is computed on the attribute widget
-         * @param {operation.non_ot.PerformCvgOperation} operation
+         * @param {operations.non_ot.PerformCvgOperation} operation
          * @constructor
          */
         function CvgCallback(operation){

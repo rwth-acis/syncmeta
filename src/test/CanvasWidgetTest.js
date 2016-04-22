@@ -30,6 +30,9 @@ define(['jquery','chai','WebConsoleReporter','canvas_widget/EntityManager','moch
                                 done();
                             });
                         });
+                        it('Object node compare node Id', function(){
+                           expect(nodeId).to.be.equal('1234567890');
+                        });
                         it('Object node should be in EntityManager',function(){
                             expect(EntityManager.findNode(nodeId)).to.be.not.null;
                         });
@@ -73,7 +76,6 @@ define(['jquery','chai','WebConsoleReporter','canvas_widget/EntityManager','moch
 
                                         it('Bi-Dir-Association edge should be in EntityManager', function(){
                                             expect(EntityManager.findEdge(edgeId)).to.be.not.null;
-
                                         });
 
                                         it('Bi-Dir-Association edge should be in Canvas', function(){

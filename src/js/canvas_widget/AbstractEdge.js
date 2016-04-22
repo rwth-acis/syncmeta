@@ -201,18 +201,6 @@ define([
         };
 
         /**
-         * Callback for an undone resp. redone Edge Delete Operation
-         * @param {operations.ot.EdgeDeleteOperation} operation
-         */
-        var historyEdgeDeleteCallback = function(operation){
-            if(operation instanceof EdgeDeleteOperation && operation.getEntityId() == that.getEntityId()){
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-                processEdgeDeleteOperation(operation);
-            }
-        };
-
-        /**
          * Get jQuery object of all DOM nodes belonging to the edge
          */
         var getAllAssociatedDOMNodes = function(){
@@ -718,30 +706,10 @@ define([
             //$("."+id).contextMenu(false);
         };
 
-        /**
-         * Register inter widget communication callbacks
-         */
-        this.registerCallbacks = function(){
-            //TODO
-            //_iwcw.registerOnHistoryChangedCallback(historyEdgeDeleteCallback);
-        };
-
-        /**
-         * Unregister inter widget communication callbacks
-         */
-        this.unregisterCallbacks = function(){
-            //TODO
-            //_iwcw.unregisterOnHistoryChangedCallback(historyEdgeDeleteCallback);
-        };
-
-
-
-        if(_iwcw){
-            that.registerCallbacks();
-        }
         this.getYMap = function(){
             return _ymap;
         };
+
         this._registerYMap = function(ymap,disableYText) {
             _ymap =ymap;
             if(!disableYText) {

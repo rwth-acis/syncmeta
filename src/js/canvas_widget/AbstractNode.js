@@ -39,7 +39,7 @@ define([
         var that = this;
 
         /**y-map instances which belongs to the node
-         * @type {y-map}
+         * @type {Y.Map}
          * @private
          * */
         var _ymap = null;
@@ -463,57 +463,6 @@ define([
                     NodeDeleteOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
                     {}
                 ).toNonOTOperation());
-                processNodeDeleteOperation(operation);
-            }
-        };
-
-        /**
-         * Callback for an undone resp. redone Node Move Operation
-         * @param {operations.ot.NodeMoveOperation} operation
-         */
-        var historyNodeMoveCallback = function(operation){
-            if(operation instanceof NodeMoveOperation && operation.getEntityId() === that.getEntityId()){
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-                processNodeMoveOperation(operation);
-            }
-        };
-
-        /**
-         * Callback for an undone resp. redone Node Move Operation
-         * @param {operations.ot.NodeMoveZOperation} operation
-         */
-        var historyNodeMoveZCallback = function(operation){
-            if(operation instanceof NodeMoveZOperation && operation.getEntityId() === that.getEntityId()){
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-                processNodeMoveZOperation(operation);
-            }
-        };
-
-        /**
-         * Callback for an undone resp. redone Node Resize Operation
-         * @param {operations.ot.NodeResizeOperation} operation
-         */
-        var historyNodeResizeCallback = function(operation){
-            if(operation instanceof NodeResizeOperation && operation.getEntityId() === that.getEntityId()){
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-                processNodeResizeOperation(operation);
-            }
-        };
-
-        /**
-         * Callback for an undone resp. redone Node Delete Operation
-         * @param {operations.ot.NodeDeleteOperation} operation
-         */
-        var historyNodeDeleteCallback = function(operation){
-            if(operation instanceof NodeDeleteOperation && operation.getEntityId() === that.getEntityId()){
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
                 processNodeDeleteOperation(operation);
             }
         };
