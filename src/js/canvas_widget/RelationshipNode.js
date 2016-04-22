@@ -108,11 +108,9 @@ define([
                             nodeId;
 
                         //noinspection JSAccessibilityCheck
-                        nodeId = canvas.createNode(EdgeShapeNode.TYPE,appearance.left + appearance.width + 50,appearance.top,150,100);
-                        //TODO can do better
-                        setTimeout(function(){
+                        canvas.createNode(EdgeShapeNode.TYPE,appearance.left + appearance.width + 50,appearance.top,150,100).done(function(nodeId){
                             canvas.createEdge(BiDirAssociationEdge.TYPE,that.getEntityId(),nodeId);
-                        },1000);
+                        });
                     },
                     disabled: function() {
                         var edges = that.getEdges(),
@@ -124,7 +122,7 @@ define([
                                 edge = edges[edgeId];
                                 if( (edge instanceof BiDirAssociationEdge &&
                                     (edge.getTarget() === that && edge.getSource() instanceof EdgeShapeNode ||
-                                        edge.getSource() === that && edge.getTarget() instanceof EdgeShapeNode)) ||
+                                    edge.getSource() === that && edge.getTarget() instanceof EdgeShapeNode)) ||
 
                                     (edge instanceof UniDirAssociationEdge && edge.getTarget() instanceof EdgeShapeNode) ){
 

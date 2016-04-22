@@ -1,16 +1,16 @@
 define([
-    'require',
-    'jqueryui',
-    'jsplumb',
-    'lodash',
-    'canvas_widget/AbstractNode',
-    'canvas_widget/SingleSelectionAttribute',
-    'canvas_widget/RenamingListAttribute',
-    'canvas_widget/ConditionListAttribute',
-    'canvas_widget/ViewTypesUtil',
-    'canvas_widget/LogicalOperator',
-    'canvas_widget/LogicalConjunctions',
-    'text!templates/canvas_widget/viewrelationship_node.html'
+	'require',
+	'jqueryui',
+	'jsplumb',
+	'lodash',
+	'canvas_widget/AbstractNode',
+	'canvas_widget/SingleSelectionAttribute',
+	'canvas_widget/RenamingListAttribute',
+	'canvas_widget/ConditionListAttribute',
+	'canvas_widget/ViewTypesUtil',
+	'canvas_widget/LogicalOperator',
+	'canvas_widget/LogicalConjunctions',
+	'text!templates/canvas_widget/viewrelationship_node.html'
 ], /** @lends ViewRelationshipNode */
 function (require, $, jsPlumb, _, AbstractNode, SingleSelectionAttribute, RenamingListAttribute, ConditionListAttribute, ViewTypesUtil, LogicalOperator, LogicalConjunctions, viewrelationshipNodeHtml) {
 
@@ -32,13 +32,13 @@ function (require, $, jsPlumb, _, AbstractNode, SingleSelectionAttribute, Renami
 	 * @param {number} width Width of node
 	 * @param {number} height Height of node
 	 * @param {number} zIndex Position of node on z-axis
-     * @param {object} json indicates if the ViewObjectNode is created from a json
+	 * @param {object} json indicates if the ViewObjectNode is created from a json
 
-     */
+	 */
 	function ViewRelationshipNode(id, left, top, width, height, zIndex,json) {
 		var that = this;
 
-        var _fromResource = json;
+		var _fromResource = json;
 
 		AbstractNode.call(this, id, ViewRelationshipNode.TYPE, left, top, width, height, zIndex);
 
@@ -48,8 +48,8 @@ function (require, $, jsPlumb, _, AbstractNode, SingleSelectionAttribute, Renami
 		 * @private
 		 */
 		var _$template = $(_.template(viewrelationshipNodeHtml, {
-					type : that.getType()
-				}));
+			type : that.getType()
+		}));
 
 		/**
 		 * jQuery object of DOM node representing the node
@@ -81,38 +81,38 @@ function (require, $, jsPlumb, _, AbstractNode, SingleSelectionAttribute, Renami
 		};
 		ViewTypesUtil.GetCurrentBaseModel().then(function (model) {
 			var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes, ['Relationship']);
-            var attribute = new SingleSelectionAttribute(id+"[target]", "Target", that, selectionValues);
+			var attribute = new SingleSelectionAttribute(id+"[target]", "Target", that, selectionValues);
 
-            var conjSelection = new SingleSelectionAttribute(id+'[conjunction]', 'Conjunction', that, LogicalConjunctions);
-            that.addAttribute(conjSelection);
+			var conjSelection = new SingleSelectionAttribute(id+'[conjunction]', 'Conjunction', that, LogicalConjunctions);
+			that.addAttribute(conjSelection);
 			conjSelection.getValue().registerYType();
-            that.get$node().find('.attributes').append(conjSelection.get$node());
+			that.get$node().find('.attributes').append(conjSelection.get$node());
 
-            if(_fromResource){
-                var targetId;
-                var target = _fromResource.attributes[id + '[target]'];
-                if(target)
-                    targetId = target.value.value;
+			if(_fromResource){
+				var targetId;
+				var target = _fromResource.attributes[id + '[target]'];
+				if(target)
+					targetId = target.value.value;
 
-                if(targetId){
-                    attribute.setValueFromJSON(_fromResource.attributes[id + '[target]']);
-                    if(conditonList = _fromResource.attributes["[condition]"]){
-                        var attrList = that.getAttribute('[attributes]').getAttributes();
-                        var targetAttrList = {};
-                        for (var key in attrList) {
-                            if (attrList.hasOwnProperty(key)) {
-                                targetAttrList[key] = attrList[key].getKey().getValue();
-                            }
-                        }
-                        var cla = new ConditionListAttribute("[condition]", "Conditions", that, targetAttrList, LogicalOperator, LogicalConjunctions);
-                        cla.setValueFromJSON(conditonList);
+				if(targetId){
+					attribute.setValueFromJSON(_fromResource.attributes[id + '[target]']);
+					if(conditonList = _fromResource.attributes["[condition]"]){
+						var attrList = that.getAttribute('[attributes]').getAttributes();
+						var targetAttrList = {};
+						for (var key in attrList) {
+							if (attrList.hasOwnProperty(key)) {
+								targetAttrList[key] = attrList[key].getKey().getValue();
+							}
+						}
+						var cla = new ConditionListAttribute("[condition]", "Conditions", that, targetAttrList, LogicalOperator, LogicalConjunctions);
+						cla.setValueFromJSON(conditonList);
 						cla.registerYMap();
 						that.addAttribute(cla);
-                        that.get$node().find('.attributes').append(cla.get$node());
-                    }
-                }
-                _fromResource = null;
-            }
+						that.get$node().find('.attributes').append(cla.get$node());
+					}
+				}
+				_fromResource = null;
+			}
 			that.addAttribute(attribute);
 			attribute.getValue().registerYType();
 			that.get$node().find('.attributes').prepend(attribute.get$node());
@@ -148,35 +148,33 @@ function (require, $, jsPlumb, _, AbstractNode, SingleSelectionAttribute, Renami
 
 		this.setContextMenuItemCallback(function () {
 			var EdgeShapeNode = require('canvas_widget/EdgeShapeNode'),
-			BiDirAssociationEdge = require('canvas_widget/BiDirAssociationEdge'),
-			UniDirAssociationEdge = require('canvas_widget/UniDirAssociationEdge');
-            var viewId = $('#lblCurrentView').text();
+				BiDirAssociationEdge = require('canvas_widget/BiDirAssociationEdge'),
+				UniDirAssociationEdge = require('canvas_widget/UniDirAssociationEdge');
+			var viewId = $('#lblCurrentView').text();
 			return {
 				addShape : {
 					name : "Add Edge Shape",
 					callback : function () {
 						var canvas = that.getCanvas(),
-						appearance = that.getAppearance(),
-						nodeId;
+							appearance = that.getAppearance(),
+							nodeId;
 
 						//noinspection JSAccessibilityCheck
-						nodeId = canvas.createNode(EdgeShapeNode.TYPE, appearance.left + appearance.width + 50, appearance.top, 150, 100);
-                        //TODO can do better
-                        setTimeout(function(){
-                            canvas.createEdge(BiDirAssociationEdge.TYPE, that.getEntityId(), nodeId, null, null, viewId);
-                        },1000);
+						canvas.createNode(EdgeShapeNode.TYPE, appearance.left + appearance.width + 50, appearance.top, 150, 100).done(function(nodeId){
+							canvas.createEdge(BiDirAssociationEdge.TYPE, that.getEntityId(), nodeId, null, null, viewId);
+						});
 					},
 					disabled : function () {
 						var edges = that.getEdges(),
-						edge,
-						edgeId;
+							edge,
+							edgeId;
 
 						for (edgeId in edges) {
 							if (edges.hasOwnProperty(edgeId)) {
 								edge = edges[edgeId];
 								if ((edge instanceof BiDirAssociationEdge &&
-										(edge.getTarget() === that && edge.getSource()instanceof EdgeShapeNode ||
-											edge.getSource() === that && edge.getTarget()instanceof EdgeShapeNode)) ||
+									(edge.getTarget() === that && edge.getSource()instanceof EdgeShapeNode ||
+									edge.getSource() === that && edge.getTarget()instanceof EdgeShapeNode)) ||
 
 									(edge instanceof UniDirAssociationEdge && edge.getTarget()instanceof EdgeShapeNode)) {
 

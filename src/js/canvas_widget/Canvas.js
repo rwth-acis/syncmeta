@@ -134,7 +134,7 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
          * @param {operations.ot.NodeAddOperation} operation
          * @param {boolean} isRemote
          */
-        var processNodeAddOperation = function(operation){
+        var processNodeAddOperation = function(operation,ymap){
             var node;
             if (operation.getJSON()) {
                 node = EntityManager.createNodeFromJSON(operation.getType(), operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex(), operation.getJSON());
@@ -147,13 +147,19 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
             }
 
             if(y){
-                y.share.nodes.get(node.getEntityId()).then(function(map){
-                    node.registerYMap(map);
-
+                if(ymap){
+                    node.registerYMap(ymap);
                     node.draw();
                     node.addToCanvas(that);
                     that.remountCurrentTool();
-                });
+                }else {
+                    y.share.nodes.get(node.getEntityId()).then(function (map) {
+                        node.registerYMap(map);
+                        node.draw();
+                        node.addToCanvas(that);
+                        that.remountCurrentTool();
+                    });
+                }
             }
             else {
                 node.draw();
@@ -166,9 +172,10 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
          * Propagate a Node Add Operation to the remote users and the local widgets
          * @param {operations.ot.NodeAddOperation} operation
          */
-        var propagateNodeAddOperation = function (operation) {
-            processNodeAddOperation(operation);
-
+        var propagateNodeAddOperation = function (operation, ymap) {
+            processNodeAddOperation(operation,ymap);
+            HistoryManager.add(operation);
+            $('#save').click();
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
@@ -185,7 +192,7 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
          * Apply an Edge Add Operation
          * @param {operations.ot.EdgeAddOperation} operation
          */
-        var processEdgeAddOperation = function (operation) {
+        var processEdgeAddOperation = function (operation,ymap) {
             var edge;
 
             if (operation.getJSON()) {
@@ -195,12 +202,20 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
             }
 
             if(y){
-                y.share.edges.get(edge.getEntityId()).then(function(map){
-                    edge.registerYMap(map);
+                if(ymap) {
+                    edge.registerYMap(ymap);
                     edge.connect();
                     edge.addToCanvas(that);
                     that.remountCurrentTool();
-                })
+                }
+                else {
+                    y.share.edges.get(edge.getEntityId()).then(function (map) {
+                        edge.registerYMap(map);
+                        edge.connect();
+                        edge.addToCanvas(that);
+                        that.remountCurrentTool();
+                    })
+                }
             }else {
                 edge.connect();
                 edge.addToCanvas(that);
@@ -212,11 +227,14 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
          * Propagate an Edge Add Operation to the remote users and the local widgets
          * @param {operations.ot.EdgeAddOperation} operation
          */
-        var propagateEdgeAddOperation = function (operation) {
+        var propagateEdgeAddOperation = function (operation,ymap) {
             var sourceNode = EntityManager.findNode(operation.getSource());
             var targetNode = EntityManager.findNode(operation.getTarget());
 
-            processEdgeAddOperation(operation);
+
+            processEdgeAddOperation(operation,ymap);
+            HistoryManager.add(operation);
+            $('#save').click();
 
             //if(_iwcw.sendRemoteOTOperation(operation)){
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
@@ -844,13 +862,15 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                     entity.select();
             }
             var operation = new EntitySelectOperation(entity ? entity.getEntityId() : null, entity ? entity.getType() : null,_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+
             _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.toNonOTOperation());
             _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,operation.toNonOTOperation());
             _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.toNonOTOperation());
 
             if(entity === null) {
-                if(_selectedEntity)
+                if(_selectedEntity) {
                     _selectedEntity.getYMap().set(EntitySelectOperation.TYPE, operation.toJSON());
+                }
             }
             else {
                 entity.getYMap().set(EntitySelectOperation.TYPE, operation.toJSON());
@@ -985,7 +1005,8 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
          * @return {number} id of new node
          */
         this.createNode = function (type, left, top, width, height, zIndex, json, identifier) {
-            var id, oType = null;
+            var  id, oType = null;
+            var deferred = $.Deferred();
             if(identifier)
                 id = identifier;
             else
@@ -995,8 +1016,7 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
             if(EntityManager.getViewId() !== null && EntityManager.getLayer() === CONFIG.LAYER.MODEL){
                 oType = EntityManager.getViewNodeType(type).getTargetNodeType().TYPE;
             }
-            var operation = new NodeAddOperation(id, type, left, top, width, height, zIndex, json || null, EntityManager.getViewId(), oType);
-
+            var operation = new NodeAddOperation(id, type, left, top, width, height, zIndex, json || null, EntityManager.getViewId(), oType, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
             if(y){
                 y.share.nodes.set(id, Y.Map).then(function(map){
                     //create the label element of the node
@@ -1013,7 +1033,9 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                                 var attrAnchorsPromise = createYTypeForValueOfAttribute(map, id + "[customAnchors]", Y.Text);
                                 var attrCustomShapePromise = createYTypeForValueOfAttribute(map, id + "[customShape]", Y.Text);
                                 $.when(attrColorPromise, attrAnchorsPromise, attrCustomShapePromise).done(function () {
+                                    propagateNodeAddOperation(operation,map);
                                     y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
+                                    deferred.resolve(id);
                                 });
                             }
                             else if (type === 'Edge Shape') {
@@ -1021,11 +1043,17 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                                 var attrOverlayPromise = createYTypeForValueOfAttribute(map, id + "[overlay]", Y.Text);
 
                                 $.when(attrColorPromise, attrOverlayPromise).done(function () {
+                                    propagateNodeAddOperation(operation,map);
                                     y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
+                                    deferred.resolve(id);
+
                                 });
                             }
                             else {
+                                propagateNodeAddOperation(operation,map);
                                 y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
+                                deferred.resolve(id);
+
                             }
                         });
                     }
@@ -1040,18 +1068,25 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                         }
                         if(attrPromises.length > 0) {
                             $.when.apply(null, attrPromises).done(function () {
+                                propagateNodeAddOperation(operation,map);
                                 y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
+                                deferred.resolve(id);
+
                             });
                         }
                         else {
+                            propagateNodeAddOperation(operation,map);
                             y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
+                            deferred.resolve(id);
+
                         }
                     }
                 })
             }else {
                 propagateNodeAddOperation(operation);
+                deferred.resolve(id);
             }
-            return id;
+            return deferred.promise();
         };
 
         /**
@@ -1065,6 +1100,7 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
          */
         this.createEdge = function (type, source, target, json, identifier) {
             var id = null, oType = null;
+            var deferred = $.Deferred();
             if(identifier)
                 id = identifier;
             else
@@ -1072,11 +1108,9 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
             if(EntityManager.getViewId() !== null && EntityManager.getLayer() === CONFIG.LAYER.MODEL){
                 oType = EntityManager.getViewEdgeType(type).getTargetEdgeType().TYPE;
             }
-            var operation = new EdgeAddOperation(id, type, source, target, json || null, EntityManager.getViewId(), oType);
+            var operation = new EdgeAddOperation(id, type, source, target, json || null, EntityManager.getViewId(), oType,  _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
             if(y){
-
                 y.share.edges.set(id, Y.Map).then(function(map){
-
                     map.set(id+"[label]", Y.Text).then(function() {
                         if(EntityManager.getLayer()=== CONFIG.LAYER.MODEL){
                             var attributes = EntityManager.getEdgeType(type).getAttributes();
@@ -1089,15 +1123,23 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                             }
                             if(attrPromises.length > 0) {
                                 $.when.apply(null, attrPromises).done(function () {
+                                    propagateEdgeAddOperation(operation,map);
                                     y.share.canvas.set(EdgeAddOperation.TYPE, operation.toJSON());
+                                    deferred.resolve(id);
+
                                 });
                             }
                             else {
+                                propagateEdgeAddOperation(operation,map);
                                 y.share.canvas.set(EdgeAddOperation.TYPE, operation.toJSON());
+                                deferred.resolve(id);
+
                             }
                         }
                         else{
+                            propagateEdgeAddOperation(operation,map);
                             y.share.canvas.set(EdgeAddOperation.TYPE, operation.toJSON());
+                            deferred.resolve(id);
                         }
                     });
                     map.set('id',id);
@@ -1107,8 +1149,9 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                 })
             } else {
                 propagateEdgeAddOperation(operation);
+                deferred.resolve(id);
             }
-            return id;
+            return deferred.promise();
         };
 
         this.scrollNodeIntoView  = function(nodeId){
@@ -1494,46 +1537,35 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                     var operation;
                     var data = y.share.canvas.get(event.name);
                     var jabberId = y.share.users.get(event.object.map[event.name][0]);
-
-                    switch(event.name){
-                        case NodeAddOperation.TYPE:{
-                            operation = new NodeAddOperation(data.id,data.type,data.left, data.top,data.width,data.height,data.zIndex,data.json,data.viewId,data.oType,jabberId);
-                            remoteNodeAddCallback(operation);
-                            if(!data.historyFlag)
-                                HistoryManager.add(operation);
-                            if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] === jabberId) {
-                                triggerSave = true;
+                    if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== jabberId || data.historyFlag) {
+                        switch (event.name) {
+                            case NodeAddOperation.TYPE:
+                            {
+                                operation = new NodeAddOperation(data.id, data.type, data.left, data.top, data.width, data.height, data.zIndex, data.json, data.viewId, data.oType, jabberId);
+                                remoteNodeAddCallback(operation);
+                                break;
                             }
-                            break;
-                        }
-                        case EdgeAddOperation.TYPE:{
-                            operation = new EdgeAddOperation(data.id, data.type, data.source, data.target, data.json, data.viewId, data.oType, jabberId);
-                            remoteEdgeAddCallback(operation);
-                            if(!data.historyFlag)
-                                HistoryManager.add(operation);
-                            if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] === jabberId) {
-                                triggerSave = true;
+                            case EdgeAddOperation.TYPE:
+                            {
+                                operation = new EdgeAddOperation(data.id, data.type, data.source, data.target, data.json, data.viewId, data.oType, jabberId);
+                                remoteEdgeAddCallback(operation);
+                                break;
                             }
-                            break;
-                        }
-                        case RevokeSharedActivityOperation.TYPE:{
-                            if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== jabberId) {
+                            case RevokeSharedActivityOperation.TYPE:
+                            {
                                 operation = new RevokeSharedActivityOperation(data.id);
                                 remoteRevokeSharedActivityOperationCallback(operation);
+                                break;
                             }
-                            break;
-                        }
-                        case GuidanceStrategyOperation.TYPE:{
-                            if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== jabberId) {
+                            case GuidanceStrategyOperation.TYPE:
+                            {
                                 operation = new GuidanceStrategyOperation(data.data);
                                 remoteGuidanceStrategyOperation(operation);
+                                break;
                             }
-                            break;
                         }
                     }
                 }
-                if(triggerSave)
-                    $('#save').click();
             })
 
         }

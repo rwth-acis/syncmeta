@@ -65,6 +65,8 @@ define([
             var attribute = new RenamingAttribute(operation.getEntityId(),"Attribute",that,_options);
             that.addAttribute(attribute);
             attribute.getRef().setValue(operation.getData());
+            attribute.getKey().setValue(operation.getData());
+
             _$node.find(".list").append(attribute.get$node());
         };
 
@@ -95,7 +97,7 @@ define([
          * @param {operations.ot.AttributeDeleteOperation} operation
          */
         this.propagateAttributeAddOperation = function(operation){
-            //processAttributeAddOperation(operation);
+           processAttributeAddOperation(operation);
             iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.getOTOperation());
         };
 

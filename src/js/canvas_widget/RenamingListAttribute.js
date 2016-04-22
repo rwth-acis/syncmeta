@@ -61,20 +61,32 @@ define([
         /**
          * Apply an Attribute Add Operation
          * @param {operations.ot.AttributeAddOperation} operation
+         * @param {Y.Text} ytext
          */
-        var processAttributeAddOperation = function(operation){
-            var _ymap = that.getRootSubjectEntity().getYMap();
-            if(_ymap)
-                _ymap.get(operation.getEntityId()+'[val]').then(function(ytext){
-                    var attribute = new RenamingAttribute(operation.getEntityId(),"Attribute",that,_options);
+        var processAttributeAddOperation = function(operation,ytext){
+            var _ymap = that.getRootSubjectEntity().getYMap(), attribute;
+            if(_ymap) {
+                if(ytext){
+                    attribute = new RenamingAttribute(operation.getEntityId(), "Attribute", that, _options);
                     that.addAttribute(attribute);
                     attribute.getRef().setValue(operation.getData());
                     attribute.getKey().setValue(operation.getData());
                     attribute.registerYMap(ytext);
                     _$node.find(".list").append(attribute.get$node());
-                });
+                }
+                else {
+                    _ymap.get(operation.getEntityId() + '[val]').then(function (yt) {
+                        var attribute = new RenamingAttribute(operation.getEntityId(), "Attribute", that, _options);
+                        that.addAttribute(attribute);
+                        attribute.getRef().setValue(operation.getData());
+                        attribute.getKey().setValue(operation.getData());
+                        attribute.registerYMap(yt);
+                        _$node.find(".list").append(attribute.get$node());
+                    });
+                }
+            }
             else {
-                var attribute = new RenamingAttribute(operation.getEntityId(),"Attribute",that,_options);
+                attribute = new RenamingAttribute(operation.getEntityId(),"Attribute",that,_options);
                 that.addAttribute(attribute);
                 _$node.find(".list").append(attribute.get$node());
             }
@@ -87,7 +99,8 @@ define([
         var propagateAttributeAddOperation = function(operation){
             var ymap = that.getRootSubjectEntity().getYMap();
             if(ymap){
-                ymap.set(operation.getEntityId()+"[val]", Y.Text).then(function(){
+                ymap.set(operation.getEntityId()+"[val]", Y.Text).then(function(ytext){
+                    processAttributeAddOperation(operation, ytext);
                     ymap.set(AttributeAddOperation.TYPE, operation.toJSON());
                 });
             }
@@ -327,18 +340,23 @@ define([
             ymap.observe(function(events){
                 for (var i in events) {
                     var operation;
-                    var data = that.getRootSubjectEntity().getYMap().get(events[i].name);
-                    switch (events[i].name) {
-                        case AttributeAddOperation.TYPE:
-                        {
-                            operation = new AttributeAddOperation(data.entityId, data.subjectEntityId, data.rootSubjectEntityId,data.type,data.data);
-                            remoteAttributeAddCallback(operation);
-                            break;
-                        }
-                        case AttributeDeleteOperation.TYPE:{
-                            operation = new AttributeDeleteOperation(data.entityId, data.subjectEntityId, data.rootSubjectEntityId,data.type);
-                            remoteAttributeDeleteCallback(operation);
-                            break;
+                    var event = events[i];
+                    var data = that.getRootSubjectEntity().getYMap().get(event.name);
+                    var jabberId = y.share.users.get(event.object.map[event.name][0]);
+                    if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== jabberId) {
+                        switch (event.name) {
+                            case AttributeAddOperation.TYPE:
+                            {
+                                operation = new AttributeAddOperation(data.entityId, data.subjectEntityId, data.rootSubjectEntityId, data.type, data.data);
+                                remoteAttributeAddCallback(operation);
+                                break;
+                            }
+                            case AttributeDeleteOperation.TYPE:
+                            {
+                                operation = new AttributeDeleteOperation(data.entityId, data.subjectEntityId, data.rootSubjectEntityId, data.type);
+                                remoteAttributeDeleteCallback(operation);
+                                break;
+                            }
                         }
                     }
                 }

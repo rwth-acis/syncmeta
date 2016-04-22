@@ -135,6 +135,8 @@ define([
          */
         var propagateEdgeDeleteOperation = function(operation){
             processEdgeDeleteOperation(operation);
+            HistoryManager.add(operation);
+            $('#save').click();
 
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
@@ -260,6 +262,7 @@ define([
 
             if(_ymap){
                 _ymap.set(EdgeDeleteOperation.TYPE, operation.toJSON());
+                propagateEdgeDeleteOperation(operation);
             }
             else {
                 propagateEdgeDeleteOperation(operation);
@@ -752,18 +755,21 @@ define([
                     var event = events[i];
                     var data = _ymap.get(event.name);
                     var jabberId= y.share.users.get(event.object.map[event.name][0]);
-                    switch (event.name) {
-                        case EntitySelectOperation.TYPE:{
-                            operation = new EntitySelectOperation(data.selectedEntityId,data.selectedEntityType, jabberId);
-                            remoteEntitySelectCallback(operation);
-                            break;
-                        }
-                        case EdgeDeleteOperation.TYPE:{
-                            operation = new EdgeDeleteOperation(data.id,data.type,data.source,data.target,data.json);
-                            remoteEdgeDeleteCallback(operation);
-                            if(!data.historyFlag)
-                                HistoryManager.add(operation);
-                            break;
+                    if (_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== jabberId || data.historyFlag) {
+
+                        switch (event.name) {
+                            case EntitySelectOperation.TYPE:
+                            {
+                                operation = new EntitySelectOperation(data.selectedEntityId, data.selectedEntityType, jabberId);
+                                remoteEntitySelectCallback(operation);
+                                break;
+                            }
+                            case EdgeDeleteOperation.TYPE:
+                            {
+                                operation = new EdgeDeleteOperation(data.id, data.type, data.source, data.target, data.json);
+                                remoteEdgeDeleteCallback(operation);
+                                break;
+                            }
                         }
                     }
                 }

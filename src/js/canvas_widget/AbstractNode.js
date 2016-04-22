@@ -201,6 +201,9 @@ define([
          */
         var propagateNodeMoveOperation = function(operation){
             processNodeMoveOperation(operation);
+            HistoryManager.add(operation);
+            $('#save').click();
+
             hideTraceAwareness();
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
@@ -221,6 +224,7 @@ define([
          */
         var propagateNodeMoveZOperation = function(operation){
             processNodeMoveZOperation(operation);
+            HistoryManager.add(operation);
             hideTraceAwareness();
             //if(_iwcw.sendRemoteOTOperation(operation)){
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
@@ -251,6 +255,8 @@ define([
          */
         var propagateNodeResizeOperation = function(operation){
             processNodeResizeOperation(operation);
+            HistoryManager.add(operation);
+            $('#save').click();
             hideTraceAwareness();
             //if(_iwcw.sendRemoteOTOperation(operation)){
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
@@ -299,6 +305,8 @@ define([
          * @param {operations.ot.NodeDeleteOperation} operation
          */
         var propagateNodeDeleteOperation = function(operation){
+            HistoryManager.add(operation);
+            $('#save').click();
             processNodeDeleteOperation(operation);
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
@@ -546,6 +554,7 @@ define([
                                     var operation = new NodeMoveZOperation(that.getEntityId(),--AbstractEntity.minZIndex-_zIndex);
                                     if(_ymap){
                                         _ymap.set('zIndex', zIndex + operation.getOffsetZ());
+                                        propagateNodeMoveZOperation(operation);
                                         _ymap.set(NodeMoveZOperation.TYPE,operation.toJSON());
                                     }
                                     else {
@@ -633,6 +642,7 @@ define([
             var operation = new NodeDeleteOperation(id,that.getType(),_appearance.left,_appearance.top,_appearance.width,_appearance.height,_zIndex,that.toJSON());
             if(_ymap){
                 _ymap.set(NodeDeleteOperation.TYPE, operation.toJSON());
+                propagateNodeDeleteOperation(operation);
             }
             else {
                 propagateNodeDeleteOperation(operation);
@@ -1145,6 +1155,7 @@ define([
                             if(_ymap){
                                 _ymap.set('width',_appearance.width +offsetX);
                                 _ymap.set('height',_appearance.height+offsetY);
+                                propagateNodeResizeOperation(operation);
                                 _ymap.set('NodeResizeOperation', operation.toJSON());
                             }
                         }
@@ -1196,6 +1207,7 @@ define([
                         if(_ymap){
                             _ymap.set('top', _appearance.top + offsetY);
                             _ymap.set('left',_appearance.left+offsetX);
+                            propagateNodeMoveOperation(operation);
                             _ymap.set(NodeMoveOperation.TYPE,operation.toJSON());
                         }
                         else {
@@ -1290,9 +1302,7 @@ define([
             jsPlumb.unmakeTarget(_$node);
         };
 
-
         that.init();
-
 
         this.getYMap = function(){
             return _ymap;
@@ -1301,56 +1311,47 @@ define([
         this._registerYMap = function(ymap) {
             _ymap = ymap;
             _ymap.observe(function (events) {
-                var triggerSave = false;
                 for (var i in events) {
                     var event = events[i];
                     var operation;
                     var data = _ymap.get(event.name);
                     var jabberId = y.share.users.get(event.object.map[event.name][0]);
 
-                    if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] === jabberId && event.name !== EntitySelectOperation.TYPE) {
-                        triggerSave = true;
-                    }
-
-                    switch (event.name){
-                        case NodeDeleteOperation.TYPE:{
-                            operation = new NodeDeleteOperation(data.id,data.type,data.left, data.top,data.width,data.height,data.zIndex,data.json);
-                            remoteNodeDeleteCallback(operation);
-                            if(!data.historyFlag)
-                                HistoryManager.add(operation);
-                            break;
-                        }
-                        case NodeMoveOperation.TYPE:{
-                            operation = new NodeMoveOperation(data.id, data.offsetX, data.offsetY, jabberId);
-                            remoteNodeMoveCallback(operation);
-                            if(!data.historyFlag)
-                                HistoryManager.add(operation);
-                            break;
-                        }
-                        case NodeMoveZOperation.TYPE:{
-                            operation =  new NodeMoveZOperation(data.id,data.offsetZ, jabberId);
-                            remoteNodeMoveZCallback(operation);
-                            if(!data.historyFlag)
-                                HistoryManager.add(operation);
-                            break;
-                        }
-                        case NodeResizeOperation.TYPE:{
-                            operation = new NodeResizeOperation(data.id, data.offsetX, data.offsetY,jabberId);
-                            remoteNodeResizeCallback(operation);
-                            if(!data.historyFlag)
-                                HistoryManager.add(operation);
-                            break;
-                        }
-                        case EntitySelectOperation.TYPE:{
-                            operation = new EntitySelectOperation(data.selectedEntityId, data.selectedEntityType, jabberId);
-                            remoteEntitySelectCallback(operation);
-                            break;
+                    if (_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== jabberId || data.historyFlag) {
+                        switch (event.name) {
+                            case NodeDeleteOperation.TYPE:
+                            {
+                                operation = new NodeDeleteOperation(data.id, data.type, data.left, data.top, data.width, data.height, data.zIndex, data.json);
+                                remoteNodeDeleteCallback(operation);
+                                break;
+                            }
+                            case NodeMoveOperation.TYPE:
+                            {
+                                operation = new NodeMoveOperation(data.id, data.offsetX, data.offsetY, jabberId);
+                                remoteNodeMoveCallback(operation);
+                                break;
+                            }
+                            case NodeMoveZOperation.TYPE:
+                            {
+                                operation = new NodeMoveZOperation(data.id, data.offsetZ, jabberId);
+                                remoteNodeMoveZCallback(operation);
+                                break;
+                            }
+                            case NodeResizeOperation.TYPE:
+                            {
+                                operation = new NodeResizeOperation(data.id, data.offsetX, data.offsetY, jabberId);
+                                remoteNodeResizeCallback(operation);
+                                break;
+                            }
+                            case EntitySelectOperation.TYPE:
+                            {
+                                operation = new EntitySelectOperation(data.selectedEntityId, data.selectedEntityType, jabberId);
+                                remoteEntitySelectCallback(operation);
+                                break;
+                            }
                         }
                     }
                 }
-                if(triggerSave)
-                    $('#save').click();
-
             });
         };
     }

@@ -75,7 +75,7 @@ var require = {
 };
 
 CONFIG = {
-    TEST_MODE:false,
+    TEST_MODE:true,
     LAYER:{
         META: "META",
         MODEL: "MODEL"

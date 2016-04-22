@@ -210,31 +210,31 @@ define([
                     propagateValueChange(CONFIG.OPERATION.TYPE.INSERT,character,selectionStart);
                 }
             }).keydown(function(ev){
-                    if (ev.which === $.ui.keyCode.BACKSPACE || ev.which === $.ui.keyCode.DELETE) {
-                        var selectionStart, selectionEnd;
-                        var deletedChar;
+                if (ev.which === $.ui.keyCode.BACKSPACE || ev.which === $.ui.keyCode.DELETE) {
+                    var selectionStart, selectionEnd;
+                    var deletedChar;
 
-                        ev.preventDefault();
-                        ev.stopPropagation();
-                        selectionStart = this.selectionStart;
-                        selectionEnd = this.selectionEnd;
-                        if(selectionStart == selectionEnd){
-                            if (ev.which === $.ui.keyCode.BACKSPACE) {
-                                deletedChar = $(this).val()[selectionStart-1];
-                                propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart-1);
-                            } else if (ev.which === $.ui.keyCode.DELETE) {
-                                deletedChar = $(this).val()[selectionStart];
-                                propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart);
-                            }
-                        } else {
-                            while(selectionStart < selectionEnd){
-                                deletedChar = $(this).val()[selectionStart];
-                                propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart);
-                                selectionEnd--;
-                            }
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    selectionStart = this.selectionStart;
+                    selectionEnd = this.selectionEnd;
+                    if(selectionStart == selectionEnd){
+                        if (ev.which === $.ui.keyCode.BACKSPACE) {
+                            deletedChar = $(this).val()[selectionStart-1];
+                            propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart-1);
+                        } else if (ev.which === $.ui.keyCode.DELETE) {
+                            deletedChar = $(this).val()[selectionStart];
+                            propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart);
+                        }
+                    } else {
+                        while(selectionStart < selectionEnd){
+                            deletedChar = $(this).val()[selectionStart];
+                            propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart);
+                            selectionEnd--;
                         }
                     }
-                });
+                }
+            });
             if(iwc){
                 that.registerCallbacks();
             }
@@ -297,6 +297,7 @@ define([
                     if (ytext.toString().length > 0)
                         ytext.delete(0, ytext.toString().length);
                     ytext.insert(0, data);
+                    _value = data;
                 }
             }
             else {
@@ -312,23 +313,18 @@ define([
             if (operation instanceof BindYTextOperation && operation.getEntityId() === that.getEntityId()) {
                 var entityId= that.getRootSubjectEntity().getEntityId();
 
-
                 if(y.share.nodes.opContents.hasOwnProperty(entityId)){
                     y.share.nodes.get(entityId).then(function(ymap){
                         ymap.get(operation.getEntityId()).then(function(ytext){
-                            _ytext = ytext;
-                            _ytext.bind(_$node[0]);
-                            initData(ytext, operation.getData());
-
+                            that.registerYType(ytext);
                         })
+
                     })
                 }
                 else if(y.share.edges.opContents.hasOwnProperty(entityId)){
                     y.share.edges.get(entityId).then(function(ymap){
                         ymap.get(operation.getEntityId()).then(function(ytext){
-                            _ytext = ytext;
-                            _ytext.bind(_$node[0]);
-                            initData(ytext, operation.getData());
+                            that.registerYType(ytext);
                         })
                     })
                 }
