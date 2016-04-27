@@ -354,6 +354,9 @@ define([
             },
             getMembers: function(){
                 return Space.members;
+            },
+            getSpaceTitle: function(){
+                return Space.title;
             }
         };
     }

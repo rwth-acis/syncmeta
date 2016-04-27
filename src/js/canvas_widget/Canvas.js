@@ -141,10 +141,16 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
             } else {
                 node = EntityManager.createNode(operation.getType(), operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex());
             }
-            if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()){
-                var color = _iwcw.getUserColor(operation.getJabberId());
+
+            if(y.share.users.get(y.db.userId) !== operation.getJabberId()){
+                var color = Util.getColor(y.share.userList.get(operation.getJabberId()).globalId);
                 node.refreshTraceAwareness(color);
             }
+            /*
+             if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()){
+             var color = _iwcw.getUserColor(operation.getJabberId());
+             node.refreshTraceAwareness(color);
+             }*/
 
             if(y){
                 if(ymap){
@@ -320,8 +326,12 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                             if(!viewType && EntityManager.getViewId()){
                                 node.hide();
                             }else{
-                                if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()){
-                                    var color = _iwcw.getUserColor(operation.getJabberId());
+                                /*if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()){
+                                 var color = _iwcw.getUserColor(operation.getJabberId());
+                                 node.refreshTraceAwareness(color);
+                                 }*/
+                                if(y.share.users.get(y.db.userId) !== operation.getJabberId()){
+                                    var color = Util.getColor(y.share.userList.get(operation.getJabberId()).globalId);
                                     node.refreshTraceAwareness(color);
                                 }
                             }
@@ -335,8 +345,13 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                         if(!viewType && EntityManager.getViewId()){
                             node.hide();
                         }else{
-                            if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()){
-                                var color = _iwcw.getUserColor(operation.getJabberId());
+                            /*
+                             if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()){
+                             var color = _iwcw.getUserColor(operation.getJabberId());
+                             node.refreshTraceAwareness(color);
+                             }*/
+                            if(y.share.users.get(y.db.userId) !== operation.getJabberId()){
+                                var color = Util.getColor(y.share.userList.get(operation.getJabberId()).globalId);
                                 node.refreshTraceAwareness(color);
                             }
                         }
@@ -1511,44 +1526,42 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
         init();
 
         if(y){
-            y.share.canvas.observe(function(events){
+            y.share.canvas.observe(function(event){
                 var triggerSave = false;
-                for(var i in events){
-                    var event =events[i];
-                    var operation;
-                    var data = y.share.canvas.get(event.name);
-                    var jabberId = y.share.users.get(event.object.map[event.name][0]);
-                    if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== jabberId || data.historyFlag) {
-                        switch (event.name) {
-                            case NodeAddOperation.TYPE:
-                            {
-                                operation = new NodeAddOperation(data.id, data.type, data.left, data.top, data.width, data.height, data.zIndex, data.json, data.viewId, data.oType, jabberId);
-                                remoteNodeAddCallback(operation);
-                                break;
-                            }
-                            case EdgeAddOperation.TYPE:
-                            {
-                                operation = new EdgeAddOperation(data.id, data.type, data.source, data.target, data.json, data.viewId, data.oType, jabberId);
-                                remoteEdgeAddCallback(operation);
-                                break;
-                            }
-                            case RevokeSharedActivityOperation.TYPE:
-                            {
-                                operation = new RevokeSharedActivityOperation(data.id);
-                                remoteRevokeSharedActivityOperationCallback(operation);
-                                break;
-                            }
-                            case GuidanceStrategyOperation.TYPE:
-                            {
-                                operation = new GuidanceStrategyOperation(data.data);
-                                remoteGuidanceStrategyOperation(operation);
-                                break;
-                            }
+                var operation;
+                var data = y.share.canvas.get(event.name);
+                var yUserId = event.object.map[event.name][0];
+                if(yUserId !== y.db.userId || data.historyFlag) {
+                    var jabberId = y.share.users.get(yUserId);
+                    switch (event.name) {
+                        case NodeAddOperation.TYPE:
+                        {
+                            operation = new NodeAddOperation(data.id, data.type, data.left, data.top, data.width, data.height, data.zIndex, data.json, data.viewId, data.oType, jabberId);
+                            remoteNodeAddCallback(operation);
+                            break;
+                        }
+                        case EdgeAddOperation.TYPE:
+                        {
+                            operation = new EdgeAddOperation(data.id, data.type, data.source, data.target, data.json, data.viewId, data.oType, jabberId);
+                            remoteEdgeAddCallback(operation);
+                            break;
+                        }
+                        case RevokeSharedActivityOperation.TYPE:
+                        {
+                            operation = new RevokeSharedActivityOperation(data.id);
+                            remoteRevokeSharedActivityOperationCallback(operation);
+                            break;
+                        }
+                        case GuidanceStrategyOperation.TYPE:
+                        {
+                            operation = new GuidanceStrategyOperation(data.data);
+                            remoteGuidanceStrategyOperation(operation);
+                            break;
                         }
                     }
+
                 }
             })
-
         }
         if(_iwcw){
             that.registerCallbacks();

@@ -334,23 +334,16 @@ define([
 
             _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new BindYTextOperation(that.getEntityId()).toNonOTOperation());
 
-            _ytext.observe(function(events){
-                for(var i in events){
-                    var event = events[i];
-                    //TODO i can not find out who triggered the delete :(
-                    //var jabberId = y.share.users.get(JSON.parse(event.object.idArray[event.index])[0]);
+            _ytext.observe(function(event){
+                _value = _ytext.toString();
 
-                    //No longer needed. the attribute widgets has his own Yjs instance
-                    //var operation = new ValueChangeOperation(that.getEntityId(), event.value, event.type, event.index);
-                    //_iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
-
-
-                    _value = _ytext.toString();
+                //TODO i can not find out who triggered the delete :-(. Therefore do this only for non delete event types
+                if(event.type!=="delete") {
+                    var jabberId = y.share.users.get(event.object._content[event.index].id[0]);
                     _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
                         "ValueChangeActivity",
                         that.getEntityId(),
-                        //TODO
-                        null,
+                        jabberId,
                         ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(), that.getRootSubjectEntity().getType(), that.getRootSubjectEntity().getLabel().getValue().getValue()),
                         {
                             value: '',

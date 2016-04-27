@@ -18,7 +18,9 @@ requirejs([
     'promise!Guidancemodel'
 ],function ($,IWCW,yjsSync,AttributeWrapper,EntityManager, ViewGenerator, JoinOperation,InitModelTypesOperation,ViewInitOperation, SetModelAttributeNodeOperation, model,guidancemodel) {
 
-    yjsSync().done(function(){
+    var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE);
+
+    yjsSync(iwc.getSpaceTitle()).done(function(){
         InitAttributeWidget();
     }).fail(function(){
         window.y= undefined;
@@ -26,7 +28,7 @@ requirejs([
     });
     function InitAttributeWidget() {
 
-        var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE);
+
 
         var wrapper = new AttributeWrapper($("#wrapper"));
 

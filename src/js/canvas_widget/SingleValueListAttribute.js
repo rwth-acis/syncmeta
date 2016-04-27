@@ -287,23 +287,22 @@ define([
                 }
             }
 
-            ymap.observe(function(events){
-                for (var i in events) {
-                    var operation;
-                    var data = ymap.get(events[i].name);
-                    switch (events[i].name) {
-                        case AttributeAddOperation.TYPE:{
-                            operation = new AttributeAddOperation(data.entityId, data.subjectEntityId, data.rootSubjectEntityId,data.type);
-                            remoteAttributeAddCallback(operation);
-                            break;
-                        }
-                        case AttributeDeleteOperation.TYPE:{
-                            operation = new AttributeDeleteOperation(data.entityId, data.subjectEntityId, data.rootSubjectEntityId,data.type);
-                            remoteAttributeDeleteCallback(operation);
-                            break;
-                        }
+            ymap.observe(function(event){
+                var operation;
+                var data = ymap.get(event.name);
+                switch (event.name) {
+                    case AttributeAddOperation.TYPE:{
+                        operation = new AttributeAddOperation(data.entityId, data.subjectEntityId, data.rootSubjectEntityId,data.type);
+                        remoteAttributeAddCallback(operation);
+                        break;
+                    }
+                    case AttributeDeleteOperation.TYPE:{
+                        operation = new AttributeDeleteOperation(data.entityId, data.subjectEntityId, data.rootSubjectEntityId,data.type);
+                        remoteAttributeDeleteCallback(operation);
+                        break;
                     }
                 }
+
             });
         }
     }

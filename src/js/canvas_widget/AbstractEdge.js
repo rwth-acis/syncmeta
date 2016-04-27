@@ -4,6 +4,7 @@ define([
     'jsplumb',
     'lodash',
     'iwcw',
+    'Util',
     'operations/ot/EdgeDeleteOperation',
     'operations/non_ot/ActivityOperation',
     'operations/non_ot/EntitySelectOperation',
@@ -11,7 +12,7 @@ define([
     'canvas_widget/AbstractEntity',
     'canvas_widget/SingleValueAttribute',
     'text!templates/canvas_widget/abstract_edge.html'
-],/** @lends AbstractEdge */function (require,$,jsPlumb,_,IWCW,EdgeDeleteOperation,ActivityOperation,EntitySelectOperation,HistoryManager,AbstractEntity,SingleValueAttribute,abstractEdgeHtml) {
+],/** @lends AbstractEdge */function (require,$,jsPlumb,_,IWCW,Util,EdgeDeleteOperation,ActivityOperation,EntitySelectOperation,HistoryManager,AbstractEntity,SingleValueAttribute,abstractEdgeHtml) {
 
     AbstractEdge.prototype = new AbstractEntity();
     AbstractEdge.prototype.constructor = AbstractEdge;
@@ -157,7 +158,8 @@ define([
         var remoteEntitySelectCallback = function(operation){
             var color;
             if(operation instanceof EntitySelectOperation){
-                color = _iwcw.getUserColor(operation.getJabberId());
+                //color = _iwcw.getUserColor(operation.getJabberId());
+                color = Util.getColor(y.share.userList.get(operation.getJabberId()).globalId);
                 if(!_isSelected){
                     if(operation.getSelectedEntityId() === that.getEntityId()){
                         _highlightColor = color;
@@ -717,27 +719,25 @@ define([
                     _label.registerYType(ytext);
                 });
             }
-            _ymap.observe(function (events) {
-                for (var i in events) {
-                    var operation;
-                    var event = events[i];
-                    var data = _ymap.get(event.name);
-                    var jabberId= y.share.users.get(event.object.map[event.name][0]);
-                    if (_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== jabberId || data.historyFlag) {
+            _ymap.observe(function (event) {
+                var operation;
+                var data = _ymap.get(event.name);
+                var yUserId = event.object.map[event.name][0];
 
-                        switch (event.name) {
-                            case EntitySelectOperation.TYPE:
-                            {
-                                operation = new EntitySelectOperation(data.selectedEntityId, data.selectedEntityType, jabberId);
-                                remoteEntitySelectCallback(operation);
-                                break;
-                            }
-                            case EdgeDeleteOperation.TYPE:
-                            {
-                                operation = new EdgeDeleteOperation(data.id, data.type, data.source, data.target, data.json);
-                                remoteEdgeDeleteCallback(operation);
-                                break;
-                            }
+                if (yUserId !== y.db.userId || data.historyFlag) {
+                    var jabberId= y.share.users.get(yUserId);
+                    switch (event.name) {
+                        case EntitySelectOperation.TYPE:
+                        {
+                            operation = new EntitySelectOperation(data.selectedEntityId, data.selectedEntityType, jabberId);
+                            remoteEntitySelectCallback(operation);
+                            break;
+                        }
+                        case EdgeDeleteOperation.TYPE:
+                        {
+                            operation = new EdgeDeleteOperation(data.id, data.type, data.source, data.target, data.json);
+                            remoteEdgeDeleteCallback(operation);
+                            break;
                         }
                     }
                 }

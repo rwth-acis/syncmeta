@@ -17,10 +17,15 @@ define([
         var act = openapp.param.get("http://purl.org/role/terms/activity");
         openapp.resource.get(act, function(resource){
             var activityName;
-            if(resource.data)
-                activityName = resource.data[resource.uri]["http://purl.org/dc/terms/title"][0].value;
-            else
-                activityName = "";
+
+            try {
+                if (resource.data)
+                    activityName = resource.data[resource.uri]["http://purl.org/dc/terms/title"][0].value;
+                else
+                    activityName = "";
+            }catch(e){
+                console.info('Guidancemodel promise failed!');
+            }
             guidancemodeling.INITIAL_NODE_LABEL = "Initial node";
             guidancemodeling.MERGE_NODE_LABEL = "Decision node";
             guidancemodeling.CALL_ACTIVITY_NODE_LABEL = "Call activity node";

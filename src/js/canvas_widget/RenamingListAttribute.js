@@ -311,26 +311,23 @@ define([
             }
 
 
-            ymap.observe(function(events){
-                for (var i in events) {
-                    var operation;
-                    var event = events[i];
-                    var data = that.getRootSubjectEntity().getYMap().get(event.name);
-                    var jabberId = y.share.users.get(event.object.map[event.name][0]);
-                    if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== jabberId) {
-                        switch (event.name) {
-                            case AttributeAddOperation.TYPE:
-                            {
-                                operation = new AttributeAddOperation(data.entityId, data.subjectEntityId, data.rootSubjectEntityId, data.type, data.data);
-                                remoteAttributeAddCallback(operation);
-                                break;
-                            }
-                            case AttributeDeleteOperation.TYPE:
-                            {
-                                operation = new AttributeDeleteOperation(data.entityId, data.subjectEntityId, data.rootSubjectEntityId, data.type);
-                                remoteAttributeDeleteCallback(operation);
-                                break;
-                            }
+            ymap.observe(function(event){
+                var operation;
+                var data = that.getRootSubjectEntity().getYMap().get(event.name);
+                var jabberId = y.share.users.get(event.object.map[event.name][0]);
+                if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== jabberId) {
+                    switch (event.name) {
+                        case AttributeAddOperation.TYPE:
+                        {
+                            operation = new AttributeAddOperation(data.entityId, data.subjectEntityId, data.rootSubjectEntityId, data.type, data.data);
+                            remoteAttributeAddCallback(operation);
+                            break;
+                        }
+                        case AttributeDeleteOperation.TYPE:
+                        {
+                            operation = new AttributeDeleteOperation(data.entityId, data.subjectEntityId, data.rootSubjectEntityId, data.type);
+                            remoteAttributeDeleteCallback(operation);
+                            break;
                         }
                     }
                 }

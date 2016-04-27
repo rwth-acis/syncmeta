@@ -57,62 +57,63 @@ requirejs([
     var _iwcw;
     _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
 
-    yjsSync().done(function(){
-        console.log('yjs log: Yjs Initialized successfully!');
+    yjsSync(_iwcw.getSpaceTitle()).done(function(){
+        console.info('yjs log: Yjs Initialized successfully!');
         y.share.users.set(y.db.userId,_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+        var userInfo = _iwcw.getUser();
+        if(userInfo.globalId === -1)
+            userInfo.globalId = y.share.userList.keysPrimitives().length;
+        y.share.userList.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], userInfo);
         InitMainWidget();
 
 
     }).fail(function(error){
-        console.log("yjs log: Yjs intialization failed!");
+        console.info("yjs log: Yjs intialization failed!");
         window.y = undefined;
         InitMainWidget();
     });
     function InitMainWidget() {
 
         var canvas = new Canvas($("#canvas"));
-        y.share.join.observe(function(events){
-            for(var i in events) {
-                var event = events[i];
-                var activityOperation;
-                var done = y.share.join.get(event.name);
-                if(!done && event.name !== _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]){
-                    y.share.join.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], true);
-                }else if(event.name === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] && !done){
-                    if (metamodel.constructor === Object) {
-                        var op = new InitModelTypesOperation(metamodel);
-                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, op.toNonOTOperation());
-                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, op.toNonOTOperation());
-                    }
-                    //TODO
-                    //_iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
-
-                    JSONtoGraph(model).done(function(stats){
-                        console.info(stats);
-                        $("#loading").hide();
-                        canvas.resetTool();
-                        if(CONFIG.TEST_MODE)
-                            require(['./../test/CanvasWidgetTest'], function(CanvasWidgetTest){
-                                CanvasWidgetTest(canvas);
-                            });
-                    });
-
-                    if (canvas.getModelAttributesNode() === null) {
-                        var modelAttributesNode = EntityManager.createModelAttributesNode();
-                        canvas.setModelAttributesNode(modelAttributesNode);
-                        modelAttributesNode.addToCanvas(canvas);
-                    }
-                    canvas.resetTool();
+        y.share.join.observe(function(event){
+            var activityOperation;
+            var done = y.share.join.get(event.name);
+            if(!done && event.name !== _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]){
+                y.share.join.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], true);
+            }else if(event.name === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] && !done){
+                if (metamodel.constructor === Object) {
+                    var op = new InitModelTypesOperation(metamodel);
+                    _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, op.toNonOTOperation());
+                    _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, op.toNonOTOperation());
                 }
-                activityOperation = new ActivityOperation(
-                    "UserJoinActivity",
-                    "-1",
-                    event.name,
-                    "",
-                    {}
-                ).toNonOTOperation();
-                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation);
+                //TODO
+                //_iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
+
+                JSONtoGraph(model).done(function(stats){
+                    console.info(stats);
+                    $("#loading").hide();
+                    canvas.resetTool();
+                    if(CONFIG.TEST_MODE)
+                        require(['./../test/CanvasWidgetTest'], function(CanvasWidgetTest){
+                            CanvasWidgetTest(canvas);
+                        });
+                });
+
+                if (canvas.getModelAttributesNode() === null) {
+                    var modelAttributesNode = EntityManager.createModelAttributesNode();
+                    canvas.setModelAttributesNode(modelAttributesNode);
+                    modelAttributesNode.addToCanvas(canvas);
+                }
+                canvas.resetTool();
             }
+            activityOperation = new ActivityOperation(
+                "UserJoinActivity",
+                "-1",
+                event.name,
+                "",
+                {}
+            ).toNonOTOperation();
+            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation);
         });
 
         if (guidancemodel.isGuidanceEditor()) {
@@ -960,6 +961,7 @@ requirejs([
 
         //local user
         y.share.join.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],false);
+
 
 
         /*

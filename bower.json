@@ -29,12 +29,12 @@
     "bootstrap": "~3.3.5",
     "font-awesome": "~4.4.0",
     "graphlib": "*",
-    "yjs": "^10.0.3",
-    "y-map": "^8.0.4",
-    "y-array": "^8.1.2",
-    "y-websockets-client": "^8.0.5",
-    "y-text": "^8.0.4",
-    "y-memory": "^8.0.3"
+    "yjs": "^11.0.3",
+    "y-map": "^9.0.0",
+    "y-array": "^9.0.0",
+    "y-websockets-client": "^8.0.8",
+    "y-text": "^9.0.0",
+    "y-memory": "^8.0.4"
   },
   "resolutions": {
     "lodash": "~2.4.1"

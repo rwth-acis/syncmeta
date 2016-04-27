@@ -57,9 +57,13 @@ define([
             space.user[CONFIG.NS.PERSON.JABBERID] = person[CONFIG.NS.PERSON.JABBERID][0].value.replace("xmpp:","");
             space.user[CONFIG.NS.PERSON.MBOX] = person[CONFIG.NS.PERSON.MBOX][0].value;
             space.user.globalId = -1;
-
-            space.title = spaceObj.subject[CONFIG.NS.PERSON.TITLE][0].value;
-
+            try {
+                space.title = spaceObj.subject[CONFIG.NS.PERSON.TITLE][0].value;
+            }
+            catch(e){
+                console.info('Space promise failed!');
+                return;
+            }
             deferred = $.Deferred();
 
             promiseArray = [];
@@ -77,18 +81,20 @@ define([
                         var person;
 
                         for(var i = 0, numOfMembers = arguments.length; i < numOfMembers; i++){
-                            person = arguments[i].data[arguments[i].uri];
-                            personData = {};
-                            personData[CONFIG.NS.PERSON.TITLE] = person[CONFIG.NS.PERSON.TITLE][0].value;
-                            personData[CONFIG.NS.PERSON.JABBERID] = person[CONFIG.NS.PERSON.JABBERID][0].value.replace("xmpp:","");
-                            personData[CONFIG.NS.PERSON.MBOX] = person[CONFIG.NS.PERSON.MBOX][0].value;
-                            personData.globalId = i;
+                            if(arguments[i].data) {
+                                person = arguments[i].data[arguments[i].uri];
+                                personData = {};
+                                personData[CONFIG.NS.PERSON.TITLE] = person[CONFIG.NS.PERSON.TITLE][0].value;
+                                personData[CONFIG.NS.PERSON.JABBERID] = person[CONFIG.NS.PERSON.JABBERID][0].value.replace("xmpp:", "");
+                                personData[CONFIG.NS.PERSON.MBOX] = person[CONFIG.NS.PERSON.MBOX][0].value;
+                                personData.globalId = i;
 
-                            if(personData[CONFIG.NS.PERSON.JABBERID] === space.user[CONFIG.NS.PERSON.JABBERID]){
-                                space.user.globalId = i;
+                                if (personData[CONFIG.NS.PERSON.JABBERID] === space.user[CONFIG.NS.PERSON.JABBERID]) {
+                                    space.user.globalId = i;
+                                }
+
+                                space.members[personData[CONFIG.NS.PERSON.JABBERID]] = personData;
                             }
-
-                            space.members[personData[CONFIG.NS.PERSON.JABBERID]] = personData;
                         }
                         deferred.resolve(space);
                     });

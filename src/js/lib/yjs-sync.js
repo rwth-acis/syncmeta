@@ -1,5 +1,5 @@
-define(['jqueryui','promise!Space','yjs'],function ($,space) {
-    return function() {
+define(['jqueryui','yjs'],function ($) {
+    return function(spaceTitle) {
         var deferred = $.Deferred();
         Y({
             db: {
@@ -7,7 +7,7 @@ define(['jqueryui','promise!Space','yjs'],function ($,space) {
             },
             connector: {
                 name: 'websockets-client', // use the websockets connector
-                room: space.title
+                room: spaceTitle
             },
             share: { // specify the shared content
                 users:'Map',
@@ -17,6 +17,8 @@ define(['jqueryui','promise!Space','yjs'],function ($,space) {
                 canvas: 'Map',
                 nodes:'Map',
                 edges:'Map',
+                userList:'Map',
+                select:'Map',
                 text:"Text"
             },
             sourceDir: '<%= grunt.config("baseUrl") %>/js/lib/vendor'

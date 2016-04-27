@@ -332,10 +332,16 @@ define([
 
             if(operation instanceof EntitySelectOperation){
                 senderJabberId = operation.getJabberId();
-                if(senderJabberId === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
+                //if(senderJabberId === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
+                if(senderJabberId === y.share.users.get(y.db.userId))
                     return;
-                color = _iwcw.getUserColor(senderJabberId);
-                username = _iwcw.getMembers()[senderJabberId][CONFIG.NS.PERSON.TITLE];
+                //color = _iwcw.getUserColor(senderJabberId);
+                var userInfo = y.share.userList.get(senderJabberId);
+                color = Util.getColor(userInfo.globalId);
+
+                //username = _iwcw.getMembers()[senderJabberId][CONFIG.NS.PERSON.TITLE];
+                username = userInfo[CONFIG.NS.PERSON.TITLE];
+
                 if(!_isSelected){
                     if(operation.getSelectedEntityId() === that.getEntityId()){
                         _highlightColor = color;
@@ -350,6 +356,7 @@ define([
                     if(operation.getSelectedEntityId() === that.getEntityId()){
                         _highlightColor = color;
                         _highlightUsername = username;
+                        that.highlight();
                     } else {
                         _highlightColor = null;
                         _highlightUsername = null;
@@ -387,10 +394,16 @@ define([
                     NodeMoveOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
                     {nodeType: that.getType()}
                 ).toNonOTOperation());
-                if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()) {
-                    color = _iwcw.getUserColor(operation.getJabberId());
+
+                /*if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()) {
+                 color = _iwcw.getUserColor(operation.getJabberId());
+                 refreshTraceAwareness(color);
+                 }*/
+                if(y.share.users.get(y.db.userId) !== operation.getJabberId()){
+                    var color = Util.getColor(y.share.userList.get(operation.getJabberId()).globalId);
                     refreshTraceAwareness(color);
                 }
+
                 processNodeMoveOperation(operation);
             }
         };
@@ -410,8 +423,13 @@ define([
                     NodeMoveOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
                     {nodeType: that.getType()}
                 ).toNonOTOperation());
-                if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()) {
-                    var color = _iwcw.getUserColor(operation.getJabberId());
+
+                /*if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()) {
+                 var color = _iwcw.getUserColor(operation.getJabberId());
+                 refreshTraceAwareness(color);
+                 }*/
+                if(y.share.users.get(y.db.userId) !== operation.getJabberId()){
+                    var color = Util.getColor(y.share.userList.get(operation.getJabberId()).globalId);
                     refreshTraceAwareness(color);
                 }
                 processNodeMoveZOperation(operation);
@@ -434,8 +452,12 @@ define([
                     NodeResizeOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
                     {nodeType: that.getType()}
                 ).toNonOTOperation());
-                if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()) {
-                    var color = _iwcw.getUserColor(operation.getJabberId());
+                /*if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()) {
+                 var color = _iwcw.getUserColor(operation.getJabberId());
+                 refreshTraceAwareness(color);
+                 }*/
+                if(y.share.users.get(y.db.userId) !== operation.getJabberId()){
+                    var color = Util.getColor(y.share.userList.get(operation.getJabberId()).globalId);
                     refreshTraceAwareness(color);
                 }
                 processNodeResizeOperation(operation);
@@ -963,7 +985,7 @@ define([
          */
         this.unselect = function(){
             _isSelected = false;
-             this.highlight(_highlightColor,_highlightUsername);
+            //this.highlight(_highlightColor,_highlightUsername);
             _$node.removeClass("selected");
             Util.delay(100).then(function(){
                 _.each(require('canvas_widget/EntityManager').getEdges(),function(e){
@@ -978,17 +1000,10 @@ define([
          * @param {String} username
          */
         this.highlight = function(color,username){
+            //unhighlight everything else
+            $('.node:not(.selected)').css({border: "2px solid transparent"});
+            $('.user_highlight').remove();
             if(color && username){
-
-                //unhighlight everything else
-                $('.node').css({border: "2px solid transparent"});
-                $('.user_highlight').remove();
-
-                //Or
-
-
-
-
                 _$node.css({border: "2px solid " + color});
                 _$node.append($('<div></div>').addClass('user_highlight').css('color',color).text(username));
                 Util.delay(100).then(function(){_.each(require('canvas_widget/EntityManager').getEdges(),function(e){e.setZIndex();});});
@@ -1259,45 +1274,43 @@ define([
 
         this._registerYMap = function(ymap) {
             _ymap = ymap;
-            _ymap.observe(function (events) {
-                for (var i in events) {
-                    var event = events[i];
-                    var operation;
-                    var data = _ymap.get(event.name);
-                    var jabberId = y.share.users.get(event.object.map[event.name][0]);
+            _ymap.observe(function (event) {
+                var operation;
+                var data = _ymap.get(event.name);
+                var yUserId = event.object.map[event.name][0];
 
-                    if (_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== jabberId || data.historyFlag) {
-                        switch (event.name) {
-                            case NodeDeleteOperation.TYPE:
-                            {
-                                operation = new NodeDeleteOperation(data.id, data.type, data.left, data.top, data.width, data.height, data.zIndex, data.json);
-                                remoteNodeDeleteCallback(operation);
-                                break;
-                            }
-                            case NodeMoveOperation.TYPE:
-                            {
-                                operation = new NodeMoveOperation(data.id, data.offsetX, data.offsetY, jabberId);
-                                remoteNodeMoveCallback(operation);
-                                break;
-                            }
-                            case NodeMoveZOperation.TYPE:
-                            {
-                                operation = new NodeMoveZOperation(data.id, data.offsetZ, jabberId);
-                                remoteNodeMoveZCallback(operation);
-                                break;
-                            }
-                            case NodeResizeOperation.TYPE:
-                            {
-                                operation = new NodeResizeOperation(data.id, data.offsetX, data.offsetY, jabberId);
-                                remoteNodeResizeCallback(operation);
-                                break;
-                            }
-                            case EntitySelectOperation.TYPE:
-                            {
-                                operation = new EntitySelectOperation(data.selectedEntityId, data.selectedEntityType, jabberId);
-                                remoteEntitySelectCallback(operation);
-                                break;
-                            }
+                if (y.db.userId !== yUserId || data.historyFlag) {
+                    var jabberId = y.share.users.get(yUserId);
+                    switch (event.name) {
+                        case NodeDeleteOperation.TYPE:
+                        {
+                            operation = new NodeDeleteOperation(data.id, data.type, data.left, data.top, data.width, data.height, data.zIndex, data.json);
+                            remoteNodeDeleteCallback(operation);
+                            break;
+                        }
+                        case NodeMoveOperation.TYPE:
+                        {
+                            operation = new NodeMoveOperation(data.id, data.offsetX, data.offsetY, jabberId);
+                            remoteNodeMoveCallback(operation);
+                            break;
+                        }
+                        case NodeMoveZOperation.TYPE:
+                        {
+                            operation = new NodeMoveZOperation(data.id, data.offsetZ, jabberId);
+                            remoteNodeMoveZCallback(operation);
+                            break;
+                        }
+                        case NodeResizeOperation.TYPE:
+                        {
+                            operation = new NodeResizeOperation(data.id, data.offsetX, data.offsetY, jabberId);
+                            remoteNodeResizeCallback(operation);
+                            break;
+                        }
+                        case EntitySelectOperation.TYPE:
+                        {
+                            operation = new EntitySelectOperation(data.selectedEntityId, data.selectedEntityType, jabberId);
+                            remoteEntitySelectCallback(operation);
+                            break;
                         }
                     }
                 }

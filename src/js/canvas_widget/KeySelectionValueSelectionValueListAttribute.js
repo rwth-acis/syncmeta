@@ -307,11 +307,11 @@ define([
             }
 
 
-            ymap.observe(function(events){
-                for (var i in events) {
+            ymap.observe(function(event){
+                for (var i in event) {
                     var operation;
-                    var data = ymap.get(events[i].name);
-                    switch (events[i].name) {
+                    var data = ymap.get(event.name);
+                    switch (event.name) {
                         case AttributeAddOperation.TYPE:{
                             operation = new AttributeAddOperation(data.entityId, data.subjectEntityId, data.rootSubjectEntityId,data.type);
                             remoteAttributeAddCallback(operation);
