@@ -857,6 +857,7 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                 if (entity)
                     entity.select();
             }
+
             var operation = new EntitySelectOperation(entity ? entity.getEntityId() : null, entity ? entity.getType() : null,_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
 
             _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.toNonOTOperation());
@@ -864,12 +865,11 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
             _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.toNonOTOperation());
 
             if(entity === null) {
-                if(_selectedEntity) {
-                    _selectedEntity.getYMap().set(EntitySelectOperation.TYPE, operation.toJSON());
-                }
+                y.share.select.set(y.db.userId, null);
             }
             else {
-                entity.getYMap().set(EntitySelectOperation.TYPE, operation.toJSON());
+                y.share.select.set(y.db.userId,entity.getEntityId());
+
 
             }
             _selectedEntity = entity;
@@ -1561,7 +1561,27 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                     }
 
                 }
-            })
+            });
+
+            y.share.select.observe(function(event){
+                if(event.name !== y.db.userId){
+
+                    var userInfo = y.share.userList.get(y.share.users.get(event.name));
+                    if(event.oldValue != null) {
+                        var unselectedEntity = EntityManager.find(event.oldValue);
+                        if(unselectedEntity)
+                            unselectedEntity.unhighlight();
+                    }
+
+                    if(event.value != null) {
+                        var selectedEntity = EntityManager.find(event.value);
+                        if(selectedEntity)
+                            selectedEntity.highlight(Util.getColor(userInfo.globalId), userInfo[CONFIG.NS.PERSON.TITLE]);
+                    }
+
+
+                }
+            });
         }
         if(_iwcw){
             that.registerCallbacks();

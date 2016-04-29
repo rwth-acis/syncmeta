@@ -7,12 +7,11 @@ define([
     'Util',
     'operations/ot/EdgeDeleteOperation',
     'operations/non_ot/ActivityOperation',
-    'operations/non_ot/EntitySelectOperation',
     'canvas_widget/HistoryManager',
     'canvas_widget/AbstractEntity',
     'canvas_widget/SingleValueAttribute',
     'text!templates/canvas_widget/abstract_edge.html'
-],/** @lends AbstractEdge */function (require,$,jsPlumb,_,IWCW,Util,EdgeDeleteOperation,ActivityOperation,EntitySelectOperation,HistoryManager,AbstractEntity,SingleValueAttribute,abstractEdgeHtml) {
+],/** @lends AbstractEdge */function (require,$,jsPlumb,_,IWCW,Util,EdgeDeleteOperation,ActivityOperation,HistoryManager,AbstractEntity,SingleValueAttribute,abstractEdgeHtml) {
 
     AbstractEdge.prototype = new AbstractEntity();
     AbstractEdge.prototype.constructor = AbstractEdge;
@@ -149,33 +148,6 @@ define([
                 {}
             ).toNonOTOperation());
 
-        };
-
-        /**
-         * Callback for a remote Entity Select Operation
-         * @param {operations.non_ot.EntitySelectOperation} operation
-         */
-        var remoteEntitySelectCallback = function(operation){
-            var color;
-            if(operation instanceof EntitySelectOperation){
-                //color = _iwcw.getUserColor(operation.getJabberId());
-                color = Util.getColor(y.share.userList.get(operation.getJabberId()).globalId);
-                if(!_isSelected){
-                    if(operation.getSelectedEntityId() === that.getEntityId()){
-                        _highlightColor = color;
-                        that.highlight(color);
-                    } else {
-                        _highlightColor = null;
-                        that.unhighlight();
-                    }
-                } else {
-                    if(operation.getSelectedEntityId() === that.getEntityId()){
-                        _highlightColor = color;
-                    } else {
-                        _highlightColor = null;
-                    }
-                }
-            }
         };
 
         /**
@@ -560,13 +532,6 @@ define([
                     }
                 }
             }
-            if(_ymap){
-                var operation = new EntitySelectOperation(that ? that.getEntityId() : null, that ? that.getType() : null);
-                _ymap.set(EntitySelectOperation.TYPE, operation.toJSON());
-            }
-            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
-            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, operation.toNonOTOperation());
-            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.toNonOTOperation());
         };
 
         /**
@@ -725,14 +690,7 @@ define([
                 var yUserId = event.object.map[event.name][0];
 
                 if (yUserId !== y.db.userId || data.historyFlag) {
-                    var jabberId= y.share.users.get(yUserId);
                     switch (event.name) {
-                        case EntitySelectOperation.TYPE:
-                        {
-                            operation = new EntitySelectOperation(data.selectedEntityId, data.selectedEntityType, jabberId);
-                            remoteEntitySelectCallback(operation);
-                            break;
-                        }
                         case EdgeDeleteOperation.TYPE:
                         {
                             operation = new EdgeDeleteOperation(data.id, data.type, data.source, data.target, data.json);

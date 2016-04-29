@@ -10,14 +10,13 @@ define([
     'operations/ot/NodeMoveZOperation',
     'operations/ot/NodeResizeOperation',
     'operations/non_ot/ActivityOperation',
-    'operations/non_ot/EntitySelectOperation',
     'canvas_widget/AbstractEntity',
     'canvas_widget/SingleValueAttribute',
     'canvas_widget/HistoryManager',
     'text!templates/canvas_widget/abstract_node.html',
     'text!templates/canvas_widget/awareness_trace.html',
     'jquery.transformable-PATCHED'
-],/** @lends AbstractNode */function(require,$,jsPlumb,_,Util,IWCW,NodeDeleteOperation,NodeMoveOperation,NodeMoveZOperation,NodeResizeOperation,ActivityOperation,EntitySelectOperation,AbstractEntity,SingleValueAttribute,HistoryManager,abstractNodeHtml,awarenessTraceHtml) {
+],/** @lends AbstractNode */function(require,$,jsPlumb,_,Util,IWCW,NodeDeleteOperation,NodeMoveOperation,NodeMoveZOperation,NodeResizeOperation,ActivityOperation,AbstractEntity,SingleValueAttribute,HistoryManager,abstractNodeHtml,awarenessTraceHtml) {
 
     AbstractNode.prototype = new AbstractEntity();
     AbstractNode.prototype.constructor = AbstractNode;
@@ -125,20 +124,6 @@ define([
          * @private
          */
         var _isSelected = false;
-
-        /**
-         * Stores current highlighting color
-         * @type {string}
-         * @private
-         */
-        var _highlightColor = null;
-
-        /**
-         * Stores current highlighting user name
-         * @type {string}
-         * @private
-         */
-        var _highlightUsername = null;
 
         /**
          * Callback to generate list of context menu items
@@ -319,50 +304,6 @@ define([
                 {}
             ).toNonOTOperation());
 
-        };
-
-        /**
-         * Callback for a remote Entity Select Operation
-         * @param {EntitySelectOperation} operation
-         */
-        var remoteEntitySelectCallback = function(operation){
-            var senderJabberId,
-                color,
-                username;
-
-            if(operation instanceof EntitySelectOperation){
-                senderJabberId = operation.getJabberId();
-                //if(senderJabberId === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
-                if(senderJabberId === y.share.users.get(y.db.userId))
-                    return;
-                //color = _iwcw.getUserColor(senderJabberId);
-                var userInfo = y.share.userList.get(senderJabberId);
-                color = Util.getColor(userInfo.globalId);
-
-                //username = _iwcw.getMembers()[senderJabberId][CONFIG.NS.PERSON.TITLE];
-                username = userInfo[CONFIG.NS.PERSON.TITLE];
-
-                if(!_isSelected){
-                    if(operation.getSelectedEntityId() === that.getEntityId()){
-                        _highlightColor = color;
-                        _highlightUsername = username;
-                        that.highlight(color,username);
-                    } else {
-                        _highlightColor = null;
-                        _highlightUsername = null;
-                        that.unhighlight();
-                    }
-                } else {
-                    if(operation.getSelectedEntityId() === that.getEntityId()){
-                        _highlightColor = color;
-                        _highlightUsername = username;
-                        that.highlight();
-                    } else {
-                        _highlightColor = null;
-                        _highlightUsername = null;
-                    }
-                }
-            }
         };
 
         var refreshTraceAwareness = function(color){
@@ -1001,8 +942,8 @@ define([
          */
         this.highlight = function(color,username){
             //unhighlight everything else
-            $('.node:not(.selected)').css({border: "2px solid transparent"});
-            $('.user_highlight').remove();
+            //$('.node:not(.selected)').css({border: "2px solid transparent"});
+            //$('.user_highlight').remove();
             if(color && username){
                 _$node.css({border: "2px solid " + color});
                 _$node.append($('<div></div>').addClass('user_highlight').css('color',color).text(username));
@@ -1304,12 +1245,6 @@ define([
                         {
                             operation = new NodeResizeOperation(data.id, data.offsetX, data.offsetY, jabberId);
                             remoteNodeResizeCallback(operation);
-                            break;
-                        }
-                        case EntitySelectOperation.TYPE:
-                        {
-                            operation = new EntitySelectOperation(data.selectedEntityId, data.selectedEntityType, jabberId);
-                            remoteEntitySelectCallback(operation);
                             break;
                         }
                     }
