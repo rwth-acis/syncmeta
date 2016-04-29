@@ -1024,8 +1024,9 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
 
                     if(EntityManager.getLayer() === CONFIG.LAYER.META) {
                         map.set(id + "[label]", Y.Text).then(function () {
+                            var attrColorPromise;
                             if (type === 'Node Shape') {
-                                var attrColorPromise = createYTypeForValueOfAttribute(map, id + "[color]", Y.Text);
+                                attrColorPromise = createYTypeForValueOfAttribute(map, id + "[color]", Y.Text);
                                 var attrAnchorsPromise = createYTypeForValueOfAttribute(map, id + "[customAnchors]", Y.Text);
                                 var attrCustomShapePromise = createYTypeForValueOfAttribute(map, id + "[customShape]", Y.Text);
                                 $.when(attrColorPromise, attrAnchorsPromise, attrCustomShapePromise).done(function () {
@@ -1035,9 +1036,8 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                                 });
                             }
                             else if (type === 'Edge Shape') {
-                                var attrColorPromise = createYTypeForValueOfAttribute(map, id + "[color]", Y.Text);
+                                attrColorPromise = createYTypeForValueOfAttribute(map, id + "[color]", Y.Text);
                                 var attrOverlayPromise = createYTypeForValueOfAttribute(map, id + "[overlay]", Y.Text);
-
                                 $.when(attrColorPromise, attrOverlayPromise).done(function () {
                                     propagateNodeAddOperation(operation,map);
                                     y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
@@ -1527,12 +1527,12 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
 
         if(y){
             y.share.canvas.observe(function(event){
-                var triggerSave = false;
-                var operation;
-                var data = y.share.canvas.get(event.name);
                 var yUserId = event.object.map[event.name][0];
-                if(yUserId !== y.db.userId || data.historyFlag) {
+
+                if(yUserId !== y.db.userId || event.value.historyFlag) {
                     var jabberId = y.share.users.get(yUserId);
+                    var operation;
+                    var data = event.value;
                     switch (event.name) {
                         case NodeAddOperation.TYPE:
                         {
@@ -1559,7 +1559,6 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                             break;
                         }
                     }
-
                 }
             });
 

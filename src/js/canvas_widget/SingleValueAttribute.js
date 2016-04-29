@@ -83,7 +83,8 @@ define([
         };
 
         this.registerYType = function(ytext){
-            _value.registerYType(ytext);
+            if(ytext)
+                _value.registerYType(ytext);
 
         };
 

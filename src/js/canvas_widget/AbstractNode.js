@@ -1216,11 +1216,11 @@ define([
         this._registerYMap = function(ymap) {
             _ymap = ymap;
             _ymap.observe(function (event) {
-                var operation;
-                var data = _ymap.get(event.name);
                 var yUserId = event.object.map[event.name][0];
 
-                if (y.db.userId !== yUserId || data.historyFlag) {
+                if (y.db.userId !== yUserId || event.value.historyFlag) {
+                    var operation;
+                    var data = event.value;
                     var jabberId = y.share.users.get(yUserId);
                     switch (event.name) {
                         case NodeDeleteOperation.TYPE:

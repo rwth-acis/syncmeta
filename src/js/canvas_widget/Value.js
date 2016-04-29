@@ -222,18 +222,6 @@ define([
             }
         };
 
-        /**
-         * Callback for an undone resp. redone Value Change Operation
-         * @param {operations.ot.ValueChangeOperation} operation
-         */
-        var historyValueChangeCallback = function(operation){
-            if(operation instanceof ValueChangeOperation && operation.getEntityId() === that.getEntityId()){
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-                processValueChangeOperation(operation);
-            }
-        };
-
         this.init = function(){
             _$node.off();
             _$node.bind("input",function(){
@@ -374,8 +362,6 @@ define([
          */
         this.registerCallbacks = function(){
             _iwcw.registerOnDataReceivedCallback(localValueChangeCallback);
-            //TODO
-            // _iwcw.registerOnHistoryChangedCallback(historyValueChangeCallback);
         };
 
         /**
@@ -383,8 +369,6 @@ define([
          */
         this.unregisterCallbacks = function(){
             _iwcw.unregisterOnDataReceivedCallback(localValueChangeCallback);
-            //TODO
-            //_iwcw.unregisterOnHistoryChangedCallback(historyValueChangeCallback);
         };
 
 
@@ -392,11 +376,11 @@ define([
             _ytext= ytext;
             _ytext.bind(_$node[0]);
 
-            /*if(that.getValue() !== _ytext.toString()){
-             if(_ytext.toString().length > 0)
-             _ytext.delete(0, _ytext.toString().length-1);
-             _ytext.insert(0, that.getValue());
-             }*/
+            if(that.getValue() !== _ytext.toString()){
+                if(_ytext.toString().length > 0)
+                    _ytext.delete(0, _ytext.toString().length-1);
+                _ytext.insert(0, that.getValue());
+            }
 
             _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new BindYTextOperation(that.getEntityId(),_value).toNonOTOperation());
             _ytext.observe(function(event){

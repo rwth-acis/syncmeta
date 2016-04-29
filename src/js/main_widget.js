@@ -67,7 +67,7 @@ requirejs([
         InitMainWidget();
 
 
-    }).fail(function(error){
+    }).fail(function(){
         console.info("yjs log: Yjs intialization failed!");
         window.y = undefined;
         InitMainWidget();
@@ -98,6 +98,27 @@ requirejs([
                             CanvasWidgetTest(canvas);
                         });
                 });
+
+                _iwcw.registerOnDataReceivedCallback(function (operation) {
+                    if (operation instanceof SetModelAttributeNodeOperation) {
+                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new SetModelAttributeNodeOperation().toNonOTOperation());
+                    }
+                    else if (operation instanceof UpdateViewListOperation) {
+                        y.share.views.set(UpdateViewListOperation.TYPE, new UpdateViewListOperation().toJSON());
+                    }
+                });
+                y.share.views.observe(function(event){
+                    switch (event.name){
+                        case UpdateViewListOperation.TYPE:{
+                            if (metamodel.constructor === Object) {
+                                ViewManager.GetViewpointList();
+                            } else {
+                                ViewManager.initViewList();
+                            }
+                        }
+                    }
+                });
+
 
                 if (canvas.getModelAttributesNode() === null) {
                     var modelAttributesNode = EntityManager.createModelAttributesNode();
@@ -245,6 +266,17 @@ requirejs([
                     $lblCurrentViewId.text("");
                     // $loading.hide();
                 }
+            });
+
+            var $saveImage = $("#save_image");
+            $saveImage.show();
+            $saveImage.click(function(){
+                canvas.toPNG().then(function(uri){
+                    var link = document.createElement('a');
+                    link.download = "export.png";
+                    link.href = uri;
+                    link.click();
+                });
             });
 
         }
@@ -534,23 +566,13 @@ requirejs([
                         //promises.push(createYTextAttribute(map,node.getAttribute(nodeId+'[customShape]')));
                         createYTextAttribute(map,node.getAttribute(nodeId+'[customShape]'));
                     }
-                    else if(jsonNode.type === 'Object' || jsonNode.type === 'Relationship' || jsonNode.type === 'Abstract Class'){
+                    else if(jsonNode.type === 'Object' || jsonNode.type === 'Relationship' || jsonNode.type === 'Abstract Class' || jsonNode.type ==='Enumeration'){
                         attrs = node.getAttribute('[attributes]').getAttributes();
                         for(var attrKey in attrs){
                             if(attrs.hasOwnProperty(attrKey)) {
                                 attr = attrs[attrKey];
                                 //promises.push(createYTextAttribute(map, attr.getKey()));
                                 createYTextAttribute(map, attr.getKey());
-                            }
-                        }
-                    }
-                    else if(jsonNode.type==='Enumeration'){
-                        attrs = node.getAttribute('[attributes]').getAttributes();
-                        for(var attrKey2 in attrs){
-                            if(attrs.hasOwnProperty(attrKey2)) {
-                                attr = attrs[attrKey2];
-                                //promises.push(createYTextAttribute(map, attr.getValue()));
-                                createYTextAttribute(map, attr.getValue());
                             }
                         }
                     }
@@ -876,103 +898,9 @@ requirejs([
 
         ViewManager.initViewList();
 
-        //TODO
-        /*
-         _iwcw.registerOnJoinOrLeaveCallback(function (operation) {
-         var activityOperation;
-         if (operation instanceof JoinOperation) {
-         if (operation.getUser() === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] && operation.getSender() === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]) {
-         if (operation.isDone()) {
-         operation.setData(model);
-         if (metamodel.constructor === Object) {
-         var op = new InitModelTypesOperation(metamodel);
-         _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, op.toNonOTOperation());
-         _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, op.toNonOTOperation());
-         }
-         _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
-
-         JSONtoGraph(model);
-         if (canvas.getModelAttributesNode() === null) {
-         var modelAttributesNode = EntityManager.createModelAttributesNode();
-         canvas.setModelAttributesNode(modelAttributesNode);
-         modelAttributesNode.addToCanvas(canvas);
-         }
-         canvas.resetTool();
-         //$("#loading").hide();
-
-         _iwcw.registerOnLocalDataReceivedCallback(function (operation) {
-         if (operation instanceof SetModelAttributeNodeOperation) {
-         _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new SetModelAttributeNodeOperation().toNonOTOperation());
-         }
-         else if (operation instanceof UpdateViewListOperation) {
-         _iwcw.sendRemoteNonOTOperation(new UpdateViewListOperation().toNonOTOperation());
-         if (metamodel.constructor === Object) {
-         ViewManager.GetViewpointList();
-         } else {
-         ViewManager.initViewList();
-         }
-         }
-         });
-
-         _iwcw.registerOnRemoteDataReceivedCallback(function (operation) {
-         if (operation instanceof UpdateViewListOperation) {
-         ViewManager.initViewList();
-         } else if (operation instanceof ActivityOperation) {
-         _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, operation.toNonOTOperation());
-         }
-         });
-
-
-         activityOperation = new ActivityOperation(
-         "UserJoinActivity",
-         "-1",
-         operation.getUser(),
-         "",
-         {}
-         ).toNonOTOperation();
-         _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation);
-         } else {
-         activityOperation = new ActivityOperation(
-         "UserJoinActivity",
-         "-1",
-         operation.getSender(),
-         "",
-         {}
-         ).toNonOTOperation();
-         _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation);
-         model = operation.getData();
-         }
-         } else {
-         //if(operation.isDone()){
-         activityOperation = new ActivityOperation(
-         "UserJoinActivity",
-         "-1",
-         operation.getSender(),
-         "",
-         {}
-         ).toNonOTOperation();
-         _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation);
-         //} else {
-         //}
-         }
-         }
-         });
-         */
-
-        //local user
+        //local user joins
         y.share.join.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],false);
 
-
-
-        /*
-         $("#save_image").click(function(){
-         canvas.toPNG().then(function(uri){
-         var link = document.createElement('a');
-         link.download = "export.png";
-         link.href = uri;
-         link.click();
-         });
-         });*/
     }
 
 });

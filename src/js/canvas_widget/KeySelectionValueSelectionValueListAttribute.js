@@ -119,12 +119,8 @@ define([
          * @param {operations.ot.AttributeDeleteOperation} operation
          */
         var propagateAttributeDeleteOperation = function(operation){
-            //processAttributeDeleteOperation(operation);
-            //_iwcw.sendRemoteOTOperation(operation);
             var ynode = that.getRootSubjectEntity().getYMap();
             if(ynode){
-                ynode.delete(operation.getEntityId());
-                ynode.delete(operation.getEntityId()+'[key]');
                 ynode.set(AttributeDeleteOperation.TYPE, operation.toJSON());
             }
         };
@@ -308,20 +304,18 @@ define([
 
 
             ymap.observe(function(event){
-                for (var i in event) {
-                    var operation;
-                    var data = ymap.get(event.name);
-                    switch (event.name) {
-                        case AttributeAddOperation.TYPE:{
-                            operation = new AttributeAddOperation(data.entityId, data.subjectEntityId, data.rootSubjectEntityId,data.type);
-                            remoteAttributeAddCallback(operation);
-                            break;
-                        }
-                        case AttributeDeleteOperation.TYPE:{
-                            operation = new AttributeDeleteOperation(data.entityId, data.subjectEntityId, data.rootSubjectEntityId,data.type);
-                            remoteAttributeDeleteCallback(operation);
-                            break;
-                        }
+                var operation;
+                var data = event.value;
+                switch (event.name) {
+                    case AttributeAddOperation.TYPE:{
+                        operation = new AttributeAddOperation(data.entityId, data.subjectEntityId, data.rootSubjectEntityId,data.type);
+                        remoteAttributeAddCallback(operation);
+                        break;
+                    }
+                    case AttributeDeleteOperation.TYPE:{
+                        operation = new AttributeDeleteOperation(data.entityId, data.subjectEntityId, data.rootSubjectEntityId,data.type);
+                        remoteAttributeDeleteCallback(operation);
+                        break;
                     }
                 }
             });

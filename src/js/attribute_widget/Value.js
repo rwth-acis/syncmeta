@@ -311,23 +311,32 @@ define([
 
         function bindYTextCallback(operation) {
             if (operation instanceof BindYTextOperation && operation.getEntityId() === that.getEntityId()) {
-                var entityId= that.getRootSubjectEntity().getEntityId();
 
-                if(y.share.nodes.opContents.hasOwnProperty(entityId)){
-                    y.share.nodes.get(entityId).then(function(ymap){
-                        ymap.get(operation.getEntityId()).then(function(ytext){
-                            that.registerYType(ytext);
-                        })
+                var entityId = that.getRootSubjectEntity().getEntityId();
 
-                    })
-                }
-                else if(y.share.edges.opContents.hasOwnProperty(entityId)){
-                    y.share.edges.get(entityId).then(function(ymap){
-                        ymap.get(operation.getEntityId()).then(function(ytext){
-                            that.registerYType(ytext);
+                if (y.share.nodes.opContents.hasOwnProperty(entityId)) {
+                    setTimeout(function(){
+                        y.share.nodes.get(entityId).then(function (ymap) {
+                            ymap.get(operation.getEntityId()).then(function (ytext) {
+                                that.registerYType(ytext);
+                            })
+
                         })
-                    })
+                    },300);
+
                 }
+                else if (y.share.edges.opContents.hasOwnProperty(entityId)) {
+                    setTimeout(function(){
+                        y.share.edges.get(entityId).then(function (ymap) {
+                            ymap.get(operation.getEntityId()).then(function (ytext) {
+                                that.registerYType(ytext);
+                            })
+                        })
+                    },300);
+
+                }
+
+
             }
         }
 

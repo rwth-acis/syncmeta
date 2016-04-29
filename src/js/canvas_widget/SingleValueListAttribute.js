@@ -271,25 +271,28 @@ define([
         }
         this.registerYMap = function(disableYText){
             var ymap = that.getRootSubjectEntity().getYMap();
-            if(!disableYText) {
-                function registerAttribute(attr, ymap) {
+
+            function registerAttribute(attr, ymap) {
+                if(!disableYText) {
                     ymap.get(attr.getValue().getEntityId()).then(function (ytext) {
                         attr.registerYType(ytext);
                     });
                 }
+                else
+                    attr.registerYType(null);
+            }
 
-                var attrs = that.getAttributes();
-                for (var key in attrs) {
-                    if (attrs.hasOwnProperty(key)) {
-                        var attr = attrs[key];
-                        registerAttribute(attr, ymap);
-                    }
+            var attrs = that.getAttributes();
+            for (var key in attrs) {
+                if (attrs.hasOwnProperty(key)) {
+                    var attr = attrs[key];
+                    registerAttribute(attr, ymap);
                 }
             }
 
             ymap.observe(function(event){
                 var operation;
-                var data = ymap.get(event.name);
+                var data = event.value;
                 switch (event.name) {
                     case AttributeAddOperation.TYPE:{
                         operation = new AttributeAddOperation(data.entityId, data.subjectEntityId, data.rootSubjectEntityId,data.type);

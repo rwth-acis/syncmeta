@@ -685,11 +685,11 @@ define([
                 });
             }
             _ymap.observe(function (event) {
-                var operation;
-                var data = _ymap.get(event.name);
                 var yUserId = event.object.map[event.name][0];
 
-                if (yUserId !== y.db.userId || data.historyFlag) {
+                if (yUserId !== y.db.userId || event.value.historyFlag) {
+                    var operation;
+                    var data = event.value;
                     switch (event.name) {
                         case EdgeDeleteOperation.TYPE:
                         {

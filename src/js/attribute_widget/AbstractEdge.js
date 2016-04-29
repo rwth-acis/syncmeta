@@ -322,7 +322,7 @@ define([
 
         this._registerYType = function(){
             y.share.edges.get(that.getEntityId()).then(function (ymap) {
-                ymap.get(that.getLabel().getValue().getEntityId()).then(function(ytext){
+                ymap.get(that.getLabel().getValue().getEntityId()).then(function (ytext) {
                     that.getLabel().getValue().registerYType(ytext);
                 })
             })

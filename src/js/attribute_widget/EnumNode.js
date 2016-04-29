@@ -61,7 +61,7 @@ define([
 
         _$node.find(".label").append(this.getLabel().get$node());
 
-        this.registerYType = function(){
+        this.registerYMap = function(){
             var registerValue = function(ymap, value){
                 ymap.get(value.getEntityId()).then(function(ytext){
                     value.registerYType(ytext);

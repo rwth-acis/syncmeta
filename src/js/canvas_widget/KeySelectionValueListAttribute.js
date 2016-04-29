@@ -113,8 +113,6 @@ define([
         var propagateAttributeDeleteOperation = function(operation){
             var ymap = that.getRootSubjectEntity().getYMap();
             if(ymap){
-                ymap.delete(operation.getEntityId());
-                ymap.delete(operation.getEntityId()+'[key]');
                 ymap.set(AttributeDeleteOperation.TYPE, operation.toJSON());
             }
 
@@ -299,7 +297,7 @@ define([
 
             ymap.observe(function(event){
                 var operation;
-                var data = that.getRootSubjectEntity().getYMap().get(event.name);
+                var data = event.value;
                 switch (event.name) {
                     case AttributeAddOperation.TYPE:
                     {

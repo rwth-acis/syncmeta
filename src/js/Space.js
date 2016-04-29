@@ -62,6 +62,7 @@ define([
             }
             catch(e){
                 console.info('Space promise failed!');
+                alert('Space pomise failed. Pls try to refresh!');
                 return;
             }
             deferred = $.Deferred();

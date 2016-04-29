@@ -293,35 +293,37 @@ define([
 
         function bindYTextCallback(operation) {
             if (operation instanceof BindYTextOperation && operation.getEntityId() === that.getEntityId()) {
-                var entityId= that.getRootSubjectEntity().getEntityId();
-                if(y.share.nodes.opContents.hasOwnProperty(entityId)){
-                    y.share.nodes.get(entityId).then(function(ymap){
-                        ymap.get(operation.getEntityId()).then(function(ytext){
-                            ytext.bind(_$node[0]);
+                setTimeout(function () {
+                    var entityId = that.getRootSubjectEntity().getEntityId();
+                    if (y.share.nodes.opContents.hasOwnProperty(entityId)) {
+                        y.share.nodes.get(entityId).then(function (ymap) {
+                            ymap.get(operation.getEntityId()).then(function (ytext) {
+                                ytext.bind(_$node[0]);
 
-                            if(that.getValue() !== ytext.toString()){
-                                if(ytext.toString().length > 0)
-                                    ytext.delete(0, ytext.toString().length);
-                                ytext.insert(0, that.getValue());
-                            }
+                                if (that.getValue() !== ytext.toString()) {
+                                    if (ytext.toString().length > 0)
+                                        ytext.delete(0, ytext.toString().length);
+                                    ytext.insert(0, that.getValue());
+                                }
 
+                            })
                         })
-                    })
-                }
-                else if(y.share.edges.opContents.hasOwnProperty(entityId)){
-                    y.share.edges.get(entityId).then(function(ymap){
-                        ymap.get(operation.getEntityId()).then(function(ytext){
-                            ytext.bind(_$node[0]);
+                    }
+                    else if (y.share.edges.opContents.hasOwnProperty(entityId)) {
+                        y.share.edges.get(entityId).then(function (ymap) {
+                            ymap.get(operation.getEntityId()).then(function (ytext) {
+                                ytext.bind(_$node[0]);
 
-                            if(that.getValue() !== ytext.toString()){
-                                if(ytext.toString().length > 0)
-                                    ytext.delete(0, ytext.toString().length);
-                                ytext.insert(0, that.getValue());
-                            }
+                                if (that.getValue() !== ytext.toString()) {
+                                    if (ytext.toString().length > 0)
+                                        ytext.delete(0, ytext.toString().length);
+                                    ytext.insert(0, that.getValue());
+                                }
 
+                            })
                         })
-                    })
-                }
+                    }
+                }, 300);
             }
         }
 

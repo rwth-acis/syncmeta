@@ -19,6 +19,7 @@ define(['jqueryui','yjs'],function ($) {
                 edges:'Map',
                 userList:'Map',
                 select:'Map',
+                views:'Map',
                 text:"Text"
             },
             sourceDir: '<%= grunt.config("baseUrl") %>/js/lib/vendor'
