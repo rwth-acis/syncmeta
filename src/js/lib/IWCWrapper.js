@@ -3,9 +3,8 @@ define([
     'operations/ot/OTOperation',
     'operations/non_ot/NonOTOperation',
     'operations/OperationFactory',
-    'Util',
-    'promise!Space'
-],/** @lends IWC */function(IIWC,OTOperation,NonOTOperation,OperationFactory, Util, Space){
+    'Util'
+],/** @lends IWC */function(IIWC,OTOperation,NonOTOperation,OperationFactory, Util){
 
     var PAYLOAD_DATA_TYPE = {
         OT_OPERATION: "OTOperation",
@@ -38,7 +37,7 @@ define([
          */
         var INTERVAL_SEND  = 25;
 
-
+        var Space = null;
 
         //noinspection JSMismatchedCollectionQueryUpdate
         /**
@@ -357,6 +356,9 @@ define([
             },
             getSpaceTitle: function(){
                 return Space.title;
+            },
+            setSpace: function(s){
+                Space = s;
             }
         };
     }

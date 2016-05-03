@@ -20,15 +20,13 @@ requirejs([
 
     var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE);
 
-    yjsSync(iwc.getSpaceTitle()).done(function(){
+    yjsSync().done(function(){
         InitAttributeWidget();
     }).fail(function(){
         window.y= undefined;
         InitAttributeWidget();
     });
     function InitAttributeWidget() {
-
-
 
         var wrapper = new AttributeWrapper($("#wrapper"));
 

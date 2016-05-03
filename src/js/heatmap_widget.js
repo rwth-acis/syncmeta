@@ -15,9 +15,11 @@ requirejs([
     'operations/ot/NodeDeleteOperation',
     'operations/non_ot/CanvasViewChangeOperation',
     'promise!Model',
-    'promise!Guidancemodel'
-],function ($, _, require, IWCOT, NodePreview, NodeAddOperation,NodeMoveOperation,NodeResizeOperation,NodeDeleteOperation, CanvasViewChangeOperation, model, guidancemodel) {
-    var iwc = IWCOT.getInstance(CONFIG.WIDGET.NAME.HEATMAP);
+    'promise!Guidancemodel',
+    'promise!Space'
+],function ($, _, require, IWCW, NodePreview, NodeAddOperation,NodeMoveOperation,NodeResizeOperation,NodeDeleteOperation, CanvasViewChangeOperation, model, guidancemodel,space) {
+    var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.HEATMAP);
+    iwc.setSpace(space);
     var $heatmap = $("#heatmap");
     var scaleFactor = $heatmap.width() / 9000;
     var $window = $("<div id='viewpoint' style='position:absolute; z-index:10000; width:50px; height:50px; border-style:groove; border-width: 1px;'></div>");
