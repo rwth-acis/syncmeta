@@ -361,8 +361,8 @@ define([
 
             };
 
-            this.registerYMap = function(map){
-                AbstractEdge.prototype.registerYMap.call(this,map);
+            this.registerYMap = function(map,disableYText){
+                AbstractEdge.prototype.registerYMap.call(this,map,disableYText);
                 var registerYText = function(ymap, val){
                     ymap.get(val.getEntityId()).then(function(ytext){
                         val.registerYType(ytext);
@@ -377,7 +377,8 @@ define([
                                 val.registerYType();
                             }
                             else{
-                                registerYText(map,val);
+                                if(!disableYText)
+                                    registerYText(map,val);
                             }
                         }
                     }

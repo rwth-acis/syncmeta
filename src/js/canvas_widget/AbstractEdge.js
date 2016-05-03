@@ -683,6 +683,7 @@ define([
                 _ymap.get(that.getEntityId() + '[label]').then(function (ytext) {
                     _label.registerYType(ytext);
                 });
+
             }
             _ymap.observe(function (event) {
                 var yUserId = event.object.map[event.name][0];

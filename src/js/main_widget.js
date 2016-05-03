@@ -566,13 +566,23 @@ requirejs([
                         //promises.push(createYTextAttribute(map,node.getAttribute(nodeId+'[customShape]')));
                         createYTextAttribute(map,node.getAttribute(nodeId+'[customShape]'));
                     }
-                    else if(jsonNode.type === 'Object' || jsonNode.type === 'Relationship' || jsonNode.type === 'Abstract Class' || jsonNode.type ==='Enumeration'){
+                    else if(jsonNode.type === 'Object' || jsonNode.type === 'Relationship' || jsonNode.type === 'Abstract Class'){
                         attrs = node.getAttribute('[attributes]').getAttributes();
                         for(var attrKey in attrs){
                             if(attrs.hasOwnProperty(attrKey)) {
                                 attr = attrs[attrKey];
                                 //promises.push(createYTextAttribute(map, attr.getKey()));
                                 createYTextAttribute(map, attr.getKey());
+                            }
+                        }
+                    }
+                    else if(jsonNode.type==='Enumeration'){
+                        attrs = node.getAttribute('[attributes]').getAttributes();
+                        for(var attrKey2 in attrs){
+                            if(attrs.hasOwnProperty(attrKey2)) {
+                                attr = attrs[attrKey2];
+                                //promises.push(createYTextAttribute(map, attr.getValue()));
+                                createYTextAttribute(map, attr.getValue());
                             }
                         }
                     }

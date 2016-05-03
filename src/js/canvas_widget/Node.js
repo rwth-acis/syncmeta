@@ -219,7 +219,7 @@ define([
 
             init();
 
-            this.registerYMap = function(map){
+            this.registerYMap = function(map,disableYText){
                 AbstractNode.prototype.registerYMap.call(this,map);
                 var registerYText = function(ymap, val){
                     ymap.get(val.getEntityId()).then(function(ytext){
@@ -235,7 +235,8 @@ define([
                                 val.registerYType();
                             }
                             else{
-                                registerYText(map,val);
+                                if(!disableYText)
+                                    registerYText(map,val);
                             }
                         }
                     }
