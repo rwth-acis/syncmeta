@@ -15,12 +15,13 @@ requirejs([
     'operations/non_ot/ViewInitOperation',
     'operations/non_ot/SetModelAttributeNodeOperation',
     'promise!Model',
+    'promise!Space',
     'promise!Guidancemodel'
-],function ($,IWCW,yjsSync,AttributeWrapper,EntityManager, ViewGenerator, JoinOperation,InitModelTypesOperation,ViewInitOperation, SetModelAttributeNodeOperation, model,guidancemodel) {
+],function ($,IWCW,yjsSync,AttributeWrapper,EntityManager, ViewGenerator, JoinOperation,InitModelTypesOperation,ViewInitOperation, SetModelAttributeNodeOperation, model, space,guidancemodel) {
 
     var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE);
 
-    yjsSync().done(function(){
+    yjsSync(space.title).done(function(){
         InitAttributeWidget();
     }).fail(function(){
         window.y= undefined;

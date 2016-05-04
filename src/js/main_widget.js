@@ -59,7 +59,7 @@ requirejs([
     _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
     _iwcw.setSpace(space);
 
-    yjsSync().done(function(){
+    yjsSync(_iwcw.getSpaceTitle()).done(function(){
         console.info('yjs log: Yjs Initialized successfully!');
         y.share.users.set(y.db.userId,_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
         var userInfo = _iwcw.getUser();

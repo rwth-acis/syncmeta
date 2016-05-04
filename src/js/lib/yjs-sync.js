@@ -1,13 +1,21 @@
 define(['jqueryui','yjs'],function ($) {
-    return function() {
+    return function(spaceTitle) {
+
         var deferred = $.Deferred();
+        if(!spaceTitle) {
+            //try to get space title from url if space promise fails
+            spaceTitle = frameElement.baseURI.substring(frameElement.baseURI.lastIndexOf('/') + 1);
+            if(spaceTitle.indexOf('#') != -1||spaceTitle.indexOf('?') != -1){
+                spaceTitle= spaceTitle.replace(/[#|\\?]\S*/g, '');
+            }
+        }
         Y({
             db: {
                 name: 'memory' // store the shared data in memory
             },
             connector: {
                 name: 'websockets-client', // use the websockets connector
-                room: frameElement.baseURI.substring(frameElement.baseURI.lastIndexOf('/')+1)
+                room: spaceTitle
             },
             share: { // specify the shared content
                 users:'Map',
