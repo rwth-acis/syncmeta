@@ -1289,8 +1289,8 @@ define([
      */
     AbstractNode.prototype.show = function(){
         this.get$node().show();
-        jsPlumb.show(this.get$node());
-        jsPlumb.repaint(this.get$node());
+        jsPlumb.show(this.get$node()[0]);
+        jsPlumb.repaint(this.get$node()[0]);
     };
 
     AbstractNode.prototype.registerYMap = function(map){

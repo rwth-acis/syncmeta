@@ -189,7 +189,7 @@ define([
           target:this.getTarget(),
           json:this.getJSON(),
           viewId:this.getViewId(),
-          otype:this.getOriginType(),
+          oType:this.getOriginType(),
           jabberId:this.getJabberId()
       }
     };

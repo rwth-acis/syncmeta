@@ -268,7 +268,6 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
          * Callback for a remote Node Add Operation
          * @param {operations.ot.NodeAddOperation} operation
          */
-
         var remoteNodeAddCallback = function (operation) {
             if (operation instanceof NodeAddOperation) {
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
@@ -419,14 +418,30 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                         edge = EntityManager.createEdge(type, operation.getEntityId(), EntityManager.findNode(operation.getSource()), EntityManager.findNode(operation.getTarget()));
                     }
 
-                    edge.connect();
-                    edge.addToCanvas(that);
+                    if(y){
+                        y.share.edges.get(edge.getEntityId()).then(function (map) {
+                            edge.registerYMap(map);
+                            edge.connect();
+                            edge.addToCanvas(that);
 
-                    //if we are in a view but the view type got no mapping in this view -> hide the element
-                    if(!viewType && EntityManager.getViewId()){
-                        edge.hide();
+                            //if we are in a view but the view type got no mapping in this view -> hide the element
+                            if(!viewType && EntityManager.getViewId()){
+                                edge.hide();
+                            }
+                            that.remountCurrentTool();
+                        })
+                    }else{
+                        edge.connect();
+                        edge.addToCanvas(that);
+
+                        //if we are in a view but the view type got no mapping in this view -> hide the element
+                        if(!viewType && EntityManager.getViewId()){
+                            edge.hide();
+                        }
+                        that.remountCurrentTool();
                     }
-                    that.remountCurrentTool();
+
+
                 }
             }
         };

@@ -371,7 +371,6 @@ define([
             _iwcw.unregisterOnDataReceivedCallback(localValueChangeCallback);
         };
 
-
         this.registerYType = function(ytext){
             _ytext= ytext;
             _ytext.bind(_$node[0]);
@@ -405,7 +404,12 @@ define([
             });
         };
 
-        //that.init();
+        //automatically determines the size of input
+        _$node.autoGrowInput({
+            comfortZone: 10,
+            minWidth: 40,
+            maxWidth: 1000
+        }).trigger("blur");
 
         if(_iwcw){
             that.registerCallbacks();

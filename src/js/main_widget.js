@@ -106,7 +106,7 @@ requirejs([
                         _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new SetModelAttributeNodeOperation().toNonOTOperation());
                     }
                     else if (operation instanceof UpdateViewListOperation) {
-                        y.share.views.set(UpdateViewListOperation.TYPE, new UpdateViewListOperation().toJSON());
+                        y.share.views.set(UpdateViewListOperation.TYPE, null);
                     }
                 });
                 y.share.views.observe(function(event){
