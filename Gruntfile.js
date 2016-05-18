@@ -51,7 +51,10 @@ module.exports = function(grunt) {
                     {cwd:'<%= bowerdir %>/y-websockets-client',expand:true, src: ['*.js'], dest:'<%=distdir%>/js/lib/vendor/y-websockets-client'},
                     {cwd:'<%= bowerdir %>/y-memory',expand:true, src: ['*.js'], dest:'<%=distdir%>/js/lib/vendor/y-memory'},
                     {src: '<%= bowerdir %>/chai/chai.js', dest: '<%= distdir %>/js/lib/vendor/test/chai.js'},
-                    {src: '<%= bowerdir %>/mocha/mocha.js', dest: '<%= distdir %>/js/lib/vendor/test/mocha.js'}
+                    {src: '<%= bowerdir %>/mocha/mocha.js', dest: '<%= distdir %>/js/lib/vendor/test/mocha.js'},
+                    {src: '<%= bowerdir %>/mocha/mocha.css', dest: '<%= distdir %>/js/lib/vendor/test/mocha.css'}
+
+
                 ]
             },
             main: {
@@ -299,6 +302,23 @@ module.exports = function(grunt) {
                 },
                 files: {
                     'html/viewcontrol.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
+                }
+
+            },
+            test_widget: {
+                options: {
+                    data: {
+                        meta: {
+                            title: "Test Widget",
+                            description: "",
+                            width: "400",
+                            height: "500"
+                        },
+                        bodyPartial: '_test_widget.tpl'
+                    }
+                },
+                files: {
+                    'html/test.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
                 }
 
             }

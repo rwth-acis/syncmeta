@@ -1218,7 +1218,7 @@ define([
             _ymap.observe(function (event) {
                 var yUserId = event.object.map[event.name][0];
 
-                if (y.db.userId !== yUserId || event.value.historyFlag) {
+                if(y.db.userId !== yUserId || event.value.historyFlag) {
                     var operation;
                     var data = event.value;
                     var jabberId = y.share.users.get(yUserId);
