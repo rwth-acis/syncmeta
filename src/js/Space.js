@@ -57,6 +57,9 @@ define([
             space.user[CONFIG.NS.PERSON.JABBERID] = person[CONFIG.NS.PERSON.JABBERID][0].value.replace("xmpp:","");
             space.user[CONFIG.NS.PERSON.MBOX] = person[CONFIG.NS.PERSON.MBOX][0].value;
             space.user.globalId = -1;
+            console.info('Space object promise');
+            console.info(spaceObj);
+
             try {
                 space.title = spaceObj.subject[CONFIG.NS.PERSON.TITLE][0].value;
             }
