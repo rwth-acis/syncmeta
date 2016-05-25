@@ -60,7 +60,7 @@ define([
             _$node = $(_activityBoxTemplate({
                 heading: y.share.userList.get(_sender) ? y.share.userList.get(_sender)[CONFIG.NS.PERSON.TITLE] : "",
                 text: _text,
-                color: y.share.userList.get(_sender) ? Util.getColor(y.share.userList.get(_sender).globalId) : "#000000",
+                color: y.share.userList.get(_sender) ? Util.getColor(y.share.userList.get(_sender).globalId) : "#000000"
             })).hide();
         else
             _$node = $(_activityBoxTemplate({
