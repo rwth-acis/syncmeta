@@ -29,7 +29,7 @@ define([
          * Set if local messages should be buffered
          * @type {boolean}
          */
-        var BUFFER_ENABLED = true;
+        var BUFFER_ENABLED = false;
 
         /**
          * Interval for sending buffered local messages
