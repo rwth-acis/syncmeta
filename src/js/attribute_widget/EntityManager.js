@@ -16,104 +16,17 @@ define(['lodash',
 		'attribute_widget/ViewRelationshipNode',
         'attribute_widget/ViewNode',
         'attribute_widget/ViewEdge',
-		'promise!Metamodel',
-        'promise!Guidancemodel'
+		//'promise!Metamodel',
+        //'promise!Guidancemodel'
 
 ], /** @lends EntityManager */
-	function (_, Node, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, ModelAttributesNode, Edge, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNode, ViewRelationshipNode, ViewNode, ViewEdge, metamodel,guidancemodel) {
+	function (_, Node, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, ModelAttributesNode, Edge, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNode, ViewRelationshipNode, ViewNode, ViewEdge /*metamodel,guidancemodel*/) {
 
-    var _layer = null;
-
-    /**
-	 * Different node types
-	 * @type {object}
-	 */
-	var nodeTypes = {};
-    /**
-     * Different edge types
-     * @type {object}
-     */
-    var edgeTypes = {};
-    var relations = {};
-
-    var _initNodeTypes = function(vls) {
-        var nodes = vls.nodes,
-            node;
-        var _nodeTypes = {};
-        for (var nodeId in nodes) {
-            if (nodes.hasOwnProperty(nodeId)) {
-                node = nodes[nodeId];
-                if (node.hasOwnProperty('targetName') && !$.isEmptyObject(nodeTypes) && nodeTypes.hasOwnProperty(node.targetName)) {
-                    _nodeTypes[node.label] = ViewNode(node.label, node.attributes, nodeTypes[node.targetName]);
-                    nodeTypes[node.targetName].VIEWTYPE = node.label;
-                }
-                else {
-                    _nodeTypes[node.label] = Node(node.label, node.shape.shape, node.shape.customShape, node.shape.customAnchors, node.shape.color, node.attributes);
-                }
-            }
-        }
-        return _nodeTypes;
-    };
 
     //Set the metamodel to the guidance metamodel for guidance modeling
-    if(guidancemodel.isGuidanceEditor()){
+    /*if(guidancemodel.isGuidanceEditor()){
         metamodel = guidancemodel.guidancemetamodel;
-    }
-    var _initEdgeTypes = function(vls){
-        var edges = vls.edges,
-            edge;
-        var _edgeTypes = {}, _relations = {};
-
-        for (var edgeId in edges) {
-            if (edges.hasOwnProperty(edgeId)) {
-                edge = edges[edgeId];
-                if(edge.hasOwnProperty('targetName') && !$.isEmptyObject(edgeTypes) && edgeTypes.hasOwnProperty(edge.targetName)){
-                    _edgeTypes[edge.label] = ViewEdge(edge.attributes, edgeTypes[edge.targetName]);
-                    edgeTypes[edge.targetName].VIEWTYPE = edge.label;
-                }else {
-                    _edgeTypes[edge.label] = Edge(edge.label, edge.shape.arrow, edge.shape.shape, edge.shape.color, edge.shape.overlay, edge.shape.overlayPosition, edge.shape.overlayRotate, edge.attributes);
-                }
-                _relations[edge.label] = edge.relations;
-            }
-        }
-        return {
-            edgeTypes:_edgeTypes,
-            relations:_relations
-        }
-    };
-
-	if (metamodel && metamodel.hasOwnProperty("nodes")) {
-		nodeTypes = _initNodeTypes(metamodel);
-        _layer = CONFIG.LAYER.MODEL;
-	} else {
-        _layer = CONFIG.LAYER.META;
-
-		nodeTypes[ObjectNode.TYPE] = ObjectNode;
-		nodeTypes[AbstractClassNode.TYPE] = AbstractClassNode;
-		nodeTypes[RelationshipNode.TYPE] = RelationshipNode;
-		nodeTypes[RelationshipGroupNode.TYPE] = RelationshipGroupNode;
-		nodeTypes[EnumNode.TYPE] = EnumNode;
-		nodeTypes[NodeShapeNode.TYPE] = NodeShapeNode;
-		nodeTypes[EdgeShapeNode.TYPE] = EdgeShapeNode;
-
-		//add view types
-		nodeTypes[ViewObjectNode.TYPE] = ViewObjectNode;
-		nodeTypes[ViewRelationshipNode.TYPE] = ViewRelationshipNode;
-	}
-
-	if (metamodel && metamodel.hasOwnProperty("edges")) {
-		var res = _initEdgeTypes(metamodel);
-        edgeTypes = res.edgeTypes;
-        relations = res.relations;
-	} else {
-		edgeTypes[GeneralisationEdge.TYPE] = GeneralisationEdge;
-		edgeTypes[BiDirAssociationEdge.TYPE] = BiDirAssociationEdge;
-		edgeTypes[UniDirAssociationEdge.TYPE] = UniDirAssociationEdge;
-
-		relations[BiDirAssociationEdge.TYPE] = BiDirAssociationEdge.RELATIONS;
-		relations[UniDirAssociationEdge.TYPE] = UniDirAssociationEdge.RELATIONS;
-		relations[GeneralisationEdge.TYPE] = GeneralisationEdge.RELATIONS;
-	}
+    }*/
 
 	/**
 	 * EntityManager
@@ -122,6 +35,64 @@ define(['lodash',
 	 * @constructor
 	 */
 	function EntityManager() {
+
+        var metamodel = null;
+
+        var _layer = null;
+
+        /**
+         * Different node types
+         * @type {object}
+         */
+        var nodeTypes = {};
+        /**
+         * Different edge types
+         * @type {object}
+         */
+        var edgeTypes = {};
+        var relations = {};
+
+        var _initNodeTypes = function(vls) {
+            var nodes = vls.nodes,
+                node;
+            var _nodeTypes = {};
+            for (var nodeId in nodes) {
+                if (nodes.hasOwnProperty(nodeId)) {
+                    node = nodes[nodeId];
+                    if (node.hasOwnProperty('targetName') && !$.isEmptyObject(nodeTypes) && nodeTypes.hasOwnProperty(node.targetName)) {
+                        _nodeTypes[node.label] = ViewNode(node.label, node.attributes, nodeTypes[node.targetName]);
+                        nodeTypes[node.targetName].VIEWTYPE = node.label;
+                    }
+                    else {
+                        _nodeTypes[node.label] = Node(node.label, node.shape.shape, node.shape.customShape, node.shape.customAnchors, node.shape.color, node.attributes);
+                    }
+                }
+            }
+            return _nodeTypes;
+        };
+        var _initEdgeTypes = function(vls){
+            var edges = vls.edges,
+                edge;
+            var _edgeTypes = {}, _relations = {};
+
+            for (var edgeId in edges) {
+                if (edges.hasOwnProperty(edgeId)) {
+                    edge = edges[edgeId];
+                    if(edge.hasOwnProperty('targetName') && !$.isEmptyObject(edgeTypes) && edgeTypes.hasOwnProperty(edge.targetName)){
+                        _edgeTypes[edge.label] = ViewEdge(edge.attributes, edgeTypes[edge.targetName]);
+                        edgeTypes[edge.targetName].VIEWTYPE = edge.label;
+                    }else {
+                        _edgeTypes[edge.label] = Edge(edge.label, edge.shape.arrow, edge.shape.shape, edge.shape.color, edge.shape.overlay, edge.shape.overlayPosition, edge.shape.overlayRotate, edge.attributes);
+                    }
+                    _relations[edge.label] = edge.relations;
+                }
+            }
+            return {
+                edgeTypes:_edgeTypes,
+                relations:_relations
+            }
+        };
+
         /**
 		 * Model attributes node
 		 * @type {attribute_widget.ModelAttributesNode}
@@ -205,7 +176,10 @@ define(['lodash',
 			 */
 			createModelAttributesNode : function () {
 				if (_modelAttributesNode === null)
+                if(metamodel)
 					return new ModelAttributesNode("modelAttributes", metamodel.attributes);
+                else
+                    return new ModelAttributesNode('modelAttributes', null);
 				return null;
 			},
 			/**
@@ -663,6 +637,41 @@ define(['lodash',
                 if(_map.hasOwnProperty(viewId))
                     delete _map[viewId];
 
+            },
+            init:function(mm){
+                metamodel = mm;
+                if (metamodel && metamodel.hasOwnProperty("nodes")) {
+                    nodeTypes = _initNodeTypes(metamodel);
+                    _layer = CONFIG.LAYER.MODEL;
+                } else {
+                    _layer = CONFIG.LAYER.META;
+
+                    nodeTypes[ObjectNode.TYPE] = ObjectNode;
+                    nodeTypes[AbstractClassNode.TYPE] = AbstractClassNode;
+                    nodeTypes[RelationshipNode.TYPE] = RelationshipNode;
+                    nodeTypes[RelationshipGroupNode.TYPE] = RelationshipGroupNode;
+                    nodeTypes[EnumNode.TYPE] = EnumNode;
+                    nodeTypes[NodeShapeNode.TYPE] = NodeShapeNode;
+                    nodeTypes[EdgeShapeNode.TYPE] = EdgeShapeNode;
+
+                    //add view types
+                    nodeTypes[ViewObjectNode.TYPE] = ViewObjectNode;
+                    nodeTypes[ViewRelationshipNode.TYPE] = ViewRelationshipNode;
+                }
+
+                if (metamodel && metamodel.hasOwnProperty("edges")) {
+                    var res = _initEdgeTypes(metamodel);
+                    edgeTypes = res.edgeTypes;
+                    relations = res.relations;
+                } else {
+                    edgeTypes[GeneralisationEdge.TYPE] = GeneralisationEdge;
+                    edgeTypes[BiDirAssociationEdge.TYPE] = BiDirAssociationEdge;
+                    edgeTypes[UniDirAssociationEdge.TYPE] = UniDirAssociationEdge;
+
+                    relations[BiDirAssociationEdge.TYPE] = BiDirAssociationEdge.RELATIONS;
+                    relations[UniDirAssociationEdge.TYPE] = UniDirAssociationEdge.RELATIONS;
+                    relations[GeneralisationEdge.TYPE] = GeneralisationEdge.RELATIONS;
+                }
             }
 
 

@@ -13,27 +13,28 @@ requirejs([
     'operations/non_ot/JoinOperation',
     'operations/non_ot/InitModelTypesOperation',
     'operations/non_ot/ViewInitOperation',
-    'operations/non_ot/SetModelAttributeNodeOperation',
-    'promise!Model',
-    'promise!Space',
-    'promise!Guidancemodel'
-],function ($,IWCW,yjsSync,AttributeWrapper,EntityManager, ViewGenerator, JoinOperation,InitModelTypesOperation,ViewInitOperation, SetModelAttributeNodeOperation, model, space,guidancemodel) {
+    'operations/non_ot/SetModelAttributeNodeOperation'
+    //'promise!Space'
+    //'promise!Guidancemodel'
+],function ($,IWCW,yjsSync,AttributeWrapper,EntityManager, ViewGenerator, JoinOperation,InitModelTypesOperation,ViewInitOperation, SetModelAttributeNodeOperation /*,space,guidancemodel*/) {
 
     var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE);
 
-    yjsSync(space.title).done(function(){
-        InitAttributeWidget();
+    yjsSync().done(function(){
+        console.info('ATTRIBUTE: Yjs successfully initialized');
+        var model = y.share.data.get('model');
+        InitAttributeWidget(model);
     }).fail(function(){
         window.y= undefined;
         InitAttributeWidget();
     });
-    function InitAttributeWidget() {
-
+    function InitAttributeWidget(model) {
+        EntityManager.init(y.share.data.get('metamodel'));
         var wrapper = new AttributeWrapper($("#wrapper"));
 
-        if (guidancemodel.isGuidanceEditor()) {
+        /*if (guidancemodel.isGuidanceEditor()) {
             model = guidancemodel.guidancemodel;
-        }
+        }*/
 
         function JSONtoGraph(json) {
             var modelAttributesNode;
@@ -146,11 +147,8 @@ requirejs([
             }
         });
 
-        //-----------------------------------------------------------------------------
-        // the attribute widget loads the model directly from the role resource space.
-        // attribute widget no longer waits for the JoinOperation from the canvas. This should speed up the initialization a bit.
-        // To revert these changes uncomment line 45-60
-        JSONtoGraph(model);
+        if(model)
+            JSONtoGraph(model);
 
         var firstInitializationFlag = true;
 

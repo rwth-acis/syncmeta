@@ -51,16 +51,16 @@ define([
                 user: {},
                 members: {}
             };
-
-            person = userObj.data[userObj.uri];
-            space.user[CONFIG.NS.PERSON.TITLE] = person[CONFIG.NS.PERSON.TITLE][0].value;
-            space.user[CONFIG.NS.PERSON.JABBERID] = person[CONFIG.NS.PERSON.JABBERID][0].value.replace("xmpp:","");
-            space.user[CONFIG.NS.PERSON.MBOX] = person[CONFIG.NS.PERSON.MBOX][0].value;
-            space.user.globalId = -1;
-            console.info('Space object promise');
-            console.info(spaceObj);
-
             try {
+                person = userObj.data[userObj.uri];
+                space.user[CONFIG.NS.PERSON.TITLE] = person[CONFIG.NS.PERSON.TITLE][0].value;
+                space.user[CONFIG.NS.PERSON.JABBERID] = person[CONFIG.NS.PERSON.JABBERID][0].value.replace("xmpp:","");
+                space.user[CONFIG.NS.PERSON.MBOX] = person[CONFIG.NS.PERSON.MBOX][0].value;
+                space.user.globalId = -1;
+                console.info('Space object promise by ' + frameElement.name);
+                console.info(spaceObj);
+
+
                 space.title = spaceObj.subject[CONFIG.NS.PERSON.TITLE][0].value;
             }
             catch(e){

@@ -1,10 +1,4 @@
-define([
-    'jqueryui',
-    'lodash',
-    'iwcw',
-    'activity_widget/Activity'
-],/** @lends NodeDeleteActivity */function($,_,IWCW,Activity) {
-
+define(['activity_widget/Activity'],/** @lends NodeDeleteActivity */function(Activity) {
     NodeDeleteActivity.TYPE = "NodeDeleteActivity";
 
     NodeDeleteActivity.prototype = new Activity();

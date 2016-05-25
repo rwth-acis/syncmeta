@@ -30,11 +30,11 @@ define([
     'text!templates/canvas_widget/action_node.html',
     'text!templates/guidance_modeling/entity_node.html',
     'text!templates/guidance_modeling/call_activity_node.html',
-    'promise!Metamodel',
-    'promise!Guidancemodel',
+    //'promise!Metamodel',
+    //'promise!Guidancemodel',
     'graphlib'
 ], /** @lends EntityManager */
-function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, ModelAttributesNode, Edge, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNode, ViewRelationshipNode, ViewNode, ViewEdge, circleNodeHtml, diamondNodeHtml, rectangleNodeHtml, roundedRectangleNodeHtml, triangleNodeHtml, setPropertyNodeHtml,activityFinalNodeHtml,startActivityNodeHtml,actionNodeHtml,entityNodeHtml,callActivityNodeHtml, metamodel, guidancemodel, graphlib) {
+function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, ModelAttributesNode, Edge, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNode, ViewRelationshipNode, ViewNode, ViewEdge, circleNodeHtml, diamondNodeHtml, rectangleNodeHtml, roundedRectangleNodeHtml, triangleNodeHtml, setPropertyNodeHtml,activityFinalNodeHtml,startActivityNodeHtml,actionNodeHtml,entityNodeHtml,callActivityNodeHtml/*, metamodel, guidancemodel*/, graphlib) {
 
     /**
      * Predefined node shapes, first is default
@@ -67,9 +67,9 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
     var nodeTypes = {};
 
     //For guidance modeling set the metamodel to the guidance metamodel
-    if(guidancemodel.isGuidanceEditor()){
+    /*if(guidancemodel.isGuidanceEditor()){
         metamodel = guidancemodel.guidancemetamodel;
-    }
+    }*/
 
     var _initNodeTypes = function(vls) {
         var _nodeTypes = {};
@@ -223,6 +223,8 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
      */
     var viewEdgeTypes = {};
 
+
+    /*
     if (metamodel && metamodel.hasOwnProperty("nodes")) {
         nodeTypes = _initNodeTypes(metamodel);
         _layer = CONFIG.LAYER.MODEL;
@@ -240,7 +242,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
         nodeTypes[ViewRelationshipNode.TYPE] = ViewRelationshipNode;
 
         _layer = CONFIG.LAYER.META;
-    }
+    }*/
 
     /**
      * Different edge types
@@ -248,7 +250,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
      */
     var edgeTypes = {};
     var relations = {};
-
+    /*
     if (metamodel && metamodel.hasOwnProperty("edges")) {
         var res = _initEdgeTypes(metamodel);
         edgeTypes = res.edgeTypes;
@@ -261,7 +263,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
         relations[BiDirAssociationEdge.TYPE] = BiDirAssociationEdge.RELATIONS;
         relations[UniDirAssociationEdge.TYPE] = UniDirAssociationEdge.RELATIONS;
         relations[GeneralisationEdge.TYPE] = GeneralisationEdge.RELATIONS;
-    }
+    }*/
 
     /**
      * EntityManager
@@ -305,6 +307,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
             edges : {}
         };
 
+        var metamodel =null;
 
         //noinspection JSUnusedGlobalSymbols
         return {
@@ -350,7 +353,10 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
              */
             createModelAttributesNode : function () {
                 if (_modelAttributesNode === null) {
-                    _modelAttributesNode = new ModelAttributesNode("modelAttributes", metamodel.attributes);
+                    if(metamodel)
+                        _modelAttributesNode = new ModelAttributesNode("modelAttributes", metamodel.attributes);
+                    else
+                        _modelAttributesNode = new ModelAttributesNode("modelAttributes", null);
                     return _modelAttributesNode;
                 }
                 return _modelAttributesNode;
@@ -2081,6 +2087,41 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
              */
             getRelations: function(){
                 return relations;
+            },
+            init:function(mm){
+                metamodel = mm;
+                if (metamodel && metamodel.hasOwnProperty("nodes")) {
+                    nodeTypes = _initNodeTypes(metamodel);
+                    _layer = CONFIG.LAYER.MODEL;
+                } else {
+                    _layer = CONFIG.LAYER.META;
+
+                    nodeTypes[ObjectNode.TYPE] = ObjectNode;
+                    nodeTypes[AbstractClassNode.TYPE] = AbstractClassNode;
+                    nodeTypes[RelationshipNode.TYPE] = RelationshipNode;
+                    nodeTypes[RelationshipGroupNode.TYPE] = RelationshipGroupNode;
+                    nodeTypes[EnumNode.TYPE] = EnumNode;
+                    nodeTypes[NodeShapeNode.TYPE] = NodeShapeNode;
+                    nodeTypes[EdgeShapeNode.TYPE] = EdgeShapeNode;
+
+                    //add view types
+                    nodeTypes[ViewObjectNode.TYPE] = ViewObjectNode;
+                    nodeTypes[ViewRelationshipNode.TYPE] = ViewRelationshipNode;
+                }
+
+                if (metamodel && metamodel.hasOwnProperty("edges")) {
+                    var res = _initEdgeTypes(metamodel);
+                    edgeTypes = res.edgeTypes;
+                    relations = res.relations;
+                } else {
+                    edgeTypes[GeneralisationEdge.TYPE] = GeneralisationEdge;
+                    edgeTypes[BiDirAssociationEdge.TYPE] = BiDirAssociationEdge;
+                    edgeTypes[UniDirAssociationEdge.TYPE] = UniDirAssociationEdge;
+
+                    relations[BiDirAssociationEdge.TYPE] = BiDirAssociationEdge.RELATIONS;
+                    relations[UniDirAssociationEdge.TYPE] = UniDirAssociationEdge.RELATIONS;
+                    relations[GeneralisationEdge.TYPE] = GeneralisationEdge.RELATIONS;
+                }
             }
         };
     }

@@ -49,24 +49,25 @@ requirejs([
     'canvas_widget/ViewManager',
     'canvas_widget/ViewGenerator',
     'canvas_widget/HistoryManager',
-    'promise!Space',
-    'promise!Metamodel',
-    'promise!Model',
-    'promise!Guidancemodel'
-],function($,jsPlumb,IWCW, yjsSync,Util,ToolSelectOperation,ActivityOperation,JoinOperation, ViewInitOperation, UpdateViewListOperation, DeleteViewOperation,SetViewTypesOperation, InitModelTypesOperation, SetModelAttributeNodeOperation, Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge, ViewObjectNode, ViewObjectNodeTool,ViewRelationshipNode, ViewRelationshipNodeTool, ViewManager, ViewGenerator, HistoryManager,space,metamodel,model,guidancemodel) {
+    'promise!Space'
+    //'promise!Guidancemodel'
+],function($,jsPlumb,IWCW, yjsSync,Util,ToolSelectOperation,ActivityOperation,JoinOperation, ViewInitOperation, UpdateViewListOperation, DeleteViewOperation,SetViewTypesOperation, InitModelTypesOperation, SetModelAttributeNodeOperation, Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge, ViewObjectNode, ViewObjectNodeTool,ViewRelationshipNode, ViewRelationshipNodeTool, ViewManager, ViewGenerator, HistoryManager,space/*,guidancemodel*/) {
 
     var _iwcw;
     _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
     _iwcw.setSpace(space);
 
     yjsSync(_iwcw.getSpaceTitle()).done(function(){
-        console.info('yjs log: Yjs Initialized successfully!');
+        console.info('CANVAS: Yjs Initialized successfully');
+
         y.share.users.set(y.db.userId,_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
         var userInfo = _iwcw.getUser();
         if(userInfo.globalId === -1)
             userInfo.globalId = y.share.userList.keysPrimitives().length;
         y.share.userList.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], userInfo);
-        InitMainWidget();
+        var metamodel = y.share.data.get('metamodel');
+        var model = y.share.data.get('model');
+        InitMainWidget(metamodel, model);
 
 
     }).fail(function(){
@@ -74,32 +75,37 @@ requirejs([
         window.y = undefined;
         InitMainWidget();
     });
-    function InitMainWidget() {
+    function InitMainWidget(metamodel, model) {
+
+        EntityManager.init(metamodel);
 
         var canvas = new Canvas($("#canvas"));
         y.share.join.observe(function(event){
             var activityOperation;
-            var done = y.share.join.get(event.name);
-            if(!done && event.name !== _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]){
+            if(!event.value && event.name !== _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]){
                 y.share.join.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], true);
-            }else if(event.name === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] && !done){
-                if (metamodel.constructor === Object) {
+            }else if(event.name === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] && !event.value){
+                if (metamodel) {
                     var op = new InitModelTypesOperation(metamodel);
                     _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, op.toNonOTOperation());
                     _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, op.toNonOTOperation());
                 }
                 //TODO
                 //_iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
-
-                JSONtoGraph(model).done(function(stats){
-                    console.info(stats);
+                if(model)
+                    JSONtoGraph(model).done(function(stats){
+                        console.info(stats);
+                        $("#loading").hide();
+                        canvas.resetTool();
+                        if(CONFIG.TEST_MODE)
+                            require(['./../test/CanvasWidgetTest'], function(CanvasWidgetTest){
+                                CanvasWidgetTest(canvas);
+                            });
+                    });
+                else{
                     $("#loading").hide();
                     canvas.resetTool();
-                    if(CONFIG.TEST_MODE)
-                        require(['./../test/CanvasWidgetTest'], function(CanvasWidgetTest){
-                            CanvasWidgetTest(canvas);
-                        });
-                });
+                }
 
                 _iwcw.registerOnDataReceivedCallback(function (operation) {
                     if (operation instanceof SetModelAttributeNodeOperation) {
@@ -138,15 +144,15 @@ requirejs([
             ).toNonOTOperation();
             _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation);
         });
+        /*
+         if (guidancemodel.isGuidanceEditor()) {
+         //Set the model which is shown by the editor to the guidancemodel
+         model = guidancemodel.guidancemodel;
+         //Set the metamodel to the guidance metamodel
+         metamodel = guidancemodel.guidancemetamodel;
+         }*/
 
-        if (guidancemodel.isGuidanceEditor()) {
-            //Set the model which is shown by the editor to the guidancemodel
-            model = guidancemodel.guidancemodel;
-            //Set the metamodel to the guidance metamodel
-            metamodel = guidancemodel.guidancemetamodel;
-        }
-
-        if (metamodel.constructor === Object) {
+        if (metamodel) {
             if (metamodel.hasOwnProperty("nodes")) {
                 var nodes = metamodel.nodes, node;
                 for (var nodeId in nodes) {
@@ -817,12 +823,18 @@ requirejs([
                     }, 1000);
                 });
             } else {
-                EntityManager.storeData().then(function () {
-                    $feedback.text("Saved!");
-                    setTimeout(function () {
-                        $feedback.text("");
-                    }, 1000);
-                });
+                y.share.data.set('model', EntityManager.graphToJSON());
+                $feedback.text("Saved!");
+                setTimeout(function () {
+                    $feedback.text("");
+                }, 1000);
+                /*
+                 EntityManager.storeData().then(function () {
+                 $feedback.text("Saved!");
+                 setTimeout(function () {
+                 $feedback.text("");
+                 }, 1000);
+                 });*/
             }
 
 

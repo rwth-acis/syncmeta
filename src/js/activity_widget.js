@@ -5,14 +5,19 @@
 
 requirejs([
     'jqueryui',
+    'lib/yjs-sync',
     'activity_widget/ActivityList'
-],function ($, ActivityList) {
+],function ($, yjsSync, ActivityList) {
 
-    new ActivityList($("#user_list"),$("#activity_list"));
+    yjsSync().done(function(){
+        console.info('ACTIVITY: Yjs successfully initialized.');
+        new ActivityList($("#user_list"),$("#activity_list"));
+    });
 
     if(CONFIG.TEST_MODE)
         require(['./../test/ActivityWidgetTest']);
 
+    /*
     $("#q").draggable({
         axis: "y",
         start: function(){
@@ -30,6 +35,6 @@ requirejs([
             gadgets.window.adjustHeight();
             $(this).css('top','');
         }
-    });
+    });*/
 
 });

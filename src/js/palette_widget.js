@@ -5,6 +5,7 @@
 
 requirejs([
     'jqueryui',
+    'lib/yjs-sync',
     'palette_widget/Palette',
     'palette_widget/MoveTool',
     'palette_widget/Separator',
@@ -19,106 +20,114 @@ requirejs([
     'palette_widget/UniDirAssociationEdgeTool',
     'palette_widget/GeneralisationEdgeTool',
     'palette_widget/ViewObjectNodeTool',
-    'palette_widget/ViewRelationshipNodeTool',
-    'text!templates/canvas_widget/circle_node.html',
-    'text!templates/canvas_widget/diamond_node.html',
-    'text!templates/canvas_widget/rectangle_node.html',
-    'text!templates/canvas_widget/rounded_rectangle_node.html',
-    'text!templates/canvas_widget/triangle_node.html',
-    'promise!Metamodel',
-    'promise!Guidancemodel'
-],function ($,Palette,MoveTool,Separator,ObjectNodeTool,AbstractClassNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,GeneralisationEdgeTool,ViewObjectNodeTool,ViewRelationshipNodeTool,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml,metamodel,guidancemodel) {
+    'palette_widget/ViewRelationshipNodeTool'
+   // 'text!templates/canvas_widget/circle_node.html',
+    //'text!templates/canvas_widget/diamond_node.html',
+    //'text!templates/canvas_widget/rectangle_node.html',
+    //'text!templates/canvas_widget/rounded_rectangle_node.html',
+    //'text!templates/canvas_widget/triangle_node.html'
+    //'promise!Metamodel',
+    //'promise!Guidancemodel'
+],function ($,yjsSync,Palette,MoveTool,Separator,ObjectNodeTool,AbstractClassNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,GeneralisationEdgeTool,ViewObjectNodeTool,ViewRelationshipNodeTool/*,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml*//*,metamodel,guidancemodel*/) {
 
-    var palette = new Palette($("#palette"),$("#info"));
+    yjsSync().done(function() {
+        console.info('PALETTE:Yjs successfully initialized');
+        var metamodel = y.share.data.get('metamodel');
+        var palette = new Palette($("#palette"), $("#info"));
 
-    palette.addTool(new MoveTool());
-    palette.addSeparator(new Separator());
-
-    //Set the metamodel to the guidance metamodel in the guidance editor
-    if(guidancemodel.isGuidanceEditor()){
-        metamodel = guidancemodel.guidancemetamodel;
-    }
-
-    if(metamodel.constructor === Object){
-        if(metamodel.hasOwnProperty('nodes')) {
-            palette.initNodePalette(metamodel);
-        }
-        if(metamodel.hasOwnProperty('edges')) {
-            palette.iniEdgePalette(metamodel);
-        }
-    }
-    else{
-        //Create node tools for metamodeling
-        palette.addTool(new AbstractClassNodeTool());
-        palette.addTool(new ObjectNodeTool());
-        palette.addTool(new RelationshipNodeTool());
-        palette.addTool(new RelationshipGroupNodeTool());
-        palette.addTool(new EnumNodeTool());
-        palette.addTool(new NodeShapeNodeTool());
-        palette.addTool(new EdgeShapeNodeTool());
-
-
-        var sep = new Separator();
-        palette.addSeparator(sep);
-        sep.get$node().hide();
-
-        var viewObjectTool = new ViewObjectNodeTool();
-        palette.addTool(viewObjectTool);
-        viewObjectTool.get$node().hide();
-
-        var viewRelNodeTool = new ViewRelationshipNodeTool();
-        palette.addTool(viewRelNodeTool);
-        viewRelNodeTool.get$node().hide();
-
+        palette.addTool(new MoveTool());
         palette.addSeparator(new Separator());
-        palette.addTool(new BiDirAssociationEdgeTool());
-        palette.addTool(new UniDirAssociationEdgeTool());
-        palette.addTool(new GeneralisationEdgeTool());
 
+        //Set the metamodel to the guidance metamodel in the guidance editor
+        /*if (guidancemodel.isGuidanceEditor()) {
+            metamodel = guidancemodel.guidancemetamodel;
+        }*/
 
-    }
-
-    //var componentName = "palette"+Util.generateRandomId();
-    //var iwc = IWCW.getInstance(componentName);
-    /**
-     * Predefined node shapes, first is default
-     * @type {{circle: *, diamond: *, rectangle: *, triangle: *}}
-     */
-    var nodeShapeTypes = {
-        "circle": circleNodeHtml,
-        "diamond": diamondNodeHtml,
-        "rectangle": rectangleNodeHtml,
-        "rounded_rectangle": roundedRectangleNodeHtml,
-        "triangle": triangleNodeHtml
-    };
-
-    /**
-     * jQuery object to test for valid color
-     * @type {$}
-     */
-    var $colorTestElement = $('<div></div>');
-
-
-    if(CONFIG.TEST_MODE)
-        require(['./../test/PaletteWidgetTest']);
-
-    $("#q").draggable({
-        axis: "y",
-        start: function(){
-            var $c = $("body");
-            $c.css('bottom', 'inherit');
-            $(this).css('height',50);
-        },
-        drag: function( event, ui ) {
-            var height = ui.position.top;
-            $("body").css('height', height);
-            gadgets.window.adjustHeight();
-        },
-        stop: function(){
-            $(this).css('height',3);
-            gadgets.window.adjustHeight();
-            $(this).css('top','');
+        if (metamodel) {
+            if (metamodel.hasOwnProperty('nodes')) {
+                palette.initNodePalette(metamodel);
+            }
+            if (metamodel.hasOwnProperty('edges')) {
+                palette.iniEdgePalette(metamodel);
+            }
         }
+        else {
+            //Create node tools for metamodeling
+            palette.addTool(new AbstractClassNodeTool());
+            palette.addTool(new ObjectNodeTool());
+            palette.addTool(new RelationshipNodeTool());
+            palette.addTool(new RelationshipGroupNodeTool());
+            palette.addTool(new EnumNodeTool());
+            palette.addTool(new NodeShapeNodeTool());
+            palette.addTool(new EdgeShapeNodeTool());
+
+
+            var sep = new Separator();
+            palette.addSeparator(sep);
+            sep.get$node().hide();
+
+            var viewObjectTool = new ViewObjectNodeTool();
+            palette.addTool(viewObjectTool);
+            viewObjectTool.get$node().hide();
+
+            var viewRelNodeTool = new ViewRelationshipNodeTool();
+            palette.addTool(viewRelNodeTool);
+            viewRelNodeTool.get$node().hide();
+
+            palette.addSeparator(new Separator());
+            palette.addTool(new BiDirAssociationEdgeTool());
+            palette.addTool(new UniDirAssociationEdgeTool());
+            palette.addTool(new GeneralisationEdgeTool());
+
+
+        }
+
+        //var componentName = "palette"+Util.generateRandomId();
+        //var iwc = IWCW.getInstance(componentName);
+        /**
+         * Predefined node shapes, first is default
+         * @type {{circle: *, diamond: *, rectangle: *, triangle: *}}
+         */
+        /*
+         //UNSUSED
+         var nodeShapeTypes = {
+         "circle": circleNodeHtml,
+         "diamond": diamondNodeHtml,
+         "rectangle": rectangleNodeHtml,
+         "rounded_rectangle": roundedRectangleNodeHtml,
+         "triangle": triangleNodeHtml
+         };*/
+
+        /**
+         * jQuery object to test for valid color
+         * @type {$}
+         */
+        //unused
+        //var $colorTestElement = $('<div></div>');
+
+
+        if (CONFIG.TEST_MODE)
+            require(['./../test/PaletteWidgetTest']);
+
+        //UNUSED
+        /*$("#q").draggable({
+         axis: "y",
+         start: function () {
+         var $c = $("body");
+         $c.css('bottom', 'inherit');
+         $(this).css('height', 50);
+         },
+         drag: function (event, ui) {
+         var height = ui.position.top;
+         $("body").css('height', height);
+         gadgets.window.adjustHeight();
+         },
+         stop: function () {
+         $(this).css('height', 3);
+         gadgets.window.adjustHeight();
+         $(this).css('top', '');
+         }
+         });*/
     });
 
 });

@@ -1,14 +1,10 @@
-define([
-    'jqueryui',
-    'lodash',
-    'iwcw',
-    'activity_widget/Activity'
-],/** @lends EdgeDeleteActivity */function($,_,IWCW,Activity) {
+define(['activity_widget/Activity'],/** @lends EdgeDeleteActivity */function(Activity) {
 
     EdgeDeleteActivity.TYPE = "EdgeDeleteActivity";
 
     EdgeDeleteActivity.prototype = new Activity();
 	EdgeDeleteActivity.prototype.constructor = EdgeDeleteActivity;
+
     /**
      * Activity representing the deletion of an edge
      * @class activity_widget.EdgeDeleteActivity

@@ -15,9 +15,9 @@ define([
     'activity_widget/ViewApplyActivity',
     'activity_widget/User',
     'operations/non_ot/ActivityOperation',
-    'operations/non_ot/EntitySelectOperation',
-    'promise!Space'
-],/** @lends ActivityList */function($,_,IWCW,Activity,NodeAddActivity,NodeDeleteActivity,NodeMoveActivity,NodeResizeActivity,EdgeAddActivity,EdgeDeleteActivity,EditorGenerateActivity,UserJoinActivity,ValueChangeActivity,ViewApplyActivity, User,ActivityOperation,EntitySelectOperation,space) {
+    'operations/non_ot/EntitySelectOperation'
+    //'promise!Space'
+],/** @lends ActivityList */function($,_,IWCW,Activity,NodeAddActivity,NodeDeleteActivity,NodeMoveActivity,NodeResizeActivity,EdgeAddActivity,EdgeDeleteActivity,EditorGenerateActivity,UserJoinActivity,ValueChangeActivity,ViewApplyActivity, User,ActivityOperation,EntitySelectOperation/*,space*/) {
 
     /**
      * List of user activities
@@ -61,7 +61,7 @@ define([
          * @type {Object}
          */
         var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ACTIVITY);
-        iwc.setSpace(space);
+        //iwc.setSpace(space);
 
         /**
          * Add an user to the user list

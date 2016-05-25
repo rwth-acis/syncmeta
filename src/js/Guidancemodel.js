@@ -17,7 +17,7 @@ define([
         var act = openapp.param.get("http://purl.org/role/terms/activity");
         openapp.resource.get(act, function(resource){
             var activityName;
-            console.info('Guidance promise object');
+            console.info('Guidance promise object by ' + frameElement.name);
             console.info(resource);
             try {
                 if (resource.data)

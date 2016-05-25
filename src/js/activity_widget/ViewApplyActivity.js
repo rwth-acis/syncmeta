@@ -1,9 +1,4 @@
-define([
-    'jqueryui',
-    'lodash',
-    'iwcw',
-    'activity_widget/Activity'
-],/** @lends ViewApplyActivity */function($,_,IWCW,Activity) {
+define(['activity_widget/Activity'],/** @lends ViewApplyActivity */function(Activity) {
 
     ViewApplyActivity.TYPE = "ViewApplyActivity";
 
