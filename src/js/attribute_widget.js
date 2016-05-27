@@ -20,7 +20,8 @@ requirejs([
 
     var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE);
 
-    yjsSync().done(function(){
+    yjsSync().done(function(y){
+        window.y = y;
         console.info('ATTRIBUTE: Yjs successfully initialized');
         var model = y.share.data.get('model');
         InitAttributeWidget(model);

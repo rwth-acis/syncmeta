@@ -9,8 +9,9 @@ requirejs([
     'activity_widget/ActivityList'
 ],function ($, yjsSync, ActivityList) {
 
-    yjsSync().done(function(){
-        console.info('ACTIVITY: Yjs successfully initialized.');
+    yjsSync().done(function(y){
+        window.y = y;
+        console.info('ACTIVITY: Yjs uccessfully initialized.');
         new ActivityList($("#user_list"),$("#activity_list"));
     });
 

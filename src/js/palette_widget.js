@@ -29,7 +29,8 @@ requirejs([
     //'promise!Guidancemodel'
 ],function ($,yjsSync,Palette,MoveTool,ObjectNodeTool,AbstractClassNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,GeneralisationEdgeTool,ViewObjectNodeTool,ViewRelationshipNodeTool/*,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml*//*,metamodel,guidancemodel*/) {
 
-    yjsSync().done(function() {
+    yjsSync().done(function(y) {
+        window.y = y;
         console.info('PALETTE:Yjs successfully initialized');
         var metamodel = y.share.data.get('metamodel');
         var palette = new Palette($("#palette"), $("#info"));

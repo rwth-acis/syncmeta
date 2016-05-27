@@ -16,6 +16,7 @@ define(['Util',
         'canvas_widget/EntityManager'],
     function(Util, AbstractEntity, Node, ObjectNode, AbstractClassNode,RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNode,ViewRelationshipNode, EntityManager ){
         function GenerateViewpointModel(viewpointModel){
+            EntityManager.init();
 
             for(var node_key in viewpointModel.nodes){
                 if(viewpointModel.nodes.hasOwnProperty(node_key)){

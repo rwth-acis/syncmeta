@@ -57,7 +57,8 @@ requirejs([
     _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
     _iwcw.setSpace(space);
 
-    yjsSync(_iwcw.getSpaceTitle()).done(function(){
+    yjsSync().done(function(y){
+        window.y = y;
         console.info('CANVAS: Yjs Initialized successfully');
 
         y.share.users.set(y.db.userId,_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);

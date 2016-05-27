@@ -1,6 +1,8 @@
 requirejs(['jqueryui','lodash','lib/yjs-sync'],function($,_,yjsSync){
     $(function(){
-        yjsSync().done(function(){
+        yjsSync().done(function(y){
+            window.y = y;
+            console.info('DEBUG: Yjs successfully initialized');
 
             var $deleteMetamodel = $("#delete-meta-model").prop('disabled', false),
                 $exportMetamodel = $("#export-meta-model").prop('disabled', false),
@@ -110,7 +112,8 @@ requirejs(['jqueryui','lodash','lib/yjs-sync'],function($,_,yjsSync){
 
             $deleteMetamodel.click(function(){
                 //this does not work ??????
-                y.share.data.delete('metamodel');
+                //y.share.data.delete('metamodel');
+                y.share.data.set('model', null);
                 getData(CONFIG.NS.MY.METAMODEL).then(function(modelUris){
                     if(modelUris.length > 0){
                         _.map(modelUris,function(uri){

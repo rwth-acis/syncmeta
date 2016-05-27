@@ -33,8 +33,7 @@ define(['jqueryui','yjs'],function ($) {
             },
             sourceDir: '<%= grunt.config("baseUrl") %>/js/lib/vendor'
         }).then(function (y) {
-            window.y = y;
-            deferred.resolve();
+            deferred.resolve(y);
         });
         return deferred.promise();
     };
