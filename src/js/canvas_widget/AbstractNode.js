@@ -1055,7 +1055,7 @@ define([
                         $target.css({width: ui.originalSize.width, height: ui.originalSize.height});
                         var offsetX = ui.size.width-ui.originalSize.width;
                         var offsetY = ui.size.height-ui.originalSize.height;
-                        var operation = new NodeResizeOperation(id,offsetX,offsetY);
+                        var operation = new NodeResizeOperation(id,offsetX,offsetY,_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
                         if(y){
                             if(_ymap){
                                 _ymap.set('width',_appearance.width +offsetX);

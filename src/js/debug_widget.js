@@ -96,37 +96,38 @@ requirejs(['jqueryui','lodash','lib/yjs-sync'],function($,_,yjsSync){
             $deleteModel.click(function(){
                 //y.share.data.delete('model');
                 y.share.data.set('model', null);
-
-                getData(CONFIG.NS.MY.MODEL).then(function(modelUris){
-                    if(modelUris.length > 0){
-                        _.map(modelUris,function(uri){
-                            openapp.resource.del(uri,function(){
-                                feedback("Done!");
-                            });
-                        });
-                    } else {
-                        feedback("No Model!");
-                    }
-                });
+                /*
+                 getData(CONFIG.NS.MY.MODEL).then(function(modelUris){
+                 if(modelUris.length > 0){
+                 _.map(modelUris,function(uri){
+                 openapp.resource.del(uri,function(){
+                 feedback("Done!");
+                 });
+                 });
+                 } else {
+                 feedback("No Model!");
+                 }
+                 });*/
             });
 
             $deleteMetamodel.click(function(){
                 //this does not work ??????
                 //y.share.data.delete('metamodel');
                 y.share.data.set('model', null);
-                getData(CONFIG.NS.MY.METAMODEL).then(function(modelUris){
-                    if(modelUris.length > 0){
-                        _.map(modelUris,function(uri){
-                            openapp.resource.del(uri,function(){
-                                $exportMetamodel.prop('disabled', true);
-                                $deleteMetamodel.prop('disabled', true);
-                                feedback("Done!");
-                            });
-                        });
-                    } else {
-                        feedback("No Model!");
-                    }
-                });
+                /*
+                 getData(CONFIG.NS.MY.METAMODEL).then(function(modelUris){
+                 if(modelUris.length > 0){
+                 _.map(modelUris,function(uri){
+                 openapp.resource.del(uri,function(){
+                 $exportMetamodel.prop('disabled', true);
+                 $deleteMetamodel.prop('disabled', true);
+                 feedback("Done!");
+                 });
+                 });
+                 } else {
+                 feedback("No Model!");
+                 }
+                 });*/
             });
 
             $deleteGuidancemodel.click(function(){
@@ -146,33 +147,41 @@ requirejs(['jqueryui','lodash','lib/yjs-sync'],function($,_,yjsSync){
             });
 
             $exportModel.click(function(){
-                getData(CONFIG.NS.MY.MODEL).then(function(modelUris){
-                    if(modelUris.length > 0){
-                        $.get(modelUris[0]+"/:representation").done(function(data){
-                            var link = document.createElement('a');
-                            link.download = "export.json";
-                            link.href = 'data:,'+encodeURI(JSON.stringify(data,null,4));
-                            link.click();
-                        });
-                    } else {
-                        feedback("No Model!");
-                    }
-                });
+                var link = document.createElement('a');
+                link.download = "model.json";
+                link.href = 'data:,'+encodeURI(JSON.stringify(y.share.data.get('model'),null,4));
+                link.click();
+                /*getData(CONFIG.NS.MY.MODEL).then(function(modelUris){
+                 if(modelUris.length > 0){
+                 $.get(modelUris[0]+"/:representation").done(function(data){
+                 var link = document.createElement('a');
+                 link.download = "export.json";
+                 link.href = 'data:,'+encodeURI(JSON.stringify(data,null,4));
+                 link.click();
+                 });
+                 } else {
+                 feedback("No Model!");
+                 }
+                 });*/
             });
 
             $exportMetamodel.click(function(){
-                getData(CONFIG.NS.MY.METAMODEL).then(function(modelUris){
-                    if(modelUris.length > 0){
-                        $.get(modelUris[0]+"/:representation").done(function(data){
-                            var link = document.createElement('a');
-                            link.download = "export.json";
-                            link.href = 'data:,'+encodeURI(JSON.stringify(data,null,4));
-                            link.click();
-                        });
-                    } else {
-                        feedback("No Model!");
-                    }
-                });
+                var link = document.createElement('a');
+                link.download = "vls.json";
+                link.href = 'data:,'+encodeURI(JSON.stringify(y.share.data.get('metamodel'),null,4));
+                link.click();
+                /*getData(CONFIG.NS.MY.METAMODEL).then(function(modelUris){
+                 if(modelUris.length > 0){
+                 $.get(modelUris[0]+"/:representation").done(function(data){
+                 var link = document.createElement('a');
+                 link.download = "export.json";
+                 link.href = 'data:,'+encodeURI(JSON.stringify(data,null,4));
+                 link.click();
+                 });
+                 } else {
+                 feedback("No Model!");
+                 }
+                 });*/
             });
 
             $exportGuidancemodel.click(function(){
@@ -200,38 +209,38 @@ requirejs(['jqueryui','lodash','lib/yjs-sync'],function($,_,yjsSync){
                     getFileContent().then(function(data){
                         y.share.data.set('model',data);
                         /*resourceSpace.create({
-                            relation: openapp.ns.role + "data",
-                            type: CONFIG.NS.MY.MODEL,
-                            representation: data,
-                            callback: function(){
-                                $exportModel.prop('disabled', false);
-                                $deleteModel.prop('disabled', false);
-                                feedback("Done!");
-                            }
-                        });*/
+                         relation: openapp.ns.role + "data",
+                         type: CONFIG.NS.MY.MODEL,
+                         representation: data,
+                         callback: function(){
+                         $exportModel.prop('disabled', false);
+                         $deleteModel.prop('disabled', false);
+                         feedback("Done!");
+                         }
+                         });*/
                     });
                 });
             });
 
             $importMetamodel.click(function(){
                 getData(CONFIG.NS.MY.METAMODEL).then(function(modelUris){
-                    if(modelUris.length > 0){
-                        _.map(modelUris,function(uri){
-                            openapp.resource.del(uri);
-                        });
-                    }
+                    /*if(modelUris.length > 0){
+                     _.map(modelUris,function(uri){
+                     openapp.resource.del(uri);
+                     });
+                     }*/
                     getFileContent().then(function(data){
                         y.share.data.set('metamodel',data);
-                        resourceSpace.create({
-                            relation: openapp.ns.role + "data",
-                            type: CONFIG.NS.MY.METAMODEL,
-                            representation: data,
-                            callback: function(){
-                                $exportModel.prop('disabled', false);
-                                $deleteModel.prop('disabled', false);
-                                feedback("Done!");
-                            }
-                        });
+                        /*resourceSpace.create({
+                         relation: openapp.ns.role + "data",
+                         type: CONFIG.NS.MY.METAMODEL,
+                         representation: data,
+                         callback: function(){
+                         $exportModel.prop('disabled', false);
+                         $deleteModel.prop('disabled', false);
+                         feedback("Done!");
+                         }
+                         });*/
                     });
                 });
             });
