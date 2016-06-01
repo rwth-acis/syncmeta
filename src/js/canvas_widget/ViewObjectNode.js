@@ -75,47 +75,6 @@ define([
             return AbstractNode.prototype.toJSON.call(this);
         };
 
-        ViewTypesUtil.GetCurrentBaseModel().then(function(model){
-            var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes,['Object']);
-            var attribute = new SingleSelectionAttribute(id+"[target]", "Target", that, selectionValues);
-
-            var conjSelection = new SingleSelectionAttribute(id+'[conjunction]', 'Conjunction', that, LogicalConjunctions);
-            that.addAttribute(conjSelection);
-            conjSelection.getValue().registerYType();
-            that.get$node().find('.attributes').append(conjSelection.get$node());
-
-            if(_fromResource){
-                var targetId;
-                var target = _fromResource.attributes[id + '[target]'];
-                if(target)
-                    targetId = target.value.value;
-
-
-                if(targetId){
-                    attribute.setValueFromJSON(_fromResource.attributes[id + '[target]']);
-                    if(conditonList = _fromResource.attributes["[condition]"]){
-                        var attrList = that.getAttribute('[attributes]').getAttributes();
-                        var targetAttrList = {};
-                        for (var key in attrList) {
-                            if (attrList.hasOwnProperty(key)) {
-                                targetAttrList[key] = attrList[key].getKey().getValue();
-                            }
-                        }
-                        var cla = new ConditionListAttribute("[condition]", "Conditions", that, targetAttrList, LogicalOperator, LogicalConjunctions);
-                        cla.setValueFromJSON(conditonList);
-                        that.addAttribute(cla);
-                        cla.registerYMap();
-                        that.get$node().find('.attributes').append(cla.get$node());
-                    }
-                }
-                _fromResource = null;
-            }
-            that.addAttribute(attribute);
-            attribute.getValue().registerYType();
-            that.get$node().find('.attributes').prepend(attribute.get$node());
-
-        });
-
         var attributeList = new RenamingListAttribute("[attributes]","Attributes",this,{"show":"Visible","hide":"Hidden"});
         this.addAttribute(attributeList);
 
@@ -130,6 +89,10 @@ define([
             if(!disableYText)
                 registerYTextAttributes(map);
             attributeList.registerYMap(disableYText);
+            if(_fromResource)
+                cla.registerYMap();
+            attribute.getValue().registerYType();
+            conjSelection.getValue().registerYType();
         };
 
         _$node.find(".label").append(this.getLabel().get$node());
@@ -139,6 +102,48 @@ define([
                 _$attributeNode.append(_attributes[attributeKey].get$node());
             }
         }
+
+        //ViewTypesUtil.GetCurrentBaseModel().then(function(model){
+        var model = y.share.data.get('model');
+        var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes,['Object']);
+        var attribute = new SingleSelectionAttribute(id+"[target]", "Target", that, selectionValues);
+
+        var conjSelection = new SingleSelectionAttribute(id+'[conjunction]', 'Conjunction', that, LogicalConjunctions);
+        that.addAttribute(conjSelection);
+
+        that.get$node().find('.attributes').append(conjSelection.get$node());
+
+        if(_fromResource){
+            var targetId;
+            var target = _fromResource.attributes[id + '[target]'];
+            if(target)
+                targetId = target.value.value;
+
+
+            if(targetId){
+                attribute.setValueFromJSON(_fromResource.attributes[id + '[target]']);
+                if(conditonList = _fromResource.attributes["[condition]"]){
+                    var attrList = that.getAttribute('[attributes]').getAttributes();
+                    var targetAttrList = {};
+                    for (var key in attrList) {
+                        if (attrList.hasOwnProperty(key)) {
+                            targetAttrList[key] = attrList[key].getKey().getValue();
+                        }
+                    }
+                    var cla = new ConditionListAttribute("[condition]", "Conditions", that, targetAttrList, LogicalOperator, LogicalConjunctions);
+                    cla.setValueFromJSON(conditonList);
+                    that.addAttribute(cla);
+
+                    that.get$node().find('.attributes').append(cla.get$node());
+                }
+            }
+            _fromResource = null;
+        }
+        that.addAttribute(attribute);
+
+        that.get$node().find('.attributes').prepend(attribute.get$node());
+
+        //});
 
         this.setContextMenuItemCallback(function(){
             var NodeShapeNode = require('canvas_widget/NodeShapeNode'),

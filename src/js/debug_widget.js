@@ -96,6 +96,7 @@ requirejs(['jqueryui','lodash','lib/yjs-sync'],function($,_,yjsSync){
             $deleteModel.click(function(){
                 //y.share.data.delete('model');
                 y.share.data.set('model', null);
+                feedback("Done!");
                 /*
                  getData(CONFIG.NS.MY.MODEL).then(function(modelUris){
                  if(modelUris.length > 0){
@@ -114,6 +115,7 @@ requirejs(['jqueryui','lodash','lib/yjs-sync'],function($,_,yjsSync){
                 //this does not work ??????
                 //y.share.data.delete('metamodel');
                 y.share.data.set('model', null);
+                feedback("Done!");
                 /*
                  getData(CONFIG.NS.MY.METAMODEL).then(function(modelUris){
                  if(modelUris.length > 0){
@@ -201,46 +203,18 @@ requirejs(['jqueryui','lodash','lib/yjs-sync'],function($,_,yjsSync){
 
             $importModel.click(function(){
                 getData(CONFIG.NS.MY.MODEL).then(function(modelUris){
-                    if(modelUris.length > 0){
-                        _.map(modelUris,function(uri){
-                            openapp.resource.del(uri);
-                        });
-                    }
                     getFileContent().then(function(data){
                         y.share.data.set('model',data);
-                        /*resourceSpace.create({
-                         relation: openapp.ns.role + "data",
-                         type: CONFIG.NS.MY.MODEL,
-                         representation: data,
-                         callback: function(){
-                         $exportModel.prop('disabled', false);
-                         $deleteModel.prop('disabled', false);
-                         feedback("Done!");
-                         }
-                         });*/
+                        feedback("Done!");
                     });
                 });
             });
 
             $importMetamodel.click(function(){
                 getData(CONFIG.NS.MY.METAMODEL).then(function(modelUris){
-                    /*if(modelUris.length > 0){
-                     _.map(modelUris,function(uri){
-                     openapp.resource.del(uri);
-                     });
-                     }*/
                     getFileContent().then(function(data){
                         y.share.data.set('metamodel',data);
-                        /*resourceSpace.create({
-                         relation: openapp.ns.role + "data",
-                         type: CONFIG.NS.MY.METAMODEL,
-                         representation: data,
-                         callback: function(){
-                         $exportModel.prop('disabled', false);
-                         $deleteModel.prop('disabled', false);
-                         feedback("Done!");
-                         }
-                         });*/
+                        feedback("Done!");
                     });
                 });
             });

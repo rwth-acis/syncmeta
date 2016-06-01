@@ -88,12 +88,6 @@ requirejs([
                 return deferred2.promise();
             }
 
-            function addMetamodelToYjs(roomName, metamodel){
-                yjsSync(roomName).done(function(yInstance){
-                    yInstance.share.data.set('metamodel',metamodel);
-                })
-            }
-
             function addGuidanceRulesToSpace(spaceURI, guidanceRules){
                 var deferred = $.Deferred();
                 var deferred2 = $.Deferred();
@@ -215,8 +209,8 @@ requirejs([
                 return deferred.promise();
             }
 
-            return $.when(getMetaModel(), getViewpoints(),getLogicalGuidanceRepresentation())
-                .then(function(metamodel, viewpoints,logicalGuidanceRepresentation){
+            return $.when(getMetaModel()/*,getLogicalGuidanceRepresentation()*/)
+                .then(function(metamodel/*, logicalGuidanceRepresentation*/){
                     return createSpace(spaceLabel,spaceTitle)
                         .then(function(spaceURI){
                             return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/activity.xml")
@@ -229,25 +223,33 @@ requirejs([
                                 }).then(function(){
                                     return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/debug.xml");
                                 }).then(function(){
-                                    return addMetamodelToYjs(spaceLabel,metamodel);
-                                }).then(function(){
                                     var deferred = $.Deferred();
+                                    var viewpoints = y.share.views.keys();
+                                    var vvs = [];
                                     for(var i=0;i<viewpoints.length;i++){
-                                        GetViewPoint(viewpoints[i]).then(function(viewpoint){
-                                            var viewpointmodel = GenerateViewpointModel(viewpoint);
-                                            addMetamodelToSpace(spaceURI, viewpointmodel, CONFIG.NS.MY.VIEWPOINT);
-                                        });
+                                        var data = y.share.views.get(viewpoints[i]);
+                                        if(data) {
+                                            var viewpointmodel = GenerateViewpointModel(data);
+                                            vvs.push(viewpointmodel);
+                                        }
                                     }
-                                    deferred.resolve();
+                                    yjsSync(spaceLabel).done(function(yInstance){
+                                        yInstance.share.data.set('metamodel',metamodel);
+                                        for(var i=0; i<vvs.length;i++){
+                                            yInstance.share.views.set(vvs[i].id, vvs[i]);
+                                        }
+                                        deferred.resolve();
+                                    });
+
                                     return deferred.promise();
                                 })
                                 .then(function(){
-                                    return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/guidance.xml");
+                                    return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/viewcontrol.xml");
                                 }).then(function(){
                                     return addWidgetToSpace(spaceURI,"<%= grunt.config('baseUrl') %>/heatmap.xml");
-                                }).then(function(){
-                                    return addLogicalGuidanceRepresentationToSpace(spaceURI, logicalGuidanceRepresentation);
-                                }).then(function(){
+                                })/*.then(function(){
+                             return addLogicalGuidanceRepresentationToSpace(spaceURI, logicalGuidanceRepresentation);
+                             })*/.then(function(){
                                     return {
                                         spaceURI: spaceURI,
                                         spaceTitle: spaceTitle

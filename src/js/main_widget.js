@@ -113,19 +113,11 @@ requirejs([
                         _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new SetModelAttributeNodeOperation().toNonOTOperation());
                     }
                     else if (operation instanceof UpdateViewListOperation) {
-                        y.share.views.set(UpdateViewListOperation.TYPE, null);
+                        y.share.canvas.set(UpdateViewListOperation.TYPE, true);
                     }
                 });
-                y.share.views.observe(function(event){
-                    switch (event.name){
-                        case UpdateViewListOperation.TYPE:{
-                            if (metamodel.constructor === Object) {
-                                ViewManager.GetViewpointList();
-                            } else {
-                                ViewManager.initViewList();
-                            }
-                        }
-                    }
+                y.share.canvas.observePath([UpdateViewListOperation.TYPE],function(){
+                    ViewManager.GetViewpointList();
                 });
 
 
@@ -210,34 +202,29 @@ requirejs([
                 var viewId = ViewManager.getViewIdOfSelected();
                 if (viewId === $('#lblCurrentView').text())
                     return;
-                var resource = ViewManager.getViewpointResourceFromViewId(viewId);
-                if (resource != null) {
-                    resource.getRepresentation('rdfjson', function (vvs) {
-                        //initialize the new node- and edge types for the EntityManager
-                        EntityManager.initViewTypes(vvs);
 
-                        //send the new tools to the palette as well
-                        var operation = new InitModelTypesOperation(vvs, true).toNonOTOperation();
-                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation);
-                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation);
+                var vvs = y.share.views.get(viewId);
+                EntityManager.initViewTypes(vvs);
 
-                        var activityOperation = new ActivityOperation("ViewApplyActivity", vvs.id, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
-                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
-                        //TODO
-                        //_iwcw.sendRemoteNonOTOperation(activityOperation.toNonOTOperation());
+                //send the new tools to the palette as well
+                var operation = new InitModelTypesOperation(vvs, true).toNonOTOperation();
+                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation);
+                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation);
 
-                        //init the tools for canvas
-                        initTools(vvs);
+                var activityOperation = new ActivityOperation("ViewApplyActivity", vvs.id, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
+                //TODO
+                //_iwcw.sendRemoteNonOTOperation(activityOperation.toNonOTOperation());
 
-                        ViewManager.getViewpointData(viewId).done(function (vvs) {
-                            ViewGenerator.generate(metamodel, vvs);
-                        });
+                //init the tools for canvas
+                initTools(vvs);
+                ViewGenerator.generate(metamodel, vvs);
 
-                        $('#lblCurrentView').show();
-                        $('#lblCurrentViewId').text(viewId);
+                $('#lblCurrentView').show();
+                $('#lblCurrentViewId').text(viewId);
 
-                    });
-                }
+                //});
+                //}
 
             });
 
@@ -370,26 +357,27 @@ requirejs([
                 if ($lblCurrentViewId.text().length > 0) {
                     var $loading = $("#loading");
                     $loading.show();
-                    Util.GetCurrentBaseModel().done(function (model) {
-                        //Disable the view types in the palette
-                        var operation = new SetViewTypesOperation(false);
-                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation.toNonOTOperation());
-                        var activityOperation = new ActivityOperation("ViewApplyActivity", '', _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
-                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
 
-                        //TODO
-                        //_iwcw.sendRemoteNonOTOperation(activityOperation.toNonOTOperation());
+                    var model = y.share.data.get('model');
+                    //Disable the view types in the palette
+                    var operation = new SetViewTypesOperation(false);
+                    _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation.toNonOTOperation());
+                    var activityOperation = new ActivityOperation("ViewApplyActivity", '', _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+                    _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
 
-                        resetCanvas();
-                        JSONtoGraph(model);
+                    //TODO
+                    //_iwcw.sendRemoteNonOTOperation(activityOperation.toNonOTOperation());
+
+                    resetCanvas();
+                    JSONtoGraph(model).done(function(){
+                        $("#loading").hide();
                         canvas.resetTool();
-                        $('#lblCurrentView').hide();
-                        $lblCurrentViewId.text("");
-                        EntityManager.setViewId(null);
-                        $loading.hide();
-                    })
+                    });
+                    $('#lblCurrentView').hide();
+                    $lblCurrentViewId.text("");
+                    EntityManager.setViewId(null);
                 }
-            });
+            })
         }
 
         //Functions and Callbacks for the view-based modeling approach
@@ -435,21 +423,24 @@ requirejs([
 
         }
 
-        var visualizeView = function (viewId, viewpointData) {
-            ViewManager.getViewResource(viewId).getRepresentation('rdfjson', function (viewData) {
+        var visualizeView = function (viewId) {
+            //ViewManager.getViewResource(viewId).getRepresentation('rdfjson', function (viewData) {
+            var viewData = y.share.views.get(viewId);
+            if(viewData) {
                 resetCanvas();
-                ViewToGraph(viewData, viewpointData);
+                ViewToGraph(viewData);
                 $('#lblCurrentView').show();
                 $('#lblCurrentViewId').text(viewData.id);
                 EntityManager.setViewId(viewData.id);
                 canvas.resetTool();
-                $("#loading").hide();
-            });
+
+            }
+            //});
         };
 
-        function ViewToGraph(json, viewpoint) {
+        function ViewToGraph(json) {
             //Initialize the attribute widget
-            var operation = new ViewInitOperation(json, viewpoint);
+            var operation = new ViewInitOperation(json);
             _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
 
             //Enable the view types in the palette
@@ -459,7 +450,10 @@ requirejs([
             var activityOperation = new ActivityOperation("ViewApplyActivity", json.id, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
             _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
 
-            JSONtoGraph(json);
+            JSONtoGraph(json).done(function(){
+                $("#loading").hide();
+                canvas.resetTool();
+            });
         }
 
         function DeleteView(viewId) {
@@ -815,27 +809,19 @@ requirejs([
             $feedback.text("Saving...");
 
             var viewId = $('#lblCurrentViewId').text();
-            if (viewId.length > 0 && metamodel.constructor !== Object) {
-                ViewManager.updateViewContent(viewId, ViewManager.getResource(viewId)).then(function () {
-                    //ViewManager.initViewList();
-                    $feedback.text("Saved!");
-                    setTimeout(function () {
-                        $feedback.text("");
-                    }, 1000);
-                });
+            if (viewId.length > 0 && !metamodel) {
+                ViewManager.updateViewContent(viewId);
+                $feedback.text("Saved!");
+                setTimeout(function () {
+                    $feedback.text("");
+                }, 1000);
+
             } else {
                 y.share.data.set('model', EntityManager.graphToJSON());
                 $feedback.text("Saved!");
                 setTimeout(function () {
                     $feedback.text("");
                 }, 1000);
-                /*
-                 EntityManager.storeData().then(function () {
-                 $feedback.text("Saved!");
-                 setTimeout(function () {
-                 $feedback.text("");
-                 }, 1000);
-                 });*/
             }
 
 
@@ -921,7 +907,7 @@ requirejs([
             }
         };
 
-        ViewManager.initViewList();
+        ViewManager.GetViewpointList();
 
         //local user joins
         y.share.join.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],false);
