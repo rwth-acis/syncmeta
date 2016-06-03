@@ -197,7 +197,7 @@ define([
         }
         _$node.find(".ui-icon-plus").click(function(){
             var id = Util.generateRandomId();
-            var operation = new AttributeAddOperation(id,that.getEntityId(),that.getRootSubjectEntity().getEntityId(),SingleValueAttribute.TYPE,iwc.getUser()[CONFIG.NS.PERSON.JABBERID]);
+            var operation = new AttributeAddOperation(id,that.getEntityId(),that.getRootSubjectEntity().getEntityId(),SingleValueAttribute.TYPE, y.share.users.get(y.db.userId));
             propagateAttributeAddOperation(operation);
         });
 

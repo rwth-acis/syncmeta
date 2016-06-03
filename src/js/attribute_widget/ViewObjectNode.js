@@ -91,11 +91,11 @@ function ($, jsPlumb, _, AbstractNode, RenamingListAttribute, SingleSelectionAtt
                 attribute.setValueFromJSON(_fromResource.attributes[targetId]);
                 var conditionList = _fromResource.attributes["[condition]"];
                 if(conditionList){
-                    var attrList = that.getAttribute('[attributes]').getAttributes();
+                    var attrList = _fromResource.attributes['[attributes]'].list;
                     var targetAttrList = {};
                     for (var attrKey in attrList) {
                         if (attrList.hasOwnProperty(attrKey)) {
-                            targetAttrList[attrKey] = attrList[attrKey].getKey().getValue();
+                            targetAttrList[attrKey] = attrList[attrKey].val.value;
                         }
                     }
                     var cla = new ConditionListAttribute("[condition]", "Conditions", that, targetAttrList, LogicalOperator);
@@ -117,7 +117,32 @@ function ($, jsPlumb, _, AbstractNode, RenamingListAttribute, SingleSelectionAtt
             }
         }
 
+        this.registerYType = function(){
+            var registerValue = function(ymap, value){
+                ymap.get(value.getEntityId()).then(function(ytext){
+                    value.registerYType(ytext);
+                })
+            };
 
+            AbstractNode.prototype.registerYType.call(this);
+            y.share.nodes.get(that.getEntityId()).then(function(ymap){
+                var attrs = _attributes["[attributes]"].getAttributes();
+                for(var attributeKey in attrs){
+                    if(attrs.hasOwnProperty(attributeKey)){
+                        var attr = attrs[attributeKey];
+                        registerValue(ymap,attr.getKey());
+                    }
+                }
+
+                var conditions = _attributes['[condition]'].getAttributes();
+                for(var attrKey4 in conditions){
+                    if(conditions.hasOwnProperty(attrKey4)) {
+                        attr = conditions[attrKey4];
+                        registerValue(ymap, attr.getKey());
+                    }
+                }
+            });
+        };
     }
 
     return ViewObjectNode;

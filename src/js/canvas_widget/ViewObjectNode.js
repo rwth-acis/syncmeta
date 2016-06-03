@@ -89,8 +89,8 @@ define([
             if(!disableYText)
                 registerYTextAttributes(map);
             attributeList.registerYMap(disableYText);
-            if(_fromResource)
-                cla.registerYMap();
+            if(cla)
+                cla.registerYMap(disableYText);
             attribute.getValue().registerYType();
             conjSelection.getValue().registerYType();
         };
@@ -109,6 +109,8 @@ define([
         var attribute = new SingleSelectionAttribute(id+"[target]", "Target", that, selectionValues);
 
         var conjSelection = new SingleSelectionAttribute(id+'[conjunction]', 'Conjunction', that, LogicalConjunctions);
+
+        var cla = null;
         that.addAttribute(conjSelection);
 
         that.get$node().find('.attributes').append(conjSelection.get$node());
@@ -119,19 +121,19 @@ define([
             if(target)
                 targetId = target.value.value;
 
-
             if(targetId){
                 attribute.setValueFromJSON(_fromResource.attributes[id + '[target]']);
                 if(conditonList = _fromResource.attributes["[condition]"]){
-                    var attrList = that.getAttribute('[attributes]').getAttributes();
+                    var attrList = _fromResource.attributes['[attributes]'].list;
                     var targetAttrList = {};
                     for (var key in attrList) {
                         if (attrList.hasOwnProperty(key)) {
-                            targetAttrList[key] = attrList[key].getKey().getValue();
+                            targetAttrList[key] = attrList[key].val.value;
                         }
                     }
-                    var cla = new ConditionListAttribute("[condition]", "Conditions", that, targetAttrList, LogicalOperator, LogicalConjunctions);
-                    cla.setValueFromJSON(conditonList);
+                    cla = new ConditionListAttribute("[condition]", "Conditions", that, targetAttrList, LogicalOperator, LogicalConjunctions);
+
+                    //cla.setValueFromJSON(conditonList);
                     that.addAttribute(cla);
 
                     that.get$node().find('.attributes').append(cla.get$node());

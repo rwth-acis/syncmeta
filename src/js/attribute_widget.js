@@ -34,8 +34,8 @@ requirejs([
         var wrapper = new AttributeWrapper($("#wrapper"));
 
         /*if (guidancemodel.isGuidanceEditor()) {
-            model = guidancemodel.guidancemodel;
-        }*/
+         model = guidancemodel.guidancemodel;
+         }*/
 
         function JSONtoGraph(json) {
             var modelAttributesNode;
@@ -76,11 +76,11 @@ requirejs([
         iwc.registerOnDataReceivedCallback(function (operation) {
             var model, modelAttributesNode;
             if (operation instanceof JoinOperation && operation.isDone()) {
-                if (firstInitializationFlag)
+                y.share.users.set(y.db.userId,operation.getUser());
+                /*if (firstInitializationFlag)
                     firstInitializationFlag = false;
                 else {
                     model = operation.getData();
-
                     JSONtoGraph(model);
 
                     $("#loading").hide();
@@ -92,7 +92,7 @@ requirejs([
                     wrapper.setModelAttributesNode(modelAttributesNode);
                     modelAttributesNode.addToWrapper(wrapper);
                 }
-                wrapper.select(modelAttributesNode);
+                wrapper.select(modelAttributesNode);*/
 
             }
             else if (operation instanceof SetModelAttributeNodeOperation) {
@@ -106,21 +106,17 @@ requirejs([
             }
             else if (operation instanceof InitModelTypesOperation) {
                 var vvs = operation.getVLS();
-
+                var metamodel = y.share.data.get('metamodel');
                 if (vvs.hasOwnProperty('id')) {
                     EntityManager.initViewTypes(vvs);
                     if (operation.getViewGenerationFlag()) {
-                        require(['promise!Metamodel'], function (metamodel) {
-                            ViewGenerator.generate(metamodel, vvs);
-                        });
+                        ViewGenerator.generate(metamodel, vvs);
                     }
 
                 } else {
                     EntityManager.setViewId(null);
                     if (operation.getViewGenerationFlag()) {
-                        require(['promise!Metamodel'], function (metamodel) {
-                            ViewGenerator.reset(metamodel);
-                        });
+                        ViewGenerator.reset(metamodel);
                     }
                 }
             }
@@ -132,6 +128,11 @@ requirejs([
                 for (nodeId in json.nodes) {
                     if (json.nodes.hasOwnProperty(nodeId)) {
                         var node = EntityManager.createNodeFromJSON(json.nodes[nodeId].type, nodeId, json.nodes[nodeId].left, json.nodes[nodeId].top, json.nodes[nodeId].width, json.nodes[nodeId].height, json.nodes[nodeId], json.id);
+                        try{
+                            node.registerYType();
+                        }catch(e){
+                            //If this fails doesn't matter initialize it with bindYTextCallback
+                        }
                         node.addToWrapper(wrapper);
                         if (json.nodes[nodeId].attributes.hasOwnProperty(nodeId + '[target]'))
                             EntityManager.addToMap(json.id, json.nodes[nodeId].attributes[nodeId + '[target]'].value.value, nodeId);
@@ -140,6 +141,13 @@ requirejs([
                 for (edgeId in json.edges) {
                     if (json.edges.hasOwnProperty(edgeId)) {
                         var edge = EntityManager.createEdgeFromJSON(json.edges[edgeId].type, edgeId, json.edges[edgeId].source, json.edges[edgeId].target, json.edges[edgeId], json.id);
+                        try{
+                            edge.registerYType();
+
+                        }catch(e){
+                            //If this fails doesn't matter initialize it with bindYTextCallback
+
+                        }
                         edge.addToWrapper(wrapper);
                         if (json.edges[edgeId].attributes.hasOwnProperty(nodeId + '[target]'))
                             EntityManager.addToMap(json.id, json.edges[edgeId].attributes[nodeId + '[target]'].value.value, edgeId);

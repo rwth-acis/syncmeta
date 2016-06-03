@@ -272,7 +272,7 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
             if (operation instanceof NodeAddOperation) {
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
-                if(operation.getViewId() === EntityManager.getViewId() || EntityManager.getLayer() === CONFIG.LAYER.META) {
+                if(operation.getViewId() === EntityManager.getViewId() && EntityManager.getLayer() === CONFIG.LAYER.META) {
                     _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
                         "NodeAddActivity",
                         operation.getEntityId(),

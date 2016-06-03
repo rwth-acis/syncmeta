@@ -91,8 +91,9 @@ requirejs([
                     _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, op.toNonOTOperation());
                     _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, op.toNonOTOperation());
                 }
-                //TODO
-                //_iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
+
+                var joinOperation = new JoinOperation(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],true, y.db.userId);
+                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, joinOperation.toNonOTOperation());
                 if(model)
                     JSONtoGraph(model).done(function(stats){
                         console.info(stats);
@@ -200,7 +201,8 @@ requirejs([
             $('#btnShowView').click(function () {
                 //Get identifier of the current selected view
                 var viewId = ViewManager.getViewIdOfSelected();
-                if (viewId === $('#lblCurrentView').text())
+                var $currentViewIdLabel = $('#lblCurrentViewId');
+                if (viewId === $currentViewIdLabel.text())
                     return;
 
                 var vvs = y.share.views.get(viewId);
@@ -213,15 +215,13 @@ requirejs([
 
                 var activityOperation = new ActivityOperation("ViewApplyActivity", vvs.id, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
                 _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
-                //TODO
-                //_iwcw.sendRemoteNonOTOperation(activityOperation.toNonOTOperation());
 
                 //init the tools for canvas
                 initTools(vvs);
                 ViewGenerator.generate(metamodel, vvs);
 
                 $('#lblCurrentView').show();
-                $('#lblCurrentViewId').text(viewId);
+                $currentViewIdLabel.text(viewId);
 
                 //});
                 //}
@@ -314,14 +314,12 @@ requirejs([
             $('#btnDelViewPoint').click(function () {
                 var viewId = ViewManager.getViewIdOfSelected();
                 if (viewId !== $('#lblCurrentViewId').text()) {
-                    openapp.resource.del(ViewManager.getViewUri(viewId), function () {
-                        ViewManager.deleteView(viewId);
-                        //TODO DeleteView Operation
-                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new DeleteViewOperation(viewId).toNonOTOperation());
-                    });
+                    y.share.views.set(viewId, null);
+                    _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new DeleteViewOperation(viewId).toNonOTOperation());
+
                 }
                 else {
-                    DeleteView(viewId);
+                    y.share.views.set(viewId, null);
                     $('#viewsHide').click();
                 }
             });
@@ -332,19 +330,15 @@ requirejs([
                     alert('View already exists');
                     return;
                 }
+                var $loading = $('#loading');
+                $loading.show();
                 resetCanvas();
+                $('#lblCurrentView').show();
                 $('#lblCurrentViewId').text(viewId);
-                ViewManager.storeView(viewId, null).then(function (resp) {
-                    ViewManager.addView(viewId, null, resp);
-                    visualizeView(viewId);
-
-                    //TODO
-                    //var operation = new UpdateViewListOperation();
-                    //_iwcw.sendRemoteNonOTOperation(operation.toNonOTOperation());
-
-                    canvas.get$canvas().show();
-                    HideCreateMenu();
-                });
+                canvas.get$canvas().show();
+                HideCreateMenu();
+                y.share.canvas.set(UpdateViewListOperation.TYPE, true);
+                $loading.hide();
             });
 
             //Meta-modelling layer implementation
@@ -456,16 +450,6 @@ requirejs([
             });
         }
 
-        function DeleteView(viewId) {
-            var deferred = $.Deferred();
-            openapp.resource.del(ViewManager.getViewUri(viewId), function () {
-                ViewManager.deleteView(viewId);
-                //TODO delete view operation
-                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new DeleteViewOperation(viewId).toNonOTOperation());
-                deferred.resolve();
-            });
-            return deferred.promise();
-        }
 
         //-------------------------------------------------------------
         var createYTextAttribute = function(map,val){
@@ -586,6 +570,23 @@ requirejs([
                                 attr = attrs[attrKey2];
                                 //promises.push(createYTextAttribute(map, attr.getValue()));
                                 createYTextAttribute(map, attr.getValue());
+                            }
+                        }
+                    }else if(jsonNode.type ==='ViewObject' || jsonNode.type === 'ViewRelationship'){
+                        attrs = node.getAttribute('[attributes]').getAttributes();
+                        for(var attrKey3 in attrs){
+                            if(attrs.hasOwnProperty(attrKey3)) {
+                                attr = attrs[attrKey3];
+                                //promises.push(createYTextAttribute(map, attr.getValue()));
+                                createYTextAttribute(map, attr.getKey());
+                            }
+                        }
+                        var conditions = node.getAttribute('[condition]').getAttributes();
+                        for(var attrKey4 in conditions){
+                            if(conditions.hasOwnProperty(attrKey4)) {
+                                attr = conditions[attrKey4];
+                                //promises.push(createYTextAttribute(map, attr.getValue()));
+                                createYTextAttribute(map, attr.getKey());
                             }
                         }
                     }

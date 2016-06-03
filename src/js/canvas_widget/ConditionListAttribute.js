@@ -260,6 +260,7 @@ define([
                 that.addAttribute(attribute);
                 _$node.find(".list").append(attribute.get$node());
             });
+
         };
 
         /**
