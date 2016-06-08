@@ -9,6 +9,7 @@ requirejs([
     'iwcw',
     'lib/yjs-sync',
     'Util',
+    'operations/non_ot/NonOTOperation',
     'operations/non_ot/ToolSelectOperation',
     'operations/non_ot/ActivityOperation',
     'operations/non_ot/JoinOperation',
@@ -51,7 +52,7 @@ requirejs([
     'canvas_widget/HistoryManager',
     'promise!Space'
     //'promise!Guidancemodel'
-],function($,jsPlumb,IWCW, yjsSync,Util,ToolSelectOperation,ActivityOperation,JoinOperation, ViewInitOperation, UpdateViewListOperation, DeleteViewOperation,SetViewTypesOperation, InitModelTypesOperation, SetModelAttributeNodeOperation, Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge, ViewObjectNode, ViewObjectNodeTool,ViewRelationshipNode, ViewRelationshipNodeTool, ViewManager, ViewGenerator, HistoryManager,space/*,guidancemodel*/) {
+],function($,jsPlumb,IWCW, yjsSync,Util,NonOTOperation,ToolSelectOperation,ActivityOperation,JoinOperation, ViewInitOperation, UpdateViewListOperation, DeleteViewOperation,SetViewTypesOperation, InitModelTypesOperation, SetModelAttributeNodeOperation, Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge, ViewObjectNode, ViewObjectNodeTool,ViewRelationshipNode, ViewRelationshipNodeTool, ViewManager, ViewGenerator, HistoryManager,space/*,guidancemodel*/) {
 
     var _iwcw;
     _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
@@ -79,10 +80,11 @@ requirejs([
     function InitMainWidget(metamodel, model) {
 
         EntityManager.init(metamodel);
-
+        var userList = [];
         var canvas = new Canvas($("#canvas"));
         y.share.join.observe(function(event){
-            var activityOperation;
+            //var activityOperation;
+            userList.push(event.name);
             if(!event.value && event.name !== _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]){
                 y.share.join.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], true);
             }else if(event.name === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] && !event.value){
@@ -116,6 +118,9 @@ requirejs([
                     else if (operation instanceof UpdateViewListOperation) {
                         y.share.canvas.set(UpdateViewListOperation.TYPE, true);
                     }
+                    else if(operation.getType() === 'WaitForCanvasOperation'){
+                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new NonOTOperation('WaitForCanvasOperation', JSON.stringify(userList)));
+                    }
                 });
                 y.share.canvas.observePath([UpdateViewListOperation.TYPE],function(){
                     ViewManager.GetViewpointList();
@@ -129,14 +134,14 @@ requirejs([
                 }
                 canvas.resetTool();
             }
-            activityOperation = new ActivityOperation(
+            /*activityOperation = new ActivityOperation(
                 "UserJoinActivity",
                 "-1",
                 event.name,
                 "",
                 {}
             ).toNonOTOperation();
-            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation);
+            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation);*/
         });
         /*
          if (guidancemodel.isGuidanceEditor()) {

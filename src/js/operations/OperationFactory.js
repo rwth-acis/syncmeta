@@ -11,6 +11,7 @@ define([
     'operations/ot/AttributeAddOperation',
     'operations/ot/AttributeDeleteOperation',
     'operations/ot/ValueChangeOperation',
+    'operations/non_ot/NonOTOperation',
     'operations/non_ot/EntitySelectOperation',
     'operations/non_ot/ToolSelectOperation',
     'operations/non_ot/ActivityOperation',
@@ -35,7 +36,7 @@ define([
     'operations/non_ot/GuidanceStrategyOperation',
     'operations/non_ot/BindYTextOperation'
 
-],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeMoveZOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,JoinOperation,SetViewTypesOperation,InitModelTypesOperation,ViewInitOperation,PerformCvgOperation,DeleteCvgOperation,DeleteViewOperation,SetModelAttributeNodeOperation,UpdateViewListOperation,ShowGuidanceBoxOperation, CanvasViewChangeOperation, RevokeSharedActivityOperation,CollaborateInActivityOperation, MoveCanvasOperation, GuidanceStrategyOperation,BindYTextOperation) {
+],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeMoveZOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,NonOTOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,JoinOperation,SetViewTypesOperation,InitModelTypesOperation,ViewInitOperation,PerformCvgOperation,DeleteCvgOperation,DeleteViewOperation,SetModelAttributeNodeOperation,UpdateViewListOperation,ShowGuidanceBoxOperation, CanvasViewChangeOperation, RevokeSharedActivityOperation,CollaborateInActivityOperation, MoveCanvasOperation, GuidanceStrategyOperation,BindYTextOperation) {
 
     /**
      * OperationFactory
@@ -59,6 +60,7 @@ define([
                 try {
                     data = JSON.parse(operation.getData());
                 } catch (e){
+                    console.error('Not able to parse data to JSON. Check the corresponding operation');
                     return null;
                 }
 
@@ -135,6 +137,9 @@ define([
                     case BindYTextOperation.TYPE:
                         resOperation = new BindYTextOperation(data.entityId,data.data);
                         resOperation.setNonOTOperation(operation);
+                        break;
+                    default:
+                        resOperation = new NonOTOperation(type, data);
                         break;
                 }
                 return resOperation;

@@ -6,17 +6,32 @@
 requirejs([
     'jqueryui',
     'lib/yjs-sync',
-    'activity_widget/ActivityList'
-],function ($, yjsSync, ActivityList) {
+    'activity_widget/ActivityList',
+    'WaitForCanvas'
+],function ($, yjsSync, ActivityList, WaitForCanvas) {
 
-    yjsSync().done(function(y){
-        window.y = y;
-        console.info('ACTIVITY: Yjs uccessfully initialized.');
-        new ActivityList($("#user_list"),$("#activity_list"));
+        yjsSync().done(function(y){
+            window.y = y;
+
+            console.info('ACTIVITY: Yjs uccessfully initialized.');
+            var activtyList = new ActivityList($("#user_list"),$("#activity_list"));
+
+            y.share.join.observe(function(event){
+                activtyList.addUser(event.name);
+
+            });
+            WaitForCanvas().done(function (userList) {
+               for(var i=0;i<userList.length;i++){
+                    activtyList.addUser(userList[i]);
+                }
+            });
+
+
+        if(CONFIG.TEST_MODE)
+            require(['./../test/ActivityWidgetTest']);
     });
 
-    if(CONFIG.TEST_MODE)
-        require(['./../test/ActivityWidgetTest']);
+
 
     /*
     $("#q").draggable({

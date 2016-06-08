@@ -130,7 +130,6 @@ define([
          * Callback for received Operations
          * @param {operations.non_ot.ActivityOperation|operations.non_ot.EntitySelectOperation} operation
          */
-        //TODO: Create abstract Operation class
         var operationCallback = function(operation){
             var activity,
                 user,
