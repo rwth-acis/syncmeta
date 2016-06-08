@@ -1069,7 +1069,7 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                         });
                     }
                     else{
-                        var attributes = EntityManager.getNodeType(type).getAttributes();
+                        var attributes = EntityManager.getNodeType(oType).getAttributes();
                         var attrPromises = [];
                         for(var attrKey in attributes){
                             if(attributes.hasOwnProperty(attrKey)&& attributes[attrKey].value === 'string'){
@@ -1571,6 +1571,11 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                         {
                             operation = new GuidanceStrategyOperation(data.data);
                             remoteGuidanceStrategyOperation(operation);
+                            break;
+                        }
+                        case 'ViewApplyActivity':{
+                            var activityOperation = new ActivityOperation("ViewApplyActivity", event.value.viewId, event.value.jabberId);
+                            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
                             break;
                         }
                     }

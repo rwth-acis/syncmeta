@@ -83,7 +83,6 @@ requirejs([
         var userList = [];
         var canvas = new Canvas($("#canvas"));
         y.share.join.observe(function(event){
-            //var activityOperation;
             userList.push(event.name);
             if(!event.value && event.name !== _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]){
                 y.share.join.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], true);
@@ -126,7 +125,6 @@ requirejs([
                     ViewManager.GetViewpointList();
                 });
 
-
                 if (canvas.getModelAttributesNode() === null) {
                     var modelAttributesNode = EntityManager.createModelAttributesNode();
                     canvas.setModelAttributesNode(modelAttributesNode);
@@ -134,14 +132,6 @@ requirejs([
                 }
                 canvas.resetTool();
             }
-            /*activityOperation = new ActivityOperation(
-                "UserJoinActivity",
-                "-1",
-                event.name,
-                "",
-                {}
-            ).toNonOTOperation();
-            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation);*/
         });
         /*
          if (guidancemodel.isGuidanceEditor()) {
@@ -220,6 +210,7 @@ requirejs([
 
                 var activityOperation = new ActivityOperation("ViewApplyActivity", vvs.id, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
                 _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
+                y.share.canvas.set('ViewApplyActivity', {viewId:viewId, jabberId:_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]});
 
                 //init the tools for canvas
                 initTools(vvs);
@@ -253,9 +244,8 @@ requirejs([
 
                     var activityOperation = new ActivityOperation("ViewApplyActivity", '', _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
                     _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
+                    y.share.canvas.set('ViewApplyActivity', {viewId:'', jabberId:_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]});
 
-                    //TODO
-                    //_iwcw.sendRemoteNonOTOperation(activityOperation.toNonOTOperation());
 
                     EntityManager.setViewId(null);
                     EntityManager.initModelTypes(metamodel);
@@ -361,11 +351,11 @@ requirejs([
                     //Disable the view types in the palette
                     var operation = new SetViewTypesOperation(false);
                     _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation.toNonOTOperation());
+
                     var activityOperation = new ActivityOperation("ViewApplyActivity", '', _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
                     _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
+                    y.share.canvas.set('ViewApplyActivity', {viewId:'', jabberId:_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]});
 
-                    //TODO
-                    //_iwcw.sendRemoteNonOTOperation(activityOperation.toNonOTOperation());
 
                     resetCanvas();
                     JSONtoGraph(model).done(function(){
@@ -448,6 +438,7 @@ requirejs([
 
             var activityOperation = new ActivityOperation("ViewApplyActivity", json.id, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
             _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
+            y.share.canvas.set('ViewApplyActivity', {viewId:json.id, jabberId:_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]});
 
             JSONtoGraph(json).done(function(){
                 $("#loading").hide();
