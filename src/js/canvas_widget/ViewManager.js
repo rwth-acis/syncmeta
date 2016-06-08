@@ -53,12 +53,14 @@ define([
                 _$selection.empty();
                 var viewpointList = y.share.views.keys();
                 for(var i=0;i<viewpointList.length;i++) {
-                    if (viewpointList[i].length > 0) {
-
+                    var viewpoint = y.share.views.get(viewpointList[i]);
+                    if(viewpoint) {
                         _$selection.append($(optionTpl({
                             id: viewpointList[i]
                         })));
                     }
+                    else
+                        y.share.views.delete(viewpointList[i]);
                 }
             },
             /**

@@ -9,7 +9,7 @@ define(['jquery','iwcw','operations/non_ot/NonOTOperation'], function($,IWCW,Non
         iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN, operation);
 
         iwc.registerOnDataReceivedCallback(function(operation){
-            if(operation) {
+            if(operation.hasOwnProperty('getType')) {
                 if (operation.getType() === 'WaitForCanvasOperation') {
                     gotResponseFromCanvas = true;
                     deferred.resolve(operation.getData());

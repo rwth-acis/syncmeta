@@ -117,7 +117,7 @@ requirejs([
                     else if (operation instanceof UpdateViewListOperation) {
                         y.share.canvas.set(UpdateViewListOperation.TYPE, true);
                     }
-                    else if(operation.getType() === 'WaitForCanvasOperation'){
+                    else if(operation.hasOwnProperty('getType') && operation.getType() === 'WaitForCanvasOperation'){
                         _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new NonOTOperation('WaitForCanvasOperation', JSON.stringify(userList)));
                     }
                 });
@@ -577,12 +577,14 @@ requirejs([
                                 createYTextAttribute(map, attr.getKey());
                             }
                         }
-                        var conditions = node.getAttribute('[condition]').getAttributes();
-                        for(var attrKey4 in conditions){
-                            if(conditions.hasOwnProperty(attrKey4)) {
-                                attr = conditions[attrKey4];
-                                //promises.push(createYTextAttribute(map, attr.getValue()));
-                                createYTextAttribute(map, attr.getKey());
+                        if(node.getAttribute('[condition]')) {
+                            var conditions = node.getAttribute('[condition]').getAttributes();
+                            for (var attrKey4 in conditions) {
+                                if (conditions.hasOwnProperty(attrKey4)) {
+                                    attr = conditions[attrKey4];
+                                    //promises.push(createYTextAttribute(map, attr.getValue()));
+                                    createYTextAttribute(map, attr.getKey());
+                                }
                             }
                         }
                     }

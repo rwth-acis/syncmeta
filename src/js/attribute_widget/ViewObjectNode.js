@@ -134,11 +134,13 @@ function ($, jsPlumb, _, AbstractNode, RenamingListAttribute, SingleSelectionAtt
                     }
                 }
 
-                var conditions = _attributes['[condition]'].getAttributes();
-                for(var attrKey4 in conditions){
-                    if(conditions.hasOwnProperty(attrKey4)) {
-                        attr = conditions[attrKey4];
-                        registerValue(ymap, attr.getKey());
+                if(_attributes['[condition]']) {
+                    var conditions = _attributes['[condition]'].getAttributes();
+                    for (var attrKey4 in conditions) {
+                        if (conditions.hasOwnProperty(attrKey4)) {
+                            attr = conditions[attrKey4];
+                            registerValue(ymap, attr.getKey());
+                        }
                     }
                 }
             });

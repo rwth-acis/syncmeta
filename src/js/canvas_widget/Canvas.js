@@ -1129,7 +1129,12 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                 y.share.edges.set(id, Y.Map).then(function(map){
                     map.set(id+"[label]", Y.Text).then(function() {
                         if(EntityManager.getLayer()=== CONFIG.LAYER.MODEL){
-                            var attributes = EntityManager.getEdgeType(type).getAttributes();
+                            var attributes = null;
+                            if(oType)
+                                attributes = EntityManager.getEdgeType(oType).getAttributes();
+                            else
+                                attributes = EntityManager.getEdgeType(type).getAttributes();
+
                             var attrPromises = [];
                             for(var attrKey in attributes){
                                 if(attributes.hasOwnProperty(attrKey)&& attributes[attrKey].value === 'string'){
