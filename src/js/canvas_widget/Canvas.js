@@ -1069,7 +1069,12 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                         });
                     }
                     else{
-                        var attributes = EntityManager.getNodeType(oType).getAttributes();
+                        var attributes=null;
+                        if(oType)
+                            attributes= EntityManager.getNodeType(oType).getAttributes();
+                        else
+                            attributes= EntityManager.getNodeType(type).getAttributes();
+
                         var attrPromises = [];
                         for(var attrKey in attributes){
                             if(attributes.hasOwnProperty(attrKey)&& attributes[attrKey].value === 'string'){
