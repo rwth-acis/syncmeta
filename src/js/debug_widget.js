@@ -1,4 +1,4 @@
-requirejs(['jqueryui','lodash','lib/yjs-sync'],function($,_,yjsSync){
+requirejs(['jqueryui','lodash','lib/yjs-sync','canvas_widget/GenerateViewpointModel'],function($,_,yjsSync,GenerateViewpointModel){
     $(function(){
         yjsSync().done(function(y){
             window.y = y;
@@ -23,9 +23,7 @@ requirejs(['jqueryui','lodash','lib/yjs-sync'],function($,_,yjsSync){
                     feedbackTimeout = setTimeout(function(){
                         $feedback.text("");
                     },2000);
-                },
-
-                resourceSpace = new openapp.oo.Resource(openapp.param.space());
+                };
 
             var getFileContent = function(){
                 var fileReader,
@@ -50,102 +48,24 @@ requirejs(['jqueryui','lodash','lib/yjs-sync'],function($,_,yjsSync){
                 return deferred.promise();
             };
 
-            var getData = function(type){
-                var spaceUri = openapp.param.space(),
-                    listOfDataUris = [],
-
-                    promises = [],
-                    mainDeferred = $.Deferred(),
-                    deferred = $.Deferred();
-
-                openapp.resource.get(spaceUri,(function(deferred){
-                    return function(space){
-
-                        var resourceUri, resourceObj, values;
-                        for(resourceUri in space.data){
-                            if(space.data.hasOwnProperty(resourceUri)){
-                                resourceObj = space.data[resourceUri];
-                                if(resourceObj['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] &&
-                                    _.isArray(resourceObj['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'])){
-
-                                    values = _.map(resourceObj['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'],function(e){
-                                        return e.value;
-                                    });
-
-                                    if(_.contains(values,"http://purl.org/role/terms/Data") && _.contains(values,type)){
-                                        listOfDataUris.push(resourceUri);
-                                    }
-
-                                }
-
-                            }
-                        }
-                        deferred.resolve();
-                    };
-
-                })(deferred));
-                promises.push(deferred.promise());
-
-                $.when.apply($,promises).then(function(){
-                    mainDeferred.resolve(listOfDataUris);
-                });
-
-                return mainDeferred.promise();
-            };
-
             $deleteModel.click(function(){
                 //y.share.data.delete('model');
                 y.share.data.set('model', null);
                 feedback("Done!");
-                /*
-                 getData(CONFIG.NS.MY.MODEL).then(function(modelUris){
-                 if(modelUris.length > 0){
-                 _.map(modelUris,function(uri){
-                 openapp.resource.del(uri,function(){
-                 feedback("Done!");
-                 });
-                 });
-                 } else {
-                 feedback("No Model!");
-                 }
-                 });*/
+
             });
 
             $deleteMetamodel.click(function(){
                 //this does not work ??????
                 //y.share.data.delete('metamodel');
-                y.share.data.set('model', null);
+                y.share.data.set('metamodel', null);
                 feedback("Done!");
-                /*
-                 getData(CONFIG.NS.MY.METAMODEL).then(function(modelUris){
-                 if(modelUris.length > 0){
-                 _.map(modelUris,function(uri){
-                 openapp.resource.del(uri,function(){
-                 $exportMetamodel.prop('disabled', true);
-                 $deleteMetamodel.prop('disabled', true);
-                 feedback("Done!");
-                 });
-                 });
-                 } else {
-                 feedback("No Model!");
-                 }
-                 });*/
             });
 
             $deleteGuidancemodel.click(function(){
-                getData(CONFIG.NS.MY.GUIDANCEMODEL).then(function(modelUris){
-                    if(modelUris.length > 0){
-                        _.map(modelUris,function(uri){
-                            openapp.resource.del(uri,function(){
-                                $exportGuidancemodel.prop('disabled', true);
-                                $deleteGuidancemodel.prop('disabled', true);
-                                feedback("Done!");
-                            });
-                        });
-                    } else {
-                        feedback("No Model!");
-                    }
-                });
+                $exportGuidancemodel.prop('disabled', true);
+                $deleteGuidancemodel.prop('disabled', true);
+                feedback("Done!");
             });
 
             $exportModel.click(function(){
@@ -153,18 +73,6 @@ requirejs(['jqueryui','lodash','lib/yjs-sync'],function($,_,yjsSync){
                 link.download = "model.json";
                 link.href = 'data:,'+encodeURI(JSON.stringify(y.share.data.get('model'),null,4));
                 link.click();
-                /*getData(CONFIG.NS.MY.MODEL).then(function(modelUris){
-                 if(modelUris.length > 0){
-                 $.get(modelUris[0]+"/:representation").done(function(data){
-                 var link = document.createElement('a');
-                 link.download = "export.json";
-                 link.href = 'data:,'+encodeURI(JSON.stringify(data,null,4));
-                 link.click();
-                 });
-                 } else {
-                 feedback("No Model!");
-                 }
-                 });*/
             });
 
             $exportMetamodel.click(function(){
@@ -172,75 +80,47 @@ requirejs(['jqueryui','lodash','lib/yjs-sync'],function($,_,yjsSync){
                 link.download = "vls.json";
                 link.href = 'data:,'+encodeURI(JSON.stringify(y.share.data.get('metamodel'),null,4));
                 link.click();
-                /*getData(CONFIG.NS.MY.METAMODEL).then(function(modelUris){
-                 if(modelUris.length > 0){
-                 $.get(modelUris[0]+"/:representation").done(function(data){
-                 var link = document.createElement('a');
-                 link.download = "export.json";
-                 link.href = 'data:,'+encodeURI(JSON.stringify(data,null,4));
-                 link.click();
-                 });
-                 } else {
-                 feedback("No Model!");
-                 }
-                 });*/
             });
 
             $exportGuidancemodel.click(function(){
-                getData(CONFIG.NS.MY.GUIDANCEMODEL).then(function(modelUris){
-                    if(modelUris.length > 0){
-                        $.get(modelUris[0]+"/:representation").done(function(data){
-                            var link = document.createElement('a');
-                            link.download = "export.json";
-                            link.href = 'data:,'+encodeURI(JSON.stringify(data,null,4));
-                            link.click();
-                        });
-                    } else {
-                        feedback("No Model!");
-                    }
-                });
+                var link = document.createElement('a');
+                link.download = "export.json";
+                link.href = 'data:,'+encodeURI(JSON.stringify(data,null,4));
+                link.click();
+
             });
 
             $importModel.click(function(){
-                getData(CONFIG.NS.MY.MODEL).then(function(modelUris){
-                    getFileContent().then(function(data){
-                        y.share.data.set('model',data);
-                        feedback("Done!");
-                    });
+                getFileContent().then(function(data){
+                    y.share.data.set('model',data);
+                    feedback("Done!");
                 });
             });
 
             $importMetamodel.click(function(){
-                getData(CONFIG.NS.MY.METAMODEL).then(function(modelUris){
-                    getFileContent().then(function(data){
+                getFileContent().then(function(data){
+                    try {
+                        var vls = GenerateViewpointModel(data);
+                        y.share.data.set('metamodel',vls);
+                        feedback("Done!");
+                    }
+                    catch(e){
                         y.share.data.set('metamodel',data);
                         feedback("Done!");
-                    });
+                    }
+
                 });
             });
 
             $importGuidancemodel.click(function(){
-                getData(CONFIG.NS.MY.GUIDANCEMODEL).then(function(modelUris){
-                    if(modelUris.length > 0){
-                        _.map(modelUris,function(uri){
-                            openapp.resource.del(uri);
-                        });
-                    }
-                    getFileContent().then(function(data){
-                        resourceSpace.create({
-                            relation: openapp.ns.role + "data",
-                            type: CONFIG.NS.MY.GUIDANCEMODEL,
-                            representation: data,
-                            callback: function(){
-                                $exportGuidancemodel.prop('disabled', false);
-                                $deleteGuidancemodel.prop('disabled', false);
-                                feedback("Done!");
-                            }
-                        });
-                    });
+                getFileContent().then(function(data){
+                    $exportGuidancemodel.prop('disabled', false);
+                    $deleteGuidancemodel.prop('disabled', false);
+                    feedback("Done!");
                 });
             });
 
+            //TODO Need rework
             var checkExistence = function(){
                 getData(CONFIG.NS.MY.MODEL).then(function(modelUris){
                     if(modelUris.length === 0){

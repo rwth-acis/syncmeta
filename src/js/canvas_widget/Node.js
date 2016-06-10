@@ -203,7 +203,8 @@ define([
                         var $tmp = _$shape.find('.' + attribute.getName().toLowerCase());
                         if ($tmp.length > 0) {
                             //initialize the value again
-                            attribute.getValue().init();
+                            if(attribute.getValue().hasOwnProperty('init'))
+                                attribute.getValue().init();
                             $tmp.append(attribute.get$node());
                             break;
                         }

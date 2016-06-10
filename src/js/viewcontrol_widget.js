@@ -121,7 +121,18 @@ requirejs(['jqueryui',
             var LoadFileAndStoreToSpace = function(){
                 getFileContent().then(function(data){
                     if(data.id){
-                        y.share.views.set(data.id,data);
+                        if(metamodel){
+                            try{
+                                var vvs = GenerateViewpointModel(data);
+                                y.share.views.set(vvs.id,vvs);
+                            }
+                            catch (e){
+                                y.share.views.set(data.id,data);
+                            }
+                        }
+                        else
+                            y.share.views.set(data.id,data);
+
                         $('#btnRefresh').click();
                     }
                 });

@@ -132,12 +132,13 @@ function ($, _, AbstractNode, RenamingListAttribute, SingleSelectionAttribute, C
                         registerValue(ymap,attr.getKey());
                     }
                 }
-
-                var conditions = _attributes['[condition]'].getAttributes();
-                for(var attrKey4 in conditions){
-                    if(conditions.hasOwnProperty(attrKey4)) {
-                        attr = conditions[attrKey4];
-                        registerValue(ymap, attr.getKey());
+                if(_attributes['[condition]']) {
+                    var conditions = _attributes['[condition]'].getAttributes();
+                    for (var attrKey4 in conditions) {
+                        if (conditions.hasOwnProperty(attrKey4)) {
+                            attr = conditions[attrKey4];
+                            registerValue(ymap, attr.getKey());
+                        }
                     }
                 }
             });
