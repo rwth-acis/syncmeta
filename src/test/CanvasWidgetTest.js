@@ -6,8 +6,14 @@ requirejs.config({
         WebConsoleReporter:'./../test/WebConsole'
     }
 });
-define(['jquery','chai','WebConsoleReporter','canvas_widget/EntityManager','mocha'],
-    function($,chai, WebConsoleReporter,EntityManager){
+define(['jquery','chai','WebConsoleReporter',
+        'canvas_widget/EntityManager',
+        './../test/canvas_widget/CreateNodeTester',
+        './../test/canvas_widget/CreateEdgeTester',
+        './../test/canvas_widget/NodeDeleteTester',
+        './../test/canvas_widget/EdgeDeleteTester',
+        'mocha'],
+    function($,chai, WebConsoleReporter,EntityManager,CreateNodeTester,CreateEdgeTester,NodeDeleteTester,EdgeDeleteTester){
 
         function CanvasWidgetTestMain(canvas){
             $('body').append($('<div id="mocha" style="display: none"></div>'));
@@ -22,85 +28,57 @@ define(['jquery','chai','WebConsoleReporter','canvas_widget/EntityManager','moch
                     expect($('#canvas').length).to.be.equal(1);
                 });
                 if(EntityManager.getLayer() === CONFIG.LAYER.META) {
-                    describe('CANVAS - META - Create Object node ', function(){
-                        var nodeId = null;
-                        before(function(done){
-                            canvas.createNode('Object',4200,4400,100,200,1000,null,'1234567890').done(function(id){
-                                nodeId = id;
+
+                    var objectClassTester = new CreateNodeTester('META - Create Object node', canvas);
+                    objectClassTester.test_createNode('Object',4200,4400,100,200,1000,null,'1234567890', function(nodeId){
+
+                        describe('CANVAS - Edit label of Object node', function(){
+                            var node = null;
+                            before(function(done){
+                                node = EntityManager.find(nodeId);
+                                this.timeout(1000);
+                                node.getLabel().getValue().setValue('Test Label');
                                 done();
                             });
-                        });
-                        it('Object node compare node Id', function(){
-                           expect(nodeId).to.be.equal('1234567890');
-                        });
-                        it('Object node should be in EntityManager',function(){
-                            expect(EntityManager.findNode(nodeId)).to.be.not.null;
-                        });
 
-                        it('Object node should be in Canvas', function(){
-                            expect($('#'+nodeId).length).to.be.equal(1);
-                        });
-
-                        it('Object node should be in Yjs', function(){
-                            expect(y.share.nodes.opContents.hasOwnProperty(nodeId)).to.be.true;
-                        });
-                        after(function(done){
-                            describe('CANVAS - META - Create Relationship node ', function(){
-                                var nodeId2 = null;
-                                before(function(done){
-                                    canvas.createNode('Relationship',4400,4400,100,200,1000,null).done(function(id){
-                                        nodeId2 = id;
-                                        done();
-                                    });
-                                });
-                                it('Relationship node should be in EntityManager',function(){
-                                    expect(EntityManager.findNode(nodeId2)).to.be.not.null;
-                                });
-
-                                it('Relationship node should be in Canvas', function(){
-                                    expect($('#'+nodeId2).length).to.be.equal(1);
-                                });
-
-                                it('Relationship node should be in Yjs', function(){
-                                    expect(y.share.nodes.opContents.hasOwnProperty(nodeId2)).to.be.true;
-                                });
-                                after(function(done){
-                                    describe('CANVAS - META - Create Bi-Dir-Association edge', function(){
-                                        var edgeId = null;
-                                        before(function(done){
-                                            canvas.createEdge('Bi-Dir-Association',nodeId,nodeId2,null).done(function(id){
-                                                edgeId = id;
-                                                done()
-                                            });
-                                        });
-
-                                        it('Bi-Dir-Association edge should be in EntityManager', function(){
-                                            expect(EntityManager.findEdge(edgeId)).to.be.not.null;
-                                        });
-
-                                        it('Bi-Dir-Association edge should be in Canvas', function(){
-                                           expect($('.'+edgeId).length).to.be.not.equal(0);
-                                        });
-
-                                        it('Bi-Dir-Association edge should be in Yjs', function(){
-                                            expect(y.share.edges.opContents.hasOwnProperty(edgeId)).to.be.true;
-
-                                        });
-
-                                        after(function(done){
-                                            EntityManager.findNode(nodeId2).triggerDeletion();
-                                            EntityManager.findNode(nodeId).triggerDeletion();
-                                            done();
-                                        });
-                                    });
-                                    done();
-                                })
+                            it('Object node should have a label in model and DOM', function(){
+                                expect(node.getLabel().getValue().getValue()).to.be.equal('Test Label');
                             });
-                            done();
-                        })
+
+                            it('Object node should have a label in ytext', function(){
+                                var ytext = node.getLabel().getValue().getYText();
+                                expect(ytext).to.be.not.null;
+                                expect(ytext.toString()).to.be.equal('Test Label');
+                            });
+
+                        });
+
+                        var abstractClassTester = new CreateNodeTester('Meta - Create Abstract node', canvas);
+                        abstractClassTester.test_createNode('Abstract Class', 4200, 4100, 200,100, 1000, null, null, function(nodeId2){
+                            var bi_dir_assoTester = new CreateEdgeTester('META - Create Generalisation edge',canvas);
+                            bi_dir_assoTester.test_createEdge('Generalisation',nodeId,nodeId2,null,null, function(edgeId){
+                                EdgeDeleteTester('META - Delete Generalisation from object to abstract class', edgeId);
+
+                                NodeDeleteTester('META - Delete abstract class node', nodeId2);
+                            });
+
+
+                        });
+
+                        var relationshipClassTester = new CreateNodeTester('Meta - Relationship node', canvas);
+                        relationshipClassTester.test_createNode('Relationship',4400,4400,100,200,1000,null, null, function(nodeId2){
+                            var bi_dir_assoTester = new CreateEdgeTester('META - Create Bi-Dir-Association edge',canvas);
+                            bi_dir_assoTester.test_createEdge('Bi-Dir-Association',nodeId,nodeId2,null,null, function(edgeId){
+
+                                NodeDeleteTester('META - Delete object node', nodeId);
+
+                                EdgeDeleteTester('META - Delete Bi-Dir-Assocation from object to relationship', edgeId, true);
+
+                                NodeDeleteTester('META - Delete relationship node', nodeId2);
+
+                            });
+                        });
                     });
-
-
                 }
             });
             mocha.run();

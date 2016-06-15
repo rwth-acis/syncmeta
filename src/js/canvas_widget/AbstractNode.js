@@ -291,8 +291,8 @@ define([
          */
         var propagateNodeDeleteOperation = function(operation){
             HistoryManager.add(operation);
-            $('#save').click();
             processNodeDeleteOperation(operation);
+            $('#save').click();
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());

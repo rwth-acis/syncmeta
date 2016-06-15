@@ -27,7 +27,7 @@ requirejs([
             });
 
 
-        if(CONFIG.TEST_MODE)
+        if(CONFIG.TEST_MODE_ACTIVITY)
             require(['./../test/ActivityWidgetTest']);
     });
 

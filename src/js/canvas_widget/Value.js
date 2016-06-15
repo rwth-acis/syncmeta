@@ -321,6 +321,14 @@ define([
         this.setValue = function(value){
             _value = value;
             _$node.val(value).trigger("blur");
+
+            if(_ytext){
+                if(value !== _ytext.toString()){
+                    if(_ytext.toString().length > 0)
+                        _ytext.delete(0, _ytext.toString().length-1);
+                    _ytext.insert(0, value);
+                }
+            }
         };
 
         /**
@@ -402,6 +410,10 @@ define([
                     ).toNonOTOperation());
                 }
             });
+        };
+
+        this.getYText = function(){
+            return _ytext;
         };
 
         //automatically determines the size of input

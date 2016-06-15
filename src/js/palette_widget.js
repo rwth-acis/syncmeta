@@ -102,7 +102,7 @@ requirejs([
         //var $colorTestElement = $('<div></div>');
 
 
-        if (CONFIG.TEST_MODE)
+        if (CONFIG.TEST_MODE_PALETTE)
             require(['./../test/PaletteWidgetTest']);
 
         //UNUSED

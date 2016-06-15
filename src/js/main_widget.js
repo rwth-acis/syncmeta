@@ -100,15 +100,17 @@ requirejs([
                         console.info(stats);
                         $("#loading").hide();
                         canvas.resetTool();
-                        if(CONFIG.TEST_MODE)
-                            require(['./../test/CanvasWidgetTest'], function(CanvasWidgetTest){
-                                CanvasWidgetTest(canvas);
-                            });
                     });
+
                 else{
                     $("#loading").hide();
                     canvas.resetTool();
                 }
+
+                if(CONFIG.TEST_MODE_CANVAS)
+                    require(['./../test/CanvasWidgetTest'], function(CanvasWidgetTest){
+                        CanvasWidgetTest(canvas);
+                    });
 
                 _iwcw.registerOnDataReceivedCallback(function (operation) {
                     if (operation instanceof SetModelAttributeNodeOperation) {

@@ -86,10 +86,10 @@
       stats.end = (new Date)
       stats.duration = (new Date) - stats.start
       logNewCalls()
-      if (stats.errors) console.warn(stats.errors, ' errors')
-      if (stats.failures) console.warn(stats.failures, ' failures')
+      if (stats.errors) console.info(stats.errors, ' errors')
+      if (stats.failures) console.info(stats.failures, ' failures')
       var skipped = stats.tests - stats.failures - stats.passes
-      if (skipped) console.warn(skipped, ' skipped')
+      if (skipped) console.info(skipped, ' skipped')
       console.info(stats.passes, ' tests passed')
       console.info(stats.duration / 1000, ' seconds')
       console.info((new Date).toUTCString())

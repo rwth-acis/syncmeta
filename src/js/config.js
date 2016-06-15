@@ -75,7 +75,10 @@ var require = {
 };
 
 CONFIG = {
-    TEST_MODE:false,
+    TEST_MODE_CANVAS:true,
+    TEST_MODE_ATTRIBUTE:false,
+    TEST_MODE_PALETTE:false,
+    TEST_MODE_ACTIVITY:false,
     LAYER:{
         META: "META",
         MODEL: "MODEL"
