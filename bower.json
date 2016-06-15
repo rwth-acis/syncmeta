@@ -16,7 +16,7 @@
     "iwc": "http://dbis.rwth-aachen.de/gadgets/iwc/lib/iwc.js",
     "jquery": "~2.0.3",
     "jquery-ui": "~1.10.3",
-    "jquery-migrate": "*",
+    "jquery-migrate": "~1.4.0",
     "jsPlumb": "git://github.com/sporritt/jsPlumb.git#~1.5.3",
     "jQuery-contextMenu": "git://github.com/medialize/jQuery-contextMenu.git#1.7.0",
     "requirejs": "~2.1.8",

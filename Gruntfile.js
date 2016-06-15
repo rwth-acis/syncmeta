@@ -28,7 +28,7 @@ module.exports = function(grunt) {
             lib: {
                 files: [
                     {src: '<%= bowerdir %>/iwc/index.js', dest: '<%= distdir %>/js/lib/vendor/iwc.js'},
-                    {src: '<%= bowerdir %>/jquery/dist/jquery.js', dest: '<%= distdir %>/js/lib/vendor/jquery.js'},
+                    {src: '<%= bowerdir %>/jquery/jquery.js', dest: '<%= distdir %>/js/lib/vendor/jquery.js'},
                     {src: '<%= bowerdir %>/jquery-migrate/jquery-migrate.js', dest: '<%= distdir %>/js/lib/vendor/jquery-migrate.js'},
                     {src: '<%= bowerdir %>/jquery-ui/ui/jquery-ui.js', dest: '<%= distdir %>/js/lib/vendor/jquery-ui.js'},
                     {src: '<%= bowerdir %>/jquery-ui/themes/base/jquery-ui.css', dest: '<%= distdir %>/css/vendor/jquery-ui.css'},
