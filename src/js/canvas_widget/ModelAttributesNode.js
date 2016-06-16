@@ -96,7 +96,7 @@ define([
             this.addAttribute(new SingleMultiLineValueAttribute(this.getEntityId()+"[description]","Description",this));
         }
 
-        this.getLabel().getValue().setValue("Model attributes");
+        this.getLabel().getValue().setValue("Model Attributes");
 
         _$node.find(".label").text("Model Attributes");
         _$node.hide();

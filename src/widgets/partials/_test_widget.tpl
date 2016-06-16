@@ -4,15 +4,15 @@
 <script src="<%= grunt.config('baseUrl') %>/test/test_widget.js"></script>
 
 <style>
-    #mocha {
+    #wrapper {
         max-height: 500px;
-        overflow: auto;
+        overflow-y: scroll;
     }
 </style>
-
-<div id="mocha"></div>
-<div id="messages"></div>
-<div id="fixtures"></div>
-
+<div id="wrapper">
+    <div id="mocha"></div>
+    <div id="messages"></div>
+    <div id="fixtures"></div>
+</div>
 
 

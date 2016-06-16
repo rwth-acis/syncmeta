@@ -324,7 +324,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
              * @param {object} json the json representation
              * @returns {canvas_widget.AbstractNode}
              */
-            //TODO: switch id and type
+            //TODO: Id is checked in canvas.createNode? Why not here???
             createNode : function (type, id, left, top, width, height, zIndex,json) {
                 var node;
                 AbstractEntity.maxZIndex = Math.max(AbstractEntity.maxZIndex, zIndex);
