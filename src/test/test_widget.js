@@ -6,7 +6,7 @@ $(function() {
         mocha.reporter('html');
         mocha.timeout(10000);
         EntityManagerTests();
-        //PromiseTests();
+        PromiseTests();
         mocha.run();
     });
     
