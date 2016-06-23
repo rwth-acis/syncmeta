@@ -4,15 +4,15 @@ define([
     'lodash',
     'Util',
     'attribute_widget/AbstractAttribute',
-    'attribute_widget/MultiLineValue',
+    'attribute_widget/CodeEditorValue',
     'text!templates/attribute_widget/single_value_attribute.html'
-],/** @lends SingleMultiLineValueAttribute */function($,jsPlumb,_,Util,AbstractAttribute,MultiLineValue,singleMultiLineValueAttributeHtml) {
+],/** @lends SingleCodeEditorValueAttribute */function($,jsPlumb,_,Util,AbstractAttribute,CodeEditorValue,SingleCodeEditorValueAttributeHtml) {
 
-    SingleMultiLineValueAttribute.prototype = new AbstractAttribute();
-	SingleMultiLineValueAttribute.prototype.constructor = SingleMultiLineValueAttribute;
+    SingleCodeEditorValueAttribute.prototype = new AbstractAttribute();
+	SingleCodeEditorValueAttribute.prototype.constructor = SingleCodeEditorValueAttribute;
     /**
-     * SingleMultiLineValueAttribute
-     * @class attribute_widget.SingleMultiLineValueAttribute
+     * SingleCodeEditorValueAttribute
+     * @class attribute_widget.SingleCodeEditorValueAttribute
      * @memberof attribute_widget
      * @extends attribute_widget.AbstractAttribute
      * @constructor
@@ -20,7 +20,7 @@ define([
      * @param {string} name Name of attribute
      * @param {attribute_widget.AbstractEntity} subjectEntity Entity the attribute is assigned to
      */
-    function SingleMultiLineValueAttribute(id,name,subjectEntity){
+    function SingleCodeEditorValueAttribute(id,name,subjectEntity){
         AbstractAttribute.call(this,id,name,subjectEntity);
 
         /***
@@ -28,14 +28,14 @@ define([
          * @type {attribute_widget.MultiLineValue}
          * @private
          */
-        var _value  = new MultiLineValue(id,name,this,this.getRootSubjectEntity());
+        var _value  = new CodeEditorValue(id,name,this,this.getRootSubjectEntity());
 
         /**
          * jQuery object of DOM node representing the node
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(singleMultiLineValueAttributeHtml,{}));
+        var _$node = $(_.template(SingleCodeEditorValueAttributeHtml,{}));
 
         /**
          * Set Value object of value
@@ -74,6 +74,6 @@ define([
         _$node.find(".value").append(_value.get$node());
     }
 
-    return SingleMultiLineValueAttribute;
+    return SingleCodeEditorValueAttribute;
 
 });

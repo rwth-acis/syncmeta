@@ -486,7 +486,7 @@ requirejs([
                 for(var key in attrs){
                     if(attrs.hasOwnProperty(key)){
                         var val = attrs[key].getValue();
-                        if(val.constructor.name === "Value" || val.constructor.name === "MultiLineValue"){
+                        if(val.constructor.name === "Value"){
                             promises.push(createYTextAttribute(map,val));
                         }
                     }
@@ -549,7 +549,7 @@ requirejs([
                         //promises.push(createYTextAttribute(map,node.getAttribute(nodeId+'[customAnchors]')));
                         createYTextAttribute(map,node.getAttribute(nodeId+'[customAnchors]'));
                         //promises.push(createYTextAttribute(map,node.getAttribute(nodeId+'[customShape]')));
-                        createYTextAttribute(map,node.getAttribute(nodeId+'[customShape]'));
+                        //createYTextAttribute(map,node.getAttribute(nodeId+'[customShape]'));
                     }
                     else if(jsonNode.type === 'Object' || jsonNode.type === 'Relationship' || jsonNode.type === 'Abstract Class'){
                         attrs = node.getAttribute('[attributes]').getAttributes();

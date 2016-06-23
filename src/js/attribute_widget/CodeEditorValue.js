@@ -1,13 +1,13 @@
-define([
+    define([
     'jqueryui',
     'jsplumb',
     'lodash',
     'iwcw',
     'attribute_widget/AbstractValue',
     'operations/ot/ValueChangeOperation',
-    'operations/non_ot/BindYTextOperation',
-    'text!templates/attribute_widget/code_editor_value.html'
-],/** @lends CodeEditorValue */function($,jsPlumb,_,IWCW,AbstractValue,ValueChangeOperation,BindYTextOperation,codeEditorValueHtml) {
+    'text!templates/attribute_widget/code_edtior_value.html',
+    'ace'
+],/** @lends CodeEditorValue */function ($, jsPlumb, _, IWCW, AbstractValue, ValueChangeOperation, codeEditorValueHtml) {
 
     CodeEditorValue.prototype = new AbstractValue();
     CodeEditorValue.prototype.constructor = CodeEditorValue;
@@ -22,12 +22,12 @@ define([
      * @param {attribute_widget.AbstractEntity} subjectEntity Entity the attribute is assigned to
      * @param {attribute_widget.AbstractNode|attribute_widget.AbstractEdge} rootSubjectEntity Topmost entity in the chain of entity the attribute is assigned to
      */
-    function CodeEditorValue(id,name,subjectEntity,rootSubjectEntity){
+    function CodeEditorValue(id, name, subjectEntity, rootSubjectEntity) {
         var that = this;
 
         var _ytext = null;
 
-        AbstractValue.prototype.constructor.call(this,id,name,subjectEntity,rootSubjectEntity);
+        AbstractValue.prototype.constructor.call(this, id, name, subjectEntity, rootSubjectEntity);
 
         /**
          * Value
@@ -36,12 +36,84 @@ define([
          */
         var _value = "";
 
+        var editor = null;
+
         /**
          * jQuery object of DOM node representing the node
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(codeEditorValueHtml,{name: name}));
+        var _$node = $(codeEditorValueHtml);
+
+        var bindAceEditor = function (ytext) {
+            _ytext = ytext;
+            ytext.bindAce(editor);
+            initData(ytext, _value);
+
+            _ytext.observe(function (event) {
+                _value = event.object.toString();
+                propagateValueChange(CONFIG.OPERATION.TYPE.INSERT, _value, 0);
+            })
+        }
+
+        var createYText = function () {
+            var deferred = $.Deferred();
+            try {
+                y.share.nodes.get(rootSubjectEntity.getEntityId()).then(function (ymap) {
+                    var promise = ymap.get(subjectEntity.getEntityId());
+                    if (promise) {
+                        promise.then(function (ytext) {
+                            bindAceEditor(ytext);
+                            deferred.resolve();
+                        });
+                    }
+                    else {
+                        ymap.set(subjectEntity.getEntityId(), Y.Text).then(function (ytext) {
+                            bindAceEditor(ytext);
+                            deferred.resolve();
+                        });
+                    }
+
+
+                });
+            }
+            catch (e) {
+                deferred.reject();
+            }
+            return deferred.promise();
+        };
+
+        _$node.click(function () {
+            if (editor) {
+                $(editor.container).parent().show();
+                $('#wrapper').hide();
+            }
+            else {
+                $('#loading').show();
+
+                var tpl = $('<div class="ace-container"><button id="undo"><img width="10px" height="10px" src="<%= grunt.config("baseUrl") %>/img/undo.png" /></button><div class="codeEditorValue" id="ace-' + rootSubjectEntity.getEntityId() + '"></div></div>');
+
+                $('body').append(tpl);
+                $('#wrapper').hide();
+
+                tpl.find('button').click(function () {
+                    $(editor.container).parent().hide();
+                    $('#wrapper').show();
+
+                });
+                editor = ace.edit('ace-' + rootSubjectEntity.getEntityId());
+                editor.setTheme("ace/theme/github");
+                editor.getSession().setMode("ace/mode/svg");
+
+                createYText().done(function () {
+                    $('#loading').hide();
+                }).fail(function () {
+                    alert('Failed to create and bind code editor to yjs');
+                });
+
+            }
+
+        });
 
         /**
          * Inter widget communication wrapper
@@ -50,16 +122,14 @@ define([
          */
         var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE);
 
-
-
         /**
          * Propagate a Value Change Operation to the remote users and the local widgets
          * @param {operations.ot.ValueChangeOperation} operation
 
          */
-        var propagateValueChangeOperation = function(operation){
+        var propagateValueChangeOperation = function (operation) {
             //processValueChangeOperation(operation);
-            iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.getOTOperation());
+            iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN, operation.getOTOperation());
         };
 
         /**
@@ -68,106 +138,18 @@ define([
          * @param value Char that was inserted or deleted
          * @param position Position the change took place
          */
-        var propagateValueChange = function(type,value,position){
-            var operation = new ValueChangeOperation(that.getEntityId(),value,type,position);
+        var propagateValueChange = function (type, value, position) {
+            var operation = new ValueChangeOperation(that.getEntityId(), value, type, position);
             propagateValueChangeOperation(operation);
 
         };
 
 
-        var init = function(){
-            _$node.off();
-            _$node.bind("input",function(){
-                //noinspection UnnecessaryLocalVariableJS
-                var oldValue = _value;
-                var removedString, addedString, i, len;
-                var newValue = _$node.val();
-                var selectionStart = _$node[0].selectionStart;
-                var left = 0;
-                var suffixStart = -newValue.length+selectionStart;
-                if(suffixStart<0){
-                    oldValue = oldValue.slice(0,suffixStart);
-                    newValue = newValue.slice(0,suffixStart);
-                }
-                while(newValue[left]===oldValue[left]&&left<selectionStart-1){
-                    left+=1;
-                }
-                removedString = oldValue.slice(left,oldValue.length-(newValue.length-selectionStart));
-                addedString = newValue.slice(left,selectionStart);
-                if(addedString.length > 0 && removedString.length > 0 && addedString[0] === removedString[0]){
-                    addedString = addedString.slice(1);
-                    removedString = removedString.slice(1);
-                    left+=1;
-                }
-                _$node.val(_value);
-                _$node[0].selectionStart = left;
-                _$node[0].selectionEnd = left;
-                for(i = 0, len = removedString.length; i <len; i++){
-                    propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,removedString[i],left);
-                }
-                for(i = 0, len = addedString.length; i <len; i++){
-                    propagateValueChange(CONFIG.OPERATION.TYPE.INSERT,addedString[i],left+i);
-                }
-            });
-
-        };
-
-        //noinspection JSUnusedLocalSymbols
-        var init2 = function(){
-            _$node.off();
-            _$node.keypress(function (ev) {
-                var selectionStart, selectionEnd;
-                var character = String.fromCharCode(ev.which);
-                var deletedChar;
-
-                ev.preventDefault();
-                ev.stopPropagation();
-                selectionStart = this.selectionStart;
-                selectionEnd = this.selectionEnd;
-                if (character.length > 0) {
-                    while(selectionStart < selectionEnd){
-                        deletedChar = $(this).val()[selectionStart];
-                        propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart);
-                        selectionEnd--;
-                    }
-                    propagateValueChange(CONFIG.OPERATION.TYPE.INSERT,character,selectionStart);
-                }
-            }).keydown(function(ev){
-                if (ev.which === $.ui.keyCode.BACKSPACE || ev.which === $.ui.keyCode.DELETE) {
-                    var selectionStart, selectionEnd;
-                    var deletedChar;
-
-                    ev.preventDefault();
-                    ev.stopPropagation();
-                    selectionStart = this.selectionStart;
-                    selectionEnd = this.selectionEnd;
-                    if(selectionStart == selectionEnd){
-                        if (ev.which === $.ui.keyCode.BACKSPACE) {
-                            deletedChar = $(this).val()[selectionStart-1];
-                            propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart-1);
-                        } else if (ev.which === $.ui.keyCode.DELETE) {
-                            deletedChar = $(this).val()[selectionStart];
-                            propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart);
-                        }
-                    } else {
-                        while(selectionStart < selectionEnd){
-                            deletedChar = $(this).val()[selectionStart];
-                            propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart);
-                            selectionEnd--;
-                        }
-                    }
-                }
-            });
-            if(iwc){
-                that.registerCallbacks();
-            }
-        };
-
         /**
          * Set value
          * @param {string} value
          */
-        this.setValue = function(value){
+        this.setValue = function (value) {
             _value = value;
             _$node.val(value);
         };
@@ -176,7 +158,7 @@ define([
          * Get value
          * @returns {string}
          */
-        this.getValue = function(){
+        this.getValue = function () {
             return _value;
         };
 
@@ -184,7 +166,7 @@ define([
          * Get jQuery object of DOM node representing the value
          * @returns {jQuery}
          */
-        this.get$node = function(){
+        this.get$node = function () {
             return _$node;
         };
 
@@ -192,14 +174,14 @@ define([
          * Set value by its JSON representation
          * @param json
          */
-        this.setValueFromJSON = function(json){
+        this.setValueFromJSON = function (json) {
             this.setValue(json.value);
         };
 
         /**
          * Register inter widget communication callbacks
          */
-        this.registerCallbacks = function(){
+        this.registerCallbacks = function () {
             //iwc.registerOnDataReceivedCallback(bindYTextCallback);
 
         };
@@ -207,7 +189,7 @@ define([
         /**
          * Unregister inter widget communication callbacks
          */
-        this.unregisterCallbacks = function(){
+        this.unregisterCallbacks = function () {
             //iwc.unregisterOnDataReceivedCallback(bindYTextCallback);
 
         };
@@ -248,8 +230,8 @@ define([
             }
         }
 
-        var initData = function(ytext, data){
-            if(data){
+        var initData = function (ytext, data) {
+            if (data) {
                 if (data !== ytext.toString()) {
                     if (ytext.toString().length > 0)
                         ytext.delete(0, ytext.toString().length);
@@ -264,17 +246,20 @@ define([
                 }
             }
         };
-        this.registerYType = function(ytext){
+        this.registerYType = function (ytext) {
             _ytext = ytext;
-            _ytext.bind(_$node[0]);
+            _ytext.observe(function (event) {
+                _value = event.object.toString();
+                propagateValueChange(CONFIG.OPERATION.TYPE.INSERT, _value, 0);
+            })
             initData(ytext);
         };
 
-        this.getYText = function(){
+        this.getYText = function () {
             return _ytext;
         };
 
-        if(iwc){
+        if (iwc) {
             that.registerCallbacks();
         }
         //init();

@@ -7,9 +7,9 @@ define([
     'attribute_widget/SingleValueAttribute',
     'attribute_widget/IntegerAttribute',
     'attribute_widget/SingleColorValueAttribute',
-    'attribute_widget/SingleMultiLineValueAttribute',
+    'attribute_widget/SingleCodeEditorValueAttribute',
     'text!templates/attribute_widget/node_shape_node.html'
-],/** @lends NodeShapeNode */function($,jsPlumb,_,AbstractNode,SingleSelectionAttribute,SingleValueAttribute,IntegerAttribute,SingleColorValueAttribute,SingleMultiLineValueAttribute,nodeShapeNodeHtml) {
+],/** @lends NodeShapeNode */function($,jsPlumb,_,AbstractNode,SingleSelectionAttribute,SingleValueAttribute,IntegerAttribute,SingleColorValueAttribute,SingleCodeEditorValueAttribute,nodeShapeNodeHtml) {
 
     NodeShapeNode.TYPE = "Node Shape";
 
@@ -65,7 +65,7 @@ define([
         this.addAttribute(new SingleColorValueAttribute(this.getEntityId()+"[color]","Color",this));
         this.addAttribute(new IntegerAttribute(this.getEntityId()+"[defaultWidth]","Default Width",this));
         this.addAttribute(new IntegerAttribute(this.getEntityId()+"[defaultHeight]","Default Height",this));
-        this.addAttribute(new SingleMultiLineValueAttribute(this.getEntityId()+"[customShape]","Custom Shape",this));
+        this.addAttribute(new SingleCodeEditorValueAttribute(this.getEntityId()+"[customShape]","Custom Shape",this));
         this.addAttribute(new SingleValueAttribute(this.getEntityId()+"[customAnchors]","Custom Anchors",this));
 
         _$node.find(".label").append(this.getLabel().get$node());

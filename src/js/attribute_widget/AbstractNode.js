@@ -10,7 +10,7 @@ define([
     'attribute_widget/AbstractEntity',
     'attribute_widget/SingleValueAttribute',
     'text!templates/attribute_widget/abstract_node.html'
-],/** @lends AbstractNode */function(require,$,jsPlumb,_,Util,IWCW,EntitySelectOperation,NodeDeleteOperation,AbstractEntity,SingleValueAttribute,abstractNodeHtml) {
+],/** @lends AbstractNode */function (require, $, jsPlumb, _, Util, IWCW, EntitySelectOperation, NodeDeleteOperation, AbstractEntity, SingleValueAttribute, abstractNodeHtml) {
 
     AbstractNode.prototype = new AbstractEntity();
     AbstractNode.prototype.constructor = AbstractNode;
@@ -28,10 +28,10 @@ define([
      * @param {string} viewId the identifier of the view the node belongs to
      * @constructor
      */
-    function AbstractNode(id,type,left,top,width,height, viewId){
+    function AbstractNode(id, type, left, top, width, height, viewId) {
         var that = this;
 
-        AbstractEntity.call(this,id);
+        AbstractEntity.call(this, id);
 
         /**
          * identifier of view the node belongs to
@@ -52,7 +52,7 @@ define([
          * @type {attribute_widget.SingleValueAttribute}
          * @private
          */
-        var _label = new SingleValueAttribute(id+"[label]","Label",this);
+        var _label = new SingleValueAttribute(id + "[label]", "Label", this);
 
         /**
          * Appearance information of edge
@@ -78,7 +78,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(abstractNodeHtml,{id: id}));
+        var _$node = $(_.template(abstractNodeHtml, { id: id }));
 
         /**
          * Inter widget communication wrapper
@@ -127,13 +127,13 @@ define([
          * Apply a Node Delete Operation
          * @param {operations.ot.NodeDeleteOperation} operation
          */
-        var processNodeDeleteOperation = function(operation){
+        var processNodeDeleteOperation = function (operation) {
             var edges = that.getEdges(),
                 edgeId,
                 edge;
 
-            for(edgeId in edges){
-                if(edges.hasOwnProperty(edgeId)){
+            for (edgeId in edges) {
+                if (edges.hasOwnProperty(edgeId)) {
                     edge = edges[edgeId];
                     edge.remove();
                 }
@@ -146,8 +146,11 @@ define([
          * Callback for an Entity Select Operation
          * @param {EntitySelectOperation} operation
          */
-        var entitySelectCallback = function(operation){
-            if(operation instanceof EntitySelectOperation && operation.getSelectedEntityId() === that.getEntityId()){
+        var entitySelectCallback = function (operation) {
+            if (operation instanceof EntitySelectOperation && operation.getSelectedEntityId() === that.getEntityId()) {
+                $('.ace-container').hide();
+                if (_wrapper.get$node().is(':hidden'))
+                    _wrapper.get$node().show();
                 _wrapper.select(that);
             }
         };
@@ -156,19 +159,19 @@ define([
          * Callback for a Node Delete Operation
          * @param {operations.ot.NodeDeleteOperation} operation
          */
-        var nodeDeleteCallback = function(operation){
-            if(operation instanceof NodeDeleteOperation && operation.getEntityId() === that.getEntityId()){
+        var nodeDeleteCallback = function (operation) {
+            if (operation instanceof NodeDeleteOperation && operation.getEntityId() === that.getEntityId()) {
                 processNodeDeleteOperation(operation);
             }
         };
 
-        var init = function(){
-            _$node.find('.show_hint a').click(function(e){
+        var init = function () {
+            _$node.find('.show_hint a').click(function (e) {
                 var $this = $(this),
                     $hint = _$node.find('.hint');
 
                 e.preventDefault();
-                if($hint.is(":visible")){
+                if ($hint.is(":visible")) {
                     $hint.hide();
                     $this.text('Show list of possible connections');
                 } else {
@@ -183,7 +186,7 @@ define([
          * Adds node to wrapper
          * @param {attribute_widget.AttributeWrapper} wrapper
          */
-        this.addToWrapper = function(wrapper){
+        this.addToWrapper = function (wrapper) {
             _wrapper = wrapper;
             _wrapper.get$node().append(_$node.hide());
             init();
@@ -192,7 +195,7 @@ define([
         /**
          * Removes edge from wrapper
          */
-        this.removeFromWrapper = function(){
+        this.removeFromWrapper = function () {
             _wrapper = null;
             _$node.detach();
         };
@@ -201,9 +204,9 @@ define([
          * Add attribute to node
          * @param {attribute_widget.AbstractAttribute} attribute
          */
-        this.addAttribute = function(attribute){
+        this.addAttribute = function (attribute) {
             var id = attribute.getEntityId();
-            if(!_attributes.hasOwnProperty(id)){
+            if (!_attributes.hasOwnProperty(id)) {
                 _attributes[id] = attribute;
             }
         };
@@ -213,8 +216,8 @@ define([
          * @param {String} id Attribute's entity id
          * @returns {attribute_widget.AbstractAttribute}
          */
-        this.getAttribute = function(id){
-            if(_attributes.hasOwnProperty(id)){
+        this.getAttribute = function (id) {
+            if (_attributes.hasOwnProperty(id)) {
                 return _attributes[id];
             }
             return null;
@@ -224,8 +227,8 @@ define([
          * Delete attribute by id
          * @param {String} id Attribute's entity id
          */
-        this.deleteAttribute = function(id){
-            if(!_attributes.hasOwnProperty(id)){
+        this.deleteAttribute = function (id) {
+            if (!_attributes.hasOwnProperty(id)) {
                 delete _attributes[id];
             }
         };
@@ -234,7 +237,7 @@ define([
          * Set node's attributes
          * @param {Object} attributes
          */
-        this.setAttributes = function(attributes){
+        this.setAttributes = function (attributes) {
             _attributes = attributes;
         };
 
@@ -242,7 +245,7 @@ define([
          * Get node's attributes
          * @returns {Object}
          */
-        this.getAttributes = function(){
+        this.getAttributes = function () {
             return _attributes;
         };
 
@@ -250,7 +253,7 @@ define([
          * Set edge label
          * @param {attribute_widget.SingleValueAttribute} label
          */
-        this.setLabel = function(label){
+        this.setLabel = function (label) {
             _label = label;
         };
 
@@ -258,18 +261,18 @@ define([
          * get the identifier of the view the node belongs to
          * @returns {string}
          */
-        this.getViewId = function(){
+        this.getViewId = function () {
             return _viewId;
         };
 
-        this.setViewId = function(viewId){
+        this.setViewId = function (viewId) {
             _viewId = viewId;
         };
         /**
          * Get edge label
          * @returns {attribute_widget.SingleValueAttribute}
          */
-        this.getLabel = function(){
+        this.getLabel = function () {
             return _label;
         };
 
@@ -277,7 +280,7 @@ define([
          * Get edge type
          * @returns {string}
          */
-        this.getType = function(){
+        this.getType = function () {
             return _type;
         };
 
@@ -286,7 +289,7 @@ define([
          * @returns {jQuery}
          * @private
          */
-        this._get$node = function(){
+        this._get$node = function () {
             return _$node;
         };
 
@@ -294,13 +297,13 @@ define([
          * Add ingoing edge
          * @param {attribute_widget.AbstractEdge} edge
          */
-        this.addIngoingEdge = function(edge){
+        this.addIngoingEdge = function (edge) {
             var id = edge.getEntityId();
             var source = edge.getSource();
             var sourceEntityId = source.getEntityId();
-            if(!_ingoingEdges.hasOwnProperty(id)){
+            if (!_ingoingEdges.hasOwnProperty(id)) {
                 _ingoingEdges[id] = edge;
-                if(!_ingoingNeighbors.hasOwnProperty(sourceEntityId)){
+                if (!_ingoingNeighbors.hasOwnProperty(sourceEntityId)) {
                     _ingoingNeighbors[sourceEntityId] = source;
                 }
             }
@@ -310,13 +313,13 @@ define([
          * Add outgoing edge
          * @param {attribute_widget.AbstractEdge} edge
          */
-        this.addOutgoingEdge = function(edge){
+        this.addOutgoingEdge = function (edge) {
             var id = edge.getEntityId();
             var target = edge.getTarget();
             var targetEntityId = target.getEntityId();
-            if(!_outgoingEdges.hasOwnProperty(id)){
+            if (!_outgoingEdges.hasOwnProperty(id)) {
                 _outgoingEdges[id] = edge;
-                if(!_outgoingNeighbors.hasOwnProperty(targetEntityId)){
+                if (!_outgoingNeighbors.hasOwnProperty(targetEntityId)) {
                     _outgoingNeighbors[targetEntityId] = target;
                 }
             }
@@ -326,19 +329,19 @@ define([
          * Delete ingoing edge
          * @param {attribute_widget.AbstractEdge} edge
          */
-        this.deleteIngoingEdge = function(edge){
+        this.deleteIngoingEdge = function (edge) {
             var id = edge.getEntityId();
             var source = edge.getSource();
             var sourceEntityId = source.getEntityId();
             var isMultiEdge = false;
-            if(_ingoingEdges.hasOwnProperty(id)){
+            if (_ingoingEdges.hasOwnProperty(id)) {
                 delete _ingoingEdges[id];
-                for(var edgeId in _ingoingEdges){
-                    if(_ingoingEdges.hasOwnProperty(edgeId) && _ingoingEdges[edgeId].getSource().getEntityId() === sourceEntityId){
+                for (var edgeId in _ingoingEdges) {
+                    if (_ingoingEdges.hasOwnProperty(edgeId) && _ingoingEdges[edgeId].getSource().getEntityId() === sourceEntityId) {
                         isMultiEdge = true;
                     }
                 }
-                if(!isMultiEdge){
+                if (!isMultiEdge) {
                     delete _ingoingNeighbors[sourceEntityId];
                 }
             }
@@ -348,19 +351,19 @@ define([
          * Delete outgoing edge
          * @param {attribute_widget.AbstractEdge} edge
          */
-        this.deleteOutgoingEdge = function(edge){
+        this.deleteOutgoingEdge = function (edge) {
             var id = edge.getEntityId();
             var target = edge.getTarget();
             var targetEntityId = target.getEntityId();
             var isMultiEdge = false;
-            if(_outgoingEdges.hasOwnProperty(id)){
+            if (_outgoingEdges.hasOwnProperty(id)) {
                 delete _outgoingEdges[id];
-                for(var edgeId in _outgoingEdges){
-                    if(_outgoingEdges.hasOwnProperty(edgeId) && _outgoingEdges[edgeId].getTarget().getEntityId() === targetEntityId){
+                for (var edgeId in _outgoingEdges) {
+                    if (_outgoingEdges.hasOwnProperty(edgeId) && _outgoingEdges[edgeId].getTarget().getEntityId() === targetEntityId) {
                         isMultiEdge = true;
                     }
                 }
-                if(!isMultiEdge){
+                if (!isMultiEdge) {
                     delete _outgoingNeighbors[targetEntityId];
                 }
             }
@@ -371,7 +374,7 @@ define([
          * Get ingoing edges
          * @returns {Object}
          */
-        this.getIngoingEdges = function(){
+        this.getIngoingEdges = function () {
             return _ingoingEdges;
         };
 
@@ -379,7 +382,7 @@ define([
          * Get outgoing edges
          * @returns {Object}
          */
-        this.getOutgoingEdges = function(){
+        this.getOutgoingEdges = function () {
             return _outgoingEdges;
         };
 
@@ -387,8 +390,8 @@ define([
          * Get all ingoing and outgoing edges
          * @returns {Array}
          */
-        this.getEdges = function(){
-            return Util.union(_ingoingEdges,_outgoingEdges);
+        this.getEdges = function () {
+            return Util.union(_ingoingEdges, _outgoingEdges);
         };
 
         //noinspection JSUnusedGlobalSymbols
@@ -396,7 +399,7 @@ define([
          * Get neighbors with an edge to the node
          * @returns {Object}
          */
-        this.getIngoingNeighbors = function(){
+        this.getIngoingNeighbors = function () {
             return _ingoingNeighbors;
         };
 
@@ -405,7 +408,7 @@ define([
          * Get neighbors with an edge from the node
          * @returns {Object}
          */
-        this.getOutgoingNeighbors = function(){
+        this.getOutgoingNeighbors = function () {
             return _outgoingNeighbors;
         };
 
@@ -414,14 +417,14 @@ define([
          * Get neighbors with an edge to or from the node
          * @returns {Object}
          */
-        this.getNeighbors = function(){
-            return Util.union(_ingoingNeighbors,_outgoingNeighbors);
+        this.getNeighbors = function () {
+            return Util.union(_ingoingNeighbors, _outgoingNeighbors);
         };
 
         /**
          * Select the node
          */
-        this.select = function(){
+        this.select = function () {
             var connectToText = require('attribute_widget/EntityManager').generateConnectToText(this);
             _$node.find('.hint').html(connectToText).hide();
             _$node.find('.show_hint').toggle(connectToText !== "");
@@ -431,28 +434,28 @@ define([
         /**
          * Unselect the node
          */
-        this.unselect = function(){
+        this.unselect = function () {
             this.hide();
         };
 
         /**
          * Show the node
          */
-        this.hide = function(){
+        this.hide = function () {
             _$node.hide();
         };
 
         /**
          * Hide the node
          */
-        this.show = function(){
+        this.show = function () {
             _$node.show();
         };
 
         /**
          * Remove the node
          */
-        this.remove = function(){
+        this.remove = function () {
             this.removeFromWrapper();
             //this.unregisterCallbacks();
             var EntityManager = require('attribute_widget/EntityManager');
@@ -465,7 +468,7 @@ define([
          * @returns {Object}
          * @private
          */
-        this.toJSON = function(){
+        this.toJSON = function () {
             return {
                 id: id,
                 label: _label.getValue(),
@@ -476,7 +479,7 @@ define([
         /**
          * Register inter widget communication callbacks
          */
-        this.registerCallbacks = function(){
+        this.registerCallbacks = function () {
             _iwc.registerOnDataReceivedCallback(entitySelectCallback);
             _iwc.registerOnDataReceivedCallback(nodeDeleteCallback);
         };
@@ -484,33 +487,33 @@ define([
         /**
          * Unregister inter widget communication callbacks
          */
-        this.unregisterCallbacks = function(){
+        this.unregisterCallbacks = function () {
             _iwc.unregisterOnDataReceivedCallback(entitySelectCallback);
             _iwc.unregisterOnDataReceivedCallback(nodeDeleteCallback);
         };
 
-        this._registerYType = function(){
+        this._registerYType = function () {
             y.share.nodes.get(that.getEntityId()).then(function (ymap) {
-                if(ytext = ymap.get(that.getLabel().getValue().getEntityId()))
+                if (ytext = ymap.get(that.getLabel().getValue().getEntityId()))
                     ytext.then(function (ytext) {
                         that.getLabel().getValue().registerYType(ytext);
                     })
             })
         };
 
-        if(_iwc){
+        if (_iwc) {
             that.registerCallbacks();
         }
 
     }
-    AbstractNode.prototype.draw = function(){
+    AbstractNode.prototype.draw = function () {
         return this._draw();
     };
-    AbstractNode.prototype.get$node = function(){
+    AbstractNode.prototype.get$node = function () {
         return this._get$node();
     };
 
-    AbstractNode.prototype.registerYType = function(){
+    AbstractNode.prototype.registerYType = function () {
         this._registerYType();
     };
 

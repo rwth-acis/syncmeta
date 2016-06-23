@@ -52,9 +52,13 @@ module.exports = function(grunt) {
                     {cwd:'<%= bowerdir %>/y-memory',expand:true, src: ['*.js'], dest:'<%=distdir%>/js/lib/vendor/y-memory'},
                     {src: '<%= bowerdir %>/chai/chai.js', dest: '<%= distdir %>/js/lib/vendor/test/chai.js'},
                     {src: '<%= bowerdir %>/mocha/mocha.js', dest: '<%= distdir %>/js/lib/vendor/test/mocha.js'},
-                    {src: '<%= bowerdir %>/mocha/mocha.css', dest: '<%= distdir %>/js/lib/vendor/test/mocha.css'}
+                    {src: '<%= bowerdir %>/mocha/mocha.css', dest: '<%= distdir %>/js/lib/vendor/test/mocha.css'},
+                    {src: '<%= bowerdir %>/ace-builds/src-min-noconflict/ace.js', dest: '<%= distdir %>/js/lib/vendor/ace/ace.js'},
+                    {src: '<%= bowerdir %>/ace-builds/src-min-noconflict/mode-svg.js', dest: '<%= distdir %>/js/lib/vendor/ace/mode-svg.js'},
+                    {src: '<%= bowerdir %>/ace-builds/src-min-noconflict/theme-github.js', dest: '<%= distdir %>/js/lib/vendor/ace/theme-github.js'},
+                    {src: '<%= bowerdir %>/ace-builds/src-min-noconflict/worker-xml.js', dest: '<%= distdir %>/js/lib/vendor/ace/worker-xml.js'},
 
-
+  
                 ]
             },
             main: {
