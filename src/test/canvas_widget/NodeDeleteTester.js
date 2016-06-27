@@ -4,7 +4,7 @@ define(['chai','canvas_widget/EntityManager'], function(chai, EntityManager){
 
         describe('CANVAS - ' + title, function() {
             before(function (done) {
-                EntityManager.findNode(nodeId).triggerDeletion();
+                EntityManager.findNode(nodeId).triggerDeletion()
                 done();
             });
             it( nodeId + ' node should no longer be in EntityManager', function(){
@@ -21,7 +21,7 @@ define(['chai','canvas_widget/EntityManager'], function(chai, EntityManager){
 
             after(function(done){
                 if(callback)
-                    callback();
+                    callback(null, nodeId);
                 done();
             })
         });

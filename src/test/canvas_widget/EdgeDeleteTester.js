@@ -23,7 +23,7 @@ define(['chai','canvas_widget/EntityManager'], function(chai, EntityManager){
 
             after(function(done){
                 if(callback)
-                    callback();
+                    callback(null, id);
                 done();
             })
 

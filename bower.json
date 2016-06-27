@@ -35,7 +35,8 @@
     "y-websockets-client": "^8.0.9",
     "y-text": "^9.0.1",
     "y-memory": "^8.0.5",
-    "ace-builds": "^1.2.3"
+    "ace-builds": "^1.2.3",
+    "async": "^1.5.2"
   },
   "resolutions": {
     "lodash": "~2.4.1"
