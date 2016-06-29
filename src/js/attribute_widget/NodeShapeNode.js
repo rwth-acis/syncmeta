@@ -82,11 +82,11 @@ define([
                 var colorAttr = that.getAttribute(that.getEntityId()+'[color]');
                 registerValue(ymap, colorAttr.getValue());
 
-                var customShapeAttr = that.getAttribute(that.getEntityId()+"[customShape]");
-                registerValue(ymap, customShapeAttr.getValue());
+                //var customShapeAttr = that.getAttribute(that.getEntityId()+"[customShape]");
+                //registerValue(ymap, customShapeAttr.getValue());
 
                 var customAnchorAttr = that.getAttribute(that.getEntityId()+"[customAnchors]");
-                registerValue(ymap, customShapeAttr.getValue());
+                registerValue(ymap, customAnchorAttr.getValue());
             });
         };
 
