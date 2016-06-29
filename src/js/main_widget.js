@@ -51,9 +51,9 @@ requirejs([
     'canvas_widget/ViewGenerator',
     'canvas_widget/HistoryManager',
     'canvas_widget/JSONtoGraph',
-    'promise!Space'
-    //'promise!Guidancemodel'
-],function($,jsPlumb,IWCW, yjsSync,Util,NonOTOperation,ToolSelectOperation,ActivityOperation,JoinOperation, ViewInitOperation, UpdateViewListOperation, DeleteViewOperation,SetViewTypesOperation, InitModelTypesOperation, SetModelAttributeNodeOperation, Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge, ViewObjectNode, ViewObjectNodeTool,ViewRelationshipNode, ViewRelationshipNodeTool, ViewManager, ViewGenerator, HistoryManager, JSONtoGraph,space/*,guidancemodel*/) {
+    'promise!Space',
+    'promise!Guidancemodel'
+],function($,jsPlumb,IWCW, yjsSync,Util,NonOTOperation,ToolSelectOperation,ActivityOperation,JoinOperation, ViewInitOperation, UpdateViewListOperation, DeleteViewOperation,SetViewTypesOperation, InitModelTypesOperation, SetModelAttributeNodeOperation, Canvas,EntityManager,NodeTool,ObjectNodeTool,AbstractClassNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,EdgeTool,GeneralisationEdgeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,ObjectNode,AbstractClassNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,GeneralisationEdge,BiDirAssociationEdge,UniDirAssociationEdge, ViewObjectNode, ViewObjectNodeTool,ViewRelationshipNode, ViewRelationshipNodeTool, ViewManager, ViewGenerator, HistoryManager, JSONtoGraph,space, guidancemodel) {
 
     var _iwcw;
     _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
@@ -80,7 +80,15 @@ requirejs([
     });
     function InitMainWidget(metamodel, model) {
 
-        EntityManager.init(metamodel);
+
+        if (guidancemodel.isGuidanceEditor()) {
+            //Set the model which is shown by the editor to the guidancemodel
+            model = y.share.data.get('guidancemodel');
+            //Set the metamodel to the guidance metamodel
+            metamodel = y.share.data.get('guidancemetamodel');
+        }
+        EntityManager.init(metamodel, guidancemodel);
+
         var userList = [];
         var canvas = new Canvas($("#canvas"));
         y.share.join.observe(function(event){
@@ -136,13 +144,8 @@ requirejs([
                 canvas.resetTool();
             }
         });
-        /*
-         if (guidancemodel.isGuidanceEditor()) {
-         //Set the model which is shown by the editor to the guidancemodel
-         model = guidancemodel.guidancemodel;
-         //Set the metamodel to the guidance metamodel
-         metamodel = guidancemodel.guidancemetamodel;
-         }*/
+
+
 
         if (metamodel) {
             if (metamodel.hasOwnProperty("nodes")) {
@@ -528,7 +531,7 @@ requirejs([
                 }, 1000);
 
             } else {
-                y.share.data.set('model', EntityManager.graphToJSON());
+                EntityManager.storeDataYjs();
                 $feedback.text("Saved!");
                 setTimeout(function () {
                     $feedback.text("");

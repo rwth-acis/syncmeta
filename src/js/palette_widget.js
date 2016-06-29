@@ -19,15 +19,9 @@ requirejs([
     'palette_widget/UniDirAssociationEdgeTool',
     'palette_widget/GeneralisationEdgeTool',
     'palette_widget/ViewObjectNodeTool',
-    'palette_widget/ViewRelationshipNodeTool'
-   // 'text!templates/canvas_widget/circle_node.html',
-    //'text!templates/canvas_widget/diamond_node.html',
-    //'text!templates/canvas_widget/rectangle_node.html',
-    //'text!templates/canvas_widget/rounded_rectangle_node.html',
-    //'text!templates/canvas_widget/triangle_node.html'
-    //'promise!Metamodel',
-    //'promise!Guidancemodel'
-],function ($,yjsSync,Palette,MoveTool,ObjectNodeTool,AbstractClassNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,GeneralisationEdgeTool,ViewObjectNodeTool,ViewRelationshipNodeTool/*,circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml*//*,metamodel,guidancemodel*/) {
+    'palette_widget/ViewRelationshipNodeTool',
+    'promise!Guidancemodel'
+],function ($,yjsSync,Palette,MoveTool,ObjectNodeTool,AbstractClassNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,GeneralisationEdgeTool,ViewObjectNodeTool,ViewRelationshipNodeTool,guidancemodel) {
 
     yjsSync().done(function(y) {
         window.y = y;
@@ -39,9 +33,9 @@ requirejs([
         palette.addSeparator();
 
         //Set the metamodel to the guidance metamodel in the guidance editor
-        /*if (guidancemodel.isGuidanceEditor()) {
-            metamodel = guidancemodel.guidancemetamodel;
-        }*/
+        if (guidancemodel.isGuidanceEditor()) {
+            metamodel = y.share.data.get('guidancemetamodel');
+        }
 
         if (metamodel) {
             if (metamodel.hasOwnProperty('nodes')) {
@@ -77,30 +71,6 @@ requirejs([
 
 
         }
-
-        //var componentName = "palette"+Util.generateRandomId();
-        //var iwc = IWCW.getInstance(componentName);
-        /**
-         * Predefined node shapes, first is default
-         * @type {{circle: *, diamond: *, rectangle: *, triangle: *}}
-         */
-        /*
-         //UNSUSED
-         var nodeShapeTypes = {
-         "circle": circleNodeHtml,
-         "diamond": diamondNodeHtml,
-         "rectangle": rectangleNodeHtml,
-         "rounded_rectangle": roundedRectangleNodeHtml,
-         "triangle": triangleNodeHtml
-         };*/
-
-        /**
-         * jQuery object to test for valid color
-         * @type {$}
-         */
-        //unused
-        //var $colorTestElement = $('<div></div>');
-
 
         if (CONFIG.TEST_MODE_PALETTE)
             require(['./../test/PaletteWidgetTest']);

@@ -15,18 +15,10 @@ define(['lodash',
 		'attribute_widget/ViewObjectNode',
 		'attribute_widget/ViewRelationshipNode',
         'attribute_widget/ViewNode',
-        'attribute_widget/ViewEdge',
-		//'promise!Metamodel',
-        //'promise!Guidancemodel'
-
+        'attribute_widget/ViewEdge'
 ], /** @lends EntityManager */
-	function (_, Node, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, ModelAttributesNode, Edge, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNode, ViewRelationshipNode, ViewNode, ViewEdge /*metamodel,guidancemodel*/) {
+	function (_, Node, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, ModelAttributesNode, Edge, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNode, ViewRelationshipNode, ViewNode, ViewEdge) {
 
-
-    //Set the metamodel to the guidance metamodel for guidance modeling
-    /*if(guidancemodel.isGuidanceEditor()){
-        metamodel = guidancemodel.guidancemetamodel;
-    }*/
 
 	/**
 	 * EntityManager

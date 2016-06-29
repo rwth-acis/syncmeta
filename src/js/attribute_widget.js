@@ -13,10 +13,9 @@ requirejs([
     'operations/non_ot/JoinOperation',
     'operations/non_ot/InitModelTypesOperation',
     'operations/non_ot/ViewInitOperation',
-    'operations/non_ot/SetModelAttributeNodeOperation'
-    //'promise!Space'
-    //'promise!Guidancemodel'
-],function ($,IWCW,yjsSync,AttributeWrapper,EntityManager, ViewGenerator, JoinOperation,InitModelTypesOperation,ViewInitOperation, SetModelAttributeNodeOperation /*,space,guidancemodel*/) {
+    'operations/non_ot/SetModelAttributeNodeOperation',
+    'promise!Guidancemodel'
+],function ($,IWCW,yjsSync,AttributeWrapper,EntityManager, ViewGenerator, JoinOperation,InitModelTypesOperation,ViewInitOperation, SetModelAttributeNodeOperation, guidancemodel) {
 
     var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE);
 
@@ -30,12 +29,18 @@ requirejs([
         InitAttributeWidget();
     });
     function InitAttributeWidget(model) {
-        EntityManager.init(y.share.data.get('metamodel'));
+
+        if(guidancemodel.isGuidanceEditor()){
+            EntityManager.init(y.share.data.get('guidancemetamodel'));
+            model = y.share.data.get('guidancemodel');
+        }else {
+            EntityManager.init(y.share.data.get('metamodel'));
+        }
         var wrapper = new AttributeWrapper($("#wrapper"));
 
-        /*if (guidancemodel.isGuidanceEditor()) {
-         model = guidancemodel.guidancemodel;
-         }*/
+        if(model)
+            JSONtoGraph(model);
+
 
         function JSONtoGraph(json) {
             var modelAttributesNode;
@@ -74,25 +79,25 @@ requirejs([
         }
 
         iwc.registerOnDataReceivedCallback(function (operation) {
-            var model, modelAttributesNode;
+            var modelAttributesNode/*, model*/;
             if (operation instanceof JoinOperation && operation.isDone()) {
                 y.share.users.set(y.db.userId,operation.getUser());
                 /*if (firstInitializationFlag)
-                    firstInitializationFlag = false;
-                else {
-                    model = operation.getData();
-                    JSONtoGraph(model);
+                 firstInitializationFlag = false;
+                 else {
+                 model = operation.getData();
+                 JSONtoGraph(model);
 
-                    $("#loading").hide();
-                }
+                 $("#loading").hide();
+                 }
 
-                modelAttributesNode = wrapper.getModelAttributesNode();
-                if (modelAttributesNode === null) {
-                    modelAttributesNode = EntityManager.createModelAttributesNode();
-                    wrapper.setModelAttributesNode(modelAttributesNode);
-                    modelAttributesNode.addToWrapper(wrapper);
-                }
-                wrapper.select(modelAttributesNode);*/
+                 modelAttributesNode = wrapper.getModelAttributesNode();
+                 if (modelAttributesNode === null) {
+                 modelAttributesNode = EntityManager.createModelAttributesNode();
+                 wrapper.setModelAttributesNode(modelAttributesNode);
+                 modelAttributesNode.addToWrapper(wrapper);
+                 }
+                 wrapper.select(modelAttributesNode);*/
 
             }
             else if (operation instanceof SetModelAttributeNodeOperation) {
@@ -156,10 +161,10 @@ requirejs([
             }
         });
 
-        if(model)
-            JSONtoGraph(model);
 
-        var firstInitializationFlag = true;
+
+
+        //var firstInitializationFlag = true;
 
         var operation = new SetModelAttributeNodeOperation();
         iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN, operation.toNonOTOperation());
@@ -169,25 +174,25 @@ requirejs([
 
         $("#loading").hide();
         //--------------------------------------------------------------------------
-
-        $("#q").draggable({
-            axis: "y",
-            start: function () {
-                var $c = $("body");
-                $c.css('bottom', 'inherit');
-                $(this).css('height', 50);
-            },
-            drag: function (event, ui) {
-                var height = ui.position.top;
-                $("body").css('height', height);
-                gadgets.window.adjustHeight();
-            },
-            stop: function () {
-                $(this).css('height', 3);
-                gadgets.window.adjustHeight();
-                $(this).css('top', '');
-            }
-        });
+        /*
+         $("#q").draggable({
+         axis: "y",
+         start: function () {
+         var $c = $("body");
+         $c.css('bottom', 'inherit');
+         $(this).css('height', 50);
+         },
+         drag: function (event, ui) {
+         var height = ui.position.top;
+         $("body").css('height', height);
+         gadgets.window.adjustHeight();
+         },
+         stop: function () {
+         $(this).css('height', 3);
+         gadgets.window.adjustHeight();
+         $(this).css('top', '');
+         }
+         });*/
     }
 
 });

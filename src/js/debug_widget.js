@@ -65,6 +65,7 @@ requirejs(['jqueryui','lodash','lib/yjs-sync','canvas_widget/GenerateViewpointMo
             $deleteGuidancemodel.click(function(){
                 $exportGuidancemodel.prop('disabled', true);
                 $deleteGuidancemodel.prop('disabled', true);
+                y.share.data.set('guidancemodel');
                 feedback("Done!");
             });
 
@@ -84,8 +85,8 @@ requirejs(['jqueryui','lodash','lib/yjs-sync','canvas_widget/GenerateViewpointMo
 
             $exportGuidancemodel.click(function(){
                 var link = document.createElement('a');
-                link.download = "export.json";
-                link.href = 'data:,'+encodeURI(JSON.stringify(data,null,4));
+                link.download = "guidance_model.json";
+                link.href = 'data:,'+encodeURI(JSON.stringify(y.share.data.get('guidancemodel'),null,4));
                 link.click();
 
             });
@@ -116,6 +117,7 @@ requirejs(['jqueryui','lodash','lib/yjs-sync','canvas_widget/GenerateViewpointMo
                 getFileContent().then(function(data){
                     $exportGuidancemodel.prop('disabled', false);
                     $deleteGuidancemodel.prop('disabled', false);
+                    y.share.data.set('guidancemodel', data);
                     feedback("Done!");
                 });
             });

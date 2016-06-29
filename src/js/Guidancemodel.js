@@ -2,7 +2,6 @@ define([
     'jqueryui'
 ],/** @lends Guidancemodel */function ($) {
 
-    var resourceSpace = new openapp.oo.Resource(openapp.param.space());
 
     /**
      * Guidancemodel
@@ -10,14 +9,13 @@ define([
      */
     function Guidancemodel(){
         var guidancemodeling = {};
-        guidancemodeling.guidancemodel = {};
-        guidancemodeling.metamodel = {};
+
         var deferred = $.Deferred();
         //Check whether this is the guidance modeling editor based on the activity name
         var act = openapp.param.get("http://purl.org/role/terms/activity");
         openapp.resource.get(act, function(resource){
             var activityName;
-            console.info('Guidance promise object by ' + frameElement.name);
+            console.info('Guidance promise by ' + frameElement.name);
             console.info(resource);
             try {
                 if (resource.data)
@@ -124,65 +122,8 @@ define([
                 return type.indexOf(" Tool", type.length - " Tool".length) !== -1;
             };
 
-            var innerDeferred = $.Deferred();
-            var innerDeferred2 = $.Deferred();
-            //Get the guidance model
-            resourceSpace.getSubResources({
-                relation: openapp.ns.role + "data",
-                type: CONFIG.NS.MY.GUIDANCEMODEL,
-                onAll: function(data) {
-                    if(data === null || data.length === 0){
-                        innerDeferred.resolve();
-                    } else {
-                        data[0].getRepresentation("rdfjson",function(representation){
-                            if(representation){
-                                guidancemodeling.guidancemodel = representation;
-                                //guidancemodeling.guidancemetamodel = representation.guidancemetamodel;
-                            }
-                            innerDeferred.resolve();
-                        });
-                    }
-                }
-            });
+            deferred.resolve(guidancemodeling);
 
-            innerDeferred.then(function(){
-                resourceSpace.getSubResources({
-                    relation: openapp.ns.role + "data",
-                    type: CONFIG.NS.MY.METAMODELPREVIEW,
-                    onAll: function(data) {
-                        if(data === null || data.length === 0){
-                            innerDeferred2.resolve();
-                        } else {
-                            data[0].getRepresentation("rdfjson",function(representation){
-                                if(representation){
-                                    guidancemodeling.metamodel = representation;
-                                    //guidancemodeling.guidancemetamodel = representation.guidancemetamodel;
-                                }
-                                innerDeferred2.resolve();
-                            });
-                        }
-                    }
-                });
-            });
-
-            innerDeferred.then(function(){
-                resourceSpace.getSubResources({
-                    relation: openapp.ns.role + "data",
-                    type: CONFIG.NS.MY.GUIDANCEMETAMODEL,
-                    onAll: function(data) {
-                        if(data === null || data.length === 0){
-                            deferred.resolve(guidancemodeling);
-                        } else {
-                            data[0].getRepresentation("rdfjson",function(representation){
-                                if(representation){
-                                    guidancemodeling.guidancemetamodel = representation;
-                                }
-                                deferred.resolve(guidancemodeling);
-                            });
-                        }
-                    }
-                });
-            });
         });
         return deferred.promise();
 

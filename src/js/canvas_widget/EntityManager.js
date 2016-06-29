@@ -30,11 +30,9 @@ define([
     'text!templates/canvas_widget/action_node.html',
     'text!templates/guidance_modeling/entity_node.html',
     'text!templates/guidance_modeling/call_activity_node.html',
-    //'promise!Metamodel',
-    //'promise!Guidancemodel',
     'graphlib'
 ], /** @lends EntityManager */
-function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, ModelAttributesNode, Edge, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNode, ViewRelationshipNode, ViewNode, ViewEdge, circleNodeHtml, diamondNodeHtml, rectangleNodeHtml, roundedRectangleNodeHtml, triangleNodeHtml, setPropertyNodeHtml,activityFinalNodeHtml,startActivityNodeHtml,actionNodeHtml,entityNodeHtml,callActivityNodeHtml/*, metamodel, guidancemodel*/, graphlib) {
+function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, ModelAttributesNode, Edge, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNode, ViewRelationshipNode, ViewNode, ViewEdge, circleNodeHtml, diamondNodeHtml, rectangleNodeHtml, roundedRectangleNodeHtml, triangleNodeHtml, setPropertyNodeHtml,activityFinalNodeHtml,startActivityNodeHtml,actionNodeHtml,entityNodeHtml,callActivityNodeHtml, graphlib) {
 
     /**
      * Predefined node shapes, first is default
@@ -58,18 +56,11 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
      *  can be CONFIG.LAYER.MODEL or CONFIG.LAYER.META*/
     var _layer = null;
 
-    var _OARP_model = null;
-
     /**
      * Different node types
      * @type {object}
      */
     var nodeTypes = {};
-
-    //For guidance modeling set the metamodel to the guidance metamodel
-    /*if(guidancemodel.isGuidanceEditor()){
-        metamodel = guidancemodel.guidancemetamodel;
-    }*/
 
     var _initNodeTypes = function(vls) {
         var _nodeTypes = {};
@@ -176,12 +167,12 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
      * Guidance modeling specific objects
      * Unused
      */
-    /*
-     var objectContextTypes = {};
-     var relationshipContextTypes = {};
-     var objectToolTypes = {};
-     var edgesByLabel = {};
-     var objectToolNodeTypes = {};*/
+
+    var objectContextTypes = {};
+    var relationshipContextTypes = {};
+    var objectToolTypes = {};
+    var edgesByLabel = {};
+    var objectToolNodeTypes = {};
 
 
     var _initEdgeTypes = function(vls){
@@ -223,27 +214,6 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
      */
     var viewEdgeTypes = {};
 
-
-    /*
-    if (metamodel && metamodel.hasOwnProperty("nodes")) {
-        nodeTypes = _initNodeTypes(metamodel);
-        _layer = CONFIG.LAYER.MODEL;
-    } else {
-        nodeTypes[ObjectNode.TYPE] = ObjectNode;
-        nodeTypes[AbstractClassNode.TYPE] = AbstractClassNode;
-        nodeTypes[RelationshipNode.TYPE] = RelationshipNode;
-        nodeTypes[RelationshipGroupNode.TYPE] = RelationshipGroupNode;
-        nodeTypes[EnumNode.TYPE] = EnumNode;
-        nodeTypes[NodeShapeNode.TYPE] = NodeShapeNode;
-        nodeTypes[EdgeShapeNode.TYPE] = EdgeShapeNode;
-
-        //add view types
-        nodeTypes[ViewObjectNode.TYPE] = ViewObjectNode;
-        nodeTypes[ViewRelationshipNode.TYPE] = ViewRelationshipNode;
-
-        _layer = CONFIG.LAYER.META;
-    }*/
-
     /**
      * Different edge types
      * @type {object}
@@ -251,19 +221,19 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
     var edgeTypes = {};
     var relations = {};
     /*
-    if (metamodel && metamodel.hasOwnProperty("edges")) {
-        var res = _initEdgeTypes(metamodel);
-        edgeTypes = res.edgeTypes;
-        relations = res.relations;
-    } else {
-        edgeTypes[GeneralisationEdge.TYPE] = GeneralisationEdge;
-        edgeTypes[BiDirAssociationEdge.TYPE] = BiDirAssociationEdge;
-        edgeTypes[UniDirAssociationEdge.TYPE] = UniDirAssociationEdge;
+     if (metamodel && metamodel.hasOwnProperty("edges")) {
+     var res = _initEdgeTypes(metamodel);
+     edgeTypes = res.edgeTypes;
+     relations = res.relations;
+     } else {
+     edgeTypes[GeneralisationEdge.TYPE] = GeneralisationEdge;
+     edgeTypes[BiDirAssociationEdge.TYPE] = BiDirAssociationEdge;
+     edgeTypes[UniDirAssociationEdge.TYPE] = UniDirAssociationEdge;
 
-        relations[BiDirAssociationEdge.TYPE] = BiDirAssociationEdge.RELATIONS;
-        relations[UniDirAssociationEdge.TYPE] = UniDirAssociationEdge.RELATIONS;
-        relations[GeneralisationEdge.TYPE] = GeneralisationEdge.RELATIONS;
-    }*/
+     relations[BiDirAssociationEdge.TYPE] = BiDirAssociationEdge.RELATIONS;
+     relations[UniDirAssociationEdge.TYPE] = UniDirAssociationEdge.RELATIONS;
+     relations[GeneralisationEdge.TYPE] = GeneralisationEdge.RELATIONS;
+     }*/
 
     /**
      * EntityManager
@@ -308,6 +278,8 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
         };
 
         var metamodel =null;
+
+        var guidancemodel = null;
 
         //noinspection JSUnusedGlobalSymbols
         return {
@@ -1887,39 +1859,19 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
 
                 return $.when.apply($, promises);
             },
-            storeData2: function(){
+            storeDataYjs: function(){
                 var data = this.graphToJSON();
-                var deferred = $.Deferred();
-                if(!_OARP_model){
-                    var resourceSpace = new openapp.oo.Resource(openapp.param.space());
-                    resourceSpace.getSubResources({
-                        relation: openapp.ns.role + "data",
-                        type: CONFIG.NS.MY.MODEL,
-                        onAll: function(docs){
-                            if(docs.length === 0) {
-                                resourceSpace.create({
-                                    relation: openapp.ns.role + "data",
-                                    type: CONFIG.NS.MY.MODEL,
-                                    representation: data,
-                                    callback: function (resource) {
-                                        _OARP_model = resource;
-                                        deferred.resolve();
-                                    }
-                                });
-                            }else{
-                                _OARP_model = docs[0];
-                            }
-                        }
-                    });
-                }else{
-                    _OARP_model.setRepresentation(data, 'application/json', function(){
-                        deferred.resolve();
-                    });
+                if(guidancemodel.isGuidanceEditor()){
+                    y.share.data.set('guidancemodel',data);
+
+                }else if(!metamodel){
+                    y.share.data.set('metamodelpreview', this.generateMetaModel());
+                    y.share.data.set('guidancemetamodel', this.generateGuidanceMetamodel());
+                    y.share.data.set('model', data);
                 }
-                return deferred.promise();
-            },
-            setOARPmodel:function(resource){
-                _OARP_model = resource;
+                else{
+                    y.share.data.set('model', data);
+                }
             },
             /**
              * Delete the Model Attribute Node
@@ -2088,8 +2040,9 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
             getRelations: function(){
                 return relations;
             },
-            init:function(mm){
+            init:function(mm, gm){
                 metamodel = mm;
+                guidancemodel  = gm;
                 if (metamodel && metamodel.hasOwnProperty("nodes")) {
                     nodeTypes = _initNodeTypes(metamodel);
                     _layer = CONFIG.LAYER.MODEL;
