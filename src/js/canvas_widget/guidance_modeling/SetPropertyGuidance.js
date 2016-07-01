@@ -31,14 +31,20 @@ define([
         if(_entityAttribute instanceof SingleValueAttribute){
             _propertyInput = new SingleValueAttribute(entity.getEntityId()+"["+propertyName.toLowerCase()+"]",propertyName,entity);
             _propertyInput.getValue().setValue(_entityAttribute.getValue().getValue());
-
-            _entityAttribute.get$node().find(".val").bind("input", function(){
+            
+            y.share.nodes.get(entity.getEntityId()).then(function(ymap){
+                ymap.get(entity.getEntityId()+"["+propertyName.toLowerCase()+"]").then(function(ytext){
+                    ytext.bind(_propertyInput.getValue().get$node()[0]);
+                })
+            })
+             
+           /* _entityAttribute.get$node().find(".val").bind("input", function(){
                 _propertyInput.getValue().setValue(_entityAttribute.getValue().getValue());
             });
 
             _propertyInput.get$node().find(".val").bind("input", function(){
                 _entityAttribute.getValue().setValue(_propertyInput.getValue().getValue());
-            });
+            });*/
 
             _$node.find(".property-input").append(_propertyInput.get$node().find(".val").prop("disabled", false));
         }

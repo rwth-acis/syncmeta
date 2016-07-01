@@ -1249,8 +1249,9 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
             },
             generateLogicalGuidanceRepresentation: function(){
                 var graph = new graphlib.Graph();
-                var nodes = guidancemodel.guidancemodel.nodes;
-                var edges = guidancemodel.guidancemodel.edges;
+                var model = y.share.data.get('guidancemodel');
+                var nodes = model.nodes;
+                var edges = model.edges;
                 //Returns successor node which belong to the action flow (everything except entity nodes)
                 var getFlowSuccessors = function(nodeId){
                     var targets = [];
