@@ -514,10 +514,7 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                 if(operation.getData() === null){
                     operation.setData(EntityManager.generateLogicalGuidanceRepresentation());
                     _iwcw.sendLocalNonOTOperation(operation.getRequestingComponent(),operation.toNonOTOperation());
-                } else {
-                    //Do nothing here
-                }
-
+                } 
             }
         };
 
