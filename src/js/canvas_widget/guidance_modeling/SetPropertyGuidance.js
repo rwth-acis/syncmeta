@@ -123,6 +123,7 @@ define([
         }
         if (_propertyInput)
             _propertyInput.get$node().find(".val").keypress(function(ev) {
+                //The event is never triggered
                 if (ev.which == 13) {
                     _$node.find(".bs-dropdown-toggle").dropdown('toggle');
                 }

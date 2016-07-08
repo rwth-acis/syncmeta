@@ -71,16 +71,12 @@ requirejs([
         var metamodel = y.share.data.get('metamodel');
         var model = y.share.data.get('model');
         InitMainWidget(metamodel, model);
-
-
     }).fail(function(){
         console.info("yjs log: Yjs intialization failed!");
         window.y = undefined;
         InitMainWidget();
     });
     function InitMainWidget(metamodel, model) {
-
-
         if (guidancemodel.isGuidanceEditor()) {
             //Set the model which is shown by the editor to the guidancemodel
             model = y.share.data.get('guidancemodel');
@@ -224,10 +220,6 @@ requirejs([
 
                 $('#lblCurrentView').show();
                 $currentViewIdLabel.text(viewId);
-
-                //});
-                //}
-
             });
 
             //Modelling layer implementation

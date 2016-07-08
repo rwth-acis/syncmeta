@@ -4,7 +4,8 @@ requirejs.config({
         chai: "lib/vendor/test/chai",
         mocha: 'lib/vendor/test/mocha',
         WebConsoleReporter: './../test/WebConsole',
-        async: 'lib/vendor/async'
+        async: 'lib/vendor/async',
+        jscheck:'lib/vendor/test/jscheck'
     }
 });
 define(['jquery', 'chai', 'async', 'WebConsoleReporter',
@@ -14,7 +15,8 @@ define(['jquery', 'chai', 'async', 'WebConsoleReporter',
     './../test/canvas_widget/NodeDeleteTester',
     './../test/canvas_widget/EdgeDeleteTester',
     'promise!Guidancemodel',
-    'mocha'],
+    'mocha',
+    'jscheck'],
     function($, chai, async, WebConsoleReporter, EntityManager, CreateNodeTester, CreateEdgeTester, NodeDeleteTester, EdgeDeleteTester, Guidancemodel) {
 
         function CanvasWidgetTestMain(canvas) {
@@ -30,11 +32,11 @@ define(['jquery', 'chai', 'async', 'WebConsoleReporter',
                     expect($('#canvas').length).to.be.equal(1);
                 });                
                 
-                if (EntityManager.getLayer() === CONFIG.LAYER.META && !Guidancemodel.isGuidanceEditor()) {         
+                if (EntityManager.getLayer() === CONFIG.LAYER.META && !Guidancemodel.isGuidanceEditor()) {        
                     async.parallel({
-                        objectNode: async.apply(CreateNodeTester, 'META - Create Object node', canvas, ['Object', 4200, 4400, 100, 200, 1000, null, '1234567890']),
-                        abstractNode: async.apply(CreateNodeTester, 'Meta - Create Abstract node', canvas, ['Abstract Class', 4200, 4100, 200, 100, 1000, null, null]),
-                        relationshipNode: async.apply(CreateNodeTester, 'Meta - Relationship node', canvas, ['Relationship', 4400, 4400, 100, 200, 1000, null, null])
+                        objectNode: async.apply(CreateNodeTester, 'META - Create Object node', canvas, ['Object',JSC.integer(0,8500)(),JSC.integer(0,8500)(), JSC.integer(100,300)(), JSC.integer(100,300)(), JSC.integer(100,1000)(), null, '1234567890']),
+                        abstractNode: async.apply(CreateNodeTester, 'Meta - Create Abstract node', canvas, ['Abstract Class', JSC.integer(0,8500)(),JSC.integer(0,8500)(), JSC.integer(100,300)(), JSC.integer(100,300)(), JSC.integer(100,1000)(), null, null]),
+                        relationshipNode: async.apply(CreateNodeTester, 'Meta - Relationship node', canvas, ['Relationship', JSC.integer(0,8500)(),JSC.integer(0,8500)(), JSC.integer(100,300)(), JSC.integer(100,300)(), JSC.integer(100,1000)(), null, null])
                     },
                         function(err, result) {
                             async.parallel({
@@ -94,9 +96,6 @@ define(['jquery', 'chai', 'async', 'WebConsoleReporter',
                             expect(EntityManager.getEdgeType('Data flow edge')).to.be.not.null;
                             expect(EntityManager.getEdgeType('Association edge')).to.be.not.null;
                         });
-                        
-                        
-                        
                     });
                 }
             });

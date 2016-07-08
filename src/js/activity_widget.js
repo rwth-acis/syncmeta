@@ -18,7 +18,6 @@ requirejs([
 
             y.share.join.observe(function(event){
                 activtyList.addUser(event.name);
-
             });
             WaitForCanvas().done(function (userList) {
                for(var i=0;i<userList.length;i++){

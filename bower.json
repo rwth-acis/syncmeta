@@ -13,36 +13,37 @@
     "tests"
   ],
   "dependencies": {
-    "iwc": "http://dbis.rwth-aachen.de/gadgets/iwc/lib/iwc.js",
-    "jquery": "~2.0.3",
-    "jquery-ui": "~1.10.3",
-    "jquery-migrate": "~1.4.0",
-    "jsPlumb": "git://github.com/sporritt/jsPlumb.git#~1.5.3",
-    "jQuery-contextMenu": "git://github.com/medialize/jQuery-contextMenu.git#1.7.0",
-    "requirejs": "~2.1.8",
-    "requirejs-i18n": "~2.0.4",
-    "lodash": "~2.4.1",
-    "requirejs-text": "~2.0.10",
-    "requirejs-promise": "*",
-    "jquery-mousewheel": "~3.1.9",
-    "jszip": "~2.0.0",
+    "ace-builds": "^1.2.3",
+    "async": "^1.5.2",
     "bootstrap": "~3.3.5",
     "font-awesome": "~4.4.0",
     "graphlib": "*",
-    "yjs": "^11.2.1",
-    "y-map": "^9.0.3",
+    "iwc": "http://dbis.rwth-aachen.de/gadgets/iwc/lib/iwc.js",
+    "jquery": "~2.0.3",
+    "jQuery-contextMenu": "git://github.com/medialize/jQuery-contextMenu.git#1.7.0",
+    "jquery-migrate": "~1.4.0",
+    "jquery-mousewheel": "~3.1.9",
+    "jquery-ui": "~1.10.3",
+    "jsPlumb": "git://github.com/sporritt/jsPlumb.git#~1.5.3",
+    "jszip": "~2.0.0",
+    "lodash": "~2.4.1",
+    "requirejs": "~2.1.8",
+    "requirejs-i18n": "~2.0.4",
+    "requirejs-promise": "*",
+    "requirejs-text": "~2.0.10",
     "y-array": "^9.0.3",
-    "y-websockets-client": "^8.0.9",
-    "y-text": "^9.0.1",
+    "y-map": "^9.0.3",
     "y-memory": "^8.0.5",
-    "ace-builds": "^1.2.3",
-    "async": "^1.5.2"
+    "y-text": "^9.0.1",
+    "y-websockets-client": "^8.0.9",
+    "yjs": "^11.2.1"
   },
   "resolutions": {
     "lodash": "~2.4.1"
   },
   "devDependencies": {
-    "mocha": "^2.4.5",
-    "chai": "^3.5.0"
+    "chai": "^3.5.0",
+    "JSCheck": "https://github.com/douglascrockford/JSCheck.git",
+    "mocha": "^2.4.5"
   }
 }

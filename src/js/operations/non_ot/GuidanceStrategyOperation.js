@@ -60,7 +60,7 @@ define([
     GuidanceStrategyOperation.prototype.toJSON = function(){
         return {data:this.getData()}
     };
-
+    
     return GuidanceStrategyOperation;
 
 });

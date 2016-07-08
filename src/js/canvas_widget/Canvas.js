@@ -244,8 +244,7 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
             processEdgeAddOperation(operation,ymap);
             HistoryManager.add(operation);
             $('#save').click();
-
-            //if(_iwcw.sendRemoteOTOperation(operation)){
+            
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
             _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
@@ -261,7 +260,6 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                     targetNodeLabel : targetNode.getLabel().getValue().getValue(),
                     targetNodeType : targetNode.getType()
                 }).toNonOTOperation());
-            //}
         };
 
         /**
@@ -495,8 +493,6 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
                         "-1",
                         _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
                         "..generated new Editor <a href=\"" + data.spaceURI + "\" target=\"_blank\">" + data.spaceTitle + "</a>", {}).toNonOTOperation();
-                    //TODO
-                    //_iwcw.sendRemoteNonOTOperation(op);
                     _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, op);
                 }
 
@@ -521,16 +517,14 @@ function ($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelect
         var localGuidanceStrategyOperationCallback = function(operation){
             if(operation instanceof GuidanceStrategyOperation){
                 //Just forward the message to remote users
-                //TODO
-                //_iwcw.sendRemoteNonOTOperation(operation.toNonOTOperation());
+                y.share.canvas.set(GuidanceStrategyOperation.TYPE, operation.toJSON());
             }
         };
 
         var localRevokeSharedActivityOperationCallback = function(operation){
             if(operation instanceof RevokeSharedActivityOperation){
                 //Just forward the message to remote users
-                //TODO
-                //_iwcw.sendRemoteNonOTOperation(operation.toNonOTOperation());
+                y.share.canvas.set(RevokeSharedActivityOperation.TYPE, operation.toJSON());
             }
         };
 
