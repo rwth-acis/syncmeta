@@ -9,9 +9,10 @@ define([
 		'operations/non_ot/ActivityOperation',
         'canvas_widget/LogicalOperator',
         'canvas_widget/LogicalConjunctions',
-		'text!templates/canvas_widget/selection_value.html'
+		'text!templates/canvas_widget/selection_value.html',
+        'text!templates/attribute_widget/selection_value.html'
 	], /** @lends SelectionValue */
-	function ($, jsPlumb, _, IWCOT, AbstractValue, AbstractAttribute, ValueChangeOperation, ActivityOperation, LogicalOperator, LogicalConjunctions,selectionValueHtml) {
+	function ($, jsPlumb, _, IWCOT, AbstractValue, AbstractAttribute, ValueChangeOperation, ActivityOperation, LogicalOperator, LogicalConjunctions,selectionValueHtml,attributeSelectionValueHtml) {
 
 	SelectionValue.prototype = new AbstractValue();
 	SelectionValue.prototype.constructor = SelectionValue;
