@@ -1,5 +1,7 @@
 # SyncMeta - Near real-time collaborative modeling framework
 ## General information
+
+[![Join the chat at https://gitter.im/rwth-acis/syncmeta](https://badges.gitter.im/rwth-acis/syncmeta.svg)](https://gitter.im/rwth-acis/syncmeta?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 For explanations, presentations, demos and links to modeling sandboxes and other stuff please visit the [SyncMeta homepage][1]. 
 
 ## Build steps
