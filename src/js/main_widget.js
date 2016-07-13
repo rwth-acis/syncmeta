@@ -87,6 +87,8 @@ requirejs([
 
         var userList = [];
         var canvas = new Canvas($("#canvas"));
+        HistoryManager.init(canvas);
+        
         y.share.join.observe(function(event){
             userList.push(event.name);
             if(!event.value && event.name !== _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]){
@@ -140,8 +142,6 @@ requirejs([
                 canvas.resetTool();
             }
         });
-
-
 
         if (metamodel) {
             if (metamodel.hasOwnProperty("nodes")) {

@@ -591,8 +591,10 @@ define([
             this.removeFromCanvas();
             //this.unregisterCallbacks();
             require('canvas_widget/EntityManager').deleteEdge(this.getEntityId());
-            if(_ymap)
-                _ymap =null;
+            if(_ymap){
+                _ymap = null;
+                y.share.edges.delete(that.getEntityId());
+            }
         };
 
         /**

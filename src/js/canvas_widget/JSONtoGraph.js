@@ -1,14 +1,27 @@
-define(['jquery', 'canvas_widget/EntityManager'], function($, EntityManager){
+define(['jquery', 'lodash','canvas_widget/EntityManager'], function($, _, EntityManager){
     return function(json, canvas){
         if(!canvas)
             return new Error('No canvas object defined!');
 
+        function cleanUpYSpace(entity){
+           var jsonKeys = _.keys(json[entity]);
+           var yKeys = y.share[entity].keys();
+           var diff = _.difference(yKeys, jsonKeys); 
+           
+           for(var i=0;i<diff.length;i++){
+               y.share[entity].delete(diff[i]);
+           }
+        }
+        
+        cleanUpYSpace('nodes');
+        cleanUpYSpace('edges');
+        
         var deferred = $.Deferred();
         var numberOfNodes = _.keys(json.nodes).length;
         var numberOfEdges = _.keys(json.edges).length;
         var createdNodes=0;
         var createdEdges=0;
-
+        
         function createYTextAttribute(map,val){
             //var deferred = $.Deferred();
             var promise = map.get(val.getEntityId());

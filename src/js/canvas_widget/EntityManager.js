@@ -247,7 +247,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
          * @type {string}
          * @private
          */
-        var _viewId = null;
+        var _viewId = undefined;
 
         /**
          * Model attributes node

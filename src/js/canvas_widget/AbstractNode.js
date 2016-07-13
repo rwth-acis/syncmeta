@@ -254,7 +254,6 @@ define([
                 NodeResizeOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
                 {nodeType: that.getType()}
             ).toNonOTOperation());
-            //}
         };
 
         //noinspection JSUnusedLocalSymbols
@@ -271,7 +270,6 @@ define([
                 if (edges.hasOwnProperty(edgeId)) {
                     edge = edges[edgeId];
                     edge.remove();
-
                 }
             }
 
@@ -280,6 +278,7 @@ define([
                     _relatedGhostEdges[i].remove();
             }
             if (_ymap){
+                y.share.nodes.delete(that.getEntityId());
                 _ymap = null;
             }
             that.remove();
@@ -628,6 +627,8 @@ define([
             $.contextMenu('destroy', '#'+that.getEntityId());
             _canvas = null;
             _$awarenessTrace.remove();
+            
+            
 
         };
 

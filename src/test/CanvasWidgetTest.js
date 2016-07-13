@@ -5,7 +5,7 @@ requirejs.config({
         mocha: 'lib/vendor/test/mocha',
         WebConsoleReporter: './../test/WebConsole',
         async: 'lib/vendor/async',
-        jscheck:'lib/vendor/test/jscheck'
+        jscheck: 'lib/vendor/test/jscheck'
     }
 });
 define(['jquery', 'chai', 'async', 'WebConsoleReporter',
@@ -14,10 +14,11 @@ define(['jquery', 'chai', 'async', 'WebConsoleReporter',
     './../test/canvas_widget/CreateEdgeTester',
     './../test/canvas_widget/NodeDeleteTester',
     './../test/canvas_widget/EdgeDeleteTester',
+    './../test/canvas_widget/JSONtoGraphTester',
     'promise!Guidancemodel',
     'mocha',
     'jscheck'],
-    function($, chai, async, WebConsoleReporter, EntityManager, CreateNodeTester, CreateEdgeTester, NodeDeleteTester, EdgeDeleteTester, Guidancemodel) {
+    function($, chai, async, WebConsoleReporter, EntityManager, CreateNodeTester, CreateEdgeTester, NodeDeleteTester, EdgeDeleteTester, JSONtoGraphTester, Guidancemodel) {
 
         function CanvasWidgetTestMain(canvas) {
             $('body').append($('<div id="mocha" style="display: none"></div>'));
@@ -30,13 +31,13 @@ define(['jquery', 'chai', 'async', 'WebConsoleReporter',
             describe('Canvas GUI Test', function() {
                 it('CANVAS - canvas drawing panel should exists', function() {
                     expect($('#canvas').length).to.be.equal(1);
-                });                
-                
-                if (EntityManager.getLayer() === CONFIG.LAYER.META && !Guidancemodel.isGuidanceEditor()) {        
+                });
+
+                if (EntityManager.getLayer() === CONFIG.LAYER.META && !Guidancemodel.isGuidanceEditor()) {
                     async.parallel({
-                        objectNode: async.apply(CreateNodeTester, 'META - Create Object node', canvas, ['Object',JSC.integer(0,8500)(),JSC.integer(0,8500)(), JSC.integer(100,300)(), JSC.integer(100,300)(), JSC.integer(100,1000)(), null, '1234567890']),
-                        abstractNode: async.apply(CreateNodeTester, 'Meta - Create Abstract node', canvas, ['Abstract Class', JSC.integer(0,8500)(),JSC.integer(0,8500)(), JSC.integer(100,300)(), JSC.integer(100,300)(), JSC.integer(100,1000)(), null, null]),
-                        relationshipNode: async.apply(CreateNodeTester, 'Meta - Relationship node', canvas, ['Relationship', JSC.integer(0,8500)(),JSC.integer(0,8500)(), JSC.integer(100,300)(), JSC.integer(100,300)(), JSC.integer(100,1000)(), null, null])
+                        objectNode: async.apply(CreateNodeTester, 'META - Create Object node', canvas, ['Object', JSC.integer(0, 8500)(), JSC.integer(0, 8500)(), JSC.integer(100, 300)(), JSC.integer(100, 300)(), JSC.integer(100, 1000)(), null, '1234567890']),
+                        abstractNode: async.apply(CreateNodeTester, 'Meta - Create Abstract node', canvas, ['Abstract Class', JSC.integer(0, 8500)(), JSC.integer(0, 8500)(), JSC.integer(100, 300)(), JSC.integer(100, 300)(), JSC.integer(100, 1000)(), null, null]),
+                        relationshipNode: async.apply(CreateNodeTester, 'Meta - Relationship node', canvas, ['Relationship', JSC.integer(0, 8500)(), JSC.integer(0, 8500)(), JSC.integer(100, 300)(), JSC.integer(100, 300)(), JSC.integer(100, 1000)(), null, null])
                     },
                         function(err, result) {
                             async.parallel({
@@ -81,6 +82,8 @@ define(['jquery', 'chai', 'async', 'WebConsoleReporter',
                                     ])
                                 });
                         });
+                    
+                    JSONtoGraphTester(canvas);
                 } else if (Guidancemodel.isGuidanceEditor()) {
                     describe('Check node types and edge types in EntityManager', function() {
                         it('Depending on the metamodel check initialized node types', function() {
