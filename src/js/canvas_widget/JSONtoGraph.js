@@ -171,18 +171,17 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function($, _, Entit
 
             if (promises.length > 0) {
                 $.when.apply(null, promises).done(function() {
-                    node.registerYMap(map, true);
                     node.addToCanvas(canvas);
                     node.bindMoveToolEvents();
                     node.draw();
-
+                    node.registerYMap(map, true);
                     deferred.resolve(nodeId);
                 });
             } else {
-                node.registerYMap(map, true);
                 node.addToCanvas(canvas);
                 node.bindMoveToolEvents();
                 node.draw();
+                node.registerYMap(map, true);
                 deferred.resolve(nodeId);
             }
         }

@@ -1118,7 +1118,7 @@ define([
                     id = identifier;
                 else
                     id = Util.generateRandomId(24);
-                if (EntityManager.getViewId() !== null && EntityManager.getLayer() === CONFIG.LAYER.MODEL) {
+                if (EntityManager.getViewId() !== undefined && EntityManager.getLayer() === CONFIG.LAYER.MODEL) {
                     oType = EntityManager.getViewEdgeType(type).getTargetEdgeType().TYPE;
                 }
                 var operation = new EdgeAddOperation(id, type, source, target, json || null, EntityManager.getViewId(), oType, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);

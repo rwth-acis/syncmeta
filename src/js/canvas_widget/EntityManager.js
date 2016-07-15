@@ -1539,7 +1539,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                     visitedNodes.push(node);
 
                     //Traverse edges to check for inheritance and linked enums
-                    edges = node.getEdges();
+                    edges = node.getOutgoingEdges();
                     for(edgeId in edges){
                         if(edges.hasOwnProperty(edgeId)){
                             edge = edges[edgeId];
