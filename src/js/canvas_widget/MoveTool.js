@@ -3,7 +3,7 @@ define([
     'jsplumb',
     'canvas_widget/AbstractCanvasTool',
     'canvas_widget/EntityManager'
-],/** @lends MoveTool */function($,jsPlumb,AbstractCanvasTool,EntityManager) {
+],/** @lends MoveTool */function($, jsPlumb, AbstractCanvasTool, EntityManager) {
 
     MoveTool.TYPE = "MoveTool";
 
@@ -16,20 +16,20 @@ define([
      * @memberof canvas_widget
      * @constructor
      */
-    function MoveTool(){
+    function MoveTool() {
 
-        AbstractCanvasTool.call(this,MoveTool.TYPE,"tool-move","Move Nodes and Edges");
+        AbstractCanvasTool.call(this, MoveTool.TYPE, "tool-move", "Move Nodes and Edges");
 
         /**
          * Mount the tool on canvas
          */
-        this.mount = function(){
+        this.mount = function() {
             var that = this;
 
             AbstractCanvasTool.prototype.mount.call(this);
-
+            //WTF??? 
             //Bind Node and Edge Events
-            var nodes = EntityManager.getNodes();
+            /*var nodes = EntityManager.getNodes();
             var nodeId, node;
             for(nodeId in nodes){
                 if(nodes.hasOwnProperty(nodeId)){
@@ -45,7 +45,7 @@ define([
                     edge = edges[edgeId];
                     edge.bindMoveToolEvents();
                 }
-            }
+            }*/
 
             this.getCanvas().bindMoveToolEvents();
 
@@ -54,11 +54,11 @@ define([
         /**
          * Unmount the tool from canvas
          */
-        this.unmount = function(){
+        this.unmount = function() {
 
             AbstractCanvasTool.prototype.unmount.call(this);
-
-            var nodes = EntityManager.getNodes();
+            //WTF?? 
+            /*var nodes = EntityManager.getNodes();
             var nodeId, node;
             for(nodeId in nodes){
                 if(nodes.hasOwnProperty(nodeId)){
@@ -74,7 +74,7 @@ define([
                     edge = edges[edgeId];
                     edge.unbindMoveToolEvents();
                 }
-            }
+            }*/
 
             this.getCanvas().unbindMoveToolEvents();
 

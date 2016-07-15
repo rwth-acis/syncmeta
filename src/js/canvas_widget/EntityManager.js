@@ -426,6 +426,9 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                 else if(edgeTypes.hasOwnProperty(type)) {
                     edge = new edgeTypes[type](id, source, target);
                 }
+                else {
+                    return undefined;
+                }
                 source.addOutgoingEdge(edge);
                 target.addIngoingEdge(edge);
                 _edges[id] = edge;
