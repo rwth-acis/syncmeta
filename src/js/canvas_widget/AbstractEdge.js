@@ -154,22 +154,17 @@ define([
          * Callback for a remote Edge Delete Operation
          * @param {operations.ot.EdgeDeleteOperation} operation
          */
-        var remoteEdgeDeleteCallback = function(operation){
-            var jabberId = y.share.users.get(_ymap.map[EdgeDeleteOperation.TYPE][0]);
-
-            //if(jabberId !== _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
-            //    y.share.edges.delete(operation.getEntityId());
-
+        this.remoteEdgeDeleteCallback = function(operation){
             if(operation instanceof EdgeDeleteOperation && operation.getEntityId() == that.getEntityId()){
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
+                /*_iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "EdgeDeleteActivity",
                     operation.getEntityId(),
                     jabberId,
                     EdgeDeleteOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
                     {}
-                ).toNonOTOperation());
+                ).toNonOTOperation());*/
                 processEdgeDeleteOperation(operation);
             }
         };
@@ -223,7 +218,8 @@ define([
             var operation = new EdgeDeleteOperation(id,that.getType(),that.getSource().getEntityId(),that.getTarget().getEntityId());
 
             if(_ymap){
-                _ymap.set(EdgeDeleteOperation.TYPE, operation.toJSON());
+                //_ymap.set(EdgeDeleteOperation.TYPE, operation.toJSON());
+                y.share.edges.delete(that.getEntityId());
                 propagateEdgeDeleteOperation(operation);
             }
             else {
@@ -593,7 +589,6 @@ define([
             require('canvas_widget/EntityManager').deleteEdge(this.getEntityId());
             if(_ymap){
                 _ymap = null;
-                y.share.edges.delete(that.getEntityId());
             }
         };
 
@@ -687,22 +682,6 @@ define([
                 });
 
             }
-            _ymap.observe(function (event) {
-                var yUserId = event.object.map[event.name][0];
-
-                if (yUserId !== y.db.userId || event.value.historyFlag) {
-                    var operation;
-                    var data = event.value;
-                    switch (event.name) {
-                        case EdgeDeleteOperation.TYPE:
-                        {
-                            operation = new EdgeDeleteOperation(data.id, data.type, data.source, data.target, data.json);
-                            remoteEdgeDeleteCallback(operation);
-                            break;
-                        }
-                    }
-                }
-            });
         }
 
     }

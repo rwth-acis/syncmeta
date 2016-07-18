@@ -4,7 +4,9 @@ define([
     'iwcw',
     'Util',
     'operations/ot/NodeAddOperation',
+    'operations/ot/NodeDeleteOperation',
     'operations/ot/EdgeAddOperation',
+    'operations/ot/EdgeDeleteOperation',
     'operations/non_ot/ToolSelectOperation',
     'operations/non_ot/EntitySelectOperation',
     'operations/non_ot/ActivityOperation',
@@ -32,7 +34,7 @@ define([
     'canvas_widget/guidance_modeling/CollaborationGuidance',
     'jquery.transformable-PATCHED'
 ], /** @lends Canvas */
-    function($, jsPlumb, IWCW, Util, NodeAddOperation, EdgeAddOperation, ToolSelectOperation, EntitySelectOperation, ActivityOperation, ExportDataOperation, ExportMetaModelOperation, ExportLogicalGuidanceRepresentationOperation, ExportImageOperation, PerformCvgOperation, DeleteCvgOperation, ShowGuidanceBoxOperation, CanvasViewChangeOperation, RevokeSharedActivityOperation, MoveCanvasOperation, GuidanceStrategyOperation, AbstractEntity, ModelAttributesNode, EntityManager, HistoryManager, AbstractCanvas, MoveTool, GuidanceBox, SelectToolGuidance, SetPropertyGuidance, GhostEdgeGuidance, CollaborationGuidance) {
+    function($, jsPlumb, IWCW, Util, NodeAddOperation, NodeDeleteOperation, EdgeAddOperation, EdgeDeleteOperation,ToolSelectOperation, EntitySelectOperation, ActivityOperation, ExportDataOperation, ExportMetaModelOperation, ExportLogicalGuidanceRepresentationOperation, ExportImageOperation, PerformCvgOperation, DeleteCvgOperation, ShowGuidanceBoxOperation, CanvasViewChangeOperation, RevokeSharedActivityOperation, MoveCanvasOperation, GuidanceStrategyOperation, AbstractEntity, ModelAttributesNode, EntityManager, HistoryManager, AbstractCanvas, MoveTool, GuidanceBox, SelectToolGuidance, SetPropertyGuidance, GhostEdgeGuidance, CollaborationGuidance) {
 
         Canvas.prototype = new AbstractCanvas();
         Canvas.prototype.constructor = Canvas;
@@ -1607,6 +1609,32 @@ define([
 
 
                     }
+                });
+
+                y.share.nodes.observe(function(event){
+                    switch (event.type) {
+                        case 'delete':
+                        {
+                            var node = EntityManager.findNode(event.name);
+                            if(node)
+                                node.remoteNodeDeleteCallback(new NodeDeleteOperation(event.name));
+                            break;
+                        }
+                    }
+
+                });
+
+                y.share.edges.observe(function(event){
+                    switch (event.type) {
+                        case 'delete':
+                        {
+                            var edge = EntityManager.findEdge(event.name);
+                            if(edge)
+                                edge.remoteEdgeDeleteCallback(new EdgeDeleteOperation(event.name));
+                            break;
+                        }
+                    }
+
                 });
             }
             if (_iwcw) {

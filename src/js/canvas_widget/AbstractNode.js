@@ -278,7 +278,6 @@ define([
                     _relatedGhostEdges[i].remove();
             }
             if (_ymap){
-                y.share.nodes.delete(that.getEntityId());
                 _ymap = null;
             }
             that.remove();
@@ -408,23 +407,18 @@ define([
          * Callback for a remote Node Delete Operation
          * @param {operations.ot.NodeDeleteOperation} operation
          */
-        var remoteNodeDeleteCallback = function(operation){
-            var jabberId = y.share.users.get(_ymap.map[NodeDeleteOperation.TYPE][0]);
-
-            //if(jabberId !== _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
-            //    y.share.nodes.delete(operation.getEntityId());
-
+         this.remoteNodeDeleteCallback = function(operation){
             if(operation instanceof NodeDeleteOperation && operation.getEntityId() === that.getEntityId()){
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
-                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
+                /*_iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "NodeDeleteActivity",
                     operation.getEntityId(),
                     jabberId,
                     NodeDeleteOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
                     {}
-                ).toNonOTOperation());
+                ).toNonOTOperation());*/
                 processNodeDeleteOperation(operation);
             }
         };
@@ -552,13 +546,13 @@ define([
             //noinspection JSAccessibilityCheck
             var operation = new NodeDeleteOperation(id,that.getType(),_appearance.left,_appearance.top,_appearance.width,_appearance.height,_zIndex,that.toJSON());
             if(_ymap){
-                _ymap.set(NodeDeleteOperation.TYPE, operation.toJSON());
+                //_ymap.set(NodeDeleteOperation.TYPE, operation.toJSON());
                 propagateNodeDeleteOperation(operation);
+                y.share.nodes.delete(that.getEntityId());
             }
             else {
                 propagateNodeDeleteOperation(operation);
             }
-            //that.canvas.callListeners(CONFIG.CANVAS.LISTENERS.NODEDELETE,nodeId);
         };
 
         //noinspection JSUnusedGlobalSymbols
@@ -1224,12 +1218,6 @@ define([
                     var data = event.value;
                     var jabberId = y.share.users.get(yUserId);
                     switch (event.name) {
-                        case NodeDeleteOperation.TYPE:
-                        {
-                            operation = new NodeDeleteOperation(data.id, data.type, data.left, data.top, data.width, data.height, data.zIndex, data.json);
-                            remoteNodeDeleteCallback(operation);
-                            break;
-                        }
                         case NodeMoveOperation.TYPE:
                         {
                             operation = new NodeMoveOperation(data.id, data.offsetX, data.offsetY, jabberId);

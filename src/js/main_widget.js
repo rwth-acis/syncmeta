@@ -105,11 +105,29 @@ requirejs([
                 if(model)
                     JSONtoGraph(model, canvas).done(function(stats){
                         console.info(stats);
+                        _iwcw.registerOnDataReceivedCallback(function (operation) {
+                            if(operation.hasOwnProperty('getType') && operation.getType() === 'WaitForCanvasOperation') {
+                                switch(operation.getData().widget){
+                                    case CONFIG.WIDGET.NAME.ATTRIBUTE:
+                                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new NonOTOperation('WaitForCanvasOperation', true));
+                                        break;
+                                }
+                            }
+                        });
+
                         $("#loading").hide();
                         canvas.resetTool();
                     });
-
                 else{
+                    _iwcw.registerOnDataReceivedCallback(function (operation) {
+                        if(operation.hasOwnProperty('getType') && operation.getType() === 'WaitForCanvasOperation') {
+                            switch(operation.getData().widget){
+                                case CONFIG.WIDGET.NAME.ATTRIBUTE:
+                                    _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new NonOTOperation('WaitForCanvasOperation', true));
+                                    break;
+                            }
+                        }
+                    });
                     $("#loading").hide();
                     canvas.resetTool();
                 }
@@ -127,7 +145,11 @@ requirejs([
                         y.share.canvas.set(UpdateViewListOperation.TYPE, true);
                     }
                     else if(operation.hasOwnProperty('getType') && operation.getType() === 'WaitForCanvasOperation'){
-                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new NonOTOperation('WaitForCanvasOperation', JSON.stringify(userList)));
+                        switch(operation.getData().widget){
+                            case CONFIG.WIDGET.NAME.ACTIVITY:
+                                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new NonOTOperation('WaitForCanvasOperation', JSON.stringify(userList)));
+                                break;
+                        }
                     }
                 });
                 y.share.canvas.observePath([UpdateViewListOperation.TYPE],function(){

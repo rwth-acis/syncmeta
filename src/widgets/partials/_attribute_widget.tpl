@@ -9,5 +9,5 @@
 }
 </style>
 <div id="loading" class="loading"></div>
-<div id="wrapper"></div>
+<div id="wrapper"><h1>Wait For Canvas Widget!</h1></div>
 <div id="q"></div>
