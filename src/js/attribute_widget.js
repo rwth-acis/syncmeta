@@ -23,7 +23,7 @@ requirejs([
     WaitForCanvas(CONFIG.WIDGET.NAME.ATTRIBUTE,7).done(function(){
         $('#wrapper').find('h1').text('Got Response from Canvas!');
         setTimeout(function(){
-            $('#wrapper').empty();
+            $('#wrapper').find('h1').remove();
         },500);
         yjsSync().done(function(y){
             window.y = y;

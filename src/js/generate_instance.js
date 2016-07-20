@@ -205,6 +205,8 @@ requirejs([
                                 }
                             }
                             yjsSync(spaceLabel).done(function(yInstance) {
+                                if(!$('#keepModel').is(':checked'))
+                                    yInstance.share.data.set('model', null);
                                 yInstance.share.data.set('metamodel', GenerateViewpointModel(y.share.data.get('model')));
                                 EntityManager.init(null, guidancemodel);
                                 yInstance.share.data.set('guidancemodel', EntityManager.generateLogicalGuidanceRepresentation());

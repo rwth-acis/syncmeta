@@ -1253,6 +1253,8 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
             generateLogicalGuidanceRepresentation: function(){
                 var graph = new graphlib.Graph();
                 var model = y.share.data.get('guidancemodel');
+                if(!model) 
+                    return null;
                 var nodes = model.nodes;
                 var edges = model.edges;
                 //Returns successor node which belong to the action flow (everything except entity nodes)

@@ -103,7 +103,7 @@ define(['Util',
                 visitedNodes.push(node);
 
                 //Traverse outgoing edges to check for inheritance and linked enums
-                outgoingEdges = node.getEdges();
+                outgoingEdges = node.getOutgoingEdges();
                 for (edgeId in outgoingEdges) {
                     if (outgoingEdges.hasOwnProperty(edgeId)) {
                         edge = outgoingEdges[edgeId];

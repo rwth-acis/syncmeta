@@ -35,6 +35,8 @@
 <p><strong>Editor space title:</strong>
 <br/>
 <input size="32" type="text" id="space_title" /></p>
+<label><input type="checkbox" id="keepModel">Don't resest the model in instance space</label>
+<br/>
 <button id="submit">Generate</button>
 <button id="reset">Reset</button>
 <p><strong>Generated instances:</strong>
