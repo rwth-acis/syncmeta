@@ -219,8 +219,8 @@ define([
 
             if(_ymap){
                 //_ymap.set(EdgeDeleteOperation.TYPE, operation.toJSON());
-                y.share.edges.delete(that.getEntityId());
                 propagateEdgeDeleteOperation(operation);
+                y.share.edges.delete(that.getEntityId());
             }
             else {
                 propagateEdgeDeleteOperation(operation);
