@@ -40,4 +40,4 @@ _Attention!_, Please be aware that any changes you commit to the gh-pages branch
 _Attention!_, We don't recommend to use the Pyhton's SimpleHTTPServer. See this [issue](http://layers.dbis.rwth-aachen.de/jira/browse/SYNCMETA-23) for more information.
 
 If you only want to deploy the SyncMeta widgets just run ```grunt connect``` after building the widgets. It starts a http server on port 8081. 
-Otherwise u can use [nginx](http://nginx.org/en/download.html) or [AIDeX Mini-Webserver)(http://www.aidex.de/software/webserver/)  
+Otherwise u can use [nginx](http://nginx.org/en/download.html) or [AIDeX Mini-Webserver](http://www.aidex.de/software/webserver/)  
