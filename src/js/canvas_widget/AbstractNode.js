@@ -923,6 +923,8 @@ define([
             _isSelected = false;
             //this.highlight(_highlightColor,_highlightUsername);
             _$node.removeClass("selected");
+            //tigger save when unselecting an entity
+             $('#save').click();
             Util.delay(100).then(function(){
                 _.each(require('canvas_widget/EntityManager').getEdges(),function(e){
                     e.setZIndex();
@@ -1074,7 +1076,7 @@ define([
 
                 //Enable Node Dragging
                 .draggable({
-                    containment: "parent",
+                    containment: 'parent',
                     start: function(ev,ui){
                         originalPos.top = ui.position.top;
                         originalPos.left = ui.position.left;
@@ -1090,9 +1092,10 @@ define([
                     drag: function(ev){
                         // ui.position.left = Math.round(ui.position.left  / _canvas.getZoom());
                         // ui.position.top = Math.round(ui.position.top / _canvas.getZoom());
-
+                            
                         if(drag) repaint();
                         drag = true;
+                        
                         _canvas.hideGuidanceBox();
                         _$node.draggable("option","grid",ev.ctrlKey ? [20,20] : '');
                     },
@@ -1113,7 +1116,6 @@ define([
                         else {
                             propagateNodeMoveOperation(operation);
                         }
-                        //that.canvas.callListeners(CONFIG.CANVAS.LISTENERS.NODEMOVE,id,offsetX,offsetY);
                         //Avoid node selection on drag stop
                         _$node.draggable("option","grid",'');
                         _canvas.showGuidanceBox();

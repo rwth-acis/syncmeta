@@ -117,6 +117,7 @@ requirejs([
 
                         $("#loading").hide();
                         canvas.resetTool();
+                        saveCallback();
                     });
                 else{
                     _iwcw.registerOnDataReceivedCallback(function (operation) {
@@ -381,6 +382,7 @@ requirejs([
                     JSONtoGraph(model, canvas).done(function(){
                         $("#loading").hide();
                         canvas.resetTool();
+                        saveCallback();
                     });
                     $('#lblCurrentView').hide();
                     $lblCurrentViewId.text("");
@@ -463,6 +465,7 @@ requirejs([
             JSONtoGraph(json, canvas).done(function(){
                 $("#loading").hide();
                 canvas.resetTool();
+                saveCallback();
             });
         }
 
@@ -615,26 +618,13 @@ requirejs([
             $generate.show();
         }
 
-        var readyToSave = true;
-        var saveTriggered = false;
         var saveCallback = function () {
-            if (readyToSave) {
-                readyToSave = false;
-                setTimeout(function () {
-                    saveFunction();
-                }, 500);
-                setTimeout(function () {
-                    readyToSave = true;
-                    if (saveTriggered) {
-                        saveTriggered = false;
-                        saveCallback();
-                    }
-                }, 5000);
-            } else {
-                saveTriggered = true;
-            }
+            saveFunction();
+            setTimeout(function() {
+                saveCallback();
+            }, 7000);
         };
-
+                
         ViewManager.GetViewpointList();
 
         //local user joins
