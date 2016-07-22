@@ -58,8 +58,8 @@ module.exports = function(grunt) {
                     {src: '<%= bowerdir %>/ace-builds/src-min-noconflict/theme-github.js', dest: '<%= distdir %>/js/lib/vendor/ace/theme-github.js'},
                     {src: '<%= bowerdir %>/ace-builds/src-min-noconflict/worker-xml.js', dest: '<%= distdir %>/js/lib/vendor/ace/worker-xml.js'},
                     {src: '<%= bowerdir %>/async/dist/async.min.js', dest: '<%= distdir %>/js/lib/vendor/async.js'},
-                    {src: '<%= bowerdir %>/JSCheck/jscheck.js', dest: '<%= distdir %>/js/lib/vendor/test/jscheck.js'}
-
+                    {src: '<%= bowerdir %>/JSCheck/jscheck.js', dest: '<%= distdir %>/js/lib/vendor/test/jscheck.js'},
+                    {src:'plugin/syncmeta-plugin.js', dest:'<%= distdir %>/plugin/syncmeta-plugin.js'}    
                 ]
             },
             main: {

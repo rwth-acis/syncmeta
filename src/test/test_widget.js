@@ -1,13 +1,17 @@
 $(function() {
     require([
         './../test/test_widget/PromiseTests',
-        './../test/test_widget/EntityManagerTests'], function(PromiseTests,EntityManagerTests) {
+        './../test/test_widget/EntityManagerTests',
+        './../test/test_widget/PluginTest'], function(PromiseTests,EntityManagerTests, PluginTest) {
         mocha.setup('bdd');
         mocha.reporter('html');
         mocha.timeout(10000);
         EntityManagerTests();
-        PromiseTests();
+        //PromiseTests();
+        PluginTest();
         mocha.run();
+        
+        
     });
     
     
