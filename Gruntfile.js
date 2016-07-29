@@ -196,7 +196,7 @@ module.exports = function(grunt) {
                 options: {
                     data: {
                         meta: {
-                            title: "Debug",
+                            title: "Import Tool",
                             description: "",
                             width: "400",
                             height: "300"

@@ -13,11 +13,12 @@ define([
     'activity_widget/UserJoinActivity',
     'activity_widget/ValueChangeActivity',
     'activity_widget/ViewApplyActivity',
+    'activity_widget/ReloadWidgetActivity',
     'activity_widget/User',
     'operations/non_ot/ActivityOperation',
     'operations/non_ot/EntitySelectOperation'
     //'promise!Space'
-],/** @lends ActivityList */function($,_,IWCW,Activity,NodeAddActivity,NodeDeleteActivity,NodeMoveActivity,NodeResizeActivity,EdgeAddActivity,EdgeDeleteActivity,EditorGenerateActivity,UserJoinActivity,ValueChangeActivity,ViewApplyActivity, User,ActivityOperation,EntitySelectOperation/*,space*/) {
+],/** @lends ActivityList */function($,_,IWCW,Activity,NodeAddActivity,NodeDeleteActivity,NodeMoveActivity,NodeResizeActivity,EdgeAddActivity,EdgeDeleteActivity,EditorGenerateActivity,UserJoinActivity,ValueChangeActivity,ViewApplyActivity, ReloadWidgetActivity, User,ActivityOperation,EntitySelectOperation/*,space*/) {
 
     /**
      * List of user activities
@@ -179,6 +180,9 @@ define([
                     case UserJoinActivity.TYPE:
                         that.addUser(operation.getSender());
                         break;
+                    case 'ReloadWidgetOperation':
+                        activity = new ReloadWidgetActivity(operation.getEntityId(), operation.getSender(), operation.getText());
+                        that.addActivity(activity);
                     case ViewApplyActivity.TYPE:
                         activity = new ViewApplyActivity(operation.getEntityId(),operation.getSender());
                         if (userList.hasOwnProperty(activity.getSender())) {

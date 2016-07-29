@@ -145,16 +145,50 @@ requirejs([
                     else if (operation instanceof UpdateViewListOperation) {
                         y.share.canvas.set(UpdateViewListOperation.TYPE, true);
                     }
-                    else if(operation.hasOwnProperty('getType') && operation.getType() === 'WaitForCanvasOperation'){
-                        switch(operation.getData().widget){
-                            case CONFIG.WIDGET.NAME.ACTIVITY:
-                                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new NonOTOperation('WaitForCanvasOperation', JSON.stringify(userList)));
-                                break;
+                    else if (operation.hasOwnProperty('getType')) {
+                        if (operation.getType() === 'WaitForCanvasOperation') {
+                            switch (operation.getData().widget) {
+                                case CONFIG.WIDGET.NAME.ACTIVITY:
+                                    _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new NonOTOperation('WaitForCanvasOperation', JSON.stringify(userList)));
+                                    break;
+                            }
                         }
                     }
+                    
                 });
-                y.share.canvas.observePath([UpdateViewListOperation.TYPE],function(){
-                    ViewManager.GetViewpointList();
+                y.share.canvas.observe(function(event){
+                    switch(event.name){
+                        case UpdateViewListOperation.TYPE:{
+                            ViewManager.GetViewpointList();
+                            break;
+                        }    
+                        case 'ReloadWidgetOperation':{
+                            var text;
+                            switch(event.value){
+                                case 'import':{
+                                    text = 'ATTENTION! Imported new model. Some widgets will reload';
+                                    break;
+                                }
+                                case 'delete' :{
+                                    text = 'ATTENTION! Deleted current model. Some widgets will reload';
+                                    break;
+                                }
+                                case 'meta_delete':{
+                                    text = "ATTENTION! Deleted current metamodel. Some widgets will reload";
+                                    break;
+                                }
+                                case 'meta_import':{
+                                   text = "ATTENTION! Imported new metamodel. Some widgets will reload";
+                                   break; 
+                                }
+                            }
+                            var activityOperation = new ActivityOperation("ReloadWidgetOperation", undefined, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], text);
+                            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
+
+                            frameElement.contentWindow.location.reload();
+                        }
+                    }
+                    
                 });
 
                 if (canvas.getModelAttributesNode() === null) {

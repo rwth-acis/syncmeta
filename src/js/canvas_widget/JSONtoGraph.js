@@ -93,6 +93,11 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function($, _, Entit
 
             if (node === undefined) {
                 console.error('SYNCMETA: Node undefined. Check if ' + jsonNode.type + '  type is defined in the VLS');
+                var $errorMsg = $('#errorMsg');
+                $('#loading').hide();
+                $('#canvas-frame').hide();
+                $errorMsg.parent().css('display', 'inline-table');
+                $errorMsg.text('SYNCMETA: Model is not compatible to the current Metamodel!');
                 return;
             }
 
@@ -276,6 +281,12 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function($, _, Entit
 
                     if (edge === undefined) {
                         console.error('SYNCMETA: Edge undefined. Check if ' + edges[edgeId].type + '  type is defined in the VLS');
+                        var $errorMsg = $('#errorMsg');
+                        $errorMsg.parent().show();
+                        $('#canvas-frame').hide();
+                        $('#loading').hide();
+                        $errorMsg.parent().css('display', 'inline-table');
+                        $errorMsg.text('SYNCMETA: Model is not compatible to the current Metamodel!');
                         continue;
                     }
 

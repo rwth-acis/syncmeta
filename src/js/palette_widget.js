@@ -75,25 +75,16 @@ requirejs([
         if (CONFIG.TEST_MODE_PALETTE)
             require(['./../test/PaletteWidgetTest']);
 
-        //UNUSED
-        /*$("#q").draggable({
-         axis: "y",
-         start: function () {
-         var $c = $("body");
-         $c.css('bottom', 'inherit');
-         $(this).css('height', 50);
-         },
-         drag: function (event, ui) {
-         var height = ui.position.top;
-         $("body").css('height', height);
-         gadgets.window.adjustHeight();
-         },
-         stop: function () {
-         $(this).css('height', 3);
-         gadgets.window.adjustHeight();
-         $(this).css('top', '');
-         }
-         });*/
+        y.share.canvas.observe(function(event){
+            switch(event.name){
+                case 'ReloadWidgetOperation':{
+                    if(event.value === 'meta_delete'){
+                        frameElement.contentWindow.location.reload();
+                    }
+                }
+            }
+        });
+        
     });
 
 });

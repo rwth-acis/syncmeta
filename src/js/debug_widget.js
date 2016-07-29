@@ -53,16 +53,19 @@ requirejs(['jqueryui', 'lodash', 'lib/yjs-sync', 'canvas_widget/GenerateViewpoin
                 $deleteModel.prop('disabled', true);
                 //y.share.data.delete('model');
                 y.share.data.set('model', null);
+                y.share.canvas.set('ReloadWidgetOperation', 'delete');
+
                 feedback("Done!");
 
             });
 
-            $deleteMetamodel.click(function() {
+            $deleteMetamodel.click(function()  {
                 $exportMetamodel.prop('disabled', true);
                 $deleteMetamodel.prop('disabled', true);
                 //this does not work ??????
                 //y.share.data.delete('metamodel');
                 y.share.data.set('metamodel', null);
+                y.share.canvas.set('ReloadWidgetOperation', 'meta_delete');
                 feedback("Done!");
             });
 
@@ -98,6 +101,7 @@ requirejs(['jqueryui', 'lodash', 'lib/yjs-sync', 'canvas_widget/GenerateViewpoin
             $importModel.click(function() {
                 getFileContent().then(function(data) {
                     y.share.data.set('model', data);
+                    y.share.canvas.set('ReloadWidgetOperation', 'import');
                     feedback("Done!");
                 });
             });
@@ -113,7 +117,7 @@ requirejs(['jqueryui', 'lodash', 'lib/yjs-sync', 'canvas_widget/GenerateViewpoin
                         y.share.data.set('metamodel', data);
                         feedback("Done!");
                     }
-
+                    y.share.canvas.set('ReloadWidgetOperation', 'meta_import');
                 });
             });
 

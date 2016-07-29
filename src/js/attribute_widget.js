@@ -152,7 +152,15 @@ requirejs([
 
             if(CONFIG.TEST_MODE_ATTRIBUTE)
                 require(['./../test/AttributeWidgetTest']);
-
+            
+            y.share.canvas.observe(function(event){
+                switch(event.name){
+                    case 'ReloadWidgetOperation':{
+                        frameElement.contentWindow.location.reload();
+                    }
+                }
+            });
+            
             $("#loading").hide();
         }
     }).fail(function(){

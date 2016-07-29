@@ -45,6 +45,10 @@
    <button id="btnRefreshView" style="display: none;">Refresh</button>
   <button id="btnDelViewPoint"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/times1.png" /></button>
 </div>
+<div class="ui-state-error ui-corner-all" style="margin-top: 20px; padding: 0 .7em; display:none">
+		<p id="errorMsg"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+		<strong>SYNCMETA!</strong></p>
+	</div>
 <div id="canvas-frame">
   <div id="canvas">
   </div>
