@@ -327,6 +327,7 @@ define([
 
                                 node.draw();
                                 node.addToCanvas(that);
+                                node.bindMoveToolEvents();
                                 //if we are in a view but the view type got no mapping in this view -> hide the element
                                 if (!viewType && EntityManager.getViewId()) {
                                     node.hide();
