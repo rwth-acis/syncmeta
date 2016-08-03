@@ -1,4 +1,4 @@
-define(['jqueryui','yjs'],function ($) {
+define(['jquery','yjs'],function ($) {
     return function(spaceTitle) {
 
         var deferred = $.Deferred();
