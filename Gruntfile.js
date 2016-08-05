@@ -59,7 +59,7 @@ module.exports = function(grunt) {
                     {src: '<%= bowerdir %>/ace-builds/src-min-noconflict/worker-xml.js', dest: '<%= distdir %>/js/lib/vendor/ace/worker-xml.js'},
                     {src: '<%= bowerdir %>/async/dist/async.min.js', dest: '<%= distdir %>/js/lib/vendor/async.js'},
                     {src: '<%= bowerdir %>/JSCheck/jscheck.js', dest: '<%= distdir %>/js/lib/vendor/test/jscheck.js'},
-                    {src:'plugin/syncmeta-plugin.js', dest:'<%= distdir %>/plugin/syncmeta-plugin.js'}    
+                    {src:'plugin/syncmeta-plugin.js', dest:'<%= distdir %>/plugin/syncmeta-plugin.js'}
                 ]
             },
             main: {
@@ -343,6 +343,20 @@ module.exports = function(grunt) {
                         text: "../components/requirejs-text/text"
                     }
                 }
+            },
+            plugin:{
+                options: {
+                    baseUrl: 'html/js',
+                    name: '../..//tools/almond',
+                    optimize:'none',
+                    mainConfigFile:"<%= distdir %>/js/config.js",
+                    include: ['plugin/main.js'],
+                    out: 'html/plugin/syncmeta-plugin.js',
+                    wrap: {
+                        startFile: './tools/wrap.start',
+                        endFile: './tools/wrap.end'
+                    }
+                }
             }
         },
         sshconfig: {
@@ -425,11 +439,14 @@ module.exports = function(grunt) {
 
     // Whenever the "test" task is run, first clean the "tmp" dir, then run this
     // plugin's task(s), then test the result.
-    grunt.registerTask('build', ['clean','requirejs','copy:lib','copy:main', 'bootstrap_prefix','buildwidgets']);
+    grunt.registerTask('build', 'Build', function(){
+        grunt.task.run(['clean','requirejs:compile','copy:lib','copy:main', 'bootstrap_prefix','buildwidgets']);
+        grunt.task.run(['requirejs:plugin']);
+    });
     grunt.registerTask('deploy', 'Deploy', function(){
         grunt.config.set('baseUrl', localConfig.deployUrl);
         grunt.config.set('roleSandboxUrl', "http://role-sandbox.eu");
-        grunt.task.run(['clean','requirejs','copy:lib','copy:main','bootstrap_prefix','buildwidgets'/*,'sftp'*/]);
+        grunt.task.run(['clean','requirejs:compile','copy:lib','copy:main','bootstrap_prefix','buildwidgets'/*,'sftp'*/]);
     });
     grunt.registerTask('serve',['build','connect']);
 
