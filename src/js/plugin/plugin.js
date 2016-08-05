@@ -1,16 +1,61 @@
-define(['jquery','lib/yjs-sync'], function($,yjsSync) {
+define(['jquery', 'lib/yjs-sync'], function($, yjsSync) {
     'use strict';
-    return  {
-        ySyncMetaInstance: null,
+    /**
+        * Listen to node manipulations. Private helper function
+         * @private
+         * @param {array} keys - the operations to listen to. All possible options are  ['NodeMoveOperation', 'NodeResizeOperation', 'NodeMoveZOperation']
+         * @param {function} callback - the callback if one of the operations defined in keys were issued
+         */
+    var onNode = function(key, callback) {
+        var newObersever = function(event) {
+            if (key.indexOf(event.name) != -1) {
+                callback(event.value);
+            }
+        };
+
+        var nodeIds = ySyncMetaInstance.share.nodes.keys();
+        var oldObserver = nodeObservers[key];
+        nodeObservers[key] = undefined;
+        for (var i = 0; i < nodeIds.length; i++) {
+            let n = ySyncMetaInstance.share.nodes.get(nodeIds[i]);
+            if (n) {
+                n.then(function(ymap) {
+                    //Overwrite with new observer
+                    ymap.unobserve(oldObserver);
+                    ymap.observe(newObersever);
+                })
+            }
+        }
+        nodeObservers[key] = newObersever;
+    };
+    var nodeObservers = {};
+    var attributeObservers = {};
+    var ySyncMetaInstance = null;
+
+    return {
+
         /**
          * @param {string} spaceName - the name of the role space where the widgets are located
          */
         connect: function(spaceName) {
             var that = this;
-            if (!this.ySyncMetaInstance) {
+            if (!ySyncMetaInstance) {
                 var deferred = $.Deferred();
                 yjsSync(spaceName).done(function(y) {
-                    that.ySyncMetaInstance = y;
+                    ySyncMetaInstance = y;
+
+                    ySyncMetaInstance.share.nodes.observe(function(event) {
+                        if (event.type === 'add') {
+                            event.value().then(function(ymap) {
+                                for (var key in nodeObservers) {
+                                    if (nodeObservers.hasOwnProperty(key)) {
+                                        ymap.observe(nodeObservers[key]);
+                                    }
+                                }
+                            });
+                        }
+                    });
+
                     deferred.resolve();
                 }).then(function() {
                     return true;
@@ -24,10 +69,10 @@ define(['jquery','lib/yjs-sync'], function($,yjsSync) {
          * @param {onNodeCallback} callback - the callback if a node was created on syncmeta canvas widget
          */
         onNodeAdd: function(callback) {
-            if (!this.ySyncMetaInstance)
+            if (!ySyncMetaInstance)
                 return new Error('No Connection to Yjs space');
 
-            this.ySyncMetaInstance.share.canvas.observe(function(event) {
+            ySyncMetaInstance.share.canvas.observe(function(event) {
                 if (event.name == 'NodeAddOperation')
                     callback(event.value);
             });
@@ -36,9 +81,9 @@ define(['jquery','lib/yjs-sync'], function($,yjsSync) {
          * @param{function} callback - callback if a users joins the space
          */
         onUserJoin: function(callback) {
-            if (!this.ySyncMetaInstance)
+            if (!ySyncMetaInstance)
                 return new Error('No Connection to Yjs space');
-            this.ySyncMetaInstance.share.userList.observe(function(event) {
+            ySyncMetaInstance.share.userList.observe(function(event) {
                 callback(event.value);
             })
         },
@@ -47,10 +92,10 @@ define(['jquery','lib/yjs-sync'], function($,yjsSync) {
          * @param {onEdgeCallback} callback - the callback if a edge was created on syncmeta canvas widget
          */
         onEdgeAdd: function(callback) {
-            if (!this.ySyncMetaInstance)
+            if (!ySyncMetaInstance)
                 return new Error('No Connection to Yjs space');
 
-            this.ySyncMetaInstance.share.canvas.observe(function(event) {
+            ySyncMetaInstance.share.canvas.observe(function(event) {
                 if (event.name == 'EdgeAddOperation')
                     callback(event.value);
             });
@@ -62,10 +107,10 @@ define(['jquery','lib/yjs-sync'], function($,yjsSync) {
          * @see onEdgeAdd
          */
         onEntityAdd: function(callback) {
-            if (!this.ySyncMetaInstance)
+            if (!ySyncMetaInstance)
                 return new Error('No Connection to Yjs space');
 
-            this.ySyncMetaInstance.share.canvas.observe(function(event) {
+            ySyncMetaInstance.share.canvas.observe(function(event) {
                 if (event.name == 'NodeAddOperation')
                     callback(event.value);
                 else if (event.name == 'EdgeAddOperation')
@@ -78,10 +123,10 @@ define(['jquery','lib/yjs-sync'], function($,yjsSync) {
          * @param {onEntitySelectCallback} callback - the callback if a entity was selected
          */
         onEntitySelect: function(callback) {
-            if (!this.ySyncMetaInstance)
+            if (!ySyncMetaInstance)
                 return new Error('No Connection to Yjs space');
 
-            this.ySyncMetaInstance.share.select.observe(function(event) {
+            ySyncMetaInstance.share.select.observe(function(event) {
                 if (event.value)
                     callback(event.value);
             });
@@ -92,10 +137,10 @@ define(['jquery','lib/yjs-sync'], function($,yjsSync) {
          */
         onNodeSelect: function(callback) {
 
-            if (!this.ySyncMetaInstance)
+            if (!ySyncMetaInstance)
                 return new Error('No Connection to Yjs space');
             var that = this;
-            this.ySyncMetaInstance.share.select.observe(function(event) {
+            ySyncMetaInstance.share.select.observe(function(event) {
                 if (event.value && that.ySyncMetaInstance.share.nodes.keys().indexOf(event.value) != -1)
                     callback(event.value);
             });
@@ -105,10 +150,10 @@ define(['jquery','lib/yjs-sync'], function($,yjsSync) {
          * @param {onEntitySelectCallback} callback - the callback if a edge was selected
          */
         onEdgeSelect: function(callback) {
-            if (!this.ySyncMetaInstance)
+            if (!ySyncMetaInstance)
                 return new Error('No Connection to Yjs space');
             var that = this;
-            this.ySyncMetaInstance.share.select.observe(function(event) {
+            ySyncMetaInstance.share.select.observe(function(event) {
                 if (event.value && that.ySyncMetaInstance.share.edges.keys().indexOf(event.value) != -1)
                     callback(event.value);
             });
@@ -118,10 +163,10 @@ define(['jquery','lib/yjs-sync'], function($,yjsSync) {
          * @param {onEntityDeleteCallback} callback - the callback if a node was deleted
          */
         onNodeDelete: function(callback) {
-            if (!this.ySyncMetaInstance)
+            if (!ySyncMetaInstance)
                 return new Error('No Connection to Yjs space');
-            this.ySyncMetaInstance.share.nodes.observe(function(event) {
-                if(event.type === 'delete')
+            ySyncMetaInstance.share.nodes.observe(function(event) {
+                if (event.type === 'delete')
                     callback(event.name);
             });
 
@@ -131,45 +176,12 @@ define(['jquery','lib/yjs-sync'], function($,yjsSync) {
          * @param {onEntityDeleteCallback} callback - the callback if a edge was deleted
          */
         onEdgeDelete: function(callback) {
-            if (!this.ySyncMetaInstance)
+            if (!ySyncMetaInstance)
                 return new Error('No Connection to Yjs space');
-            this.ySyncMetaInstance.share.edges.observe(function(event) {
-                if(event.type === 'delete')
+            ySyncMetaInstance.share.edges.observe(function(event) {
+                if (event.type === 'delete')
                     callback(event.name);
             });
-        },
-        /**
-         * Listen to node manipulations
-         * @param {array} keys - the operations to listen to. All possible options are  ['NodeMoveOperation', 'NodeResizeOperation', 'NodeMoveZOperation']
-         * @param {function} callback - the callback if one of the operations defined in keys were issued
-         * @param {string} id - id of the node to listen to. If null we listen to all
-         */
-        onNode: function(keys, callback, id) {
-            if (!this.ySyncMetaInstance)
-                return new Error('No Connection to Yjs space');
-            if (id) {
-                this.ySyncMetaInstance.share.nodes.get(id).then(function(ymap) {
-                    ymap.observe(function(event) {
-                        if (keys.indexOf(event.name) != -1) {
-                            callback(event.value);
-                        }
-                    })
-                })
-            } else {
-                var nodeIds = this.ySyncMetaInstance.share.nodes.keys();
-                for (var i = 0; i < nodeIds.length; i++) {
-                    let n =this.ySyncMetaInstance.share.nodes.get(nodeIds[i]);
-                    if (n) {
-                        n.then(function(ymap) {
-                            ymap.observe(function(event) {
-                                if (keys.indexOf(event.name) != -1) {
-                                    callback(event.value);
-                                }
-                            })
-                        })
-                    }
-                }
-            }
         },
         /**
          * Listen to NodeMoveOperations
@@ -178,8 +190,10 @@ define(['jquery','lib/yjs-sync'], function($,yjsSync) {
          * @param {string} id - id of the node to listen to. If null we listen to all
          * @see onNode
          */
-        onNodeMove: function(callback, id) {
-            this.onNode(['NodeMoveOperation'], callback, id);
+        onNodeMove: function(callback) {
+            if (!ySyncMetaInstance)
+                return new Error('No Connection to Yjs space');
+            onNode('NodeMoveOperation', callback);
         },
         /**
          * Listen to NodeResizeOperations
@@ -188,8 +202,10 @@ define(['jquery','lib/yjs-sync'], function($,yjsSync) {
          * @param {string} id - id of the node to listen to. If null we listen to all
          * @see OnNode
          */
-        onNodeResize: function(callback, id) {
-            this.onNode(['NodeResizeOperation'], callback, id);
+        onNodeResize: function(callback) {
+            if (!ySyncMetaInstance)
+                return new Error('No Connection to Yjs space');
+            onNode('NodeResizeOperation', callback);
         },
         /**
          * Listen to NodeMoveZOperations
@@ -198,8 +214,10 @@ define(['jquery','lib/yjs-sync'], function($,yjsSync) {
          * @param {string} id - id of the node to listen to. If null we listen to all
          * @see OnNode
          */
-        onNodeMoveZ: function(callback, id) {
-            this.onNode(['NodeMoveZOperation'], callback, id);
+        onNodeMoveZ: function(callback) {
+            if (!ySyncMetaInstance)
+                return new Error('No Connection to Yjs space');
+            onNode('NodeMoveZOperation', callback);
         },
         /**
          * Listen to changes on Attributes on nodes or edges
@@ -208,7 +226,7 @@ define(['jquery','lib/yjs-sync'], function($,yjsSync) {
          * @param {string} entityId - id of the node to listen to. If null we listen to all of the specified type
          */
         onAttributeChange: function(type, callback, entityId) {
-            if (!this.ySyncMetaInstance)
+            if (!ySyncMetaInstance)
                 return new Error('No Connection to Yjs space');
 
             var listenToAttributes = function(ymapPromise, entityId) {
@@ -238,17 +256,17 @@ define(['jquery','lib/yjs-sync'], function($,yjsSync) {
             };
             if (!entityId) {
                 //listen to everything OR return
-                var nodeIds = this.ySyncMetaInstance.share[type].keys();
+                var nodeIds = ySyncMetaInstance.share[type].keys();
                 for (var i = 0; i < nodeIds.length; i++) {
-                    let p = this.ySyncMetaInstance.share[type].get(nodeIds[i]);
+                    let p = ySyncMetaInstance.share[type].get(nodeIds[i]);
                     if (p) {
                         listenToAttributes(p, nodeIds[i]);
                     }
                 }
             }
             else {
-                let p = this.ySyncMetaInstance.share[type].get(entityId);
-                if(p)
+                let p = ySyncMetaInstance.share[type].get(entityId);
+                if (p)
                     listenToAttributes(p, entityId);
             }
         },
