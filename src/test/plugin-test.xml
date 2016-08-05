@@ -58,9 +58,12 @@
           timeout();
         })();
     </script>
+    <style>
+     #eventList{max-height: 400px; overflow: auto;}
+    </style>
     <script src="<%= grunt.config('baseUrl') %>/plugin/syncmeta-plugin.js"></script>
     <script src="<%= grunt.config('baseUrl') %>/test/syncmeta-plugin-test.js"></script>
-
+    <ul id="eventList"></ul>
     ]]>
     </Content>
 </Module>

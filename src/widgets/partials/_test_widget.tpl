@@ -2,8 +2,6 @@
 <script src="<%= grunt.config('baseUrl') %>/js/lib/vendor/jquery.js"></script>
 <script src="<%= grunt.config('baseUrl') %>/js/lib/vendor/test/mocha.js"></script>
 <script src="<%= grunt.config('baseUrl') %>/test/test_widget.js"></script>
-<script src="<%= grunt.config('baseUrl') %>/plugin/syncmeta-plugin.js"></script>
-
 <style>
     #wrapper {
         max-height: 500px;

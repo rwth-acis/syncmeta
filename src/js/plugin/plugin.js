@@ -1,8 +1,9 @@
 define(['jquery','lib/yjs-sync'], function($,yjsSync) {
+    'use strict';
     return  {
         ySyncMetaInstance: null,
         /**
-         * TODO documentation and implementation
+         * @param {string} spaceName - the name of the role space where the widgets are located
          */
         connect: function(spaceName) {
             var that = this;
@@ -10,9 +11,7 @@ define(['jquery','lib/yjs-sync'], function($,yjsSync) {
                 var deferred = $.Deferred();
                 yjsSync(spaceName).done(function(y) {
                     that.ySyncMetaInstance = y;
-                    //TODO newly created nodes and edges need to register observers, too.
                     deferred.resolve();
-
                 }).then(function() {
                     return true;
                 })
@@ -122,7 +121,8 @@ define(['jquery','lib/yjs-sync'], function($,yjsSync) {
             if (!this.ySyncMetaInstance)
                 return new Error('No Connection to Yjs space');
             this.ySyncMetaInstance.share.nodes.observe(function(event) {
-                callback(event.value);
+                if(event.type === 'delete')
+                    callback(event.name);
             });
 
         },
@@ -134,7 +134,8 @@ define(['jquery','lib/yjs-sync'], function($,yjsSync) {
             if (!this.ySyncMetaInstance)
                 return new Error('No Connection to Yjs space');
             this.ySyncMetaInstance.share.edges.observe(function(event) {
-                callback(event.value);
+                if(event.type === 'delete')
+                    callback(event.name);
             });
         },
         /**
@@ -157,7 +158,8 @@ define(['jquery','lib/yjs-sync'], function($,yjsSync) {
             } else {
                 var nodeIds = this.ySyncMetaInstance.share.nodes.keys();
                 for (var i = 0; i < nodeIds.length; i++) {
-                    if (n = this.ySyncMetaInstance.share.nodes.get(nodeIds[i])) {
+                    let n =this.ySyncMetaInstance.share.nodes.get(nodeIds[i]);
+                    if (n) {
                         n.then(function(ymap) {
                             ymap.observe(function(event) {
                                 if (keys.indexOf(event.name) != -1) {
@@ -238,13 +240,16 @@ define(['jquery','lib/yjs-sync'], function($,yjsSync) {
                 //listen to everything OR return
                 var nodeIds = this.ySyncMetaInstance.share[type].keys();
                 for (var i = 0; i < nodeIds.length; i++) {
-                    if (p = this.ySyncMetaInstance.share[type].get(nodeIds[i])) {
+                    let p = this.ySyncMetaInstance.share[type].get(nodeIds[i]);
+                    if (p) {
                         listenToAttributes(p, nodeIds[i]);
                     }
                 }
             }
-            else if (p = this.ySyncMetaInstance.share[type].get(entityId)) {
-                listenToAttributes(p, entityId);
+            else {
+                let p = this.ySyncMetaInstance.share[type].get(entityId);
+                if(p)
+                    listenToAttributes(p, entityId);
             }
         },
         /**
