@@ -1,12 +1,12 @@
-define(['jquery','yjs'],function ($) {
+define(['jquery', 'yjs'], function($) {
     return function(spaceTitle) {
 
         var deferred = $.Deferred();
-        if(!spaceTitle) {
+        if (!spaceTitle) {
             //try to get space title from url if space promise fails
             spaceTitle = frameElement.baseURI.substring(frameElement.baseURI.lastIndexOf('/') + 1);
-            if(spaceTitle.indexOf('#') != -1||spaceTitle.indexOf('?') != -1){
-                spaceTitle= spaceTitle.replace(/[#|\\?]\S*/g, '');
+            if (spaceTitle.indexOf('#') != -1 || spaceTitle.indexOf('?') != -1) {
+                spaceTitle = spaceTitle.replace(/[#|\\?]\S*/g, '');
             }
         }
         Y({
@@ -15,24 +15,25 @@ define(['jquery','yjs'],function ($) {
             },
             connector: {
                 name: 'websockets-client', // use the websockets connector
-                room: spaceTitle
+                room: spaceTitle,
+                url: 'https://yjs.dbis.rwth-aachen.de:5080'
             },
             share: { // specify the shared content
-                users:'Map',
-                undo:'Array',
-                redo:'Array',
-                join:'Map',
+                users: 'Map',
+                undo: 'Array',
+                redo: 'Array',
+                join: 'Map',
                 canvas: 'Map',
-                nodes:'Map',
-                edges:'Map',
-                userList:'Map',
-                select:'Map',
-                views:'Map',
-                data:'Map',
-                text:"Text"
+                nodes: 'Map',
+                edges: 'Map',
+                userList: 'Map',
+                select: 'Map',
+                views: 'Map',
+                data: 'Map',
+                text: "Text"
             },
             sourceDir: '<%= grunt.config("baseUrl") %>/js/lib/vendor'
-        }).then(function (y) {
+        }).then(function(y) {
             deferred.resolve(y);
         });
         return deferred.promise();
