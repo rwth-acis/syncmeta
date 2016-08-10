@@ -1,5 +1,6 @@
 define(['jquery', 'lib/yjs-sync'], function($, yjsSync) {
     'use strict';
+
     /**
         * Listen to node manipulations. Private helper function
          * @private
@@ -21,7 +22,8 @@ define(['jquery', 'lib/yjs-sync'], function($, yjsSync) {
             if (n) {
                 n.then(function(ymap) {
                     //Overwrite with new observer
-                    ymap.unobserve(oldObserver);
+                    if (oldObserver)
+                        ymap.unobserve(oldObserver);
                     ymap.observe(newObersever);
                 })
             }
@@ -29,33 +31,153 @@ define(['jquery', 'lib/yjs-sync'], function($, yjsSync) {
         nodeObservers[key] = newObersever;
     };
     var nodeObservers = {};
-    var attributeObservers = {};
+    var attrObservers = {
+        nodes: {
+            attributeYTextObserver: undefined,
+            attributePrimitiveObserver: undefined
+        },
+        edges: {
+            attributeYTextObserver: undefined,
+            attributePrimitiveObserver: undefined
+        }
+    }
+    var attrObserverMap = {
+        ytext: {},
+        primitive: {}
+    };
     var ySyncMetaInstance = null;
 
-    return {
+    /**
+         * Listen to changes on Attributes on nodes or edges
+         * @param {string} type - 'nodes' or 'edges'
+         * @param {onAttributeChangeCallback} callback - calls back if a attribute is changed
+         * @param {string} entityId - id of the node to listen to. If null we listen to all of the specified type
+         * @private
+         */
+    var onAttributeChange = function(type, callback) {
+        if (!ySyncMetaInstance)
+            return new Error('No Connection to Yjs space');
+        
 
+        attrObservers[type].attributePrimitiveObserver = function(entityId) {
+            return function(event) {
+                if (event.name.search(/\w*\[\w*\]/g) != -1) {
+                    callback(event.value.value, entityId, event.value.entityId);
+                }
+            }
+        }
+        attrObservers[type].attributeYTextObserver = function(entityId, attrId) {
+            return function(event) {
+                callback(event.object.toString(), entityId, attrId);
+            }
+        };
+
+        var listenToAttributes = function(ymapPromise, entityId) {
+            var listentoAttributesHelper = function(attrId, attrPromise, entityId) {
+                if (attrPromise instanceof Promise) {
+                    attrPromise.then(function(ytext) {
+                        if (attrObserverMap.ytext[attrId])
+                            ytext.unobserve(attrObserverMap.ytext[attrId]);
+                         var newObserver = attrObservers[type].attributeYTextObserver(entityId, attrId);
+                         attrObserverMap.ytext[attrId] = newObserver;
+                         ytext.observe(newObserver);
+                    })
+                }
+            };
+
+            ymapPromise.then(function(ymap) {
+                if (attrObserverMap.primitive[entityId])
+                    ymap.unobserve(attrObserverMap.primitive[entityId]);
+                var newObserver = attrObservers[type].attributePrimitiveObserver(entityId);
+                attrObserverMap.primitive[entityId] = newObserver;
+                ymap.observe(newObserver);
+                
+                var keys = ymap.keys();
+                for (var i = 0; i < keys.length; i++) {
+                    if (keys[i].search(/\w*\[\w*\]/g) != -1) {
+                        listentoAttributesHelper(keys[i], ymap.get(keys[i]), entityId);
+                    }
+                }
+            });
+        };
+
+        //listen to everything OR return
+        var nodeIds = ySyncMetaInstance.share[type].keys();
+        for (var i = 0; i < nodeIds.length; i++) {
+            let p = ySyncMetaInstance.share[type].get(nodeIds[i]);
+            if (p) {
+                listenToAttributes(p, nodeIds[i]);
+            }
+        }
+    };
+
+    return {
         /**
+         * If are already connected to a syncmeta yjs space then use this funnction to init the plugin
+         * Otherwise connect to yjs with the connect function
+         * @param {object} yInstance - the y instance 
+         */
+        init: function(yInstance) {
+            ySyncMetaInstance = yInstance;
+
+            var attrObserverInit = function(type, ymap, id) {
+                if (attrObservers[type].attributePrimitiveObserver && attrObservers[type].attributeYTextObserver) {
+                    ymap.observe(function(e) {
+                        if (e.type === 'add' && e.name.search(/\w*\[\w*\]/g) != -1) {
+                            var attrId = e.name;
+                            if (e.value() instanceof Promise) {
+                                e.value().then(function(ytext) {
+                                    var newObserver = attrObservers[type].attributeYTextObserver(id, attrId);
+                                    ytext.observe(newObserver);
+                                    attrObserverMap.ytext[attrId] =newObserver;
+                                });
+                            } else {
+                                var newObersever = attrObservers[type].attributePrimitiveObserver(id);
+                                e.object.observe(newObersever);
+                                attrObserverMap.primitive[id] = newObersever;
+                            }
+                        }
+                    });
+                }
+            }
+
+            ySyncMetaInstance.share.nodes.observe(function(event) {
+                var nodeId = event.name;
+                if (event.type === 'add') {
+                    event.value().then(function(ymap) {
+                        for (var key in nodeObservers) {
+                            if (nodeObservers.hasOwnProperty(key)) {
+                                ymap.observe(nodeObservers[key]);
+                            }
+                        }
+
+                        attrObserverInit('nodes', ymap, nodeId);
+                    });
+                }
+            });
+
+            ySyncMetaInstance.share.edges.observe(function(event) {
+                var edgeId = event.name;
+                if (event.type === 'add') {
+                    event.value().then(function(ymap) {
+                        attrObserverInit('edges', ymap, edgeId);
+                    });
+                }
+            })
+        },
+        /**
+         * Connect to a syncmeta yjs space.
+         * This or the init function must be called before using the listeners.
+         * This interally uses the init function to setup the plugin.
          * @param {string} spaceName - the name of the role space where the widgets are located
+         * @see init
          */
         connect: function(spaceName) {
             var that = this;
             if (!ySyncMetaInstance) {
                 var deferred = $.Deferred();
                 yjsSync(spaceName).done(function(y) {
-                    ySyncMetaInstance = y;
-
-                    ySyncMetaInstance.share.nodes.observe(function(event) {
-                        if (event.type === 'add') {
-                            event.value().then(function(ymap) {
-                                for (var key in nodeObservers) {
-                                    if (nodeObservers.hasOwnProperty(key)) {
-                                        ymap.observe(nodeObservers[key]);
-                                    }
-                                }
-                            });
-                        }
-                    });
-
+                    that.init(y);
                     deferred.resolve();
                 }).then(function() {
                     return true;
@@ -139,9 +261,8 @@ define(['jquery', 'lib/yjs-sync'], function($, yjsSync) {
 
             if (!ySyncMetaInstance)
                 return new Error('No Connection to Yjs space');
-            var that = this;
             ySyncMetaInstance.share.select.observe(function(event) {
-                if (event.value && that.ySyncMetaInstance.share.nodes.keys().indexOf(event.value) != -1)
+                if (event.value && ySyncMetaInstance.share.nodes.keys().indexOf(event.value) != -1)
                     callback(event.value);
             });
         },
@@ -152,9 +273,8 @@ define(['jquery', 'lib/yjs-sync'], function($, yjsSync) {
         onEdgeSelect: function(callback) {
             if (!ySyncMetaInstance)
                 return new Error('No Connection to Yjs space');
-            var that = this;
             ySyncMetaInstance.share.select.observe(function(event) {
-                if (event.value && that.ySyncMetaInstance.share.edges.keys().indexOf(event.value) != -1)
+                if (event.value && ySyncMetaInstance.share.edges.keys().indexOf(event.value) != -1)
                     callback(event.value);
             });
         },
@@ -220,65 +340,14 @@ define(['jquery', 'lib/yjs-sync'], function($, yjsSync) {
             onNode('NodeMoveZOperation', callback);
         },
         /**
-         * Listen to changes on Attributes on nodes or edges
-         * @param {string} type - 'nodes' or 'edges'
-         * @param {onAttributeChangeCallback} callback - calls back if a attribute is changed
-         * @param {string} entityId - id of the node to listen to. If null we listen to all of the specified type
-         */
-        onAttributeChange: function(type, callback, entityId) {
-            if (!ySyncMetaInstance)
-                return new Error('No Connection to Yjs space');
-
-            var listenToAttributes = function(ymapPromise, entityId) {
-                var listentoAttributesHelper = function(attrId, attrPromise, entityId) {
-                    if (attrPromise instanceof Promise) {
-                        attrPromise.then(function(ytext) {
-                            ytext.observe(function(event) {
-                                callback(event.object.toString(), entityId, attrId);
-                            });
-                        })
-                    }
-                };
-
-                ymapPromise.then(function(ymap) {
-                    ymap.observe(function(event) {
-                        if (event.name.search(/\w*\[\w*\]/g) != -1) {
-                            callback(event.value.value, entityId, event.value.entityId);
-                        }
-                    });
-                    var keys = ymap.keys();
-                    for (var i = 0; i < keys.length; i++) {
-                        if (keys[i].search(/\w*\[\w*\]/g) != -1) {
-                            listentoAttributesHelper(keys[i], ymap.get(keys[i]), entityId);
-                        }
-                    }
-                });
-            };
-            if (!entityId) {
-                //listen to everything OR return
-                var nodeIds = ySyncMetaInstance.share[type].keys();
-                for (var i = 0; i < nodeIds.length; i++) {
-                    let p = ySyncMetaInstance.share[type].get(nodeIds[i]);
-                    if (p) {
-                        listenToAttributes(p, nodeIds[i]);
-                    }
-                }
-            }
-            else {
-                let p = ySyncMetaInstance.share[type].get(entityId);
-                if (p)
-                    listenToAttributes(p, entityId);
-            }
-        },
-        /**
          * Listen to changes on Attributes on nodes
          * Equivalent to onAttributeChange('nodes', callback, entityId);
          * @param {onAttributeChangeCallback} callback - calls back if a attribute is changed
          * @param {string} entityId - id of the node to listen to. If null we listen to all of the specified type
          * @see OnAttributeChange
          */
-        onNodeAttributeChange: function(callback, entityId) {
-            this.onAttributeChange('nodes', callback, entityId);
+        onNodeAttributeChange: function(callback) {
+            onAttributeChange('nodes', callback);
         },
         /**
          * Listen to changes on Attributes on edges
@@ -287,8 +356,8 @@ define(['jquery', 'lib/yjs-sync'], function($, yjsSync) {
          * @param {string} entityId - id of the edge to listen to. If null we listen to all of the specified type
          * @see OnAttributeChange
          */
-        onEdgeAttributeChange: function(callback, entityId) {
-            this.onAttributeChange('edges', callback, entityId);
+        onEdgeAttributeChange: function(callback) {
+            onAttributeChange('edges', callback);
         }
 
         /**

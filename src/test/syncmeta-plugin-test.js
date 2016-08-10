@@ -11,22 +11,22 @@ $(function() {
         syncmeta.onNodeAdd(function(event) {
             addToList('Node created: ' + event.id);
 
-            /*listen to newly created nodes by using the onNodeAttributeChange with the event.id paramater
-            in the the onNodeAdd Callback*/  
+            /*
+            * New oberver for the events on attributes on nodes.
+            */  
             syncmeta.onNodeAttributeChange(function(value, entityId, attrId) {
-                addToList('onNodeAttributeChange(only ' + entityId + ') + value:  ' + value + ' attrId: ' + attrId);
-            }, event.id);
+                addToList('onNodeAttributeChange(overrides) nodeId: ' + entityId + ' value:  ' + value + ' attrId: ' + attrId);
+            });
 
         });
 
         syncmeta.onEdgeAdd(function(event) {
             addToList('Edge created: ' + event.id);
             
-            //same as for the edges
-            //see line 16 and comments
+            //new oberserver for attribute on events on edges
             syncmeta.onEdgeAttributeChange(function(value, entityId, attrId) {
                 addToList('onEdgeAttributeChange(only ' + entityId + ') + value:  ' + value + ' attrId: ' + attrId);
-            }, event.id);
+            });
             
         });
 
@@ -57,10 +57,7 @@ $(function() {
             addToList('Node was moved on Z: ' + event.id);
         });
 
-        //this is not called for newly crated nodes and edges
-        //only for the imported graphs
-        //i know its a bit suboptimal. I will improve this in the future
-        //see line 16
+        
         syncmeta.onNodeAttributeChange(function(value, entityId, attrId) {
             addToList('onNodeAttributeChange:  value: ' + value + ' entityId: ' + entityId + ' attrId: ' + attrId);
         });

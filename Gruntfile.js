@@ -388,6 +388,15 @@ module.exports = function(grunt) {
                     destination: 'doc',
                     configure: 'jsdoc.conf.json'
                 }
+            },
+            plugin:{
+                 src: [
+                    '<%= srcdir %>/js/plugin/*.js'
+                ],
+                options: {
+                    destination: 'html/plugin/doc',
+                    configure: 'jsdoc.conf.json'
+                }
             }
         },
         jshint: {
