@@ -1,13 +1,13 @@
 //Copyright 2012, etc.
 
 (function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
+    //if (syncmeta_api && typeof define === 'function' && define.amd) {
         // AMD.
-        define(['jquery'], factory);
-    } else {
+   //     define(['jquery'], factory);
+   // } else {
         // Browser globals
         root.syncmeta = factory(root.$, root._);
-    }
+    //}
 }(this, function ($, _) {
 
 

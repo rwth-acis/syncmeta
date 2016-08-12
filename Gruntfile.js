@@ -348,6 +348,7 @@ module.exports = function(grunt) {
                 options: {
                     baseUrl: 'html/js',
                     name: '../..//tools/almond',
+                    namespace :'syncmeta_api',
                     optimize:'none',
                     mainConfigFile:"<%= distdir %>/js/config.js",
                     include: ['plugin/main.js'],

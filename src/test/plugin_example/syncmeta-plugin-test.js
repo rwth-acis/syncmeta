@@ -7,15 +7,24 @@ $(function() {
             $event.css('opacity', 0.5);
         }, 3000);
     }
+    var nc =0, ec=0;
+    
+    /*It is also possible to use syncmeta.init(yInstance) if you are already connected to syncmeta yjs room.
+    * This doesn't require the async promise call like above
+    */ 
     syncmeta.connect().done(function() {
         syncmeta.onNodeAdd(function(event) {
             addToList('Node created: ' + event.id);
 
             /*
+            * everytime a node is created a new onNodeAttributeChange observer is also created.
+            * should not be used like that. This will produce a lot of callbacks. Only for testing and demonstration purposes
+            * better uses this outside of such a callback like in line 65
             * New oberver for the events on attributes on nodes.
             */  
+            nc++;
             syncmeta.onNodeAttributeChange(function(value, entityId, attrId) {
-                addToList('onNodeAttributeChange(overrides) nodeId: ' + entityId + ' value:  ' + value + ' attrId: ' + attrId);
+                addToList('onNodeAttributeChange '+ nc +':  nodeId: ' + entityId + ' value:  ' + value + ' attrId: ' + attrId);
             });
 
         });
@@ -24,8 +33,9 @@ $(function() {
             addToList('Edge created: ' + event.id);
             
             //new oberserver for attribute on events on edges
+            ec++;
             syncmeta.onEdgeAttributeChange(function(value, entityId, attrId) {
-                addToList('onEdgeAttributeChange(only ' + entityId + ') + value:  ' + value + ' attrId: ' + attrId);
+                addToList('onEdgeAttributeChange' + ' edgeId: '+  entityId + 'value: ' + value + 'attrId: ' + attrId);
             });
             
         });
@@ -65,10 +75,10 @@ $(function() {
             addToList('onEdgeAttributeChange:  value: ' + value + ' entityId: ' + entityId + ' attrId: ' + attrId);
         });
         
-        //the old NodeMove callback should be overridden by this one
-        //See Line 43
+        
+        //Second onNode move observer
         syncmeta.onNodeMove(function(e) {
-            addToList('Node  was moved(overridden): '+ e.id);
+            addToList('onNodeMove2: Moved: '+ e.id);
         });
     });
 });

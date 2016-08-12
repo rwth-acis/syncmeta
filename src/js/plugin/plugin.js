@@ -15,22 +15,26 @@ define(['jquery', 'lib/yjs-sync'], function($, yjsSync) {
         };
 
         var nodeIds = ySyncMetaInstance.share.nodes.keys();
-        var oldObserver = nodeObservers[key];
-        nodeObservers[key] = undefined;
+        //var oldObserver = nodeObservers[key];
+        //nodeObservers[key] = undefined;
         for (var i = 0; i < nodeIds.length; i++) {
             let n = ySyncMetaInstance.share.nodes.get(nodeIds[i]);
             if (n) {
                 n.then(function(ymap) {
                     //Overwrite with new observer
-                    if (oldObserver)
-                        ymap.unobserve(oldObserver);
+                    //if (oldObserver)
+                    //    ymap.unobserve(oldObserver);
                     ymap.observe(newObersever);
                 })
             }
         }
-        nodeObservers[key] = newObersever;
+        nodeObservers[key].push(newObersever);
     };
-    var nodeObservers = {};
+    var nodeObservers = {
+        NodeMoveOperation: [],
+        NodeResizeOperation: [],
+        NodeMoveZOperation: []
+    };
     var attrObservers = {
         nodes: {
             attributeYTextObserver: undefined,
@@ -41,10 +45,10 @@ define(['jquery', 'lib/yjs-sync'], function($, yjsSync) {
             attributePrimitiveObserver: undefined
         }
     }
-    var attrObserverMap = {
+    /*var attrObserverMap = {
         ytext: {},
         primitive: {}
-    };
+    };*/
     var ySyncMetaInstance = null;
 
     /**
@@ -57,11 +61,11 @@ define(['jquery', 'lib/yjs-sync'], function($, yjsSync) {
     var onAttributeChange = function(type, callback) {
         if (!ySyncMetaInstance)
             return new Error('No Connection to Yjs space');
-        
+
 
         attrObservers[type].attributePrimitiveObserver = function(entityId) {
             return function(event) {
-                if (event.name.search(/\w*\[\w*\]/g) != -1) {
+                if (event.name.search(/\w*\[(\w|\s)*\]/g) != -1) {
                     callback(event.value.value, entityId, event.value.entityId);
                 }
             }
@@ -76,25 +80,25 @@ define(['jquery', 'lib/yjs-sync'], function($, yjsSync) {
             var listentoAttributesHelper = function(attrId, attrPromise, entityId) {
                 if (attrPromise instanceof Promise) {
                     attrPromise.then(function(ytext) {
-                        if (attrObserverMap.ytext[attrId])
-                            ytext.unobserve(attrObserverMap.ytext[attrId]);
-                         var newObserver = attrObservers[type].attributeYTextObserver(entityId, attrId);
-                         attrObserverMap.ytext[attrId] = newObserver;
-                         ytext.observe(newObserver);
+                        //if (attrObserverMap.ytext[attrId])
+                        //    ytext.unobserve(attrObserverMap.ytext[attrId]);
+                        var newObserver = attrObservers[type].attributeYTextObserver(entityId, attrId);
+                        //attrObserverMap.ytext[attrId] = newObserver;
+                        ytext.observe(newObserver);
                     })
                 }
             };
 
             ymapPromise.then(function(ymap) {
-                if (attrObserverMap.primitive[entityId])
-                    ymap.unobserve(attrObserverMap.primitive[entityId]);
+                //if (attrObserverMap.primitive[entityId])
+                //    ymap.unobserve(attrObserverMap.primitive[entityId]);
                 var newObserver = attrObservers[type].attributePrimitiveObserver(entityId);
-                attrObserverMap.primitive[entityId] = newObserver;
+                //attrObserverMap.primitive[entityId] = newObserver;
                 ymap.observe(newObserver);
-                
+
                 var keys = ymap.keys();
                 for (var i = 0; i < keys.length; i++) {
-                    if (keys[i].search(/\w*\[\w*\]/g) != -1) {
+                    if (keys[i].search(/\w*\[(\w|\s)*\]/g) != -1) {
                         listentoAttributesHelper(keys[i], ymap.get(keys[i]), entityId);
                     }
                 }
@@ -123,18 +127,18 @@ define(['jquery', 'lib/yjs-sync'], function($, yjsSync) {
             var attrObserverInit = function(type, ymap, id) {
                 if (attrObservers[type].attributePrimitiveObserver && attrObservers[type].attributeYTextObserver) {
                     ymap.observe(function(e) {
-                        if (e.type === 'add' && e.name.search(/\w*\[\w*\]/g) != -1) {
+                        if (e.type === 'add' && e.name.search(/\w*\[(\w|\s)*\]/g) != -1) {
                             var attrId = e.name;
                             if (e.value() instanceof Promise) {
                                 e.value().then(function(ytext) {
                                     var newObserver = attrObservers[type].attributeYTextObserver(id, attrId);
                                     ytext.observe(newObserver);
-                                    attrObserverMap.ytext[attrId] =newObserver;
+                                    //attrObserverMap.ytext[attrId] =newObserver;
                                 });
                             } else {
                                 var newObersever = attrObservers[type].attributePrimitiveObserver(id);
                                 e.object.observe(newObersever);
-                                attrObserverMap.primitive[id] = newObersever;
+                                //attrObserverMap.primitive[id] = newObersever;
                             }
                         }
                     });
@@ -147,7 +151,9 @@ define(['jquery', 'lib/yjs-sync'], function($, yjsSync) {
                     event.value().then(function(ymap) {
                         for (var key in nodeObservers) {
                             if (nodeObservers.hasOwnProperty(key)) {
-                                ymap.observe(nodeObservers[key]);
+                                for (let i = 0; i < nodeObservers[key].length; i++) {
+                                    ymap.observe(nodeObservers[key][i]);
+                                }
                             }
                         }
 
@@ -188,7 +194,7 @@ define(['jquery', 'lib/yjs-sync'], function($, yjsSync) {
         },
         /**
          * Listen to NodeAddOperations on the SyncMeta canvas widget
-         * @param {onNodeCallback} callback - the callback if a node was created on syncmeta canvas widget
+         * @param {onNodeAddCallback} callback - the callback if a node was created on syncmeta canvas widget
          */
         onNodeAdd: function(callback) {
             if (!ySyncMetaInstance)
@@ -211,7 +217,7 @@ define(['jquery', 'lib/yjs-sync'], function($, yjsSync) {
         },
         /**
          * Listen to EdgeAddOperation on the SyncMeta canvas widget
-         * @param {onEdgeCallback} callback - the callback if a edge was created on syncmeta canvas widget
+         * @param {onEdgeAddCallback} callback - the callback if a edge was created on syncmeta canvas widget
          */
         onEdgeAdd: function(callback) {
             if (!ySyncMetaInstance)
@@ -361,7 +367,7 @@ define(['jquery', 'lib/yjs-sync'], function($, yjsSync) {
         }
 
         /**
-         * @callback onNodeCallback
+         * @callback onNodeAddCallback
          * @param {object} event - the NodeAddOperation event
          * @param {string} event.id - the id of the created node
          * @param {string} event.type - the type of the node
@@ -377,7 +383,7 @@ define(['jquery', 'lib/yjs-sync'], function($, yjsSync) {
          */
 
         /**
-         * @callback onEdgeCallback
+         * @callback onEdgeAddCallback
          * @param {object} event - the EdgeAddOperation event
          * @param {string} event.id - the id of the created edge
          * @param {string} event.jabberId - jabberId of the user who created the edge
