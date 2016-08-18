@@ -51,6 +51,8 @@ define(['jquery', 'lib/yjs-sync'], function($, yjsSync) {
     };*/
     var ySyncMetaInstance = null;
 
+    var jabberId = null;
+
     /**
          * Listen to changes on Attributes on nodes or edges
          * @param {string} type - 'nodes' or 'edges'
@@ -115,6 +117,7 @@ define(['jquery', 'lib/yjs-sync'], function($, yjsSync) {
         }
     };
 
+
     return {
         /**
          * If are already connected to a syncmeta yjs space then use this funnction to init the plugin
@@ -169,6 +172,10 @@ define(['jquery', 'lib/yjs-sync'], function($, yjsSync) {
                         attrObserverInit('edges', ymap, edgeId);
                     });
                 }
+            })
+
+            openapp.resource.get(openapp.param.user(), function(user) {
+                jabberId = user.subject['http://xmlns.com/foaf/0.1/jabberID'][0].value.replace("xmpp:", "");
             })
         },
         /**
@@ -364,6 +371,70 @@ define(['jquery', 'lib/yjs-sync'], function($, yjsSync) {
          */
         onEdgeAttributeChange: function(callback) {
             onAttributeChange('edges', callback);
+        },
+        /**
+         * Set a value for a attribute of a entity
+         * @param {stirng} entity
+         * @param {string} attrName
+         * @param {string|bool|integer} value
+         */
+        setAttributeValue: function(entityId, attrName, value) {
+            var idx = ySyncMetaInstance.share.nodes.keys().indexOf(entityId);
+
+            var attrId;
+            //Does attrName has the form of the id
+            if (attrName.search(/\w*\[(\w|\s)*\]/g) != -1)
+                //Yes, the attribute name is the attribute id
+                attrId = attrName;
+            else
+                //No, build the attribute id
+                attrId = entityId + '[' + attrName.toLowerCase() + ']';
+
+            var findAttr = function(ymap, attrId, value) {
+                var keys = ymap.keys().indexOf(attrId);
+                if (keys != -1) {
+                    var attr = ymap.get(attrId);
+                    if (attr instanceof Promise) {
+                        attr.then(function(ytext) {
+                            setTimeout(function() {
+                                var l = ytext.toString().length;
+                                if (l > 0) {
+                                    ytext.delete(0, l);
+                                }
+                                ytext.insert(0, value);
+                                //lets wait a bit before trigger the save
+                                // so that the canvas and attribute widget can process the value change at their callbacks
+                                setTimeout(function() {
+                                    if (jabberId)
+                                        ySyncMetaInstance.share.canvas.set('triggerSave', jabberId);
+                                }, 500);
+
+                            }, 500);
+
+                        })
+                    }
+                    else
+                        ymap.set(attrId, { 'entityId': attrId, 'value': value, 'type': 'update', 'position': 0 });
+                }
+                else
+                    ymap.set(attrId, { 'entityId': attrId, 'value': value, 'type': 'update', 'position': 0 });
+            }
+
+            if (idx != -1) {
+                ySyncMetaInstance.share.nodes.get(entityId).then(function(ymap) {
+                    findAttr(ymap, attrId, value);
+                });
+            } else {
+                idx = ySyncMetaInstance.share.edges.keys().indexOf(entityId);
+                if (idx != -1) {
+                    ySyncMetaInstance.share.edges.get(entityId).then(function(ymap) {
+                        findAttr(ymap, attrId, value);
+                    });
+                }
+                else {
+                    return;
+                }
+            }
         }
 
         /**

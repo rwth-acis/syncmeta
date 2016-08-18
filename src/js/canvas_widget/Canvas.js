@@ -1588,6 +1588,11 @@ define([
                                 _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
                                 break;
                             }
+                            case 'triggerSave':{
+                                if(event.value === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
+                                    $('#save').click();
+                                break;
+                            }
                         }
                     }
                 });
