@@ -16,16 +16,16 @@ requirejs([
     'operations/non_ot/ViewInitOperation',
     'operations/non_ot/SetModelAttributeNodeOperation',
     'promise!Guidancemodel'
-],function ($,IWCW,yjsSync,WaitForCanvas,AttributeWrapper,EntityManager, ViewGenerator, JoinOperation,InitModelTypesOperation,ViewInitOperation, SetModelAttributeNodeOperation, guidancemodel) {
+], function ($, IWCW, yjsSync, WaitForCanvas, AttributeWrapper, EntityManager, ViewGenerator, JoinOperation, InitModelTypesOperation, ViewInitOperation, SetModelAttributeNodeOperation, guidancemodel) {
 
     var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE);
 
-    WaitForCanvas(CONFIG.WIDGET.NAME.ATTRIBUTE,7).done(function(){
+    WaitForCanvas(CONFIG.WIDGET.NAME.ATTRIBUTE, 7).done(function () {
         $('#wrapper').find('h1').text('Got Response from Canvas!');
-        setTimeout(function(){
+        setTimeout(function () {
             $('#wrapper').find('h1').remove();
-        },500);
-        yjsSync().done(function(y){
+        }, 500);
+        yjsSync().done(function (y) {
             window.y = y;
             console.info('ATTRIBUTE: Yjs successfully initialized');
             var model = y.share.data.get('model');
@@ -33,15 +33,15 @@ requirejs([
         });
         function InitAttributeWidget(model) {
 
-            if(guidancemodel.isGuidanceEditor()){
+            if (guidancemodel.isGuidanceEditor()) {
                 EntityManager.init(y.share.data.get('guidancemetamodel'));
                 model = y.share.data.get('guidancemodel');
-            }else {
+            } else {
                 EntityManager.init(y.share.data.get('metamodel'));
             }
             var wrapper = new AttributeWrapper($("#wrapper"));
 
-            if(model)
+            if (model)
                 JSONtoGraph(model);
 
 
@@ -51,16 +51,21 @@ requirejs([
                 if (json.attributes && !_.isEmpty(json.attributes)) {
                     modelAttributesNode = EntityManager.createModelAttributesNodeFromJSON(json.attributes);
                     wrapper.setModelAttributesNode(modelAttributesNode);
-                    modelAttributesNode.registerYType();
+                    try {
+                        modelAttributesNode.registerYType();
+                    }
+                    catch (e) {
+                        //If this fails doesn't matter initialize it with bindYTextCallback
+                    }
                     modelAttributesNode.addToWrapper(wrapper);
                     //wrapper.select(modelAttributesNode);
                 }
                 for (nodeId in json.nodes) {
                     if (json.nodes.hasOwnProperty(nodeId)) {
                         var node = EntityManager.createNodeFromJSON(json.nodes[nodeId].type, nodeId, json.nodes[nodeId].left, json.nodes[nodeId].top, json.nodes[nodeId].width, json.nodes[nodeId].height, json.nodes[nodeId]);
-                        try{
+                        try {
                             node.registerYType();
-                        }catch(e){
+                        } catch (e) {
                             //If this fails doesn't matter initialize it with bindYTextCallback
                         }
                         node.addToWrapper(wrapper);
@@ -69,10 +74,10 @@ requirejs([
                 for (edgeId in json.edges) {
                     if (json.edges.hasOwnProperty(edgeId)) {
                         var edge = EntityManager.createEdgeFromJSON(json.edges[edgeId].type, edgeId, json.edges[edgeId].source, json.edges[edgeId].target, json.edges[edgeId]);
-                        try{
+                        try {
                             edge.registerYType();
 
-                        }catch(e){
+                        } catch (e) {
                             //If this fails doesn't matter initialize it with bindYTextCallback
 
                         }
@@ -84,13 +89,19 @@ requirejs([
             iwc.registerOnDataReceivedCallback(function (operation) {
                 var modelAttributesNode/*, model*/;
                 if (operation instanceof JoinOperation && operation.isDone()) {
-                    y.share.users.set(y.db.userId,operation.getUser());
+                    y.share.users.set(y.db.userId, operation.getUser());
                 }
                 else if (operation instanceof SetModelAttributeNodeOperation) {
                     modelAttributesNode = wrapper.getModelAttributesNode();
                     if (modelAttributesNode === null) {
                         modelAttributesNode = EntityManager.createModelAttributesNode();
                         wrapper.setModelAttributesNode(modelAttributesNode);
+                        try {
+                            modelAttributesNode.registerYType();
+                        }
+                        catch (e) {
+                            //If this fails doesn't matter initialize it with bindYTextCallback
+                        }
                         modelAttributesNode.addToWrapper(wrapper);
                     }
                     wrapper.select(modelAttributesNode);
@@ -119,9 +130,9 @@ requirejs([
                     for (nodeId in json.nodes) {
                         if (json.nodes.hasOwnProperty(nodeId)) {
                             var node = EntityManager.createNodeFromJSON(json.nodes[nodeId].type, nodeId, json.nodes[nodeId].left, json.nodes[nodeId].top, json.nodes[nodeId].width, json.nodes[nodeId].height, json.nodes[nodeId], json.id);
-                            try{
+                            try {
                                 node.registerYType();
-                            }catch(e){
+                            } catch (e) {
                                 //If this fails doesn't matter initialize it with bindYTextCallback
                             }
                             node.addToWrapper(wrapper);
@@ -132,10 +143,10 @@ requirejs([
                     for (edgeId in json.edges) {
                         if (json.edges.hasOwnProperty(edgeId)) {
                             var edge = EntityManager.createEdgeFromJSON(json.edges[edgeId].type, edgeId, json.edges[edgeId].source, json.edges[edgeId].target, json.edges[edgeId], json.id);
-                            try{
+                            try {
                                 edge.registerYType();
 
-                            }catch(e){
+                            } catch (e) {
                                 //If this fails doesn't matter initialize it with bindYTextCallback
 
                             }
@@ -150,20 +161,20 @@ requirejs([
             var operation = new SetModelAttributeNodeOperation();
             iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN, operation.toNonOTOperation());
 
-            if(CONFIG.TEST_MODE_ATTRIBUTE)
+            if (CONFIG.TEST_MODE_ATTRIBUTE)
                 require(['./../test/AttributeWidgetTest']);
-            
-            y.share.canvas.observe(function(event){
-                switch(event.name){
-                    case 'ReloadWidgetOperation':{
+
+            y.share.canvas.observe(function (event) {
+                switch (event.name) {
+                    case 'ReloadWidgetOperation': {
                         frameElement.contentWindow.location.reload();
                     }
                 }
             });
-            
+
             $("#loading").hide();
         }
-    }).fail(function(){
+    }).fail(function () {
         $('#wrapper').find('h1').text('Add Canvas Widget to Space and refresh the widget.');
         $('#loading').hide();
     });

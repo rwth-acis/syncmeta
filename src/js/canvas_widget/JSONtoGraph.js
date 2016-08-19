@@ -9,7 +9,8 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function($, _, Entit
             var diff = _.difference(yKeys, jsonKeys);
 
             for (var i = 0; i < diff.length; i++) {
-                y.share[entity].delete(diff[i]);
+                if(diff[i] !== 'modelAttributes')
+                    y.share[entity].delete(diff[i]);
             }
         }
 
@@ -52,13 +53,14 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function($, _, Entit
             var promises = [];
             var modelAttributesNode = EntityManager.createModelAttributesNodeFromJSON(json.attributes);
 
-
+          
             var attrs = modelAttributesNode.getAttributes();
             for (var key in attrs) {
                 if (attrs.hasOwnProperty(key)) {
                     var val = attrs[key].getValue();
                     if (val.constructor.name === "Value") {
-                        promises.push(createYTextAttribute(map, val));
+                        //promises.push(createYTextAttribute(map, val));
+                        createYTextAttribute(map, val)
                     }
                 }
             }

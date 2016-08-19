@@ -13,6 +13,13 @@ $(function() {
     * This doesn't require the async promise call like above
     */
     syncmeta.connect().done(function() {
+        $('#modelAttr').click(function(){
+             syncmeta.setAttributeValue('modelAttributes', 'id', 'the empty model');
+            syncmeta.setAttributeValue('modelAttributes', 'boolean', false);
+            syncmeta.setAttributeValue('modelAttributes', 'version', 2);
+            syncmeta.setAttributeValue('modelAttributes', 'enum', 'third');
+        });
+       
         syncmeta.onNodeAdd(function(event) {
             addToList('Node created: ' + event.id);
 

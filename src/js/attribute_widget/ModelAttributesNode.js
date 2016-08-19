@@ -10,7 +10,7 @@ define([
     'attribute_widget/SingleSelectionAttribute',
     'attribute_widget/SingleMultiLineValueAttribute',
     'text!templates/attribute_widget/model_attributes_node.html'
-],/** @lends ModelAttributesNode */function($,jsPlumb,_,AbstractNode,BooleanAttribute,IntegerAttribute,FileAttribute,SingleValueAttribute,SingleSelectionAttribute,SingleMultiLineValueAttribute,modelAttributesNodeHtml) {
+],/** @lends ModelAttributesNode */function ($, jsPlumb, _, AbstractNode, BooleanAttribute, IntegerAttribute, FileAttribute, SingleValueAttribute, SingleSelectionAttribute, SingleMultiLineValueAttribute, modelAttributesNodeHtml) {
 
     ModelAttributesNode.TYPE = "ModelAttributesNode";
 
@@ -25,16 +25,16 @@ define([
      * @param {string} id Entity identifier of node
      * @param {object} [attr] model attributes
      */
-    function ModelAttributesNode(id,attr){
+    function ModelAttributesNode(id, attr) {
 
-        AbstractNode.call(this,id,ModelAttributesNode.TYPE,0,0,0,0);
+        AbstractNode.call(this, id, ModelAttributesNode.TYPE, 0, 0, 0, 0);
 
         /**
          * jQuery object of node template
          * @type {jQuery}
          * @private
          */
-        var _$template = $(_.template(modelAttributesNodeHtml,{}));
+        var _$template = $(_.template(modelAttributesNodeHtml, {}));
 
         /**
          * jQuery object of DOM node representing the node
@@ -57,51 +57,64 @@ define([
          */
         var attributes = this.getAttributes();
 
-        if(attr){
-            if(_.size(attr) === 0){
+        if (attr) {
+            if (_.size(attr) === 0) {
                 _$node.children().hide();
             }
-            for(var attrKey in attr){
-                if(attr.hasOwnProperty(attrKey)){
-                    switch(attr[attrKey].value){
+            for (var attrKey in attr) {
+                if (attr.hasOwnProperty(attrKey)) {
+                    switch (attr[attrKey].value) {
                         case "boolean":
-                            this.addAttribute(new BooleanAttribute(this.getEntityId()+"["+attr[attrKey].key.toLowerCase()+"]",attr[attrKey].key,this));
+                            this.addAttribute(new BooleanAttribute(this.getEntityId() + "[" + attr[attrKey].key.toLowerCase() + "]", attr[attrKey].key, this));
                             break;
                         case "string":
-                            this.addAttribute(new SingleValueAttribute(this.getEntityId()+"["+attr[attrKey].key.toLowerCase()+"]",attr[attrKey].key,this));
+                            this.addAttribute(new SingleValueAttribute(this.getEntityId() + "[" + attr[attrKey].key.toLowerCase() + "]", attr[attrKey].key, this));
                             break;
                         case "integer":
-                            this.addAttribute(new IntegerAttribute(this.getEntityId()+"["+attr[attrKey].key.toLowerCase()+"]",attr[attrKey].key,this));
+                            this.addAttribute(new IntegerAttribute(this.getEntityId() + "[" + attr[attrKey].key.toLowerCase() + "]", attr[attrKey].key, this));
                             break;
                         case "file":
-                            this.addAttribute(new FileAttribute(this.getEntityId()+"["+attr[attrKey].key.toLowerCase()+"]",attr[attrKey].key,this));
+                            this.addAttribute(new FileAttribute(this.getEntityId() + "[" + attr[attrKey].key.toLowerCase() + "]", attr[attrKey].key, this));
                             break;
                         default:
-                            if(attr[attrKey].options){
-                                this.addAttribute(new SingleSelectionAttribute(this.getEntityId()+"["+attr[attrKey].key.toLowerCase()+"]",attr[attrKey].key,this,attr[attrKey].options));
+                            if (attr[attrKey].options) {
+                                this.addAttribute(new SingleSelectionAttribute(this.getEntityId() + "[" + attr[attrKey].key.toLowerCase() + "]", attr[attrKey].key, this, attr[attrKey].options));
                             }
                             break;
                     }
                 }
             }
         } else {
-            this.addAttribute(new SingleValueAttribute(this.getEntityId()+"[name]","Name",this));
-            this.addAttribute(new SingleMultiLineValueAttribute(this.getEntityId()+"[description]","Description",this));
+            this.addAttribute(new SingleValueAttribute(this.getEntityId() + "[name]", "Name", this));
+            this.addAttribute(new SingleMultiLineValueAttribute(this.getEntityId() + "[description]", "Description", this));
         }
 
-        this.registerYType = function(){
-            //TODO
-            if(attr){
+        this.registerYType = function () {
+            var helper = function (entityId, val) {
+                y.share.nodes.get(entityId).then(function (ymap) {
+                    var ytext = ymap.get(val.getEntityId());
+                    if (ytext)
+                        ytext.then(function (ytext) {
+                            val.registerYType(ytext);
+                        })
+                })
+            }
 
-            }else{
-
+            var attrs = this.getAttributes();
+            for (var key in attrs) {
+                if (attrs.hasOwnProperty(key)) {
+                    var val = attrs[key].getValue();
+                    if (val.constructor.name === "Value") {
+                        helper(this.getEntityId(), val);
+                    }
+                }
             }
         };
 
         _$node.find(".label").hide();
 
-        for(var attributeKey in attributes){
-            if(attributes.hasOwnProperty(attributeKey)){
+        for (var attributeKey in attributes) {
+            if (attributes.hasOwnProperty(attributeKey)) {
                 _$attributeNode.append(attributes[attributeKey].get$node());
             }
         }

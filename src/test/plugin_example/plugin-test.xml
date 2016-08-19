@@ -64,6 +64,8 @@
     <script src="<%= grunt.config('baseUrl') %>/js/lib/vendor/require.js"></script>    
     <script src="<%= grunt.config('baseUrl') %>/plugin/syncmeta-plugin.js"></script>
     <script src="<%= grunt.config('baseUrl') %>/test/plugin_example/syncmeta-plugin-test.js"></script>
+    <button id="modelAttr" >Set ModelAttribute values </button>
+    <br>
     <ul id="eventList"></ul>
     ]]>
     </Content>
