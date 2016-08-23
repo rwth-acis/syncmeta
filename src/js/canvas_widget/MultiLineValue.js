@@ -186,6 +186,41 @@ define([
             _iwcw.unregisterOnDataReceivedCallback(localValueChangeCallback);
             //_iwcw.unregisterOnHistoryChangedCallback(historyValueChangeCallback);
         };
+        
+        this.registerYType = function(ytext) {
+            _ytext = ytext;
+            _ytext.bind(_$node[0]);
+
+            if (that.getValue() !== _ytext.toString()) {
+                if (_ytext.toString().length > 0)
+                    _ytext.delete(0, _ytext.toString().length - 1);
+                _ytext.insert(0, that.getValue());
+            }
+
+            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new BindYTextOperation(that.getEntityId()).toNonOTOperation());
+
+            _ytext.observe(function(event) {
+                _value = _ytext.toString();
+
+                //TODO i can not find out who triggered the delete :-(. Therefore do this only for non delete event types
+                if (event.type !== "delete") {
+                    var jabberId = y.share.users.get(event.object._content[event.index].id[0]);
+                    _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
+                        "ValueChangeActivity",
+                        that.getEntityId(),
+                        jabberId,
+                        ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(), that.getRootSubjectEntity().getType(), that.getRootSubjectEntity().getLabel().getValue().getValue()),
+                        {
+                            value: '',
+                            subjectEntityName: that.getSubjectEntity().getName(),
+                            rootSubjectEntityType: that.getRootSubjectEntity().getType(),
+                            rootSubjectEntityId: that.getRootSubjectEntity().getEntityId()
+                        }
+                    ).toNonOTOperation());
+                }
+            });
+        };
+
 
         if (_iwcw) {
             that.registerCallbacks();
