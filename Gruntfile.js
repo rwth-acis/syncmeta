@@ -352,6 +352,9 @@ module.exports = function(grunt) {
                     optimize:'none',
                     mainConfigFile:"<%= distdir %>/js/config.js",
                     include: ['plugin/main.js'],
+                    paths:{
+                        jquery:  "empty:"
+                    },
                     out: 'html/plugin/syncmeta-plugin.js',
                     wrap: {
                         startFile: './tools/wrap.start',
