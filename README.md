@@ -41,3 +41,7 @@ _Attention!_, We don't recommend to use the Pyhton's SimpleHTTPServer. See this 
 
 If you only want to deploy the SyncMeta widgets just run ```grunt connect``` after building the widgets. It starts a http server on port 8081. 
 Otherwise u can use [nginx](http://nginx.org/en/download.html) or [AIDeX Mini-Webserver](http://www.aidex.de/software/webserver/)  
+
+###Versions
+Syncmeta uses the awesome [Yjs](http://y-js.org/) framework to provide near-realtime collaborative modeling in the web browser.
+The previous version of Syncmeta uses the [OpenCoWeb OT](https://github.com/opencoweb/coweb) framework and is still available in the [opencoweb-ot](https://github.com/rwth-acis/syncmeta/tree/opencoweb-ot) branch.
