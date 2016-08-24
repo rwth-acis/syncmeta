@@ -2,16 +2,18 @@ define([
     'jqueryui',
     'jsplumb',
     'lodash',
-    'iwcotw',
+    'iwcw',
     'canvas_widget/AbstractValue',
     'canvas_widget/AbstractAttribute',
     'operations/ot/ValueChangeOperation',
     'operations/non_ot/ActivityOperation',
+    'operations/non_ot/BindYTextOperation',
     'text!templates/canvas_widget/value.html'
-],/** @lends Value */function($,jsPlumb,_,IWCOT,AbstractValue,AbstractAttribute,ValueChangeOperation,ActivityOperation,valueHtml) {
+],/** @lends Value */function($,jsPlumb,_,IWCW,AbstractValue,AbstractAttribute,ValueChangeOperation,ActivityOperation,BindYTextOperation,valueHtml) {
 
     Value.prototype = new AbstractValue();
     Value.prototype.constructor = Value;
+
     /**
      * Value
      * @class canvas_widget.Value
@@ -25,6 +27,8 @@ define([
      */
     function Value(id,name,subjectEntity,rootSubjectEntity){
         var that = this;
+
+        var _ytext = null;
 
         AbstractValue.call(this,id,name,subjectEntity,rootSubjectEntity);
 
@@ -47,7 +51,7 @@ define([
          * @type {Object}
          * @private
          */
-        var _iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.MAIN);
+        var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
 
         /**
          * Get chain of entities the attribute is assigned to
@@ -141,6 +145,7 @@ define([
         var processValueChangeOperation = function(operation){
             _value = calcNewValue(operation);
             commitUpdate(operation.getType(),_value,operation.getPosition(),operation.getRemote());
+
         };
 
         /**
@@ -149,28 +154,24 @@ define([
          */
         var propagateValueChangeOperation = function(operation){
             operation.setEntityIdChain(getEntityIdChain());
-            operation.setRemote(false);
+
+            //operation.setRemote(false);
             processValueChangeOperation(operation);
-            operation.setRemote(true);
-            if(_iwcot.sendRemoteOTOperation(operation)){
-                if(!operation.getFromView()) {
-                    _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
-                        "ValueChangeActivity",
-                        that.getEntityId(),
-                        _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
-                        ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(), that.getRootSubjectEntity().getType(), that.getRootSubjectEntity().getLabel().getValue().getValue()),
-                        {
-                            value: calcNewValue(operation),
-                            subjectEntityName: that.getSubjectEntity().getName(),
-                            rootSubjectEntityType: that.getRootSubjectEntity().getType(),
-                            rootSubjectEntityId: that.getRootSubjectEntity().getEntityId()
-                        }
-                    ).toNonOTOperation());
-                }
-            }
-            if(operation.getFromView()){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
-            }
+            //operation.setRemote(true);
+            /*
+             if(_ytext){
+             switch(operation.getType()){
+             case 'insert':
+             {
+             _ytext.insert(operation.getPosition(), operation.getValue());
+             break;
+             }
+             case 'delete':{
+             _ytext.delete(operation.getPosition(), operation.getValue().length);
+             break;
+             }
+             }
+             }*/
         };
 
         /**
@@ -182,7 +183,8 @@ define([
         var propagateValueChange = function(type,value,position){
             var operation = new ValueChangeOperation(that.getEntityId(),value,type,position);
             propagateValueChangeOperation(operation);
-            _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
         };
 
         /**
@@ -191,8 +193,9 @@ define([
          */
         var remoteValueChangeCallback = function(operation){
             if(operation instanceof ValueChangeOperation && operation.getEntityId() === that.getEntityId()){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
+                //_iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                //_iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "ValueChangeActivity",
                     that.getEntityId(),
                     operation.getOTOperation().getSender(),
@@ -215,17 +218,7 @@ define([
         var localValueChangeCallback = function(operation){
             if(operation instanceof ValueChangeOperation && operation.getEntityId() === that.getEntityId()){
                 propagateValueChangeOperation(operation);
-            }
-        };
-
-        /**
-         * Callback for an undone resp. redone Value Change Operation
-         * @param {operations.ot.ValueChangeOperation} operation
-         */
-        var historyValueChangeCallback = function(operation){
-            if(operation instanceof ValueChangeOperation && operation.getEntityId() === that.getEntityId()){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                processValueChangeOperation(operation);
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
             }
         };
 
@@ -264,6 +257,7 @@ define([
                 }
             });
 
+            //automatically determines the size of input
             _$node.autoGrowInput({
                 comfortZone: 10,
                 minWidth: 40,
@@ -292,31 +286,31 @@ define([
                     propagateValueChange(CONFIG.OPERATION.TYPE.INSERT,character,selectionStart);
                 }
             }).keydown(function(ev){
-                    if (ev.which === $.ui.keyCode.BACKSPACE || ev.which === $.ui.keyCode.DELETE) {
-                        var selectionStart, selectionEnd;
-                        var deletedChar;
+                if (ev.which === $.ui.keyCode.BACKSPACE || ev.which === $.ui.keyCode.DELETE) {
+                    var selectionStart, selectionEnd;
+                    var deletedChar;
 
-                        ev.preventDefault();
-                        ev.stopPropagation();
-                        selectionStart = this.selectionStart;
-                        selectionEnd = this.selectionEnd;
-                        if(selectionStart == selectionEnd){
-                            if (ev.which === $.ui.keyCode.BACKSPACE) {
-                                deletedChar = $(this).val()[selectionStart-1];
-                                propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart-1);
-                            } else if (ev.which === $.ui.keyCode.DELETE) {
-                                deletedChar = $(this).val()[selectionStart];
-                                propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart);
-                            }
-                        } else {
-                            while(selectionStart < selectionEnd){
-                                deletedChar = $(this).val()[selectionStart];
-                                propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart);
-                                selectionEnd--;
-                            }
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    selectionStart = this.selectionStart;
+                    selectionEnd = this.selectionEnd;
+                    if(selectionStart == selectionEnd){
+                        if (ev.which === $.ui.keyCode.BACKSPACE) {
+                            deletedChar = $(this).val()[selectionStart-1];
+                            propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart-1);
+                        } else if (ev.which === $.ui.keyCode.DELETE) {
+                            deletedChar = $(this).val()[selectionStart];
+                            propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart);
+                        }
+                    } else {
+                        while(selectionStart < selectionEnd){
+                            deletedChar = $(this).val()[selectionStart];
+                            propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart);
+                            selectionEnd--;
                         }
                     }
-                });
+                }
+            });
 
         };
 
@@ -327,6 +321,14 @@ define([
         this.setValue = function(value){
             _value = value;
             _$node.val(value).trigger("blur");
+
+            if(_ytext){
+                if(value !== _ytext.toString()){
+                    if(_ytext.toString().length > 0)
+                        _ytext.delete(0, _ytext.toString().length-1);
+                    _ytext.insert(0, value);
+                }
+            }
         };
 
         /**
@@ -367,25 +369,64 @@ define([
          * Register inter widget communication callbacks
          */
         this.registerCallbacks = function(){
-            _iwcot.registerOnLocalDataReceivedCallback(localValueChangeCallback);
-            _iwcot.registerOnRemoteDataReceivedCallback(remoteValueChangeCallback);
-            _iwcot.registerOnHistoryChangedCallback(historyValueChangeCallback);
+            _iwcw.registerOnDataReceivedCallback(localValueChangeCallback);
         };
 
         /**
          * Unregister inter widget communication callbacks
          */
         this.unregisterCallbacks = function(){
-            _iwcot.unregisterOnLocalDataReceivedCallback(localValueChangeCallback);
-            _iwcot.unregisterOnRemoteDataReceivedCallback(remoteValueChangeCallback);
-            _iwcot.unregisterOnHistoryChangedCallback(historyValueChangeCallback);
+            _iwcw.unregisterOnDataReceivedCallback(localValueChangeCallback);
         };
 
-        that.init();
+        this.registerYType = function(ytext){
+            _ytext= ytext;
+            _ytext.bind(_$node[0]);
 
-        if(_iwcot){
+            if(that.getValue() !== _ytext.toString()){
+                if(_ytext.toString().length > 0)
+                    _ytext.delete(0, _ytext.toString().length-1);
+                _ytext.insert(0, that.getValue());
+            }
+
+            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new BindYTextOperation(that.getEntityId(),_value).toNonOTOperation());
+            _ytext.observe(function(event){
+                _value = _ytext.toString();
+
+                //TODO i can not find out who triggered the delete :-(. Therefore do this only for non delete event types
+                if(event.type!=="delete") {
+                    var jabberId = y.share.users.get(event.object._content[event.index].id[0]);
+                    _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
+                        "ValueChangeActivity",
+                        that.getEntityId(),
+                        jabberId,
+                        ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(), that.getRootSubjectEntity().getType(), that.getRootSubjectEntity().getLabel().getValue().getValue()),
+                        {
+                            value: '',
+                            subjectEntityName: that.getSubjectEntity().getName(),
+                            rootSubjectEntityType: that.getRootSubjectEntity().getType(),
+                            rootSubjectEntityId: that.getRootSubjectEntity().getEntityId()
+                        }
+                    ).toNonOTOperation());
+                }
+            });
+        };
+
+        this.getYText = function(){
+            return _ytext;
+        };
+
+        //automatically determines the size of input
+        _$node.autoGrowInput({
+            comfortZone: 10,
+            minWidth: 40,
+            maxWidth: 1000
+        }).trigger("blur");
+
+        if(_iwcw){
             that.registerCallbacks();
         }
+
     }
 
     return Value;

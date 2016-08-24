@@ -42,7 +42,7 @@ define([
          * @private
          */
         var _options2 = options2;
-        
+
         /**
          * Value object of key
          * @type {canvas_widget.Value}
@@ -148,6 +148,13 @@ define([
             _key.setValueFromJSON(json.key);
             _value.setValueFromJSON(json.value);
             _value2.setValueFromJSON(json.value2||{value: ""});
+        };
+
+        this.registerYType = function(ytext){
+            if(ytext)
+                _key.registerYType(ytext);
+            _value.registerYType();
+            _value2.registerYType();
         };
 
         _$node.find(".key").append(_key.get$node());

@@ -1,9 +1,4 @@
-define([
-    'jqueryui',
-    'lodash',
-    'iwcw',
-    'activity_widget/Activity'
-],/** @lends UserJoinActivity */function($,_,IWCW,Activity) {
+define(['activity_widget/Activity'],/** @lends UserJoinActivity */function(Activity) {
 
     UserJoinActivity.TYPE = "UserJoinActivity";
 

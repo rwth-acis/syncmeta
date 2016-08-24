@@ -8,6 +8,7 @@ define('canvas_widget/AbstractAttribute',[
 
     AbstractAttribute.prototype = new AbstractEntity();
     AbstractAttribute.prototype.constructor = AbstractAttribute;
+
     /**
      * AbstractAttribute
      * @class canvas_widget.AbstractAttribute
@@ -130,6 +131,15 @@ define('canvas_widget/AbstractAttribute',[
      */
     AbstractAttribute.prototype.toJSON = function(){
         return this._toJSON();
+    };
+
+    AbstractAttribute.prototype.registerYTypeForValue = function(map, value){
+        var deferred = $.Deferred();
+        map.get(value.getEntityId()).then(function(type){
+            value.registerYType(type);
+            deferred.resolve();
+        });
+        return deferred.promise();
     };
 
     return AbstractAttribute;

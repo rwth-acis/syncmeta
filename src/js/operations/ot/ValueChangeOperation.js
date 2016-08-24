@@ -4,6 +4,7 @@ define([
     'operations/ot/OTOperation'
 ],/** @lends ValueChangeOperation */function(require,EntityOperation,OTOperation) {
 
+    ValueChangeOperation.TYPE = "ValueChangeOperation";
     ValueChangeOperation.prototype = new EntityOperation();
 	ValueChangeOperation.prototype.constructor = ValueChangeOperation;
     /**
@@ -234,6 +235,16 @@ define([
             return ".. changed " + valueKey + " of " + entityType + (entityName ? " " : "") + entityName;
         else
             return ".. changed " + valueKey + " of " + entityType + (entityName ? " " : "") + entityName + " in View " + viewId;
+    };
+
+    ValueChangeOperation.prototype.toJSON = function(){
+        return {
+            entityId : this.getEntityId(),
+            value: this.getValue(),
+            position: this.getPosition(),
+            type : this.getType()
+
+        }
     };
 
     return ValueChangeOperation;

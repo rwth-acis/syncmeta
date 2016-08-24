@@ -7,9 +7,9 @@ define([
     'attribute_widget/SingleValueAttribute',
     'attribute_widget/IntegerAttribute',
     'attribute_widget/SingleColorValueAttribute',
-    'attribute_widget/SingleMultiLineValueAttribute',
+    'attribute_widget/SingleCodeEditorValueAttribute',
     'text!templates/attribute_widget/node_shape_node.html'
-],/** @lends NodeShapeNode */function($,jsPlumb,_,AbstractNode,SingleSelectionAttribute,SingleValueAttribute,IntegerAttribute,SingleColorValueAttribute,SingleMultiLineValueAttribute,nodeShapeNodeHtml) {
+],/** @lends NodeShapeNode */function($,jsPlumb,_,AbstractNode,SingleSelectionAttribute,SingleValueAttribute,IntegerAttribute,SingleColorValueAttribute,SingleCodeEditorValueAttribute,nodeShapeNodeHtml) {
 
     NodeShapeNode.TYPE = "Node Shape";
 
@@ -28,6 +28,8 @@ define([
      * @param {number} height Height of node
      */
     function NodeShapeNode(id,left,top,width,height){
+
+        var that = this;
 
         AbstractNode.call(this,id,NodeShapeNode.TYPE,left,top,width,height);
 
@@ -63,10 +65,30 @@ define([
         this.addAttribute(new SingleColorValueAttribute(this.getEntityId()+"[color]","Color",this));
         this.addAttribute(new IntegerAttribute(this.getEntityId()+"[defaultWidth]","Default Width",this));
         this.addAttribute(new IntegerAttribute(this.getEntityId()+"[defaultHeight]","Default Height",this));
-        this.addAttribute(new SingleMultiLineValueAttribute(this.getEntityId()+"[customShape]","Custom Shape",this));
+        this.addAttribute(new SingleCodeEditorValueAttribute(this.getEntityId()+"[customShape]","Custom Shape",this));
         this.addAttribute(new SingleValueAttribute(this.getEntityId()+"[customAnchors]","Custom Anchors",this));
 
         _$node.find(".label").append(this.getLabel().get$node());
+
+        this.registerYType = function(){
+            var registerValue = function(ymap, value){
+                ymap.get(value.getEntityId()).then(function(ytext){
+                    value.registerYType(ytext);
+                })
+            };
+
+            AbstractNode.prototype.registerYType.call(this);
+            y.share.nodes.get(that.getEntityId()).then(function(ymap){
+                var colorAttr = that.getAttribute(that.getEntityId()+'[color]');
+                registerValue(ymap, colorAttr.getValue());
+
+                //var customShapeAttr = that.getAttribute(that.getEntityId()+"[customShape]");
+                //registerValue(ymap, customShapeAttr.getValue());
+
+                var customAnchorAttr = that.getAttribute(that.getEntityId()+"[customAnchors]");
+                registerValue(ymap, customAnchorAttr.getValue());
+            });
+        };
 
         for(var attributeKey in attributes){
             if(attributes.hasOwnProperty(attributeKey)){

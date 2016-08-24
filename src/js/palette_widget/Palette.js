@@ -5,7 +5,6 @@ define([
     'operations/non_ot/SetViewTypesOperation',
     'operations/non_ot/InitModelTypesOperation',
     'palette_widget/MoveTool',
-    'palette_widget/Separator',
     'palette_widget/NodeTool',
     'palette_widget/EdgeTool',
     'text!templates/canvas_widget/circle_node.html',
@@ -13,7 +12,7 @@ define([
     'text!templates/canvas_widget/rectangle_node.html',
     'text!templates/canvas_widget/rounded_rectangle_node.html',
     'text!templates/canvas_widget/triangle_node.html'
-],/** @lends Palette */function(_,IWCW,ToolSelectOperation,SetViewTypesOperation,InitModelTypesOperation,MoveTool, Separator,NodeTool, EdgeTool, circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml) {
+],/** @lends Palette */function(_,IWCW,ToolSelectOperation,SetViewTypesOperation,InitModelTypesOperation,MoveTool,NodeTool, EdgeTool, circleNodeHtml,diamondNodeHtml,rectangleNodeHtml,roundedRectangleNodeHtml,triangleNodeHtml) {
 
     /**
      * Palette
@@ -31,12 +30,6 @@ define([
          */
         var _tools = {};
 
-        /**
-         * Separators added to palette
-         * @type {Object}
-         * @private
-         */
-        var _separators = [];
 
         /**
          * Tool currently selected
@@ -44,8 +37,6 @@ define([
          * @private
          */
         var _currentToolName = null;
-
-
 
         /**
          * Inter widget communication wrapper
@@ -85,7 +76,6 @@ define([
         var setViewTypesCallback = function(operation){
             if(operation instanceof SetViewTypesOperation) {
                 if(operation.getFlag() && _tools.hasOwnProperty('ViewObject') && _tools.hasOwnProperty('ViewRelationship')){
-                    _separators[1].get$node().show();
                     _tools['ViewObject'].get$node().show();
                     _tools['ViewRelationship'].get$node().show();
                     _tools['Object'].get$node().hide();
@@ -94,7 +84,6 @@ define([
                     _tools['Abstract Class'].get$node().hide();
                 }
                 else if(!operation.getFlag() &&  _tools.hasOwnProperty('ViewObject') && _tools.hasOwnProperty('ViewRelationship')) {
-                    _separators[1].get$node().hide();
                     _tools['ViewObject'].get$node().hide();
                     _tools['ViewRelationship'].get$node().hide();
                     _tools['Object'].get$node().show();
@@ -116,9 +105,9 @@ define([
                     $palette.empty();
                 }
                 that.addTool(new MoveTool());
-                that.addSeparator(new Separator());
+                that.addSeparator();
                 that.initNodePalette(vls);
-                that.addSeparator(new Separator());
+                that.addSeparator();
                 that.iniEdgePalette(vls);
                 _currentToolName = 'MoveTool';
             }
@@ -144,13 +133,9 @@ define([
 
         /**
          * Add separator to palette
-         * @param {palette_widget.Separator} separator
          */
-        this.addSeparator = function(separator){
-            if(!_.contains(_separators,separator)){
-                _separators.push(separator);
-                $palette.append(separator.get$node());
-            }
+        this.addSeparator = function(){
+            $palette.append($('<hr />'));
         };
 
         //noinspection JSUnusedGlobalSymbols

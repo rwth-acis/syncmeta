@@ -4,6 +4,7 @@ define([
     'operations/ot/OTOperation'
 ],/** @lends NodeMoveZOperation */function(require,EntityOperation,OTOperation) {
 
+    NodeMoveZOperation.TYPE ="NodeMoveZOperation";
     NodeMoveZOperation.prototype = new EntityOperation();
 	NodeMoveZOperation.prototype.constructor = NodeMoveZOperation;
     /**
@@ -13,9 +14,10 @@ define([
      * @extends operations.ot.EntityOperation
      * @param {String} entityId Entity id of the entity this activity works on
      * @param {number} offsetZ Offset in z-direction
+     * @param {string} jabberId the jabberId of the user
      * @constructor
      */
-    function NodeMoveZOperation(entityId,offsetZ){
+    function NodeMoveZOperation(entityId,offsetZ,jabberId){
         var that = this;
 
         EntityOperation.call(this,EntityOperation.TYPES.NodeMoveZOperation,entityId,CONFIG.ENTITY.NODE);
@@ -28,6 +30,13 @@ define([
         var _offsetZ = offsetZ;
 
         /**
+         * the jabberId
+         * @type {string}
+         * @private
+         */
+        var _jabberId = jabberId;
+
+        /**
          * Create OTOperation for operation
          * @returns {operations.ot.OTOperation}
          */
@@ -35,7 +44,8 @@ define([
             return new OTOperation(
                 CONFIG.ENTITY.NODE+":"+that.getEntityId(),
                 JSON.stringify({
-                    offsetZ: _offsetZ
+                    offsetZ: _offsetZ,
+                    jabberId:_jabberId
                 }),
                 CONFIG.OPERATION.TYPE.UPDATE,
                 CONFIG.IWC.POSITION.NODE.Z
@@ -48,6 +58,10 @@ define([
          */
         this.getOffsetZ = function(){
             return _offsetZ;
+        };
+
+        this.getJabberId = function(){
+            return _jabberId;
         };
 
         /**
@@ -85,7 +99,8 @@ define([
 
             return new NodeMoveZOperation(
                 this.getEntityId(),
-                -this.getOffsetZ()
+                -this.getOffsetZ(),
+                this.getJabberId()
             );
         };
     }
@@ -101,6 +116,13 @@ define([
         }
     };
 
+    NodeMoveZOperation.prototype.toJSON =function(){
+        return {
+            id:this.getEntityId(),
+            offsetZ:this.getOffsetZ(),
+            jabberId:this.getJabberId()
+        }
+    };
     return NodeMoveZOperation;
 
 });

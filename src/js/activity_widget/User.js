@@ -2,9 +2,9 @@ define([
     'jqueryui',
     'lodash',
     'Util',
-    'promise!Space',
+    //'promise!Space',
     'text!templates/activity_widget/user_box.html'
-],/** @lends User */function($,_,Util,space,userBoxHtml) {
+],/** @lends User */function($,_,Util/*,space*/,userBoxHtml) {
 
     /**
      * A user working on the model
@@ -50,12 +50,20 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_userBoxTemplate({
+        /*var _$node = $(_userBoxTemplate({
             heading: space.members.hasOwnProperty(jabberId) ? space.members[jabberId][CONFIG.NS.PERSON.TITLE] : "",
             text: "",
             color: space.members.hasOwnProperty(jabberId) ? Util.getColor(space.members[jabberId].globalId) : "#000000",
             view: ""
-        })).hide();
+        })).hide();*/
+
+            var _$node = $(_userBoxTemplate({
+                heading: y.share.userList.get(jabberId) ? y.share.userList.get(jabberId)[CONFIG.NS.PERSON.TITLE] : "",
+                text: "",
+                color: y.share.userList.get(jabberId) ? Util.getColor(y.share.userList.get(jabberId).globalId) : "#000000",
+                view: ""
+            })).hide();
+
 
         /**
          * jQuery object of DOM node representing the user text

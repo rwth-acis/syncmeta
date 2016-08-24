@@ -3,14 +3,15 @@ define([
     'jqueryui',
     'jsplumb',
     'lodash',
-    'iwcotw',
+    'iwcw',
+    'Util',
     'operations/ot/EdgeDeleteOperation',
     'operations/non_ot/ActivityOperation',
-    'operations/non_ot/EntitySelectOperation',
+    'canvas_widget/HistoryManager',
     'canvas_widget/AbstractEntity',
     'canvas_widget/SingleValueAttribute',
     'text!templates/canvas_widget/abstract_edge.html'
-],/** @lends AbstractEdge */function (require,$,jsPlumb,_,IWCOT,EdgeDeleteOperation,ActivityOperation,EntitySelectOperation,AbstractEntity,SingleValueAttribute,abstractEdgeHtml) {
+],/** @lends AbstractEdge */function (require,$,jsPlumb,_,IWCW,Util,EdgeDeleteOperation,ActivityOperation,HistoryManager,AbstractEntity,SingleValueAttribute,abstractEdgeHtml) {
 
     AbstractEdge.prototype = new AbstractEntity();
     AbstractEdge.prototype.constructor = AbstractEdge;
@@ -31,6 +32,8 @@ define([
         var that = this;
 
         AbstractEntity.call(this,id);
+
+        var _ymap = null;
 
         /**
          * Type of edge
@@ -88,7 +91,7 @@ define([
          * Inter widget communication wrapper
          * @type {Object}
          */
-        var _iwcot = IWCOT.getInstance(CONFIG.WIDGET.NAME.MAIN);
+        var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
 
         /**
          * Attributes of edge
@@ -132,69 +135,36 @@ define([
          */
         var propagateEdgeDeleteOperation = function(operation){
             processEdgeDeleteOperation(operation);
-            if(_iwcot.sendRemoteOTOperation(operation)){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
-                    "EdgeDeleteActivity",
-                    operation.getEntityId(),
-                    _iwcot.getUser()[CONFIG.NS.PERSON.JABBERID],
-                    EdgeDeleteOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
-                    {}
-                ).toNonOTOperation());
-            }
-        };
+            HistoryManager.add(operation);
+            $('#save').click();
 
-        /**
-         * Callback for a remote Entity Select Operation
-         * @param {operations.non_ot.EntitySelectOperation} operation
-         */
-        var remoteEntitySelectCallback = function(operation){
-            var color;
-            if(operation instanceof EntitySelectOperation && operation.getDestination() === CONFIG.WIDGET.NAME.MAIN){
-                color = _iwcot.getUserColor(operation.getNonOTOperation().getSender());
-                if(!_isSelected){
-                    if(operation.getSelectedEntityId() === that.getEntityId()){
-                        _highlightColor = color;
-                        that.highlight(color);
-                    } else {
-                        _highlightColor = null;
-                        that.unhighlight();
-                    }
-                } else {
-                    if(operation.getSelectedEntityId() === that.getEntityId()){
-                        _highlightColor = color;
-                    } else {
-                        _highlightColor = null;
-                    }
-                }
-            }
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
+                "EdgeDeleteActivity",
+                operation.getEntityId(),
+                _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
+                EdgeDeleteOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
+                {}
+            ).toNonOTOperation());
+
         };
 
         /**
          * Callback for a remote Edge Delete Operation
          * @param {operations.ot.EdgeDeleteOperation} operation
          */
-        var remoteEdgeDeleteCallback = function(operation){
+        this.remoteEdgeDeleteCallback = function(operation){
             if(operation instanceof EdgeDeleteOperation && operation.getEntityId() == that.getEntityId()){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcot.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+                /*_iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                     "EdgeDeleteActivity",
                     operation.getEntityId(),
-                    operation.getOTOperation().getSender(),
+                    jabberId,
                     EdgeDeleteOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
                     {}
-                ).toNonOTOperation());
-                processEdgeDeleteOperation(operation);
-            }
-        };
-
-        /**
-         * Callback for an undone resp. redone Edge Delete Operation
-         * @param {operations.ot.EdgeDeleteOperation} operation
-         */
-        var historyEdgeDeleteCallback = function(operation){
-            if(operation instanceof EdgeDeleteOperation && operation.getEntityId() == that.getEntityId()){
-                _iwcot.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
+                ).toNonOTOperation());*/
                 processEdgeDeleteOperation(operation);
             }
         };
@@ -246,7 +216,15 @@ define([
         this.triggerDeletion = function(){
             _canvas.select(null);
             var operation = new EdgeDeleteOperation(id,that.getType(),that.getSource().getEntityId(),that.getTarget().getEntityId());
-            propagateEdgeDeleteOperation(operation);
+
+            if(_ymap){
+                //_ymap.set(EdgeDeleteOperation.TYPE, operation.toJSON());
+                propagateEdgeDeleteOperation(operation);
+                y.share.edges.delete(that.getEntityId());
+            }
+            else {
+                propagateEdgeDeleteOperation(operation);
+            }
             //that.canvas.callListeners(CONFIG.CANVAS.LISTENERS.NODEDELETE,nodeId);
         };
 
@@ -575,6 +553,7 @@ define([
                     }
                 }
             }
+             $('#save').click();
         };
 
         /**
@@ -609,9 +588,12 @@ define([
             this.removeFromCanvas();
             //this.unregisterCallbacks();
             require('canvas_widget/EntityManager').deleteEdge(this.getEntityId());
+            if(_ymap){
+                _ymap = null;
+            }
         };
 
-         /**
+        /**
          * Get JSON representation of the edge
          * @returns {Object}
          * @private
@@ -644,10 +626,10 @@ define([
                 $(_jsPlumbConnection.getOverlay("label").canvas).find("input").prop("disabled",false).css('pointerEvents','');
 
                 /*$(_jsPlumbConnection.getOverlay("label").canvas).find("input[type=text]").autoGrowInput({
-                    comfortZone: 10,
-                    minWidth: 40,
-                    maxWidth: 100
-                }).trigger("blur");*/
+                 comfortZone: 10,
+                 minWidth: 40,
+                 maxWidth: 100
+                 }).trigger("blur");*/
             }
             //Define Edge Rightclick Menu
             $.contextMenu({
@@ -671,7 +653,7 @@ define([
                 }
             });
 
-            $("."+id).contextMenu(true);
+            //$("."+id).contextMenu(true);
 
         };
 
@@ -686,40 +668,23 @@ define([
                 $(_jsPlumbConnection.getOverlay("label").canvas).find("input").prop("disabled",true).css('pointerEvents','none');
             }
 
-            $("."+id).contextMenu(false);
+            //$("."+id).contextMenu(false);
         };
 
-        /**
-         * Register inter widget communication callbacks
-         */
-        this.registerCallbacks = function(){
-            _iwcot.registerOnRemoteDataReceivedCallback(remoteEntitySelectCallback);
-            _iwcot.registerOnRemoteDataReceivedCallback(remoteEdgeDeleteCallback);
-            _iwcot.registerOnHistoryChangedCallback(historyEdgeDeleteCallback);
-
-            _iwcot.registerOnLocalDataReceivedCallback(localEdgeDeleteCallback);
+        this.getYMap = function(){
+            return _ymap;
         };
 
-        /**
-         * Unregister inter widget communication callbacks
-         */
-        this.unregisterCallbacks = function(){
-            _iwcot.unregisterOnRemoteDataReceivedCallback(remoteEntitySelectCallback);
-            _iwcot.unregisterOnRemoteDataReceivedCallback(remoteEdgeDeleteCallback);
-            _iwcot.unregisterOnHistoryChangedCallback(historyEdgeDeleteCallback);
+        this._registerYMap = function(ymap,disableYText) {
+            _ymap =ymap;
+            if(!disableYText) {
+                _ymap.get(that.getEntityId() + '[label]').then(function (ytext) {
+                    _label.registerYType(ytext);
+                });
 
-            _iwcot.unregisterOnLocalDataReceivedCallback(localEdgeDeleteCallback);
-        };
-
-        function localEdgeDeleteCallback(operation){
-            if(operation instanceof EdgeDeleteOperation && that.getEntityId() === operation.getEntityId()){
-                that.triggerDeletion();
             }
         }
 
-        if(_iwcot){
-            that.registerCallbacks();
-        }
     }
 
     /**
@@ -744,6 +709,10 @@ define([
     AbstractEdge.prototype.show = function(){
         var connector = this.getJsPlumbConnection();
         connector.setVisible(true);
+    };
+
+    AbstractEdge.prototype.registerYMap = function(map,disableYText){
+        this._registerYMap(map,disableYText);
     };
 
     return AbstractEdge;

@@ -5,8 +5,9 @@ define([
     'iwcw',
     'attribute_widget/AbstractValue',
     'operations/ot/ValueChangeOperation',
+    'operations/non_ot/BindYTextOperation',
     'text!templates/attribute_widget/multi_line_value.html'
-],/** @lends MultiLineValue */function($,jsPlumb,_,IWCW,AbstractValue,ValueChangeOperation,multiLineValueHtml) {
+],/** @lends MultiLineValue */function($,jsPlumb,_,IWCW,AbstractValue,ValueChangeOperation,BindYTextOperation,multiLineValueHtml) {
 
     MultiLineValue.prototype = new AbstractValue();
     MultiLineValue.prototype.constructor = MultiLineValue;
@@ -23,6 +24,8 @@ define([
      */
     function MultiLineValue(id,name,subjectEntity,rootSubjectEntity){
         var that = this;
+
+        var _ytext = null;
 
         AbstractValue.prototype.constructor.call(this,id,name,subjectEntity,rootSubjectEntity);
 
@@ -123,7 +126,7 @@ define([
 
          */
         var propagateValueChangeOperation = function(operation){
-            processValueChangeOperation(operation);
+            //processValueChangeOperation(operation);
             iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.getOTOperation());
         };
 
@@ -183,9 +186,7 @@ define([
                     propagateValueChange(CONFIG.OPERATION.TYPE.INSERT,addedString[i],left+i);
                 }
             });
-            if(iwc){
-                that.registerCallbacks();
-            }
+
         };
 
         //noinspection JSUnusedLocalSymbols
@@ -209,31 +210,31 @@ define([
                     propagateValueChange(CONFIG.OPERATION.TYPE.INSERT,character,selectionStart);
                 }
             }).keydown(function(ev){
-                    if (ev.which === $.ui.keyCode.BACKSPACE || ev.which === $.ui.keyCode.DELETE) {
-                        var selectionStart, selectionEnd;
-                        var deletedChar;
+                if (ev.which === $.ui.keyCode.BACKSPACE || ev.which === $.ui.keyCode.DELETE) {
+                    var selectionStart, selectionEnd;
+                    var deletedChar;
 
-                        ev.preventDefault();
-                        ev.stopPropagation();
-                        selectionStart = this.selectionStart;
-                        selectionEnd = this.selectionEnd;
-                        if(selectionStart == selectionEnd){
-                            if (ev.which === $.ui.keyCode.BACKSPACE) {
-                                deletedChar = $(this).val()[selectionStart-1];
-                                propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart-1);
-                            } else if (ev.which === $.ui.keyCode.DELETE) {
-                                deletedChar = $(this).val()[selectionStart];
-                                propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart);
-                            }
-                        } else {
-                            while(selectionStart < selectionEnd){
-                                deletedChar = $(this).val()[selectionStart];
-                                propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart);
-                                selectionEnd--;
-                            }
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    selectionStart = this.selectionStart;
+                    selectionEnd = this.selectionEnd;
+                    if(selectionStart == selectionEnd){
+                        if (ev.which === $.ui.keyCode.BACKSPACE) {
+                            deletedChar = $(this).val()[selectionStart-1];
+                            propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart-1);
+                        } else if (ev.which === $.ui.keyCode.DELETE) {
+                            deletedChar = $(this).val()[selectionStart];
+                            propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart);
+                        }
+                    } else {
+                        while(selectionStart < selectionEnd){
+                            deletedChar = $(this).val()[selectionStart];
+                            propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart);
+                            selectionEnd--;
                         }
                     }
-                });
+                }
+            });
             if(iwc){
                 that.registerCallbacks();
             }
@@ -276,17 +277,86 @@ define([
          * Register inter widget communication callbacks
          */
         this.registerCallbacks = function(){
-            iwc.registerOnDataReceivedCallback(valueChangeCallback);
+            //iwc.registerOnDataReceivedCallback(valueChangeCallback);
+            iwc.registerOnDataReceivedCallback(bindYTextCallback);
+
         };
 
         /**
          * Unregister inter widget communication callbacks
          */
         this.unregisterCallbacks = function(){
-            iwc.unregisterOnDataReceivedCallback(valueChangeCallback);
+            //iwc.unregisterOnDataReceivedCallback(valueChangeCallback);
+            iwc.unregisterOnDataReceivedCallback(bindYTextCallback);
+
         };
 
-        init();
+        function bindYTextCallback(operation) {
+            if (operation instanceof BindYTextOperation && operation.getEntityId() === that.getEntityId()) {
+                setTimeout(function () {
+                    var entityId = that.getRootSubjectEntity().getEntityId();
+                    if (y.share.nodes.opContents.hasOwnProperty(entityId)) {
+                        y.share.nodes.get(entityId).then(function (ymap) {
+                            ymap.get(operation.getEntityId()).then(function (ytext) {
+                                ytext.bind(_$node[0]);
+
+                                if (that.getValue() !== ytext.toString()) {
+                                    if (ytext.toString().length > 0)
+                                        ytext.delete(0, ytext.toString().length);
+                                    ytext.insert(0, that.getValue());
+                                }
+
+                            })
+                        })
+                    }
+                    else if (y.share.edges.opContents.hasOwnProperty(entityId)) {
+                        y.share.edges.get(entityId).then(function (ymap) {
+                            ymap.get(operation.getEntityId()).then(function (ytext) {
+                                ytext.bind(_$node[0]);
+
+                                if (that.getValue() !== ytext.toString()) {
+                                    if (ytext.toString().length > 0)
+                                        ytext.delete(0, ytext.toString().length);
+                                    ytext.insert(0, that.getValue());
+                                }
+
+                            })
+                        })
+                    }
+                }, 300);
+            }
+        }
+
+        var initData = function(ytext, data){
+            if(data){
+                if (data !== ytext.toString()) {
+                    if (ytext.toString().length > 0)
+                        ytext.delete(0, ytext.toString().length);
+                    ytext.insert(0, data);
+                }
+            }
+            else {
+                if (that.getValue() !== ytext.toString()) {
+                    if (ytext.toString().length > 0)
+                        ytext.delete(0, ytext.toString().length);
+                    ytext.insert(0, that.getValue());
+                }
+            }
+        };
+        this.registerYType = function(ytext){
+            _ytext = ytext;
+            _ytext.bind(_$node[0]);
+            initData(ytext);
+        };
+
+        this.getYText = function(){
+            return _ytext;
+        };
+
+        if(iwc){
+            that.registerCallbacks();
+        }
+        //init();
     }
 
     return MultiLineValue;

@@ -9,7 +9,7 @@ define([
     'attribute_widget/SingleValueAttribute',
     'attribute_widget/AbstractEntity',
     'text!templates/attribute_widget/abstract_edge.html'
-],/** @lends AbstractEdge */function (require,$,jsPlumb,_,IWCW,EntitySelectOperation,EdgeDeleteOperation,SingleValueAttribute,AbstractEntity,abstractEdgeHtml) {
+],/** @lends AbstractEdge */function (require, $, jsPlumb, _, IWCW, EntitySelectOperation, EdgeDeleteOperation, SingleValueAttribute, AbstractEntity, abstractEdgeHtml) {
 
     AbstractEdge.prototype = new AbstractEntity();
     AbstractEdge.prototype.constructor = AbstractEdge;
@@ -25,10 +25,10 @@ define([
      * @param {attribute_widget.AbstractNode} target Target node
      * @param {string} viewId the identifier of the view the edge belongs to
      */
-    function AbstractEdge(type,id,source,target, viewId){
+    function AbstractEdge(type, id, source, target, viewId) {
         var that = this;
 
-        AbstractEntity.call(this,id);
+        AbstractEntity.call(this, id);
 
         /**
          * Type of edge
@@ -49,7 +49,7 @@ define([
          * @type {attribute_widget.SingleValueAttribute}
          * @private
          */
-        var _label = new SingleValueAttribute(id+"[label]","Label",this);
+        var _label = new SingleValueAttribute(id + "[label]", "Label", this);
 
         /**
          * Appearance information of edge
@@ -66,7 +66,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(abstractEdgeHtml,{id: id, type: type}));
+        var _$node = $(_.template(abstractEdgeHtml, { id: id, type: type }));
 
         /**
          * Wrapper the edge is drawn on
@@ -93,7 +93,7 @@ define([
          * Apply an Edge Delete Operation
          * @param {operations.ot.EdgeDeleteOperation} operation
          */
-        var processEdgeDeleteOperation = function(operation){
+        var processEdgeDeleteOperation = function (operation) {
             that.getSource().deleteOutgoingEdge(that);
             that.getTarget().deleteIngoingEdge(that);
             that.remove();
@@ -103,8 +103,11 @@ define([
          * Callback for an Entity Select Operation
          * @param {operations.non_ot.EntitySelectOperation} operation
          */
-        var entitySelectCallback = function(operation){
-            if(operation instanceof EntitySelectOperation && operation.getSelectedEntityId() === that.getEntityId()){
+        var entitySelectCallback = function (operation) {
+            if (operation instanceof EntitySelectOperation && operation.getSelectedEntityId() === that.getEntityId()) {
+                $('.ace-container').hide();
+                if (_wrapper.get$node().is(':hidden'))
+                    _wrapper.get$node().show();
                 _wrapper.select(that);
             }
         };
@@ -113,8 +116,8 @@ define([
          * Callback for an Edge Delete Operation
          * @param {operations.ot.EdgeDeleteOperation} operation
          */
-        var edgeDeleteCallback = function(operation){
-            if(operation instanceof EdgeDeleteOperation && operation.getEntityId() === that.getEntityId()){
+        var edgeDeleteCallback = function (operation) {
+            if (operation instanceof EdgeDeleteOperation && operation.getEntityId() === that.getEntityId()) {
                 processEdgeDeleteOperation(operation);
             }
         };
@@ -123,7 +126,7 @@ define([
          * Adds edge to wrapper
          * @param {attribute_widget.AttributeWrapper} wrapper
          */
-        this.addToWrapper = function(wrapper){
+        this.addToWrapper = function (wrapper) {
             _wrapper = wrapper;
             _wrapper.get$node().append(_$node.hide());
         };
@@ -131,7 +134,7 @@ define([
         /**
          * Removes edge from wrapper
          */
-        this.removeFromWrapper = function(){
+        this.removeFromWrapper = function () {
             _wrapper = null;
             _$node.detach();
         };
@@ -140,9 +143,9 @@ define([
          * Add attribute to edge
          * @param {attribute_widget.AbstractAttribute} attribute
          */
-        this.addAttribute = function(attribute){
+        this.addAttribute = function (attribute) {
             var id = attribute.getEntityId();
-            if(!_attributes.hasOwnProperty(id)){
+            if (!_attributes.hasOwnProperty(id)) {
                 _attributes[id] = attribute;
             }
         };
@@ -151,7 +154,7 @@ define([
          * Set edge's attributes
          * @param {Object} attributes
          */
-        this.setAttributes = function(attributes){
+        this.setAttributes = function (attributes) {
             _attributes = attributes;
         };
 
@@ -159,7 +162,7 @@ define([
          * Get edge's attributes
          * @returns {Object}
          */
-        this.getAttributes = function(){
+        this.getAttributes = function () {
             return _attributes;
         };
 
@@ -168,8 +171,8 @@ define([
          * @param {String} id Attribute's entity id
          * @returns {attribute_widget.AbstractAttribute}
          */
-        this.getAttribute = function(id){
-            if(_attributes.hasOwnProperty(id)){
+        this.getAttribute = function (id) {
+            if (_attributes.hasOwnProperty(id)) {
                 return _attributes[id];
             }
             return null;
@@ -179,8 +182,8 @@ define([
          * Delete attribute by id
          * @param {String} id Attribute's entity id
          */
-        this.deleteAttribute = function(id){
-            if(!_attributes.hasOwnProperty(id)){
+        this.deleteAttribute = function (id) {
+            if (!_attributes.hasOwnProperty(id)) {
                 delete _attributes[id];
             }
         };
@@ -189,7 +192,7 @@ define([
          * Set edge label
          * @param {attribute_widget.SingleValueAttribute} label
          */
-        this.setLabel = function(label){
+        this.setLabel = function (label) {
             _label = label;
         };
 
@@ -197,7 +200,7 @@ define([
          * Get edge label
          * @returns {attribute_widget.SingleValueAttribute}
          */
-        this.getLabel = function(){
+        this.getLabel = function () {
             return _label;
         };
 
@@ -205,7 +208,7 @@ define([
          * return the identifier of the view the edge belongs to
          * @returns {string}
          */
-        this.getViewId = function(){
+        this.getViewId = function () {
             return _viewId;
         };
 
@@ -213,7 +216,7 @@ define([
          * sets the identifier the edge belongs to
          * @param viewId the identifier of the view
          */
-        this.setViewId = function(viewId){
+        this.setViewId = function (viewId) {
             _viewId = viewId;
         };
 
@@ -221,7 +224,7 @@ define([
          * Get edge type
          * @returns {string}
          */
-        this.getType = function(){
+        this.getType = function () {
             return _type;
         };
 
@@ -229,7 +232,7 @@ define([
          * Get source node
          * @returns {attribute_widget.AbstractNode}
          */
-        this.getSource = function(){
+        this.getSource = function () {
             return _appearance.source;
         };
 
@@ -237,7 +240,7 @@ define([
          * Get target node
          * @returns {attribute_widget.AbstractNode}
          */
-        this.getTarget = function(){
+        this.getTarget = function () {
             //noinspection JSAccessibilityCheck
             return _appearance.target;
         };
@@ -247,42 +250,42 @@ define([
          * @returns {jQuery}
          * @private
          */
-        this._get$node = function(){
+        this._get$node = function () {
             return _$node;
         };
 
         /**
          * Select the edge
          */
-        this.select = function(){
+        this.select = function () {
             this.show();
         };
 
         /**
          * Unselect the edge
          */
-        this.unselect = function(){
+        this.unselect = function () {
             this.hide();
         };
 
         /**
          * Hide edge
          */
-        this.hide = function(){
+        this.hide = function () {
             _$node.hide();
         };
 
         /**
          * Show edge
          */
-        this.show = function(){
+        this.show = function () {
             _$node.show();
         };
 
         /**
          * Remove the edge
          */
-        this.remove = function(){
+        this.remove = function () {
             source.deleteOutgoingEdge(this);
             target.deleteIngoingEdge(this);
             this.removeFromWrapper();
@@ -296,7 +299,7 @@ define([
          * Get JSON representation of the edge
          * @returns {Object}
          */
-        this.toJSON = function(){
+        this.toJSON = function () {
             return {
                 id: id,
                 label: _label,
@@ -307,7 +310,7 @@ define([
         /**
          * Register inter widget communication callbacks
          */
-        this.registerCallbacks = function(){
+        this.registerCallbacks = function () {
             iwc.registerOnDataReceivedCallback(entitySelectCallback);
             iwc.registerOnDataReceivedCallback(edgeDeleteCallback);
         };
@@ -315,14 +318,22 @@ define([
         /**
          * Unregister inter widget communication callbacks
          */
-        this.unregisterCallbacks = function(){
+        this.unregisterCallbacks = function () {
             iwc.unregisterOnDataReceivedCallback(entitySelectCallback);
             iwc.unregisterOnDataReceivedCallback(edgeDeleteCallback);
         };
 
+        this._registerYType = function () {
+            y.share.edges.get(that.getEntityId()).then(function (ymap) {
+                ymap.get(that.getLabel().getValue().getEntityId()).then(function (ytext) {
+                    that.getLabel().getValue().registerYType(ytext);
+                })
+            })
+        };
+
         _$node.find(".label").append(this.getLabel().get$node());
 
-        if(iwc){
+        if (iwc) {
             that.registerCallbacks();
         }
     }
@@ -331,8 +342,12 @@ define([
      * Get jQuery object of DOM node representing the node
      * @returns {jQuery}
      */
-    AbstractEdge.prototype.get$node = function(){
+    AbstractEdge.prototype.get$node = function () {
         return this._get$node();
+    };
+
+    AbstractEdge.prototype.registerYType = function () {
+        this._registerYType();
     };
 
     return AbstractEdge;

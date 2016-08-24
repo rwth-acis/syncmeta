@@ -76,8 +76,6 @@ define([
          */
         var _$node = $(_.template(condition_predicateHtml,{}));
 
-
-
         //noinspection JSUnusedGlobalSymbols
         /**
          * Set Value object of key
@@ -128,15 +126,6 @@ define([
             return _value2;
         };
 
-		/*
-		 this.setValue3 = function(value){
-            _value3 = value;
-        };
-		
-		this.getValue3 = function(){
-            return _value3;
-        };
-		*/
 
         /**
          * Get jQuery object of the DOM node representing the attribute
@@ -172,6 +161,14 @@ define([
         _$node.find(".property").append(_value.get$node());
         _$node.find(".operator").append(_value2.get$node());
 		//_$node.find(".operator2").append(_value3.get$node());
+
+        this.registerYMap = function(ytext){
+            if(ytext){
+                _key.registerYType(ytext);
+            }
+            _value.registerYType();
+            _value2.registerYType();
+        }
     }
 
     return ConditionPredicateAttribute;

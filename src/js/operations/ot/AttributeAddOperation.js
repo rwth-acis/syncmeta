@@ -4,6 +4,8 @@ define([
     'operations/ot/OTOperation'
 ],/** @lends AttributeAddOperation */function(require,EntityOperation,OTOperation) {
 
+    AttributeAddOperation.TYPE = "AttributeAddOperation";
+    
     AttributeAddOperation.prototype = new EntityOperation();
     AttributeAddOperation.prototype.constructor = AttributeAddOperation;
     /**
@@ -17,7 +19,7 @@ define([
      * @param {String} type Type of attribute to add
      * @constructor
      */
-    function AttributeAddOperation(entityId,subjectEntityId,rootSubjectEntityId,type){
+    function AttributeAddOperation(entityId,subjectEntityId,rootSubjectEntityId,type,data){
         var that = this;
 
         EntityOperation.call(this,EntityOperation.TYPES.AttributeAddOperation,entityId,CONFIG.ENTITY.ATTR);
@@ -43,6 +45,8 @@ define([
          */
         var _type = type;
 
+        var _data = data;
+
         /**
          * Create OTOperation for operation
          * @returns {operations.ot.OTOperation}
@@ -53,7 +57,8 @@ define([
                 JSON.stringify({
                     type: _type,
                     subjectEntityId: _subjectEntityId,
-                    rootSubjectEntityId: _rootSubjectEntityId
+                    rootSubjectEntityId: _rootSubjectEntityId,
+                    data:_data
                 }),
                 CONFIG.OPERATION.TYPE.INSERT,
                 CONFIG.IWC.POSITION.ATTR.ADD
@@ -98,6 +103,10 @@ define([
             return otOperation;
         };
 
+        this.getData = function(){
+            return _data;
+        };
+
         /**
          * Adjust the passed operation in the history of operation
          * when this operation is applied remotely after the passed operation
@@ -125,6 +134,16 @@ define([
             );
         };
     }
+
+    AttributeAddOperation.prototype.toJSON = function(){
+        return {
+            entityId:this.getEntityId(),
+            type: this.getType(),
+            subjectEntityId: this.getSubjectEntityId(),
+            rootSubjectEntityId: this.getRootSubjectEntityId(),
+            data:this.getData()
+        }
+    };
 
     return AttributeAddOperation;
 

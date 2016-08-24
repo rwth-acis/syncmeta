@@ -4,6 +4,7 @@ define([
     'operations/ot/OTOperation'
 ],/** @lends NodeAddOperation */function(require,EntityOperation,OTOperation) {
 
+    NodeAddOperation.TYPE = "NodeAddOperation";
     NodeAddOperation.prototype = new EntityOperation();
 	NodeAddOperation.prototype.constructor = NodeAddOperation;
     /**
@@ -20,12 +21,12 @@ define([
      * @param {number} zIndex Position of node on z-axis
      * @param {object} json JSON representation of node
      * @param {string} viewId the identifier of the view
+     * @param {string} oType the original Type, only set in views
+     * @param {string} jabberId the jabberId of the user
      * @constructor
      */
-    function NodeAddOperation(entityId,type,left,top,width,height,zIndex,json, viewId, oType){
+    function NodeAddOperation(entityId,type,left,top,width,height,zIndex,json, viewId, oType,jabberId){
         var that = this;
-
-
 
         EntityOperation.call(this,EntityOperation.TYPES.NodeAddOperation,entityId,CONFIG.ENTITY.NODE);
 
@@ -35,6 +36,13 @@ define([
          * @private
          */
         var _viewId = viewId;
+
+        /**
+         * the jabberId of the user
+         * @type {string}
+         * @private
+         */
+        var _jabberId = jabberId;
 
         var _oType = oType;
 
@@ -103,7 +111,8 @@ define([
                     zIndex: _zIndex,
                     json: _json,
                     viewId:_viewId,
-                    oType: _oType
+                    oType: _oType,
+                    jabberId:_jabberId
                 }),
                 CONFIG.OPERATION.TYPE.INSERT,
                 CONFIG.IWC.POSITION.NODE.ADD
@@ -170,13 +179,20 @@ define([
             return _json;
         };
 
-
         /**
          * the identifier of the view
          * @returns {string}
          */
         this.getViewId = function(){
           return _viewId;
+        };
+
+        /**
+         * Get the jabberid
+         * @returns {string}
+         */
+        this.getJabberId = function(){
+            return _jabberId;
         };
 
         /**
@@ -232,6 +248,22 @@ define([
             return "..created " + nodeType + " " + nodeLabel;
         }else
             return ".. created " + nodeType + " " + nodeLabel + " in View " + viewId;
+    };
+
+    NodeAddOperation.prototype.toJSON= function(){
+        return {
+            id:this.getEntityId(),
+            type: this.getType(),
+            left: this.getLeft(),
+            top: this.getTop(),
+            width: this.getWidth(),
+            height: this.getHeight(),
+            zIndex: this.getZIndex(),
+            json: this.getJSON(),
+            viewId:this.getViewId(),
+            oType: this.getOriginType(),
+            jabberId:this.getJabberId()
+        }
     };
 
     return NodeAddOperation;

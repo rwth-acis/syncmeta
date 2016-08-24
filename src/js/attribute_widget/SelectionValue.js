@@ -1,76 +1,76 @@
 define([
-		'jqueryui',
-		'jsplumb',
-		'lodash',
-		'iwcw',
-		'Util',
-		'attribute_widget/AbstractValue',
-		'operations/ot/ValueChangeOperation',
-		'canvas_widget/LogicalOperator',
-		'canvas_widget/LogicalConjunctions',
-        'attribute_widget/ClosedViewGeneration',
-		'text!templates/attribute_widget/selection_value.html'
-	], /** @lends SelectionValue */
-	function ($, jsPlumb, _, IWCW, Util, AbstractValue, ValueChangeOperation, LogicalOperator, LogicalConjunctions, CVG,selectionValueHtml) {
+    'jqueryui',
+    'jsplumb',
+    'lodash',
+    'iwcw',
+    'Util',
+    'attribute_widget/AbstractValue',
+    'operations/ot/ValueChangeOperation',
+    'canvas_widget/LogicalOperator',
+    'canvas_widget/LogicalConjunctions',
+    'attribute_widget/ClosedViewGeneration',
+    'text!templates/attribute_widget/selection_value.html'
+], /** @lends SelectionValue */
+function ($, jsPlumb, _, IWCW, Util, AbstractValue, ValueChangeOperation, LogicalOperator, LogicalConjunctions, CVG,selectionValueHtml) {
 
-	SelectionValue.prototype = new AbstractValue();
-	SelectionValue.prototype.constructor = SelectionValue;
-	/**
-	 * SelectionValue
-	 * @class attribute_widget.SelectionValue
-	 * @extends attribute_widget.AbstractValue
-	 * @memberof attribute_widget
-	 * @param {string} id Entity identifier
-	 * @param {string} name Name of attribute
-	 * @param {attribute_widget.AbstractEntity} subjectEntity Entity the attribute is assigned to
-	 * @param {attribute_widget.AbstractNode|attribute_widget.AbstractEdge} rootSubjectEntity Topmost entity in the chain of entity the attribute is assigned to
-	 * @param {Object} options Selection options
-	 * @constructor
-	 */
-	function SelectionValue(id, name, subjectEntity, rootSubjectEntity, options) {
-		var that = this;
+    SelectionValue.prototype = new AbstractValue();
+    SelectionValue.prototype.constructor = SelectionValue;
+    /**
+     * SelectionValue
+     * @class attribute_widget.SelectionValue
+     * @extends attribute_widget.AbstractValue
+     * @memberof attribute_widget
+     * @param {string} id Entity identifier
+     * @param {string} name Name of attribute
+     * @param {attribute_widget.AbstractEntity} subjectEntity Entity the attribute is assigned to
+     * @param {attribute_widget.AbstractNode|attribute_widget.AbstractEdge} rootSubjectEntity Topmost entity in the chain of entity the attribute is assigned to
+     * @param {Object} options Selection options
+     * @constructor
+     */
+    function SelectionValue(id, name, subjectEntity, rootSubjectEntity, options) {
+        var that = this;
 
-		AbstractValue.prototype.constructor.call(this, id, name, subjectEntity, rootSubjectEntity);
+        AbstractValue.prototype.constructor.call(this, id, name, subjectEntity, rootSubjectEntity);
 
-		/**
-		 * Value
-		 * @type {string}
-		 * @private
-		 */
-		var _value = _.keys(options)[0];
+        /**
+         * Value
+         * @type {string}
+         * @private
+         */
+        var _value = _.keys(options)[0];
 
-		/**
-		 * jQuery object of DOM node representing the node
-		 * @type {jQuery}
-		 * @private
-		 */
-		var _$node = $(_.template(selectionValueHtml, {
-					name : name,
-					options : options
-				}));
+        /**
+         * jQuery object of DOM node representing the node
+         * @type {jQuery}
+         * @private
+         */
+        var _$node = $(_.template(selectionValueHtml, {
+            name : name,
+            options : options
+        }));
 
-		/**
-		 * Inter widget communication wrapper
-		 * @type {Object}
-		 * @private
-		 */
-		var _iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE);
+        /**
+         * Inter widget communication wrapper
+         * @type {Object}
+         * @private
+         */
+        var _iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE);
 
-		/**
-		 * Apply a Value Change Operation
-		 * @param {operations.ot.ValueChangeOperation} operation
+        /**
+         * Apply a Value Change Operation
+         * @param {operations.ot.ValueChangeOperation} operation
          * @param {bool} fromCallback determines if the method is called from the callback or not
-		 */
-		var processValueChangeOperation = function (operation, fromCallback) {
-			that.setValue(operation.getValue());
-			if (operation.getEntityId() === that.getRootSubjectEntity().getEntityId()+'[target]') {
-				var EntityManager = require('attribute_widget/EntityManager');
+         */
+        var processValueChangeOperation = function (operation, fromCallback) {
+            that.setValue(operation.getValue());
+            if (operation.getEntityId() === that.getRootSubjectEntity().getEntityId()+'[target]') {
+                var EntityManager = require('attribute_widget/EntityManager');
                 var DeleteCvgOperation = require('operations/non_ot/DeleteCvgOperation');
                 var PerformCvgOperation = require('operations/non_ot/PerformCvgOperation');
-				var AttributeAddOperation = require('operations/ot/AttributeAddOperation');
-				var AttributeDeleteOperation = require('operations/ot/AttributeDeleteOperation');
-				var KeySelectionValueSelectionValueAttribute = require('attribute_widget/KeySelectionValueSelectionValueAttribute');
-				var ConditionListAttribute = require('attribute_widget/ConditionListAttribute');
+                var AttributeAddOperation = require('operations/ot/AttributeAddOperation');
+                var AttributeDeleteOperation = require('operations/ot/AttributeDeleteOperation');
+                var RenamingAttribute = require('attribute_widget/RenamingAttribute');
+                var ConditionListAttribute = require('attribute_widget/ConditionListAttribute');
                 var ConditionPredicateAttribute = require('attribute_widget/ConditionPredicateAttribute');
                 var makeDeleteCvgOp = function(viewType){
                     var deleteCvgOp = null;
@@ -111,31 +111,31 @@ define([
                         for (var key1 in viewTypeAttrList) {
                             if (viewTypeAttrList.hasOwnProperty(key1)) {
                                 attr = viewTypeAttrList[key1];
-                                op = new AttributeDeleteOperation(attr.getEntityId(), attr.getSubjectEntityId(), attr.getRootSubjectEntity().getEntityId(), KeySelectionValueSelectionValueAttribute.TYPE);
-                                attr.propagateAttributeDeleteOperation(op, CONFIG.WIDGET.NAME.MAIN);
+                                op = new AttributeDeleteOperation(attr.getEntityId(), attr.getSubjectEntityId(), attr.getRootSubjectEntity().getEntityId(), RenamingAttribute.TYPE);
+                                attr.propagateAttributeDeleteOperation(op);
                             }
                         }
 
+                        //initialize label
                         var optVal =  viewType.getAttribute(viewType.getEntityId()+ '[target]').getOptionValue();
-                        viewType.getLabel().getValue().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT, optVal, 0);
+                        var ytextLabel = viewType.getLabel().getValue().getYText();
+                        if(ytextLabel.toString() !== optVal) {
+                            if(ytextLabel.toString().length > 0)
+                                ytextLabel.delete(0, ytextLabel.toString().length);
+                            ytextLabel.insert(0,optVal);
+                        }
 
-                        attributeList = {};
+
                         //the attributes of the new target
                         var targetAttributes = node.getAttributes()["[attributes]"].getAttributes();
-                        //crate the attributes of the new target
+                        //crate the renaming attributes
                         for (var key2 in targetAttributes) {
                             if (targetAttributes.hasOwnProperty(key2)) {
                                 var refAttr = targetAttributes[key2];
                                 var id = refAttr.getEntityId();
 
-                                op = new AttributeAddOperation(id, viewTypeAttribute.getEntityId(), viewTypeAttribute.getRootSubjectEntity().getEntityId(), KeySelectionValueSelectionValueAttribute.TYPE);
-
-                                viewTypeAttribute.propagateAttributeAddOperation(op, CONFIG.WIDGET.NAME.MAIN);
-                                attr = viewTypeAttribute.getAttribute(id);
-                                attr.getKey().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT, refAttr.getKey().getValue(), 0);
-                                attr.getRef().propagateValueChange(CONFIG.OPERATION.TYPE.INSERT, refAttr.getKey().getValue(), 0);
-
-                                attributeList[id] = refAttr.getKey().getValue();
+                                op = new AttributeAddOperation(id, viewTypeAttribute.getEntityId(), viewTypeAttribute.getRootSubjectEntity().getEntityId(), RenamingAttribute.TYPE, refAttr.getKey().getValue());
+                                viewTypeAttribute.propagateAttributeAddOperation(op);
                             }
                         }
                     }
@@ -176,8 +176,6 @@ define([
                     else{
                         EntityManager.addToMap(viewType.getViewId(), node.getEntityId(), viewType.getEntityId());
                     }
-
-
                 }
             }
         };

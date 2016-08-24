@@ -5,8 +5,9 @@ define([
     'iwcw',
     'attribute_widget/AbstractValue',
     'operations/ot/ValueChangeOperation',
+    'operations/non_ot/BindYTextOperation',
     'text!templates/attribute_widget/value.html'
-],/** @lends Value */function($,jsPlumb,_,IWCW,AbstractValue,ValueChangeOperation,valueHtml) {
+],/** @lends Value */function($,jsPlumb,_,IWCW,AbstractValue,ValueChangeOperation,BindYTextOperation,valueHtml) {
 
     Value.prototype = new AbstractValue();
     Value.prototype.constructor = Value;
@@ -23,6 +24,8 @@ define([
      */
     function Value(id,name,subjectEntity,rootSubjectEntity){
         var that = this;
+
+        var _ytext= null;
 
         AbstractValue.prototype.constructor.call(this,id,name,subjectEntity,rootSubjectEntity);
 
@@ -183,9 +186,7 @@ define([
                     that.propagateValueChange(CONFIG.OPERATION.TYPE.INSERT,addedString[i],left+i);
                 }
             });
-            if(iwc){
-                that.registerCallbacks();
-            }
+
         };
 
         //noinspection JSUnusedLocalSymbols
@@ -209,31 +210,31 @@ define([
                     propagateValueChange(CONFIG.OPERATION.TYPE.INSERT,character,selectionStart);
                 }
             }).keydown(function(ev){
-                    if (ev.which === $.ui.keyCode.BACKSPACE || ev.which === $.ui.keyCode.DELETE) {
-                        var selectionStart, selectionEnd;
-                        var deletedChar;
+                if (ev.which === $.ui.keyCode.BACKSPACE || ev.which === $.ui.keyCode.DELETE) {
+                    var selectionStart, selectionEnd;
+                    var deletedChar;
 
-                        ev.preventDefault();
-                        ev.stopPropagation();
-                        selectionStart = this.selectionStart;
-                        selectionEnd = this.selectionEnd;
-                        if(selectionStart == selectionEnd){
-                            if (ev.which === $.ui.keyCode.BACKSPACE) {
-                                deletedChar = $(this).val()[selectionStart-1];
-                                propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart-1);
-                            } else if (ev.which === $.ui.keyCode.DELETE) {
-                                deletedChar = $(this).val()[selectionStart];
-                                propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart);
-                            }
-                        } else {
-                            while(selectionStart < selectionEnd){
-                                deletedChar = $(this).val()[selectionStart];
-                                propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart);
-                                selectionEnd--;
-                            }
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    selectionStart = this.selectionStart;
+                    selectionEnd = this.selectionEnd;
+                    if(selectionStart == selectionEnd){
+                        if (ev.which === $.ui.keyCode.BACKSPACE) {
+                            deletedChar = $(this).val()[selectionStart-1];
+                            propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart-1);
+                        } else if (ev.which === $.ui.keyCode.DELETE) {
+                            deletedChar = $(this).val()[selectionStart];
+                            propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart);
+                        }
+                    } else {
+                        while(selectionStart < selectionEnd){
+                            deletedChar = $(this).val()[selectionStart];
+                            propagateValueChange(CONFIG.OPERATION.TYPE.DELETE,deletedChar,selectionStart);
+                            selectionEnd--;
                         }
                     }
-                });
+                }
+            });
             if(iwc){
                 that.registerCallbacks();
             }
@@ -277,6 +278,7 @@ define([
          */
         this.registerCallbacks = function(){
             iwc.registerOnDataReceivedCallback(valueChangeCallback);
+            iwc.registerOnDataReceivedCallback(bindYTextCallback);
         };
 
         /**
@@ -284,9 +286,73 @@ define([
          */
         this.unregisterCallbacks = function(){
             iwc.unregisterOnDataReceivedCallback(valueChangeCallback);
+            iwc.unregisterOnDataReceivedCallback(bindYTextCallback);
+
         };
 
-        init();
+
+        var initData = function(ytext, data){
+            if(data){
+                if (data !== ytext.toString()) {
+                    if (ytext.toString().length > 0)
+                        ytext.delete(0, ytext.toString().length);
+                    ytext.insert(0, data);
+                    _value = data;
+                }
+            }
+            else {
+                if (that.getValue() !== ytext.toString()) {
+                    if (ytext.toString().length > 0)
+                        ytext.delete(0, ytext.toString().length);
+                    ytext.insert(0, that.getValue());
+                }
+            }
+        };
+
+        function bindYTextCallback(operation) {
+            if (operation instanceof BindYTextOperation && operation.getEntityId() === that.getEntityId()) {
+
+                var entityId = that.getRootSubjectEntity().getEntityId();
+
+                if (y.share.nodes.opContents.hasOwnProperty(entityId)) {
+                    setTimeout(function(){
+                        y.share.nodes.get(entityId).then(function (ymap) {
+                            ymap.get(operation.getEntityId()).then(function (ytext) {
+                                that.registerYType(ytext);
+                            })
+
+                        })
+                    },300);
+
+                }
+                else if (y.share.edges.opContents.hasOwnProperty(entityId)) {
+                    setTimeout(function(){
+                        y.share.edges.get(entityId).then(function (ymap) {
+                            ymap.get(operation.getEntityId()).then(function (ytext) {
+                                that.registerYType(ytext);
+                            })
+                        })
+                    },300);
+
+                }
+
+
+            }
+        }
+
+        this.getYText = function(){
+            return _ytext;
+        };
+
+        this.registerYType = function(ytext){
+            _ytext = ytext;
+            _ytext.bind(_$node[0]);
+            initData(ytext);
+        };
+        //init();
+        if(iwc){
+            that.registerCallbacks();
+        }
     }
 
     return Value;

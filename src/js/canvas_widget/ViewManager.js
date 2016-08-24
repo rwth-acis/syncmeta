@@ -50,30 +50,22 @@ define([
              * initialize the viewpoint selection list of the generic editor instance
              */
             GetViewpointList : function() {
-                var that = this;
-                var resourceSpace = new openapp.oo.Resource(openapp.param.space());
-                var $selection = $('#ddmViewpointSelection');
-                resourceSpace.getSubResources({
-                    relation: openapp.ns.role + "data",
-                    type: CONFIG.NS.MY.VIEWPOINT,
-                    onEach: function (context) {
-                        context.getRepresentation("rdfjson", function (rep) {
-                            var $option = $(optionTpl({
-                                id: rep.id
-                            }));
-                            //$option.attr('link', context.uri);
-                            _viewpointResourceDictionary[rep.id] = context;
-                            if(that.getViewResource(rep.id) === null)
-                                that.addView(rep.id, rep.id, null);
-                            $selection.append($option);
-
-                        });
+                _$selection.empty();
+                var viewpointList = y.share.views.keys();
+                for(var i=0;i<viewpointList.length;i++) {
+                    var viewpoint = y.share.views.get(viewpointList[i]);
+                    if(viewpoint) {
+                        _$selection.append($(optionTpl({
+                            id: viewpointList[i]
+                        })));
                     }
-                });
+                    else
+                        y.share.views.delete(viewpointList[i]);
+                }
             },
             /**
              * checks if a view exists
-              * @param viewId the viewId of the vie
+             * @param viewId the viewId of the vie
              * @returns {boolean} true if the view already exits false if not
              */
             existsView : function(viewId) {
@@ -164,9 +156,9 @@ define([
              * @returns {object}
              */
             getResource : function(viewId){
-              if(_viewResourceDictionary.hasOwnProperty(viewId)){
-                  return _viewResourceDictionary[viewId];
-              }
+                if(_viewResourceDictionary.hasOwnProperty(viewId)){
+                    return _viewResourceDictionary[viewId];
+                }
             },
             /**
              * adds a view to the ViewManager
@@ -250,13 +242,9 @@ define([
              * @param {object} resource openapp.oo.resource of the the view
              * @returns {object} jquery promise
              */
-            updateViewContent:function(viewId, resource){
-                var deferred = $.Deferred();
+            updateViewContent:function(viewId){
                 var data = this.viewToJSON(viewId);
-                resource.setRepresentation(data, 'application/json', function(){
-                    deferred.resolve();
-                });
-                return deferred.promise();
+                y.share.views.set(viewId,data);
             },
             /**
              * generates the json representation of a view

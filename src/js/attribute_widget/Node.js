@@ -29,6 +29,7 @@ define([
 
         Node.prototype = new AbstractNode();
         Node.prototype.constructor = Node;
+
         /**
          * Node
          * @class attribute_widget.Node
@@ -75,7 +76,6 @@ define([
                                 break;
                             case "string":
                                 attrObj[attributeId] = new SingleValueAttribute(id+"["+attribute.key.toLowerCase()+"]",attribute.key,that);
-                                //TODO: Add option to set identifier attribute in metamodel
                                 if(attribute.key.toLowerCase() === 'title' || attribute.key.toLowerCase() === "name"){
                                     that.setLabel(attrObj[attributeId]);
                                 }
@@ -103,6 +103,25 @@ define([
                         $attributeNode.append(attrObj[attributeKey].get$node());
                     }
                 }
+            };
+
+            this.registerYType = function(){
+                AbstractNode.prototype.registerYType.call(this);
+                var registerValue = function(ymap, value){
+                    ymap.get(value.getEntityId()).then(function(ytext){
+                        value.registerYType(ytext);
+                    })
+                };
+                y.share.nodes.get(that.getEntityId()).then(function(ymap){
+                    for(var attributeKey in attributes){
+                        if(attributes.hasOwnProperty(attributeKey)){
+                            var attribute = attributes[attributeKey];
+                            if(attribute.value === 'string')
+                                registerValue(ymap, that.getAttribute(attributeKey).getValue());
+                        }
+                    }
+                });
+
             };
 
             init();

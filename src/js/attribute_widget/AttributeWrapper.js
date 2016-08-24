@@ -54,6 +54,9 @@ define([
         var entitySelectCallback = function(operation){
             if(operation instanceof EntitySelectOperation && operation.getSelectedEntityId() === null){
                 that.select(_modelAttributesNode);
+                if($node.is(':hidden'))
+                    $node.show();
+                $('.ace-container').hide();
             }
         };
 

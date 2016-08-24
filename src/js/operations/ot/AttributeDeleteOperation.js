@@ -4,6 +4,7 @@ define([
     'operations/ot/OTOperation'
 ],/** @lends AttributeDeleteOperation */function(require,EntityOperation,OTOperation) {
 
+    AttributeDeleteOperation.TYPE = "AttributeDeleteOperation";
     AttributeDeleteOperation.prototype = new EntityOperation();
 	AttributeDeleteOperation.prototype.constructor = AttributeDeleteOperation;
     /**
@@ -139,6 +140,15 @@ define([
             );
         };
     }
+
+    AttributeDeleteOperation.prototype.toJSON = function(){
+        return {
+            entityId: this.getEntityId(),
+            type: this.getType(),
+            subjectEntityId: this.getSubjectEntityId(),
+            rootSubjectEntityId: this.getRootSubjectEntityId()
+        }
+    };
 
     return AttributeDeleteOperation;
 

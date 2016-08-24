@@ -26,7 +26,7 @@ define([
      * @param {number} height Height of node
      */
     function AbstractClassNode(id,left,top,width,height){
-
+        var that = this;
         AbstractNode.call(this,id,AbstractClassNode.TYPE,left,top,width,height);
 
         /**
@@ -55,15 +55,34 @@ define([
          * @type {Object}
          * @private
          */
-        var attributes = this.getAttributes();
+        var _attributes = this.getAttributes();
 
         this.addAttribute(new KeySelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File"}));
 
         _$node.find(".label").append(this.getLabel().get$node());
 
-        for(var attributeKey in attributes){
-            if(attributes.hasOwnProperty(attributeKey)){
-                _$attributeNode.append(attributes[attributeKey].get$node());
+        this.registerYType = function(){
+            var registerValue = function(ymap, value){
+                ymap.get(value.getEntityId()).then(function(ytext){
+                    value.registerYType(ytext);
+                })
+            };
+
+            AbstractNode.prototype.registerYType.call(this);
+            y.share.nodes.get(that.getEntityId()).then(function(ymap){
+                var attrs = _attributes["[attributes]"].getAttributes();
+                for(var attributeKey in attrs){
+                    if(attrs.hasOwnProperty(attributeKey)){
+                        var attr = attrs[attributeKey];
+                        registerValue(ymap,attr.getKey());
+                    }
+                }
+            });
+        };
+
+        for(var attributeKey in _attributes){
+            if(_attributes.hasOwnProperty(attributeKey)){
+                _$attributeNode.append(_attributes[attributeKey].get$node());
             }
         }
     }

@@ -89,6 +89,26 @@ define([
                 }
             };
 
+            this.registerYType = function(){
+                AbstractEdge.prototype.registerYType.call(this);
+
+                var registerValue = function(ymap, value){
+                    ymap.get(value.getEntityId()).then(function(ytext){
+                        value.registerYType(ytext);
+                    })
+                };
+                y.share.edges.get(that.getEntityId()).then(function(ymap){
+                    for(var attributeKey in attributes){
+                        if(attributes.hasOwnProperty(attributeKey)){
+                            var attribute = attributes[attributeKey];
+                            if(attribute.value === 'string')
+                                registerValue(ymap, that.getAttribute(attributeKey).getValue());
+                        }
+                    }
+                });
+
+            };
+
             init();
 
         }

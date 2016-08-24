@@ -45,13 +45,13 @@
                               if(win){
                                   win.close();
                               }
-                          },1000);
+                          },1500);
                       };
                   }
               } else {
                   if(cnt > 0){
                       cnt -= 1;
-                      setTimeout(timeout,200);
+                      setTimeout(timeout,700);
                   }
               }
           };

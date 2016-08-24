@@ -3,10 +3,10 @@ define([
     'jqueryui',
     'lodash',
     'canvas_widget/AbstractNode',
-	'canvas_widget/SingleSelectionAttribute',
+    'canvas_widget/SingleSelectionAttribute',
     'canvas_widget/RenamingListAttribute',
-	'canvas_widget/ConditionListAttribute',
-	'canvas_widget/ViewTypesUtil',
+    'canvas_widget/ConditionListAttribute',
+    'canvas_widget/ViewTypesUtil',
     'canvas_widget/LogicalOperator',
     'canvas_widget/LogicalConjunctions',
     'text!templates/canvas_widget/viewobject_node.html'
@@ -75,48 +75,26 @@ define([
             return AbstractNode.prototype.toJSON.call(this);
         };
 
-		ViewTypesUtil.GetCurrentBaseModel().then(function(model){
-			var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes,['Object']);
-			var attribute = new SingleSelectionAttribute(id+"[target]", "Target", that, selectionValues);
-
-            var conjSelection = new SingleSelectionAttribute(id+'[conjunction]', 'Conjunction', that, LogicalConjunctions);
-            that.addAttribute(conjSelection);
-            that.get$node().find('.attributes').append(conjSelection.get$node());
-
-            if(_fromResource){
-                var targetId;
-                var target = _fromResource.attributes[id + '[target]'];
-                if(target)
-                    targetId = target.value.value;
+        var attributeList = new RenamingListAttribute("[attributes]","Attributes",this,{"show":"Visible","hide":"Hidden"});
+        this.addAttribute(attributeList);
 
 
-                if(targetId){
-                    attribute.setValueFromJSON(_fromResource.attributes[id + '[target]']);
-                    if(conditonList = _fromResource.attributes["[condition]"]){
-                        var attrList = that.getAttribute('[attributes]').getAttributes();
-                        var targetAttrList = {};
-                        for (var key in attrList) {
-                            if (attrList.hasOwnProperty(key)) {
-                                targetAttrList[key] = attrList[key].getKey().getValue();
-                            }
-                        }
-                        var cla = new ConditionListAttribute("[condition]", "Conditions", that, targetAttrList, LogicalOperator, LogicalConjunctions);
-                        cla.setValueFromJSON(conditonList);
-                        that.addAttribute(cla);
-                        that.get$node().find('.attributes').append(cla.get$node());
-                    }
-                }
-                _fromResource = null;
-            }
-            that.addAttribute(attribute);
+        var registerYTextAttributes = function(map){
+            map.get(that.getLabel().getValue().getEntityId()).then(function(ytext){
+                that.getLabel().getValue().registerYType(ytext);
+            });
+        };
+        this.registerYMap = function(map, disableYText){
+            AbstractNode.prototype.registerYMap.call(this,map);
+            if(!disableYText)
+                registerYTextAttributes(map);
+            attributeList.registerYMap(disableYText);
+            if(cla)
+                cla.registerYMap(disableYText);
+            attribute.getValue().registerYType();
+            conjSelection.getValue().registerYType();
+        };
 
-			that.get$node().find('.attributes').prepend(attribute.get$node());
-
-		});
-		        
-		var attributeList = new RenamingListAttribute("[attributes]","Attributes",this,{"show":"Visible","hide":"Hidden"});
-		this.addAttribute(attributeList);
-		
         _$node.find(".label").append(this.getLabel().get$node());
 
         for(var attributeKey in _attributes){
@@ -124,6 +102,50 @@ define([
                 _$attributeNode.append(_attributes[attributeKey].get$node());
             }
         }
+
+        //ViewTypesUtil.GetCurrentBaseModel().then(function(model){
+        var model = y.share.data.get('model');
+        var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes,['Object']);
+        var attribute = new SingleSelectionAttribute(id+"[target]", "Target", that, selectionValues);
+
+        var conjSelection = new SingleSelectionAttribute(id+'[conjunction]', 'Conjunction', that, LogicalConjunctions);
+
+        var cla = null;
+        that.addAttribute(conjSelection);
+
+        that.get$node().find('.attributes').append(conjSelection.get$node());
+
+        if(_fromResource){
+            var targetId;
+            var target = _fromResource.attributes[id + '[target]'];
+            if(target)
+                targetId = target.value.value;
+
+            if(targetId){
+                attribute.setValueFromJSON(_fromResource.attributes[id + '[target]']);
+                if(conditonList = _fromResource.attributes["[condition]"]){
+                    var attrList = _fromResource.attributes['[attributes]'].list;
+                    var targetAttrList = {};
+                    for (var key in attrList) {
+                        if (attrList.hasOwnProperty(key)) {
+                            targetAttrList[key] = attrList[key].val.value;
+                        }
+                    }
+                    cla = new ConditionListAttribute("[condition]", "Conditions", that, targetAttrList, LogicalOperator, LogicalConjunctions);
+
+                    //cla.setValueFromJSON(conditonList);
+                    that.addAttribute(cla);
+
+                    that.get$node().find('.attributes').append(cla.get$node());
+                }
+            }
+            _fromResource = null;
+        }
+        that.addAttribute(attribute);
+
+        that.get$node().find('.attributes').prepend(attribute.get$node());
+
+        //});
 
         this.setContextMenuItemCallback(function(){
             var NodeShapeNode = require('canvas_widget/NodeShapeNode'),
@@ -133,14 +155,15 @@ define([
             return {
                 addShape: {
                     name: "Add Node Shape",
-                        callback: function(){
+                    callback: function(){
                         var canvas = that.getCanvas(),
                             appearance = that.getAppearance(),
                             nodeId;
 
                         //noinspection JSAccessibilityCheck
-                        nodeId = canvas.createNode(NodeShapeNode.TYPE,appearance.left + appearance.width + 50,appearance.top,150,100);
-                        canvas.createEdge(BiDirAssociationEdge.TYPE,that.getEntityId(),nodeId, null, null, viewId);
+                        canvas.createNode(NodeShapeNode.TYPE,appearance.left + appearance.width + 50,appearance.top,150,100).done(function(nodeId){
+                            canvas.createEdge(BiDirAssociationEdge.TYPE,that.getEntityId(),nodeId, null, null, viewId);
+                        });
                     },
                     disabled: function() {
                         var edges = that.getEdges(),
@@ -152,7 +175,7 @@ define([
                                 edge = edges[edgeId];
                                 if( (edge instanceof BiDirAssociationEdge &&
                                     (edge.getTarget() === that && edge.getSource() instanceof NodeShapeNode ||
-                                        edge.getSource() === that && edge.getTarget() instanceof NodeShapeNode)) ||
+                                    edge.getSource() === that && edge.getTarget() instanceof NodeShapeNode)) ||
 
                                     (edge instanceof UniDirAssociationEdge && edge.getTarget() instanceof NodeShapeNode) ){
 

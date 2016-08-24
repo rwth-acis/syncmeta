@@ -4,6 +4,7 @@ define([
     'operations/ot/OTOperation'
 ],/** @lends NodeDeleteOperation */function(require,EntityOperation,OTOperation) {
 
+    NodeDeleteOperation.TYPE= "NodeDeleteOperation";
     NodeDeleteOperation.prototype = new EntityOperation();
 	NodeDeleteOperation.prototype.constructor = NodeDeleteOperation;
     /**
@@ -235,6 +236,19 @@ define([
             );
         };
     }
+
+    NodeDeleteOperation.prototype.toJSON = function(){
+        return {
+            id:this.getEntityId(),
+            type: this.getType(),
+            left: this.getLeft(),
+            top: this.getTop(),
+            width: this.getWidth(),
+            height: this.getHeight(),
+            zIndex: this.getZIndex(),
+            json: this.getJSON()
+        }
+    };
 
     NodeDeleteOperation.getOperationDescription = function(nodeType,nodeLabel,viewId){
         if(!nodeLabel && !viewId){

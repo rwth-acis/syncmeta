@@ -1,7 +1,5 @@
 define([],/** @lends AbstractCanvasTool */function () {
 
-    var AbstractCanvasTool;
-
     //noinspection JSUnusedGlobalSymbols
     /**
      * AbstractCanvasTool
@@ -12,7 +10,7 @@ define([],/** @lends AbstractCanvasTool */function () {
      * @param {string} [className] Class name assigned to canvas node when tool is mounted
      * @param {string} [description] Description of tool
      */
-    AbstractCanvasTool = function(name,className,description){
+    function AbstractCanvasTool(name,className,description){
         /**
          * Canvas that the tool is added to
          * @type {canvas_widget.AbstractCanvas}
@@ -97,7 +95,7 @@ define([],/** @lends AbstractCanvasTool */function () {
         this._unmount = function(){
             _canvas.get$canvas().removeClass(_className);
         };
-    };
+    }
 
     /**
      * Mount the tool on canvas

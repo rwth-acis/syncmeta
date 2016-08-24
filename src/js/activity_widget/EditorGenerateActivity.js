@@ -1,10 +1,4 @@
-define([
-    'jqueryui',
-    'lodash',
-    'iwcw',
-    'activity_widget/Activity'
-],/** @lends EditorGenerateActivity */function($,_,IWCW,Activity) {
-
+define(['activity_widget/Activity'],/** @lends EditorGenerateActivity */function(Activity) {
     EditorGenerateActivity.TYPE = "EditorGenerateActivity";
 
     EditorGenerateActivity.prototype = new Activity();

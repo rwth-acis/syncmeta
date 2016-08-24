@@ -58,7 +58,7 @@ define([
 
         /**
          * Apply an Attribute Add Operation
-         * @param {operations.ot.AttributeDeleteOperation} operation
+         * @param {operations.ot.AttributeAddOperation} operation
          */
         var processAttributeAddOperation = function(operation){
             var attribute = new KeySelectionValueAttribute(operation.getEntityId(),"Attribute",that,_options);
@@ -80,10 +80,10 @@ define([
 
         /**
          * Propagate an Attribute Add Operation to the remote users and the local widgets
-         * @param {operations.ot.AttributeDeleteOperation} operation
+         * @param {operations.ot.AttributeAddOperation} operation
          */
         var propagateAttributeAddOperation = function(operation){
-            processAttributeAddOperation(operation);
+            //processAttributeAddOperation(operation);
             iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.getOTOperation());
         };
 

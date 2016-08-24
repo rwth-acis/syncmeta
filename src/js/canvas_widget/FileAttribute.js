@@ -5,7 +5,7 @@ define([
     'Util',
     'canvas_widget/AbstractAttribute',
     'canvas_widget/FileValue',
-    'text!templates/canvas_widget/single_selection_attribute.html'
+    'text!templates/canvas_widget/file_attribute.html'
 ],/** @lends FileAttribute */function($,jsPlumb,_,Util,AbstractAttribute,FileValue,fileAttributeHtml) {
 
     FileAttribute.prototype = new AbstractAttribute();
@@ -20,7 +20,8 @@ define([
      * @param {string} name Name of attribute
      * @param {canvas_widget.AbstractEntity} subjectEntity Entity the attribute is assigned to
      */
-    function FileAttribute(id,name,subjectEntity){
+    function FileAttribute(id,name,subjectEntity, useAttributeHtml){
+        useAttributeHtml = typeof(useAttributeHtml) !== 'undefined' ? useAttributeHtml : false;
         AbstractAttribute.call(this,id,name,subjectEntity);
 
         /***
@@ -28,7 +29,7 @@ define([
          * @type {canvas_widget.FileValue}
          * @private
          */
-        var _value = new FileValue(id,name,this,this.getRootSubjectEntity());
+        var _value = new FileValue(id,name,this,this.getRootSubjectEntity(), useAttributeHtml);
 
         /**
          * jQuery object of DOM node representing the node

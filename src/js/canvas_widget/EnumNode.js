@@ -70,8 +70,20 @@ define([
             json.type = EnumNode.TYPE;
             return json;
         };
+        var attr= new SingleValueListAttribute("[attributes]","Attributes",this);
+        this.addAttribute(attr);
 
-        this.addAttribute(new SingleValueListAttribute("[attributes]","Attributes",this));
+        this.registerYMap = function(map,disableYText){
+            AbstractNode.prototype.registerYMap.call(this,map);
+            if(!disableYText)
+                registerYTextAttributes(map);
+            attr.registerYMap(disableYText);
+        };
+        var registerYTextAttributes = function(map){
+            map.get(that.getLabel().getValue().getEntityId()).then(function(ytext){
+                that.getLabel().getValue().registerYType(ytext);
+            });
+        };
 
         _$node.find(".label").append(this.getLabel().get$node());
 

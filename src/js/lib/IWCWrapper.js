@@ -2,8 +2,9 @@ define([
     'iwc',
     'operations/ot/OTOperation',
     'operations/non_ot/NonOTOperation',
-    'operations/OperationFactory'
-],/** @lends IWC */function(IIWC,OTOperation,NonOTOperation,OperationFactory){
+    'operations/OperationFactory',
+    'Util'
+],/** @lends IWC */function(IIWC,OTOperation,NonOTOperation,OperationFactory, Util){
 
     var PAYLOAD_DATA_TYPE = {
         OT_OPERATION: "OTOperation",
@@ -28,13 +29,15 @@ define([
          * Set if local messages should be buffered
          * @type {boolean}
          */
-        var BUFFER_ENABLED = true;
+        var BUFFER_ENABLED = false;
 
         /**
          * Interval for sending buffered local messages
          * @type {number}
          */
         var INTERVAL_SEND  = 25;
+
+        var Space = null;
 
         //noinspection JSMismatchedCollectionQueryUpdate
         /**
@@ -51,6 +54,8 @@ define([
          * @private
          */
         var _onDataReceivedCallbacks = [];
+
+        var _onDataReceivedCallers = [];
 
         /**
          * Stores (for each user) the times an inocming messages has been received to drop duplicate (same time) messages
@@ -120,25 +125,31 @@ define([
          */
         var sendBufferedMessages = function(){
             var intent;
-            var data = _messageBuffer.splice(0,_messageBuffer.length);
-            //sendBufferTimer.pause();
-            if(data.length == 1){
-                intent = encapsulateMessage(CONFIG.WIDGET.NAME.MAIN,CONFIG.IWC.FLAG.PUBLISH_LOCAL, CONFIG.IWC.ACTION.DATA, data[0]);
-                if (IIWC.util.validateIntent(intent)) {
+            var data = null;
 
-                    console.log("=== " + intent.flags.toString().replace(/PUBLISH_/g,"") + " INTENT TRANSMITTED AT COMPONENT " + componentName + " ===");
-                    console.log(intent);
+            for(var receiver in _messageBuffer) {
+                if (_messageBuffer.hasOwnProperty(receiver)) {
+                    data = _messageBuffer[receiver].splice(0,_messageBuffer[receiver].length);
+                    //sendBufferTimer.pause();
+                    if (data.length == 1) {
+                        intent = encapsulateMessage(receiver, CONFIG.IWC.FLAG.PUBLISH_LOCAL, CONFIG.IWC.ACTION.DATA, data[0]);
+                        if (IIWC.util.validateIntent(intent)) {
 
-                    _iwc.publish(intent);
-                }
-            } else if(data.length > 1){
-                intent = encapsulateMessage(CONFIG.WIDGET.NAME.MAIN,CONFIG.IWC.FLAG.PUBLISH_LOCAL, CONFIG.IWC.ACTION.DATA_ARRAY, data);
-                if (IIWC.util.validateIntent(intent)) {
+                            console.log("=== " + intent.flags.toString().replace(/PUBLISH_/g, "") + " INTENT TRANSMITTED AT COMPONENT " + componentName + " ===");
+                            console.log(intent);
 
-                    console.log("=== " + intent.flags.toString().replace(/PUBLISH_/g,"") + " INTENT TRANSMITTED AT COMPONENT " + componentName + " ===");
-                    console.log(intent);
+                            _iwc.publish(intent);
+                        }
+                    } else if (data.length > 1) {
+                        intent = encapsulateMessage(receiver, CONFIG.IWC.FLAG.PUBLISH_LOCAL, CONFIG.IWC.ACTION.DATA_ARRAY, data);
+                        if (IIWC.util.validateIntent(intent)) {
 
-                    _iwc.publish(intent);
+                            console.log("=== " + intent.flags.toString().replace(/PUBLISH_/g, "") + " INTENT TRANSMITTED AT COMPONENT " + componentName + " ===");
+                            console.log(intent);
+
+                            _iwc.publish(intent);
+                        }
+                    }
                 }
             }
             //sendBufferTimer.resume();
@@ -180,7 +191,8 @@ define([
                         //adjustHistory(remoteOp);
                         for(i = 0, numOfCallbacks = _onDataReceivedCallbacks.length; i < numOfCallbacks; i++){
                             if(typeof _onDataReceivedCallbacks[i] === 'function'){
-                                _onDataReceivedCallbacks[i](resOperation);
+                                var caller = _onDataReceivedCallers[i] || this;
+                                _onDataReceivedCallbacks[i].call(caller, resOperation);
                             }
                         }
                         break;
@@ -191,7 +203,8 @@ define([
                         //adjustHistory(remoteOp);
                         for(i = 0, numOfCallbacks = _onDataReceivedCallbacks.length; i < numOfCallbacks; i++){
                             if(typeof _onDataReceivedCallbacks[i] === 'function'){
-                                _onDataReceivedCallbacks[i](resOperation);
+                                var caller = _onDataReceivedCallers[i] || this;
+                                _onDataReceivedCallbacks[i].call(caller, resOperation);
                             }
                         }
                         break;
@@ -260,8 +273,12 @@ define([
 
                 if(BUFFER_ENABLED){
                     //sendBufferTimer.pause();
-                    _messageBuffer.push(data);
-                    //sendBufferTimer.resume();
+                    if(_messageBuffer.hasOwnProperty(receiver)){
+                        _messageBuffer[receiver].push(data);
+                    } else {
+                        _messageBuffer[receiver] = [data];
+                    }
+                            //sendBufferTimer.resume();
                 } else {
                     intent = encapsulateMessage(receiver, CONFIG.IWC.FLAG.PUBLISH_LOCAL, CONFIG.IWC.ACTION.DATA, data);
                     if (IIWC.util.validateIntent(intent)) {
@@ -299,15 +316,19 @@ define([
                     sender: operation.getSender()
                 });
             },
+            getUserColor: function(jabberId){
+                return Util.getColor(Space.members[jabberId].globalId);
+            },
             /**
              * Register callback for local data receive events
              * @memberof IWCWrapper#
              * @param {function} callback
              */
-            registerOnDataReceivedCallback: function(callback){
+            registerOnDataReceivedCallback: function(callback, caller){
                 if(typeof callback === "function"){
                     this.unregisterOnDataReceivedCallback(callback);
                     _onDataReceivedCallbacks.push(callback);
+                    _onDataReceivedCallers.push(caller);
                 }
             },
             /**
@@ -322,9 +343,22 @@ define([
                     for(i = 0, numOfCallbacks = _onDataReceivedCallbacks.length; i < numOfCallbacks; i++){
                         if(callback === _onDataReceivedCallbacks[i]){
                             _onDataReceivedCallbacks.splice(i,1);
+                            _onDataReceivedCallers.splice(i, 1);
                         }
                     }
                 }
+            },
+            getUser: function(){
+                return Space.user;
+            },
+            getMembers: function(){
+                return Space.members;
+            },
+            getSpaceTitle: function(){
+                return Space.title;
+            },
+            setSpace: function(s){
+                Space = s;
             }
         };
     }

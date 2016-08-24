@@ -24,6 +24,7 @@ define([
      * @param {number} height Height of node
      */
     function ObjectNode(id,left,top,width,height){
+        var that= this;
         AbstractNode.call(this,id,ObjectNode.TYPE,left,top,width,height);
 
         /**
@@ -53,6 +54,25 @@ define([
          * @private
          */
         var _attributes = this.getAttributes();
+
+        this.registerYType = function(){
+            var registerValue = function(ymap, value){
+                ymap.get(value.getEntityId()).then(function(ytext){
+                    value.registerYType(ytext);
+                })
+            };
+
+            AbstractNode.prototype.registerYType.call(this);
+            y.share.nodes.get(that.getEntityId()).then(function(ymap){
+                var attrs = _attributes["[attributes]"].getAttributes();
+                for(var attributeKey in attrs){
+                    if(attrs.hasOwnProperty(attributeKey)){
+                        var attr = attrs[attributeKey];
+                        registerValue(ymap,attr.getKey());
+                    }
+                }
+            });
+        };
 
         this.addAttribute(new KeySelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File"}));
 

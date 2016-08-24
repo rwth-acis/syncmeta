@@ -75,7 +75,7 @@ define([
          * @param {operations.ot.AttributeAddOperation} operation
          */
         var propagateAttributeAddOperation = function(operation){
-			processAttributeAddOperation(operation);
+			//processAttributeAddOperation(operation);
             iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN, operation.getOTOperation());
         };
 
@@ -197,7 +197,7 @@ define([
         }
         _$node.find(".ui-icon-plus").click(function(){
             var id = Util.generateRandomId();
-            var operation = new AttributeAddOperation(id,that.getEntityId(),that.getRootSubjectEntity().getEntityId(),SingleValueAttribute.TYPE);
+            var operation = new AttributeAddOperation(id,that.getEntityId(),that.getRootSubjectEntity().getEntityId(),SingleValueAttribute.TYPE, y.share.users.get(y.db.userId));
             propagateAttributeAddOperation(operation);
         });
 

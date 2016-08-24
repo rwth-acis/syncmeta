@@ -5,8 +5,9 @@ define([
     'iwcw',
     'attribute_widget/AbstractValue',
     'operations/ot/ValueChangeOperation',
+    'operations/non_ot/BindYTextOperation',
     'text!templates/attribute_widget/color_value.html'
-],/** @lends ColorValue */function($,jsPlumb,_,IWCW,AbstractValue,ValueChangeOperation,colorValueHtml) {
+],/** @lends ColorValue */function($,jsPlumb,_,IWCW,AbstractValue,ValueChangeOperation,BindYTextOperation,colorValueHtml) {
 
     ColorValue.prototype = new AbstractValue();
     ColorValue.prototype.constructor = ColorValue;
@@ -23,6 +24,7 @@ define([
      */
     function ColorValue(id,name,subjectEntity,rootSubjectEntity){
         var that = this;
+        var _ytext = null;
 
         AbstractValue.prototype.constructor.call(this,id,name,subjectEntity,rootSubjectEntity);
 
@@ -123,7 +125,7 @@ define([
          * @param {operations.ot.ValueChangeOperation} operation
          */
         var propagateValueChangeOperation = function(operation){
-            processValueChangeOperation(operation);
+            //processValueChangeOperation(operation);
             iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.getOTOperation());
         };
 
@@ -277,6 +279,7 @@ define([
          */
         this.registerCallbacks = function(){
             iwc.registerOnDataReceivedCallback(valueChangeCallback);
+            iwc.registerOnDataReceivedCallback(bindYTextCallback);
         };
 
         /**
@@ -284,9 +287,66 @@ define([
          */
         this.unregisterCallbacks = function(){
             iwc.unregisterOnDataReceivedCallback(valueChangeCallback);
+            iwc.unregisterOnDataReceivedCallback(bindYTextCallback);
         };
 
-        init();
+        function bindYTextCallback(operation) {
+            if (operation instanceof BindYTextOperation && operation.getEntityId() === that.getEntityId()) {
+                var entityId= that.getRootSubjectEntity().getEntityId();
+                if(y.share.nodes.opContents.hasOwnProperty(entityId)){
+                    y.share.nodes.get(entityId).then(function(ymap){
+                        ymap.get(operation.getEntityId()).then(function(ytext){
+                            ytext.bind(_$node[0]);
+                            if(that.getValue() !== ytext.toString()){
+                                if(ytext.toString().length > 0)
+                                    ytext.delete(0, ytext.toString().length-1);
+                                ytext.insert(0, that.getValue());
+                            }
+                        })
+                    })
+                }
+                else if(y.share.edges.opContents.hasOwnProperty(entityId)){
+                    y.share.edges.get(entityId).then(function(ymap){
+                        ymap.get(operation.getEntityId()).then(function(ytext){
+                            ytext.bind(_$node[0]);
+                            if(that.getValue() !== ytext.toString()){
+                                if(ytext.toString().length > 0)
+                                    ytext.delete(0, ytext.toString().length-1);
+                                ytext.insert(0, that.getValue());
+                            }
+                        })
+                    })
+                }
+            }
+        }
+
+        var initData = function(ytext, data){
+            if(data){
+                if (data !== ytext.toString()) {
+                    if (ytext.toString().length > 0)
+                        ytext.delete(0, ytext.toString().length);
+                    ytext.insert(0, data);
+                }
+            }
+            else {
+                if (that.getValue() !== ytext.toString()) {
+                    if (ytext.toString().length > 0)
+                        ytext.delete(0, ytext.toString().length);
+                    ytext.insert(0, that.getValue());
+                }
+            }
+        };
+
+        this.getYText = function(){
+            return _ytext;
+        };
+
+        this.registerYType = function(ytext){
+            _ytext = ytext;
+            _ytext.bind(_$node[0]);
+            initData(ytext);
+        };
+        //init();
     }
 
     return ColorValue;

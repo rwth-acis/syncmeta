@@ -69,7 +69,23 @@ define([
             return AbstractNode.prototype.toJSON.call(this);
         };
 
-        this.addAttribute(new KeySelectionValueSelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File"},{"hidden":"Hide","top":"Top","center":"Center","bottom":"Bottom"}));
+        var attr=new KeySelectionValueSelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File"},{"hidden":"Hide","top":"Top","center":"Center","bottom":"Bottom"});
+        this.addAttribute(attr);
+
+        this.registerYMap = function(map, disableYText){
+            AbstractNode.prototype.registerYMap.call(this,map);
+            if(!disableYText)
+                registerYTextAttributes(map);
+            attr.registerYMap(map,disableYText);
+
+
+        };
+
+        function registerYTextAttributes(map){
+            map.get(that.getLabel().getValue().getEntityId()).then(function(ytext){
+                that.getLabel().getValue().registerYType(ytext);
+            });
+        }
 
         $node.find(".label").append(this.getLabel().get$node());
 
@@ -92,8 +108,9 @@ define([
                             nodeId;
 
                         //noinspection JSAccessibilityCheck
-                        nodeId = canvas.createNode(EdgeShapeNode.TYPE,appearance.left + appearance.width + 50,appearance.top,150,100);
-                        canvas.createEdge(BiDirAssociationEdge.TYPE,that.getEntityId(),nodeId);
+                        canvas.createNode(EdgeShapeNode.TYPE,appearance.left + appearance.width + 50,appearance.top,150,100).done(function(nodeId){
+                            canvas.createEdge(BiDirAssociationEdge.TYPE,that.getEntityId(),nodeId);
+                        });
                     },
                     disabled: function() {
                         var edges = that.getEdges(),
@@ -105,7 +122,7 @@ define([
                                 edge = edges[edgeId];
                                 if( (edge instanceof BiDirAssociationEdge &&
                                     (edge.getTarget() === that && edge.getSource() instanceof EdgeShapeNode ||
-                                        edge.getSource() === that && edge.getTarget() instanceof EdgeShapeNode)) ||
+                                    edge.getSource() === that && edge.getTarget() instanceof EdgeShapeNode)) ||
 
                                     (edge instanceof UniDirAssociationEdge && edge.getTarget() instanceof EdgeShapeNode) ){
 

@@ -26,7 +26,7 @@ define([
      * @param {number} height Height of node
      */
     function EnumNode(id,left,top,width,height){
-
+        var that = this;
         AbstractNode.call(this,id,EnumNode.TYPE,left,top,width,height);
 
         /**
@@ -55,15 +55,34 @@ define([
          * @type {Object}
          * @private
          */
-        var attributes = this.getAttributes();
+        var _attributes = this.getAttributes();
 
         this.addAttribute(new SingleValueListAttribute("[attributes]","Attributes",this));
 
         _$node.find(".label").append(this.getLabel().get$node());
 
-        for(var attributeKey in attributes){
-            if(attributes.hasOwnProperty(attributeKey)){
-                $attributeNode.append(attributes[attributeKey].get$node());
+        this.registerYMap = function(){
+            var registerValue = function(ymap, value){
+                ymap.get(value.getEntityId()).then(function(ytext){
+                    value.registerYType(ytext);
+                })
+            };
+
+            AbstractNode.prototype.registerYType.call(this);
+            y.share.nodes.get(that.getEntityId()).then(function(ymap){
+                var attrs = _attributes["[attributes]"].getAttributes();
+                for(var attributeKey in attrs){
+                    if(attrs.hasOwnProperty(attributeKey)){
+                        var attr = attrs[attributeKey];
+                        registerValue(ymap,attr.getValue());
+                    }
+                }
+            });
+        };
+
+        for(var attributeKey in _attributes){
+            if(_attributes.hasOwnProperty(attributeKey)){
+                $attributeNode.append(_attributes[attributeKey].get$node());
             }
         }
     }

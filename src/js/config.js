@@ -30,6 +30,16 @@ var require = {
         },
         jszip: {
             exports: "JSZip"
+        },
+        classjs: {
+            exports: "Class"
+        },
+        graphlib: {
+            exports: "graphlib",
+            deps: ['lodash']
+        },
+        bootstrap: {
+            deps: ["jquery"]
         }
     },
     paths: {
@@ -56,11 +66,20 @@ var require = {
         mfexport: "lib/MFExport",
         ildeApi: "lib/ildeApi",
         swfobject: "lib/vendor/swfobject/swfobject",
-        jszip: "lib/vendor/jszip"
+        jszip: "lib/vendor/jszip",
+        classjs: "lib/Class",
+        graphlib: "lib/vendor/graphlib.core.min",
+        bootstrap: "lib/vendor/bootstrap/dropdown.prefixed",
+        yjs: "lib/vendor/yjs/y",
+        ace: "lib/vendor/ace/ace"
     }
 };
 
 CONFIG = {
+    TEST_MODE_CANVAS:false,
+    TEST_MODE_ATTRIBUTE:false,
+    TEST_MODE_PALETTE:false,
+    TEST_MODE_ACTIVITY:false,
     LAYER:{
         META: "META",
         MODEL: "MODEL"
@@ -70,7 +89,9 @@ CONFIG = {
             MAIN: "MAIN",
             PALETTE: "PALETTE",
             ATTRIBUTE: "ATTRIBUTE",
-            ACTIVITY: "ACTIVITY"
+            ACTIVITY: "ACTIVITY",
+            GUIDANCE: "GUIDANCE",
+            HEATMAP: "HEATMAP"
         }
     },
     ENTITY: {
@@ -172,7 +193,11 @@ CONFIG = {
             INSTANCE: "my:ns:instance",
 			VIEWPOINT: "my:ns:viewpoint",
 			VIEW: "my:ns:view",
-            COPY: "my:ns:copy"
+            COPY: "my:ns:copy",
+            GUIDANCEMODEL: "my:ns:guidancemodel",
+            METAMODELPREVIEW: "my:ns:metamodelpreview",
+            GUIDANCEMETAMODEL: "my:ns:guidancemetamodel",
+            LOGICALGUIDANCEREPRESENTATION: "my:ns:logicalguidancerepresentation"
         }
     }
 };

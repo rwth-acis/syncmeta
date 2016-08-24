@@ -13,10 +13,12 @@ define([
     'activity_widget/UserJoinActivity',
     'activity_widget/ValueChangeActivity',
     'activity_widget/ViewApplyActivity',
+    'activity_widget/ReloadWidgetActivity',
     'activity_widget/User',
     'operations/non_ot/ActivityOperation',
     'operations/non_ot/EntitySelectOperation'
-],/** @lends ActivityList */function($,_,IWCW,Activity,NodeAddActivity,NodeDeleteActivity,NodeMoveActivity,NodeResizeActivity,EdgeAddActivity,EdgeDeleteActivity,EditorGenerateActivity,UserJoinActivity,ValueChangeActivity,ViewApplyActivity, User,ActivityOperation,EntitySelectOperation) {
+    //'promise!Space'
+],/** @lends ActivityList */function($,_,IWCW,Activity,NodeAddActivity,NodeDeleteActivity,NodeMoveActivity,NodeResizeActivity,EdgeAddActivity,EdgeDeleteActivity,EditorGenerateActivity,UserJoinActivity,ValueChangeActivity,ViewApplyActivity, ReloadWidgetActivity, User,ActivityOperation,EntitySelectOperation/*,space*/) {
 
     /**
      * List of user activities
@@ -60,6 +62,7 @@ define([
          * @type {Object}
          */
         var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ACTIVITY);
+        //iwc.setSpace(space);
 
         /**
          * Add an user to the user list
@@ -128,7 +131,6 @@ define([
          * Callback for received Operations
          * @param {operations.non_ot.ActivityOperation|operations.non_ot.EntitySelectOperation} operation
          */
-        //TODO: Create abstract Operation class
         var operationCallback = function(operation){
             var activity,
                 user,
@@ -178,6 +180,9 @@ define([
                     case UserJoinActivity.TYPE:
                         that.addUser(operation.getSender());
                         break;
+                    case 'ReloadWidgetOperation':
+                        activity = new ReloadWidgetActivity(operation.getEntityId(), operation.getSender(), operation.getText());
+                        that.addActivity(activity);
                     case ViewApplyActivity.TYPE:
                         activity = new ViewApplyActivity(operation.getEntityId(),operation.getSender());
                         if (userList.hasOwnProperty(activity.getSender())) {

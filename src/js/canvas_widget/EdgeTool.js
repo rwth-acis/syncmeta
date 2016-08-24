@@ -29,15 +29,17 @@ define([
         );
 
         var _relations = relations;
-
+        
+        
         /**
          * Mount the tool on canvas
          */
         this.mount = function(){
-
+           
             function makeNeighborhoodFilter(nodeId){
                 return function(n){
-                    return n.getEntityId() !== nodeId && !n.getNeighbors().hasOwnProperty(nodeId);
+                    return true;
+                    //return n.getEntityId() !== nodeId && !n.getNeighbors().hasOwnProperty(nodeId);
                 };
             }
 
@@ -63,7 +65,7 @@ define([
                 if(nodes.hasOwnProperty(nodeId)){
                     node = nodes[nodeId];
                     node.lowlight();
-                    if(EntityManager.getViewId() === null || EntityManager.getLayer() === CONFIG.LAYER.META) {
+                    if(EntityManager.getViewId() === undefined || EntityManager.getLayer() === CONFIG.LAYER.META) {
                         nodeType = node.getType();
                         strGetNodesByType = 'getNodesByType';
                     }
@@ -75,6 +77,7 @@ define([
                         if(relations[i].sourceTypes.indexOf(nodeType) !== -1){
                             if(_.size(_.filter(EntityManager[strGetNodesByType](relations[i].targetTypes),makeNeighborhoodFilter(node.getEntityId()))) > 0){
                                 node.makeSource();
+                                node.unbindMoveToolEvents();
                                 node.unlowlight();
                                 break;
                             }
@@ -90,7 +93,7 @@ define([
                     numOfRelations,
                     strGetNodesByType;
                 if(sourceNode){
-                    if(EntityManager.getViewId() === null || EntityManager.getLayer() === CONFIG.LAYER.META) {
+                    if(EntityManager.getViewId() === undefined || EntityManager.getLayer() === CONFIG.LAYER.META) {
                         sourceType = sourceNode.getType();
                         strGetNodesByType = 'getNodesByType';
                     }
@@ -126,7 +129,6 @@ define([
                 if(typeof originalEvent !== 'undefined'){ //Was the connection established using Drag'n Drop?
                     jsPlumb.detach(info.connection,{fireEvent: false});
                     that.getCanvas().createEdge(that.getName(),info.sourceId,info.targetId);
-                    //that.canvas.callListeners(CONFIG.CANVAS.LISTENERS.EDGEADD,that.name,info.sourceId,info.targetId);
                 }
                 return true;
             });
@@ -157,6 +159,7 @@ define([
             var $canvas = this.getCanvas().get$canvas();
 
             //Unbind Node Events
+            //TODO Not very nicely implemented. Iterates over all nodes again like it was in MoveTool
             var nodes = EntityManager.getNodes();
             var nodeId, node;
             for(nodeId in nodes){
@@ -164,6 +167,7 @@ define([
                     node = nodes[nodeId];
                     node.unlowlight();
                     node.unbindEdgeToolEvents();
+                    node.bindMoveToolEvents();
                 }
             }
 

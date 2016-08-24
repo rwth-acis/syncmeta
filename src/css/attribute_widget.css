@@ -111,3 +111,10 @@
     overflow-y: auto;
     max-height: 150px;
 }
+
+.codeEditorValue {
+    position: absolute;
+    width: 560px;
+    height: 200px;
+    overflow-y:auto;
+}

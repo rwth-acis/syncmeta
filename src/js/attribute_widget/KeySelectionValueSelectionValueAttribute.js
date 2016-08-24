@@ -88,7 +88,7 @@ define([
          * @param {operations.ot.AttributeDeleteOperation} operation
          */
         this.propagateAttributeDeleteOperation = function(operation){
-            processAttributeDeleteOperation(operation);
+            //processAttributeDeleteOperation(operation);
             _iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.getOTOperation());
         };
 

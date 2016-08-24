@@ -2,9 +2,9 @@ define([
     'jqueryui',
     'lodash',
     'Util',
-    'promise!Space',
+    //'promise!Space',
     'text!templates/activity_widget/activity_box.html'
-],/** @lends Activity */function($,_,Util,space,activityBoxHtml) {
+],/** @lends Activity */function($,_,Util/*,space*/,activityBoxHtml) {
 
     /**
      * An abstract user activity issued by one of the users
@@ -50,11 +50,26 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_activityBoxTemplate({
-            heading: space.members.hasOwnProperty(_sender) ? space.members[_sender][CONFIG.NS.PERSON.TITLE] : "",
-            text: _text,
-            color: space.members.hasOwnProperty(_sender) ? Util.getColor(space.members[_sender].globalId) : "#000000"
-        })).hide();
+        /*var _$node = $(_activityBoxTemplate({
+         heading: space.members.hasOwnProperty(_sender) ? space.members[_sender][CONFIG.NS.PERSON.TITLE] : "",
+         text: _text,
+         color: space.members.hasOwnProperty(_sender) ? Util.getColor(space.members[_sender].globalId) : "#000000"
+         })).hide();*/
+        var _$node;
+        if(_sender)
+            _$node = $(_activityBoxTemplate({
+                heading: y.share.userList.get(_sender) ? y.share.userList.get(_sender)[CONFIG.NS.PERSON.TITLE] : "",
+                text: _text,
+                color: y.share.userList.get(_sender) ? Util.getColor(y.share.userList.get(_sender).globalId) : "#000000"
+            })).hide();
+        else
+            _$node = $(_activityBoxTemplate({
+                heading: "",
+                text: "",
+                color:"#000000"
+            })).hide();
+
+
 
 
         /**

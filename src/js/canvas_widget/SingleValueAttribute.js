@@ -21,7 +21,7 @@ define([
      * @param {canvas_widget.AbstractEntity} subjectEntity Entity the attribute is assigned to
      */
     function SingleValueAttribute(id,name,subjectEntity){
-
+        var that = this;
         AbstractAttribute.call(this,id,name,subjectEntity);
 
         /***
@@ -73,12 +73,19 @@ define([
             return json;
         };
 
+
         /**
          * Set attribute value by its JSON representation
          * @param json
          */
         this.setValueFromJSON = function(json){
             _value.setValueFromJSON(json.value);
+        };
+
+        this.registerYType = function(ytext){
+            if(ytext)
+                _value.registerYType(ytext);
+
         };
 
         _$node.find(".name").text(this.getName());

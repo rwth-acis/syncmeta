@@ -23,8 +23,11 @@ define([
      * @param {Object} options Selection options
      */
     function KeySelectionValueAttribute(id,name,subjectEntity,options){
+        var that = this;
 
         AbstractAttribute.call(this,id,name,subjectEntity);
+
+        var _ymap = null;
 
         //noinspection UnnecessaryLocalVariableJS
         /**
@@ -33,7 +36,7 @@ define([
          * @private
          */
         var _options = options;
-        
+
         /**
          * Value object of key
          * @type {canvas_widget.Value}
@@ -114,6 +117,17 @@ define([
         this.setValueFromJSON = function(json){
             _key.setValueFromJSON(json.key);
             _value.setValueFromJSON(json.value);
+        };
+
+
+        this.registerYMap = function(ytext){
+            if(ytext)
+                _key.registerYType(ytext);
+            _value.registerYType();
+        };
+
+        this.getYMap = function(){
+            return _ymap;
         };
 
         _$node.find(".key").append(_key.get$node());

@@ -1,5 +1,8 @@
 <link rel="stylesheet" type="text/css" href="<%= grunt.config('baseUrl') %>/css/vendor/jquery-ui.css">
 <link rel="stylesheet" type="text/css" href="<%= grunt.config('baseUrl') %>/css/vendor/jquery.contextMenu.css">
+<link rel="stylesheet" type="text/css" href="<%= grunt.config('baseUrl') %>/css/vendor/bootstrap.min.prefixed.css">
+<!-- <link rel="stylesheet" type="text/css" href="<%= grunt.config('baseUrl') %>/css/vendor/font-awesome/css/font-awesome.min.css"> -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 <link rel="stylesheet" type="text/css" href="<%= grunt.config('baseUrl') %>/css/style.css">
 <link rel="stylesheet" type="text/css" href="<%= grunt.config('baseUrl') %>/css/main_widget.css">
 <script src="<%= grunt.config('baseUrl') %>/js/main_widget.js"></script>
@@ -42,6 +45,10 @@
    <button id="btnRefreshView" style="display: none;">Refresh</button>
   <button id="btnDelViewPoint"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/times1.png" /></button>
 </div>
+<div class="ui-state-error ui-corner-all" style="margin-top: 20px; padding: 0 .7em; display:none">
+		<p id="errorMsg"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+		<strong>SYNCMETA!</strong></p>
+	</div>
 <div id="canvas-frame">
   <div id="canvas">
   </div>

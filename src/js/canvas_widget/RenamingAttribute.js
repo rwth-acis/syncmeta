@@ -140,6 +140,13 @@ define([
         _$node.find(".ref").append(_ref.get$node()).hide();
         _$node.find(".vis").append(_vis.get$node());
 
+        this.registerYMap = function(ytext){
+            if(ytext){
+                _key.registerYType(ytext);
+            }
+            _vis.registerYType();
+        }
+
     }
 
     return RenamingAttribute;

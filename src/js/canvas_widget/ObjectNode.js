@@ -4,11 +4,9 @@ define([
     'jsplumb',
     'lodash',
     'canvas_widget/AbstractNode',
-    'canvas_widget/SingleValueAttribute',
-    'canvas_widget/SingleSelectionAttribute',
     'canvas_widget/KeySelectionValueListAttribute',
     'text!templates/canvas_widget/object_node.html'
-],/** @lends ObjectNode */function(require,$,jsPlumb,_,AbstractNode,SingleValueAttribute,SingleSelectionAttribute,KeySelectionValueListAttribute,objectNodeHtml) {
+],/** @lends ObjectNode */function(require,$,jsPlumb,_,AbstractNode,KeySelectionValueListAttribute,objectNodeHtml) {
 
     ObjectNode.TYPE = "Object";
     ObjectNode.DEFAULT_WIDTH = 150;
@@ -69,10 +67,22 @@ define([
         this.toJSON = function(){
             return AbstractNode.prototype.toJSON.call(this);
         };
+        var attr = new KeySelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File"});
+        this.addAttribute(attr);
 
-        //this.addAttribute(new SingleValueAttribute(this.getEntityId()+"[color]","Color",this));
-        //this.addAttribute(new SingleSelectionAttribute(this.getEntityId()+"[shape]","Shape",this,{"rectangle":"Rectangle","circle":"Circle"}));
-        this.addAttribute(new KeySelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File"}));
+
+        this.registerYMap = function(map,disableYText){
+            AbstractNode.prototype.registerYMap.call(this,map);
+            if(!disableYText)
+                registerYTextAttributes(map);
+            attr.registerYMap(disableYText);
+        };
+
+        var registerYTextAttributes = function(map){
+            map.get(that.getLabel().getValue().getEntityId()).then(function(ytext){
+                that.getLabel().getValue().registerYType(ytext);
+            });
+        };
 
         _$node.find(".label").append(this.getLabel().get$node());
 
@@ -89,14 +99,15 @@ define([
             return {
                 addShape: {
                     name: "Add Node Shape",
-                        callback: function(){
+                    callback: function(){
                         var canvas = that.getCanvas(),
                             appearance = that.getAppearance(),
                             nodeId;
 
                         //noinspection JSAccessibilityCheck
-                        nodeId = canvas.createNode(NodeShapeNode.TYPE,appearance.left + appearance.width + 50,appearance.top,150,100);
-                        canvas.createEdge(BiDirAssociationEdge.TYPE,that.getEntityId(),nodeId);
+                        canvas.createNode(NodeShapeNode.TYPE,appearance.left + appearance.width + 50,appearance.top,150,100).done(function(nodeId){
+                            canvas.createEdge(BiDirAssociationEdge.TYPE,that.getEntityId(),nodeId);
+                        });
                     },
                     disabled: function() {
                         var edges = that.getEdges(),
@@ -108,7 +119,7 @@ define([
                                 edge = edges[edgeId];
                                 if( (edge instanceof BiDirAssociationEdge &&
                                     (edge.getTarget() === that && edge.getSource() instanceof NodeShapeNode ||
-                                        edge.getSource() === that && edge.getTarget() instanceof NodeShapeNode)) ||
+                                    edge.getSource() === that && edge.getTarget() instanceof NodeShapeNode)) ||
 
                                     (edge instanceof UniDirAssociationEdge && edge.getTarget() instanceof NodeShapeNode) ){
 
@@ -122,10 +133,10 @@ define([
                 sepConvertTo: "---------",
                 convertTo: {
                     name: "Convert to..",
-                        items: {
+                    items: {
                         abstractClassNode: {
                             name: "..Abstract Class",
-                                callback: function(){
+                            callback: function(){
                                 var canvas = that.getCanvas(),
                                     appearance = that.getAppearance(),
                                     nodeId;
@@ -160,7 +171,7 @@ define([
                         },
                         relationshipNode: {
                             name: "..Relationship",
-                                callback: function(){
+                            callback: function(){
                                 var canvas = that.getCanvas(),
                                     appearance = that.getAppearance(),
                                     nodeId;

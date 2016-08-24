@@ -1,20 +1,20 @@
-define(['lodash',
-        'canvas_widget/ViewTypesUtil'],
-    function(_,ViewTypesUtil) {
+define([], function() {
         function CVG(canvas, json){
             var _canvas = canvas;
             var _json = json;
 
-            ViewTypesUtil.GetCurrentBaseModel().then(function(baseModel){
-                var origin;
-                for(var nodeKey in _json.nodes){
-                    if(_json.nodes.hasOwnProperty(nodeKey) && baseModel.nodes.hasOwnProperty(_json.nodes[nodeKey])){
-                        origin = _json.nodes[nodeKey];
-                        var node = baseModel.nodes[origin];
-                        _canvas.createNode(node.type, node.left, node.top, node.width, node.height, node.zIndex, node, nodeKey);
-                    }
+            var baseModel = y.share.data.get('model');
+            var origin;
+            for(var nodeKey in _json.nodes){
+                if(_json.nodes.hasOwnProperty(nodeKey) && baseModel.nodes.hasOwnProperty(_json.nodes[nodeKey])){
+                    origin = _json.nodes[nodeKey];
+                    var node = baseModel.nodes[origin];
+                    _canvas.createNode(node.type, node.left, node.top, node.width, node.height, node.zIndex, node, nodeKey);
                 }
-                origin = null;
+            }
+            origin = null;
+            //TODO timeout here very ugly solution need to wait for till all nodes are created but they are created in yjs callback
+            setTimeout(function(){
                 for(var edgeKey in _json.edges){
                     if(_json.edges.hasOwnProperty(edgeKey)) {
                         var edge = _json.edges[edgeKey];
@@ -26,7 +26,8 @@ define(['lodash',
                         _canvas.createEdge(edge.type, edge.source, edge.target, edgeJson, edgeKey, $('#lblCurrentView').text());
                     }
                 }
-            });
+            },1000);
+
         }
         return CVG;
 

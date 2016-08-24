@@ -10,15 +10,21 @@ define([
      * @memberof operations.non_ot
      * @constructor
      * @param {string} selectedEntityId Entity id of the selected entity
+     * @param {string} selectedEntityType
+     * @param {string} jabberId
      */
-    function EntitySelectOperation(selectedEntityId, destination){
-        var _destination = destination;
+
+    function EntitySelectOperation(selectedEntityId, selectedEntityType, jabberId){
         /**
          * Entity id of the selected entity
          * @type {string}
          * @private
          */
         var _selectedEntityId = selectedEntityId;
+
+        var _jabberId = jabberId;
+
+        var _selectedEntityType = selectedEntityType;
 
         /**
          * Corresponding NonOtOperation
@@ -35,8 +41,12 @@ define([
             return _selectedEntityId;
         };
 
-        this.getDestination = function(){
-            return _destination;
+        this.getSelectedEntityType = function(){
+            return _selectedEntityType;
+        };
+
+        this.getJabberId = function(){
+            return _jabberId;
         };
 
         /**
@@ -63,13 +73,24 @@ define([
             if(_nonOTOperation === null){
                 _nonOTOperation = new NonOTOperation(
                     EntitySelectOperation.TYPE,
-                    JSON.stringify({selectedEntityId: _selectedEntityId,
-                                    destination:_destination})
+                    JSON.stringify({
+                        selectedEntityId: _selectedEntityId,
+                        selectedEntityType: _selectedEntityType
+                    })
                 );
             }
             return _nonOTOperation;
         };
     }
+
+    EntitySelectOperation.prototype.toJSON = function(){
+        return {
+            selectedEntityId: this.getSelectedEntityId(),
+            selectedEntityType: this.getSelectedEntityType(),
+            jabberId:this.getJabberId()
+        };
+    };
+
 
     return EntitySelectOperation;
 
