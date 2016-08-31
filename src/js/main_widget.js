@@ -104,6 +104,7 @@ requirejs([
                 _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, joinOperation.toNonOTOperation());
                 if (model)
                     JSONtoGraph(model, canvas).done(function (stats) {
+                        window.SyncmetaLog = stats;
                         console.info(stats);
                         _iwcw.registerOnDataReceivedCallback(function (operation) {
                             if (operation.hasOwnProperty('getType') && operation.getType() === 'WaitForCanvasOperation') {

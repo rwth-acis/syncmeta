@@ -116,8 +116,11 @@ define([
                     for(var attributeKey in attributes){
                         if(attributes.hasOwnProperty(attributeKey)){
                             var attribute = attributes[attributeKey];
-                            if(attribute.value === 'string')
-                                registerValue(ymap, that.getAttribute(attributeKey).getValue());
+                            if(attribute.value === 'string'){
+                                var attr = that.getAttribute(attributeKey);
+                                if(attr != that.getLabel())
+                                    registerValue(ymap, attr.getValue());
+                            }
                         }
                     }
                 });

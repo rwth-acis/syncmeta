@@ -59,7 +59,7 @@ requirejs(['jqueryui', 'lodash', 'lib/yjs-sync', 'canvas_widget/GenerateViewpoin
 
             });
 
-            $deleteMetamodel.click(function()  {
+            $deleteMetamodel.click(function() {
                 $exportMetamodel.prop('disabled', true);
                 $deleteMetamodel.prop('disabled', true);
                 //this does not work ??????
@@ -100,6 +100,7 @@ requirejs(['jqueryui', 'lodash', 'lib/yjs-sync', 'canvas_widget/GenerateViewpoin
 
             $importModel.click(function() {
                 getFileContent().then(function(data) {
+                                  
                     y.share.data.set('model', data);
                     y.share.canvas.set('ReloadWidgetOperation', 'import');
                     feedback("Done!");

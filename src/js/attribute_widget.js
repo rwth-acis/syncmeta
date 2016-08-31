@@ -27,6 +27,11 @@ requirejs([
         }, 500);
         yjsSync().done(function (y) {
             window.y = y;
+            window.syncmetaLog ={
+                widget:"Attribute",
+                initializedYTexts : 0,
+                objects:{}
+            };
             console.info('ATTRIBUTE: Yjs successfully initialized');
             var model = y.share.data.get('model');
             InitAttributeWidget(model);
@@ -43,6 +48,7 @@ requirejs([
 
             if (model)
                 JSONtoGraph(model);
+            console.info(window.syncmetaLog);
 
 
             function JSONtoGraph(json) {
