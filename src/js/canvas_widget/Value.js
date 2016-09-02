@@ -388,8 +388,9 @@ define([
                     _ytext.delete(0, _ytext.toString().length-1);
                 _ytext.insert(0, that.getValue());
             }
-
+                
             _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new BindYTextOperation(that.getEntityId(),_value).toNonOTOperation());
+            
             _ytext.observe(function(event){
                 _value = _ytext.toString();
 
@@ -410,6 +411,19 @@ define([
                     ).toNonOTOperation());
                 }
             });
+            
+            _ytext.observe(_.debounce(function(event){
+                if(event.type !== "delete"){
+                    var jabberId = y.share.users.get(event.object._content[event.index].id[0]);
+                    if(jabberId ===  _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
+                        $('#save').click();
+                }
+                else{
+                    //I don't know who deleted here, so everyone save's  the current state for now
+                    $('#save').click();
+                }
+                
+            },1000));
         };
 
         this.getYText = function(){
