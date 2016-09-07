@@ -188,7 +188,7 @@ define([
                 processNodeAddOperation(operation, ymap);
                 HistoryManager.add(operation);
                 $('#save').click();
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
+                //_iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP, operation.getOTOperation());
                 _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
@@ -1031,6 +1031,8 @@ define([
                 if (y) {
                     y.share.nodes.set(id, Y.Map).then(function(map) {
                         //create the label element of the node
+                        map.set(NodeAddOperation.TYPE, operation.toJSON());
+                        
                         map.set('left', left);
                         map.set('top', top);
                         map.set('width', width);

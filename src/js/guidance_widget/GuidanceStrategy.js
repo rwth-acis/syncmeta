@@ -7,7 +7,8 @@ define([
 
     var GuidanceStrategy = Class.extend({
         init: function(logicalGuidanceRepresentation, space){
-            this.logicalGuidanceRepresentation = graphlib.json.read(logicalGuidanceRepresentation);
+            if(logicalGuidanceRepresentation)
+                this.logicalGuidanceRepresentation = graphlib.json.read(logicalGuidanceRepresentation);
             this.space = space;
             this.iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.GUIDANCE);
         },

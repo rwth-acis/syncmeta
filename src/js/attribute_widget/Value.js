@@ -344,10 +344,21 @@ define([
             return _ytext;
         };
 
-        this.registerYType = function(ytext){
+        this.registerYType = function(ytext) {
             _ytext = ytext;
             _ytext.bind(_$node[0]);
-            initData(ytext);
+            
+            _ytext.observe(function(event){
+                _value = _ytext.toString();
+            })
+            
+            //loging
+            window.syncmetaLog.initializedYTexts += 1;
+            if(window.syncmetaLog.hasOwnProperty(this.getEntityId()))
+                window.syncmetaLog.objects[this.getEntityId()] +=1;
+            else window.syncmetaLog.objects[this.getEntityId()] = 0;
+            
+            //initData(ytext);
         };
         //init();
         if(iwc){

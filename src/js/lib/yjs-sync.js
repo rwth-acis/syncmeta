@@ -17,7 +17,8 @@ define(['jquery', 'yjs'], function($) {
                 name: 'websockets-client', // use the websockets connector
                 room: spaceTitle,
                 //url: 'https://yjs.dbis.rwth-aachen.de:5080'
-                url: 'http://yjs.dbis.rwth-aachen.de:5079'
+                //url: 'http://yjs.dbis.rwth-aachen.de:5079',
+                url:'http://localhost:1234/'
             },
             share: { // specify the shared content
                 users: 'Map',
@@ -34,7 +35,7 @@ define(['jquery', 'yjs'], function($) {
                 text: "Text"
             },
             sourceDir: '<%= grunt.config("baseUrl") %>/js/lib/vendor'
-        }).then(function(y) {
+        }).then(function(y) {   
             deferred.resolve(y);
         });
         return deferred.promise();
