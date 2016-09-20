@@ -32,6 +32,7 @@ define(['jquery', 'yjs'], function($) {
                 select: 'Map',
                 views: 'Map',
                 data: 'Map',
+                activity:'Map',
                 text: "Text"
             },
             sourceDir: '<%= grunt.config("baseUrl") %>/js/lib/vendor'

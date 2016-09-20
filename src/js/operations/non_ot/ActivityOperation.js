@@ -118,7 +118,15 @@ define([
             return _nonOTOperation;
         };
     }
-
+    ActivityOperation.prototype.toJSON = function(){
+        return {
+            type: this.getType(),
+            entityId: this.getEntityId(),
+            sender: this.getSender(),
+            text: this.getText(),
+            data: this.getData()
+        }
+    }
     return ActivityOperation;
 
 });

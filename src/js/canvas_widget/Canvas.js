@@ -191,13 +191,13 @@ define([
                 //_iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP, operation.getOTOperation());
-                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
+                y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(
                     "NodeAddActivity",
                     operation.getEntityId(),
                     _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
                     NodeAddOperation.getOperationDescription(operation.getType()), {
                         nodeType: operation.getType()
-                    }).toNonOTOperation());
+                    }));
             };
 
             /**
@@ -255,7 +255,7 @@ define([
 
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
-                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
+                y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(
                     "EdgeAddActivity",
                     operation.getEntityId(),
                     _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
@@ -267,7 +267,7 @@ define([
                         targetNodeId: operation.getTarget(),
                         targetNodeLabel: targetNode.getLabel().getValue().getValue(),
                         targetNodeType: targetNode.getType()
-                    }).toNonOTOperation());
+                    }));
             };
 
             /**
@@ -279,13 +279,6 @@ define([
                     _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
                     _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP, operation.getOTOperation());
                     if (operation.getViewId() === EntityManager.getViewId() && EntityManager.getLayer() === CONFIG.LAYER.META) {
-                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
-                            "NodeAddActivity",
-                            operation.getEntityId(),
-                            operation.getJabberId(),
-                            NodeAddOperation.getOperationDescription(operation.getType()), {
-                                nodeType: operation.getType()
-                            }).toNonOTOperation());
                         processNodeAddOperation(operation);
 
                     } else if (EntityManager.getLayer() === CONFIG.LAYER.MODEL) {
@@ -305,13 +298,6 @@ define([
                                 type = viewType;
                             }
                         }
-                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
-                            "NodeAddActivity",
-                            operation.getEntityId(),
-                            operation.getJabberId(),
-                            NodeAddOperation.getOperationDescription(type), {
-                                nodeType: type
-                            }).toNonOTOperation());
 
                         //processNodeAddOperation
                         if (operation.getJSON()) {
@@ -385,21 +371,7 @@ define([
                     _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
 
                     if (operation.getViewId() === EntityManager.getViewId() || EntityManager.getLayer() === CONFIG.LAYER.META) {
-                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
-                            "EdgeAddActivity",
-                            operation.getEntityId(),
-                            operation.getJabberId(),
-                            EdgeAddOperation.getOperationDescription(operation.getType(), "", sourceNode.getLabel().getValue().getValue(), sourceNode.getType(), targetNode.getLabel().getValue().getValue(), targetNode.getType()), {
-                                nodeType: operation.getType(),
-                                sourceNodeId: operation.getSource(),
-                                sourceNodeLabel: sourceNode.getLabel().getValue().getValue(),
-                                sourceNodeType: sourceNode.getType(),
-                                targetNodeId: operation.getTarget(),
-                                targetNodeLabel: targetNode.getLabel().getValue().getValue(),
-                                targetNodeType: targetNode.getType()
-                            }).toNonOTOperation());
                         processEdgeAddOperation(operation);
-
                     }
                     else if (EntityManager.getLayer() === CONFIG.LAYER.MODEL) {
                         var type, edge, viewType;
@@ -1587,7 +1559,7 @@ define([
                                 }
                             case 'ViewApplyActivity': {
                                 var activityOperation = new ActivityOperation("ViewApplyActivity", event.value.viewId, event.value.jabberId);
-                                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
+                                y.share.activity.set(ActivityOperation.TYPE, activityOperation);
                                 break;
                             }
                             case 'triggerSave':{

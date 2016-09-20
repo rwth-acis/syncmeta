@@ -140,13 +140,14 @@ define([
 
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
+           
+            y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(
                 "EdgeDeleteActivity",
                 operation.getEntityId(),
                 _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
                 EdgeDeleteOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
                 {}
-            ).toNonOTOperation());
+            ));
 
         };
 
@@ -158,13 +159,6 @@ define([
             if(operation instanceof EdgeDeleteOperation && operation.getEntityId() == that.getEntityId()){
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-                /*_iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
-                    "EdgeDeleteActivity",
-                    operation.getEntityId(),
-                    jabberId,
-                    EdgeDeleteOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
-                    {}
-                ).toNonOTOperation());*/
                 processEdgeDeleteOperation(operation);
             }
         };

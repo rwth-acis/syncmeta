@@ -195,18 +195,6 @@ define([
             if(operation instanceof ValueChangeOperation && operation.getEntityId() === that.getEntityId()){
                 //_iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
                 //_iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
-                    "ValueChangeActivity",
-                    that.getEntityId(),
-                    operation.getOTOperation().getSender(),
-                    ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(),that.getRootSubjectEntity().getType(),that.getRootSubjectEntity().getLabel().getValue().getValue()),
-                    {
-                        value: calcNewValue(operation),
-                        subjectEntityName: that.getSubjectEntity().getName(),
-                        rootSubjectEntityType: that.getRootSubjectEntity().getType(),
-                        rootSubjectEntityId: that.getRootSubjectEntity().getEntityId()
-                    }
-                ).toNonOTOperation());
                 processValueChangeOperation(operation);
             }
         };
@@ -397,7 +385,7 @@ define([
                 //TODO i can not find out who triggered the delete :-(. Therefore do this only for non delete event types
                 if(event.type!=="delete") {
                     var jabberId = y.share.users.get(event.object._content[event.index].id[0]);
-                    _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
+                    y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(
                         "ValueChangeActivity",
                         that.getEntityId(),
                         jabberId,
@@ -408,7 +396,7 @@ define([
                             rootSubjectEntityType: that.getRootSubjectEntity().getType(),
                             rootSubjectEntityId: that.getRootSubjectEntity().getEntityId()
                         }
-                    ).toNonOTOperation());
+                    ));
                 }
             });
             
