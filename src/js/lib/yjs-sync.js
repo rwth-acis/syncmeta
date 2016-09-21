@@ -22,8 +22,6 @@ define(['jquery', 'yjs'], function($) {
             },
             share: { // specify the shared content
                 users: 'Map',
-                undo: 'Array',
-                redo: 'Array',
                 join: 'Map',
                 canvas: 'Map',
                 nodes: 'Map',
@@ -33,8 +31,9 @@ define(['jquery', 'yjs'], function($) {
                 views: 'Map',
                 data: 'Map',
                 activity:'Map',
-                text: "Text"
+                text:"Text"
             },
+            type:["Text","Map"],
             sourceDir: '<%= grunt.config("baseUrl") %>/js/lib/vendor'
         }).then(function(y) {   
             deferred.resolve(y);

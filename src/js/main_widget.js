@@ -523,19 +523,20 @@ requirejs([
         //-------------------------------------------------------------
 
         var $undo = $("#undo");
+        $undo.prop('disabled', true);
         var $redo = $("#redo");
+         $redo.prop('disabled', true);
 
         $undo.click(function () {
             HistoryManager.undo();
         });
-        if (y.share.undo.length === 0)
-            $undo.prop('disabled', true);
+        
+            
 
         $redo.click(function () {
             HistoryManager.redo();
         });
-        if (y.share.redo.length === 0)
-            $redo.prop('disabled', true);
+           
 
 
         $("#q").draggable({

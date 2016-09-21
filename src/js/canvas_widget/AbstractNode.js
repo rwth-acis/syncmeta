@@ -290,7 +290,6 @@ define([
          * @param {operations.ot.NodeDeleteOperation} operation
          */
         var propagateNodeDeleteOperation = function(operation){
-            HistoryManager.add(operation);
             processNodeDeleteOperation(operation);
             $('#save').click();
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
@@ -396,6 +395,7 @@ define([
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
                 processNodeDeleteOperation(operation);
+                HistoryManager.clean(operation.getEntityId());
             }
         };
 
@@ -507,11 +507,13 @@ define([
         /**
          * Send NodeDeleteOperation for node
          */
-        this.triggerDeletion = function(){
+        this.triggerDeletion = function(historyFlag){
             var edgeId,
                 edges = this.getEdges(),
                 edge;
-
+                
+           
+                
             _canvas.select(null);
             for(edgeId in edges){
                 if(edges.hasOwnProperty(edgeId)){
@@ -529,6 +531,8 @@ define([
             else {
                 propagateNodeDeleteOperation(operation);
             }
+             if(!historyFlag)
+                HistoryManager.add(operation);
         };
 
         //noinspection JSUnusedGlobalSymbols

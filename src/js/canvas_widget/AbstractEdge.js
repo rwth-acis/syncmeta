@@ -135,7 +135,6 @@ define([
          */
         var propagateEdgeDeleteOperation = function(operation){
             processEdgeDeleteOperation(operation);
-            HistoryManager.add(operation);
             $('#save').click();
 
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
@@ -207,19 +206,19 @@ define([
         /**
          * Send NodeDeleteOperation for node
          */
-        this.triggerDeletion = function(){
+        this.triggerDeletion = function(historyFlag){
             _canvas.select(null);
             var operation = new EdgeDeleteOperation(id,that.getType(),that.getSource().getEntityId(),that.getTarget().getEntityId());
 
             if(_ymap){
-                //_ymap.set(EdgeDeleteOperation.TYPE, operation.toJSON());
                 propagateEdgeDeleteOperation(operation);
                 y.share.edges.delete(that.getEntityId());
             }
             else {
                 propagateEdgeDeleteOperation(operation);
             }
-            //that.canvas.callListeners(CONFIG.CANVAS.LISTENERS.NODEDELETE,nodeId);
+             if(!historyFlag)
+                HistoryManager.add(operation);
         };
 
         //noinspection JSUnusedGlobalSymbols

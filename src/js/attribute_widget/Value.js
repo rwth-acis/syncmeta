@@ -313,27 +313,21 @@ define([
             if (operation instanceof BindYTextOperation && operation.getEntityId() === that.getEntityId()) {
 
                 var entityId = that.getRootSubjectEntity().getEntityId();
-
-                if (y.share.nodes.opContents.hasOwnProperty(entityId)) {
-                    setTimeout(function(){
+               
+                if (y.share.nodes.keys().indexOf(entityId)!=-1) {
                         y.share.nodes.get(entityId).then(function (ymap) {
                             ymap.get(operation.getEntityId()).then(function (ytext) {
                                 that.registerYType(ytext);
                             })
-
                         })
-                    },300);
-
                 }
-                else if (y.share.edges.opContents.hasOwnProperty(entityId)) {
-                    setTimeout(function(){
+                else if (y.share.edges.keys().indexOf(entityId) != -1) {
+                    
                         y.share.edges.get(entityId).then(function (ymap) {
                             ymap.get(operation.getEntityId()).then(function (ytext) {
                                 that.registerYType(ytext);
                             })
                         })
-                    },300);
-
                 }
 
 

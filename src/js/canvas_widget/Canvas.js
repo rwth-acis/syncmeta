@@ -186,9 +186,8 @@ define([
              */
             var propagateNodeAddOperation = function(operation, ymap) {
                 processNodeAddOperation(operation, ymap);
-                HistoryManager.add(operation);
                 $('#save').click();
-                //_iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP, operation.getOTOperation());
                 y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(
@@ -248,9 +247,7 @@ define([
                 var sourceNode = EntityManager.findNode(operation.getSource());
                 var targetNode = EntityManager.findNode(operation.getTarget());
 
-
                 processEdgeAddOperation(operation, ymap);
-                HistoryManager.add(operation);
                 $('#save').click();
 
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
@@ -987,7 +984,7 @@ define([
              * @param {string} identifier the identifier of the node, if null a new id is generated
              * @return {number} id of new node
              */
-            this.createNode = function(type, left, top, width, height, zIndex, json, identifier) {
+            this.createNode = function(type, left, top, width, height, zIndex, json, identifier, historyFlag) {
                 var id, oType = null;
                 var deferred = $.Deferred();
                 if (identifier)
@@ -1034,6 +1031,23 @@ define([
 
                                     });
                                 }
+                                else if (json && (type === 'Object' || type === 'Relationship' || type === 'Abstract Class')) {
+                                    var promises = [];
+                                    attrs = json.attributes['[attributes]'].list;
+                                    for (var attrKey in attrs) {
+                                        if (attrs.hasOwnProperty(attrKey)) {
+                                            attr = attrs[attrKey];
+                                            promises.push(createYTypeForValueOfAttribute(map, attr.key.id, Y.Text));
+                                        }
+                                    }
+                                    $.when(promises).done(function() {
+                                        propagateNodeAddOperation(operation, map);
+                                        y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
+                                        deferred.resolve(id);
+                                    });
+                                    
+                                    
+                                }
                                 else {
                                     propagateNodeAddOperation(operation, map);
                                     y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
@@ -1076,6 +1090,8 @@ define([
                     propagateNodeAddOperation(operation);
                     deferred.resolve(id);
                 }
+                if(!historyFlag)
+                    HistoryManager.add(operation);
                 return deferred.promise();
             };
 
@@ -1088,7 +1104,7 @@ define([
              * @param {string} identifier the identifier of the edge
              * @return {number} id of new edge
              */
-            this.createEdge = function(type, source, target, json, identifier) {
+            this.createEdge = function(type, source, target, json, identifier, historyFlag) {
                 var id = null, oType = null;
                 var deferred = $.Deferred();
                 if (identifier)
@@ -1146,6 +1162,8 @@ define([
                     propagateEdgeAddOperation(operation);
                     deferred.resolve(id);
                 }
+                if(!historyFlag)
+                    HistoryManager.add(operation);
                 return deferred.promise();
             };
 
