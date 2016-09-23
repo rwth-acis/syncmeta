@@ -27,59 +27,6 @@ define([
         var that = this;
 
         Activity.call(this,entityId,sender,text);
-
-        /**
-         * Type of created node
-         * @type {string}
-         * @private
-         */
-        var _nodeType = nodeType;
-
-        /**
-         * Label of created node
-         * @type {string}
-         * @private
-         */
-        var _nodeLabel = "";
-
-        /**
-         * Inter widget communication wrapper
-         * @type {Object}
-         */
-        var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ACTIVITY);
-
-        /**
-         * Callback for received Value Change Activity referring the node label
-         * @param {operations.non_ot.ActivityOperation} operation
-         */
-        var nodeLabelChangeCallback = function(operation) {
-            if (operation instanceof ActivityOperation &&
-                operation.getType() === ValueChangeActivity.TYPE &&
-                that.getEntityId() + "[label]" === operation.getEntityId()) {
-
-                _nodeLabel = operation.getData().value;
-                that.setText(NodeAddOperation.getOperationDescription(_nodeType, _nodeLabel));
-            }
-        };
-
-        /**
-         * Register inter widget communication callbacks
-         */
-        this.registerCallbacks = function(){
-            iwc.registerOnDataReceivedCallback(nodeLabelChangeCallback);
-        };
-
-        /**
-         * Unregister inter widget communication callbacks
-         */
-        this.unregisterCallbacks = function(){
-            iwc.unregisterOnDataReceivedCallback(nodeLabelChangeCallback);
-        };
-
-        if(iwc){
-            this.registerCallbacks();
-        }
-
     }
 
     return NodeAddActivity;

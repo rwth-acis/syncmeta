@@ -69,14 +69,16 @@ define([
                     var attribute = new KeySelectionValueAttribute(operation.getEntityId(), "Attribute", that, _options);
                     attribute.registerYMap(ytext);
                     that.addAttribute(attribute);
-                    _$node.find(".list").append(attribute.get$node());
+                    if(_$node.find(".list").find("#"+attribute.getEntityId()).length == 0)
+                        _$node.find(".list").append(attribute.get$node());
 
                 });
             }
             else {
                 var attribute = new KeySelectionValueAttribute(operation.getEntityId(), "Attribute", that, _options);
                 that.addAttribute(attribute);
-                _$node.find(".list").append(attribute.get$node());
+                if(_$node.find(".list").find("#"+attribute.getEntityId()).length == 0)
+                    _$node.find(".list").append(attribute.get$node());
             }
 
         };
@@ -241,7 +243,8 @@ define([
                 var attribute = new KeySelectionValueAttribute(key,key,that,_options);
                 attribute.setValueFromJSON(json.list[key]);
                 that.addAttribute(attribute);
-                _$node.find(".list").append(attribute.get$node());
+                if(_$node.find(".list").find("#"+attribute.getEntityId()).length == 0)
+                    _$node.find(".list").append(attribute.get$node());
             });
         };
 

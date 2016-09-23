@@ -93,9 +93,26 @@ define([
                 AbstractEdge.prototype.registerYType.call(this);
 
                 var registerValue = function(ymap, value){
-                    ymap.get(value.getEntityId()).then(function(ytext){
-                        value.registerYType(ytext);
-                    })
+                   try {
+                        ymap.get(value.getEntityId()).then(function(ytext) {
+                            value.registerYType(ytext);
+                        })
+                    }
+                    catch (e) {
+                        //Try it again after a timeout
+                        window.syncmetaLog.firstAttemptFail[value.getEntityId()] = 0;
+                        setTimeout(function() {
+                            try {
+                                ymap.get(value.getEntityId()).then(function(ytext) {
+                                    value.registerYType(ytext);
+                                })
+                            }
+                            catch (e) {
+                              window.syncmetaLog.errors[value.getEntityId()] = 0 ;
+                              console.error('ATTRIBUTE: Failed to retrieve ytext property with id '+ value.getEntityId() +' from ymap with id ' + that.getEntityId());
+                            }
+                        }, 500);
+                    }
                 };
                 y.share.edges.get(that.getEntityId()).then(function(ymap){
                     for(var attributeKey in attributes){

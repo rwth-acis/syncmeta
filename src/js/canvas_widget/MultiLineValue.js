@@ -76,7 +76,7 @@ define([
             operation.setRemote(false);
             that.setValue(operation.getValue());
             operation.setRemote(true);
-            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
+            y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(
                 "ValueChangeActivity",
                 that.getEntityId(),
                 _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
@@ -186,8 +186,8 @@ define([
             _iwcw.unregisterOnDataReceivedCallback(localValueChangeCallback);
             //_iwcw.unregisterOnHistoryChangedCallback(historyValueChangeCallback);
         };
-        
-        this.registerYType = function(ytext) {
+
+        this.registerYType = function (ytext) {
             _ytext = ytext;
             _ytext.bind(_$node[0]);
 
@@ -199,13 +199,13 @@ define([
 
             _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new BindYTextOperation(that.getEntityId()).toNonOTOperation());
 
-            _ytext.observe(function(event) {
+            _ytext.observe(function (event) {
                 _value = _ytext.toString();
 
                 //TODO i can not find out who triggered the delete :-(. Therefore do this only for non delete event types
                 if (event.type !== "delete") {
                     var jabberId = y.share.users.get(event.object._content[event.index].id[0]);
-                    _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
+                    y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(
                         "ValueChangeActivity",
                         that.getEntityId(),
                         jabberId,
@@ -215,8 +215,7 @@ define([
                             subjectEntityName: that.getSubjectEntity().getName(),
                             rootSubjectEntityType: that.getRootSubjectEntity().getType(),
                             rootSubjectEntityId: that.getRootSubjectEntity().getEntityId()
-                        }
-                    ).toNonOTOperation());
+                        }));
                 }
             });
         };

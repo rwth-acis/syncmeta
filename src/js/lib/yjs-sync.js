@@ -17,12 +17,11 @@ define(['jquery', 'yjs'], function($) {
                 name: 'websockets-client', // use the websockets connector
                 room: spaceTitle,
                 //url: 'https://yjs.dbis.rwth-aachen.de:5080'
-                url: 'http://yjs.dbis.rwth-aachen.de:5079'
+                //url: 'http://yjs.dbis.rwth-aachen.de:5079',
+                url:'http://localhost:1234/'
             },
             share: { // specify the shared content
                 users: 'Map',
-                undo: 'Array',
-                redo: 'Array',
                 join: 'Map',
                 canvas: 'Map',
                 nodes: 'Map',
@@ -31,10 +30,12 @@ define(['jquery', 'yjs'], function($) {
                 select: 'Map',
                 views: 'Map',
                 data: 'Map',
-                text: "Text"
+                activity:'Map',
+                text:"Text"
             },
+            type:["Text","Map"],
             sourceDir: '<%= grunt.config("baseUrl") %>/js/lib/vendor'
-        }).then(function(y) {
+        }).then(function(y) {   
             deferred.resolve(y);
         });
         return deferred.promise();

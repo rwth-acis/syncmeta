@@ -69,7 +69,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(keySelectionValueSelectionValueAttributeHtml,{}));
+        var _$node = $(_.template(keySelectionValueSelectionValueAttributeHtml,{id:id}));
 
         //noinspection JSUnusedGlobalSymbols
         /**
