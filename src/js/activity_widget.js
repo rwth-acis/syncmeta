@@ -19,7 +19,6 @@ requirejs([
             y.share.join.observe(function(event){
                 activtyList.addUser(event.name);
             });
-
             WaitForCanvas(CONFIG.WIDGET.NAME.ACTIVITY).done(function (userList) {
                for(var i=0;i<userList.length;i++){
                     activtyList.addUser(userList[i]);

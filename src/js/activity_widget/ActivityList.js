@@ -1,6 +1,7 @@
 define([
     'jqueryui',
     'lodash',
+    'iwcw',
     'activity_widget/Activity',
     'activity_widget/NodeAddActivity',
     'activity_widget/NodeDeleteActivity',
@@ -17,7 +18,7 @@ define([
     'operations/non_ot/ActivityOperation',
     'operations/non_ot/EntitySelectOperation'
     //'promise!Space'
-],/** @lends ActivityList */function($,_,Activity,NodeAddActivity,NodeDeleteActivity,NodeMoveActivity,NodeResizeActivity,EdgeAddActivity,EdgeDeleteActivity,EditorGenerateActivity,UserJoinActivity,ValueChangeActivity,ViewApplyActivity, ReloadWidgetActivity, User,ActivityOperation,EntitySelectOperation/*,space*/) {
+],/** @lends ActivityList */function($,_,IWCW,Activity,NodeAddActivity,NodeDeleteActivity,NodeMoveActivity,NodeResizeActivity,EdgeAddActivity,EdgeDeleteActivity,EditorGenerateActivity,UserJoinActivity,ValueChangeActivity,ViewApplyActivity, ReloadWidgetActivity, User,ActivityOperation,EntitySelectOperation/*,space*/) {
 
     /**
      * List of user activities
@@ -55,6 +56,13 @@ define([
          * @type {Array}
          */
         var activityList = [];
+
+        /**
+         * Inter widget communication wrapper
+         * @type {Object}
+         */
+        var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ACTIVITY);
+        //iwc.setSpace(space);
 
         /**
          * Add an user to the user list
@@ -208,11 +216,24 @@ define([
                 }
             }
         };
-        if(y){
-            y.share.activity.observe(function(event){
-                operationCallback(new ActivityOperation(event.value.type, event.value.entityId, event.value.sender, event.value.text, event.value.data));
-            })
-        }    
+
+        /**
+         * Register inter widget communication callbacks
+         */
+        this.registerCallbacks = function(){
+            iwc.registerOnDataReceivedCallback(operationCallback);
+        };
+
+        /**
+         * Unregister inter widget communication callbacks
+         */
+        this.unregisterCallbacks = function(){
+            iwc.unregisterOnDataReceivedCallback(operationCallback);
+        };
+
+        if(iwc){
+            this.registerCallbacks();
+        }
     }
 
     return ActivityList;

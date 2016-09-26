@@ -186,17 +186,18 @@ define([
              */
             var propagateNodeAddOperation = function(operation, ymap) {
                 processNodeAddOperation(operation, ymap);
+                HistoryManager.add(operation);
                 $('#save').click();
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP, operation.getOTOperation());
-                y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(
+                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
                     "NodeAddActivity",
                     operation.getEntityId(),
                     _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
                     NodeAddOperation.getOperationDescription(operation.getType()), {
                         nodeType: operation.getType()
-                    }));
+                    }).toNonOTOperation());
             };
 
             /**
@@ -247,12 +248,14 @@ define([
                 var sourceNode = EntityManager.findNode(operation.getSource());
                 var targetNode = EntityManager.findNode(operation.getTarget());
 
+
                 processEdgeAddOperation(operation, ymap);
+                HistoryManager.add(operation);
                 $('#save').click();
 
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
-                y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(
+                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
                     "EdgeAddActivity",
                     operation.getEntityId(),
                     _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
@@ -264,7 +267,7 @@ define([
                         targetNodeId: operation.getTarget(),
                         targetNodeLabel: targetNode.getLabel().getValue().getValue(),
                         targetNodeType: targetNode.getType()
-                    }));
+                    }).toNonOTOperation());
             };
 
             /**
@@ -276,6 +279,13 @@ define([
                     _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
                     _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP, operation.getOTOperation());
                     if (operation.getViewId() === EntityManager.getViewId() && EntityManager.getLayer() === CONFIG.LAYER.META) {
+                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
+                            "NodeAddActivity",
+                            operation.getEntityId(),
+                            operation.getJabberId(),
+                            NodeAddOperation.getOperationDescription(operation.getType()), {
+                                nodeType: operation.getType()
+                            }).toNonOTOperation());
                         processNodeAddOperation(operation);
 
                     } else if (EntityManager.getLayer() === CONFIG.LAYER.MODEL) {
@@ -295,6 +305,13 @@ define([
                                 type = viewType;
                             }
                         }
+                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
+                            "NodeAddActivity",
+                            operation.getEntityId(),
+                            operation.getJabberId(),
+                            NodeAddOperation.getOperationDescription(type), {
+                                nodeType: type
+                            }).toNonOTOperation());
 
                         //processNodeAddOperation
                         if (operation.getJSON()) {
@@ -368,7 +385,21 @@ define([
                     _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
 
                     if (operation.getViewId() === EntityManager.getViewId() || EntityManager.getLayer() === CONFIG.LAYER.META) {
+                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
+                            "EdgeAddActivity",
+                            operation.getEntityId(),
+                            operation.getJabberId(),
+                            EdgeAddOperation.getOperationDescription(operation.getType(), "", sourceNode.getLabel().getValue().getValue(), sourceNode.getType(), targetNode.getLabel().getValue().getValue(), targetNode.getType()), {
+                                nodeType: operation.getType(),
+                                sourceNodeId: operation.getSource(),
+                                sourceNodeLabel: sourceNode.getLabel().getValue().getValue(),
+                                sourceNodeType: sourceNode.getType(),
+                                targetNodeId: operation.getTarget(),
+                                targetNodeLabel: targetNode.getLabel().getValue().getValue(),
+                                targetNodeType: targetNode.getType()
+                            }).toNonOTOperation());
                         processEdgeAddOperation(operation);
+
                     }
                     else if (EntityManager.getLayer() === CONFIG.LAYER.MODEL) {
                         var type, edge, viewType;
@@ -984,7 +1015,7 @@ define([
              * @param {string} identifier the identifier of the node, if null a new id is generated
              * @return {number} id of new node
              */
-            this.createNode = function(type, left, top, width, height, zIndex, json, identifier, historyFlag) {
+            this.createNode = function(type, left, top, width, height, zIndex, json, identifier) {
                 var id, oType = null;
                 var deferred = $.Deferred();
                 if (identifier)
@@ -1000,8 +1031,6 @@ define([
                 if (y) {
                     y.share.nodes.set(id, Y.Map).then(function(map) {
                         //create the label element of the node
-                        map.set(NodeAddOperation.TYPE, operation.toJSON());
-                        
                         map.set('left', left);
                         map.set('top', top);
                         map.set('width', width);
@@ -1030,23 +1059,6 @@ define([
                                         deferred.resolve(id);
 
                                     });
-                                }
-                                else if (json && (type === 'Object' || type === 'Relationship' || type === 'Abstract Class')) {
-                                    var promises = [];
-                                    attrs = json.attributes['[attributes]'].list;
-                                    for (var attrKey in attrs) {
-                                        if (attrs.hasOwnProperty(attrKey)) {
-                                            attr = attrs[attrKey];
-                                            promises.push(createYTypeForValueOfAttribute(map, attr.key.id, Y.Text));
-                                        }
-                                    }
-                                    $.when(promises).done(function() {
-                                        propagateNodeAddOperation(operation, map);
-                                        y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
-                                        deferred.resolve(id);
-                                    });
-                                    
-                                    
                                 }
                                 else {
                                     propagateNodeAddOperation(operation, map);
@@ -1090,8 +1102,6 @@ define([
                     propagateNodeAddOperation(operation);
                     deferred.resolve(id);
                 }
-                if(!historyFlag)
-                    HistoryManager.add(operation);
                 return deferred.promise();
             };
 
@@ -1104,7 +1114,7 @@ define([
              * @param {string} identifier the identifier of the edge
              * @return {number} id of new edge
              */
-            this.createEdge = function(type, source, target, json, identifier, historyFlag) {
+            this.createEdge = function(type, source, target, json, identifier) {
                 var id = null, oType = null;
                 var deferred = $.Deferred();
                 if (identifier)
@@ -1162,8 +1172,6 @@ define([
                     propagateEdgeAddOperation(operation);
                     deferred.resolve(id);
                 }
-                if(!historyFlag)
-                    HistoryManager.add(operation);
                 return deferred.promise();
             };
 
@@ -1577,7 +1585,7 @@ define([
                                 }
                             case 'ViewApplyActivity': {
                                 var activityOperation = new ActivityOperation("ViewApplyActivity", event.value.viewId, event.value.jabberId);
-                                y.share.activity.set(ActivityOperation.TYPE, activityOperation);
+                                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
                                 break;
                             }
                             case 'triggerSave':{

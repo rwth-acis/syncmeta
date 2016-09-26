@@ -104,7 +104,6 @@ requirejs([
                 _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, joinOperation.toNonOTOperation());
                 if (model)
                     JSONtoGraph(model, canvas).done(function (stats) {
-                        window.SyncmetaLog = stats;
                         console.info(stats);
                         _iwcw.registerOnDataReceivedCallback(function (operation) {
                             if (operation.hasOwnProperty('getType') && operation.getType() === 'WaitForCanvasOperation') {
@@ -201,12 +200,8 @@ requirejs([
                             }
                             var activityOperation = new ActivityOperation("ReloadWidgetOperation", undefined, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], text);
                             _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
-                            
-                            //Users should not initlaize the new model at the same time, thus wait between 0 and 3 seconds before refreshing
-                            setTimeout(function(){
-                                frameElement.contentWindow.location.reload();
-                            }, Math.floor(Math.random() * 3000))
-                            
+
+                            frameElement.contentWindow.location.reload();
                         }
                     }
 
@@ -523,20 +518,19 @@ requirejs([
         //-------------------------------------------------------------
 
         var $undo = $("#undo");
-        $undo.prop('disabled', true);
         var $redo = $("#redo");
-         $redo.prop('disabled', true);
 
         $undo.click(function () {
             HistoryManager.undo();
         });
-        
-            
+        if (y.share.undo.length === 0)
+            $undo.prop('disabled', true);
 
         $redo.click(function () {
             HistoryManager.redo();
         });
-           
+        if (y.share.redo.length === 0)
+            $redo.prop('disabled', true);
 
 
         $("#q").draggable({

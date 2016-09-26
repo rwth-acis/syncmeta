@@ -193,14 +193,13 @@ define([
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-
-            y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(
+            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                 "NodeMoveActivity",
                 operation.getEntityId(),
                 operation.getJabberId(),
                 NodeMoveOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
                 {nodeType: that.getType()}
-            ))
+            ).toNonOTOperation());
 
         };
 
@@ -215,13 +214,13 @@ define([
             //if(_iwcw.sendRemoteOTOperation(operation)){
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-            y.share.activity.set(ActivityOperation.TYPE,new ActivityOperation(
+            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                 "NodeMoveActivity",
                 operation.getEntityId(),
                 _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
                 NodeMoveOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
                 {nodeType: that.getType()}
-            ));
+            ).toNonOTOperation());
             //}
         };
 
@@ -248,14 +247,13 @@ define([
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-            y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(
+            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                 "NodeResizeActivity",
                 operation.getEntityId(),
                 operation.getJabberId(),
                 NodeResizeOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
                 {nodeType: that.getType()}
-            ));
-            
+            ).toNonOTOperation());
         };
 
         //noinspection JSUnusedLocalSymbols
@@ -290,18 +288,19 @@ define([
          * @param {operations.ot.NodeDeleteOperation} operation
          */
         var propagateNodeDeleteOperation = function(operation){
+            HistoryManager.add(operation);
             processNodeDeleteOperation(operation);
             $('#save').click();
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
-            y.share.activity.set(ActivityOperation.TYPE,new ActivityOperation(
+            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                 "NodeDeleteActivity",
                 operation.getEntityId(),
                 _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
                 NodeDeleteOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
                 {}
-            ));
+            ).toNonOTOperation());
 
         };
 
@@ -327,7 +326,13 @@ define([
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-                
+                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
+                    "NodeMoveActivity",
+                    operation.getEntityId(),
+                    operation.getJabberId(),
+                    NodeMoveOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
+                    {nodeType: that.getType()}
+                ).toNonOTOperation());
 
                 /*if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()) {
                  color = _iwcw.getUserColor(operation.getJabberId());
@@ -350,6 +355,13 @@ define([
             if(operation instanceof NodeMoveZOperation && operation.getEntityId() === that.getEntityId()){
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
+                    "NodeMoveActivity",
+                    operation.getEntityId(),
+                    operation.getJabberId(),
+                    NodeMoveOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
+                    {nodeType: that.getType()}
+                ).toNonOTOperation());
 
                 /*if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()) {
                  var color = _iwcw.getUserColor(operation.getJabberId());
@@ -372,7 +384,13 @@ define([
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-                
+                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
+                    "NodeResizeActivity",
+                    operation.getEntityId(),
+                    operation.getJabberId(),
+                    NodeResizeOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
+                    {nodeType: that.getType()}
+                ).toNonOTOperation());
                 /*if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()) {
                  var color = _iwcw.getUserColor(operation.getJabberId());
                  refreshTraceAwareness(color);
@@ -394,8 +412,14 @@ define([
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
+                /*_iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
+                    "NodeDeleteActivity",
+                    operation.getEntityId(),
+                    jabberId,
+                    NodeDeleteOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
+                    {}
+                ).toNonOTOperation());*/
                 processNodeDeleteOperation(operation);
-                HistoryManager.clean(operation.getEntityId());
             }
         };
 
@@ -507,13 +531,11 @@ define([
         /**
          * Send NodeDeleteOperation for node
          */
-        this.triggerDeletion = function(historyFlag){
+        this.triggerDeletion = function(){
             var edgeId,
                 edges = this.getEdges(),
                 edge;
-                
-           
-                
+
             _canvas.select(null);
             for(edgeId in edges){
                 if(edges.hasOwnProperty(edgeId)){
@@ -531,8 +553,6 @@ define([
             else {
                 propagateNodeDeleteOperation(operation);
             }
-             if(!historyFlag)
-                HistoryManager.add(operation);
         };
 
         //noinspection JSUnusedGlobalSymbols

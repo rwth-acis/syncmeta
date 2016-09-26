@@ -82,7 +82,7 @@ define([
             operation.setEntityIdChain(getEntityIdChain());
             //processValueChangeOperation(operation);
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-            y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(
+            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
                 "ValueChangeActivity",
                 that.getEntityId(),
                 _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
@@ -93,7 +93,7 @@ define([
                     rootSubjectEntityType: that.getRootSubjectEntity().getType(),
                     rootSubjectEntityId: that.getRootSubjectEntity().getEntityId()
                 }
-            ));
+            ).toNonOTOperation());
 
             var ynode = that.getRootSubjectEntity().getYMap();
             if(ynode){
@@ -109,6 +109,18 @@ define([
             if(operation instanceof ValueChangeOperation && operation.getEntityId() === that.getEntityId()){
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
+                    "ValueChangeActivity",
+                    that.getEntityId(),
+                    operation.getOTOperation().getSender(),
+                    ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(),that.getRootSubjectEntity().getType(),that.getRootSubjectEntity().getLabel().getValue().getValue()),
+                    {
+                        value: operation.getValue(),
+                        subjectEntityName: that.getSubjectEntity().getName(),
+                        rootSubjectEntityType: that.getRootSubjectEntity().getType(),
+                        rootSubjectEntityId: that.getRootSubjectEntity().getEntityId()
+                    }
+                ).toNonOTOperation());
                 processValueChangeOperation(operation);
             }
         };

@@ -118,7 +118,7 @@ define([
                 operation.setEntityIdChain(getEntityIdChain());
                 //processValueChangeOperation(operation);
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
-                 y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(
+                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new ActivityOperation(
                     "ValueChangeActivity",
                     that.getEntityId(),
                     _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
