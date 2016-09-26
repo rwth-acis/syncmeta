@@ -48,10 +48,7 @@ define(['chai', 'async',
                         function(err, edgeList) {
                             async.series([
                                 async.apply(EdgeDeleteTester, 'META - Delete Generalisation from object to abstract class', edgeList.generalisation, false),
-                                async.apply(NodeDeleteTester, 'META - Delete abstract class node', result.abstractNode)
-                            ]);
-
-                            async.series([
+                                async.apply(NodeDeleteTester, 'META - Delete abstract class node', result.abstractNode),
                                 async.apply(NodeDeleteTester, 'META - Delete object node', result.objectNode),
                                 async.apply(EdgeDeleteTester, 'META - Delete Bi-Dir-Assocation from object to relationship', edgeList.biDirAssociation, true),
                                 async.apply(NodeDeleteTester, 'META - Delete relationship node', result.relationshipNode)

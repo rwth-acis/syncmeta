@@ -11,7 +11,7 @@ module.exports = function(grunt) {
 
         baseUrl: localConfig.baseUrl,
         roleSandboxUrl: localConfig.roleSandboxUrl,
-
+        yjsConnectorUrl: localConfig.yjsConnectorUrl,
         bowerdir: grunt.file.readJSON('.bowerrc')['directory'],
         distdir: 'html',
         srcdir:  'src',
@@ -363,6 +363,7 @@ module.exports = function(grunt) {
                 }
             }
         },
+        /*
         sshconfig: {
             "dbis": grunt.file.readJSON('.dbis.secret.json')
         },
@@ -382,6 +383,7 @@ module.exports = function(grunt) {
                 }
             }
         },
+        */
         jsdoc : {
             canvas : {
                 src: [

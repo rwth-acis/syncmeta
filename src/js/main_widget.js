@@ -374,6 +374,8 @@ requirejs([
                 if (viewId === $('#lblCurrentViewId').text())
                     return;
                 $("#loading").show();
+                $('#lblCurrentView').show();
+                $('#lblCurrentViewId').text(viewId);
                 visualizeView(viewId);
             });
 
@@ -382,10 +384,12 @@ requirejs([
                 if (viewId !== $('#lblCurrentViewId').text()) {
                     y.share.views.set(viewId, null);
                     _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new DeleteViewOperation(viewId).toNonOTOperation());
+                    ViewManager.deleteView(viewId);
 
                 }
                 else {
                     y.share.views.set(viewId, null);
+                    ViewManager.deleteView(viewId);
                     $('#viewsHide').click();
                 }
             });
@@ -396,11 +400,10 @@ requirejs([
                     alert('View already exists');
                     return;
                 }
+                ViewManager.addView(viewId);
                 var $loading = $('#loading');
                 $loading.show();
                 resetCanvas();
-                $('#lblCurrentView').show();
-                $('#lblCurrentViewId').text(viewId);
                 canvas.get$canvas().show();
                 HideCreateMenu();
                 y.share.canvas.set(UpdateViewListOperation.TYPE, true);
@@ -427,12 +430,10 @@ requirejs([
                     _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
                     y.share.canvas.set('ViewApplyActivity', { viewId: '', jabberId: _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] });
 
-
                     resetCanvas();
                     JSONtoGraph(model, canvas).done(function () {
                         $("#loading").hide();
                         canvas.resetTool();
-                        saveCallback();
                     });
                     $('#lblCurrentView').hide();
                     $lblCurrentViewId.text("");
@@ -515,7 +516,6 @@ requirejs([
             JSONtoGraph(json, canvas).done(function () {
                 $("#loading").hide();
                 canvas.resetTool();
-                saveCallback();
             });
         }
 
@@ -537,27 +537,6 @@ requirejs([
             HistoryManager.redo();
         });
            
-
-
-        $("#q").draggable({
-            axis: "y",
-            start: function () {
-                var $c = $("#canvas-frame");
-                $c.css('bottom', 'inherit');
-                $(this).css('height', 50);
-            },
-            drag: function (event, ui) {
-                var height = ui.position.top - 30;
-                $("#canvas-frame").css('height', height);
-                gadgets.window.adjustHeight();
-            },
-            stop: function () {
-                $(this).css('height', 3);
-                gadgets.window.adjustHeight();
-                $(this).css('top', '');
-            }
-        });
-
         $("#showtype").click(function () {
             canvas.get$node().removeClass("hide_type");
             $(this).hide();

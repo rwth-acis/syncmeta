@@ -11,26 +11,6 @@ define([
      * @constructor
      */
     function ViewManager(){
-        /**
-         * consists of the view identifier as key and the openapp.oo.Resource object as value
-         * @type {object}
-         * @private
-         */
-        var _viewResourceDictionary = {};
-
-        /**
-         * consists of the viewpoint identifier as key and the viewpoint identifier as value
-         * @type {object}
-         * @private
-         */
-        var _viewViewpointDictionary={};
-
-        /**
-         * consists of the viewpoint id as value and the openapp.oo.Resource object as value
-         * @type {object}
-         * @private
-         */
-        var _viewpointResourceDictionary={};
 
         /**
          * represent a reference to the view selection html element
@@ -69,7 +49,7 @@ define([
              * @returns {boolean} true if the view already exits false if not
              */
             existsView : function(viewId) {
-                return _viewResourceDictionary.hasOwnProperty(viewId);
+                return y.share.views.keys().indexOf(viewId) != -1;
             },
             /**
              * returns the view identifier of  currently selected html selection element
@@ -77,72 +57,7 @@ define([
              */
             getViewIdOfSelected : function(){
                 return this.getSelected$node().attr('id');
-            },
-            /**
-             * returns the viewpoint role space resource object for a identifier of a view
-             * @param viewId the identifier of the view
-             * @returns {object} the resource object
-             */
-            getViewpointResourceFromViewId:function(viewId){
-                if(_viewViewpointDictionary.hasOwnProperty(viewId)){
-                    var viewpointId = _viewViewpointDictionary[viewId];
-                    if(_viewpointResourceDictionary.hasOwnProperty(viewpointId)){
-                        return _viewpointResourceDictionary[viewpointId];
-                    }
-                }
-                return null;
-            },
-            /**
-             * gets the view uri for a viewId
-             * @param viewId the view identifier of the view
-             * @returns {string} the uri of the resource in the role space
-             */
-            getViewUri : function(viewId){
-                return _viewResourceDictionary.hasOwnProperty(viewId)? _viewResourceDictionary[viewId].uri : null;
-            },
-            /**
-             * returns the view role space resource object for a identifier of a view
-             * @param viewId the identifier of the view
-             * @returns {object} the resource object
-             */
-            getViewResource:function(viewId){
-                return _viewResourceDictionary.hasOwnProperty(viewId)? _viewResourceDictionary[viewId] : null;
-            },
-            /**
-             * the data for a specific view
-             * @param viewId the identifier of the view
-             * @returns {*} a jquery promise object
-             */
-            getViewData:function(viewId){
-                var deferred = $.Deferred();
-                this.getViewResource(viewId).getRepresentation('rdfjson', function(viewData){
-                    deferred.resolve(viewData);
-                });
-                return deferred.promise();
-            },
-            /**
-             * gets the identifier of a viewpoint for a viewId
-             * @param {string} viewId the viewpoint identifier
-             * @returns {string} the uri of the resource in the role space
-             */
-            getViewpointId : function(viewId){
-                return _viewViewpointDictionary.hasOwnProperty(viewId)? _viewViewpointDictionary[viewId] : null;
-            },
-            /**
-             * returns the viewpoint resource object for a viewpoint id
-             * @param viewpointId
-             * @returns {object} the openapp.oo.resource object
-             */
-            getViewpointResource:function(viewpointId){
-                return _viewpointResourceDictionary.hasOwnProperty(viewpointId) ? _viewpointResourceDictionary[viewpointId] : null;
-            },
-            getViewpointData : function(viewpointId){
-                var deferred = $.Deferred();
-                this.getViewpointResource(viewpointId).getRepresentation('rdfjson', function(viewData){
-                    deferred.resolve(viewData);
-                });
-                return deferred.promise();
-            },
+            },       
             /**
              * returns the currently selected option node of the html selection element
              * @returns {object} jquery object
@@ -151,89 +66,23 @@ define([
                 return  _$selection.find('option:selected');
             },
             /**
-             * returns the openapp.oo.Resource object of the view
-             * @param {string} viewId the view identifier
-             * @returns {object}
-             */
-            getResource : function(viewId){
-                if(_viewResourceDictionary.hasOwnProperty(viewId)){
-                    return _viewResourceDictionary[viewId];
-                }
-            },
-            /**
              * adds a view to the ViewManager
              * @param {string} viewId the view identifier
-             * @param {string} viewpointId the viewpoint identifier which is used to generate the view. for the meta model editor this is null
-             * @param {object} resource the openapp.oo.resource object
              */
-            addView : function(viewId, viewpointId, resource){
-                if(!_viewResourceDictionary.hasOwnProperty(viewId)){
-                    _viewResourceDictionary[viewId] = resource;
-                    _viewViewpointDictionary[viewId] = viewpointId;
-                    var $option = $(optionTpl({
-                        id: viewId
-                    }));
-                    _$selection.append($option);
+            addView : function(viewId){
+                if(y.share.views.keys().indexOf(viewId) == -1) {
+                    y.share.views.set(viewId, {viewId:viewId, attributes:{}, nodes:{}, edges:{}});
                     return true;
                 }
                 else return false;
-            },
-            updateView: function(viewId, viewpointId, resource){
-                if(_viewResourceDictionary.hasOwnProperty(viewId)){
-                    _viewResourceDictionary[viewId] = resource;
-                    _viewViewpointDictionary[viewId] = viewpointId;
-                    var $option = $(optionTpl({
-                        id: viewId
-                    }));
-                    _$selection.append($option);
-                }
             },
             /**
              * deletes a view from the view manager
              * @param {string} viewId the identifier of the view
              */
             deleteView: function(viewId){
-                delete _viewResourceDictionary[viewId];
-                delete _viewViewpointDictionary[viewId];
+                y.share.views.delete(viewId);
                 _$selection.find('#'+viewId).remove();
-            },
-            /**
-             * initializes the view manager and adds new views to to view manager
-             */
-            initViewList : function(){
-                var that = this;
-                _$selection.empty();
-                var resourceSpace = new openapp.oo.Resource(openapp.param.space());
-                resourceSpace.getSubResources({
-                    relation: openapp.ns.role + "data",
-                    type: CONFIG.NS.MY.VIEW,
-                    onEach: function (context) {
-                        context.getRepresentation("rdfjson", function (data) {
-                            var successful = that.addView(data.id, data.viewpoint, context);
-                            if(!successful)
-                                that.updateView(data.id, data.viewpoint, context)
-                        });
-                    }
-                });
-            },
-            /**
-             * Stores current view in the ROLE Space
-             * @param {string} viewId the identifier for the view
-             * @returns {object} jquery promise
-             */
-            storeView : function (viewId) {
-                var resourceSpace = new openapp.oo.Resource(openapp.param.space());
-                var deferred = $.Deferred();
-                var data = this.viewToJSON(viewId);
-                resourceSpace.create({
-                    relation : openapp.ns.role + "data",
-                    type : CONFIG.NS.MY.VIEW,
-                    representation : data,
-                    callback : function (resource) {
-                        deferred.resolve(resource);
-                    }
-                });
-                return deferred.promise();
             },
             /**
              * Update a view representation in the ROLE Space

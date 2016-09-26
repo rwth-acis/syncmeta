@@ -16,9 +16,7 @@ define(['jquery', 'yjs'], function($) {
             connector: {
                 name: 'websockets-client', // use the websockets connector
                 room: spaceTitle,
-                //url: 'https://yjs.dbis.rwth-aachen.de:5080'
-                //url: 'http://yjs.dbis.rwth-aachen.de:5079',
-                url:'http://localhost:1234/'
+                url:"<%= grunt.config('yjsConnectorUrl') %>"
             },
             share: { // specify the shared content
                 users: 'Map',
