@@ -76,7 +76,7 @@ define([
             AbstractNode.prototype.registerYMap.call(this,map);
             if(!disableYText)
                 registerYTextAttributes(map);
-            attr.registerYMap(disableYText);
+            attr.registerYMap(map,disableYText);
 
 
         };

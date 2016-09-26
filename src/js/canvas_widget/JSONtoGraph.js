@@ -9,7 +9,7 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function($, _, Entit
             var diff = _.difference(yKeys, jsonKeys);
 
             for (var i = 0; i < diff.length; i++) {
-                if (diff[i] !== 'modelAttributes')
+                if(diff[i] !== 'modelAttributes')
                     y.share[entity].delete(diff[i]);
             }
         }
@@ -22,9 +22,8 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function($, _, Entit
         var numberOfEdges = _.keys(json.edges).length;
         var createdNodes = 0;
         var createdEdges = 0;
-        var report = { widget: 'CANVAS', createdYText: 0, modelAttributes: { attributes: {} }, nodes: {}, edges: {} };
 
-        function createYTextAttribute(id, map, val) {
+        function createYTextAttribute(map, val) {
             //var deferred = $.Deferred();
             var promise = map.get(val.getEntityId());
             if (promise === undefined) {
@@ -33,15 +32,6 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function($, _, Entit
                         val.getValue().registerYType(ytext);
                     else
                         val.registerYType(ytext);
-                    if (id === 'modelAttributes') {
-                        report.modelAttributes.attributes[val.getEntityId()] = true;
-                    }
-                    else if (report.nodes.hasOwnProperty(id)) {
-                        report.nodes[id].attributes[val.getEntityId()] = true;
-                    } else if (report.edges.hasOwnProperty(id)) {
-                        report.edges[id].attributes[val.getEntityId()] = true;
-                    }
-                     report.createdYText +=1;
                     //deferred.resolve();
                 });
             }
@@ -51,15 +41,7 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function($, _, Entit
                         val.getValue().registerYType(ytext);
                     else
                         val.registerYType(ytext);
-                    if (id === 'modelAttributes') {
-                        report.modelAttributes.attributes[val.getEntityId()] = false;
-                    }
-                    if (report.nodes.hasOwnProperty(id)) {
-                        report.nodes[id].attributes[val.getEntityId()] = false;
-                    } else if (report.edges.hasOwnProperty(id)) {
-                        report.edges[id].attributes[val.getEntityId()] = false;
-                    }
-                    report.createdYText +=1;
+
                     //deferred.resolve();
 
                 })
@@ -71,14 +53,14 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function($, _, Entit
             var promises = [];
             var modelAttributesNode = EntityManager.createModelAttributesNodeFromJSON(json.attributes);
 
-
+          
             var attrs = modelAttributesNode.getAttributes();
             for (var key in attrs) {
                 if (attrs.hasOwnProperty(key)) {
                     var val = attrs[key].getValue();
                     if (val.constructor.name === "Value") {
                         //promises.push(createYTextAttribute(map, val));
-                        createYTextAttribute('modelAttributes', map, val)
+                        createYTextAttribute(map, val)
                     }
                 }
             }
@@ -125,18 +107,18 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function($, _, Entit
             var attrs, attr;
             if (EntityManager.getLayer() === CONFIG.LAYER.META) {
                 //promises.push(createYTextAttribute(map,node.getLabel()));
-                createYTextAttribute(nodeId, map, node.getLabel());
+                createYTextAttribute(map, node.getLabel());
                 if (jsonNode.type === "Edge Shape") {
                     //promises.push(createYTextAttribute(map,node.getAttribute(nodeId+'[color]')));
-                    createYTextAttribute(nodeId, map, node.getAttribute(nodeId + '[color]'));
+                    createYTextAttribute(map, node.getAttribute(nodeId + '[color]'));
                     //promises.push(createYTextAttribute(map,node.getAttribute(nodeId+'[overlay]')));
-                    createYTextAttribute(nodeId, map, node.getAttribute(nodeId + '[overlay]'));
+                    createYTextAttribute(map, node.getAttribute(nodeId + '[overlay]'));
 
                 } else if (jsonNode.type === "Node Shape") {
                     //promises.push(createYTextAttribute(map,node.getAttribute(nodeId  +'[color]')));
-                    createYTextAttribute(nodeId, map, node.getAttribute(nodeId + '[color]'));
+                    createYTextAttribute(map, node.getAttribute(nodeId + '[color]'));
                     //promises.push(createYTextAttribute(map,node.getAttribute(nodeId+'[customAnchors]')));
-                    createYTextAttribute(nodeId, map, node.getAttribute(nodeId + '[customAnchors]'));
+                    createYTextAttribute(map, node.getAttribute(nodeId + '[customAnchors]'));
                     //promises.push(createYTextAttribute(map,node.getAttribute(nodeId+'[customShape]')));
                     //createYTextAttribute(map,node.getAttribute(nodeId+'[customShape]'));
                 }
@@ -146,7 +128,7 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function($, _, Entit
                         if (attrs.hasOwnProperty(attrKey)) {
                             attr = attrs[attrKey];
                             //promises.push(createYTextAttribute(map, attr.getKey()));
-                            createYTextAttribute(nodeId, map, attr.getKey());
+                            createYTextAttribute(map, attr.getKey());
                         }
                     }
                 }
@@ -156,7 +138,7 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function($, _, Entit
                         if (attrs.hasOwnProperty(attrKey2)) {
                             attr = attrs[attrKey2];
                             //promises.push(createYTextAttribute(map, attr.getValue()));
-                            createYTextAttribute(nodeId, map, attr.getValue());
+                            createYTextAttribute(map, attr.getValue());
                         }
                     }
                 } else if (jsonNode.type === 'ViewObject' || jsonNode.type === 'ViewRelationship') {
@@ -165,7 +147,7 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function($, _, Entit
                         if (attrs.hasOwnProperty(attrKey3)) {
                             attr = attrs[attrKey3];
                             //promises.push(createYTextAttribute(map, attr.getValue()));
-                            createYTextAttribute(nodeId, map, attr.getKey());
+                            createYTextAttribute(map, attr.getKey());
                         }
                     }
                     if (node.getAttribute('[condition]')) {
@@ -174,7 +156,7 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function($, _, Entit
                             if (conditions.hasOwnProperty(attrKey4)) {
                                 attr = conditions[attrKey4];
                                 //promises.push(createYTextAttribute(map, attr.getValue()));
-                                createYTextAttribute(nodeId, map, attr.getKey());
+                                createYTextAttribute(map, attr.getKey());
                             }
                         }
                     }
@@ -187,7 +169,7 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function($, _, Entit
                         var val = attrs[key].getValue();
                         if (val.constructor.name === "Value") {
                             //promises.push(createYTextAttribute(map,val));
-                            createYTextAttribute(nodeId, map, val);
+                            createYTextAttribute(map, val);
                         }
                     }
                 }
@@ -214,8 +196,6 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function($, _, Entit
             var deferred = $.Deferred();
             if (y.share.nodes.opContents.hasOwnProperty(nodeId)) {
                 y.share.nodes.get(nodeId).then(function(map) {
-                    report.nodes[nodeId] = { viaSet: false, attributes: {} };
-
                     createNodeCallback(deferred, map, jsonNode, nodeId);
                 })
             } else {
@@ -225,10 +205,8 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function($, _, Entit
                     map.set('width', jsonNode.width);
                     map.set('height', jsonNode.height);
                     map.set('zIndex', jsonNode.zIndex);
-
-                    report.nodes[nodeId] = { viaSet: true, attributes: {} };
-
                     createNodeCallback(deferred, map, jsonNode, nodeId);
+
                 })
             }
             return deferred.promise();
@@ -249,7 +227,7 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function($, _, Entit
         function registerEdgeCallback(deferred, edge, map) {
             var promises = [];
             //promises.push(createYTextAttribute(map,edge.getLabel()));
-            createYTextAttribute(edge.getEntityId(), map, edge.getLabel());
+            createYTextAttribute(map, edge.getLabel());
             if (EntityManager.getLayer() === CONFIG.LAYER.MODEL) {
                 var attrs = edge.getAttributes();
                 for (var key in attrs) {
@@ -257,7 +235,7 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function($, _, Entit
                         var val = attrs[key].getValue();
                         if (val.constructor.name === "Value") {
                             //promises.push(createYTextAttribute(map,val));
-                            createYTextAttribute(edge.getEntityId(), map, val);
+                            createYTextAttribute(map, val);
                         }
                     }
                 }
@@ -286,12 +264,10 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function($, _, Entit
             var deferred = $.Deferred();
             if (y.share.edges.opContents.hasOwnProperty(edge.getEntityId())) {
                 y.share.edges.get(edge.getEntityId()).then(function(map) {
-                    report.edges[edge.getEntityId()] = { viaSet: false, attributes: {} };
                     registerEdgeCallback(deferred, edge, map);
                 })
             } else {
                 y.share.edges.set(edge.getEntityId(), Y.Map).then(function(map) {
-                    report.edges[edge.getEntityId()] = { viaSet: false, attributes: {} };
                     registerEdgeCallback(deferred, edge, map);
                 })
             }
@@ -346,17 +322,12 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function($, _, Entit
                         registerEdges(json.edges).then(null, null, function(createdEdges) {
                             if (createdEdges === numberOfEdges) {
                                 canvas.resetTool();
-                                report.createdNodes = createdNodes;
-                                report.createdEdges = createdEdges;
-                                deferred.resolve(report);
+                                deferred.resolve('SYNCMETA:Created nodes:' + createdNodes + 'Created Edges: ' + createdEdges);
 
                             }
                         });
-                    } else {
-                        report.createdNodes = createdNodes;
-                        report.createdEdges = 0;
-                        deferred.resolve(report);
-                    }
+                    } else
+                        deferred.resolve('SYNCMETA:Created nodes:' + createdNodes);
                 }
             });
         } else

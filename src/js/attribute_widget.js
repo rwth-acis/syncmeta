@@ -15,32 +15,19 @@ requirejs([
     'operations/non_ot/InitModelTypesOperation',
     'operations/non_ot/ViewInitOperation',
     'operations/non_ot/SetModelAttributeNodeOperation',
-    // 'promise!Space',
     'promise!Guidancemodel'
-], function($, IWCW, yjsSync, WaitForCanvas, AttributeWrapper, EntityManager, ViewGenerator, JoinOperation, InitModelTypesOperation, ViewInitOperation, SetModelAttributeNodeOperation, /*space,*/ guidancemodel) {
+], function ($, IWCW, yjsSync, WaitForCanvas, AttributeWrapper, EntityManager, ViewGenerator, JoinOperation, InitModelTypesOperation, ViewInitOperation, SetModelAttributeNodeOperation, guidancemodel) {
 
     var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE);
-    //iwc.setSpace(space);
 
-    WaitForCanvas(CONFIG.WIDGET.NAME.ATTRIBUTE, 7).done(function() {
-        $('#wrapper').find('h1').text('Got Response from Canvas! Connecting to Yjs....');
-
-        yjsSync().done(function(y) {
+    WaitForCanvas(CONFIG.WIDGET.NAME.ATTRIBUTE, 7).done(function () {
+        $('#wrapper').find('h1').text('Got Response from Canvas!');
+        setTimeout(function () {
+            $('#wrapper').find('h1').remove();
+        }, 500);
+        yjsSync().done(function (y) {
             window.y = y;
-            window.syncmetaLog = {
-                widget: "Attribute",
-                initializedYTexts: 0,
-                objects: {},
-                errors: {},
-                firstAttemptFail:{}
-            };
-            $('#wrapper').find('h1').text('Successfully connected to Yjs.');
-            setTimeout(function() {
-                $('#wrapper').find('h1').remove();
-            }, 2000);
             console.info('ATTRIBUTE: Yjs successfully initialized');
-            //y.share.users.set(y.db.userId, iwc.getUser()[CONFIG.NS.PERSON.JABBERID]);
-
             var model = y.share.data.get('model');
             InitAttributeWidget(model);
         });
@@ -56,7 +43,6 @@ requirejs([
 
             if (model)
                 JSONtoGraph(model);
-            console.info(window.syncmetaLog);
 
 
             function JSONtoGraph(json) {
@@ -100,7 +86,7 @@ requirejs([
                 }
             }
 
-            iwc.registerOnDataReceivedCallback(function(operation) {
+            iwc.registerOnDataReceivedCallback(function (operation) {
                 var modelAttributesNode/*, model*/;
                 if (operation instanceof JoinOperation && operation.isDone()) {
                     y.share.users.set(y.db.userId, operation.getUser());
@@ -178,20 +164,17 @@ requirejs([
             if (CONFIG.TEST_MODE_ATTRIBUTE)
                 require(['./../test/AttributeWidgetTest']);
 
-            y.share.canvas.observe(function(event) {
+            y.share.canvas.observe(function (event) {
                 switch (event.name) {
                     case 'ReloadWidgetOperation': {
-                        setTimeout(function(){
-                              frameElement.contentWindow.location.reload();
-                        },Math.floor(Math.random() * 3000)+ 1000);
-                      
+                        frameElement.contentWindow.location.reload();
                     }
                 }
             });
 
             $("#loading").hide();
         }
-    }).fail(function() {
+    }).fail(function () {
         $('#wrapper').find('h1').text('Add Canvas Widget to Space and refresh the widget.');
         $('#loading').hide();
     });

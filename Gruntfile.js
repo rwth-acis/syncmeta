@@ -383,60 +383,13 @@ module.exports = function(grunt) {
             }
         },
         jsdoc : {
-            canvas : {
+            dist : {
                 src: [
-                    'main_widget.js',
-                    '<%= srcdir %>/js/canvas_widget',
+                    '<%= srcdir %>/**/*.js',
                     'README.md'
                 ],
                 options: {
-                    destination: 'doc/canvas',
-                    configure: 'jsdoc.conf.json',
-                    recurse: true
-                }
-            },
-            attribute : {
-                src: [
-                    'attribute_widget.js',
-                    '<%= srcdir %>/js/attribute_widget',
-                    'README.md'
-                ],
-                options: {
-                    destination: 'doc/attribute',
-                    configure: 'jsdoc.conf.json',
-                    recurse: true
-                }
-            },
-            palette : {
-                src: [
-                    'palette_widget.js',
-                    '<%= srcdir %>/js/palette_widget',
-                    'README.md'
-                ],
-                options: {
-                    destination: 'doc/palette',
-                    configure: 'jsdoc.conf.json',
-                    recurse: true
-                }
-            },
-            activity : {
-                src: [
-                    'activity_widget.js',
-                    '<%= srcdir %>/js/activity_widget',
-                    'README.md'
-                ],
-                options: {
-                    destination: 'doc/activity',
-                    configure: 'jsdoc.conf.json',
-                    recurse: true
-                }
-            },
-            operations:{
-                src: [
-                    '<%= srcdir %>/js/operations/*'
-                ],
-                options: {
-                    destination: 'doc/operations',
+                    destination: 'doc',
                     configure: 'jsdoc.conf.json'
                 }
             },
@@ -445,7 +398,7 @@ module.exports = function(grunt) {
                     '<%= srcdir %>/js/plugin/*.js'
                 ],
                 options: {
-                    destination: 'doc/plugin',
+                    destination: 'html/plugin/doc',
                     configure: 'jsdoc.conf.json'
                 }
             }

@@ -1,10 +1,11 @@
 define([
     'jqueryui',
     'lodash',
+    'iwcw',
     'activity_widget/Activity',
     'operations/ot/ValueChangeOperation',
     'operations/non_ot/ActivityOperation'
-],/** @lends ValueChangeActivity */function($,_,Activity,ValueChangeOperation,ActivityOperation) {
+],/** @lends ValueChangeActivity */function($,_,IWCW,Activity,ValueChangeOperation,ActivityOperation) {
 
     ValueChangeActivity.TYPE = "ValueChangeActivity";
 
@@ -58,6 +59,26 @@ define([
         var _rootSubjectEntityId = rootSubjectEntityId;
 
         /**
+         * Inter widget communication wrapper
+         * @type {Object}
+         */
+        var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ACTIVITY);
+
+        /**
+         * Callback for received Value Change Activity referring the root subject entity label
+         * @param {operations.non_ot.ActivityOperation} operation
+         */
+        var rootSubjectEntityLabelChangeCallback = function(operation) {
+            if (operation instanceof ActivityOperation &&
+                operation.getType() === ValueChangeActivity.TYPE &&
+                that.getRootSubjectEntityId() + "[label]" === operation.getEntityId()) {
+
+                that.setText(ValueChangeOperation.getOperationDescription(_subjectEntityName, _rootSubjectEntityType, operation.getData().value));
+            }
+
+        };
+
+        /**
          * Get value of attribute
          * @returns {string}
          */
@@ -90,7 +111,27 @@ define([
         this.getRootSubjectEntityId = function(){
             return _rootSubjectEntityId;
         };
+
+        /**
+         * Register inter widget communication callbacks
+         */
+        this.registerCallbacks = function(){
+            iwc.registerOnDataReceivedCallback(rootSubjectEntityLabelChangeCallback);
+        };
+
+        /**
+         * Unregister inter widget communication callbacks
+         */
+        this.unregisterCallbacks = function(){
+            iwc.unregisterOnDataReceivedCallback(rootSubjectEntityLabelChangeCallback);
+        };
+
+        if(iwc){
+            this.registerCallbacks();
+        }
+
     }
+
     return ValueChangeActivity;
 
 });

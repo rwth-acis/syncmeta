@@ -313,21 +313,27 @@ define([
             if (operation instanceof BindYTextOperation && operation.getEntityId() === that.getEntityId()) {
 
                 var entityId = that.getRootSubjectEntity().getEntityId();
-               
-                if (y.share.nodes.keys().indexOf(entityId)!=-1) {
+
+                if (y.share.nodes.opContents.hasOwnProperty(entityId)) {
+                    setTimeout(function(){
                         y.share.nodes.get(entityId).then(function (ymap) {
                             ymap.get(operation.getEntityId()).then(function (ytext) {
                                 that.registerYType(ytext);
                             })
+
                         })
+                    },300);
+
                 }
-                else if (y.share.edges.keys().indexOf(entityId) != -1) {
-                    
+                else if (y.share.edges.opContents.hasOwnProperty(entityId)) {
+                    setTimeout(function(){
                         y.share.edges.get(entityId).then(function (ymap) {
                             ymap.get(operation.getEntityId()).then(function (ytext) {
                                 that.registerYType(ytext);
                             })
                         })
+                    },300);
+
                 }
 
 
@@ -338,21 +344,10 @@ define([
             return _ytext;
         };
 
-        this.registerYType = function(ytext) {
+        this.registerYType = function(ytext){
             _ytext = ytext;
             _ytext.bind(_$node[0]);
-            
-            _ytext.observe(function(event){
-                _value = _ytext.toString();
-            })
-            
-            //loging
-            window.syncmetaLog.initializedYTexts += 1;
-            if(window.syncmetaLog.hasOwnProperty(this.getEntityId()))
-                window.syncmetaLog.objects[this.getEntityId()] +=1;
-            else window.syncmetaLog.objects[this.getEntityId()] = 0;
-            
-            //initData(ytext);
+            initData(ytext);
         };
         //init();
         if(iwc){

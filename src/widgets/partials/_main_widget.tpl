@@ -8,7 +8,7 @@
 <script src="<%= grunt.config('baseUrl') %>/js/main_widget.js"></script>
 <div id="loading" class="loading"></div>
 <div class="button_bar left">
-  <button id="save" title="Save the current state of the model"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/save.png" /></button>
+  <button id="save"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/save.png" /></button>
   <!--<button id="save_image"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/save_image.png" /></button>-->
   <!--<button id="generate" style="display: none"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/generate.png" /></button>-->
   <span id="feedback"></span>
@@ -25,25 +25,25 @@
     <p><strong>Editor space title:</strong><input size="32" type="text" id="space_title" /></p>
 </div>
 <div class="button_bar right">
-  <button id="viewsHide" title="Close the View Panel"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/viewHide.png"/></button>
-   <button id="viewsShow" title="Show the View Panel"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/viewShow.png"/></button>
-  <button id="showtype" title="Show the types of nodes and edges"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/hidetype.png" /></button>
-  <button id="hidetype" title="Hide types of nodes and edges"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/showtype.png" /></button>
-  <button id="zoomin" title="Zoom in"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/zoomin.png" /></button>
-  <button id="zoomout" title="Zoom out"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/zoomout.png" /></button>
-  <button id="undo" title="Undo your latest changes"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/undo.png" /></button>
-  <button id="redo" title="Redo your latest changes"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/redo.png" /></button>
+  <button id="viewsHide"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/viewHide.png"/></button>
+   <button id="viewsShow"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/viewShow.png"/></button>
+  <button id="showtype"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/hidetype.png" /></button>
+  <button id="hidetype"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/showtype.png" /></button>
+  <button id="zoomin"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/zoomin.png" /></button>
+  <button id="zoomout"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/zoomout.png" /></button>
+  <button id="undo"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/undo.png" /></button>
+  <button id="redo"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/redo.png" /></button>
 </div>
 <div id="ViewCtrlContainer" class="button_bar left">
- <button id="btnCreateViewpoint" title="Create a viewpoint"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/add196.png" /></button>
+ <button id="btnCreateViewpoint"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/add196.png" /></button>
   <input id="txtNameViewpoint" type="text" placeholder="name"  style="display: none;">
    <select id="ddmViewpointSelection" style="display: none;"></select>
-  <button id="btnAddViewpoint" title="Create an empty viewpoint" style="display: none;"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/checked21.png" /></button>
-  <button id="btnCancelCreateViewpoint" title="Cancel" style="display: none;"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/times1.png" /></button>
+  <button id="btnAddViewpoint" style="display: none;"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/checked21.png" /></button>
+  <button id="btnCancelCreateViewpoint" style="display: none;"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/times1.png" /></button>
   <select id="ddmViewSelection"></select>
-   <button id="btnShowView" title="Apply a viewpoint to the current model or visualize the viewpoint">Show</button>
-   <button id="btnRefreshView" title="Refresh viewpoint list" style="display: none;">Refresh</button>
-  <button id="btnDelViewPoint" title="Delete current viewpoint in the list"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/times1.png" /></button>
+   <button id="btnShowView">Show</button>
+   <button id="btnRefreshView" style="display: none;">Refresh</button>
+  <button id="btnDelViewPoint"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/times1.png" /></button>
 </div>
 <div class="ui-state-error ui-corner-all" style="margin-top: 20px; padding: 0 .7em; display:none">
 		<p id="errorMsg"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>

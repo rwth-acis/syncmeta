@@ -135,18 +135,18 @@ define([
          */
         var propagateEdgeDeleteOperation = function(operation){
             processEdgeDeleteOperation(operation);
+            HistoryManager.add(operation);
             $('#save').click();
 
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-           
-            y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(
+            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
                 "EdgeDeleteActivity",
                 operation.getEntityId(),
                 _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
                 EdgeDeleteOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
                 {}
-            ));
+            ).toNonOTOperation());
 
         };
 
@@ -158,6 +158,13 @@ define([
             if(operation instanceof EdgeDeleteOperation && operation.getEntityId() == that.getEntityId()){
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+                /*_iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY,new ActivityOperation(
+                    "EdgeDeleteActivity",
+                    operation.getEntityId(),
+                    jabberId,
+                    EdgeDeleteOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
+                    {}
+                ).toNonOTOperation());*/
                 processEdgeDeleteOperation(operation);
             }
         };
@@ -206,19 +213,19 @@ define([
         /**
          * Send NodeDeleteOperation for node
          */
-        this.triggerDeletion = function(historyFlag){
+        this.triggerDeletion = function(){
             _canvas.select(null);
             var operation = new EdgeDeleteOperation(id,that.getType(),that.getSource().getEntityId(),that.getTarget().getEntityId());
 
             if(_ymap){
+                //_ymap.set(EdgeDeleteOperation.TYPE, operation.toJSON());
                 propagateEdgeDeleteOperation(operation);
                 y.share.edges.delete(that.getEntityId());
             }
             else {
                 propagateEdgeDeleteOperation(operation);
             }
-             if(!historyFlag)
-                HistoryManager.add(operation);
+            //that.canvas.callListeners(CONFIG.CANVAS.LISTENERS.NODEDELETE,nodeId);
         };
 
         //noinspection JSUnusedGlobalSymbols

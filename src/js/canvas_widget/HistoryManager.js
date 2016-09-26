@@ -12,10 +12,7 @@ define(['jqueryui',
         var bufferSize = 20;
         
         var _canvas = null;
-            
-        var undo = [];
-        var redo = [];
-            
+        
         var $undo = $('#undo');
 
         var $redo = $('#redo');
@@ -27,27 +24,38 @@ define(['jqueryui',
                 case NodeDeleteOperation.TYPE: {
                     entity = EntityManager.findNode(json.id);
                     if (entity) {
-                        entity.triggerDeletion(true);
-                        operation =  new NodeDeleteOperation(json.id, json.type, json.left, json.top, json.width, json.height, json.zIndex, json.json);
-
+                        operation = new NodeDeleteOperation(json.id, json.type, json.left, json.top, json.width, json.height, json.zIndex, json.json);
+                        y.share.nodes.get(json.id).then(function(ymap) {
+                            data = operation.toJSON();
+                            data.historyFlag = true;
+                            ymap.set(NodeDeleteOperation.TYPE, data);
+                        });
                     }
                     break;
                 }
                 case NodeAddOperation.TYPE: {
-                    _canvas.createNode(json.type, json.left, json.top, json.width, json.height, json.zIndex, json.json, json.id,true);
                     operation = new NodeAddOperation(json.id, json.type, json.left, json.top, json.width, json.height, json.zIndex, json.json);
+                    data = operation.toJSON();
+                    data.historyFlag = true;
+                    _canvas.createNode(json.type, json.left, json.top, json.width, json.height, json.zIndex, json.json, json.id);
                     break;
                 }
                 case EdgeAddOperation.TYPE: {
-                    _canvas.createEdge(json.type, json.source, json.target, json.json, json.id, true);
                     operation = new EdgeAddOperation(json.id, json.type, json.source, json.target, json.json);
+                    data = operation.toJSON();
+                    data.historyFlag = true;
+                    _canvas.createEdge(json.type, json.source, json.target, json.json, json.id);
                     break;
                 }
                 case EdgeDeleteOperation.TYPE: {
                     entity = EntityManager.findEdge(json.id);
                     if (entity) {
-                        entity.triggerDeletion(true);
-                        operation = new EdgeDeleteOperation(json.id, json.type, json.source, json.target, json.json);    
+                        operation = new EdgeDeleteOperation(json.id, json.type, json.source, json.target, json.json);
+                        y.share.edges.get(json.id).then(function(ymap) {
+                            data = operation.toJSON();
+                            data.historyFlag = true;
+                            ymap.set(EdgeDeleteOperation.TYPE, data);
+                        });
                     }
                     break;
                 }
@@ -100,17 +108,22 @@ define(['jqueryui',
                     var inverseOp = operation.inverse();
                     var json = inverseOp.toJSON();
                     json.TYPE = inverseOp.constructor.name;
-                    undo.push(json);
+                    y.share.undo.push([json]);
                     $undo.prop('disabled', false);
                 }
-                if (undo.length >bufferSize) {
-                    undo.shift();
+                if (y.share.undo.length >bufferSize && y.share.undo.length - bufferSize >= bufferSize) {
+                    y.share.undo.delete(0, y.share.undo.length - bufferSize);
                 }
+                if (y.share.redo.length > bufferSize && y.share.redo.length -bufferSize >= bufferSize) {
+                    y.share.redo.delete(0, y.share.redo.length - bufferSize);
+                }
+
             },
             undo: function() {
-                if (undo.length > 0) {
-                    var jsonOp = undo.pop();
-                    if (undo.length === 0) {
+                if (y.share.undo.length > 0) {
+                    var jsonOp = y.share.undo.get(y.share.undo.length - 1);
+                    y.share.undo.delete(y.share.undo.length - 1);
+                    if (y.share.undo.length === 0) {
                         $undo.prop('disabled', true);
                     }
                     var operation = propagateHistoryOperationFromJson(jsonOp);
@@ -122,18 +135,19 @@ define(['jqueryui',
                     var json = inverseOp.toJSON();
                     json.TYPE = inverseOp.constructor.name;
 
-                    if (redo.length === 0)
+                    if (y.share.redo.length === 0)
                         $redo.prop('disabled', false);
-                    redo.push(json);
+                    y.share.redo.push([json]);
                 }
                 else {
                     $undo.prop('disabled', true);
                 }
             },
             redo: function() {
-                if (redo.length > 0) {
-                    var jsonOp = redo.pop();
-                    if (redo.length === 0) {
+                if (y.share.redo.length > 0) {
+                    var jsonOp = y.share.redo.get(y.share.redo.length - 1);
+                    y.share.redo.delete(y.share.redo.length - 1);
+                    if (y.share.redo.length === 0) {
                         $redo.prop('disabled', true);
                     }
                     var operation = propagateHistoryOperationFromJson(jsonOp);
@@ -145,29 +159,14 @@ define(['jqueryui',
                     var json = inverseOp.toJSON();
                     json.TYPE = inverseOp.constructor.name;
 
-                    if (undo.length === 0)
+                    if (y.share.undo.length === 0)
                         $undo.prop('disabled', false);
-                    undo.push(json);
+                    y.share.undo.push([json]);
+
                 }
                 else {
                     $redo.prop('disabled', true);
                 }
-            },
-            clean: function(entityId){
-                var entityIdFilter = function(value, idx){
-                    if(value.id === entityId)
-                        return false;
-                    else return true;
-                };
-                undo = undo.filter(entityIdFilter);
-                redo = redo.filter(entityIdFilter);
-                if (undo.length === 0) {
-                    $undo.prop('disabled', true);
-                }
-                if (redo.length === 0) {
-                    $redo.prop('disabled', true);
-                }
-                    
             }
         }
     }

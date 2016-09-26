@@ -77,14 +77,12 @@ define([
                     var attribute = new KeySelectionValueSelectionValueAttribute(operation.getEntityId(), "Attribute", that, _options, _options2);
                     attribute.registerYType(ytext);
                     that.addAttribute(attribute);
-                     if(_$node.find(".list").find("#"+attribute.getEntityId()).length == 0)
-                        _$node.find(".list").append(attribute.get$node());
+                    _$node.find(".list").append(attribute.get$node());
                 });
             }else{
                 var attribute = new KeySelectionValueSelectionValueAttribute(operation.getEntityId(), "Attribute", that, _options, _options2);
                 that.addAttribute(attribute);
-                 if(_$node.find(".list").find("#"+attribute.getEntityId()).length == 0)
-                    _$node.find(".list").append(attribute.get$node());
+                _$node.find(".list").append(attribute.get$node());
             }
 
         };
@@ -251,8 +249,7 @@ define([
                 var attribute = new KeySelectionValueSelectionValueAttribute(key,key,that,_options,_options2);
                 attribute.setValueFromJSON(json.list[key]);
                 that.addAttribute(attribute);
-                 if(_$node.find(".list").find("#"+attribute.getEntityId()).length == 0)
-                    _$node.find(".list").append(attribute.get$node());
+                _$node.find(".list").append(attribute.get$node());
             });
         };
 
