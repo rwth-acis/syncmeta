@@ -12,9 +12,10 @@ define(['jquery', 'chai', 'WebConsoleReporter',
     'canvas_widget/EntityManager',
     './../test/canvas_widget/MetamodelingTester',
     './../test/canvas_widget/JSONtoGraphTester',
+    './../test/canvas_widget/ViewpointModelingTest',
     'promise!Guidancemodel',
     'mocha'],
-    function($, chai, WebConsoleReporter, EntityManager, MetamodelingTester, JSONtoGraphTester, Guidancemodel) {
+    function($, chai, WebConsoleReporter, EntityManager, MetamodelingTester, JSONtoGraphTester, ViewpointModelingTest,Guidancemodel) {
 
         function CanvasWidgetTestMain(canvas) {
             $('body').append($('<div id="mocha" style="display: none"></div>'));
@@ -30,8 +31,9 @@ define(['jquery', 'chai', 'WebConsoleReporter',
                 });
 
                 if (EntityManager.getLayer() === CONFIG.LAYER.META && !Guidancemodel.isGuidanceEditor()) {
-                    JSONtoGraphTester(canvas);
-                    MetamodelingTester(canvas);
+                    //JSONtoGraphTester(canvas);
+                    //MetamodelingTester(canvas);
+                    ViewpointModelingTest();
                 } else if (Guidancemodel.isGuidanceEditor()) {
                     describe('Check node types and edge types in EntityManager', function() {
                         it('Depending on the metamodel check initialized node types', function() {
