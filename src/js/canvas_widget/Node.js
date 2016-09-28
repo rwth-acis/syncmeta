@@ -220,13 +220,8 @@ define([
 
             init();
 
-            this.registerYMap = function(map,disableYText){
+            this.registerYMap = function(){
                 AbstractNode.prototype.registerYMap.call(this,map);
-                var registerYText = function(ymap, val){
-                    ymap.get(val.getEntityId()).then(function(ytext){
-                        val.registerYType(ytext);
-                    });
-                };
                 var attr = that.getAttributes();
                 for(var key in attr){
                     if(attr.hasOwnProperty(key)){
@@ -234,10 +229,6 @@ define([
                         if(val.hasOwnProperty('registerYType')){
                             if(val.constructor.name !== "Value" ){
                                 val.registerYType();
-                            }
-                            else{
-                                if(!disableYText)
-                                    registerYText(map,val);
                             }
                         }
                     }

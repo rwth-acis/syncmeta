@@ -93,21 +93,12 @@ define([
             attrShape.getValue().registerYType();
             attrOverlayPos.getValue().registerYType();
             attrOverlayRotate.getValue().registerYType();
-            if(!disableYText)
-                registerYTextAttributes(map);
+            that.getLabel().getValue().registerYType();
+            attrColor.getValue().registerYType();
+            attrOverlay.getValue().registerYType();  
+          
         };
-        function registerYTextAttributes(map){
-            map.get(that.getLabel().getValue().getEntityId()).then(function(ytext){
-                that.getLabel().getValue().registerYType(ytext);
-            });
-            map.get(that.getEntityId()+"[color]").then(function(ytext){
-                attrColor.getValue().registerYType(ytext);
-            });
-            map.get(that.getEntityId()+"[overlay]").then(function(ytext){
-                attrOverlay.getValue().registerYType(ytext);
-            });
-
-        }
+      
         _$node.find(".label").append(this.getLabel().get$node());
 
         for(var attributeKey in _attributes){

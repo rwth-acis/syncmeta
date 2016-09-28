@@ -90,9 +90,7 @@ define([
         var propagateAttributeAddOperation = function(operation){
             var ynode = that.getRootSubjectEntity().getYMap();
             if(ynode){
-                ynode.set(operation.getEntityId()+'[key]', Y.Text).then(function(){
-                    ynode.set(AttributeAddOperation.TYPE, operation.toJSON());
-                });
+                ynode.set(AttributeAddOperation.TYPE, operation.toJSON());
             }
         };
 

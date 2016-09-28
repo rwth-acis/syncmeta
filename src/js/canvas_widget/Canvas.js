@@ -34,7 +34,7 @@ define([
     'canvas_widget/guidance_modeling/CollaborationGuidance',
     'jquery.transformable-PATCHED'
 ], /** @lends Canvas */
-    function($, jsPlumb, IWCW, Util, NodeAddOperation, NodeDeleteOperation, EdgeAddOperation, EdgeDeleteOperation,ToolSelectOperation, EntitySelectOperation, ActivityOperation, ExportDataOperation, ExportMetaModelOperation, ExportLogicalGuidanceRepresentationOperation, ExportImageOperation, PerformCvgOperation, DeleteCvgOperation, ShowGuidanceBoxOperation, CanvasViewChangeOperation, RevokeSharedActivityOperation, MoveCanvasOperation, GuidanceStrategyOperation, AbstractEntity, ModelAttributesNode, EntityManager, HistoryManager, AbstractCanvas, MoveTool, GuidanceBox, SelectToolGuidance, SetPropertyGuidance, GhostEdgeGuidance, CollaborationGuidance) {
+    function($, jsPlumb, IWCW, Util, NodeAddOperation, NodeDeleteOperation, EdgeAddOperation, EdgeDeleteOperation, ToolSelectOperation, EntitySelectOperation, ActivityOperation, ExportDataOperation, ExportMetaModelOperation, ExportLogicalGuidanceRepresentationOperation, ExportImageOperation, PerformCvgOperation, DeleteCvgOperation, ShowGuidanceBoxOperation, CanvasViewChangeOperation, RevokeSharedActivityOperation, MoveCanvasOperation, GuidanceStrategyOperation, AbstractEntity, ModelAttributesNode, EntityManager, HistoryManager, AbstractCanvas, MoveTool, GuidanceBox, SelectToolGuidance, SetPropertyGuidance, GhostEdgeGuidance, CollaborationGuidance) {
 
         Canvas.prototype = new AbstractCanvas();
         Canvas.prototype.constructor = Canvas;
@@ -136,7 +136,7 @@ define([
              * @param {operations.ot.NodeAddOperation} operation
              * @param {Y.Map} ymap
              */
-            var processNodeAddOperation = function(operation, ymap) {
+            var processNodeAddOperation = function(operation) {
                 var node;
                 if (operation.getJSON()) {
                     node = EntityManager.createNodeFromJSON(operation.getType(), operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex(), operation.getJSON());
@@ -148,35 +148,13 @@ define([
                     var color = Util.getColor(y.share.userList.get(operation.getJabberId()).globalId);
                     node.refreshTraceAwareness(color);
                 }
-                /*
-                 if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()){
-                 var color = _iwcw.getUserColor(operation.getJabberId());
-                 node.refreshTraceAwareness(color);
-                 }*/
+                if (y)
+                    node.registerYMap();
 
-                if (y) {
-                    if (ymap) {
-                        node.registerYMap(ymap);
-                        node.draw();
-                        node.addToCanvas(that);
-                        node.bindMoveToolEvents();
-                        that.remountCurrentTool();
-                    } else {
-                        y.share.nodes.get(node.getEntityId()).then(function(map) {
-                            node.registerYMap(map);
-                            node.draw();
-                            node.addToCanvas(that);
-                            node.bindMoveToolEvents();
-                            that.remountCurrentTool();
-                        });
-                    }
-                }
-                else {
-                    node.draw();
-                    node.addToCanvas(that);
-                    node.bindMoveToolEvents();
-                    that.remountCurrentTool();
-                }
+                node.draw();
+                node.addToCanvas(that);
+                node.bindMoveToolEvents();
+                that.remountCurrentTool();
             };
 
             /**
@@ -204,7 +182,7 @@ define([
              * @param {operations.ot.EdgeAddOperation} operation
              * @param {Y.Map} ymap
              */
-            var processEdgeAddOperation = function(operation, ymap) {
+            var processEdgeAddOperation = function(operation) {
                 var edge;
 
                 if (operation.getJSON()) {
@@ -213,29 +191,15 @@ define([
                     edge = EntityManager.createEdge(operation.getType(), operation.getEntityId(), EntityManager.findNode(operation.getSource()), EntityManager.findNode(operation.getTarget()));
                 }
 
-                if (y) {
-                    if (ymap) {
-                        edge.registerYMap(ymap);
-                        edge.connect();
-                        edge.addToCanvas(that);
-                        edge.bindMoveToolEvents();
-                        that.remountCurrentTool();
-                    }
-                    else {
-                        y.share.edges.get(edge.getEntityId()).then(function(map) {
-                            edge.registerYMap(map);
-                            edge.connect();
-                            edge.addToCanvas(that);
-                            edge.bindMoveToolEvents();
-                            that.remountCurrentTool();
-                        })
-                    }
-                } else {
-                    edge.connect();
-                    edge.addToCanvas(that);
-                    edge.bindMoveToolEvents();
-                    that.remountCurrentTool();
-                }
+                if (window.hasOwnProperty("y"))
+                    edge.registerYMap();
+
+                edge.connect();
+                edge.addToCanvas(that);
+                edge.bindMoveToolEvents();
+                that.remountCurrentTool();
+
+
             };
 
             /**
@@ -964,13 +928,6 @@ define([
                 //this.callListeners(CONFIG.CANVAS.LISTENERS.RESET);
             };
 
-            var createYTypeForValueOfAttribute = function(map, id, yType) {
-                var deferred = $.Deferred();
-                map.set(id, yType).then(function() {
-                    deferred.resolve();
-                });
-                return deferred.promise();
-            };
 
             /**
              * Create a new node and draw it on the canvas
@@ -986,7 +943,6 @@ define([
              */
             this.createNode = function(type, left, top, width, height, zIndex, json, identifier, historyFlag) {
                 var id, oType = null;
-                var deferred = $.Deferred();
                 if (identifier)
                     id = identifier;
                 else
@@ -997,102 +953,12 @@ define([
                     oType = EntityManager.getViewNodeType(type).getTargetNodeType().TYPE;
                 }
                 var operation = new NodeAddOperation(id, type, left, top, width, height, zIndex, json || null, EntityManager.getViewId(), oType, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
-                if (y) {
-                    y.share.nodes.set(id, Y.Map).then(function(map) {
-                        //create the label element of the node
-                        map.set(NodeAddOperation.TYPE, operation.toJSON());
-                        
-                        map.set('left', left);
-                        map.set('top', top);
-                        map.set('width', width);
-                        map.set('height', height);
-                        map.set('zIndex', zIndex);
 
-                        if (EntityManager.getLayer() === CONFIG.LAYER.META) {
-                            map.set(id + "[label]", Y.Text).then(function() {
-                                var attrColorPromise;
-                                if (type === 'Node Shape') {
-                                    attrColorPromise = createYTypeForValueOfAttribute(map, id + "[color]", Y.Text);
-                                    var attrAnchorsPromise = createYTypeForValueOfAttribute(map, id + "[customAnchors]", Y.Text);
-                                    var attrCustomShapePromise = createYTypeForValueOfAttribute(map, id + "[customShape]", Y.Text);
-                                    $.when(attrColorPromise, attrAnchorsPromise, attrCustomShapePromise).done(function() {
-                                        propagateNodeAddOperation(operation, map);
-                                        y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
-                                        deferred.resolve(id);
-                                    });
-                                }
-                                else if (type === 'Edge Shape') {
-                                    attrColorPromise = createYTypeForValueOfAttribute(map, id + "[color]", Y.Text);
-                                    var attrOverlayPromise = createYTypeForValueOfAttribute(map, id + "[overlay]", Y.Text);
-                                    $.when(attrColorPromise, attrOverlayPromise).done(function() {
-                                        propagateNodeAddOperation(operation, map);
-                                        y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
-                                        deferred.resolve(id);
-
-                                    });
-                                }
-                                else if (json && (type === 'Object' || type === 'Relationship' || type === 'Abstract Class')) {
-                                    var promises = [];
-                                    attrs = json.attributes['[attributes]'].list;
-                                    for (var attrKey in attrs) {
-                                        if (attrs.hasOwnProperty(attrKey)) {
-                                            attr = attrs[attrKey];
-                                            promises.push(createYTypeForValueOfAttribute(map, attr.key.id, Y.Text));
-                                        }
-                                    }
-                                    $.when(promises).done(function() {
-                                        propagateNodeAddOperation(operation, map);
-                                        y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
-                                        deferred.resolve(id);
-                                    });
-                                    
-                                    
-                                }
-                                else {
-                                    propagateNodeAddOperation(operation, map);
-                                    y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
-                                    deferred.resolve(id);
-
-                                }
-                            });
-                        }
-                        else {
-                            var attributes = null;
-                            if (oType)
-                                attributes = EntityManager.getNodeType(oType).getAttributes();
-                            else
-                                attributes = EntityManager.getNodeType(type).getAttributes();
-
-                            var attrPromises = [];
-                            for (var attrKey in attributes) {
-                                if (attributes.hasOwnProperty(attrKey) && attributes[attrKey].value === 'string') {
-                                    var attrId = id + '[' + attributes[attrKey].key + ']';
-                                    attrPromises.push(createYTypeForValueOfAttribute(map, attrId.toLowerCase(), Y.Text));
-                                }
-                            }
-                            if (attrPromises.length > 0) {
-                                $.when.apply(null, attrPromises).done(function() {
-                                    propagateNodeAddOperation(operation, map);
-                                    y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
-                                    deferred.resolve(id);
-
-                                });
-                            }
-                            else {
-                                propagateNodeAddOperation(operation, map);
-                                y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
-                                deferred.resolve(id);
-
-                            }
-                        }
-                    })
-                } else {
-                    propagateNodeAddOperation(operation);
-                    deferred.resolve(id);
-                }
-                if(!historyFlag)
+                propagateNodeAddOperation(operation);
+                if (y)
+                    y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
+                if (!historyFlag)
                     HistoryManager.add(operation);
-                return deferred.promise();
             };
 
             /**
@@ -1106,7 +972,7 @@ define([
              */
             this.createEdge = function(type, source, target, json, identifier, historyFlag) {
                 var id = null, oType = null;
-                var deferred = $.Deferred();
+
                 if (identifier)
                     id = identifier;
                 else
@@ -1115,56 +981,13 @@ define([
                     oType = EntityManager.getViewEdgeType(type).getTargetEdgeType().TYPE;
                 }
                 var operation = new EdgeAddOperation(id, type, source, target, json || null, EntityManager.getViewId(), oType, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
-                if (y) {
-                    y.share.edges.set(id, Y.Map).then(function(map) {
-                        map.set(id + "[label]", Y.Text).then(function() {
-                            if (EntityManager.getLayer() === CONFIG.LAYER.MODEL) {
-                                var attributes = null;
-                                if (oType)
-                                    attributes = EntityManager.getEdgeType(oType).getAttributes();
-                                else
-                                    attributes = EntityManager.getEdgeType(type).getAttributes();
+                propagateEdgeAddOperation(operation);
 
-                                var attrPromises = [];
-                                for (var attrKey in attributes) {
-                                    if (attributes.hasOwnProperty(attrKey) && attributes[attrKey].value === 'string') {
-                                        var attrId = id + '[' + attributes[attrKey].key + ']';
-                                        attrPromises.push(createYTypeForValueOfAttribute(map, attrId.toLowerCase(), Y.Text));
-                                    }
-                                }
-                                if (attrPromises.length > 0) {
-                                    $.when.apply(null, attrPromises).done(function() {
-                                        propagateEdgeAddOperation(operation, map);
-                                        y.share.canvas.set(EdgeAddOperation.TYPE, operation.toJSON());
-                                        deferred.resolve(id);
+                if (window.hasOwnProperty("y"))
+                    y.share.canvas.set(EdgeAddOperation.TYPE, operation.toJSON());
 
-                                    });
-                                }
-                                else {
-                                    propagateEdgeAddOperation(operation, map);
-                                    y.share.canvas.set(EdgeAddOperation.TYPE, operation.toJSON());
-                                    deferred.resolve(id);
-
-                                }
-                            }
-                            else {
-                                propagateEdgeAddOperation(operation, map);
-                                y.share.canvas.set(EdgeAddOperation.TYPE, operation.toJSON());
-                                deferred.resolve(id);
-                            }
-                        });
-                        map.set('id', id);
-                        map.set('source', source);
-                        map.set('target', target);
-
-                    })
-                } else {
-                    propagateEdgeAddOperation(operation);
-                    deferred.resolve(id);
-                }
-                if(!historyFlag)
+                if (!historyFlag)
                     HistoryManager.add(operation);
-                return deferred.promise();
             };
 
             this.scrollNodeIntoView = function(nodeId) {
@@ -1580,8 +1403,8 @@ define([
                                 y.share.activity.set(ActivityOperation.TYPE, activityOperation);
                                 break;
                             }
-                            case 'triggerSave':{
-                                if(event.value === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
+                            case 'triggerSave': {
+                                if (event.value === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
                                     $('#save').click();
                                 break;
                             }
@@ -1609,28 +1432,28 @@ define([
                     }
                 });
 
-                y.share.nodes.observe(function(event){
+                y.share.nodes.observe(function(event) {
                     switch (event.type) {
                         case 'delete':
-                        {
-                            var node = EntityManager.findNode(event.name);
-                            if(node)
-                                node.remoteNodeDeleteCallback(new NodeDeleteOperation(event.name));
-                            break;
-                        }
+                            {
+                                var node = EntityManager.findNode(event.name);
+                                if (node)
+                                    node.remoteNodeDeleteCallback(new NodeDeleteOperation(event.name));
+                                break;
+                            }
                     }
 
                 });
 
-                y.share.edges.observe(function(event){
+                y.share.edges.observe(function(event) {
                     switch (event.type) {
                         case 'delete':
-                        {
-                            var edge = EntityManager.findEdge(event.name);
-                            if(edge)
-                                edge.remoteEdgeDeleteCallback(new EdgeDeleteOperation(event.name));
-                            break;
-                        }
+                            {
+                                var edge = EntityManager.findEdge(event.name);
+                                if (edge)
+                                    edge.remoteEdgeDeleteCallback(new EdgeDeleteOperation(event.name));
+                                break;
+                            }
                     }
 
                 });

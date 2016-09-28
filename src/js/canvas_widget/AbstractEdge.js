@@ -34,6 +34,22 @@ define([
         AbstractEntity.call(this,id);
 
         var _ymap = null;
+        
+        if(window.hasOwnProperty("y")){
+            if (y.share.edges.keys().indexOf(id) != -1) {
+                _ymap = y.share.edges.get(id);
+
+            }
+            else {
+                _ymap = y.share.edges.set(id, Y.Map);
+                _ymap.set('id', id);
+                _ymap.set('source', source.getEntityId());
+                _ymap.set('target', target.getEntityId());
+            }
+        }
+        this.getYMap = function() {
+            return _ymap;
+        };
 
         /**
          * Type of edge
@@ -664,18 +680,8 @@ define([
             //$("."+id).contextMenu(false);
         };
 
-        this.getYMap = function(){
-            return _ymap;
-        };
-
-        this._registerYMap = function(ymap,disableYText) {
-            _ymap =ymap;
-            if(!disableYText) {
-                _ymap.get(that.getEntityId() + '[label]').then(function (ytext) {
-                    _label.registerYType(ytext);
-                });
-
-            }
+        this._registerYMap = function() {
+            that.getLabel().getValue().registerYType();       
         }
 
     }
@@ -704,8 +710,8 @@ define([
         connector.setVisible(true);
     };
 
-    AbstractEdge.prototype.registerYMap = function(map,disableYText){
-        this._registerYMap(map,disableYText);
+    AbstractEdge.prototype.registerYMap = function(){
+        this._registerYMap();
     };
 
     return AbstractEdge;
