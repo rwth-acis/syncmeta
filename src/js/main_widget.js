@@ -401,13 +401,8 @@ requirejs([
                     return;
                 }
                 ViewManager.addView(viewId);
-                var $loading = $('#loading');
-                $loading.show();
-                resetCanvas();
-                canvas.get$canvas().show();
                 HideCreateMenu();
                 y.share.canvas.set(UpdateViewListOperation.TYPE, true);
-                $loading.hide();
             });
 
             //Meta-modelling layer implementation
