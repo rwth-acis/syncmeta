@@ -6,7 +6,7 @@ define([
     'operations/non_ot/DeleteViewOperation',
     'attribute_widget/ModelAttributesNode',
     'attribute_widget/EntityManager'
-],/** @lends AttributeWrapper */function(IWCW, NodeAddOperation, EdgeAddOperation, EntitySelectOperation, DeleteViewOperation, ModelAttributesNode, EntityManager) {
+],/** @lends AttributeWrapper */function (IWCW, NodeAddOperation, EdgeAddOperation, EntitySelectOperation, DeleteViewOperation, ModelAttributesNode, EntityManager) {
 
     /**
      * AttributeWrapper
@@ -51,7 +51,7 @@ define([
          * Callback for a Entity Select Operation
          * @param {operations.non_ot.EntitySelectOperation} operation
          */
-        var entitySelectCallback = function(operation) {
+        var entitySelectCallback = function (operation) {
             if (operation instanceof EntitySelectOperation && operation.getSelectedEntityId() === null) {
                 that.select(_modelAttributesNode);
                 if ($node.is(':hidden'))
@@ -64,7 +64,7 @@ define([
          * Callback for an Node Add Operation
          * @param {operations.ot.NodeAddOperation} operation
          */
-        var nodeAddCallback = function(operation) {
+        var nodeAddCallback = function (operation) {
             if (operation instanceof NodeAddOperation) {
 
                 var node, type, viewType;
@@ -102,7 +102,7 @@ define([
          * Callback for an Edge Add Operation
          * @param {operations.ot.EdgeAddOperation} operation
          */
-        var edgeAddCallback = function(operation) {
+        var edgeAddCallback = function (operation) {
             if (operation instanceof EdgeAddOperation) {
                 var edge, type, viewType;
 
@@ -137,7 +137,7 @@ define([
          * Get jQuery object of DOM node representing the node
          * @returns {jQuery}
          */
-        this.get$node = function() {
+        this.get$node = function () {
             return _$node;
         };
 
@@ -145,7 +145,7 @@ define([
          * Set model attributes
          * @param node {attribute_widget.ModelAttributesNode}
          */
-        this.setModelAttributesNode = function(node) {
+        this.setModelAttributesNode = function (node) {
             _modelAttributesNode = node;
         };
 
@@ -153,7 +153,7 @@ define([
          * Get model Attributes
          * @returns {attribute_widget.ModelAttributesNode}
          */
-        this.getModelAttributesNode = function() {
+        this.getModelAttributesNode = function () {
             return _modelAttributesNode;
         };
 
@@ -161,7 +161,7 @@ define([
          * Select an entity
          * @param {attribute_widget.AbstractNode|attribute_widget.AbstractEdge} entity
          */
-        this.select = function(entity) {
+        this.select = function (entity) {
             if (_selectedEntity != entity) {
                 if (_selectedEntity) _selectedEntity.unselect();
                 if (entity) entity.select();
@@ -172,7 +172,7 @@ define([
         /**
          * Register inter widget communication callbacks
          */
-        this.registerCallbacks = function() {
+        this.registerCallbacks = function () {
             iwc.registerOnDataReceivedCallback(entitySelectCallback);
             iwc.registerOnDataReceivedCallback(nodeAddCallback);
             iwc.registerOnDataReceivedCallback(edgeAddCallback);
@@ -183,7 +183,7 @@ define([
         /**
          * Unregister inter widget communication callbacks
          */
-        this.unregisterCallbacks = function() {
+        this.unregisterCallbacks = function () {
             iwc.unregisterOnDataReceivedCallback(entitySelectCallback);
             iwc.unregisterOnDataReceivedCallback(nodeAddCallback);
             iwc.unregisterOnDataReceivedCallback(edgeAddCallback);
@@ -194,90 +194,98 @@ define([
         if (iwc) {
             that.registerCallbacks();
         }
-        /*
+
         if (y) {
-            y.share.nodes.observe(function(event) {
+            y.share.nodes.observe(function (event) {
                 switch (event.type) {
                     case 'add': {
-                        event.value().then(function(ymap) {
-                            ymap.observe(function(nodeEvent) {
-                                switch (nodeEvent.name) {
-                                    case NodeAddOperation.TYPE: {
-                                        nodeAddCallback(new NodeAddOperation(nodeEvent.value.id, nodeEvent.value.type, nodeEvent.value.left, nodeEvent.value.top, nodeEvent.value.width, nodeEvent.value.height, nodeEvent.value.zIndex, nodeEvent.value.json, null, nodeEvent.value.oType, nodeEvent.value.jabberId));
-                                        break;
-                                    }
-                                    default: {
-                                        if (nodeEvent.name.search(/\w*\[(\w|\s)*\]/g) != -1) {
-                                            var node = EntityManager.findNode(nodeEvent.object.get(NodeAddOperation.TYPE).id);
-                                            var attrs = node.getAttributes();
-                                            var register = function(event, attr) {
-                                                event.value().then(function(ytext) {
-                                                    attr.getValue().registerYType(ytext);
-                                                })
-                                            };
-                                            for (var attrKey in attrs) {
-                                                if (attrs.hasOwnProperty(attrKey)) {
-                                                    if (attrs[attrKey].getEntityId() === nodeEvent.name) {
-                                                        var attr = attrs[attrKey]
-                                                        register(nodeEvent, attr);
+                        y.share.nodes.get(event.name).observe(function (nodeEvent) {
 
+                            switch (nodeEvent.name) {
+                                case 'jabberId': {
+                                    var map = nodeEvent.object;
+                                    nodeAddCallback(new NodeAddOperation(map.get('id'), map.get('type'), map.get('left'), map.get('top'), map.get('width'), map.get('height'), map.get('zIndex'), null, null, null, nodeEvent.value));
+                                    break;
+                                }
+                                default:
+                                    if (nodeEvent.name.search(/\w*\[(\w|\s)*\]/g) != -1) {
+                                        var node = EntityManager.findNode(nodeEvent.object.get('id'));
+                                        if (node.getLabel().getEntityId() === nodeEvent.name)
+                                            node.getLabel().getValue().registerYType(nodeEvent.object.get(nodeEvent.name));
+                                        else {
+                                            var attrs = null;
+
+                                            if (EntityManager.getLayer() === CONFIG.LAYER.META) {
+                                                attrs = node.getAttribute('[attributes]');
+                                                if (!attrs)
+                                                    attrs = node.getAttributes();
+                                                else
+                                                    attrs = attrs.getAttributes();
+                                                var attrId = nodeEvent.name.replace(/\[\w*\]/g, '');
+                                                if (attrs.hasOwnProperty(attrId)) {
+                                                    var attr = attrs[attrId];
+                                                    if (attr.hasOwnProperty('getKey')) {
+                                                        if (attr.getKey().hasOwnProperty('registerYType'))
+                                                            attr.getKey().registerYType(nodeEvent.object.get(nodeEvent.name));
+                                                    } else if (attr.hasOwnProperty('getValue')) {
+                                                        if (attr.getValue().hasOwnProperty('registerYType'))
+                                                            attr.getValue().registerYType(nodeEvent.object.get(nodeEvent.name));
                                                     }
                                                 }
                                             }
+                                            else {
+                                                attrs = node.getAttributes();
+                                            }
+
 
                                         }
-                                        break;
                                     }
-                                }
-                            })
+                            }
                         });
                         break;
                     }
                 }
             });
 
-            y.share.edges.observe(function(event) {
+            y.share.edges.observe(function (event) {
                 switch (event.type) {
                     case 'add': {
-                        event.value().then(function(ymap) {
-                            ymap.observe(function(edgeEvent) {
-                                switch (edgeEvent.name) {
-                                    case EdgeAddOperation.TYPE: {
-                                        edgeAddCallback(new EdgeAddOperation(edgeEvent.value.id, edgeEvent.value.type, edgeEvent.value.source, edgeEvent.value.target, edgeEvent.value.json, null, edgeEvent.value.oType, edgeEvent.value.jabberId));
-
-                                        break;
-                                    }
-                                    default: {
-                                        if (edgeEvent.name.search(/\w*\[(\w|\s)*\]/g) != -1) {
-                                            var node = EntityManager.findEdge(edgeEvent.object.get(EdgeAddOperation.TYPE).id);
-                                            var attrs = edge.getAttributes();
-                                            var register = function(event, attr) {
-                                                event.value().then(function(ytext) {
-                                                    attr.getValue().registerYType(ytext);
-                                                })
-                                            };
+                        y.share.edges.get(event.name).observe(function (edgeEvent) {
+                            switch (edgeEvent.name) {
+                                case 'jabberId': {
+                                    var map = edgeEvent.object;
+                                    edgeAddCallback(new EdgeAddOperation(map.get('id'), map.get('type'), map.get('source'), map.get('target'), null, null, null, edgeEvent.value));
+                                    break;
+                                }
+                                default: {
+                                    if (edgeEvent.name.search(/\w*\[(\w|\s)*\]/g) != -1) {
+                                        var edge = EntityManager.findEdge(edgeEvent.object.get('id'));
+                                        var attrs = edge.getAttributes();
+                                        if (edge.getLabel().getEntityId() === edgeEvent.name)
+                                            edge.getLabel().getValue().registerYType(edgeEvent.object.get(edgeEvent.name));
+                                        else {
+                                            var attrs = node.getAttributes();
                                             for (var attrKey in attrs) {
                                                 if (attrs.hasOwnProperty(attrKey)) {
                                                     if (attrs[attrKey].getEntityId() === edgeEvent.name) {
-                                                        register(edgeEvent, attrs[attrKey]);
-
-                                                        break;
+                                                        var attr = attrs[attrKey]
+                                                        if (attr.getValue().hasOwnProperty('registerYType'))
+                                                            attr.getValue().registerYType(edgeEvent.object.get(edgeEvent.name));
                                                     }
                                                 }
                                             }
-
                                         }
-
                                     }
                                 }
-                            })
+                            }
                         });
-                        break;
                     }
+                        break;
                 }
+
             })
         }
-        */
+
         function deleteViewCallback(operation) {
             if (operation instanceof DeleteViewOperation) {
                 EntityManager.deleteViewFromMap(operation.getViewId());

@@ -150,9 +150,8 @@ define([
             _value2.setValueFromJSON(json.value2||{value: ""});
         };
 
-        this.registerYType = function(ytext){
-            if(ytext)
-                _key.registerYType(ytext);
+        this.registerYType = function(){
+            _key.registerYType();
             _value.registerYType();
             _value2.registerYType();
         };

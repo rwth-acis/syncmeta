@@ -120,9 +120,8 @@ define([
         };
 
 
-        this.registerYMap = function(ytext){
-            if(ytext)
-                _key.registerYType(ytext);
+        this.registerYMap = function(){
+            _key.registerYType();
             _value.registerYType();
         };
 

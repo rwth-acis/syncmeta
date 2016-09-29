@@ -34,7 +34,7 @@ define([
     'canvas_widget/guidance_modeling/CollaborationGuidance',
     'jquery.transformable-PATCHED'
 ], /** @lends Canvas */
-    function($, jsPlumb, IWCW, Util, NodeAddOperation, NodeDeleteOperation, EdgeAddOperation, EdgeDeleteOperation, ToolSelectOperation, EntitySelectOperation, ActivityOperation, ExportDataOperation, ExportMetaModelOperation, ExportLogicalGuidanceRepresentationOperation, ExportImageOperation, PerformCvgOperation, DeleteCvgOperation, ShowGuidanceBoxOperation, CanvasViewChangeOperation, RevokeSharedActivityOperation, MoveCanvasOperation, GuidanceStrategyOperation, AbstractEntity, ModelAttributesNode, EntityManager, HistoryManager, AbstractCanvas, MoveTool, GuidanceBox, SelectToolGuidance, SetPropertyGuidance, GhostEdgeGuidance, CollaborationGuidance) {
+    function ($, jsPlumb, IWCW, Util, NodeAddOperation, NodeDeleteOperation, EdgeAddOperation, EdgeDeleteOperation, ToolSelectOperation, EntitySelectOperation, ActivityOperation, ExportDataOperation, ExportMetaModelOperation, ExportLogicalGuidanceRepresentationOperation, ExportImageOperation, PerformCvgOperation, DeleteCvgOperation, ShowGuidanceBoxOperation, CanvasViewChangeOperation, RevokeSharedActivityOperation, MoveCanvasOperation, GuidanceStrategyOperation, AbstractEntity, ModelAttributesNode, EntityManager, HistoryManager, AbstractCanvas, MoveTool, GuidanceBox, SelectToolGuidance, SetPropertyGuidance, GhostEdgeGuidance, CollaborationGuidance) {
 
         Canvas.prototype = new AbstractCanvas();
         Canvas.prototype.constructor = Canvas;
@@ -119,7 +119,7 @@ define([
             var _ghostEdges = [];
             var _guidanceBoxEntityId = null;
 
-            $(window).resize(function() {
+            $(window).resize(function () {
                 sendViewChangeOperation();
             });
 
@@ -127,7 +127,7 @@ define([
              * Apply a Tool Select Operation
              * @param {ToolSelectOperation} operation
              */
-            var processToolSelectOperation = function(operation) {
+            var processToolSelectOperation = function (operation) {
                 that.mountTool(operation.getSelectedToolName());
             };
 
@@ -136,7 +136,7 @@ define([
              * @param {operations.ot.NodeAddOperation} operation
              * @param {Y.Map} ymap
              */
-            var processNodeAddOperation = function(operation) {
+            var processNodeAddOperation = function (operation) {
                 var node;
                 if (operation.getJSON()) {
                     node = EntityManager.createNodeFromJSON(operation.getType(), operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex(), operation.getJSON());
@@ -160,12 +160,11 @@ define([
             /**
              * Propagate a Node Add Operation to the remote users and the local widgets
              * @param {operations.ot.NodeAddOperation} operation
-             * @param {Y.Map} ymap
              */
-            var propagateNodeAddOperation = function(operation, ymap) {
-                processNodeAddOperation(operation, ymap);
+            var propagateNodeAddOperation = function (operation) {
+                processNodeAddOperation(operation);
                 $('#save').click();
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
+                //_iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP, operation.getOTOperation());
                 y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(
@@ -182,7 +181,7 @@ define([
              * @param {operations.ot.EdgeAddOperation} operation
              * @param {Y.Map} ymap
              */
-            var processEdgeAddOperation = function(operation) {
+            var processEdgeAddOperation = function (operation) {
                 var edge;
 
                 if (operation.getJSON()) {
@@ -201,20 +200,17 @@ define([
 
 
             };
-
             /**
              * Propagate an Edge Add Operation to the remote users and the local widgets
              * @param {operations.ot.EdgeAddOperation} operation
-             * @param {Y.Map} ymap
              */
-            var propagateEdgeAddOperation = function(operation, ymap) {
+            var propagateEdgeAddOperation = function (operation) {
                 var sourceNode = EntityManager.findNode(operation.getSource());
                 var targetNode = EntityManager.findNode(operation.getTarget());
 
-                processEdgeAddOperation(operation, ymap);
+                processEdgeAddOperation(operation);
                 $('#save').click();
 
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
                 y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(
                     "EdgeAddActivity",
@@ -235,9 +231,8 @@ define([
              * Callback for a remote Node Add Operation
              * @param {operations.ot.NodeAddOperation} operation
              */
-            var remoteNodeAddCallback = function(operation) {
+            var remoteNodeAddCallback = function (operation) {
                 if (operation instanceof NodeAddOperation) {
-                    _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
                     _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP, operation.getOTOperation());
                     if (operation.getViewId() === EntityManager.getViewId() && EntityManager.getLayer() === CONFIG.LAYER.META) {
                         processNodeAddOperation(operation);
@@ -267,54 +262,25 @@ define([
                             node = EntityManager.createNode(type, operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex());
                         }
 
-
-                        if (y) {
-                            y.share.nodes.get(node.getEntityId()).then(function(map) {
-                                node.registerYMap(map);
-
-                                node.draw();
-                                node.addToCanvas(that);
-                                node.bindMoveToolEvents();
-                                //if we are in a view but the view type got no mapping in this view -> hide the element
-                                if (!viewType && EntityManager.getViewId()) {
-                                    node.hide();
-                                } else {
-                                    /*if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()){
-                                     var color = _iwcw.getUserColor(operation.getJabberId());
-                                     node.refreshTraceAwareness(color);
-                                     }*/
-                                    if (y.share.users.get(y.db.userId) !== operation.getJabberId()) {
-                                        var color = Util.getColor(y.share.userList.get(operation.getJabberId()).globalId);
-                                        node.refreshTraceAwareness(color);
-                                    }
-                                }
-                                that.remountCurrentTool();
-                            });
-                        }
-                        else {
-                            node.draw();
-                            node.addToCanvas(that);
-                            //if we are in a view but the view type got no mapping in this view -> hide the element
-                            if (!viewType && EntityManager.getViewId()) {
-                                node.hide();
-                            } else {
-                                /*
-                                 if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()){
-                                 var color = _iwcw.getUserColor(operation.getJabberId());
-                                 node.refreshTraceAwareness(color);
-                                 }*/
-                                if (y.share.users.get(y.db.userId) !== operation.getJabberId()) {
-                                    var color = Util.getColor(y.share.userList.get(operation.getJabberId()).globalId);
-                                    node.refreshTraceAwareness(color);
-                                }
+                        node.registerYMap();
+                        node.draw();
+                        node.addToCanvas(that);
+                        //if we are in a view but the view type got no mapping in this view -> hide the element
+                        if (!viewType && EntityManager.getViewId()) {
+                            node.hide();
+                        } else {
+                            if (y.share.users.get(y.db.userId) !== operation.getJabberId()) {
+                                var color = Util.getColor(y.share.userList.get(operation.getJabberId()).globalId);
+                                node.refreshTraceAwareness(color);
                             }
-                            that.remountCurrentTool();
                         }
+                        that.remountCurrentTool();
                     }
+
                 }
             };
 
-            var sendViewChangeOperation = function() {
+            var sendViewChangeOperation = function () {
                 var canvasFrame = $("#canvas-frame");
                 var operation = new CanvasViewChangeOperation(_$node.position().left, _$node.position().top, canvasFrame.width(), canvasFrame.height(), _zoom);
                 _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.HEATMAP, operation.toNonOTOperation());
@@ -324,12 +290,10 @@ define([
              * Callback for a remote Edge Add Operation
              * @param {operations.ot.EdgeAddOperation} operation
              */
-            var remoteEdgeAddCallback = function(operation) {
+            var remoteEdgeAddCallback = function (operation) {
                 if (operation instanceof EdgeAddOperation) {
                     var sourceNode = EntityManager.findNode(operation.getSource());
                     var targetNode = EntityManager.findNode(operation.getTarget());
-
-                    _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
 
                     if (operation.getViewId() === EntityManager.getViewId() || EntityManager.getLayer() === CONFIG.LAYER.META) {
                         processEdgeAddOperation(operation);
@@ -358,30 +322,15 @@ define([
                             edge = EntityManager.createEdge(type, operation.getEntityId(), EntityManager.findNode(operation.getSource()), EntityManager.findNode(operation.getTarget()));
                         }
 
-                        if (y) {
-                            y.share.edges.get(edge.getEntityId()).then(function(map) {
-                                edge.registerYMap(map);
-                                edge.connect();
-                                edge.addToCanvas(that);
+                        edge.registerYMap();
+                        edge.connect();
+                        edge.addToCanvas(that);
 
-                                //if we are in a view but the view type got no mapping in this view -> hide the element
-                                if (!viewType && EntityManager.getViewId()) {
-                                    edge.hide();
-                                }
-                                that.remountCurrentTool();
-                            })
-                        } else {
-                            edge.connect();
-                            edge.addToCanvas(that);
-
-                            //if we are in a view but the view type got no mapping in this view -> hide the element
-                            if (!viewType && EntityManager.getViewId()) {
-                                edge.hide();
-                            }
-                            that.remountCurrentTool();
+                        //if we are in a view but the view type got no mapping in this view -> hide the element
+                        if (!viewType && EntityManager.getViewId()) {
+                            edge.hide();
                         }
-
-
+                        that.remountCurrentTool();
                     }
                 }
             };
@@ -390,19 +339,19 @@ define([
              * Callback for a local Tool Select Operation
              * @param {operations.non_ot.ToolSelectOperation} operation
              */
-            var localToolSelectCallback = function(operation) {
+            var localToolSelectCallback = function (operation) {
                 if (operation instanceof ToolSelectOperation) {
                     processToolSelectOperation(operation);
                 }
             };
 
-            var localShowGuidanceBoxCallback = function(operation) {
+            var localShowGuidanceBoxCallback = function (operation) {
                 if (operation instanceof ShowGuidanceBoxOperation) {
                     processShowGuidanceBoxOperation(operation);
                 }
             };
 
-            var processShowGuidanceBoxOperation = function(operation) {
+            var processShowGuidanceBoxOperation = function (operation) {
                 _guidanceDefinition = operation.getGuidance();
                 _guidanceBoxLabel = operation.getLabel();
                 that.showGuidanceBox(operation.getEntityId());
@@ -412,7 +361,7 @@ define([
              * Callback for a local Export Data Operation
              * @param {operations.non_ot.ExportDataOperation} operation
              */
-            var localExportDataCallback = function(operation) {
+            var localExportDataCallback = function (operation) {
                 if (operation instanceof ExportDataOperation) {
                     operation.setData(EntityManager.graphToJSON());
                     _iwcw.sendLocalNonOTOperation(operation.getRequestingComponent(), operation.toNonOTOperation());
@@ -423,7 +372,7 @@ define([
              * Callback for a local Export Data Operation
              * @param {operations.non_ot.ExportMetaModelOperation} operation
              */
-            var localExportMetaModelCallback = function(operation) {
+            var localExportMetaModelCallback = function (operation) {
                 if (operation instanceof ExportMetaModelOperation) {
                     if (operation.getData() === null) {
                         operation.setData(EntityManager.generateMetaModel());
@@ -441,13 +390,13 @@ define([
                 }
             };
 
-            var localMoveCanvasOperation = function(operation) {
+            var localMoveCanvasOperation = function (operation) {
                 if (operation instanceof MoveCanvasOperation) {
                     that.scrollNodeIntoView(operation.getObjectId(), operation.getTransition());
                 }
             };
 
-            var localExportLogicalGuidanceRepresentationCallback = function(operation) {
+            var localExportLogicalGuidanceRepresentationCallback = function (operation) {
                 if (operation instanceof ExportLogicalGuidanceRepresentationOperation) {
                     if (operation.getData() === null) {
                         operation.setData(EntityManager.generateLogicalGuidanceRepresentation());
@@ -456,28 +405,28 @@ define([
                 }
             };
 
-            var localGuidanceStrategyOperationCallback = function(operation) {
+            var localGuidanceStrategyOperationCallback = function (operation) {
                 if (operation instanceof GuidanceStrategyOperation) {
                     //Just forward the message to remote users
                     y.share.canvas.set(GuidanceStrategyOperation.TYPE, operation.toJSON());
                 }
             };
 
-            var localRevokeSharedActivityOperationCallback = function(operation) {
+            var localRevokeSharedActivityOperationCallback = function (operation) {
                 if (operation instanceof RevokeSharedActivityOperation) {
                     //Just forward the message to remote users
                     y.share.canvas.set(RevokeSharedActivityOperation.TYPE, operation.toJSON());
                 }
             };
 
-            var remoteGuidanceStrategyOperation = function(operation) {
+            var remoteGuidanceStrategyOperation = function (operation) {
                 if (operation instanceof GuidanceStrategyOperation) {
                     //Just forward the message to the local guidance widget
                     _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.toNonOTOperation());
                 }
             };
 
-            var remoteRevokeSharedActivityOperationCallback = function(operation) {
+            var remoteRevokeSharedActivityOperationCallback = function (operation) {
                 if (operation instanceof RevokeSharedActivityOperation) {
                     //Just forward the message to the local guidance widget
                     _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.toNonOTOperation());
@@ -488,9 +437,9 @@ define([
              * Callback for a local Export Data Operation
              * @param {operations.non_ot.ExportImageOperation} operation
              */
-            var localExportImageCallback = function(operation) {
+            var localExportImageCallback = function (operation) {
                 if (operation instanceof ExportImageOperation) {
-                    that.toPNG().then(function(url) {
+                    that.toPNG().then(function (url) {
                         operation.setData(url);
                         _iwcw.sendLocalNonOTOperation(operation.getRequestingComponent(), operation.toNonOTOperation());
                     });
@@ -502,7 +451,7 @@ define([
              * @param {operations.ot.NodeAddOperation} operation
              */
 
-            var init = function() {
+            var init = function () {
                 var $canvasFrame = _$node.parent();
 
                 that.addTool(MoveTool.TYPE, new MoveTool());
@@ -521,16 +470,16 @@ define([
                 });
 
                 _$node.draggable({
-                    start: function() {
+                    start: function () {
                         _$node.draggable("option", "containment", [-_canvasWidth + $canvasFrame.width(), -_canvasHeight + $canvasFrame.height(), 0, 0]);
                         _$node.draggable("option", "containment", [-_canvasWidth + $canvasFrame.width(), -_canvasHeight + $canvasFrame.height(), 0, 0]);
                     },
-                    drag: function(event, ui) {
+                    drag: function (event, ui) {
 
                         //ui.position.left = Math.round(ui.position.left  / _zoom);
                         //ui.position.top = Math.round(ui.position.top / _zoom);
                     },
-                    stop: function() {
+                    stop: function () {
                         sendViewChangeOperation();
 
                     }
@@ -544,7 +493,7 @@ define([
                         scalable: false
                     });
                 }
-                _$node.mousewheel(function(event) {
+                _$node.mousewheel(function (event) {
                     that.setZoom(that.getZoom() + 0.1 * event.deltaY);
                     event.preventDefault();
                 });
@@ -556,11 +505,11 @@ define([
              * Get jQuery object of DOM node representing the canvas
              * @returns {jQuery}
              */
-            this.get$node = function() {
+            this.get$node = function () {
                 return _$node;
             };
 
-            this.showGuidanceBox = function(entityId) {
+            this.showGuidanceBox = function (entityId) {
                 this.hideGuidanceBox();
                 var entity;
                 if (typeof (entityId) == 'undefined') {
@@ -640,7 +589,7 @@ define([
                 _guidanceBox.draw();
             };
 
-            this.hideGuidanceBox = function() {
+            this.hideGuidanceBox = function () {
                 if (_guidanceBox !== null)
                     _guidanceBox.remove();
                 _guidanceBox = null;
@@ -654,7 +603,7 @@ define([
              * Set model attributes
              * @param {canvas_widget.ModelAttributesNode} node
              */
-            this.setModelAttributesNode = function(node) {
+            this.setModelAttributesNode = function (node) {
                 _modelAttributesNode = node;
             };
 
@@ -662,7 +611,7 @@ define([
              * Get model attributes
              * @returns {canvas_widget.ModelAttributesNode}
              */
-            this.getModelAttributesNode = function() {
+            this.getModelAttributesNode = function () {
                 return _modelAttributesNode;
             };
 
@@ -670,7 +619,7 @@ define([
             /**
              * Calls an event listener
              */
-            this.callListeners = function() {
+            this.callListeners = function () {
                 var i,
                     numOfCallbacks;
                 //noinspection JSAccessibilityCheck
@@ -689,7 +638,7 @@ define([
              * @param {string} name Name of event
              * @param {function} callback Event Listener
              */
-            this.registerListener = function(name, callback) {
+            this.registerListener = function (name, callback) {
                 if (CONFIG.CANVAS.LISTENERS.hasOwnProperty(name) && typeof callback === "function") {
                     this.unregisterListener(name, callback);
                     (_listeners[name] || (_listeners[name] = [])).push(callback);
@@ -701,7 +650,7 @@ define([
              * @param {string} name Name of event
              * @param {function} callback Event Listener which has previously been registered
              */
-            this.unregisterListener = function(name, callback) {
+            this.unregisterListener = function (name, callback) {
                 var i,
                     numOfCallbacks;
 
@@ -717,7 +666,7 @@ define([
             /**
              * Bind events for move tool
              */
-            this.bindMoveToolEvents = function() {
+            this.bindMoveToolEvents = function () {
 
                 //Enable Canvas Dragging
                 _$node.draggable("enable");
@@ -732,7 +681,7 @@ define([
                 $.contextMenu({
                     selector: '#' + _$node.attr('id'),
                     zIndex: AbstractEntity.CONTEXT_MENU_Z_INDEX,
-                    build: function($trigger, e) {
+                    build: function ($trigger, e) {
                         if (_selectedEntity === null) {
                             return {
                                 items: {
@@ -780,7 +729,7 @@ define([
             /**
              * Bind events for move tool
              */
-            this.unbindMoveToolEvents = function() {
+            this.unbindMoveToolEvents = function () {
 
                 //Disable Canvas Dragging
                 _$node.draggable("disable");
@@ -798,7 +747,7 @@ define([
              * Select an entity
              * @param {canvas_widget.AbstractNode|canvas_widget.AbstractEdge} entity
              */
-            this.select = function(entity) {
+            this.select = function (entity) {
                 if (_selectedEntity != entity) {
                     if (_selectedEntity)
                         _selectedEntity.unselect();
@@ -828,7 +777,7 @@ define([
              * Get entity currently selected
              * @return {canvas_widget.AbstractNode|canvas_widget/AbstractEdge}
              */
-            this.getSelectedEntity = function() {
+            this.getSelectedEntity = function () {
                 return _selectedEntity;
             };
 
@@ -836,7 +785,7 @@ define([
              * Set zoom level (between 0.5 and 2, default is 1)
              * @param {number} zoom
              */
-            this.setZoom = function(zoom) {
+            this.setZoom = function (zoom) {
                 if (zoom < 0.1 || zoom > 2) {
                     return;
                 }
@@ -856,7 +805,7 @@ define([
                 sendViewChangeOperation();
             };
 
-            this.showGhostEdge = function(sourceId, targetId, relationshipType) {
+            this.showGhostEdge = function (sourceId, targetId, relationshipType) {
                 var source = EntityManager.findNode(sourceId);
                 var target = EntityManager.findNode(targetId);
                 if (!source || !target) {
@@ -889,7 +838,7 @@ define([
                 }
             };
 
-            this.highlightEntity = function(entityId) {
+            this.highlightEntity = function (entityId) {
                 var entity = EntityManager.findNode(entityId);
 
                 if (entity)
@@ -900,7 +849,7 @@ define([
                 }
             };
 
-            this.unhighlightEntity = function(entityId) {
+            this.unhighlightEntity = function (entityId) {
                 var entity = EntityManager.findNode(entityId);
 
                 if (!entity)
@@ -913,14 +862,14 @@ define([
              * Get zoom level
              * @returns {number}
              */
-            this.getZoom = function() {
+            this.getZoom = function () {
                 return _zoom;
             };
 
             /**
              * Reset the currently mounted tool back to the Move Tool
              */
-            this.resetTool = function() {
+            this.resetTool = function () {
                 var operation = new ToolSelectOperation(MoveTool.TYPE);
 
                 _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation.toNonOTOperation());
@@ -941,7 +890,7 @@ define([
              * @param {string} identifier the identifier of the node, if null a new id is generated
              * @return {number} id of new node
              */
-            this.createNode = function(type, left, top, width, height, zIndex, json, identifier, historyFlag) {
+            this.createNode = function (type, left, top, width, height, zIndex, json, identifier, historyFlag) {
                 var id, oType = null;
                 if (identifier)
                     id = identifier;
@@ -955,8 +904,9 @@ define([
                 var operation = new NodeAddOperation(id, type, left, top, width, height, zIndex, json || null, EntityManager.getViewId(), oType, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
 
                 propagateNodeAddOperation(operation);
-                if (y)
+                if (y) {
                     y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
+                }
                 if (!historyFlag)
                     HistoryManager.add(operation);
             };
@@ -970,7 +920,7 @@ define([
              * @param {string} identifier the identifier of the edge
              * @return {number} id of new edge
              */
-            this.createEdge = function(type, source, target, json, identifier, historyFlag) {
+            this.createEdge = function (type, source, target, json, identifier, historyFlag) {
                 var id = null, oType = null;
 
                 if (identifier)
@@ -990,7 +940,7 @@ define([
                     HistoryManager.add(operation);
             };
 
-            this.scrollNodeIntoView = function(nodeId) {
+            this.scrollNodeIntoView = function (nodeId) {
                 var frameOffset = $("#canvas-frame").offset();
                 var frameWidth = $("#canvas-frame").width();
                 var frameHeight = $("#canvas-frame").height();
@@ -1027,7 +977,7 @@ define([
              * Convert current canvas content to PNG image file
              * @return {string} Data-URI of generated PNG image
              */
-            this.toPNG = function() {
+            this.toPNG = function () {
                 var $renderedCanvas = $('<canvas></canvas>').insertAfter(_$node).attr('width', _$node.width()).attr('height', _$node.height()),
                     ctx = $renderedCanvas[0].getContext('2d'),
                     deferred = $.Deferred(),
@@ -1046,9 +996,9 @@ define([
                 ctx.fill();
 
 
-                _.each(_.sortBy($.makeArray(_$node.children()), function(e) {
+                _.each(_.sortBy($.makeArray(_$node.children()), function (e) {
                     return $(e).css('zIndex');
-                }), function(e) {
+                }), function (e) {
                     var $this = $(e);
                     if (typeof ($this.attr('id')) === 'undefined' ||
                         (!$this.attr('id').startsWith('modelAttributes') &&
@@ -1057,7 +1007,7 @@ define([
                     }
                 });
 
-                $.when.apply($, promises).then(function() {
+                $.when.apply($, promises).then(function () {
                     var tempCanvas = document.createElement("canvas"),
                         tCtx = tempCanvas.getContext("2d"),
                         minLeft = _canvasWidth,
@@ -1119,7 +1069,7 @@ define([
              * @param ctx Canvas context
              * @returns {promise}
              */
-            var convertNodeTreeToCanvas = function($node, ctx) {
+            var convertNodeTreeToCanvas = function ($node, ctx) {
 
                 function drawSVGOnCanvas(ctx, svgMarkup, x, y) {
                     var svg = new Blob([svgMarkup], {
@@ -1130,13 +1080,13 @@ define([
                         img = new Image(),
                         deferred = $.Deferred();
 
-                    img.onload = function() {
+                    img.onload = function () {
                         ctx.drawImage(img, x, y);
                         DOMURL.revokeObjectURL(url);
                         deferred.resolve();
                     };
                     img.src = url;
-                    setTimeout(function() {
+                    setTimeout(function () {
                         deferred.resolve();
                     }, 500);
                     return deferred.promise();
@@ -1223,7 +1173,7 @@ define([
                         '>': '&gt;'
                     };
 
-                    value = $.trim(value).replace(/[&<>]/g, function(tag) {
+                    value = $.trim(value).replace(/[&<>]/g, function (tag) {
                         return tagsToReplace[tag] || tag;
                     });
 
@@ -1278,17 +1228,17 @@ define([
 
                 var contents = $node.contents();
 
-                return convertNodeToSVG($node).then(function() {
+                return convertNodeToSVG($node).then(function () {
                     var promises = [];
                     if (contents.length !== 1 || contents[0].nodeType !== Node.TEXT_NODE) {
-                        contents.each(function() {
+                        contents.each(function () {
                             var $this = $(this);
                             if ($node[0].nodeName.toLowerCase() !== 'svg') {
                                 promises.push(convertNodeTreeToCanvas($this, ctx));
                             }
                         });
                     }
-                    return $.when.apply($, promises).then(function() {
+                    return $.when.apply($, promises).then(function () {
                         return true;
                     });
                 });
@@ -1297,7 +1247,7 @@ define([
             /**
              * Register inter widget communication callbacks
              */
-            this.registerCallbacks = function() {
+            this.registerCallbacks = function () {
                 _iwcw.registerOnDataReceivedCallback(localToolSelectCallback);
                 _iwcw.registerOnDataReceivedCallback(localExportDataCallback);
                 _iwcw.registerOnDataReceivedCallback(localExportMetaModelCallback);
@@ -1317,7 +1267,7 @@ define([
             /**
              * Unregister inter widget communication callbacks
              */
-            this.unregisterCallbacks = function() {
+            this.unregisterCallbacks = function () {
                 _iwcw.unregisterOnDataReceivedCallback(localToolSelectCallback);
                 _iwcw.unregisterOnDataReceivedCallback(localExportDataCallback);
                 _iwcw.unregisterOnDataReceivedCallback(localExportMetaModelCallback);
@@ -1342,7 +1292,7 @@ define([
              */
             function CvgCallback(operation) {
                 if (operation instanceof PerformCvgOperation) {
-                    require(['canvas_widget/ClosedViewGeneration'], function(CVG) {
+                    require(['canvas_widget/ClosedViewGeneration'], function (CVG) {
                         CVG(that, operation.getJSON());
                     });
                 }
@@ -1366,7 +1316,7 @@ define([
             init();
 
             if (y) {
-                y.share.canvas.observe(function(event) {
+                y.share.canvas.observe(function (event) {
                     var yUserId = event.object.map[event.name][0];
 
                     if (yUserId !== y.db.userId || event.value.historyFlag) {
@@ -1412,7 +1362,7 @@ define([
                     }
                 });
 
-                y.share.select.observe(function(event) {
+                y.share.select.observe(function (event) {
                     if (event.name !== y.db.userId) {
 
                         var userInfo = y.share.userList.get(y.share.users.get(event.name));
@@ -1432,7 +1382,7 @@ define([
                     }
                 });
 
-                y.share.nodes.observe(function(event) {
+                y.share.nodes.observe(function (event) {
                     switch (event.type) {
                         case 'delete':
                             {
@@ -1442,10 +1392,9 @@ define([
                                 break;
                             }
                     }
-
                 });
 
-                y.share.edges.observe(function(event) {
+                y.share.edges.observe(function (event) {
                     switch (event.type) {
                         case 'delete':
                             {

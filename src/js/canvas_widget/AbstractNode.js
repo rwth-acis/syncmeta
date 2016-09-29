@@ -37,6 +37,12 @@ define([
     function AbstractNode(id, type, left, top, width, height, zIndex) {
         var that = this;
 
+          /**
+         * Inter widget communication wrapper
+         * @type {Object}
+         * @private
+         */
+        var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
         /**y-map instances which belongs to the node
          * @type {Y.Map}
          * @private
@@ -53,6 +59,9 @@ define([
                  _ymap.set('width', width);
                  _ymap.set('height', height);
                  _ymap.set('zIndex', zIndex);
+                 _ymap.set('type', type);
+                 _ymap.set('id',id);
+                 _ymap.set('jabberId', _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
              }
          }
          this.getYMap = function() {
@@ -119,12 +128,6 @@ define([
             });
         }, 3000);
 
-        /**
-         * Inter widget communication wrapper
-         * @type {Object}
-         * @private
-         */
-        var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
 
         /**
          * Attributes of node
@@ -1205,7 +1208,7 @@ define([
             _ymap.observe(function(event) {
                 var yUserId = event.object.map[event.name][0];
 
-                if (y.db.userId !== yUserId || event.value.historyFlag) {
+                if (y.db.userId !== yUserId || (event.value && event.value.historyFlag)) {
                     var operation;
                     var data = event.value;
                     var jabberId = y.share.users.get(yUserId);

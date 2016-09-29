@@ -82,10 +82,8 @@ define([
             _value.setValueFromJSON(json.value);
         };
 
-        this.registerYType = function(ytext){
-            if(ytext)
-                _value.registerYType(ytext);
-
+        this.registerYType = function(){
+            _value.registerYType();
         };
 
         _$node.find(".name").text(this.getName());
