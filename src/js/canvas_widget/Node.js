@@ -221,7 +221,10 @@ define([
             init();
 
             this.registerYMap = function(){
-                AbstractNode.prototype.registerYMap.call(this,map);
+                AbstractNode.prototype.registerYMap.call(this);
+                var labelAttr = that.getLabel();
+                if(labelAttr)
+                    labelAttr.registerYType();
                 var attr = that.getAttributes();
                 for(var key in attr){
                     if(attr.hasOwnProperty(key)){

@@ -1,7 +1,6 @@
 requirejs(['jqueryui', 'lodash', 'lib/yjs-sync', 'canvas_widget/GenerateViewpointModel'], function($, _, yjsSync, GenerateViewpointModel) {
     $(function() {
         yjsSync().done(function(y) {
-            window.y = y;
             console.info('DEBUG: Yjs successfully initialized');
 
             var $deleteMetamodel = $("#delete-meta-model").prop('disabled', false),

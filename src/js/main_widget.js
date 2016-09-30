@@ -60,7 +60,6 @@ requirejs([
     _iwcw.setSpace(space);
 
     yjsSync().done(function(y) {
-        window.y = y;
         console.info('CANVAS: Yjs Initialized successfully');
 
         y.share.users.set(y.db.userId, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
@@ -70,13 +69,13 @@ requirejs([
         y.share.userList.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], userInfo);
         var metamodel = y.share.data.get('metamodel');
         var model = y.share.data.get('model');
-        InitMainWidget(metamodel, model);
+        InitMainWidget(metamodel, model, y);
     }).fail(function() {
         console.info("yjs log: Yjs intialization failed!");
         window.y = undefined;
         InitMainWidget();
     });
-    function InitMainWidget(metamodel, model) {
+    function InitMainWidget(metamodel, model, y) {
         if (guidancemodel.isGuidanceEditor()) {
             //Set the model which is shown by the editor to the guidancemodel
             model = y.share.data.get('guidancemodel');
@@ -84,7 +83,9 @@ requirejs([
             metamodel = y.share.data.get('guidancemetamodel');
         }
         EntityManager.init(metamodel, guidancemodel);
-
+        
+        window.y = y;
+        
         var userList = [];
         var canvas = new Canvas($("#canvas"));
         HistoryManager.init(canvas);
@@ -427,7 +428,6 @@ requirejs([
                 }
             })
         }
-
         //Functions and Callbacks for the view-based modeling approach
         var ShowViewCreateMenu = function() {
             $('#btnCreateViewpoint').hide();
