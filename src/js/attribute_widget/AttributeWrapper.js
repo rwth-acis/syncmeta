@@ -208,7 +208,7 @@ define([
                                     break;
                                 }
                                 default:
-                                    if (nodeEvent.name.search(/\w*\[(\w|\s)*\]/g) != -1) {
+                                    if (nodeEvent.name.search(/\w*\[(\w|\s)*\]/g) != -1 && nodeEvent.type !='delete') {
                                         var node = EntityManager.findNode(nodeEvent.object.get('id'));
                                         if (node.getLabel().getEntityId() === nodeEvent.name)
                                             node.getLabel().getValue().registerYType(nodeEvent.object.get(nodeEvent.name));

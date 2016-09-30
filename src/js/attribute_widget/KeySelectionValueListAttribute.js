@@ -186,21 +186,7 @@ define([
             });
         };
 
-        /**
-         * Register inter widget communication callbacks
-         */
-        this.registerCallbacks = function () {
-            iwc.registerOnDataReceivedCallback(attributeAddCallback);
-            iwc.registerOnDataReceivedCallback(attributeDeleteCallback);
-        };
-
-        /**
-         * Unregister inter widget communication callbacks
-         */
-        this.unregisterCallbacks = function () {
-            iwc.unregisterOnDataReceivedCallback(attributeAddCallback);
-            iwc.unregisterOnDataReceivedCallback(attributeDeleteCallback);
-        };
+       
 
         _$node.find(".name").text(this.getName());
         for (var attrId in _list) {
@@ -215,15 +201,19 @@ define([
 
         });
 
-        if (iwc) {
-            that.registerCallbacks();
-        }
-        y.share.nodes.get(subjectEntity.getEntityId()).observe(function (event) {
-            switch (event.name) {
-                case AttributeAddOperation.TYPE: {
-                    var data = event.value;
-                    attributeAddCallback(new AttributeAddOperation(data.entityId, data.subjectEntityId, data.rootSubjectEntityId, data.type, data.data));
-                    break;
+        y.share.nodes.get(subjectEntity.getEntityId()).observe(function(event) {
+            if (event.name.indexOf('[key]') != -1) {
+                switch (event.type) {
+                    case 'add': {
+                        operation = new AttributeAddOperation(event.name.replace(/\[\w*\]/g, ''), that.getEntityId(), that.getRootSubjectEntity().getEntityId(), that.constructor.name);
+                        attributeAddCallback(operation);
+                        break;
+                    }
+                    case 'delete':{
+                        operation = new AttributeDeleteOperation(event.name.replace(/\[\w*\]/g, ''), that.getEntityId(), that.getRootSubjectEntity().getEntityId(), that.constructor.name);
+                        attributeDeleteCallback(operation);
+                        break;
+                    }
                 }
             }
         })

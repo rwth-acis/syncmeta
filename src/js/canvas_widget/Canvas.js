@@ -1364,7 +1364,6 @@ define([
 
                 y.share.select.observe(function (event) {
                     if (event.name !== y.db.userId) {
-
                         var userInfo = y.share.userList.get(y.share.users.get(event.name));
                         if (event.oldValue != null) {
                             var unselectedEntity = EntityManager.find(event.oldValue);

@@ -73,7 +73,6 @@ define([
 
          */
         var propagateAttributeDeleteOperation = function(operation){
-            //processAttributeDeleteOperation(operation);
             _iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.getOTOperation());
         };
 

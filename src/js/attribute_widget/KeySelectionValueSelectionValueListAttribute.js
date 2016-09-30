@@ -9,7 +9,7 @@ define([
     'attribute_widget/AbstractAttribute',
     'attribute_widget/KeySelectionValueSelectionValueAttribute',
     'text!templates/attribute_widget/list_attribute.html'
-], function ($, jsPlumb, _, IWCW, Util, AttributeAddOperation, AttributeDeleteOperation, AbstractAttribute, KeySelectionValueSelectionValueAttribute, keySelectionValueSelectionValueListAttributeHtml) {
+], function($, jsPlumb, _, IWCW, Util, AttributeAddOperation, AttributeDeleteOperation, AbstractAttribute, KeySelectionValueSelectionValueAttribute, keySelectionValueSelectionValueListAttributeHtml) {
 
     KeySelectionValueSelectionValueListAttribute.prototype = new AbstractAttribute();
     KeySelectionValueSelectionValueListAttribute.prototype.constructor = KeySelectionValueSelectionValueListAttribute;
@@ -68,11 +68,11 @@ define([
          * Apply an Attribute Add Operation
          * @param {operations.ot.AttributeDeleteOperation} operation
          */
-        var processAttributeAddOperation = function (operation) {
+        var processAttributeAddOperation = function(operation) {
             var attribute = new KeySelectionValueSelectionValueAttribute(operation.getEntityId(), "Attribute", that, _options, _options2);
             var ymap = y.share.nodes.get(subjectEntity.getEntityId());
             //this is strange if i call processAttributeAddOperation for this time ytext is undefined, but it shouldn't 
-            setTimeout(function () {
+            setTimeout(function() {
                 var ytext = ymap.get(attribute.getKey().getEntityId());
                 attribute.getKey().registerYType(ytext);
             }, 200);
@@ -84,7 +84,7 @@ define([
          * Apply an Attribute Delete Operation
          * @param {operations.ot.AttributeDeleteOperation} operation
          */
-        var processAttributeDeleteOperation = function (operation) {
+        var processAttributeDeleteOperation = function(operation) {
             var attribute = that.getAttribute(operation.getEntityId());
             if (attribute) {
                 that.deleteAttribute(attribute.getEntityId());
@@ -96,7 +96,7 @@ define([
          * Callback for an Attribute Delete Operation
          * @param {operations.ot.AttributeDeleteOperation} operation
          */
-        var attributeDeleteCallback = function (operation) {
+        var attributeDeleteCallback = function(operation) {
             if (operation instanceof AttributeDeleteOperation && operation.getRootSubjectEntityId() === that.getRootSubjectEntity().getEntityId() && operation.getSubjectEntityId() === that.getEntityId()) {
                 processAttributeDeleteOperation(operation);
             }
@@ -106,15 +106,15 @@ define([
          * Propagate an Attribute Add Operation to the remote users and the local widgets
          * @param {operations.ot.AttributeDeleteOperation} operation
          */
-        this.propagateAttributeAddOperation = function (operation) {
+        this.propagateAttributeAddOperation = function(operation) {
             iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN, operation.getOTOperation());
         };
 
-         /**
-         * Callback for an Attribute Add Operation
-         * @param {operations.ot.AttributeAddOperation} operation
-         */
-        var attributeAddCallback = function (operation) {
+        /**
+        * Callback for an Attribute Add Operation
+        * @param {operations.ot.AttributeAddOperation} operation
+        */
+        var attributeAddCallback = function(operation) {
             if (operation instanceof AttributeAddOperation && operation.getRootSubjectEntityId() === that.getRootSubjectEntity().getEntityId() && operation.getSubjectEntityId() === that.getEntityId()) {
                 processAttributeAddOperation(operation);
             }
@@ -124,7 +124,7 @@ define([
          * Add attribute to attribute list
          * @param {attribute_widget.AbstractAttribute} attribute
          */
-        this.addAttribute = function (attribute) {
+        this.addAttribute = function(attribute) {
             var id = attribute.getEntityId();
             if (!_list.hasOwnProperty(id)) {
                 _list[id] = attribute;
@@ -136,7 +136,7 @@ define([
          * @param id
          * @returns {attribute_widget.AbstractAttribute}
          */
-        this.getAttribute = function (id) {
+        this.getAttribute = function(id) {
             if (_list.hasOwnProperty(id)) {
                 return _list[id];
             }
@@ -147,7 +147,7 @@ define([
          * Delete attribute from attribute list by its entity id
          * @param {string} id
          */
-        this.deleteAttribute = function (id) {
+        this.deleteAttribute = function(id) {
             if (_list.hasOwnProperty(id)) {
                 delete _list[id];
             }
@@ -158,7 +158,7 @@ define([
          * Get attribute list
          * @returns {Object}
          */
-        this.getAttributes = function () {
+        this.getAttributes = function() {
             return _list;
         };
 
@@ -166,7 +166,7 @@ define([
          * Set attribute list
          * @param {Object} list
          */
-        this.setAttributes = function (list) {
+        this.setAttributes = function(list) {
             _list = list;
         };
 
@@ -174,7 +174,7 @@ define([
          * Get jQuery object of the DOM node representing the attribute (list)
          * @returns {jQuery}
          */
-        this.get$node = function () {
+        this.get$node = function() {
             return _$node;
         };
 
@@ -182,8 +182,8 @@ define([
          * Set attribute list by its JSON representation
          * @param json
          */
-        this.setValueFromJSON = function (json) {
-            _.forEach(json.list, function (val, key) {
+        this.setValueFromJSON = function(json) {
+            _.forEach(json.list, function(val, key) {
                 var attribute = new KeySelectionValueSelectionValueAttribute(key, key, that, _options, _options2);
                 attribute.setValueFromJSON(json.list[key]);
                 if (attr = that.getAttribute(attribute.getEntityId())) {
@@ -198,14 +198,14 @@ define([
         /**
          * Register inter widget communication callbacks
          */
-        this.registerCallbacks = function () {
+        this.registerCallbacks = function() {
             iwc.registerOnDataReceivedCallback(attributeDeleteCallback);
         };
 
         /**
          * Unregister inter widget communication callbacks
          */
-        this.unregisterCallbacks = function () {
+        this.unregisterCallbacks = function() {
             iwc.unregisterOnDataReceivedCallback(attributeDeleteCallback);
         };
 
@@ -215,7 +215,7 @@ define([
                 _$node.find(".list").append(_list[attrId].get$node());
             }
         }
-        _$node.find(".ui-icon-plus").click(function () {
+        _$node.find(".ui-icon-plus").click(function() {
             var id = Util.generateRandomId();
             var operation = new AttributeAddOperation(id, that.getEntityId(), that.getRootSubjectEntity().getEntityId(), KeySelectionValueSelectionValueAttribute.TYPE);
             that.propagateAttributeAddOperation(operation);
@@ -224,12 +224,18 @@ define([
         if (iwc) {
             that.registerCallbacks();
         }
-        y.share.nodes.get(subjectEntity.getEntityId()).observe(function (event) {
-            switch (event.name) {
-                case AttributeAddOperation.TYPE: {
-                    var data = event.value;
-                    attributeAddCallback(new AttributeAddOperation(data.entityId, data.subjectEntityId, data.rootSubjectEntityId, data.type, data.data));
-                    break;
+        y.share.nodes.get(subjectEntity.getEntityId()).observe(function(event) {
+            if (event.name.indexOf('[key]') != -1) {
+                switch (event.type) {
+                    case 'add': {
+                        operation = new AttributeAddOperation(event.name.replace(/\[\w*\]/g, ''), that.getEntityId(), that.getRootSubjectEntity().getEntityId(), that.constructor.name);
+                        attributeAddCallback(operation);
+                        break;
+                    }
+                    case 'delete': {
+                        operation = new AttributeDeleteOperation(event.name.replace(/\[\w*\]/g, ''), that.getEntityId(), that.getRootSubjectEntity().getEntityId(), that.constructor.name);
+                        attributeDeleteCallback(operation);
+                    }
                 }
             }
         })

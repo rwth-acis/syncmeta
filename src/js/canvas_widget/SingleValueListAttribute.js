@@ -73,20 +73,22 @@ define([
                 attribute.get$node().remove();
             }
         };
+        /**
+         * Propagate an Attribute Add Operation to the remote users and the local widgets
+         * @param {operations.ot.AttributeAddOperation} operation
+         */
+        var propagateAttributeAddOperation = function (operation) {
+            processAttributeAddOperation(operation);            
+        };
 
         /**
          * Propagate an Attribute Delete Operation to the remote users and the local widgets
          * @param {operations.ot.AttributeDeleteOperation} operation
          */
         var propagateAttributeDeleteOperation = function(operation){
-            //processAttributeDeleteOperation(operation);
-            //_iwcw.sendRemoteOTOperation(operation);
+            processAttributeDeleteOperation(operation);
             var ynode = that.getRootSubjectEntity().getYMap();
-            if(ynode){
-                ynode.set(operation.getEntityId(), Y.Map).then(function(){
-                    ynode.set(AttributeDeleteOperation.TYPE, operation.toJSON());
-                });
-            }
+            ynode.delete(operation.getEntityId());
         };
 
         /**
@@ -105,11 +107,16 @@ define([
          */
         var remoteAttributeDeleteCallback = function(operation){
             if(operation instanceof AttributeDeleteOperation && operation.getRootSubjectEntityId() === that.getRootSubjectEntity().getEntityId() && operation.getSubjectEntityId() === that.getEntityId()){
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
                 processAttributeDeleteOperation(operation);
             }
         };
-
+        
+        var localAttributeAddCallback = function (operation) {
+            if (operation instanceof AttributeAddOperation && operation.getRootSubjectEntityId() === that.getRootSubjectEntity().getEntityId() && operation.getSubjectEntityId() === that.getEntityId()) {
+                propagateAttributeAddOperation(operation);
+            }
+        };
+        
         /**
          * Callback for a local Attribute Delete Operation
          * @param {operations.ot.AttributeDeleteOperation} operation
@@ -208,7 +215,8 @@ define([
         /**
          * Register inter widget communication callbacks
          */
-        this.registerCallbacks = function(){
+        this.registerCallbacks = function() {
+            _iwcw.registerOnDataReceivedCallback(localAttributeAddCallback);
             _iwcw.registerOnDataReceivedCallback(localAttributeDeleteCallback);
         };
 
@@ -242,21 +250,23 @@ define([
             }
 
             ymap.observe(function(event){
+                 var yUserId = event.object.map[event.name][0];
+                if (yUserId === y.db.userId) return; 
                 var operation;
                 var data = event.value;
-                switch (event.name) {
-                    case AttributeAddOperation.TYPE:{
-                        operation = new AttributeAddOperation(data.entityId, data.subjectEntityId, data.rootSubjectEntityId,data.type);
-                        remoteAttributeAddCallback(operation);
-                        break;
-                    }
-                    case AttributeDeleteOperation.TYPE:{
-                        operation = new AttributeDeleteOperation(data.entityId, data.subjectEntityId, data.rootSubjectEntityId,data.type);
-                        remoteAttributeDeleteCallback(operation);
-                        break;
-                    }
-                }
-
+                 if(event.name.indexOf('[value]') != -1){
+                     switch (event.type) {
+                         case 'add': {
+                             operation = new AttributeAddOperation(event.name.replace(/\[\w*\]/g, ''), that.getEntityId(), that.getRootSubjectEntity().getEntityId(), that.constructor.name);
+                             remoteAttributeAddCallback(operation);
+                             break;
+                         }
+                         case 'delete': {
+                             operation = new AttributeDeleteOperation(event.name, that.getEntityId(), that.getRootSubjectEntity().getEntityId(), that.constructor.name);
+                             remoteAttributeDeleteCallback(operation);
+                         }
+                     }
+                 }
             });
         }
     }
