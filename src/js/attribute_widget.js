@@ -32,7 +32,7 @@ requirejs([
                 initializedYTexts: 0,
                 objects: {},
                 errors: {},
-                firstAttemptFail:{}
+                firstAttemptFail: {}
             };
             $('#wrapper').find('h1').text('Successfully connected to Yjs.');
             setTimeout(function() {
@@ -65,36 +65,21 @@ requirejs([
                 if (json.attributes && !_.isEmpty(json.attributes)) {
                     modelAttributesNode = EntityManager.createModelAttributesNodeFromJSON(json.attributes);
                     wrapper.setModelAttributesNode(modelAttributesNode);
-                    try {
-                        modelAttributesNode.registerYType();
-                    }
-                    catch (e) {
-                        //If this fails doesn't matter initialize it with bindYTextCallback
-                    }
+                    modelAttributesNode.registerYType();
                     modelAttributesNode.addToWrapper(wrapper);
-                    //wrapper.select(modelAttributesNode);
+                    wrapper.select(modelAttributesNode);
                 }
                 for (nodeId in json.nodes) {
                     if (json.nodes.hasOwnProperty(nodeId)) {
                         var node = EntityManager.createNodeFromJSON(json.nodes[nodeId].type, nodeId, json.nodes[nodeId].left, json.nodes[nodeId].top, json.nodes[nodeId].width, json.nodes[nodeId].height, json.nodes[nodeId]);
-                        try {
-                            node.registerYType();
-                        } catch (e) {
-                            //If this fails doesn't matter initialize it with bindYTextCallback
-                        }
+                        node.registerYType();
                         node.addToWrapper(wrapper);
                     }
                 }
                 for (edgeId in json.edges) {
                     if (json.edges.hasOwnProperty(edgeId)) {
                         var edge = EntityManager.createEdgeFromJSON(json.edges[edgeId].type, edgeId, json.edges[edgeId].source, json.edges[edgeId].target, json.edges[edgeId]);
-                        try {
-                            edge.registerYType();
-
-                        } catch (e) {
-                            //If this fails doesn't matter initialize it with bindYTextCallback
-
-                        }
+                        edge.registerYType();
                         edge.addToWrapper(wrapper);
                     }
                 }
@@ -110,12 +95,7 @@ requirejs([
                     if (modelAttributesNode === null) {
                         modelAttributesNode = EntityManager.createModelAttributesNode();
                         wrapper.setModelAttributesNode(modelAttributesNode);
-                        try {
-                            modelAttributesNode.registerYType();
-                        }
-                        catch (e) {
-                            //If this fails doesn't matter initialize it with bindYTextCallback
-                        }
+                        modelAttributesNode.registerYType();
                         modelAttributesNode.addToWrapper(wrapper);
                     }
                     wrapper.select(modelAttributesNode);
@@ -144,11 +124,7 @@ requirejs([
                     for (nodeId in json.nodes) {
                         if (json.nodes.hasOwnProperty(nodeId)) {
                             var node = EntityManager.createNodeFromJSON(json.nodes[nodeId].type, nodeId, json.nodes[nodeId].left, json.nodes[nodeId].top, json.nodes[nodeId].width, json.nodes[nodeId].height, json.nodes[nodeId], json.id);
-                            try {
-                                node.registerYType();
-                            } catch (e) {
-                                //If this fails doesn't matter initialize it with bindYTextCallback
-                            }
+                            node.registerYType();
                             node.addToWrapper(wrapper);
                             if (json.nodes[nodeId].attributes.hasOwnProperty(nodeId + '[target]'))
                                 EntityManager.addToMap(json.id, json.nodes[nodeId].attributes[nodeId + '[target]'].value.value, nodeId);
@@ -157,13 +133,7 @@ requirejs([
                     for (edgeId in json.edges) {
                         if (json.edges.hasOwnProperty(edgeId)) {
                             var edge = EntityManager.createEdgeFromJSON(json.edges[edgeId].type, edgeId, json.edges[edgeId].source, json.edges[edgeId].target, json.edges[edgeId], json.id);
-                            try {
-                                edge.registerYType();
-
-                            } catch (e) {
-                                //If this fails doesn't matter initialize it with bindYTextCallback
-
-                            }
+                            edge.registerYType();
                             edge.addToWrapper(wrapper);
                             if (json.edges[edgeId].attributes.hasOwnProperty(nodeId + '[target]'))
                                 EntityManager.addToMap(json.id, json.edges[edgeId].attributes[nodeId + '[target]'].value.value, edgeId);
@@ -181,10 +151,10 @@ requirejs([
             y.share.canvas.observe(function(event) {
                 switch (event.name) {
                     case 'ReloadWidgetOperation': {
-                        setTimeout(function(){
-                              frameElement.contentWindow.location.reload();
-                        },Math.floor(Math.random() * 3000)+ 1000);
-                      
+                        setTimeout(function() {
+                            frameElement.contentWindow.location.reload();
+                        }, Math.floor(Math.random() * 3000) + 1000);
+
                     }
                 }
             });

@@ -71,23 +71,16 @@ define([
         _$node.find(".label").append(this.getLabel().get$node());
 
         this.registerYType = function(){
-            var registerValue = function(ymap, value){
-                ymap.get(value.getEntityId()).then(function(ytext){
-                    value.registerYType(ytext);
-                })
-            };
-
             AbstractNode.prototype.registerYType.call(this);
-            y.share.nodes.get(that.getEntityId()).then(function(ymap){
-                var colorAttr = that.getAttribute(that.getEntityId()+'[color]');
-                registerValue(ymap, colorAttr.getValue());
+            var ymap = y.share.nodes.get(that.getEntityId());
 
-                //var customShapeAttr = that.getAttribute(that.getEntityId()+"[customShape]");
-                //registerValue(ymap, customShapeAttr.getValue());
+            var colorVal = that.getAttribute(that.getEntityId() + '[color]').getValue();
+            var ytextColor = ymap.get(colorVal.getEntityId());
+            colorVal.registerYType(ytextColor);
 
-                var customAnchorAttr = that.getAttribute(that.getEntityId()+"[customAnchors]");
-                registerValue(ymap, customAnchorAttr.getValue());
-            });
+            var customAnchorVal = that.getAttribute(that.getEntityId() + "[customAnchors]").getValue();
+            var ytextCustomAnchor = ymap.get(customAnchorVal.getEntityId());
+            customAnchorVal.registerYType(ytextCustomAnchor);
         };
 
         for(var attributeKey in attributes){

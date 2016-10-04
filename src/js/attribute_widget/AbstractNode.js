@@ -493,12 +493,11 @@ define([
         };
 
         this._registerYType = function () {
-            y.share.nodes.get(that.getEntityId()).then(function (ymap) {
-                if (ytext = ymap.get(that.getLabel().getValue().getEntityId()))
-                    ytext.then(function (ytext) {
-                        that.getLabel().getValue().registerYType(ytext);
-                    })
-            })
+            var ymap = y.share.nodes.get(that.getEntityId());
+            if(ymap){
+                var ytext = ymap.get(that.getLabel().getValue().getEntityId());
+                that.getLabel().getValue().registerYType(ytext);
+            }
         };
 
         if (_iwc) {

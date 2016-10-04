@@ -71,20 +71,15 @@ define([
 
 
         this.registerYType = function(){
-            var registerValue = function(ymap, value){
-                ymap.get(value.getEntityId()).then(function(ytext){
-                    value.registerYType(ytext);
-                })
-            };
-
             AbstractNode.prototype.registerYType.call(this);
-            y.share.nodes.get(that.getEntityId()).then(function(ymap){
-                var colorAttr = that.getAttribute(that.getEntityId()+'[color]');
-                registerValue(ymap, colorAttr.getValue());
+                var ymap = y.share.nodes.get(that.getEntityId());
+                var colorVal = that.getAttribute(that.getEntityId()+'[color]').getValue();
+                var ytextColor = ymap.get(colorVal.getEntityId());
+                colorVal.registerYType(ytextColor);
 
-                var customShapeAttr = that.getAttribute(that.getEntityId()+"[overlay]");
-                registerValue(ymap, customShapeAttr.getValue());
-            });
+                var customShapeVal = that.getAttribute(that.getEntityId()+"[overlay]").getValue();
+                var ytextCustomShape =  ymap.get(customShapeVal.getEntityId());
+                customShapeVal.registerYType(ytextCustomShape);
         };
 
         for(var attributeKey in attributes){

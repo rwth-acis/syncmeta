@@ -97,10 +97,8 @@ define([
             }
         }
 
-
-
-        this.registerYMap = function(map, disableYText) {
-            AbstractNode.prototype.registerYMap.call(this, map);
+        this.registerYMap = function() {
+            AbstractNode.prototype.registerYMap.call(this);
             attrShapeSelect.getValue().registerYType();
             attrWidth.getValue().registerYType();
             attrHeight.getValue().registerYType();

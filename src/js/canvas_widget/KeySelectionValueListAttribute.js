@@ -257,6 +257,7 @@ define([
                 if (attrs.hasOwnProperty(key)) {
                     var attr = attrs[key];
                     attr.getKey().registerYType();
+                    attr.getValue().registerYType();
                 }
             }
 

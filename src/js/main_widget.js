@@ -67,25 +67,26 @@ requirejs([
         if (userInfo.globalId === -1)
             userInfo.globalId = y.share.userList.keysPrimitives().length;
         y.share.userList.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], userInfo);
-        var metamodel = y.share.data.get('metamodel');
-        var model = y.share.data.get('model');
-        InitMainWidget(metamodel, model, y);
-    }).fail(function() {
-        console.info("yjs log: Yjs intialization failed!");
-        window.y = undefined;
-        InitMainWidget();
-    });
-    function InitMainWidget(metamodel, model, y) {
-        if (guidancemodel.isGuidanceEditor()) {
+        var metamodel, model;
+         if (guidancemodel.isGuidanceEditor()) {
             //Set the model which is shown by the editor to the guidancemodel
             model = y.share.data.get('guidancemodel');
             //Set the metamodel to the guidance metamodel
             metamodel = y.share.data.get('guidancemetamodel');
         }
+        else{
+            metamodel = y.share.data.get('metamodel');
+            model = y.share.data.get('model');
+        }
         EntityManager.init(metamodel, guidancemodel);
-        
         window.y = y;
-        
+        InitMainWidget(metamodel, model);
+    }).fail(function() {
+        console.info("yjs log: Yjs intialization failed!");
+        window.y = undefined;
+        InitMainWidget();
+    });
+    function InitMainWidget(metamodel, model) {
         var userList = [];
         var canvas = new Canvas($("#canvas"));
         HistoryManager.init(canvas);

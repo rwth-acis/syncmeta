@@ -7,7 +7,7 @@ define([
     'attribute_widget/BooleanAttribute',
     'attribute_widget/SingleMultiLineValueAttribute',
     'text!templates/attribute_widget/enum_node.html'
-],/** @lends EnumNode */function($,jsPlumb,_,AbstractNode,SingleValueListAttribute,BooleanAttribute,SingleMultiLineValueAttribute,enumNodeHtml) {
+],/** @lends EnumNode */function($, jsPlumb, _, AbstractNode, SingleValueListAttribute, BooleanAttribute, SingleMultiLineValueAttribute, enumNodeHtml) {
 
     EnumNode.TYPE = "Enumeration";
 
@@ -25,16 +25,16 @@ define([
      * @param {number} width Width of node
      * @param {number} height Height of node
      */
-    function EnumNode(id,left,top,width,height){
+    function EnumNode(id, left, top, width, height) {
         var that = this;
-        AbstractNode.call(this,id,EnumNode.TYPE,left,top,width,height);
+        AbstractNode.call(this, id, EnumNode.TYPE, left, top, width, height);
 
         /**
          * jQuery object of node template
          * @type {jQuery}
          * @private
          */
-        var _$template = $(_.template(enumNodeHtml,{}));
+        var _$template = $(_.template(enumNodeHtml, {}));
 
         /**
          * jQuery object of DOM node representing the node
@@ -57,31 +57,26 @@ define([
          */
         var _attributes = this.getAttributes();
 
-        this.addAttribute(new SingleValueListAttribute("[attributes]","Attributes",this));
+        this.addAttribute(new SingleValueListAttribute("[attributes]", "Attributes", this));
 
         _$node.find(".label").append(this.getLabel().get$node());
 
-        this.registerYMap = function(){
-            var registerValue = function(ymap, value){
-                ymap.get(value.getEntityId()).then(function(ytext){
-                    value.registerYType(ytext);
-                })
-            };
-
+        this.registerYMap = function() {
             AbstractNode.prototype.registerYType.call(this);
-            y.share.nodes.get(that.getEntityId()).then(function(ymap){
-                var attrs = _attributes["[attributes]"].getAttributes();
-                for(var attributeKey in attrs){
-                    if(attrs.hasOwnProperty(attributeKey)){
-                        var attr = attrs[attributeKey];
-                        registerValue(ymap,attr.getValue());
-                    }
+            var ymap = y.share.nodes.get(that.getEntityId());
+            var attrs = _attributes["[attributes]"].getAttributes();
+            for (var attributeKey in attrs) {
+                if (attrs.hasOwnProperty(attributeKey)) {
+                    var val = attrs[attributeKey].getValue();
+                    var ytext = ymap.get(val.getEntityId());
+                    val.registerYType(ytext);
                 }
-            });
+            }
+
         };
 
-        for(var attributeKey in _attributes){
-            if(_attributes.hasOwnProperty(attributeKey)){
+        for (var attributeKey in _attributes) {
+            if (_attributes.hasOwnProperty(attributeKey)) {
                 $attributeNode.append(_attributes[attributeKey].get$node());
             }
         }

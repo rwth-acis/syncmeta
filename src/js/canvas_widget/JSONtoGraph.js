@@ -27,15 +27,23 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function($, _, Entit
 
         function createNode(nodeId, jsonNode) {
             var map = y.share.nodes.get(nodeId);
-            var node = EntityManager.createNodeFromJSON(
-                jsonNode.type,
-                nodeId,
-                map.get('left') ? map.get('left') : jsonNode.left,
-                map.get('top') ? map.get('top') : jsonNode.top,
-                map.get('width') ? map.get('width') : jsonNode.width,
-                map.get('height') ? map.get('height') : jsonNode.height,
-                map.get('zIndex') ? map.get('zIndex') : jsonNode.zIndex,
-                jsonNode);
+            
+            var node = null;
+            if(map){
+               node = EntityManager.createNodeFromJSON(
+                jsonNode.type, nodeId,
+                map.get('left'), map.get('top'), 
+                map.get('width'), map.get('height'),
+                map.get('zIndex'), jsonNode);
+            }
+            else{
+               node = EntityManager.createNodeFromJSON(
+                jsonNode.type, nodeId,
+                jsonNode.left, jsonNode.top,
+                jsonNode.width, jsonNode.height,
+                jsonNode.zIndex,jsonNode);
+            }
+                
 
             if (node === undefined) {
                 console.error('SYNCMETA: Node undefined. Check if ' + jsonNode.type + '  type is defined in the VLS');

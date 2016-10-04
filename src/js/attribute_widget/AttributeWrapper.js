@@ -200,7 +200,6 @@ define([
                 switch (event.type) {
                     case 'add': {
                         y.share.nodes.get(event.name).observe(function(nodeEvent) {
-
                             switch (nodeEvent.name) {
                                 case 'jabberId': {
                                     var map = nodeEvent.object;
@@ -210,6 +209,7 @@ define([
                                 default:
                                     if (nodeEvent.name.search(/\w*\[(\w|\s)*\]/g) != -1 && nodeEvent.type != 'delete') {
                                         var node = EntityManager.findNode(nodeEvent.object.get('id'));
+                                        //Check for label
                                         if (node.getLabel().getEntityId() === nodeEvent.name)
                                             node.getLabel().getValue().registerYType(nodeEvent.object.get(nodeEvent.name));
                                         else {
@@ -277,7 +277,7 @@ define([
                                         if (edge.getLabel().getEntityId() === edgeEvent.name)
                                             edge.getLabel().getValue().registerYType(edgeEvent.object.get(edgeEvent.name));
                                         else {
-                                            var attrs = node.getAttributes();
+                                            var attrs = edge.getAttributes();
                                             for (var attrKey in attrs) {
                                                 if (attrs.hasOwnProperty(attrKey)) {
                                                     if (attrs[attrKey].getEntityId() === edgeEvent.name) {

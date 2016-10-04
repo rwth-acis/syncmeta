@@ -61,23 +61,17 @@ define([
 
         _$node.find(".label").append(this.getLabel().get$node());
 
-        this.registerYType = function(){
-            var registerValue = function(ymap, value){
-                ymap.get(value.getEntityId()).then(function(ytext){
-                    value.registerYType(ytext);
-                })
-            };
-
+         this.registerYType = function() {
             AbstractNode.prototype.registerYType.call(this);
-            y.share.nodes.get(that.getEntityId()).then(function(ymap){
-                var attrs = _attributes["[attributes]"].getAttributes();
-                for(var attributeKey in attrs){
-                    if(attrs.hasOwnProperty(attributeKey)){
-                        var attr = attrs[attributeKey];
-                        registerValue(ymap,attr.getKey());
-                    }
+            var ymap = y.share.nodes.get(that.getEntityId());
+            var attrs = _attributes["[attributes]"].getAttributes();
+            for (var attributeKey in attrs) {
+                if (attrs.hasOwnProperty(attributeKey)) {
+                    var keyVal = attrs[attributeKey].getKey();
+                    var ytext = ymap.get(keyVal.getEntityId())
+                    keyVal.registerYType(ytext);
                 }
-            });
+            }
         };
 
         for(var attributeKey in _attributes){

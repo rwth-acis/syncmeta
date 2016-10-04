@@ -87,7 +87,6 @@ define([
                                 break;
                             case "string":
                                 attrObj[attributeId] = new SingleValueAttribute(id+"["+attribute.key.toLowerCase()+"]",attribute.key,that);
-                                //TODO: Add option to set identifier attribute in metamodel
                                 if(attribute.key.toLowerCase() === 'label' || attribute.key.toLowerCase() === 'title' || attribute.key.toLowerCase() === "name"){
                                     that.setLabel(attrObj[attributeId]);
                                 }
@@ -230,13 +229,10 @@ define([
                     if(attr.hasOwnProperty(key)){
                         var val = attr[key].getValue();
                         if(val.hasOwnProperty('registerYType')){
-                            if(val.constructor.name !== "Value" ){
-                                val.registerYType();
-                            }
+                            val.registerYType();  
                         }
                     }
                 }
-
             }
         }
 

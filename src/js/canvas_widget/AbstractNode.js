@@ -1277,8 +1277,8 @@ define([
         jsPlumb.repaint(this.get$node()[0]);
     };
 
-    AbstractNode.prototype.registerYMap = function(map) {
-        this._registerYMap(map);
+    AbstractNode.prototype.registerYMap = function() {
+        this._registerYMap();
     };
     return AbstractNode;
 

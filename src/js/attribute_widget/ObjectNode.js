@@ -5,7 +5,7 @@ define([
     'attribute_widget/AbstractNode',
     'attribute_widget/KeySelectionValueListAttribute',
     'text!templates/attribute_widget/object_node.html'
-],/** @lends ObjectNode */function($,jsPlumb,_,AbstractNode,KeySelectionValueListAttribute,objectNodeHtml) {
+],/** @lends ObjectNode */function($, jsPlumb, _, AbstractNode, KeySelectionValueListAttribute, objectNodeHtml) {
 
     ObjectNode.TYPE = "Object";
 
@@ -23,16 +23,16 @@ define([
      * @param {number} width Width of node
      * @param {number} height Height of node
      */
-    function ObjectNode(id,left,top,width,height){
-        var that= this;
-        AbstractNode.call(this,id,ObjectNode.TYPE,left,top,width,height);
+    function ObjectNode(id, left, top, width, height) {
+        var that = this;
+        AbstractNode.call(this, id, ObjectNode.TYPE, left, top, width, height);
 
         /**
          * jQuery object of node template
          * @type {jQuery}
          * @private
          */
-        var _$template = $(_.template(objectNodeHtml,{type:"Object"}));
+        var _$template = $(_.template(objectNodeHtml, { type: "Object" }));
 
         /**
          * jQuery object of DOM node representing the node
@@ -55,31 +55,25 @@ define([
          */
         var _attributes = this.getAttributes();
 
-        this.registerYType = function(){
-            var registerValue = function(ymap, value){
-                ymap.get(value.getEntityId()).then(function(ytext){
-                    value.registerYType(ytext);
-                })
-            };
-
+        this.registerYType = function() {
             AbstractNode.prototype.registerYType.call(this);
-            y.share.nodes.get(that.getEntityId()).then(function(ymap){
-                var attrs = _attributes["[attributes]"].getAttributes();
-                for(var attributeKey in attrs){
-                    if(attrs.hasOwnProperty(attributeKey)){
-                        var attr = attrs[attributeKey];
-                        registerValue(ymap,attr.getKey());
-                    }
+            var ymap = y.share.nodes.get(that.getEntityId());
+            var attrs = _attributes["[attributes]"].getAttributes();
+            for (var attributeKey in attrs) {
+                if (attrs.hasOwnProperty(attributeKey)) {
+                    var keyVal = attrs[attributeKey].getKey();
+                    var ytext = ymap.get(keyVal.getEntityId())
+                    keyVal.registerYType(ytext);
                 }
-            });
+            }
         };
 
-        this.addAttribute(new KeySelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File"}));
+        this.addAttribute(new KeySelectionValueListAttribute("[attributes]", "Attributes", this, { "string": "String", "boolean": "Boolean", "integer": "Integer", "file": "File" }));
 
         _$node.find(".label").append(this.getLabel().get$node());
 
-        for(var attributeKey in _attributes){
-            if(_attributes.hasOwnProperty(attributeKey)){
+        for (var attributeKey in _attributes) {
+            if (_attributes.hasOwnProperty(attributeKey)) {
                 _$attributeNode.append(_attributes[attributeKey].get$node());
             }
         }

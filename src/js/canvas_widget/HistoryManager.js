@@ -34,7 +34,7 @@ define(['jqueryui',
                     break;
                 }
                 case NodeAddOperation.TYPE: {
-                    _canvas.createNode(json.type, json.left, json.top, json.width, json.height, json.zIndex, json.json, json.id,true);
+                    _canvas.createNode(json.type, json.left, json.top, json.width, json.height, json.zIndex, json.json, json.id, true);
                     operation = new NodeAddOperation(json.id, json.type, json.left, json.top, json.width, json.height, json.zIndex, json.json);
                     break;
                 }
@@ -55,11 +55,10 @@ define(['jqueryui',
                     entity = EntityManager.findNode(json.id);
                     if (entity) {
                         operation = new NodeMoveOperation(json.id, json.offsetX, json.offsetY);
-                        y.share.nodes.get(json.id).then(function(ymap) {
-                            data = operation.toJSON();
-                            data.historyFlag = true;
-                            ymap.set(NodeMoveOperation.TYPE, data);
-                        });
+                        var ymap = y.share.nodes.get(json.id);
+                        data = operation.toJSON();
+                        data.historyFlag = true;
+                        ymap.set(NodeMoveOperation.TYPE, data);
                     }
                     break;
                 }
@@ -67,11 +66,11 @@ define(['jqueryui',
                     entity = EntityManager.findNode(json.id);
                     if (entity) {
                         operation = new NodeMoveZOperation(json.id, json.offsetZ);
-                        y.share.nodes.get(json.id).then(function(ymap) {
-                            data = operation.toJSON();
-                            data.historyFlag = true;
-                            ymap.set(NodeMoveZOperation.TYPE, data);
-                        });
+                        var ymap = y.share.nodes.get(json.id)
+                        data = operation.toJSON();
+                        data.historyFlag = true;
+                        ymap.set(NodeMoveZOperation.TYPE, data);
+                        
                     }
                     break;
                 }
@@ -79,11 +78,11 @@ define(['jqueryui',
                     entity = EntityManager.findNode(json.id);
                     if (entity) {
                         operation = new NodeResizeOperation(json.id, json.offsetX, json.offsetY);
-                        y.share.nodes.get(json.id).then(function(ymap) {
-                            data = operation.toJSON();
-                            data.historyFlag = true;
-                            ymap.set(NodeResizeOperation.TYPE, data);
-                        });
+                        var ymap = y.share.nodes.get(json.id);
+                        data = operation.toJSON();
+                        data.historyFlag = true;
+                        ymap.set(NodeResizeOperation.TYPE, data);
+                        
                     }
                     break;
                 }
