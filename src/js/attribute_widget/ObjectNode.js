@@ -62,12 +62,17 @@ define([
             for (var attributeKey in attrs) {
                 if (attrs.hasOwnProperty(attributeKey)) {
                     var keyVal = attrs[attributeKey].getKey();
-                    var ytext = ymap.get(keyVal.getEntityId())
+                    var ytext = ymap.get(keyVal.getEntityId());
                     keyVal.registerYType(ytext);
                 }
             }
         };
-
+        
+        this.remove  = function(){
+            AbstractNode.prototype.remove.call(this);
+            this.getAttribute('[attributes]').unregisterCallbacks();
+        }
+        
         this.addAttribute(new KeySelectionValueListAttribute("[attributes]", "Attributes", this, { "string": "String", "boolean": "Boolean", "integer": "Integer", "file": "File" }));
 
         _$node.find(".label").append(this.getLabel().get$node());

@@ -78,6 +78,9 @@ define([
             that.getLabel().getValue().registerYType();
             attr.registerYMap();
         };
+         this.unregisterCallbacks = function(){
+            that.getAttribute('[attributes]').unregisterCallbacks();
+        }
         var registerYTextAttributes = function(map){
             map.get(that.getLabel().getValue().getEntityId()).then(function(ytext){
                 that.getLabel().getValue().registerYType(ytext);

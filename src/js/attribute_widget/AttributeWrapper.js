@@ -173,9 +173,7 @@ define([
          * Register inter widget communication callbacks
          */
         this.registerCallbacks = function() {
-            iwc.registerOnDataReceivedCallback(entitySelectCallback);
-            iwc.registerOnDataReceivedCallback(nodeAddCallback);
-            iwc.registerOnDataReceivedCallback(edgeAddCallback);
+            iwc.registerOnDataReceivedCallback(entitySelectCallback);           
             iwc.registerOnDataReceivedCallback(deleteViewCallback);
         };
 
@@ -185,10 +183,7 @@ define([
          */
         this.unregisterCallbacks = function() {
             iwc.unregisterOnDataReceivedCallback(entitySelectCallback);
-            iwc.unregisterOnDataReceivedCallback(nodeAddCallback);
-            iwc.unregisterOnDataReceivedCallback(edgeAddCallback);
             iwc.unregisterOnDataReceivedCallback(deleteViewCallback);
-
         };
 
         if (iwc) {

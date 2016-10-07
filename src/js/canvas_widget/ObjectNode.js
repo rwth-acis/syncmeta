@@ -84,7 +84,11 @@ define([
                 _$attributeNode.append(_attributes[attributeKey].get$node());
             }
         }
-
+        
+        this.unregisterCallbacks = function(){
+            that.getAttribute('[attributes]').unregisterCallbacks();
+        }
+        
         this.setContextMenuItemCallback(function(){
             var NodeShapeNode = require('canvas_widget/NodeShapeNode'),
                 BiDirAssociationEdge = require('canvas_widget/BiDirAssociationEdge'),

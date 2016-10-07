@@ -193,7 +193,9 @@ define([
 
         
         y.share.nodes.get(subjectEntity.getEntityId()).observe(function(event) {
+           
             if (event.name.indexOf('[value]') != -1) {
+                
                 switch (event.type) {
                     case 'add': {
                         operation = new AttributeAddOperation(event.name.replace(/\[\w*\]/g, ''), that.getEntityId(), that.getRootSubjectEntity().getEntityId(), that.constructor.name);

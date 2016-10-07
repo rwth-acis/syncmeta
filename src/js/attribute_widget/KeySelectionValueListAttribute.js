@@ -186,7 +186,17 @@ define([
             });
         };
 
-       
+       /**
+         * Unregister inter widget communication callbacks
+         */
+        this.unregisterCallbacks = function(){
+            var attrs = this.getAttributes();
+            for(var key in attrs){
+                if(attrs.hasOwnProperty(key)){
+                    attrs[key].unregisterCallbacks();
+                }
+            }              
+        };
 
         _$node.find(".name").text(this.getName());
         for (var attrId in _list) {

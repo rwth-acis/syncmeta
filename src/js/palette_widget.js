@@ -24,7 +24,7 @@ requirejs([
 ],function ($,yjsSync,Palette,MoveTool,ObjectNodeTool,AbstractClassNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,GeneralisationEdgeTool,ViewObjectNodeTool,ViewRelationshipNodeTool,guidancemodel) {
 
     yjsSync().done(function(y) {
-        window.y = y;
+        
         console.info('PALETTE:Yjs successfully initialized');
         var metamodel = y.share.data.get('metamodel');
         var palette = new Palette($("#palette"), $("#info"));
@@ -74,7 +74,7 @@ requirejs([
 
         if (CONFIG.TEST_MODE_PALETTE)
             require(['./../test/PaletteWidgetTest']);
-
+        window.y = y;
         y.share.canvas.observe(function(event){
             switch(event.name){
                 case 'ReloadWidgetOperation':{

@@ -116,8 +116,6 @@ define([
              */
             this.propagateValueChangeOperation = function(operation) {
                 operation.setEntityIdChain(getEntityIdChain());
-                //processValueChangeOperation(operation);
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
                  y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(
                     "ValueChangeActivity",
                     that.getEntityId(),
@@ -152,23 +150,11 @@ define([
              */
             var localValueChangeCallback = function(operation) {
                 if (operation instanceof ValueChangeOperation && operation.getEntityId() === that.getEntityId()) {
-                    _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
                     that.propagateValueChangeOperation(operation);
                 }
             };
 
-            /**
-             * Callback for an undone resp. redone Value Change Operation
-             * @param {operations.ot.ValueChangeOperation} operation
-             */
-            var historyValueChangeCallback = function(operation) {
-                if (operation instanceof ValueChangeOperation && operation.getEntityId() === that.getEntityId()) {
-                    _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
-                    _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
-                    processValueChangeOperation(operation);
-                }
-            };
-
+           
             /**
              * Set value
              * @param {string} value
@@ -221,18 +207,14 @@ define([
              * Register inter widget communication callbacks
              */
             this.registerCallbacks = function() {
-                //_iwcw.registerOnRemoteDataReceivedCallback(remoteValueChangeCallback);
                 _iwcw.registerOnDataReceivedCallback(localValueChangeCallback);
-                //_iwcw.registerOnHistoryChangedCallback(historyValueChangeCallback);
             };
 
             /**
              * Unregister inter widget communication callbacks
              */
             this.unregisterCallbacks = function() {
-                // _iwcw.unregisterOnRemoteDataReceivedCallback(remoteValueChangeCallback);
                 _iwcw.unregisterOnDataReceivedCallback(localValueChangeCallback);
-                //_iwcw.unregisterOnHistoryChangedCallback(historyValueChangeCallback);
             };
 
             if (_iwcw) {

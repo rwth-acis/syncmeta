@@ -230,7 +230,6 @@ define([
             processNodeMoveZOperation(operation);
             HistoryManager.add(operation);
             hideTraceAwareness();
-            //if(_iwcw.sendRemoteOTOperation(operation)){
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
             y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(
@@ -240,7 +239,6 @@ define([
                 NodeMoveOperation.getOperationDescription(that.getType(), that.getLabel().getValue().getValue()),
                 { nodeType: that.getType() }
             ));
-            //}
         };
 
         /**
@@ -262,7 +260,6 @@ define([
             HistoryManager.add(operation);
             $('#save').click();
             hideTraceAwareness();
-            //if(_iwcw.sendRemoteOTOperation(operation)){
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP, operation.getOTOperation());
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
@@ -273,10 +270,8 @@ define([
                 NodeResizeOperation.getOperationDescription(that.getType(), that.getLabel().getValue().getValue()),
                 { nodeType: that.getType() }
             ));
-
         };
 
-        //noinspection JSUnusedLocalSymbols
         /**
          * Apply a Node Delete Operation
          * @param {operations.ot.NodeDeleteOperation} operation
@@ -346,11 +341,6 @@ define([
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP, operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
 
-
-                /*if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()) {
-                 color = _iwcw.getUserColor(operation.getJabberId());
-                 refreshTraceAwareness(color);
-                 }*/
                 if (y.share.users.get(y.db.userId) !== operation.getJabberId()) {
                     var color = Util.getColor(y.share.userList.get(operation.getJabberId()).globalId);
                     refreshTraceAwareness(color);
@@ -369,10 +359,6 @@ define([
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
 
-                /*if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()) {
-                 var color = _iwcw.getUserColor(operation.getJabberId());
-                 refreshTraceAwareness(color);
-                 }*/
                 if (y.share.users.get(y.db.userId) !== operation.getJabberId()) {
                     var color = Util.getColor(y.share.userList.get(operation.getJabberId()).globalId);
                     refreshTraceAwareness(color);
@@ -391,10 +377,6 @@ define([
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP, operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
 
-                /*if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()) {
-                 var color = _iwcw.getUserColor(operation.getJabberId());
-                 refreshTraceAwareness(color);
-                 }*/
                 if (y.share.users.get(y.db.userId) !== operation.getJabberId()) {
                     var color = Util.getColor(y.share.userList.get(operation.getJabberId()).globalId);
                     refreshTraceAwareness(color);
@@ -525,13 +507,10 @@ define([
         /**
          * Send NodeDeleteOperation for node
          */
-        this.triggerDeletion = function(historyFlag) {
+        this._triggerDeletion = function(historyFlag) {
             var edgeId,
                 edges = this.getEdges(),
                 edge;
-
-
-
             _canvas.select(null);
             for (edgeId in edges) {
                 if (edges.hasOwnProperty(edgeId)) {
@@ -539,10 +518,8 @@ define([
                     edge.triggerDeletion();
                 }
             }
-            //noinspection JSAccessibilityCheck
             var operation = new NodeDeleteOperation(id, that.getType(), _appearance.left, _appearance.top, _appearance.width, _appearance.height, _zIndex, that.toJSON());
             if (_ymap) {
-                //_ymap.set(NodeDeleteOperation.TYPE, operation.toJSON());
                 propagateNodeDeleteOperation(operation);
                 y.share.nodes.delete(that.getEntityId());
             }
@@ -619,9 +596,8 @@ define([
             $.contextMenu('destroy', '#' + that.getEntityId());
             _canvas = null;
             _$awarenessTrace.remove();
-
-
-
+            if(this.hasOwnProperty('unregisterCallbacks'))
+                this.unregisterCallbacks();
         };
 
         /**
@@ -977,7 +953,6 @@ define([
         this.remove = function() {
             clearInterval(_awarenessTimer);
             this.removeFromCanvas();
-            //this.unregisterCallbacks();
             require('canvas_widget/EntityManager').deleteNode(this.getEntityId());
         };
 
@@ -1267,7 +1242,7 @@ define([
         this.get$node().hide();
         jsPlumb.hide(this.get$node());
     };
-
+    
     /**
      * show the node and all associated edges
      */
@@ -1280,6 +1255,10 @@ define([
     AbstractNode.prototype.registerYMap = function() {
         this._registerYMap();
     };
+    
+    AbstractNode.prototype.triggerDeletion = function(){
+        this._triggerDeletion();
+    }
     return AbstractNode;
 
 });

@@ -80,7 +80,11 @@ define([
             that.getLabel().getValue().registerYType();
             attr.registerYMap();
         };
-
+        
+        this.unregisterCallbacks = function(){
+            that.getAttribute('[attributes]').unregisterCallbacks();
+        }
+        
         _$node.find(".label").append(this.getLabel().get$node());
 
         for(var attributeKey in _attributes){

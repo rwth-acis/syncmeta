@@ -174,6 +174,8 @@ define([
          */
         this.deleteAttribute = function(id) {
             if (_list.hasOwnProperty(id)) {
+                var attr = _list[id];
+                
                 delete _list[id];
             }
         };
@@ -243,8 +245,15 @@ define([
          * Unregister inter widget communication callbacks
          */
         this.unregisterCallbacks = function() {
+            _iwcw.unregisterOnDataReceivedCallback(localAttributeAddCallback);
             _iwcw.unregisterOnDataReceivedCallback(localAttributeDeleteCallback);
-
+            
+            var attrs = this.getAttributes();
+            for(var key in attrs){
+                if(attrs.hasOwnProperty(key)){
+                    attrs[key].unregisterCallbacks();
+                }
+            }
         };
 
         _$node.find(".name").text(this.getName());
@@ -265,18 +274,18 @@ define([
             for (var key in attrs) {
                 if (attrs.hasOwnProperty(key)) {
                     var attr = attrs[key];
-                    attr.getKey().registerYType();
+                    attr.registerYType();
                 }
             }
 
             ymap.observe(function(event) {
                 if (event.name.indexOf('[key]') != -1) {
-                    var yUserId = event.object.map[event.name][0];
-                    if (yUserId === y.db.userId) return;
                     var operation;
                     var data = event.value;
                     switch (event.type) {
                         case 'add': {
+                            var yUserId = event.object.map[event.name][0];
+                            if (yUserId === y.db.userId) return;
                             operation = new AttributeAddOperation(event.name.replace(/\[\w*\]/g, ''), that.getEntityId(), that.getRootSubjectEntity().getEntityId(), that.constructor.name);
                             remoteAttributeAddCallback(operation);
                             break;

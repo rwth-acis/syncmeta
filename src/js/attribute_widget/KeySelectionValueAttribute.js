@@ -157,6 +157,8 @@ define([
          */
         this.unregisterCallbacks = function(){
             _iwc.unregisterOnDataReceivedCallback(attributeDeleteCallback);
+            
+            _value.unregisterCallbacks();
         };
 
 
