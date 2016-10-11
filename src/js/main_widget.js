@@ -196,9 +196,9 @@ requirejs([
                             _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
 
                             //Users should not initlaize the new model at the same time, thus wait between 0 and 3 seconds before refreshing
-                            setTimeout(function() {
+                            //setTimeout(function() {
                                 frameElement.contentWindow.location.reload();
-                            }, Math.floor(Math.random() * 3000))
+                            //}, Math.floor(Math.random() * 3000))
 
                         }
                     }

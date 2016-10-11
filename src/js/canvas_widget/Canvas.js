@@ -616,53 +616,6 @@ define([
                 return _modelAttributesNode;
             };
 
-            //noinspection JSUnusedGlobalSymbols
-            /**
-             * Calls an event listener
-             */
-            this.callListeners = function() {
-                var i,
-                    numOfCallbacks;
-                //noinspection JSAccessibilityCheck
-                var args = Array.prototype.splice.call(arguments, 0);
-
-                var name = args.shift();
-                if (_listeners.hasOwnProperty(name)) {
-                    for (i = 0, numOfCallbacks = _listeners[name].length; i < numOfCallbacks; i++) {
-                        _listeners[name][i].apply(this, args);
-                    }
-                }
-            };
-
-            /**
-             * Register an event listener
-             * @param {string} name Name of event
-             * @param {function} callback Event Listener
-             */
-            this.registerListener = function(name, callback) {
-                if (CONFIG.CANVAS.LISTENERS.hasOwnProperty(name) && typeof callback === "function") {
-                    this.unregisterListener(name, callback);
-                    (_listeners[name] || (_listeners[name] = [])).push(callback);
-                }
-            };
-
-            /**
-             * Unregister an event listener
-             * @param {string} name Name of event
-             * @param {function} callback Event Listener which has previously been registered
-             */
-            this.unregisterListener = function(name, callback) {
-                var i,
-                    numOfCallbacks;
-
-                if (_listeners[name] && typeof callback === "function") {
-                    for (i = 0, numOfCallbacks = _listeners[name].length; i < numOfCallbacks; i++) {
-                        if (callback === _listeners[name][i]) {
-                            _listeners[name].splice(i, 1);
-                        }
-                    }
-                }
-            };
 
             /**
              * Bind events for move tool
@@ -891,7 +844,7 @@ define([
              * @param {string} identifier the identifier of the node, if null a new id is generated
              * @return {number} id of new node
              */
-            this.createNode = function(type, left, top, width, height, zIndex, json, identifier, historyFlag) {
+            this.createNode = function (type, left, top, width, height, zIndex, json, identifier, historyFlag) {
                 var id, oType = null;
                 if (identifier)
                     id = identifier;
@@ -910,6 +863,7 @@ define([
                 }
                 if (!historyFlag)
                     HistoryManager.add(operation);
+                return id;
             };
 
             /**
@@ -939,6 +893,7 @@ define([
 
                 if (!historyFlag)
                     HistoryManager.add(operation);
+                return id;
             };
 
             this.scrollNodeIntoView = function(nodeId) {

@@ -12,7 +12,8 @@ define(['jqueryui',
         var bufferSize = 20;
         
         var _canvas = null;
-            
+
+        var latestOp = null;    
         var undo = [];
         var redo = [];
             
@@ -100,7 +101,9 @@ define(['jqueryui',
                     var json = inverseOp.toJSON();
                     json.TYPE = inverseOp.constructor.name;
                     undo.push(json);
+                    redo = [];
                     $undo.prop('disabled', false);
+                    $redo.prop('disabled', true);
                 }
                 if (undo.length >bufferSize) {
                     undo.shift();
@@ -116,7 +119,8 @@ define(['jqueryui',
                     if (!operation) {
                         this.undo();
                         return;
-                    }
+                    } else latestOp = operation;
+                    
                     var inverseOp = operation.inverse();
                     var json = inverseOp.toJSON();
                     json.TYPE = inverseOp.constructor.name;
@@ -140,6 +144,7 @@ define(['jqueryui',
                         this.redo();
                         return;
                     }
+                    else latestOp = operation;
                     var inverseOp = operation.inverse();
                     var json = inverseOp.toJSON();
                     json.TYPE = inverseOp.constructor.name;
@@ -167,6 +172,15 @@ define(['jqueryui',
                     $redo.prop('disabled', true);
                 }
                     
+            },
+            getLatestOperation: function(){
+                return latestOp;
+            },
+            getUndoList : function(){
+                return undo;
+            },
+            getRedoList: function(){
+                return redo;
             }
         }
     }

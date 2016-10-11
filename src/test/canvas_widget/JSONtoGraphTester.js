@@ -10,9 +10,8 @@ define(['jquery', 'lodash', 'chai',
 
             describe('JSONtoGraph Tester', function() {
                 before(function(done) {
-                    JSONtoGraph(json, canvas).done(function(stats) {
-                        done();
-                    });
+                    JSONtoGraph(json, canvas);
+                    done();
 
                 })
 

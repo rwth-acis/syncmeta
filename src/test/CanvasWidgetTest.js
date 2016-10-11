@@ -32,8 +32,8 @@ define(['jquery', 'chai', 'WebConsoleReporter',
 
                 if (EntityManager.getLayer() === CONFIG.LAYER.META && !Guidancemodel.isGuidanceEditor()) {
                     //JSONtoGraphTester(canvas);
-                    //MetamodelingTester(canvas);
-                    ViewpointModelingTest();
+                    MetamodelingTester(canvas);
+                    //ViewpointModelingTest();
                 } else if (Guidancemodel.isGuidanceEditor()) {
                     describe('Check node types and edge types in EntityManager', function() {
                         it('Depending on the metamodel check initialized node types', function() {

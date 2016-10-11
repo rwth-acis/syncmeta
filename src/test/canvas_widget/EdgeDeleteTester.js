@@ -1,9 +1,9 @@
 define(['chai', 'canvas_widget/EntityManager'], function(chai, EntityManager) {
-    function EdgeDeleteTester(title, id, disableTrigger, callback) {
+    function EdgeDeleteTester(title, id, testOnly, callback) {
         var expect = chai.expect;
 
         describe('CANVAS - ' + title, function() {
-            if (!disableTrigger) {
+            if (!testOnly) {
                 before(function(done) {
                     EntityManager.findEdge(id).triggerDeletion();
                     done();

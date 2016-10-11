@@ -202,7 +202,7 @@ define([
          * Propagate a Node Move Operation to the remote users and the local widgets
          * @param {operations.ot.NodeMoveOperation} operation
          */
-        var propagateNodeMoveOperation = function(operation) {
+        this.propagateNodeMoveOperation = function(operation) {
             processNodeMoveOperation(operation);
             HistoryManager.add(operation);
             $('#save').click();
@@ -226,7 +226,7 @@ define([
          * Propagate a Node Move Z Operation to the remote users and the local widgets
          * @param {operations.ot.NodeMoveZOperation} operation
          */
-        var propagateNodeMoveZOperation = function(operation) {
+        this.propagateNodeMoveZOperation = function (operation) {
             processNodeMoveZOperation(operation);
             HistoryManager.add(operation);
             hideTraceAwareness();
@@ -255,7 +255,7 @@ define([
          * Propagate a Node Resize Operation to the remote users and the local widgets
          * @param {operations.ot.NodeResizeOperation} operation
          */
-        var propagateNodeResizeOperation = function(operation) {
+        this.propagateNodeResizeOperation = function(operation) {
             processNodeResizeOperation(operation);
             HistoryManager.add(operation);
             $('#save').click();
@@ -420,26 +420,30 @@ define([
                             moveToForeground: {
                                 name: "Move to Foreground",
                                 callback: function(/*key, opt*/) {
+                                    //TODO ugly
                                     var operation = new NodeMoveZOperation(that.getEntityId(), ++AbstractEntity.maxZIndex - _zIndex);
-                                    if (y) {
+                                    if (_ymap) {
+                                        _ymap.set('zIndex', zIndex + operation.getOffsetZ());
+                                        that.propagateNodeMoveZOperation(operation);
                                         _ymap.set(NodeMoveZOperation.TYPE, operation.toJSON());
                                     }
                                     else {
-                                        propagateNodeMoveZOperation(operation);
+                                        that.propagateNodeMoveZOperation(operation);
                                     }
                                 }
                             },
                             moveToBackground: {
                                 name: "Move to Background",
                                 callback: function(/*key, opt*/) {
+                                    //TODO ugly
                                     var operation = new NodeMoveZOperation(that.getEntityId(), --AbstractEntity.minZIndex - _zIndex);
                                     if (_ymap) {
                                         _ymap.set('zIndex', zIndex + operation.getOffsetZ());
-                                        propagateNodeMoveZOperation(operation);
+                                        that.propagateNodeMoveZOperation(operation);
                                         _ymap.set(NodeMoveZOperation.TYPE, operation.toJSON());
                                     }
                                     else {
-                                        propagateNodeMoveZOperation(operation);
+                                        that.propagateNodeMoveZOperation(operation);
                                     }
                                 }
                             },
@@ -507,7 +511,7 @@ define([
         /**
          * Send NodeDeleteOperation for node
          */
-        this._triggerDeletion = function(historyFlag) {
+        this.triggerDeletion = function(historyFlag) {
             var edgeId,
                 edges = this.getEdges(),
                 edge;
@@ -1030,17 +1034,15 @@ define([
                             if (_ymap) {
                                 _ymap.set('width', _appearance.width + offsetX);
                                 _ymap.set('height', _appearance.height + offsetY);
-                                propagateNodeResizeOperation(operation);
+                                that.propagateNodeResizeOperation(operation);
                                 _ymap.set('NodeResizeOperation', operation.toJSON());
                             }
                         }
                         else {
-                            propagateNodeResizeOperation(operation);
+                            that.propagateNodeResizeOperation(operation);
                         }
-                        //that.canvas.callListeners(CONFIG.CANVAS.LISTENERS.NODERESIZE,id,offsetX,offsetY);
                         _$node.resizable("option", "aspectRatio", false);
                         _$node.resizable("option", "grid", '');
-                        //$(ev.toElement).one('click',function(ev){ev.stopImmediatePropagation();});
                         that.draw();
                         repaint();
                         _canvas.showGuidanceBox();
@@ -1083,11 +1085,11 @@ define([
                         if (_ymap) {
                             _ymap.set('top', _appearance.top + offsetY);
                             _ymap.set('left', _appearance.left + offsetX);
-                            propagateNodeMoveOperation(operation);
+                            that.propagateNodeMoveOperation(operation);
                             _ymap.set(NodeMoveOperation.TYPE, operation.toJSON());
                         }
                         else {
-                            propagateNodeMoveOperation(operation);
+                            that.propagateNodeMoveOperation(operation);
                         }
                         //Avoid node selection on drag stop
                         _$node.draggable("option", "grid", '');
@@ -1255,10 +1257,7 @@ define([
     AbstractNode.prototype.registerYMap = function() {
         this._registerYMap();
     };
-    
-    AbstractNode.prototype.triggerDeletion = function(){
-        this._triggerDeletion();
-    }
+     
     return AbstractNode;
 
 });
