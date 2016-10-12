@@ -136,7 +136,7 @@ define([
                         jabberId,
                         ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(), that.getRootSubjectEntity().getType(), that.getRootSubjectEntity().getLabel().getValue().getValue()),
                         {
-                            value: '',
+                            value: _value,
                             subjectEntityName: that.getSubjectEntity().getName(),
                             rootSubjectEntityType: that.getRootSubjectEntity().getType(),
                             rootSubjectEntityId: that.getRootSubjectEntity().getEntityId()

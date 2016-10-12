@@ -15,12 +15,12 @@ requirejs([
     'operations/non_ot/InitModelTypesOperation',
     'operations/non_ot/ViewInitOperation',
     'operations/non_ot/SetModelAttributeNodeOperation',
-    // 'promise!Space',
+    'promise!User',
     'promise!Guidancemodel'
-], function($, IWCW, yjsSync, WaitForCanvas, AttributeWrapper, EntityManager, ViewGenerator, JoinOperation, InitModelTypesOperation, ViewInitOperation, SetModelAttributeNodeOperation, /*space,*/ guidancemodel) {
+], function($, IWCW, yjsSync, WaitForCanvas, AttributeWrapper, EntityManager, ViewGenerator, JoinOperation, InitModelTypesOperation, ViewInitOperation, SetModelAttributeNodeOperation, user, guidancemodel) {
 
     var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE);
-    //iwc.setSpace(space);
+    iwc.setSpace(user);
 
     WaitForCanvas(CONFIG.WIDGET.NAME.ATTRIBUTE, 7).done(function() {
         $('#wrapper').find('h1').text('Got Response from Canvas! Connecting to Yjs....');
@@ -39,7 +39,7 @@ requirejs([
                 $('#wrapper').find('h1').remove();
             }, 2000);
             console.info('ATTRIBUTE: Yjs successfully initialized');
-            //y.share.users.set(y.db.userId, iwc.getUser()[CONFIG.NS.PERSON.JABBERID]);
+            y.share.users.set(y.db.userId, iwc.getUser()[CONFIG.NS.PERSON.JABBERID]);
 
             var model = y.share.data.get('model');
             InitAttributeWidget(model);
