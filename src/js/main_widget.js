@@ -468,8 +468,6 @@ requirejs([
                 }
             }
             EntityManager.deleteModelAttribute();
-            EntityManager.clearBin();
-
         }
 
         var visualizeView = function(viewId) {

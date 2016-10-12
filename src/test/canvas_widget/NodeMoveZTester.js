@@ -22,7 +22,11 @@ define(['chai', 'operations/ot/NodeMoveZOperation', 'canvas_widget/EntityManager
 
                 it('MOVEZ: Node ' + id + ' should have a correct Z-Index', function () {
                     expect(node.getZIndex()).to.be.equal(expectedZIndex);
-                })
+                });
+
+                it('MOVEZ: Node ' + id + ' should have correct Z-Index in Y-Map', function(){
+                    expect(node.getYMap().get('zIndex')).to.be.equal(expectedZIndex);
+                });
 
                 after(function (done) {
                     if (callback)

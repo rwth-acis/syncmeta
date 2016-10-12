@@ -22,10 +22,15 @@ define(['chai', 'operations/ot/NodeMoveOperation', 'canvas_widget/EntityManager'
                     done();
                 });
 
-                it('MOVE: Node ' + id + ' should be at correct position', function () {
+                it('MOVE: Node ' + id + ' should be at correct position in Canvas', function () {
                     expect(node.getAppearance().left).to.be.equal(expectedLeft);
                     expect(node.getAppearance().top).to.be.equal(expectedTop);
-                })
+                });
+                 
+                it('MOVE: Node ' + id + 'should have correct values in Y-Map', function(){
+                    expect(node.getYMap().get('left')).to.be.equal(expectedLeft);
+                    expect(node.getYMap().get('top')).to.be.equal(expectedTop);
+                });
 
                 after(function (done) {
                     if (callback)

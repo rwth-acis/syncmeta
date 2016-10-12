@@ -25,7 +25,12 @@ define(['chai', 'operations/ot/NodeResizeOperation', 'canvas_widget/EntityManage
                 it('RESIZE: Node ' + id + ' should have correct size', function () {
                     expect(node.getAppearance().width).to.be.equal(expectedWidth);
                     expect(node.getAppearance().height).to.be.equal(expectedHeight);
-                })
+                });
+
+                it('RESIZE: Node ' + id + ' should have correct values in Y-Map', function(){
+                    expect(node.getYMap().get('width')).to.be.equal(expectedWidth);
+                    expect(node.getYMap().get('height')).to.be.equal(expectedHeight);
+                });
 
                 after(function (done) {
                     if (callback)
