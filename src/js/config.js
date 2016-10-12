@@ -76,10 +76,14 @@ var require = {
 };
 
 CONFIG = {
-    TEST_MODE_CANVAS:true,
-    TEST_MODE_ATTRIBUTE:false,
-    TEST_MODE_PALETTE:false,
-    TEST_MODE_ACTIVITY:false,
+    TEST:{
+        USER:"Luigi Test",
+        EMAIL:"luigi.test05@gmail.com",
+        CANVAS: true,
+        ATTRIBUTE: true,
+        PALETTE: false,
+        ACTIVITY: false
+    },
     LAYER:{
         META: "META",
         MODEL: "MODEL"

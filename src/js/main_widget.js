@@ -65,7 +65,7 @@ requirejs([
         y.share.users.set(y.db.userId, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
         var userInfo = _iwcw.getUser();
         if (userInfo.globalId === -1)
-            userInfo.globalId = y.share.userList.keysPrimitives().length;
+            userInfo.globalId = y.db.userId.charCodeAt(0) + y.db.userId.charCodeAt(1);
         y.share.userList.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], userInfo);
         var metamodel, model;
          if (guidancemodel.isGuidanceEditor()) {
@@ -143,7 +143,7 @@ requirejs([
                     canvas.resetTool();
                 }
 
-                if (CONFIG.TEST_MODE_CANVAS)
+                if (CONFIG.TEST.CANVAS && (_iwcw.getUser()[CONFIG.NS.PERSON.TITLE] === CONFIG.TEST.USER || _iwcw.getUser()[CONFIG.NS.PERSON.MBOX] === CONFIG.TEST.EMAIL))
                     require(['./../test/CanvasWidgetTest'], function(CanvasWidgetTest) {
                         CanvasWidgetTest(canvas);
                     });

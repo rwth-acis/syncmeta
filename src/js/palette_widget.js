@@ -72,7 +72,7 @@ requirejs([
 
         }
 
-        if (CONFIG.TEST_MODE_PALETTE)
+        if (CONFIG.TEST.PALETTE)
             require(['./../test/PaletteWidgetTest']);
         window.y = y;
         y.share.canvas.observe(function(event){

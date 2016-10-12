@@ -145,7 +145,7 @@ requirejs([
             var operation = new SetModelAttributeNodeOperation();
             iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN, operation.toNonOTOperation());
 
-            if (CONFIG.TEST_MODE_ATTRIBUTE)
+            if (CONFIG.TEST.ATTRIBUTE && (iwc.getUser()[CONFIG.NS.PERSON.TITLE] === CONFIG.TEST.USER || iwc.getUser()[CONFIG.NS.PERSON.MBOX] === CONFIG.TEST.EMAIL))
                 require(['./../test/AttributeWidgetTest']);
 
             y.share.canvas.observe(function(event) {
