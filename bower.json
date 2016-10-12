@@ -31,10 +31,10 @@
     "requirejs-i18n": "~2.0.4",
     "requirejs-promise": "*",
     "requirejs-text": "~2.0.10",
-    "yjs": "^12.0.1",
-    "y-map": "^10.0.1",
+    "yjs": "^12.0.4",
+    "y-map": "^10.0.3",
     "y-memory": "^8.0.7",
-    "y-websockets-client": "^8.0.10",
+    "y-websockets-client": "^8.0.11",
     "y-text": "^9.0.2"
   },
   "resolutions": {
