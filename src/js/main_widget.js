@@ -119,7 +119,6 @@ requirejs([
 
                     $("#loading").hide();
                     canvas.resetTool();
-                    saveCallback();
 
                 }
                 else {
@@ -633,13 +632,7 @@ requirejs([
             $generate.show();
         }
 
-        var saveCallback = function() {
-            saveFunction();
-            setTimeout(function() {
-                saveCallback();
-            }, 7000);
-        };
-
+    
         ViewManager.GetViewpointList();
 
         //local user joins

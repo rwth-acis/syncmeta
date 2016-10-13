@@ -1860,7 +1860,6 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
              * resets the EntityManager
              */
             reset : function(){
-                this.clearBin();
                 _nodes ={};
                 _edges = {};
                 this.deleteModelAttribute();

@@ -75,83 +75,8 @@ define([
             that.setValue(operation.getValue());
         };
 
-        /**
-         * Propagate a Value Change Operation to the remote users and the local widgets
-         * @param {operations.ot.ValueChangeOperation} operation
-         */
-        var propagateValueChangeOperation = function(operation){
-            operation.setEntityIdChain(getEntityIdChain());
-            processValueChangeOperation(operation);
-            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-            if(!operation.getFromView()) {
-                y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(
-                    "ValueChangeActivity",
-                    that.getEntityId(),
-                    _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
-                    ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(), that.getRootSubjectEntity().getType(), that.getRootSubjectEntity().getLabel().getValue().getValue()),
-                    {
-                        value: operation.getValue(),
-                        subjectEntityName: that.getSubjectEntity().getName(),
-                        rootSubjectEntityType: that.getRootSubjectEntity().getType(),
-                        rootSubjectEntityId: that.getRootSubjectEntity().getEntityId()
-                    }
-                ));
-            }
-            if(that.getRootSubjectEntity().getYMap()){
-                that.getRootSubjectEntity().getYMap().set(that.getEntityId(), operation.toJSON());
-            }
-
-        };
-
-        /**
-         * Callback for a remote Value Change Operation
-         * @param {operations.ot.ValueChangeOperation} operation
-         */
-        var remoteValueChangeCallback = function(operation){
-            if(operation instanceof ValueChangeOperation && operation.getEntityId() === that.getEntityId()){
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-                processValueChangeOperation(operation);
-            }
-        };
-
-        /**
-         * Callback for a local Value Change Operation
-         * @param {operations.ot.ValueChangeOperation} operation
-         */
-        var localValueChangeCallback = function(operation){
-            if(operation instanceof ValueChangeOperation && operation.getEntityId() === that.getEntityId()){
-                propagateValueChangeOperation(operation);
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-            }
-        };
-
-        /**
-         * Callback for an undone resp. redone Value Change Operation
-         * @param {operations.ot.ValueChangeOperation} operation
-         */
-        var historyValueChangeCallback = function(operation){
-            if(operation instanceof ValueChangeOperation && operation.getEntityId() === that.getEntityId()){
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-                processValueChangeOperation(operation);
-            }
-        };
-
-        var propagateValueChange = function(type,value,position){
-            var operation = new ValueChangeOperation(that.getEntityId(),value,type,position);
-            propagateValueChangeOperation(operation);
-        };
-
         var init = function(){
             _$node.off();
-            _$node.change(function(){
-                var value = parseInt(_$node.val());
-                if(isNaN(value)){
-                    value = 0;
-                }
-                propagateValueChange(CONFIG.OPERATION.TYPE.UPDATE,value,0);
-            });
         };
 
         /**
@@ -200,41 +125,45 @@ define([
             this.setValue(json.value);
         };
 
-        /**
-         * Register inter widget communication callbacks
-         */
-        this.registerCallbacks = function(){
-            //_iwcw.registerOnRemoteDataReceivedCallback(remoteValueChangeCallback);
-            _iwcw.registerOnDataReceivedCallback(localValueChangeCallback);
-            //_iwcw.registerOnHistoryChangedCallback(historyValueChangeCallback);
-        };
-
-        /**
-         * Unregister inter widget communication callbacks
-         */
-        this.unregisterCallbacks = function(){
-            //_iwcw.unregisterOnRemoteDataReceivedCallback(remoteValueChangeCallback);
-            _iwcw.unregisterOnDataReceivedCallback(localValueChangeCallback);
-            //_iwcw.unregisterOnHistoryChangedCallback(historyValueChangeCallback);
-        };
-
-        this.registerYType = function(){
+       
+        this.registerYType = function () {
             //observer
-            that.getRootSubjectEntity().getYMap().observePath([that.getEntityId()],function(events) {
-                //TODO check that remove if statement. Why is events undefined ?????
-                if(events)
-                    remoteValueChangeCallback(new ValueChangeOperation(events.entityId, events.value, events.type, events.position));
+            that.getRootSubjectEntity().getYMap().observePath([that.getEntityId()], function (event) {
+                if (event) {
+                    var operation = new ValueChangeOperation(event.entityId, event.value, event.type, event.position, event.jabberId);
+                    _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
+                    processValueChangeOperation(operation);
+
+                    //Only the local user Propagates the activity and saves the state of the model
+                    if (_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] === operation.getJabberId()) {
+                        y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(
+                            "ValueChangeActivity",
+                            that.getEntityId(),
+                            _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
+                            ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(), that.getRootSubjectEntity().getType(), that.getRootSubjectEntity().getLabel().getValue().getValue()), {
+                                value: operation.getValue(),
+                                subjectEntityName: that.getSubjectEntity().getName(),
+                                rootSubjectEntityType: that.getRootSubjectEntity().getType(),
+                                rootSubjectEntityId: that.getRootSubjectEntity().getEntityId()
+                            }));
+                    }
+                    else {
+                        //the remote users propagtes the change to their local attribute widget
+                        //TODO(PENDING): can be replaced with yjs as well
+                        _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
+                    }
+                }
+                
             });
+
+            //Debounce the save function
+            that.getRootSubjectEntity().getYMap().observePath([that.getEntityId()], _.debounce(function (event) {
+                if (event.jabberId === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
+                    $('#save').click();
+            }, 750));
         };
 
         init();
-        if(_iwcw){
-            that.registerCallbacks();
-        }
-
-
     }
-
     return IntegerValue;
-
 });
