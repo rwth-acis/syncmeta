@@ -16,7 +16,7 @@ define([
     'text!templates/canvas_widget/abstract_node.html',
     'text!templates/canvas_widget/awareness_trace.html',
     'jquery.transformable-PATCHED'
-],/** @lends AbstractNode */function(require,$,jsPlumb,_,Util,IWCW,NodeDeleteOperation,NodeMoveOperation,NodeMoveZOperation,NodeResizeOperation,ActivityOperation,AbstractEntity,SingleValueAttribute,HistoryManager,abstractNodeHtml,awarenessTraceHtml) {
+],/** @lends AbstractNode */function (require, $, jsPlumb, _, Util, IWCW, NodeDeleteOperation, NodeMoveOperation, NodeMoveZOperation, NodeResizeOperation, ActivityOperation, AbstractEntity, SingleValueAttribute, HistoryManager, abstractNodeHtml, awarenessTraceHtml) {
 
     AbstractNode.prototype = new AbstractEntity();
     AbstractNode.prototype.constructor = AbstractNode;
@@ -34,16 +34,40 @@ define([
      * @param {number} height Height of node
      * @param {number} zIndex Position of node on z-axis
      */
-    function AbstractNode(id,type,left,top,width,height,zIndex){
+    function AbstractNode(id, type, left, top, width, height, zIndex) {
         var that = this;
 
+        /**
+       * Inter widget communication wrapper
+       * @type {Object}
+       * @private
+       */
+        var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
         /**y-map instances which belongs to the node
          * @type {Y.Map}
          * @private
          * */
         var _ymap = null;
-
-        AbstractEntity.call(this,id);
+        if (window.hasOwnProperty("y")) {
+            if (y.share.nodes.keys().indexOf(id) != -1) {
+                _ymap = y.share.nodes.get(id);
+            }
+            else {
+                _ymap = y.share.nodes.set(id, Y.Map);
+                _ymap.set('left', left);
+                _ymap.set('top', top);
+                _ymap.set('width', width);
+                _ymap.set('height', height);
+                _ymap.set('zIndex', zIndex);
+                _ymap.set('type', type);
+                _ymap.set('id', id);
+                _ymap.set('jabberId', _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+            }
+        }
+        this.getYMap = function () {
+            return _ymap;
+        };
+        AbstractEntity.call(this, id);
 
         /**
          * Type of node
@@ -57,7 +81,7 @@ define([
          * @type {canvas_widget.SingleValueAttribute}
          * @private
          */
-        var _label = new SingleValueAttribute(id+"[label]","Label",this);
+        var _label = new SingleValueAttribute(id + "[label]", "Label", this);
 
         /**
          * Appearance information of edge
@@ -90,26 +114,20 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(abstractNodeHtml,{id: id}));
+        var _$node = $(_.template(abstractNodeHtml, { id: id }));
 
-        var _$awarenessTrace = $(_.template(awarenessTraceHtml, {id: id + "_awareness"}));
+        var _$awarenessTrace = $(_.template(awarenessTraceHtml, { id: id + "_awareness" }));
 
-        var _awarenessTimer = setInterval(function(){
+        var _awarenessTimer = setInterval(function () {
             var opacity = _$awarenessTrace.css("opacity");
             opacity -= 0.1;
-            if(opacity < 0)
+            if (opacity < 0)
                 opacity = 0;
             _$awarenessTrace.css({
                 opacity: opacity
             });
         }, 3000);
 
-        /**
-         * Inter widget communication wrapper
-         * @type {Object}
-         * @private
-         */
-        var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
 
         /**
          * Attributes of node
@@ -129,7 +147,7 @@ define([
          * Callback to generate list of context menu items
          * @type {function}
          */
-        var _contextMenuItemCallback = function(){return{};};
+        var _contextMenuItemCallback = function () { return {}; };
 
         /**
          * Set of ingoing edges
@@ -165,7 +183,7 @@ define([
          * Apply a Node Move Operation
          * @param {operations.ot.NodeMoveOperation} operation
          */
-        var processNodeMoveOperation = function(operation){
+        var processNodeMoveOperation = function (operation) {
             _canvas.hideGuidanceBox();
             that.move(operation.getOffsetX(), operation.getOffsetY(), 0);
             _canvas.showGuidanceBox();
@@ -176,31 +194,37 @@ define([
          * Apply a Node Move Z Operation
          * @param {operations.ot.NodeMoveZOperation} operation
          */
-        var processNodeMoveZOperation = function(operation){
-            that.move(0,0,operation.getOffsetZ());
+        var processNodeMoveZOperation = function (operation) {
+            that.move(0, 0, operation.getOffsetZ());
         };
 
         /**
          * Propagate a Node Move Operation to the remote users and the local widgets
          * @param {operations.ot.NodeMoveOperation} operation
          */
-        var propagateNodeMoveOperation = function(operation){
+        this.propagateNodeMoveOperation = function (operation) {
+            operation.setJabberId(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
             processNodeMoveOperation(operation);
             HistoryManager.add(operation);
             $('#save').click();
 
             hideTraceAwareness();
-            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
-            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP, operation.getOTOperation());
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
 
             y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(
                 "NodeMoveActivity",
                 operation.getEntityId(),
                 operation.getJabberId(),
-                NodeMoveOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
-                {nodeType: that.getType()}
-            ))
+                NodeMoveOperation.getOperationDescription(that.getType(), that.getLabel().getValue().getValue()),
+                { nodeType: that.getType() }
+            ));
+
+            if (_ymap) {
+                _ymap.set(NodeMoveOperation.TYPE, operation.toJSON());
+            }
+
 
         };
 
@@ -208,30 +232,33 @@ define([
          * Propagate a Node Move Z Operation to the remote users and the local widgets
          * @param {operations.ot.NodeMoveZOperation} operation
          */
-        var propagateNodeMoveZOperation = function(operation){
+        this.propagateNodeMoveZOperation = function (operation) {
+            var jabberId =  _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID];
+            operation.setJabberId(jabberId);
             processNodeMoveZOperation(operation);
             HistoryManager.add(operation);
             hideTraceAwareness();
-            //if(_iwcw.sendRemoteOTOperation(operation)){
-            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-            y.share.activity.set(ActivityOperation.TYPE,new ActivityOperation(
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
+            y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(
                 "NodeMoveActivity",
                 operation.getEntityId(),
-                _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
-                NodeMoveOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
-                {nodeType: that.getType()}
+                jabberId,
+                NodeMoveOperation.getOperationDescription(that.getType(), that.getLabel().getValue().getValue()),
+                { nodeType: that.getType() }
             ));
-            //}
+
+            if (_ymap)
+                _ymap.set(NodeMoveZOperation.TYPE, operation.toJSON());
         };
 
         /**
          * Apply a Node Resize Operation
          * @param {operations.ot.NodeResizeOperation} operation
          */
-        var processNodeResizeOperation = function(operation){
+        var processNodeResizeOperation = function (operation) {
             _canvas.hideGuidanceBox();
-            that.resize(operation.getOffsetX(),operation.getOffsetY());
+            that.resize(operation.getOffsetX(), operation.getOffsetY());
             _canvas.showGuidanceBox();
         };
 
@@ -239,31 +266,32 @@ define([
          * Propagate a Node Resize Operation to the remote users and the local widgets
          * @param {operations.ot.NodeResizeOperation} operation
          */
-        var propagateNodeResizeOperation = function(operation){
+        this.propagateNodeResizeOperation = function (operation) {
+            operation.setJabberId(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
             processNodeResizeOperation(operation);
             HistoryManager.add(operation);
             $('#save').click();
             hideTraceAwareness();
-            //if(_iwcw.sendRemoteOTOperation(operation)){
-            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
-            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP, operation.getOTOperation());
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
             y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(
                 "NodeResizeActivity",
                 operation.getEntityId(),
                 operation.getJabberId(),
-                NodeResizeOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
-                {nodeType: that.getType()}
+                NodeResizeOperation.getOperationDescription(that.getType(), that.getLabel().getValue().getValue()),
+                { nodeType: that.getType() }
             ));
-            
+
+            if (_ymap)
+                _ymap.set('NodeResizeOperation', operation.toJSON());
         };
 
-        //noinspection JSUnusedLocalSymbols
         /**
          * Apply a Node Delete Operation
          * @param {operations.ot.NodeDeleteOperation} operation
          */
-        var processNodeDeleteOperation = function(operation) {
+        var processNodeDeleteOperation = function (operation) {
             var edges = that.getEdges(),
                 edgeId,
                 edge;
@@ -279,7 +307,7 @@ define([
                 if (typeof _relatedGhostEdges[i].remove == "function")
                     _relatedGhostEdges[i].remove();
             }
-            if (_ymap){
+            if (_ymap) {
                 _ymap = null;
             }
             that.remove();
@@ -289,30 +317,30 @@ define([
          * Propagate a Node Delete Operation to the remote users and the local widgets
          * @param {operations.ot.NodeDeleteOperation} operation
          */
-        var propagateNodeDeleteOperation = function(operation){
+        var propagateNodeDeleteOperation = function (operation) {
             processNodeDeleteOperation(operation);
             $('#save').click();
-            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
-            y.share.activity.set(ActivityOperation.TYPE,new ActivityOperation(
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP, operation.getOTOperation());
+            y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(
                 "NodeDeleteActivity",
                 operation.getEntityId(),
                 _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
-                NodeDeleteOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
+                NodeDeleteOperation.getOperationDescription(that.getType(), that.getLabel().getValue().getValue()),
                 {}
             ));
 
         };
 
-        var refreshTraceAwareness = function(color){
+        var refreshTraceAwareness = function (color) {
             _$awarenessTrace.css({
                 opacity: 1,
                 fill: color
             });
         };
 
-        var hideTraceAwareness = function(){
+        var hideTraceAwareness = function () {
             _$awarenessTrace.css({
                 opacity: 0
             });
@@ -322,18 +350,13 @@ define([
          * Callback for a remote Node Move Operation
          * @param {operations.ot.NodeMoveOperation} operation
          */
-        var remoteNodeMoveCallback = function(operation){
-            if(operation instanceof NodeMoveOperation && operation.getEntityId() === that.getEntityId()){
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-                
+        var remoteNodeMoveCallback = function (operation) {
+            if (operation instanceof NodeMoveOperation && operation.getEntityId() === that.getEntityId()) {
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP, operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
 
-                /*if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()) {
-                 color = _iwcw.getUserColor(operation.getJabberId());
-                 refreshTraceAwareness(color);
-                 }*/
-                if(y.share.users.get(y.db.userId) !== operation.getJabberId()){
+                if (y.share.users.get(y.db.userId) !== operation.getJabberId()) {
                     var color = Util.getColor(y.share.userList.get(operation.getJabberId()).globalId);
                     refreshTraceAwareness(color);
                 }
@@ -346,16 +369,12 @@ define([
          * Callback for a remote Node Move Z Operation
          * @param {operations.ot.NodeMoveZOperation} operation
          */
-        var remoteNodeMoveZCallback = function(operation){
-            if(operation instanceof NodeMoveZOperation && operation.getEntityId() === that.getEntityId()){
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+        var remoteNodeMoveZCallback = function (operation) {
+            if (operation instanceof NodeMoveZOperation && operation.getEntityId() === that.getEntityId()) {
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
 
-                /*if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()) {
-                 var color = _iwcw.getUserColor(operation.getJabberId());
-                 refreshTraceAwareness(color);
-                 }*/
-                if(y.share.users.get(y.db.userId) !== operation.getJabberId()){
+                if (y.share.users.get(y.db.userId) !== operation.getJabberId()) {
                     var color = Util.getColor(y.share.userList.get(operation.getJabberId()).globalId);
                     refreshTraceAwareness(color);
                 }
@@ -367,17 +386,13 @@ define([
          * Callback for a remote Node Resize Operation
          * @param {operations.ot.NodeResizeOperation} operation
          */
-        var remoteNodeResizeCallback = function(operation){
-            if(operation instanceof NodeResizeOperation && operation.getEntityId() === that.getEntityId()){
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-                
-                /*if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()) {
-                 var color = _iwcw.getUserColor(operation.getJabberId());
-                 refreshTraceAwareness(color);
-                 }*/
-                if(y.share.users.get(y.db.userId) !== operation.getJabberId()){
+        var remoteNodeResizeCallback = function (operation) {
+            if (operation instanceof NodeResizeOperation && operation.getEntityId() === that.getEntityId()) {
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP, operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
+
+                if (y.share.users.get(y.db.userId) !== operation.getJabberId()) {
                     var color = Util.getColor(y.share.userList.get(operation.getJabberId()).globalId);
                     refreshTraceAwareness(color);
                 }
@@ -389,22 +404,22 @@ define([
          * Callback for a remote Node Delete Operation
          * @param {operations.ot.NodeDeleteOperation} operation
          */
-         this.remoteNodeDeleteCallback = function(operation){
-            if(operation instanceof NodeDeleteOperation && operation.getEntityId() === that.getEntityId()){
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP,operation.getOTOperation());
+        this.remoteNodeDeleteCallback = function (operation) {
+            if (operation instanceof NodeDeleteOperation && operation.getEntityId() === that.getEntityId()) {
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP, operation.getOTOperation());
                 processNodeDeleteOperation(operation);
                 HistoryManager.clean(operation.getEntityId());
             }
         };
 
-        this.init = function(){
+        this.init = function () {
             //Define Node Rightclick Menu
             $.contextMenu({
-                selector: "#"+id,
+                selector: "#" + id,
                 zIndex: AbstractEntity.CONTEXT_MENU_Z_INDEX,
-                build: function($trigger, e){
+                build: function ($trigger, e) {
                     var menuItems,
                         offsetClick,
                         offsetCanvas;
@@ -413,53 +428,39 @@ define([
                     offsetClick = $(e.target).offset();
                     offsetCanvas = that.getCanvas().get$node().offset();
 
-                    if(_canvas.getSelectedEntity() === null || _canvas.getSelectedEntity() === that){
-                        menuItems = _.extend(_contextMenuItemCallback(),{
+                    if (_canvas.getSelectedEntity() === null || _canvas.getSelectedEntity() === that) {
+                        menuItems = _.extend(_contextMenuItemCallback(), {
                             connectTo: EntityManager.generateConnectToMenu(that),
                             sepMove: "---------",
                             moveToForeground: {
                                 name: "Move to Foreground",
-                                callback: function(/*key, opt*/){
-                                    var operation = new NodeMoveZOperation(that.getEntityId(),++AbstractEntity.maxZIndex-_zIndex);
-                                    if(y){
-                                        _ymap.set(NodeMoveZOperation.TYPE,operation.toJSON());
-                                    }
-                                    else {
-                                        propagateNodeMoveZOperation(operation);
-                                    }
+                                callback: function (/*key, opt*/) {
+                                    that.propagateNodeMoveZOperation(new NodeMoveZOperation(that.getEntityId(), ++AbstractEntity.maxZIndex - _zIndex));
                                 }
                             },
                             moveToBackground: {
                                 name: "Move to Background",
-                                callback: function(/*key, opt*/){
-                                    var operation = new NodeMoveZOperation(that.getEntityId(),--AbstractEntity.minZIndex-_zIndex);
-                                    if(_ymap){
-                                        _ymap.set('zIndex', zIndex + operation.getOffsetZ());
-                                        propagateNodeMoveZOperation(operation);
-                                        _ymap.set(NodeMoveZOperation.TYPE,operation.toJSON());
-                                    }
-                                    else {
-                                        propagateNodeMoveZOperation(operation);
-                                    }
+                                callback: function (/*key, opt*/) {
+                                    that.propagateNodeMoveZOperation(new NodeMoveZOperation(that.getEntityId(), --AbstractEntity.minZIndex - _zIndex));
                                 }
                             },
                             sepDelete: "---------",
                             delete: {
                                 name: "Delete",
-                                callback: function(/*key, opt*/){
+                                callback: function (/*key, opt*/) {
                                     that.triggerDeletion();
                                 }
                             },
-                            quit:{
-                                name:' ',
-                                disabled:true
+                            quit: {
+                                name: ' ',
+                                disabled: true
                             }
                         });
 
                         return {
                             items: menuItems,
                             events: {
-                                show: function(/*opt*/){
+                                show: function (/*opt*/) {
                                     _canvas.select(that);
                                 }
                             }
@@ -477,7 +478,7 @@ define([
         /**
          * Triggers jsPlumb's repaint function and adjusts the angle of the edge labels
          */
-        var repaint = function(){
+        var repaint = function () {
             //var edgeId,
             //    edges = that.getEdges();
             jsPlumb.repaint(_$node);
@@ -487,51 +488,46 @@ define([
              edges[edgeId].setZIndex();
              }
              }*/
-            _.each(require('canvas_widget/EntityManager').getEdges(),function(e){e.setZIndex();});
+            _.each(require('canvas_widget/EntityManager').getEdges(), function (e) { e.setZIndex(); });
         };
 
         /**
          * Anchor options for new connections
          * @type {object}
          */
-        var _anchorOptions = [ "Perimeter",{ shape:"Rectangle", anchorCount: 10} ];
+        var _anchorOptions = ["Perimeter", { shape: "Rectangle", anchorCount: 10 }];
 
         /**
          * Get options for new connections
          * @returns {Object}
          */
-        this.getAnchorOptions = function(){
+        this.getAnchorOptions = function () {
             return _anchorOptions;
         };
 
         /**
          * Send NodeDeleteOperation for node
          */
-        this.triggerDeletion = function(historyFlag){
+        this.triggerDeletion = function (historyFlag) {
             var edgeId,
                 edges = this.getEdges(),
                 edge;
-                
-           
-                
             _canvas.select(null);
-            for(edgeId in edges){
-                if(edges.hasOwnProperty(edgeId)){
+            for (edgeId in edges) {
+                if (edges.hasOwnProperty(edgeId)) {
                     edge = edges[edgeId];
                     edge.triggerDeletion();
                 }
             }
-            //noinspection JSAccessibilityCheck
-            var operation = new NodeDeleteOperation(id,that.getType(),_appearance.left,_appearance.top,_appearance.width,_appearance.height,_zIndex,that.toJSON());
-            if(_ymap){
-                //_ymap.set(NodeDeleteOperation.TYPE, operation.toJSON());
+            var operation = new NodeDeleteOperation(id, that.getType(), _appearance.left, _appearance.top, _appearance.width, _appearance.height, _zIndex, that.toJSON());
+            if (_ymap) {
                 propagateNodeDeleteOperation(operation);
                 y.share.nodes.delete(that.getEntityId());
             }
             else {
                 propagateNodeDeleteOperation(operation);
             }
-             if(!historyFlag)
+            if (!historyFlag)
                 HistoryManager.add(operation);
         };
 
@@ -540,7 +536,7 @@ define([
          * Get callback to generate list of context menu items
          * @returns {object}
          */
-        this.getContextMenuItemCallback = function(){
+        this.getContextMenuItemCallback = function () {
             return _contextMenuItemCallback;
         };
 
@@ -548,8 +544,8 @@ define([
          * Set callback to generate list of context menu items
          * @param {function} contextMenuItemCallback
          */
-        this.setContextMenuItemCallback = function(contextMenuItemCallback){
-            if(typeof contextMenuItemCallback === 'function'){
+        this.setContextMenuItemCallback = function (contextMenuItemCallback) {
+            if (typeof contextMenuItemCallback === 'function') {
                 _contextMenuItemCallback = contextMenuItemCallback;
             }
         };
@@ -558,7 +554,7 @@ define([
          * Get node appearance
          * @returns {{left: number, top: number, width: number, height: number}}
          */
-        this.getAppearance = function(){
+        this.getAppearance = function () {
             return _appearance;
         };
 
@@ -566,11 +562,11 @@ define([
          * Get position of node on z-axis
          * @return {number}
          */
-        this.getZIndex = function(){
+        this.getZIndex = function () {
             return _zIndex;
         };
 
-        this.refreshTraceAwareness = function(color){
+        this.refreshTraceAwareness = function (color) {
             refreshTraceAwareness(color);
         };
 
@@ -578,7 +574,7 @@ define([
          * Adds node to canvas
          * @param {canvas_widget.AbstractCanvas} canvas
          */
-        this.addToCanvas = function(canvas){
+        this.addToCanvas = function (canvas) {
             _canvas = canvas;
             canvas.get$canvas().append(_$awarenessTrace);
             canvas.get$canvas().append(_$node);
@@ -588,31 +584,30 @@ define([
          * Get associated canvas
          * @returns {canvas_widget.AbstractCanvas}
          */
-        this.getCanvas = function(){
+        this.getCanvas = function () {
             return _canvas;
         };
 
         /**
          * Removes node from canvas
          */
-        this.removeFromCanvas = function(){
+        this.removeFromCanvas = function () {
             _$node.remove();
             //destroy the context menu
-            $.contextMenu('destroy', '#'+that.getEntityId());
+            $.contextMenu('destroy', '#' + that.getEntityId());
             _canvas = null;
             _$awarenessTrace.remove();
-            
-            
-
+            if (this.hasOwnProperty('unregisterCallbacks'))
+                this.unregisterCallbacks();
         };
 
         /**
          * Add attribute to node
          * @param {canvas_widget.AbstractAttribute} attribute
          */
-        this.addAttribute = function(attribute){
+        this.addAttribute = function (attribute) {
             var id = attribute.getEntityId();
-            if(!_attributes.hasOwnProperty(id)){
+            if (!_attributes.hasOwnProperty(id)) {
                 _attributes[id] = attribute;
             }
         };
@@ -622,8 +617,8 @@ define([
          * @param {String} id Attribute's entity id
          * @returns {canvas_widget.AbstractAttribute}
          */
-        this.getAttribute = function(id){
-            if(_attributes.hasOwnProperty(id)){
+        this.getAttribute = function (id) {
+            if (_attributes.hasOwnProperty(id)) {
                 return _attributes[id];
             }
             return null;
@@ -633,8 +628,8 @@ define([
          * Delete attribute by id
          * @param {String} id Attribute's entity id
          */
-        this.deleteAttribute = function(id){
-            if(_attributes.hasOwnProperty(id)){
+        this.deleteAttribute = function (id) {
+            if (_attributes.hasOwnProperty(id)) {
                 delete _attributes[id];
             }
         };
@@ -643,7 +638,7 @@ define([
          * Set node's attributes
          * @param {Object} attributes
          */
-        this.setAttributes = function(attributes){
+        this.setAttributes = function (attributes) {
             _attributes = attributes;
         };
 
@@ -651,7 +646,7 @@ define([
          * Get node's attributes
          * @returns {Object}
          */
-        this.getAttributes = function(){
+        this.getAttributes = function () {
             return _attributes;
         };
 
@@ -659,7 +654,7 @@ define([
          * Set edge label
          * @param {canvas_widget.SingleValueAttribute} label
          */
-        this.setLabel = function(label){
+        this.setLabel = function (label) {
             _label = label;
         };
 
@@ -667,7 +662,7 @@ define([
          * Get edge label
          * @returns {canvas_widget.SingleValueAttribute}
          */
-        this.getLabel = function(){
+        this.getLabel = function () {
             return _label;
         };
 
@@ -675,7 +670,7 @@ define([
          * Get edge type
          * @returns {string}
          */
-        this.getType = function(){
+        this.getType = function () {
             return _type;
         };
 
@@ -684,7 +679,7 @@ define([
          * @returns {jQuery}
          * @private
          */
-        this._get$node = function(){
+        this._get$node = function () {
             return _$node;
         };
 
@@ -692,11 +687,11 @@ define([
          * Apply position and dimension attributes to the node
          * @private
          */
-        this._draw = function(){
+        this._draw = function () {
             //noinspection JSAccessibilityCheck
             _$awarenessTrace.css({
-                left: _appearance.left + _appearance.width/2,
-                top: _appearance.top + _appearance.height/2,
+                left: _appearance.left + _appearance.width / 2,
+                top: _appearance.top + _appearance.height / 2,
                 width: _appearance.width * 1.2,
                 height: _appearance.height * 1.2,
                 zIndex: _zIndex - 1
@@ -716,13 +711,17 @@ define([
          * @param {number} offsetY Offset in y-direction
          * @param {number} offsetZ Offset in z-direction
          */
-        this.move = function(offsetX,offsetY,offsetZ){
-            //noinspection JSAccessibilityCheck
+        this.move = function (offsetX, offsetY, offsetZ) {
             _appearance.left += offsetX;
             _appearance.top += offsetY;
 
             _zIndex += offsetZ;
 
+            if (_ymap) {
+                _ymap.set('left', _appearance.left);
+                _ymap.set('top', _appearance.top);
+                _ymap.set('zIndex', _zIndex);
+            }
             this._draw();
             repaint();
         };
@@ -732,10 +731,13 @@ define([
          * @param {number} offsetX Offset in x-direction
          * @param {number} offsetY Offset in y-direction
          */
-        this.resize = function(offsetX,offsetY){
+        this.resize = function (offsetX, offsetY) {
             _appearance.width += offsetX;
             _appearance.height += offsetY;
-
+            if(_ymap){
+                _ymap.set('width', _appearance.width);
+                _ymap.set('height', _appearance.height);
+            }
             this._draw();
             repaint();
         };
@@ -744,13 +746,13 @@ define([
          * Add ingoing edge
          * @param {canvas_widget.AbstractEdge} edge
          */
-        this.addIngoingEdge = function(edge){
+        this.addIngoingEdge = function (edge) {
             var id = edge.getEntityId();
             var source = edge.getSource();
             var sourceEntityId = source.getEntityId();
-            if(!_ingoingEdges.hasOwnProperty(id)){
+            if (!_ingoingEdges.hasOwnProperty(id)) {
                 _ingoingEdges[id] = edge;
-                if(!_ingoingNeighbors.hasOwnProperty(sourceEntityId)){
+                if (!_ingoingNeighbors.hasOwnProperty(sourceEntityId)) {
                     _ingoingNeighbors[sourceEntityId] = source;
                 }
             }
@@ -760,13 +762,13 @@ define([
          * Add outgoing edge
          * @param {canvas_widget.AbstractEdge} edge
          */
-        this.addOutgoingEdge = function(edge){
+        this.addOutgoingEdge = function (edge) {
             var id = edge.getEntityId();
             var target = edge.getTarget();
             var targetEntityId = target.getEntityId();
-            if(!_outgoingEdges.hasOwnProperty(id)){
+            if (!_outgoingEdges.hasOwnProperty(id)) {
                 _outgoingEdges[id] = edge;
-                if(!_outgoingNeighbors.hasOwnProperty(targetEntityId)){
+                if (!_outgoingNeighbors.hasOwnProperty(targetEntityId)) {
                     _outgoingNeighbors[targetEntityId] = target;
                 }
             }
@@ -776,19 +778,19 @@ define([
          * Delete ingoing edge
          * @param {canvas_widget.AbstractEdge} edge
          */
-        this.deleteIngoingEdge = function(edge){
+        this.deleteIngoingEdge = function (edge) {
             var id = edge.getEntityId();
             var source = edge.getSource();
             var sourceEntityId = source.getEntityId();
             var isMultiEdge = false;
-            if(_ingoingEdges.hasOwnProperty(id)){
+            if (_ingoingEdges.hasOwnProperty(id)) {
                 delete _ingoingEdges[id];
-                for(var edgeId in _ingoingEdges){
-                    if(_ingoingEdges.hasOwnProperty(edgeId) && _ingoingEdges[edgeId].getSource().getEntityId() === sourceEntityId){
+                for (var edgeId in _ingoingEdges) {
+                    if (_ingoingEdges.hasOwnProperty(edgeId) && _ingoingEdges[edgeId].getSource().getEntityId() === sourceEntityId) {
                         isMultiEdge = true;
                     }
                 }
-                if(!isMultiEdge){
+                if (!isMultiEdge) {
                     delete _ingoingNeighbors[sourceEntityId];
                 }
             }
@@ -798,19 +800,19 @@ define([
          * Delete outgoing edge
          * @param {canvas_widget.AbstractEdge} edge
          */
-        this.deleteOutgoingEdge = function(edge){
+        this.deleteOutgoingEdge = function (edge) {
             var id = edge.getEntityId();
             var target = edge.getTarget();
             var targetEntityId = target.getEntityId();
             var isMultiEdge = false;
-            if(_outgoingEdges.hasOwnProperty(id)){
+            if (_outgoingEdges.hasOwnProperty(id)) {
                 delete _outgoingEdges[id];
-                for(var edgeId in _outgoingEdges){
-                    if(_outgoingEdges.hasOwnProperty(edgeId) && _outgoingEdges[edgeId].getTarget().getEntityId() === targetEntityId){
+                for (var edgeId in _outgoingEdges) {
+                    if (_outgoingEdges.hasOwnProperty(edgeId) && _outgoingEdges[edgeId].getTarget().getEntityId() === targetEntityId) {
                         isMultiEdge = true;
                     }
                 }
-                if(!isMultiEdge){
+                if (!isMultiEdge) {
                     delete _outgoingNeighbors[targetEntityId];
                 }
             }
@@ -821,7 +823,7 @@ define([
          * Get ingoing edges
          * @returns {Object}
          */
-        this.getIngoingEdges = function(){
+        this.getIngoingEdges = function () {
             return _ingoingEdges;
         };
 
@@ -829,7 +831,7 @@ define([
          * Get outgoing edges
          * @returns {Object}
          */
-        this.getOutgoingEdges = function(){
+        this.getOutgoingEdges = function () {
             return _outgoingEdges;
         };
 
@@ -837,8 +839,8 @@ define([
          * Get all ingoing and outgoing edges
          * @returns {Array}
          */
-        this.getEdges = function(){
-            return Util.union(_ingoingEdges,_outgoingEdges);
+        this.getEdges = function () {
+            return Util.union(_ingoingEdges, _outgoingEdges);
         };
 
         //noinspection JSUnusedGlobalSymbols
@@ -846,7 +848,7 @@ define([
          * Get neighbors with an edge to the node
          * @returns {Object}
          */
-        this.getIngoingNeighbors = function(){
+        this.getIngoingNeighbors = function () {
             return _ingoingNeighbors;
         };
 
@@ -855,7 +857,7 @@ define([
          * Get neighbors with an edge from the node
          * @returns {Object}
          */
-        this.getOutgoingNeighbors = function(){
+        this.getOutgoingNeighbors = function () {
             return _outgoingNeighbors;
         };
 
@@ -864,33 +866,33 @@ define([
          * Get neighbors with an edge to or from the node
          * @returns {Object}
          */
-        this.getNeighbors = function(){
-            return Util.union(_ingoingNeighbors,_outgoingNeighbors);
+        this.getNeighbors = function () {
+            return Util.union(_ingoingNeighbors, _outgoingNeighbors);
         };
 
         /**
          * Lowlight the node
          */
-        this.lowlight = function(){
+        this.lowlight = function () {
             _$node.addClass('lowlighted');
         };
 
         /**
          * Unlowlight the node
          */
-        this.unlowlight = function(){
+        this.unlowlight = function () {
             _$node.removeClass('lowlighted');
         };
 
         /**
          * Select the node
          */
-        this.select = function(){
+        this.select = function () {
             _isSelected = true;
             this.unhighlight();
             _$node.addClass("selected");
-            Util.delay(100).then(function(){
-                _.each(require('canvas_widget/EntityManager').getEdges(),function(e){
+            Util.delay(100).then(function () {
+                _.each(require('canvas_widget/EntityManager').getEdges(), function (e) {
                     e.setZIndex();
                 });
             });
@@ -899,14 +901,14 @@ define([
         /**
          * Unselect the node
          */
-        this.unselect = function(){
+        this.unselect = function () {
             _isSelected = false;
             //this.highlight(_highlightColor,_highlightUsername);
             _$node.removeClass("selected");
             //tigger save when unselecting an entity
-             $('#save').click();
-            Util.delay(100).then(function(){
-                _.each(require('canvas_widget/EntityManager').getEdges(),function(e){
+            $('#save').click();
+            Util.delay(100).then(function () {
+                _.each(require('canvas_widget/EntityManager').getEdges(), function (e) {
                     e.setZIndex();
                 });
             });
@@ -917,34 +919,34 @@ define([
          * @param {String} color
          * @param {String} username
          */
-        this.highlight = function(color,username){
+        this.highlight = function (color, username) {
             //unhighlight everything else
             //$('.node:not(.selected)').css({border: "2px solid transparent"});
             //$('.user_highlight').remove();
-            if(color && username){
-                _$node.css({border: "2px solid " + color});
-                _$node.append($('<div></div>').addClass('user_highlight').css('color',color).text(username));
-                Util.delay(100).then(function(){_.each(require('canvas_widget/EntityManager').getEdges(),function(e){e.setZIndex();});});
+            if (color && username) {
+                _$node.css({ border: "2px solid " + color });
+                _$node.append($('<div></div>').addClass('user_highlight').css('color', color).text(username));
+                Util.delay(100).then(function () { _.each(require('canvas_widget/EntityManager').getEdges(), function (e) { e.setZIndex(); }); });
             }
         };
 
         /**
          * Unhighlight the node
          */
-        this.unhighlight = function(){
-            _$node.css({border: ""});
+        this.unhighlight = function () {
+            _$node.css({ border: "" });
             _$node.find('.user_highlight').remove();
-            Util.delay(100).then(function(){
+            Util.delay(100).then(function () {
                 var EntityManager = null;
-                try{
+                try {
                     EntityManager = require('canvas_widget/EntityManager');
-                    _.each(EntityManager.getEdges(),function(e){
+                    _.each(EntityManager.getEdges(), function (e) {
                         e.setZIndex();
                     });
                 }
-                catch(error){
-                    require(['canvas_widget/EntityManager'], function(EntityManager){
-                        _.each(EntityManager.getEdges(),function(e){
+                catch (error) {
+                    require(['canvas_widget/EntityManager'], function (EntityManager) {
+                        _.each(EntityManager.getEdges(), function (e) {
                             e.setZIndex();
                         });
                     });
@@ -956,10 +958,9 @@ define([
         /**
          * Remove the node
          */
-        this.remove = function(){
+        this.remove = function () {
             clearInterval(_awarenessTimer);
             this.removeFromCanvas();
-            //this.unregisterCallbacks();
             require('canvas_widget/EntityManager').deleteNode(this.getEntityId());
         };
 
@@ -968,9 +969,9 @@ define([
          * @returns {Object}
          * @private
          */
-        this._toJSON = function(){
+        this._toJSON = function () {
             var attr = {};
-            _.forEach(this.getAttributes(),function(val,key){
+            _.forEach(this.getAttributes(), function (val, key) {
                 attr[key] = val.toJSON();
             });
             //noinspection JSAccessibilityCheck
@@ -986,14 +987,14 @@ define([
             };
         };
 
-        this.addGhostEdge = function(ghostEdge){
+        this.addGhostEdge = function (ghostEdge) {
             _relatedGhostEdges.push(ghostEdge);
         };
 
         /**
          * Bind events for move tool
          */
-        this.bindMoveToolEvents = function(){
+        this.bindMoveToolEvents = function () {
 
             //$canvas.find(".node.ui-draggable").draggable("option","disabled",false);
             var originalPos = {
@@ -1004,102 +1005,83 @@ define([
             //Enable Node Selection
             var drag = false;
             var $sizePreview = $("<div class=\"size-preview\"></div>").hide();
-            _$node.on("click",function(){
+            _$node.on("click", function () {
                 _canvas.select(that);
             })
                 //Enable Node Resizing
                 .resizable({
                     containment: "parent",
-                    start: function(ev/*,ui*/){
+                    start: function (ev/*,ui*/) {
                         _canvas.hideGuidanceBox();
                         $sizePreview.show();
-                        _$node.css({opacity:0.5});
+                        _$node.css({ opacity: 0.5 });
                         _$node.append($sizePreview);
-                        _$node.resizable("option","aspectRatio",ev.shiftKey);
-                        _$node.resizable("option","grid",ev.ctrlKey ? [20,20] : '');
+                        _$node.resizable("option", "aspectRatio", ev.shiftKey);
+                        _$node.resizable("option", "grid", ev.ctrlKey ? [20, 20] : '');
                     },
-                    resize:function(ev,ui){
+                    resize: function (ev, ui) {
                         _canvas.hideGuidanceBox();
                         $sizePreview.text(Math.round(ui.size.width) + "x" + Math.round(ui.size.height));
                         repaint();
-                        _$node.resizable("option","aspectRatio",ev.shiftKey);
-                        _$node.resizable("option","grid",ev.ctrlKey ? [20,20] : '');
+                        _$node.resizable("option", "aspectRatio", ev.shiftKey);
+                        _$node.resizable("option", "grid", ev.ctrlKey ? [20, 20] : '');
                     },
-                    stop:function(ev,ui){
+                    stop: function (ev, ui) {
                         $sizePreview.hide();
-                        _$node.css({opacity:''});
+                        _$node.css({ opacity: '' });
                         var $target = ui.helper;
-                        $target.css({width: ui.originalSize.width, height: ui.originalSize.height});
-                        var offsetX = ui.size.width-ui.originalSize.width;
-                        var offsetY = ui.size.height-ui.originalSize.height;
-                        var operation = new NodeResizeOperation(id,offsetX,offsetY,_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
-                        if(y){
-                            if(_ymap){
-                                _ymap.set('width',_appearance.width +offsetX);
-                                _ymap.set('height',_appearance.height+offsetY);
-                                propagateNodeResizeOperation(operation);
-                                _ymap.set('NodeResizeOperation', operation.toJSON());
-                            }
-                        }
-                        else {
-                            propagateNodeResizeOperation(operation);
-                        }
-                        //that.canvas.callListeners(CONFIG.CANVAS.LISTENERS.NODERESIZE,id,offsetX,offsetY);
-                        _$node.resizable("option","aspectRatio",false);
-                        _$node.resizable("option","grid",'');
-                        //$(ev.toElement).one('click',function(ev){ev.stopImmediatePropagation();});
-                        that.draw();
-                        repaint();
-                        _canvas.showGuidanceBox();
+                        $target.css({ width: ui.originalSize.width, height: ui.originalSize.height });
+                        var offsetX = ui.size.width - ui.originalSize.width;
+                        var offsetY = ui.size.height - ui.originalSize.height;
+                        var operation = new NodeResizeOperation(id, offsetX, offsetY);
+                        that.propagateNodeResizeOperation(operation);
+                        _$node.resizable("option", "aspectRatio", false);
+                        _$node.resizable("option", "grid", '');
+                        
+                        //TODO: check that! Already called in processNodeResizeOperation called by propagateNodeResizeOperation
+                        //_canvas.showGuidanceBox();
                     }
                 })
 
                 //Enable Node Dragging
                 .draggable({
                     containment: 'parent',
-                    start: function(ev,ui){
+                    start: function (ev, ui) {
                         originalPos.top = ui.position.top;
                         originalPos.left = ui.position.left;
                         //ui.position.top = 0;
                         //ui.position.left = 0;
                         _canvas.select(that);
                         _canvas.hideGuidanceBox();
-                        _$node.css({opacity:0.5});
+                        _$node.css({ opacity: 0.5 });
                         _$node.resizable("disable");
                         drag = false;
-                        _$node.draggable("option","grid",ev.ctrlKey ? [20,20] : '');
+                        _$node.draggable("option", "grid", ev.ctrlKey ? [20, 20] : '');
                     },
-                    drag: function(ev){
+                    drag: function (ev) {
                         // ui.position.left = Math.round(ui.position.left  / _canvas.getZoom());
                         // ui.position.top = Math.round(ui.position.top / _canvas.getZoom());
-                            
-                        if(drag) repaint();
+
+                        if (drag) repaint();
                         drag = true;
-                        
+
                         _canvas.hideGuidanceBox();
-                        _$node.draggable("option","grid",ev.ctrlKey ? [20,20] : '');
+                        _$node.draggable("option", "grid", ev.ctrlKey ? [20, 20] : '');
                     },
-                    stop: function(ev,ui){
-                        _$node.css({opacity:''});
+                    stop: function (ev, ui) {
+                        _$node.css({ opacity: '' });
                         _$node.resizable("enable");
                         var id = _$node.attr("id");
                         //_$node.css({top: originalPos.top / _canvas.getZoom(), left: originalPos.left / _canvas.getZoom()});
                         var offsetX = Math.round((ui.position.left - originalPos.left) / _canvas.getZoom());
                         var offsetY = Math.round((ui.position.top - originalPos.top) / _canvas.getZoom());
-                        var operation = new NodeMoveOperation(id,offsetX,offsetY,_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
-                        if(_ymap){
-                            _ymap.set('top', _appearance.top + offsetY);
-                            _ymap.set('left',_appearance.left+offsetX);
-                            propagateNodeMoveOperation(operation);
-                            _ymap.set(NodeMoveOperation.TYPE,operation.toJSON());
-                        }
-                        else {
-                            propagateNodeMoveOperation(operation);
-                        }
+                        var operation = new NodeMoveOperation(id, offsetX, offsetY);
+                        that.propagateNodeMoveOperation(operation);
+
                         //Avoid node selection on drag stop
-                        _$node.draggable("option","grid",'');
+                        _$node.draggable("option", "grid", '');
                         _canvas.showGuidanceBox();
-                        $(ev.toElement).one('click',function(ev){ev.stopImmediatePropagation();});
+                        $(ev.toElement).one('click', function (ev) { ev.stopImmediatePropagation(); });
                     }
                 })
 
@@ -1112,14 +1094,14 @@ define([
                     scalable: false
                 })
 
-                .find("input").prop("disabled",false).css('pointerEvents','');
+                .find("input").prop("disabled", false).css('pointerEvents', '');
 
         };
 
         /**
          * Unbind events for move tool
          */
-        this.unbindMoveToolEvents = function(){
+        this.unbindMoveToolEvents = function () {
             //Disable Node Selection
             _$node.off("click")
 
@@ -1136,22 +1118,22 @@ define([
 
                 .transformable('destroy')
 
-                .find("input").prop("disabled",true).css('pointerEvents','none');
+                .find("input").prop("disabled", true).css('pointerEvents', 'none');
         };
 
         /**
          * Bind source node events for edge tool
          */
-        this.makeSource = function(){
+        this.makeSource = function () {
             _$node.addClass("source");
-            jsPlumb.makeSource(_$node,{
-                connectorPaintStyle:{ strokeStyle:"#aaaaaa", lineWidth:2 },
+            jsPlumb.makeSource(_$node, {
+                connectorPaintStyle: { strokeStyle: "#aaaaaa", lineWidth: 2 },
                 endpoint: "Blank",
                 anchor: _anchorOptions,
                 //maxConnections:1,
-                uniqueEndpoint:false,
-                deleteEndpointsOnDetach:true,
-                onMaxConnections:function(info/*, originalEvent*/) {
+                uniqueEndpoint: false,
+                deleteEndpointsOnDetach: true,
+                onMaxConnections: function (info/*, originalEvent*/) {
                     console.log("element is ", info.element, "maxConnections is", info.maxConnections);
                 }
             });
@@ -1160,16 +1142,16 @@ define([
         /**
          * Bind target node events for edge tool
          */
-        this.makeTarget = function(){
+        this.makeTarget = function () {
             _$node.addClass("target");
-            jsPlumb.makeTarget(_$node,{
-                isTarget:false,
+            jsPlumb.makeTarget(_$node, {
+                isTarget: false,
                 endpoint: "Blank",
                 anchor: _anchorOptions,
-                uniqueEndpoint:false,
+                uniqueEndpoint: false,
                 //maxConnections:1,
-                deleteEndpointsOnDetach:true,
-                onMaxConnections:function(info/*, originalEvent*/) {
+                deleteEndpointsOnDetach: true,
+                onMaxConnections: function (info/*, originalEvent*/) {
                     console.log("user tried to drop connection", info.connection, "on element", info.element, "with max connections", info.maxConnections);
                 }
             });
@@ -1178,7 +1160,7 @@ define([
         /**
          * Unbind events for edge tool
          */
-        this.unbindEdgeToolEvents = function(){
+        this.unbindEdgeToolEvents = function () {
             _$node.removeClass("source target");
             jsPlumb.unmakeSource(_$node);
             jsPlumb.unmakeTarget(_$node);
@@ -1186,38 +1168,33 @@ define([
 
         that.init();
 
-        this.getYMap = function(){
-            return _ymap;
-        };
-
-        this._registerYMap = function(ymap) {
-            _ymap = ymap;
+        this._registerYMap = function () {
             _ymap.observe(function (event) {
                 var yUserId = event.object.map[event.name][0];
 
-                if(y.db.userId !== yUserId || event.value.historyFlag) {
+                if (y.db.userId !== yUserId || (event.value && event.value.historyFlag)) {
                     var operation;
                     var data = event.value;
                     var jabberId = y.share.users.get(yUserId);
                     switch (event.name) {
                         case NodeMoveOperation.TYPE:
-                        {
-                            operation = new NodeMoveOperation(data.id, data.offsetX, data.offsetY, jabberId);
-                            remoteNodeMoveCallback(operation);
-                            break;
-                        }
+                            {
+                                operation = new NodeMoveOperation(data.id, data.offsetX, data.offsetY, jabberId);
+                                remoteNodeMoveCallback(operation);
+                                break;
+                            }
                         case NodeMoveZOperation.TYPE:
-                        {
-                            operation = new NodeMoveZOperation(data.id, data.offsetZ, jabberId);
-                            remoteNodeMoveZCallback(operation);
-                            break;
-                        }
+                            {
+                                operation = new NodeMoveZOperation(data.id, data.offsetZ, jabberId);
+                                remoteNodeMoveZCallback(operation);
+                                break;
+                            }
                         case NodeResizeOperation.TYPE:
-                        {
-                            operation = new NodeResizeOperation(data.id, data.offsetX, data.offsetY, jabberId);
-                            remoteNodeResizeCallback(operation);
-                            break;
-                        }
+                            {
+                                operation = new NodeResizeOperation(data.id, data.offsetX, data.offsetY, jabberId);
+                                remoteNodeResizeCallback(operation);
+                                break;
+                            }
                     }
                 }
             });
@@ -1227,7 +1204,7 @@ define([
     /**
      * Apply position and dimension attributes to the node
      */
-    AbstractNode.prototype.draw = function(){
+    AbstractNode.prototype.draw = function () {
         return this._draw();
     };
 
@@ -1235,7 +1212,7 @@ define([
      * Get jQuery object of DOM node representing the node
      * @returns {jQuery}
      */
-    AbstractNode.prototype.get$node = function(){
+    AbstractNode.prototype.get$node = function () {
         return this._get$node();
     };
 
@@ -1243,14 +1220,14 @@ define([
      * Get JSON representation of the node
      * @returns {{label: Object, left: number, top: number, width: number, height: number, type: string, attributes: Object}}
      */
-    AbstractNode.prototype.toJSON = function(){
+    AbstractNode.prototype.toJSON = function () {
         return this._toJSON();
     };
 
     /**
      * hide the node and all associated edges
      */
-    AbstractNode.prototype.hide = function(){
+    AbstractNode.prototype.hide = function () {
         this.get$node().hide();
         jsPlumb.hide(this.get$node());
     };
@@ -1258,15 +1235,16 @@ define([
     /**
      * show the node and all associated edges
      */
-    AbstractNode.prototype.show = function(){
+    AbstractNode.prototype.show = function () {
         this.get$node().show();
         jsPlumb.show(this.get$node()[0]);
         jsPlumb.repaint(this.get$node()[0]);
     };
 
-    AbstractNode.prototype.registerYMap = function(map){
-        this._registerYMap(map);
+    AbstractNode.prototype.registerYMap = function () {
+        this._registerYMap();
     };
+
     return AbstractNode;
 
 });

@@ -114,21 +114,6 @@ define([
 
         this.get$overlay().find('.type').addClass('segmented');
 
-        /*this.setContextMenuItems({
-            sep0: "---------",
-            convertToUniDirAssociationEdge: {
-                name: "Convert to Uni-Dir. Assoc. Edge",
-                callback: function(){
-                    var canvas = that.getCanvas();
-
-                    //noinspection JSAccessibilityCheck
-                    canvas.createEdge(require('canvas_widget/UniDirAssociationEdge').TYPE,that.getSource().getEntityId(),that.getTarget().getEntityId(),that.toJSON());
-
-                    that.triggerDeletion();
-
-                }
-            }
-        });*/
     }
 
     return BiDirAssociationEdge;

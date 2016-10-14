@@ -187,7 +187,7 @@ function ($, jsPlumb, _, IWCW, Util, AbstractValue, ValueChangeOperation, Logica
          * @param position Position the change took place
          */
         this.propagateValueChange = function (type, value, position) {
-            var operation = new ValueChangeOperation(that.getEntityId(), value, type, position);
+            var operation = new ValueChangeOperation(that.getEntityId(), value, type, position, _iwc.getUser()[CONFIG.NS.PERSON.JABBERID]);
             propagateValueChangeOperation(operation);
 
         };
@@ -198,7 +198,10 @@ function ($, jsPlumb, _, IWCW, Util, AbstractValue, ValueChangeOperation, Logica
          */
         var propagateValueChangeOperation = function (operation) {
             processValueChangeOperation(operation);
-            _iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN, operation.getOTOperation());
+            var ymap = y.share.nodes.get(rootSubjectEntity.getEntityId());
+            if(ymap){
+                ymap.set(that.getEntityId(), operation.toJSON());
+            }
         };
 
         /**

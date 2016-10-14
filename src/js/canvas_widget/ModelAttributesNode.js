@@ -107,27 +107,14 @@ define([
             }
         }
 
-        this.registerYMap = function (map, disableYText) {
-            function registerAttribute(attr) {
-                var ytextPromise = that.getYMap().get(attr.getValue().getEntityId())
-                if (ytextPromise)
-                    ytextPromise.then(function (ytext) {
-                        attr.getValue().registerYType(ytext);
-                    })
-                else {
-                    that.getYMap().set(attr.getValue().getEntityId(), Y.Text).then(function (ytext) {
-                        attr.getValue().registerYType(ytext);
-                    })
-                }
-            }
-
-            AbstractNode.prototype.registerYMap.call(this, map);
+        this.registerYMap = function (map) {
+            AbstractNode.prototype.registerYMap.call(this);
             var attrs = this.getAttributes();
             for (var key in attrs) {
                 if (attrs.hasOwnProperty(key)) {
                     var attr = attrs[key];
-                    if (!disableYText && (attr instanceof SingleValueAttribute || attr instanceof SingleMultiLineValueAttribute)) {
-                        registerAttribute(attr);
+                    if (attr instanceof SingleValueAttribute || attr instanceof SingleMultiLineValueAttribute) {
+                        attr.getValue().registerYType();
                     } else if (!(attr instanceof FileAttribute) && !(attr instanceof SingleValueAttribute) && !(attr instanceof SingleMultiLineValueAttribute)) {
                         attr.getValue().registerYType();
                     }

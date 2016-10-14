@@ -18,12 +18,14 @@ define([
      * @param {number} position Position where the char has been added resp. deleted
      * @constructor
      */
-    function ValueChangeOperation(entityId,value,type,position, fromView){
+    function ValueChangeOperation(entityId,value,type,position,jabberId,fromView){
         var that = this;
 
         EntityOperation.call(this,EntityOperation.TYPES.ValueChangeOperation,entityId,CONFIG.ENTITY.VAL);
 
         var _fromView = fromView;
+
+        var _jabberId = jabberId;
 
         /**
          * Char that has been added resp. deleted
@@ -70,9 +72,17 @@ define([
                 _value,
                 _type,
                 _position,
+                _jabberId,
                 _fromView
             );
         };
+
+        this.getJabberId = function(){
+            return _jabberId;
+        }
+        this.setJabberId = function(jabberId){
+            _jabberId = jabberId;
+        }
 
         this.getFromView = function(){
           return _fromView;
@@ -242,8 +252,8 @@ define([
             entityId : this.getEntityId(),
             value: this.getValue(),
             position: this.getPosition(),
-            type : this.getType()
-
+            type : this.getType(),
+            jabberId: this.getJabberId()
         }
     };
 

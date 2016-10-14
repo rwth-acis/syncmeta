@@ -72,21 +72,16 @@ define([
         var attr=new KeySelectionValueSelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File"},{"hidden":"Hide","top":"Top","center":"Center","bottom":"Bottom"});
         this.addAttribute(attr);
 
-        this.registerYMap = function(map, disableYText){
-            AbstractNode.prototype.registerYMap.call(this,map);
-            if(!disableYText)
-                registerYTextAttributes(map);
-            attr.registerYMap(disableYText);
-
-
+        this.registerYMap = function(){
+            AbstractNode.prototype.registerYMap.call(this);
+            that.getLabel().getValue().registerYType();
+            attr.registerYMap();
         };
 
-        function registerYTextAttributes(map){
-            map.get(that.getLabel().getValue().getEntityId()).then(function(ytext){
-                that.getLabel().getValue().registerYType(ytext);
-            });
+        this.unregisterCallbacks = function(){
+            that.getAttribute('[attributes]').unregisterCallbacks();
         }
-
+        
         $node.find(".label").append(this.getLabel().get$node());
 
         for(var attributeKey in _attributes){

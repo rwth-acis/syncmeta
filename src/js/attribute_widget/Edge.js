@@ -79,8 +79,6 @@ define([
                 }
                 that.setAttributes(attrObj);
 
-                //_$node.find(".label").append(that.getLabel().get$node());
-
                 var $attributeNode = _$node.find(".attributes");
                 for(var attributeKey in attrObj){
                     if(attrObj.hasOwnProperty(attributeKey)){
@@ -88,42 +86,21 @@ define([
                     }
                 }
             };
-
-            this.registerYType = function(){
+            
+             this.registerYType = function(){
                 AbstractEdge.prototype.registerYType.call(this);
-
-                var registerValue = function(ymap, value){
-                   try {
-                        ymap.get(value.getEntityId()).then(function(ytext) {
-                            value.registerYType(ytext);
-                        })
-                    }
-                    catch (e) {
-                        //Try it again after a timeout
-                        window.syncmetaLog.firstAttemptFail[value.getEntityId()] = 0;
-                        setTimeout(function() {
-                            try {
-                                ymap.get(value.getEntityId()).then(function(ytext) {
-                                    value.registerYType(ytext);
-                                })
-                            }
-                            catch (e) {
-                              window.syncmetaLog.errors[value.getEntityId()] = 0 ;
-                              console.error('ATTRIBUTE: Failed to retrieve ytext property with id '+ value.getEntityId() +' from ymap with id ' + that.getEntityId());
-                            }
-                        }, 500);
-                    }
-                };
-                y.share.edges.get(that.getEntityId()).then(function(ymap){
-                    for(var attributeKey in attributes){
-                        if(attributes.hasOwnProperty(attributeKey)){
-                            var attribute = attributes[attributeKey];
-                            if(attribute.value === 'string')
-                                registerValue(ymap, that.getAttribute(attributeKey).getValue());
+                
+                var ymap = y.share.edges.get(that.getEntityId());
+                var attr = that.getAttributes();
+                for(var key in attr){
+                    if(attr.hasOwnProperty(key)){
+                        var val = attr[key].getValue();
+                        if(val.hasOwnProperty('registerYType')){
+                            var ytext = ymap.get(val.getEntityId());
+                            val.registerYType(ytext);
                         }
                     }
-                });
-
+                }
             };
 
             init();

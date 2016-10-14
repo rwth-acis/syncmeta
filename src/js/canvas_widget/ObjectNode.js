@@ -71,17 +71,10 @@ define([
         this.addAttribute(attr);
 
 
-        this.registerYMap = function(map,disableYText){
-            AbstractNode.prototype.registerYMap.call(this,map);
-            if(!disableYText)
-                registerYTextAttributes(map);
-            attr.registerYMap(disableYText);
-        };
-
-        var registerYTextAttributes = function(map){
-            map.get(that.getLabel().getValue().getEntityId()).then(function(ytext){
-                that.getLabel().getValue().registerYType(ytext);
-            });
+        this.registerYMap = function(){
+            AbstractNode.prototype.registerYMap.call(this);
+            that.getLabel().getValue().registerYType();
+            attr.registerYMap();
         };
 
         _$node.find(".label").append(this.getLabel().get$node());
@@ -91,7 +84,11 @@ define([
                 _$attributeNode.append(_attributes[attributeKey].get$node());
             }
         }
-
+        
+        this.unregisterCallbacks = function(){
+            that.getAttribute('[attributes]').unregisterCallbacks();
+        }
+        
         this.setContextMenuItemCallback(function(){
             var NodeShapeNode = require('canvas_widget/NodeShapeNode'),
                 BiDirAssociationEdge = require('canvas_widget/BiDirAssociationEdge'),

@@ -28,6 +28,12 @@ define([
         var that = this;
 
         var _ytext = null;
+        if(window.hasOwnProperty("y")){
+            if(rootSubjectEntity.getYMap().keys().indexOf(id) != -1)
+                _ytext = rootSubjectEntity.getYMap().get(id);
+            else
+                _ytext = rootSubjectEntity.getYMap().set(id, Y.Text);
+        }
 
         AbstractValue.call(this, id, name, subjectEntity, rootSubjectEntity);
 
@@ -187,8 +193,7 @@ define([
             //_iwcw.unregisterOnHistoryChangedCallback(historyValueChangeCallback);
         };
 
-        this.registerYType = function (ytext) {
-            _ytext = ytext;
+        this.registerYType = function () {
             _ytext.bind(_$node[0]);
 
             if (that.getValue() !== _ytext.toString()) {
@@ -197,7 +202,7 @@ define([
                 _ytext.insert(0, that.getValue());
             }
 
-            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new BindYTextOperation(that.getEntityId()).toNonOTOperation());
+            //_iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new BindYTextOperation(that.getEntityId()).toNonOTOperation());
 
             _ytext.observe(function (event) {
                 _value = _ytext.toString();

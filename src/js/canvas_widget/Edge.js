@@ -361,29 +361,18 @@ define([
 
             };
 
-            this.registerYMap = function(map,disableYText){
-                AbstractEdge.prototype.registerYMap.call(this,map,disableYText);
-                var registerYText = function(ymap, val){
-                    ymap.get(val.getEntityId()).then(function(ytext){
-                        val.registerYType(ytext);
-                    });
-                };
+            this.registerYMap = function(){
+                AbstractEdge.prototype.registerYMap.call(this);
+             
                 var attr = that.getAttributes();
                 for(var key in attr){
                     if(attr.hasOwnProperty(key)){
                         var val = attr[key].getValue();
                         if(val.hasOwnProperty('registerYType')){
-                            if(val.constructor.name !== "Value" ){
-                                val.registerYType();
-                            }
-                            else{
-                                if(!disableYText)
-                                    registerYText(map,val);
-                            }
+                            val.registerYType();
                         }
                     }
                 }
-
             };
 
             init();

@@ -122,14 +122,7 @@ define(['lodash',
         var viewEdgeTypes = {};
 
 		var _edges = {};
-		/**
-		 * Deleted nodes and edges
-		 * @type {{nodes: {}, edges: {}}}
-		 */
-		var _recycleBin = {
-			nodes : {},
-			edges : {}
-		};
+		
 		//noinspection JSUnusedGlobalSymbols
 		return {
 			/**
@@ -147,12 +140,7 @@ define(['lodash',
 			//TODO: switch id and type
 			createNode : function (type, id, left, top, width, height,json) {
 				var node;
-				if (_recycleBin.nodes.hasOwnProperty(id)) {
-					node = _recycleBin.nodes[id];
-					delete _recycleBin.nodes[id];
-					_nodes[id] = node;
-					return node;
-				}
+				
                 if (viewNodeTypes.hasOwnProperty(type) && viewId) {
                     node = viewNodeTypes[type](id, left, top, width, height, json);
                 }
@@ -193,7 +181,6 @@ define(['lodash',
 			 */
 			deleteNode : function (id) {
 				if (_nodes.hasOwnProperty(id)) {
-					_recycleBin.nodes[id] = _nodes[id];
 					delete _nodes[id];
 				}
 			},
@@ -255,12 +242,7 @@ define(['lodash',
 			//TODO: switch id and type
 			createEdge : function (type, id, source, target) {
 				var edge;
-				if (_recycleBin.edges.hasOwnProperty(id)) {
-					edge = _recycleBin.edges[id];
-					delete _recycleBin.edges[id];
-					_edges[id] = edge;
-					return edge;
-				}
+                
                 if(viewId && viewEdgeTypes.hasOwnProperty(type)){
                     edge = viewEdgeTypes[type](id, source, target);
                 }
@@ -292,7 +274,6 @@ define(['lodash',
 			 */
 			deleteEdge : function (id) {
 				if (_edges.hasOwnProperty(id)) {
-					_recycleBin.edges[id] = _edges[id];
 					delete _edges[id];
 				}
 			},
@@ -498,15 +479,6 @@ define(['lodash',
             initModelTypes : function(vls){
                 this.initNodeTypes(vls);
                 this.initEdgeTypes(vls);
-            },
-            /**
-             * clears the recycle bin
-             */
-            clearBin :function(){
-                _recycleBin = {
-                    nodes : {},
-                    edges : {}
-                };
             },
             /**
              * Get the node type by its name

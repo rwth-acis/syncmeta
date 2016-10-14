@@ -267,15 +267,6 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
          * @private
          */
         var _edges = {};
-        /**
-         * Deleted nodes and edges
-         * @type {{nodes: {}, edges: {}}}
-         * @private
-         */
-        var _recycleBin = {
-            nodes : {},
-            edges : {}
-        };
 
         var metamodel =null;
 
@@ -301,15 +292,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                 var node;
                 AbstractEntity.maxZIndex = Math.max(AbstractEntity.maxZIndex, zIndex);
                 AbstractEntity.minZIndex = Math.min(AbstractEntity.minZIndex, zIndex);
-                if (_recycleBin.nodes.hasOwnProperty(id)) {
-                    node = _recycleBin.nodes[id];
-                    delete _recycleBin.nodes[id];
-                    _nodes[id] = node;
-                    //Register context menu
-                    node.init();
-                    return node;
-                }
-
+             
                 if(_viewId && viewNodeTypes.hasOwnProperty(type)){
                     node = viewNodeTypes[type](id, left, top, width, height, zIndex);
                 }
@@ -361,7 +344,6 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
              */
             deleteNode: function(id){
                 if(_nodes.hasOwnProperty(id)){
-                    _recycleBin.nodes[id] = _nodes[id];
                     delete _nodes[id];
                 }
             },
@@ -410,16 +392,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
             //TODO: switch id and type
             createEdge: function(type,id,source,target){
                 var edge;
-                //noinspection JSAccessibilityCheck
-                if(_recycleBin.edges.hasOwnProperty(id)){
-                    //noinspection JSAccessibilityCheck
-                    edge = _recycleBin.edges[id];
-                    //noinspection JSAccessibilityCheck
-                    delete _recycleBin.edges[id];
-                    _edges[id] = edge;
-                    return edge;
-                }
-
+                
                 if(_viewId && viewEdgeTypes.hasOwnProperty(type)){
                     edge = viewEdgeTypes[type](id,source,target);
                 }
@@ -454,8 +427,6 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
              */
             deleteEdge: function(id){
                 if(_edges.hasOwnProperty(id)){
-                    //noinspection JSAccessibilityCheck
-                    _recycleBin.edges[id] = _edges[id];
                     delete _edges[id];
                 }
             },
@@ -1886,19 +1857,9 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                 _modelAttributesNode = null;
             },
             /**
-             * Clear the  recylce bin
-             */
-            clearBin : function(){
-                _recycleBin = {
-                    nodes : {},
-                    edges : {}
-                };
-            },
-            /**
              * resets the EntityManager
              */
             reset : function(){
-                this.clearBin();
                 _nodes ={};
                 _edges = {};
                 this.deleteModelAttribute();

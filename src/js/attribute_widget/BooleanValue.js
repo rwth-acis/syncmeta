@@ -62,8 +62,8 @@ define([
          * @param value Char that was inserted or deleted
          * @param position Position the change took place
          */
-        var propagateValueChange = function(type,value,position){
-            var operation = new ValueChangeOperation(that.getEntityId(),value,type,position);
+        var propagateValueChange = function(type,value){
+            var operation = new ValueChangeOperation(that.getEntityId(),value,type, null, _iwc.getUser()[CONFIG.NS.PERSON.JABBERID]);
             propagateValueChangeOperation(operation);
 
         };
@@ -73,7 +73,10 @@ define([
          */
         var propagateValueChangeOperation = function(operation){
             processValueChangeOperation(operation);
-            _iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.getOTOperation());
+            var ymap = y.share.nodes.get(rootSubjectEntity.getEntityId());
+            if(ymap){
+                ymap.set(that.getEntityId(), operation.toJSON());
+            }
         };
 
         /**

@@ -59,9 +59,7 @@ define([
              * @private
              */
             var _$node = AbstractNode.prototype.get$node.call(this).append($template);
-
-
-
+            
             var init = function() {
                 var attribute, attributeId, attrObj = {};
 
@@ -76,8 +74,8 @@ define([
                                 break;
                             case "string":
                                 attrObj[attributeId] = new SingleValueAttribute(id + "[" + attribute.key.toLowerCase() + "]", attribute.key, that);
-                                if (attribute.key.toLowerCase() === 'title' || attribute.key.toLowerCase() === "name") {
-                                    that.setLabel(attrObj[attributeId]);
+                                if (attribute.key.toLowerCase() === 'label' || attribute.key.toLowerCase() === 'title' || attribute.key.toLowerCase() === "name") {
+                                        that.setLabel(attrObj[attributeId]);
                                 }
                                 break;
                             case "integer":
@@ -95,8 +93,6 @@ define([
                 }
                 that.setAttributes(attrObj);
 
-                //_$node.find(".label").append(that.getLabel().get$node());
-
                 var $attributeNode = _$node.find(".attributes");
                 for (var attributeKey in attrObj) {
                     if (attrObj.hasOwnProperty(attributeKey)) {
@@ -104,49 +100,27 @@ define([
                     }
                 }
             };
-
-            this.registerYType = function() {
-                AbstractNode.prototype.registerYType.call(this);
-                var registerValue = function(ymap, value) {
-                    try {
-                        ymap.get(value.getEntityId()).then(function(ytext) {
-                            value.registerYType(ytext);
-                        })
-                    }
-                    catch (e) {
-                        //Try it again after a timeout
-                        window.syncmetaLog.firstAttemptFail[value.getEntityId()] = 0;
-                        setTimeout(function() {
-                            try {
-                                ymap.get(value.getEntityId()).then(function(ytext) {
-                                    value.registerYType(ytext);
-                                })
-                            }
-                            catch (e) {
-                              window.syncmetaLog.errors[value.getEntityId()] = 0 ;
-                              console.error('ATTRIBUTE: Failed to retrieve ytext property with id '+ value.getEntityId() +' from ymap with id ' + that.getEntityId());
-                            }
-                        }, 500);
-                    }
-                };
-                y.share.nodes.get(that.getEntityId()).then(function(ymap) {
-                    for (var attributeKey in attributes) {
-                        if (attributes.hasOwnProperty(attributeKey)) {
-                            var attribute = attributes[attributeKey];
-                            if (attribute.value === 'string') {
-                                var attr = that.getAttribute(attributeKey);
-                                if (attr != that.getLabel())
-                                    registerValue(ymap, attr.getValue());
-                            }
-                        }
-                    }
-                });
-
-            };
-
             init();
-
         }
+        
+        Node.prototype.registerYType = function() {
+            AbstractNode.prototype.registerYType.call(this);
+            var ymap = y.share.nodes.get(this.getEntityId());
+            var attr = this.getAttributes();
+            for (var key in attr) {
+                if (attr.hasOwnProperty(key)) {
+                    var val = attr[key].getValue();
+                    var ytext = ymap.get(val.getEntityId());
+                    if (val.hasOwnProperty('registerYType')) {
+                        val.registerYType(ytext);
+                    }
+                }
+            }
+        }
+        
+        /**
+         * 
+         */
         Node.prototype.applyAttributeRenaming = function(renamingAttributes) {
             var renAttr, $attr, attributes = this.getAttributes();
             for (var attrKey in attributes) {

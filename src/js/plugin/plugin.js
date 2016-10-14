@@ -1,4 +1,4 @@
-define(['jquery', 'lib/yjs-sync'], function($, yjsSync) {
+define(['lib/yjs-sync'], function(yjsSync) {
     'use strict';
 
     /**
@@ -15,18 +15,9 @@ define(['jquery', 'lib/yjs-sync'], function($, yjsSync) {
         };
 
         var nodeIds = ySyncMetaInstance.share.nodes.keys();
-        //var oldObserver = nodeObservers[key];
-        //nodeObservers[key] = undefined;
         for (var i = 0; i < nodeIds.length; i++) {
-            let n = ySyncMetaInstance.share.nodes.get(nodeIds[i]);
-            if (n) {
-                n.then(function(ymap) {
-                    //Overwrite with new observer
-                    //if (oldObserver)
-                    //    ymap.unobserve(oldObserver);
-                    ymap.observe(newObersever);
-                })
-            }
+            var ymap = ySyncMetaInstance.share.nodes.get(nodeIds[i]);
+             ymap.observe(newObersever);
         }
         nodeObservers[key].push(newObersever);
     };
@@ -45,10 +36,6 @@ define(['jquery', 'lib/yjs-sync'], function($, yjsSync) {
             attributePrimitiveObserver: undefined
         }
     }
-    /*var attrObserverMap = {
-        ytext: {},
-        primitive: {}
-    };*/
     var ySyncMetaInstance = null;
 
     var jabberId = null;
@@ -78,39 +65,30 @@ define(['jquery', 'lib/yjs-sync'], function($, yjsSync) {
             }
         };
 
-        var listenToAttributes = function(ymapPromise, entityId) {
-            var listentoAttributesHelper = function(attrId, attrPromise, entityId) {
-                if (attrPromise instanceof Promise) {
-                    attrPromise.then(function(ytext) {
-                        //if (attrObserverMap.ytext[attrId])
-                        //    ytext.unobserve(attrObserverMap.ytext[attrId]);
-                        var newObserver = attrObservers[type].attributeYTextObserver(entityId, attrId);
-                        //attrObserverMap.ytext[attrId] = newObserver;
-                        ytext.observe(newObserver);
-                    })
-                }
+        var listenToAttributes = function(ymap, entityId) {
+            var listentoAttributesHelper = function (attrId, ytext, entityId) {
+                var newObserver = attrObservers[type].attributeYTextObserver(entityId, attrId);
+                ytext.observe(newObserver);
             };
 
-            ymapPromise.then(function(ymap) {
-                //if (attrObserverMap.primitive[entityId])
-                //    ymap.unobserve(attrObserverMap.primitive[entityId]);
-                var newObserver = attrObservers[type].attributePrimitiveObserver(entityId);
-                //attrObserverMap.primitive[entityId] = newObserver;
-                ymap.observe(newObserver);
+            var newObserver = attrObservers[type].attributePrimitiveObserver(entityId);
+            ymap.observe(newObserver);
 
-                var keys = ymap.keys();
-                for (var i = 0; i < keys.length; i++) {
-                    if (keys[i].search(/\w*\[(\w|\s)*\]/g) != -1) {
-                        listentoAttributesHelper(keys[i], ymap.get(keys[i]), entityId);
-                    }
+            var keys = ymap.keys();
+            for (var i = 0; i < keys.length; i++) {
+                if (keys[i].search(/\w*\[(\w|\s)*\]/g) != -1) {
+                    var ytext = ymap.get(keys[i]);
+                    //is it relly a y-text object?
+                    if(ytext.constructor.name === "t")
+                        listentoAttributesHelper(keys[i], ytext, entityId);
                 }
-            });
+            }
         };
 
         //listen to everything OR return
         var nodeIds = ySyncMetaInstance.share[type].keys();
         for (var i = 0; i < nodeIds.length; i++) {
-            let p = ySyncMetaInstance.share[type].get(nodeIds[i]);
+            var p = ySyncMetaInstance.share[type].get(nodeIds[i]);
             if (p) {
                 listenToAttributes(p, nodeIds[i]);
             }
@@ -132,16 +110,13 @@ define(['jquery', 'lib/yjs-sync'], function($, yjsSync) {
                     ymap.observe(function(e) {
                         if (e.type === 'add' && e.name.search(/\w*\[(\w|\s)*\]/g) != -1) {
                             var attrId = e.name;
-                            if (e.value() instanceof Promise) {
-                                e.value().then(function(ytext) {
-                                    var newObserver = attrObservers[type].attributeYTextObserver(id, attrId);
-                                    ytext.observe(newObserver);
-                                    //attrObserverMap.ytext[attrId] =newObserver;
-                                });
+                            if (e.value.constructor.name === "t") {
+                                var ytext = e.value;
+                                var newObserver = attrObservers[type].attributeYTextObserver(id, attrId);
+                                ytext.observe(newObserver);
                             } else {
                                 var newObersever = attrObservers[type].attributePrimitiveObserver(id);
                                 e.object.observe(newObersever);
-                                //attrObserverMap.primitive[id] = newObersever;
                             }
                         }
                     });
@@ -151,26 +126,23 @@ define(['jquery', 'lib/yjs-sync'], function($, yjsSync) {
             ySyncMetaInstance.share.nodes.observe(function(event) {
                 var nodeId = event.name;
                 if (event.type === 'add') {
-                    event.value().then(function(ymap) {
-                        for (var key in nodeObservers) {
-                            if (nodeObservers.hasOwnProperty(key)) {
-                                for (let i = 0; i < nodeObservers[key].length; i++) {
-                                    ymap.observe(nodeObservers[key][i]);
-                                }
+                    var ymap = event.value;
+                    for (var key in nodeObservers) {
+                        if (nodeObservers.hasOwnProperty(key)) {
+                            for (var i = 0; i < nodeObservers[key].length; i++) {
+                                ymap.observe(nodeObservers[key][i]);
                             }
                         }
-
-                        attrObserverInit('nodes', ymap, nodeId);
-                    });
+                    }
+                    attrObserverInit('nodes', ymap, nodeId);
                 }
             });
 
             ySyncMetaInstance.share.edges.observe(function(event) {
                 var edgeId = event.name;
                 if (event.type === 'add') {
-                    event.value().then(function(ymap) {
-                        attrObserverInit('edges', ymap, edgeId);
-                    });
+                    var ymap = event.value;
+                    attrObserverInit('edges', ymap, edgeId);
                 }
             })
 
@@ -390,28 +362,25 @@ define(['jquery', 'lib/yjs-sync'], function($, yjsSync) {
                 //No, build the attribute id
                 attrId = entityId + '[' + attrName.toLowerCase() + ']';
 
-            var findAttr = function(ymap, attrId, value) {
+            var findAttr = function (ymap, attrId, value) {
                 var keys = ymap.keys().indexOf(attrId);
                 if (keys != -1) {
                     var attr = ymap.get(attrId);
-                    if (attr instanceof Promise) {
-                        attr.then(function(ytext) {
-                            setTimeout(function() {
-                                var l = ytext.toString().length;
-                                if (l > 0) {
-                                    ytext.delete(0, l);
-                                }
-                                ytext.insert(0, value);
-                                //lets wait a bit before trigger the save
-                                // so that the canvas and attribute widget can process the value change at their callbacks
-                                setTimeout(function() {
-                                    if (jabberId)
-                                        ySyncMetaInstance.share.canvas.set('triggerSave', jabberId);
-                                }, 500);
 
-                            }, 500);
-
-                        })
+                    if (attr.constructor.name === "t") {
+                        var ytext = attr;
+                       
+                            var l = ytext.toString().length;
+                            if (l > 0) {
+                                ytext.delete(0, l);
+                            }
+                            ytext.insert(0, value);
+                            //lets wait a bit before trigger the save
+                            // so that the canvas and attribute widget can process the value change at their callbacks
+                            setTimeout(function () {
+                                if (jabberId)
+                                    ySyncMetaInstance.share.canvas.set('triggerSave', jabberId);
+                            }, 500);                   
                     }
                     else
                         ymap.set(attrId, { 'entityId': attrId, 'value': value, 'type': 'update', 'position': 0 });
@@ -421,15 +390,13 @@ define(['jquery', 'lib/yjs-sync'], function($, yjsSync) {
             }
 
             if (idx != -1) {
-                ySyncMetaInstance.share.nodes.get(entityId).then(function(ymap) {
-                    findAttr(ymap, attrId, value);
-                });
+                var ymap = ySyncMetaInstance.share.nodes.get(entityId);
+                findAttr(ymap, attrId, value); 
             } else {
                 idx = ySyncMetaInstance.share.edges.keys().indexOf(entityId);
                 if (idx != -1) {
-                    ySyncMetaInstance.share.edges.get(entityId).then(function(ymap) {
-                        findAttr(ymap, attrId, value);
-                    });
+                    var ymap = ySyncMetaInstance.share.edges.get(entityId);
+                    findAttr(ymap, attrId, value);
                 }
                 else {
                     return;

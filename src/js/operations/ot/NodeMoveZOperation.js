@@ -14,7 +14,7 @@ define([
      * @extends operations.ot.EntityOperation
      * @param {String} entityId Entity id of the entity this activity works on
      * @param {number} offsetZ Offset in z-direction
-     * @param {string} jabberId the jabberId of the user
+     * @param {string} optional: jabberId the jabberId of the user (is automatically set by propagateNodeMoveOperation)
      * @constructor
      */
     function NodeMoveZOperation(entityId,offsetZ,jabberId){
@@ -64,6 +64,10 @@ define([
             return _jabberId;
         };
 
+        this.setJabberId = function(jabberId){
+            _jabberId = jabberId;
+        }
+
         /**
          * Get corresponding ot operation
          * @returns {operations.ot.OTOperation}
@@ -107,12 +111,12 @@ define([
 
     NodeMoveZOperation.getOperationDescription = function(nodeType,nodeLabel,viewId){
         if(!nodeLabel && !viewId){
-            return "..moved " + nodeType;
+            return "..moved " + nodeType + " on on Z-Axis";
         } else if(!viewId) {
-            return "..moved " + nodeType + " " + nodeLabel;
+            return "..moved " + nodeType + " " + nodeLabel + " on Z-Axis";
         }
         else{
-            return "..moved " + nodeType  + " " + nodeLabel + " in View " + viewId;
+            return "..moved " + nodeType  + " " + nodeLabel + " in View " + viewId + " on Z-Axis";
         }
     };
 

@@ -1,7 +1,6 @@
-requirejs(['jqueryui', 'lodash', 'lib/yjs-sync', 'canvas_widget/GenerateViewpointModel'], function($, _, yjsSync, GenerateViewpointModel) {
-    $(function() {
-        yjsSync().done(function(y) {
-            window.y = y;
+requirejs(['jqueryui', 'lodash', 'lib/yjs-sync', 'canvas_widget/GenerateViewpointModel'], function ($, _, yjsSync, GenerateViewpointModel) {
+    $(function () {
+        yjsSync().done(function (y) {
             console.info('DEBUG: Yjs successfully initialized');
 
             var $deleteMetamodel = $("#delete-meta-model").prop('disabled', false),
@@ -17,15 +16,15 @@ requirejs(['jqueryui', 'lodash', 'lib/yjs-sync', 'canvas_widget/GenerateViewpoin
                 $feedback = $("#feedback"),
                 feedbackTimeout,
 
-                feedback = function(msg) {
+                feedback = function (msg) {
                     $feedback.text(msg);
                     clearTimeout(feedbackTimeout);
-                    feedbackTimeout = setTimeout(function() {
+                    feedbackTimeout = setTimeout(function () {
                         $feedback.text("");
                     }, 2000);
                 };
 
-            var getFileContent = function() {
+            var getFileContent = function () {
                 var fileReader,
                     files = $fileObject[0].files,
                     file,
@@ -35,7 +34,7 @@ requirejs(['jqueryui', 'lodash', 'lib/yjs-sync', 'canvas_widget/GenerateViewpoin
                 file = files[0];
 
                 fileReader = new FileReader();
-                fileReader.onload = function(e) {
+                fileReader.onload = function (e) {
                     var data = e.target.result;
                     try {
                         data = JSON.parse(data);
@@ -48,7 +47,7 @@ requirejs(['jqueryui', 'lodash', 'lib/yjs-sync', 'canvas_widget/GenerateViewpoin
                 return deferred.promise();
             };
 
-            $deleteModel.click(function() {
+            $deleteModel.click(function () {
                 $exportModel.prop('disabled', true);
                 $deleteModel.prop('disabled', true);
                 //y.share.data.delete('model');
@@ -59,7 +58,7 @@ requirejs(['jqueryui', 'lodash', 'lib/yjs-sync', 'canvas_widget/GenerateViewpoin
 
             });
 
-            $deleteMetamodel.click(function() {
+            $deleteMetamodel.click(function () {
                 $exportMetamodel.prop('disabled', true);
                 $deleteMetamodel.prop('disabled', true);
                 //this does not work ??????
@@ -69,28 +68,28 @@ requirejs(['jqueryui', 'lodash', 'lib/yjs-sync', 'canvas_widget/GenerateViewpoin
                 feedback("Done!");
             });
 
-            $deleteGuidancemodel.click(function() {
+            $deleteGuidancemodel.click(function () {
                 $exportGuidancemodel.prop('disabled', true);
                 $deleteGuidancemodel.prop('disabled', true);
                 y.share.data.set('guidancemodel', null);
                 feedback("Done!");
             });
 
-            $exportModel.click(function() {
+            $exportModel.click(function () {
                 var link = document.createElement('a');
                 link.download = "model.json";
                 link.href = 'data:,' + encodeURI(JSON.stringify(y.share.data.get('model'), null, 4));
                 link.click();
             });
 
-            $exportMetamodel.click(function() {
+            $exportMetamodel.click(function () {
                 var link = document.createElement('a');
                 link.download = "vls.json";
                 link.href = 'data:,' + encodeURI(JSON.stringify(y.share.data.get('metamodel'), null, 4));
                 link.click();
             });
 
-            $exportGuidancemodel.click(function() {
+            $exportGuidancemodel.click(function () {
                 var link = document.createElement('a');
                 link.download = "guidance_model.json";
                 link.href = 'data:,' + encodeURI(JSON.stringify(y.share.data.get('guidancemodel'), null, 4));
@@ -98,20 +97,23 @@ requirejs(['jqueryui', 'lodash', 'lib/yjs-sync', 'canvas_widget/GenerateViewpoin
 
             });
 
-            $importModel.click(function() {
-                getFileContent().then(function(data) {
-                                  
+            $importModel.click(function () {
+                getFileContent().then(function (data) {
+
                     y.share.data.set('model', data);
                     y.share.canvas.set('ReloadWidgetOperation', 'import');
                     feedback("Done!");
                 });
             });
 
-            $importMetamodel.click(function() {
-                getFileContent().then(function(data) {
+            $importMetamodel.click(function () {
+                getFileContent().then(function (data) {
                     try {
                         var vls = GenerateViewpointModel(data);
-                        y.share.data.set('metamodel', vls);
+                        //if everything is empty. Maybe it is already a VLS
+                        if (_.keys(vls.nodes).length === 0 && _.keys(vls.edges).length === 0 && _.keys(vls.attributes).length === 0)
+                            y.share.data.set('metamodel', data);
+                        else y.share.data.set('metamodel', vls);
                         feedback("Done!");
                     }
                     catch (e) {
@@ -122,8 +124,8 @@ requirejs(['jqueryui', 'lodash', 'lib/yjs-sync', 'canvas_widget/GenerateViewpoin
                 });
             });
 
-            $importGuidancemodel.click(function() {
-                getFileContent().then(function(data) {
+            $importGuidancemodel.click(function () {
+                getFileContent().then(function (data) {
                     $exportGuidancemodel.prop('disabled', false);
                     $deleteGuidancemodel.prop('disabled', false);
                     y.share.data.set('guidancemodel', data);
@@ -132,7 +134,7 @@ requirejs(['jqueryui', 'lodash', 'lib/yjs-sync', 'canvas_widget/GenerateViewpoin
             });
 
 
-            var checkExistence = function() {
+            var checkExistence = function () {
 
                 if (!y.share.data.get('model')) {
                     $exportModel.prop('disabled', true);

@@ -73,12 +73,14 @@ define([
         var attr= new SingleValueListAttribute("[attributes]","Attributes",this);
         this.addAttribute(attr);
 
-        this.registerYMap = function(map,disableYText){
-            AbstractNode.prototype.registerYMap.call(this,map);
-            if(!disableYText)
-                registerYTextAttributes(map);
-            attr.registerYMap(disableYText);
+        this.registerYMap = function(){
+            AbstractNode.prototype.registerYMap.call(this);
+            that.getLabel().getValue().registerYType();
+            attr.registerYMap();
         };
+         this.unregisterCallbacks = function(){
+            that.getAttribute('[attributes]').unregisterCallbacks();
+        }
         var registerYTextAttributes = function(map){
             map.get(that.getLabel().getValue().getEntityId()).then(function(ytext){
                 that.getLabel().getValue().registerYType(ytext);

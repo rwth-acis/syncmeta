@@ -289,7 +289,7 @@ define([
             source.deleteOutgoingEdge(this);
             target.deleteIngoingEdge(this);
             this.removeFromWrapper();
-            //this.unregisterCallbacks();
+            this.unregisterCallbacks();
             var EntityManager = require('attribute_widget/EntityManager');
             EntityManager.deleteEdge(this.getEntityId());
             EntityManager.deleteFromMap(this.getViewId(), this.getEntityId());
@@ -324,11 +324,11 @@ define([
         };
 
         this._registerYType = function () {
-            y.share.edges.get(that.getEntityId()).then(function (ymap) {
-                ymap.get(that.getLabel().getValue().getEntityId()).then(function (ytext) {
-                    that.getLabel().getValue().registerYType(ytext);
-                })
-            })
+            var ymap = y.share.edges.get(that.getEntityId());
+            if(ymap){
+                var ytext = ymap.get(that.getLabel().getValue().getEntityId());
+                that.getLabel().getValue().registerYType(ytext);    
+            }   
         };
 
         _$node.find(".label").append(this.getLabel().get$node());

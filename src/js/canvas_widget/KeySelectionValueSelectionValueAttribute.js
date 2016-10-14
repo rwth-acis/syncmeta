@@ -150,13 +150,21 @@ define([
             _value2.setValueFromJSON(json.value2||{value: ""});
         };
 
-        this.registerYType = function(ytext){
-            if(ytext)
-                _key.registerYType(ytext);
+        this.registerYType = function(){
+            _key.registerYType();
             _value.registerYType();
             _value2.registerYType();
         };
-
+        
+        /**
+         * Unregister all IWC callback
+         */
+        this.unregisterCallbacks = function(){
+            _value.unregisterCallbacks();
+            _value2.unregisterCallbacks();
+        }
+        
+            
         _$node.find(".key").append(_key.get$node());
         _$node.find(".value").append(_value.get$node());
     }

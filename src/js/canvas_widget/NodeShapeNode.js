@@ -9,7 +9,7 @@ define([
     'canvas_widget/SingleColorValueAttribute',
     'canvas_widget/SingleMultiLineValueAttribute',
     'text!templates/canvas_widget/node_shape_node.html'
-],/** @lends NodeShapeNode */function($,jsPlumb,_,AbstractNode,SingleSelectionAttribute,SingleValueAttribute,IntegerAttribute,SingleColorValueAttribute,SingleMultiLineValueAttribute,nodeShapeNodeHtml) {
+],/** @lends NodeShapeNode */function($, jsPlumb, _, AbstractNode, SingleSelectionAttribute, SingleValueAttribute, IntegerAttribute, SingleColorValueAttribute, SingleMultiLineValueAttribute, nodeShapeNodeHtml) {
 
     NodeShapeNode.TYPE = "Node Shape";
     NodeShapeNode.DEFAULT_WIDTH = 150;
@@ -30,17 +30,17 @@ define([
      * @param {number} height Height of node
      * @param {number} zIndex Position of node on z-axis
      */
-    function NodeShapeNode(id,left,top,width,height,zIndex){
+    function NodeShapeNode(id, left, top, width, height, zIndex) {
         var that = this;
 
-        AbstractNode.call(this,id,NodeShapeNode.TYPE,left,top,width,height,zIndex);
+        AbstractNode.call(this, id, NodeShapeNode.TYPE, left, top, width, height, zIndex);
 
         /**
          * jQuery object of node template
          * @type {jQuery}
          * @private
          */
-        var _$template = $(_.template(nodeShapeNodeHtml,{type: that.getType()}));
+        var _$template = $(_.template(nodeShapeNodeHtml, { type: that.getType() }));
 
         /**
          * jQuery object of DOM node representing the node
@@ -67,18 +67,20 @@ define([
          * Get JSON representation of the node
          * @returns {Object}
          */
-        this.toJSON = function(){
+        this.toJSON = function() {
             var json = AbstractNode.prototype.toJSON.call(this);
             json.type = NodeShapeNode.TYPE;
             return json;
         };
 
-        var attrShapeSelect = new SingleSelectionAttribute(this.getEntityId()+"[shape]","Shape",this,{"circle":"Circle","diamond":"Diamond","rectangle":"Rectangle","rounded_rectangle":"Rounded Rectangle","triangle":"Triangle"});
-        var attrWidth = new IntegerAttribute(this.getEntityId()+"[defaultWidth]","Default Width",this);
-        var attrHeight = new IntegerAttribute(this.getEntityId()+"[defaultHeight]","Default Height",this);
-        var attrColor = new SingleColorValueAttribute(this.getEntityId()+"[color]","Color",this);
-        var attrCustomShape = new SingleMultiLineValueAttribute(this.getEntityId()+"[customShape]","Custom Shape",this);
-        var attrAnchors = new SingleValueAttribute(this.getEntityId()+"[customAnchors]","Custom Anchors",this);
+        var attrShapeSelect = new SingleSelectionAttribute(this.getEntityId() + "[shape]", "Shape", this, { "circle": "Circle", "diamond": "Diamond", "rectangle": "Rectangle", "rounded_rectangle": "Rounded Rectangle", "triangle": "Triangle" });
+        var attrWidth = new IntegerAttribute(this.getEntityId() + "[defaultWidth]", "Default Width", this);
+        var attrHeight = new IntegerAttribute(this.getEntityId() + "[defaultHeight]", "Default Height", this);
+        var attrColor = new SingleColorValueAttribute(this.getEntityId() + "[color]", "Color", this);
+        var attrCustomShape = new SingleMultiLineValueAttribute(this.getEntityId() + "[customShape]", "Custom Shape", this);
+        var attrAnchors = new SingleValueAttribute(this.getEntityId() + "[customAnchors]", "Custom Anchors", this);
+
+
 
         this.addAttribute(attrShapeSelect);
         this.addAttribute(attrColor);
@@ -89,40 +91,23 @@ define([
 
         _$node.find(".label").append(this.getLabel().get$node());
 
-        for(var attributeKey in _attributes){
-            if(_attributes.hasOwnProperty(attributeKey)){
+        for (var attributeKey in _attributes) {
+            if (_attributes.hasOwnProperty(attributeKey)) {
                 _$attributeNode.append(_attributes[attributeKey].get$node());
             }
         }
 
-
-
-        this.registerYMap = function(map,disableYText){
-            AbstractNode.prototype.registerYMap.call(this,map);
-
+        this.registerYMap = function() {
+            AbstractNode.prototype.registerYMap.call(this);
             attrShapeSelect.getValue().registerYType();
             attrWidth.getValue().registerYType();
             attrHeight.getValue().registerYType();
-            if(!disableYText)
-                registerYTextAttributes(map);
-
+            that.getLabel().getValue().registerYType();
+            attrColor.getValue().registerYType();
+            attrAnchors.getValue().registerYType();
+            attrCustomShape.getValue().registerYType();
         };
-        var registerYTextAttributes = function(map) {
-            map.get(that.getLabel().getValue().getEntityId()).then(function(ytext){
-                that.getLabel().getValue().registerYType(ytext);
-            });
-            map.get(that.getEntityId()+"[color]").then(function(ytext){
-                attrColor.getValue().registerYType(ytext);
-            });
-            map.get(that.getEntityId()+"[customAnchors]").then(function(ytext){
-                attrAnchors.getValue().registerYType(ytext);
-            });
-            map.get(that.getEntityId()+"[customShape]").then(function(ytext){
-                attrCustomShape.getValue().registerYType(ytext);
-            });
-        }
-
-        }
+    }
 
     return NodeShapeNode;
 
