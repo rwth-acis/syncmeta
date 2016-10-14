@@ -1,4 +1,4 @@
-define(['jquery', 'lib/yjs-sync'], function($, yjsSync) {
+define(['lib/yjs-sync'], function(yjsSync) {
     'use strict';
 
     /**
@@ -369,7 +369,7 @@ define(['jquery', 'lib/yjs-sync'], function($, yjsSync) {
 
                     if (attr.constructor.name === "t") {
                         var ytext = attr;
-                        setTimeout(function () {
+                       
                             var l = ytext.toString().length;
                             if (l > 0) {
                                 ytext.delete(0, l);
@@ -380,9 +380,7 @@ define(['jquery', 'lib/yjs-sync'], function($, yjsSync) {
                             setTimeout(function () {
                                 if (jabberId)
                                     ySyncMetaInstance.share.canvas.set('triggerSave', jabberId);
-                            }, 500);
-
-                        }, 500);
+                            }, 500);                   
                     }
                     else
                         ymap.set(attrId, { 'entityId': attrId, 'value': value, 'type': 'update', 'position': 0 });

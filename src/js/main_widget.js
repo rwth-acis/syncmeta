@@ -64,8 +64,7 @@ requirejs([
 
         y.share.users.set(y.db.userId, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
         var userInfo = _iwcw.getUser();
-        if (userInfo.globalId === -1)
-            userInfo.globalId = y.db.userId.charCodeAt(0) + y.db.userId.charCodeAt(1);
+        userInfo.globalId = Util.getGlobalId(user, y);
         y.share.userList.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], userInfo);
         var metamodel, model;
          if (guidancemodel.isGuidanceEditor()) {

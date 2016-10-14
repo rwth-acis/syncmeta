@@ -11,11 +11,12 @@ requirejs.config({
 define(['jquery', 'chai', 'WebConsoleReporter',
     'canvas_widget/EntityManager',
     './../test/canvas_widget/MetamodelingTester',
+    './../test/canvas_widget/ModelingTester',
     './../test/canvas_widget/JSONtoGraphTester',
     './../test/canvas_widget/ViewpointModelingTest',
     'promise!Guidancemodel',
     'mocha'],
-    function($, chai, WebConsoleReporter, EntityManager, MetamodelingTester, JSONtoGraphTester, ViewpointModelingTest,Guidancemodel) {
+    function($, chai, WebConsoleReporter, EntityManager, MetamodelingTester, ModelingTester, JSONtoGraphTester, ViewpointModelingTest,Guidancemodel) {
 
         function CanvasWidgetTestMain(canvas) {
             $('body').append($('<div id="mocha" style="display: none"></div>'));
@@ -50,6 +51,9 @@ define(['jquery', 'chai', 'WebConsoleReporter',
                             expect(EntityManager.getEdgeType('Association edge')).to.be.not.null;
                         });
                     });
+                }
+                else{
+                    ModelingTester(canvas);
                 }
             });
             mocha.run();

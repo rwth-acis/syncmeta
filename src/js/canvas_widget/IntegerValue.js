@@ -158,7 +158,7 @@ define([
 
             //Debounce the save function
             that.getRootSubjectEntity().getYMap().observePath([that.getEntityId()], _.debounce(function (event) {
-                if (event.jabberId === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
+                if (event && event.jabberId === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
                     $('#save').click();
             }, 750));
         };

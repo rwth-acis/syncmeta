@@ -25,8 +25,8 @@
     <p><strong>Editor space title:</strong><input size="32" type="text" id="space_title" /></p>
 </div>
 <div class="button_bar right">
-  <button id="viewsHide" title="Close the View Panel"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/viewHide.png"/></button>
-   <button id="viewsShow" title="Show the View Panel"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/viewShow.png"/></button>
+  <button id="viewsHide" title="Close the View Panel" style="display: none;"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/viewHide.png"/></button>
+   <button id="viewsShow" title="Show the View Panel" style="display: none;"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/viewShow.png"/></button>
   <button id="showtype" title="Show the types of nodes and edges"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/hidetype.png" /></button>
   <button id="hidetype" title="Hide types of nodes and edges"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/showtype.png" /></button>
   <button id="zoomin" title="Zoom in"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/zoomin.png" /></button>
