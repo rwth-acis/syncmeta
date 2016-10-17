@@ -32,9 +32,9 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function($, _, Entit
             if(map){
                node = EntityManager.createNodeFromJSON(
                 jsonNode.type, nodeId,
-                map.get('left'), map.get('top'), 
-                map.get('width'), map.get('height'),
-                map.get('zIndex'), jsonNode);
+                map.get('left') ? map.get('left') : jsonNode.left, map.get('top') ? map.get('top') : jsonNode.top, 
+                map.get('width') ? map.get('width') : jsonNode.width, map.get('height') ? map.get('height') : jsonNode.height,
+                map.get('zIndex') ? map.get('zIndex') : jsonNode.zIndex, jsonNode);
             }
             else{
                node = EntityManager.createNodeFromJSON(

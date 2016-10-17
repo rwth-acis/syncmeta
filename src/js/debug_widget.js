@@ -100,7 +100,61 @@ requirejs(['jqueryui', 'lodash', 'lib/yjs-sync', 'canvas_widget/GenerateViewpoin
             $importModel.click(function () {
                 getFileContent().then(function (data) {
 
+                    var initAttributes = function(attrs, map){
+                        if(attrs.hasOwnProperty('[attributes]')){
+                            var attr = attrs['[attributes]'].list;
+                            for(var key in attr){
+                                if(attr.hasOwnProperty(key)){
+                                    if(attr[key].hasOwnProperty('key')){
+                                        var ytext = map.set(attr[key].key.id, Y.Text);
+                                        ytext.insert(0, attr[key].key.value);
+                                    }
+                                    else { 
+                                        var ytext = map.set(attr[key].value.id, Y.Text);
+                                        ytext.insert(0, attr[key].value.value);
+                                    }
+                                }
+                            }
+
+                        }else{
+                            for(var key in attrs){
+                                if(attrs.hasOwnProperty(key)){
+                                    var value = attrs[key].value;
+                                    if(!value.hasOwnProperty('option')){
+                                        if(value.value instanceof String){
+                                            var ytext = map.set(value.id, Y.Text);
+                                            ytext.insert(0, value.value);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                     y.share.data.set('model', data);
+                    for(var key in data.nodes){
+                        if (data.nodes.hasOwnProperty(key)) {
+                            var entity = data.nodes[key];
+                            var map = y.share.nodes.set(key, Y.Map);
+                            var attrs = entity.attributes;
+                            if(entity.hasOwnProperty('label')){
+                                var ytext = map.set(entity.label.value.id, Y.Text);
+                                ytext.insert(0, entity.label.value.value);
+                            }
+                            initAttributes(attrs, map);
+                        }
+                    }
+                    for(var key in data.edges){
+                        if (data.edges.hasOwnProperty(key)) {
+                            var entity = data.edges[key];
+                            var map = y.share.edges.set(key, Y.Map);
+                            var attrs = entity.attributes;
+                            if(entity.hasOwnProperty('label')){
+                                var ytext = map.set(entity.label.value.id, Y.Text);
+                                ytext.insert(0, entity.label.value.value);
+                            }
+                            initAttributes(attrs, map);
+                        }
+                    }
                     y.share.canvas.set('ReloadWidgetOperation', 'import');
                     feedback("Done!");
                 });

@@ -17,15 +17,15 @@ requirejs([
     'operations/non_ot/SetModelAttributeNodeOperation',
     'promise!User',
     'promise!Guidancemodel'
-], function($, IWCW, yjsSync, WaitForCanvas, AttributeWrapper, EntityManager, ViewGenerator, JoinOperation, InitModelTypesOperation, ViewInitOperation, SetModelAttributeNodeOperation, user, guidancemodel) {
+], function ($, IWCW, yjsSync, WaitForCanvas, AttributeWrapper, EntityManager, ViewGenerator, JoinOperation, InitModelTypesOperation, ViewInitOperation, SetModelAttributeNodeOperation, user, guidancemodel) {
 
     var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE);
     iwc.setSpace(user);
 
-    WaitForCanvas(CONFIG.WIDGET.NAME.ATTRIBUTE, 7).done(function() {
+    WaitForCanvas(CONFIG.WIDGET.NAME.ATTRIBUTE, 7).done(function () {
         $('#wrapper').find('h1').text('Got Response from Canvas! Connecting to Yjs....');
 
-        yjsSync().done(function(y) {
+        yjsSync().done(function (y) {
             window.y = y;
             window.syncmetaLog = {
                 widget: "Attribute",
@@ -35,7 +35,7 @@ requirejs([
                 firstAttemptFail: {}
             };
             $('#wrapper').find('h1').text('Successfully connected to Yjs.');
-            setTimeout(function() {
+            setTimeout(function () {
                 $('#wrapper').find('h1').remove();
             }, 2000);
             console.info('ATTRIBUTE: Yjs successfully initialized');
@@ -85,7 +85,7 @@ requirejs([
                 }
             }
 
-            iwc.registerOnDataReceivedCallback(function(operation) {
+            iwc.registerOnDataReceivedCallback(function (operation) {
                 var modelAttributesNode/*, model*/;
                 if (operation instanceof JoinOperation && operation.isDone()) {
                     y.share.users.set(y.db.userId, operation.getUser());
@@ -148,20 +148,17 @@ requirejs([
             if (CONFIG.TEST.ATTRIBUTE && (iwc.getUser()[CONFIG.NS.PERSON.TITLE] === CONFIG.TEST.USER || iwc.getUser()[CONFIG.NS.PERSON.MBOX] === CONFIG.TEST.EMAIL))
                 require(['./../test/AttributeWidgetTest']);
 
-            y.share.canvas.observe(function(event) {
+            y.share.canvas.observe(function (event) {
                 switch (event.name) {
                     case 'ReloadWidgetOperation': {
-                        setTimeout(function() {
-                            frameElement.contentWindow.location.reload();
-                        }, Math.floor(Math.random() * 3000) + 1000);
-
+                        frameElement.contentWindow.location.reload();
                     }
                 }
             });
 
             $("#loading").hide();
         }
-    }).fail(function() {
+    }).fail(function () {
         $('#wrapper').find('h1').text('Add Canvas Widget to Space and refresh the widget.');
         $('#loading').hide();
     });
