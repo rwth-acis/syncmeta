@@ -416,8 +416,6 @@ define([
                             }
                             that.remountCurrentTool();
                         }
-
-
                     }
                 }
             };
