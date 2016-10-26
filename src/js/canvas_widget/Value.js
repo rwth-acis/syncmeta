@@ -380,7 +380,7 @@ define([
             _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new BindYTextOperation(that.getEntityId(),_value).toNonOTOperation());
             
             _ytext.observe(function(event){
-                _value = _ytext.toString();
+                _value = _ytext.toString().replace(/\n/g,"");
 
                 //TODO i can not find out who triggered the delete :-(. Therefore do this only for non delete event types
                 if(event.type!=="delete") {

@@ -343,7 +343,7 @@ define([
             _ytext.bind(_$node[0]);
             
             _ytext.observe(function(event){
-                _value = _ytext.toString();
+                _value = _ytext.toString().replace(/\n/g,"");
             })
             
             //loging
