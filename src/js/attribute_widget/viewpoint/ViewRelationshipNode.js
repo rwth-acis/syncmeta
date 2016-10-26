@@ -2,12 +2,12 @@ define([
     'jqueryui',
     'lodash',
     'attribute_widget/AbstractNode',
-    'attribute_widget/RenamingListAttribute',
+    'attribute_widget/viewpoint/RenamingListAttribute',
     'attribute_widget/SingleSelectionAttribute',
-    'attribute_widget/ConditionListAttribute',
-    'canvas_widget/ViewTypesUtil',
-    'canvas_widget/LogicalOperator',
-    'canvas_widget/LogicalConjunctions',
+    'attribute_widget/viewpoint/ConditionListAttribute',
+    'canvas_widget/viewpoint/ViewTypesUtil',
+    'canvas_widget/viewpoint/LogicalOperator',
+    'canvas_widget/viewpoint/LogicalConjunctions',
     'text!templates/attribute_widget/relationship_node.html'
 ], /** @lends ViewRelationshipNode */
 function ($, _, AbstractNode, RenamingListAttribute, SingleSelectionAttribute, ConditionListAttribute, ViewTypesUtil,LogicalOperator,LogicalConjunctions, relationshipNodeHtml) {

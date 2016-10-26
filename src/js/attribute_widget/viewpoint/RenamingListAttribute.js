@@ -6,15 +6,15 @@ define([
     'operations/ot/AttributeAddOperation',
     'operations/ot/AttributeDeleteOperation',
     'attribute_widget/AbstractAttribute',
-    'attribute_widget/ConditionPredicateAttribute',
+    'attribute_widget/viewpoint/RenamingAttribute',
     'text!templates/attribute_widget/list_attribute.html'
-],function($,_,IWCW,Util,AttributeAddOperation,AttributeDeleteOperation,AbstractAttribute,ConditionPredicateAttribute,listAttributeHtml) {
+],function($,_,IWCW,Util,AttributeAddOperation,AttributeDeleteOperation,AbstractAttribute,RenamingAttribute,listAttributeHtml) {
 
-    ConditionListAttribute.prototype = new AbstractAttribute();
-    ConditionListAttribute.prototype.constructor = ConditionListAttribute;
+    RenamingListAttribute.prototype = new AbstractAttribute();
+    RenamingListAttribute.prototype.constructor = RenamingListAttribute;
     /**
      * Abstract Attribute
-     * @class attribute_widget.ConditionListAttribute
+     * @class attribute_widget.RenamingListAttribute
      * @memberof attribute_widget
      * @extends attribute_widget.AbstractAttribute
      * @constructor
@@ -22,9 +22,8 @@ define([
      * @param {string} name Name of attribute
      * @param {AbstractEntity} subjectEntity Entity the attribute is assigned to
      * @param {Object} options Selection options
-     * @param {Object} options2 Selection options
      */
-    function ConditionListAttribute(id,name,subjectEntity,options,options2/*,options3*/){
+    function RenamingListAttribute(id,name,subjectEntity,options){
         var that = this;
 
         AbstractAttribute.call(this,id,name,subjectEntity);
@@ -36,14 +35,6 @@ define([
          */
         var _options = options;
 
-        /**
-         * Selection options
-         * @type {Object}
-         * @private
-         */
-        var _options2 = options2;
-		
-		//var _options3 = options3;
         /**
          * List of attributes
          * @type {Object}
@@ -57,6 +48,8 @@ define([
          * @private
          */
         var _$node = $(_.template(listAttributeHtml,{}));
+        //remove the plus icon
+        _$node.find('.ui-icon ui-icon-plus').parent().remove();
 
         /**
          * Inter widget communication wrapper
@@ -69,10 +62,12 @@ define([
          * @param {operations.ot.AttributeDeleteOperation} operation
          */
         var processAttributeAddOperation = function(operation){
-            var attribute = new ConditionPredicateAttribute(operation.getEntityId(),"Attribute",that,_options,_options2);
+            var attribute = new RenamingAttribute(operation.getEntityId(),"Attribute",that,_options);
             that.addAttribute(attribute);
-            _$node.find('.list .operator2').show();
-			_$node.find(".list").append(attribute.get$node());
+            attribute.getRef().setValue(operation.getData());
+            attribute.getKey().setValue(operation.getData());
+
+            _$node.find(".list").append(attribute.get$node());
         };
 
         /**
@@ -101,8 +96,8 @@ define([
          * Propagate an Attribute Add Operation to the remote users and the local widgets
          * @param {operations.ot.AttributeDeleteOperation} operation
          */
-        var propagateAttributeAddOperation = function(operation){
-			processAttributeAddOperation(operation);
+        this.propagateAttributeAddOperation = function(operation){
+           processAttributeAddOperation(operation);
             iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.getOTOperation());
         };
 
@@ -173,17 +168,17 @@ define([
             return _$node;
         };
 
-		this.setOptions = function(options){
-			_options = options;
-		};
-		
+        this.setOptions = function(options){
+            _options = options;
+        };
+
         /**
          * Set attribute list by its JSON representation
          * @param json
          */
         this.setValueFromJSON = function(json){
             _.forEach(json.list,function(val,key){
-                var attribute = new ConditionPredicateAttribute(key,key,that,_options,_options2);
+                var attribute = new RenamingAttribute(key,key,that,_options);
                 attribute.setValueFromJSON(json.list[key]);
                 if(attr = that.getAttribute(attribute.getEntityId())){
                     that.deleteAttribute(attr.getEntityId());
@@ -216,18 +211,12 @@ define([
                 _$node.find(".list").append(_list[attrId].get$node());
             }
         }
-        _$node.find(".ui-icon-plus").click(function(){
-            var id = Util.generateRandomId();
-            var operation = new AttributeAddOperation(id,that.getEntityId(),that.getRootSubjectEntity().getEntityId(),ConditionPredicateAttribute.TYPE);
-            propagateAttributeAddOperation(operation);
-
-        });
 
         if(iwc){
             that.registerCallbacks();
         }
     }
 
-    return ConditionListAttribute;
+    return RenamingListAttribute;
 
 });

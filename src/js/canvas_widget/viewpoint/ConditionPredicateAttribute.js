@@ -6,15 +6,15 @@ define([
     'canvas_widget/AbstractAttribute',
     'canvas_widget/Value',
     'canvas_widget/SelectionValue',
-    'text!templates/attribute_widget/renaming_attribute.html'
-],/** @lends RenamingAttribute */ function($,_,Util,AttributeDeleteOperation,AbstractAttribute,Value,SelectionValue,renamingAttrHTML) {
+    'text!templates/canvas_widget/condition_predicate.html'
+],/** @lends ConditionPredicateAttribute */ function($,_,Util,AttributeDeleteOperation,AbstractAttribute,Value,SelectionValue,condition_predicateHtml) {
 
-    RenamingAttribute.TYPE = "RenamingAttribute";
+    ConditionPredicateAttribute.TYPE = "ConditionPredicateAttribute";
 
-    RenamingAttribute.prototype = new AbstractAttribute();
-    RenamingAttribute.prototype.constructor = RenamingAttribute;
+    ConditionPredicateAttribute.prototype = new AbstractAttribute();
+	ConditionPredicateAttribute.prototype.constructor = ConditionPredicateAttribute;
     /**
-     * RenamingAttribute
+     * ConditionPredicateAttribute
      * @class attribute_widget.ConditionPredicateAttribute
      * @memberof attribute_widget
      * @extends attribute_widget.AbstractAttribute
@@ -22,9 +22,10 @@ define([
      * @param {string} name Name of attribute
      * @param {AbstractEntity} subjectEntity Entity the attribute is assigned to
      * @param {Object} options Selection options
+     * @param {Object} options2 Selection options
      * @constructor
      */
-    function RenamingAttribute(id,name,subjectEntity,options){
+    function ConditionPredicateAttribute(id,name,subjectEntity,options,options2){
 
         AbstractAttribute.call(this,id,name,subjectEntity);
 
@@ -36,33 +37,43 @@ define([
          */
         var _options = options;
 
+        //noinspection UnnecessaryLocalVariableJS
+        /**
+         * Selection options
+         * @type {Object}
+         * @private
+         */
+        var _options2 = options2;
+		
+		//var _options3 = options3;
+		
         /**
          * Value object of key
          * @type {attribute_widget.Value}
          * @private
          */
-        var _key = new Value(id+"[val]","Attribute Name",this,this.getRootSubjectEntity());
+        var _key = new Value(id+"[val]","Attribute Value",this,this.getRootSubjectEntity());
 
         /***
-         * Value object of ref
+         * Value object of value
          * @type {attribute_widget.Value}
          * @private
          */
-        var _ref = new Value(id+"[ref]","Attribute Reference",this,this.getRootSubjectEntity());
+        var _value = new SelectionValue(id+"[property]","Attribute Name",this,this.getRootSubjectEntity(),_options);
 
         /***
-         * Value object of vis
+         * Value object of value
          * @type {attribute_widget.Value}
          * @private
          */
-        var _vis = new SelectionValue(id+"[vis]","Attribute Visibility",this,this.getRootSubjectEntity(),_options);
-
+        var _value2 = new SelectionValue(id+"[operator]","Logical Operator",this,this.getRootSubjectEntity(),_options2);
+		
         /**
          * jQuery object of the DOM node representing the attribute
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(renamingAttrHTML,{}));
+        var _$node = $(_.template(condition_predicateHtml,{}));
 
         //noinspection JSUnusedGlobalSymbols
         /**
@@ -82,19 +93,19 @@ define([
         };
 
         /**
-         * Get Value object of value
-         * @returns {attribute_widget.Value}
+         * Set Value object of value
+         * @param {attribute_widget.Value} value
          */
-        this.getRef = function(){
-            return _ref;
+        this.setValue = function(value){
+            _value = value;
         };
 
         /**
-         * Get Visibility object of value
+         * Get Value object of value
          * @returns {attribute_widget.Value}
          */
-        this.getVis = function(){
-            return _vis;
+        this.getValue = function(){
+            return _value;
         };
 
         //noinspection JSUnusedGlobalSymbols
@@ -102,9 +113,18 @@ define([
          * Set Value object of value
          * @param {attribute_widget.Value} value
          */
-        this.setVis = function(value){
-            _vis = value;
+        this.setValue2 = function(value){
+            _value2 = value;
         };
+
+        /**
+         * Get Value object of value
+         * @returns {attribute_widget.Value}
+         */
+        this.getValue2 = function(){
+            return _value2;
+        };
+
 
         /**
          * Get jQuery object of the DOM node representing the attribute
@@ -120,35 +140,34 @@ define([
          */
         this.setValueFromJSON = function(json){
             _key.setValueFromJSON(json.val);
-            _ref.setValueFromJSON(json.ref);
-            _vis.setValueFromJSON(json.vis||{value: ""});
-            //_value3.setValueFromJSON(json.operator2 || {value: ""});
+            _value.setValueFromJSON(json.property);
+            _value2.setValueFromJSON(json.operator||{value: ""});
+			//_value3.setValueFromJSON(json.operator2 || {value: ""});
         };
-
-        /**
+		/**
          * Get JSON representation of the attribute
          * @returns {Object}
          */
         this.toJSON = function(){
             var json = AbstractAttribute.prototype.toJSON.call(this);
             json.val = _key.toJSON();
-            json.ref = _ref.toJSON();
-            json.vis = _vis.toJSON();
+            json.property = _value.toJSON();
+            json.operator = _value2.toJSON();
+			//json.operator2 = _value3.toJSON();
             return json;
         };
-        _$node.find(".val").append(_key.get$node());
-        _$node.find(".ref").append(_ref.get$node()).hide();
-        _$node.find(".vis").append(_vis.get$node());
+		_$node.find(".val").append(_key.get$node());
+        _$node.find(".property").append(_value.get$node());
+        _$node.find(".operator").append(_value2.get$node());
+		//_$node.find(".operator2").append(_value3.get$node());
 
-        this.registerYMap = function(ytext){
-            if(ytext){
-                _key.registerYType(ytext);
-            }
-            _vis.registerYType();
+        this.registerYMap = function () {
+            _key.registerYType();
+            _value.registerYType();
+            _value2.registerYType();
         }
-
     }
 
-    return RenamingAttribute;
+    return ConditionPredicateAttribute;
 
 });

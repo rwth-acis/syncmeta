@@ -125,8 +125,7 @@ define([
             }
 
             _ytext.observe(function (event) {
-                _value = _ytext.toString();
-
+                _value = _ytext.toString().replace(/\n/g,'');
                 //TODO i can not find out who triggered the delete :-(. Therefore do this only for non delete event types
                 if (event.type !== "delete") {
                     var jabberId = y.share.users.get(event.object._content[event.index].id[0]);

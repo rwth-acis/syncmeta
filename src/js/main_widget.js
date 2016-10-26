@@ -43,12 +43,12 @@ requirejs([
     'canvas_widget/GeneralisationEdge',
     'canvas_widget/BiDirAssociationEdge',
     'canvas_widget/UniDirAssociationEdge',
-    'canvas_widget/ViewObjectNode',
-    'canvas_widget/ViewObjectNodeTool',
-    'canvas_widget/ViewRelationshipNode',
-    'canvas_widget/ViewRelationshipNodeTool',
-    'canvas_widget/ViewManager',
-    'canvas_widget/ViewGenerator',
+    'canvas_widget/viewpoint/ViewObjectNode',
+    'canvas_widget/viewpoint/ViewObjectNodeTool',
+    'canvas_widget/viewpoint/ViewRelationshipNode',
+    'canvas_widget/viewpoint/ViewRelationshipNodeTool',
+    'canvas_widget/viewpoint/ViewManager',
+    'canvas_widget/view/ViewGenerator',
     'canvas_widget/HistoryManager',
     'canvas_widget/JSONtoGraph',
     'promise!User',
@@ -104,7 +104,7 @@ requirejs([
                 var joinOperation = new JoinOperation(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], true, y.db.userId);
                 _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, joinOperation.toNonOTOperation());
                 if (model) {
-                    var report = JSONtoGraph(model, canvas)
+                    var report = JSONtoGraph(model, canvas);
                     console.info(report);
                     _iwcw.registerOnDataReceivedCallback(function(operation) {
                         if (operation.hasOwnProperty('getType') && operation.getType() === 'WaitForCanvasOperation') {
@@ -414,10 +414,10 @@ requirejs([
                     y.share.canvas.set('ViewApplyActivity', { viewId: '', jabberId: _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] });
 
                     resetCanvas();
-                    JSONtoGraph(model, canvas).done(function() {
-                        $("#loading").hide();
-                        canvas.resetTool();
-                    });
+                    JSONtoGraph(model, canvas);
+                    $("#loading").hide();
+                    canvas.resetTool();
+                    
                     $('#lblCurrentView').hide();
                     $lblCurrentViewId.text("");
                     EntityManager.setViewId(null);
@@ -493,10 +493,10 @@ requirejs([
             _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
             y.share.canvas.set('ViewApplyActivity', { viewId: json.id, jabberId: _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] });
 
-            JSONtoGraph(json, canvas).done(function() {
-                $("#loading").hide();
-                canvas.resetTool();
-            });
+            JSONtoGraph(json, canvas)
+            $("#loading").hide();
+            canvas.resetTool();
+            
         }
 
 

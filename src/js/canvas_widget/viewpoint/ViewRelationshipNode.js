@@ -5,11 +5,11 @@ define([
     'lodash',
     'canvas_widget/AbstractNode',
     'canvas_widget/SingleSelectionAttribute',
-    'canvas_widget/RenamingListAttribute',
-    'canvas_widget/ConditionListAttribute',
-    'canvas_widget/ViewTypesUtil',
-    'canvas_widget/LogicalOperator',
-    'canvas_widget/LogicalConjunctions',
+    'canvas_widget/viewpoint/RenamingListAttribute',
+    'canvas_widget/viewpoint/ConditionListAttribute',
+    'canvas_widget/viewpoint/ViewTypesUtil',
+    'canvas_widget/viewpoint/LogicalOperator',
+    'canvas_widget/viewpoint/LogicalConjunctions',
     'text!templates/canvas_widget/viewrelationship_node.html'
 ], /** @lends ViewRelationshipNode */
 function (require, $, jsPlumb, _, AbstractNode, SingleSelectionAttribute, RenamingListAttribute, ConditionListAttribute, ViewTypesUtil, LogicalOperator, LogicalConjunctions, viewrelationshipNodeHtml) {
@@ -89,18 +89,12 @@ function (require, $, jsPlumb, _, AbstractNode, SingleSelectionAttribute, Renami
         });
         this.addAttribute(attributeList);
 
-        var registerYTextAttributes = function(map){
-            map.get(that.getLabel().getValue().getEntityId()).then(function(ytext){
-                that.getLabel().getValue().registerYType(ytext);
-            });
-        };
-        this.registerYMap = function(map, disableYText){
-            AbstractNode.prototype.registerYMap.call(this,map);
-            if(!disableYText)
-                registerYTextAttributes(map);
-            attributeList.registerYMap(disableYText);
-            if(cla)
-                cla.registerYMap(disableYText);
+        this.registerYMap = function(){
+            AbstractNode.prototype.registerYMap.call(this, map);
+            that.getLabel().getValue().registerYType();
+            attributeList.registerYMap();
+            if (cla)
+                cla.registerYMap();
             attribute.getValue().registerYType();
             conjSelection.getValue().registerYType();
         };
@@ -114,7 +108,6 @@ function (require, $, jsPlumb, _, AbstractNode, SingleSelectionAttribute, Renami
         }
 
         var model = y.share.data.get('model');
-        //ViewTypesUtil.GetCurrentBaseModel().then(function (model) {
         var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes, ['Relationship']);
         var attribute = new SingleSelectionAttribute(id+"[target]", "Target", that, selectionValues);
         var cla = null;
@@ -151,7 +144,6 @@ function (require, $, jsPlumb, _, AbstractNode, SingleSelectionAttribute, Renami
         that.addAttribute(attribute);
 
         that.get$node().find('.attributes').prepend(attribute.get$node());
-        //});
 
         this.setContextMenuItemCallback(function () {
             var EdgeShapeNode = require('canvas_widget/EdgeShapeNode'),

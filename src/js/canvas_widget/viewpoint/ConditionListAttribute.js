@@ -7,17 +7,18 @@ define([
     'operations/ot/AttributeAddOperation',
     'operations/ot/AttributeDeleteOperation',
     'canvas_widget/AbstractAttribute',
-    'canvas_widget/RenamingAttribute',
+    'canvas_widget/viewpoint/ConditionPredicateAttribute',
     'text!templates/canvas_widget/list_attribute.html'
-],/** @lends RenamingListAttribute */function($,jsPlumb,_,IWCW,Util,AttributeAddOperation,AttributeDeleteOperation,AbstractAttribute,RenamingAttribute,listHtml) {
+],/** @lends ConditionListAttribute */function($,jsPlumb,_,IWCW,Util,AttributeAddOperation,AttributeDeleteOperation,AbstractAttribute,ConditionPredicateAttribute,listHtml) {
 
-    RenamingListAttribute.TYPE = "RenamingListAttribute";
+    ConditionListAttribute.TYPE = "ConditionListAttribute";
 
-    RenamingListAttribute.prototype = new AbstractAttribute();
-    RenamingListAttribute.prototype.constructor = RenamingListAttribute;
+    ConditionListAttribute.prototype = new AbstractAttribute();
+    ConditionListAttribute.prototype.constructor = ConditionListAttribute;
+
     /**
-     * RenamingListAttribute
-     * @class canvas_widget.RenamingListAttribute
+     * ConditionListAttribute
+     * @class canvas_widget.ConditionListAttribute
      * @extends canvas_widget.AbstractAttribute
      * @memberof canvas_widget
      * @constructor
@@ -25,8 +26,10 @@ define([
      * @param {string} name Name of attribute
      * @param {AbstractEntity} subjectEntity Entity the attribute is assigned to
      * @param {Object} options Selection options
+     * @param {Object} options2 Selection options
+     * @param {Object} options3 Selection options
      */
-    function RenamingListAttribute(id,name,subjectEntity,options){
+    function ConditionListAttribute(id,name,subjectEntity,options,options2, options3){
         var that = this;
 
         AbstractAttribute.call(this,id,name,subjectEntity);
@@ -38,6 +41,14 @@ define([
          */
         var _options = options;
 
+        /**
+         * Selection options
+         * @type {Object}
+         * @private
+         */
+        var _options2 = options2;
+
+        var _options3 = options3;
         /**
          * List of attributes
          * @type {Object}
@@ -64,31 +75,19 @@ define([
          * @param {Y.Text} ytext
          */
         var processAttributeAddOperation = function(operation,ytext){
-            var _ymap = that.getRootSubjectEntity().getYMap(), attribute;
-            if(_ymap) {
-                if(ytext){
-                    attribute = new RenamingAttribute(operation.getEntityId(), "Attribute", that, _options);
-                    that.addAttribute(attribute);
-                    attribute.getRef().setValue(operation.getData());
-                    attribute.getKey().setValue(operation.getData());
-                    attribute.registerYMap(ytext);
-                    _$node.find(".list").append(attribute.get$node());
-                }
-                else {
-                    _ymap.get(operation.getEntityId() + '[val]').then(function (yt) {
-                        var attribute = new RenamingAttribute(operation.getEntityId(), "Attribute", that, _options);
-                        that.addAttribute(attribute);
-                        attribute.getRef().setValue(operation.getData());
-                        attribute.getKey().setValue(operation.getData());
-                        attribute.registerYMap(yt);
-                        _$node.find(".list").append(attribute.get$node());
-                    });
-                }
-            }
-            else {
-                attribute = new RenamingAttribute(operation.getEntityId(),"Attribute",that,_options);
+            var attribute = new ConditionPredicateAttribute(operation.getEntityId(),"Attribute",that,_options,_options2,_options3);
+            var ymap = that.getRootSubjectEntity().getYMap();
+            if(ytext){
+                attribute.registerYMap(ytext);
                 that.addAttribute(attribute);
                 _$node.find(".list").append(attribute.get$node());
+            }
+            else {
+                ymap.get(operation.getEntityId() + '[val]').then(function (yt) {
+                    attribute.registerYMap(yt);
+                    that.addAttribute(attribute);
+                    _$node.find(".list").append(attribute.get$node());
+                });
             }
         };
 
@@ -100,7 +99,7 @@ define([
             var ymap = that.getRootSubjectEntity().getYMap();
             if(ymap){
                 ymap.set(operation.getEntityId()+"[val]", Y.Text).then(function(ytext){
-                    processAttributeAddOperation(operation, ytext);
+                    processAttributeAddOperation(operation,ytext);
                     ymap.set(AttributeAddOperation.TYPE, operation.toJSON());
                 });
             }
@@ -125,6 +124,7 @@ define([
         var propagateAttributeDeleteOperation = function(operation){
             var ymap = that.getRootSubjectEntity().getYMap();
             if(ymap){
+                processAttributeDeleteOperation(operation);
                 ymap.delete(operation.getEntityId());
                 ymap.delete(operation.getEntityId()+'[val]');
                 ymap.set(AttributeDeleteOperation.TYPE, operation.toJSON());
@@ -240,7 +240,7 @@ define([
          */
         this.toJSON = function(){
             var json = AbstractAttribute.prototype.toJSON.call(this);
-            json.type = RenamingListAttribute.TYPE;
+            json.type = ConditionListAttribute.TYPE;
             var attr = {};
             _.forEach(this.getAttributes(),function(val,key){
                 attr[key] = val.toJSON();
@@ -255,11 +255,12 @@ define([
          */
         this.setValueFromJSON = function(json){
             _.forEach(json.list,function(val,key){
-                var attribute = new RenamingAttribute(key,key,that,_options);
+                var attribute = new ConditionPredicateAttribute(key,key,that,_options,_options2,_options3);
                 attribute.setValueFromJSON(json.list[key]);
                 that.addAttribute(attribute);
                 _$node.find(".list").append(attribute.get$node());
             });
+
         };
 
         /**
@@ -286,9 +287,6 @@ define([
             }
         }
 
-        if(_iwcw){
-            that.registerCallbacks();
-        }
         this.registerYMap = function(disableYText){
             var ymap = that.getRootSubjectEntity().getYMap();
             function registerAttribute(attr, ymap,disableYText) {
@@ -319,7 +317,7 @@ define([
                     switch (event.name) {
                         case AttributeAddOperation.TYPE:
                         {
-                            operation = new AttributeAddOperation(data.entityId, data.subjectEntityId, data.rootSubjectEntityId, data.type, data.data);
+                            operation = new AttributeAddOperation(data.entityId, data.subjectEntityId, data.rootSubjectEntityId, data.type);
                             remoteAttributeAddCallback(operation);
                             break;
                         }
@@ -332,9 +330,13 @@ define([
                     }
                 }
             });
+        };
+
+        if(_iwcw){
+            that.registerCallbacks();
         }
     }
 
-    return RenamingListAttribute;
+    return ConditionListAttribute;
 
 });

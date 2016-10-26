@@ -11,8 +11,8 @@ define(['Util',
         'canvas_widget/GeneralisationEdge',
         'canvas_widget/BiDirAssociationEdge',
         'canvas_widget/UniDirAssociationEdge',
-        'canvas_widget/ViewObjectNode',
-        'canvas_widget/ViewRelationshipNode',
+        'canvas_widget/viewpoint/ViewObjectNode',
+        'canvas_widget/viewpoint/ViewRelationshipNode',
         'canvas_widget/EntityManager'],
     function(Util, AbstractEntity, Node, ObjectNode, AbstractClassNode,RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNode,ViewRelationshipNode, EntityManager ){
         function GenerateViewpointModel(viewpointModel){

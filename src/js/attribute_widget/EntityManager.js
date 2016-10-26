@@ -12,10 +12,10 @@ define(['lodash',
 		'attribute_widget/GeneralisationEdge',
 		'attribute_widget/BiDirAssociationEdge',
 		'attribute_widget/UniDirAssociationEdge',
-		'attribute_widget/ViewObjectNode',
-		'attribute_widget/ViewRelationshipNode',
-        'attribute_widget/ViewNode',
-        'attribute_widget/ViewEdge'
+		'attribute_widget/viewpoint/ViewObjectNode',
+		'attribute_widget/viewpoint/ViewRelationshipNode',
+        'attribute_widget/view/ViewNode',
+        'attribute_widget/view/ViewEdge'
 ], /** @lends EntityManager */
 	function (_, Node, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, ModelAttributesNode, Edge, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNode, ViewRelationshipNode, ViewNode, ViewEdge) {
 

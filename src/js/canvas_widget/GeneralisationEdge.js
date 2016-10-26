@@ -9,8 +9,8 @@ define([
     'canvas_widget/RelationshipNode',
     'canvas_widget/RelationshipGroupNode',
     'canvas_widget/EnumNode',
-    'canvas_widget/ViewObjectNode',
-    'canvas_widget/ViewRelationshipNode'
+    'canvas_widget/viewpoint/ViewObjectNode',
+    'canvas_widget/viewpoint/ViewRelationshipNode'
 ],/** @lends GeneralisationEdge */function(require,$,jsPlumb,_,AbstractEdge,AbstractClassNode,ObjectNode,RelationshipNode,RelationshipGroupNode,EnumNode,ViewObjectNode, ViewRelationshipNode) {
 
     GeneralisationEdge.TYPE = "Generalisation";

@@ -4,11 +4,11 @@ define([
     'lodash',
     'canvas_widget/AbstractNode',
     'canvas_widget/SingleSelectionAttribute',
-    'canvas_widget/RenamingListAttribute',
-    'canvas_widget/ConditionListAttribute',
-    'canvas_widget/ViewTypesUtil',
-    'canvas_widget/LogicalOperator',
-    'canvas_widget/LogicalConjunctions',
+    'canvas_widget/viewpoint/RenamingListAttribute',
+    'canvas_widget/viewpoint/ConditionListAttribute',
+    'canvas_widget/viewpoint/ViewTypesUtil',
+    'canvas_widget/viewpoint/LogicalOperator',
+    'canvas_widget/viewpoint/LogicalConjunctions',
     'text!templates/canvas_widget/viewobject_node.html'
 ],/** @lends ViewObjectNode */function(require,$,_,AbstractNode,SingleSelectionAttribute,RenamingListAttribute,ConditionListAttribute,ViewTypesUtil,LogicalOperator,LogicalConjunctions,viewobjectNodeHtml) {
 
@@ -78,20 +78,13 @@ define([
         var attributeList = new RenamingListAttribute("[attributes]","Attributes",this,{"show":"Visible","hide":"Hidden"});
         this.addAttribute(attributeList);
 
-
-        var registerYTextAttributes = function(map){
-            map.get(that.getLabel().getValue().getEntityId()).then(function(ytext){
-                that.getLabel().getValue().registerYType(ytext);
-            });
-        };
-        this.registerYMap = function(map, disableYText){
-            AbstractNode.prototype.registerYMap.call(this,map);
-            if(!disableYText)
-                registerYTextAttributes(map);
-            attributeList.registerYMap(disableYText);
-            if(cla)
-                cla.registerYMap(disableYText);
-            attribute.getValue().registerYType();
+        this.registerYMap = function () {
+            AbstractNode.prototype.registerYMap.call(this, map);
+            that.getLabel().getValue().registerYType();
+            attributeList.registerYMap();
+            if (cla)
+                cla.registerYMap();
+            targetAttribute.getValue().registerYType();
             conjSelection.getValue().registerYType();
         };
 
@@ -103,10 +96,9 @@ define([
             }
         }
 
-        //ViewTypesUtil.GetCurrentBaseModel().then(function(model){
         var model = y.share.data.get('model');
         var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes,['Object']);
-        var attribute = new SingleSelectionAttribute(id+"[target]", "Target", that, selectionValues);
+        var targetAttribute = new SingleSelectionAttribute(id+"[target]", "Target", that, selectionValues);
 
         var conjSelection = new SingleSelectionAttribute(id+'[conjunction]', 'Conjunction', that, LogicalConjunctions);
 
@@ -122,7 +114,7 @@ define([
                 targetId = target.value.value;
 
             if(targetId){
-                attribute.setValueFromJSON(_fromResource.attributes[id + '[target]']);
+                targetAttribute.setValueFromJSON(_fromResource.attributes[id + '[target]']);
                 if(conditonList = _fromResource.attributes["[condition]"]){
                     var attrList = _fromResource.attributes['[attributes]'].list;
                     var targetAttrList = {};
@@ -141,11 +133,10 @@ define([
             }
             _fromResource = null;
         }
-        that.addAttribute(attribute);
+        that.addAttribute(targetAttribute);
 
-        that.get$node().find('.attributes').prepend(attribute.get$node());
+        that.get$node().find('.attributes').prepend(targetAttribute.get$node());
 
-        //});
 
         this.setContextMenuItemCallback(function(){
             var NodeShapeNode = require('canvas_widget/NodeShapeNode'),

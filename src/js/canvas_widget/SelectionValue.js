@@ -7,8 +7,8 @@ define([
     'canvas_widget/AbstractAttribute',
     'operations/ot/ValueChangeOperation',
     'operations/non_ot/ActivityOperation',
-    'canvas_widget/LogicalOperator',
-    'canvas_widget/LogicalConjunctions',
+    'canvas_widget/viewpoint/LogicalOperator',
+    'canvas_widget/viewpoint/LogicalConjunctions',
     'text!templates/canvas_widget/selection_value.html',
     'text!templates/attribute_widget/selection_value.html'
 ], /** @lends SelectionValue */

@@ -10,8 +10,8 @@ define([
     'attribute_widget/EnumNode',
     'attribute_widget/NodeShapeNode',
     'attribute_widget/EdgeShapeNode',
-	'attribute_widget/ViewObjectNode',
-	'attribute_widget/ViewRelationshipNode'
+	'attribute_widget/viewpoint/ViewObjectNode',
+	'attribute_widget/viewpoint/ViewRelationshipNode'
 ],/** @lends BiDirAssociationEdge */function($,jsPlumb,_,AbstractEdge,AbstractClassNode,ObjectNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode,ViewObjectNode,ViewRelationshipNode) {
 
     BiDirAssociationEdge.TYPE = "Bi-Dir-Association";

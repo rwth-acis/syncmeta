@@ -10,7 +10,7 @@ requirejs([
     'WaitForCanvas',
     'attribute_widget/AttributeWrapper',
     'attribute_widget/EntityManager',
-    'attribute_widget/ViewGenerator',
+    'attribute_widget/view/ViewGenerator',
     'operations/non_ot/JoinOperation',
     'operations/non_ot/InitModelTypesOperation',
     'operations/non_ot/ViewInitOperation',
@@ -117,8 +117,6 @@ requirejs([
                     }
                 }
                 else if (operation instanceof ViewInitOperation) {
-                    EntityManager.clearBin();
-
                     var json = operation.getData();
                     var nodeId, edgeId;
                     for (nodeId in json.nodes) {
