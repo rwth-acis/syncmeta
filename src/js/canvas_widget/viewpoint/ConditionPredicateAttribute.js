@@ -142,7 +142,6 @@ define([
             _key.setValueFromJSON(json.val);
             _value.setValueFromJSON(json.property);
             _value2.setValueFromJSON(json.operator||{value: ""});
-			//_value3.setValueFromJSON(json.operator2 || {value: ""});
         };
 		/**
          * Get JSON representation of the attribute
@@ -153,7 +152,6 @@ define([
             json.val = _key.toJSON();
             json.property = _value.toJSON();
             json.operator = _value2.toJSON();
-			//json.operator2 = _value3.toJSON();
             return json;
         };
 		_$node.find(".val").append(_key.get$node());

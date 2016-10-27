@@ -24,7 +24,7 @@ define([
      * @param {Object} options Selection options
      * @param {Object} options2 Selection options
      */
-    function ConditionListAttribute(id,name,subjectEntity,options,options2/*,options3*/){
+    function ConditionListAttribute(id,name,subjectEntity,options,options2){
         var that = this;
 
         AbstractAttribute.call(this,id,name,subjectEntity);
@@ -43,7 +43,6 @@ define([
          */
         var _options2 = options2;
 		
-		//var _options3 = options3;
         /**
          * List of attributes
          * @type {Object}
@@ -102,7 +101,6 @@ define([
          * @param {operations.ot.AttributeDeleteOperation} operation
          */
         var propagateAttributeAddOperation = function(operation){
-			processAttributeAddOperation(operation);
             iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.getOTOperation());
         };
 

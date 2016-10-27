@@ -79,7 +79,7 @@ define([
         this.addAttribute(attributeList);
 
         this.registerYMap = function () {
-            AbstractNode.prototype.registerYMap.call(this, map);
+            AbstractNode.prototype.registerYMap.call(this);
             that.getLabel().getValue().registerYType();
             attributeList.registerYMap();
             if (cla)
@@ -97,41 +97,43 @@ define([
         }
 
         var model = y.share.data.get('model');
-        var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes,['Object']);
-        var targetAttribute = new SingleSelectionAttribute(id+"[target]", "Target", that, selectionValues);
+        if(model){
+            var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes, ['Object']);
+            var targetAttribute = new SingleSelectionAttribute(id + "[target]", "Target", that, selectionValues);
 
-        var conjSelection = new SingleSelectionAttribute(id+'[conjunction]', 'Conjunction', that, LogicalConjunctions);
+            var conjSelection = new SingleSelectionAttribute(id + '[conjunction]', 'Conjunction', that, LogicalConjunctions);
 
-        var cla = null;
-        that.addAttribute(conjSelection);
+            var cla = null;
+            that.addAttribute(conjSelection);
 
-        that.get$node().find('.attributes').append(conjSelection.get$node());
+            that.get$node().find('.attributes').append(conjSelection.get$node());
 
-        if(_fromResource){
-            var targetId;
-            var target = _fromResource.attributes[id + '[target]'];
-            if(target)
-                targetId = target.value.value;
+            if (_fromResource) {
+                var targetId;
+                var target = _fromResource.attributes[id + '[target]'];
+                if (target)
+                    targetId = target.value.value;
 
-            if(targetId){
-                targetAttribute.setValueFromJSON(_fromResource.attributes[id + '[target]']);
-                if(conditonList = _fromResource.attributes["[condition]"]){
-                    var attrList = _fromResource.attributes['[attributes]'].list;
-                    var targetAttrList = {};
-                    for (var key in attrList) {
-                        if (attrList.hasOwnProperty(key)) {
-                            targetAttrList[key] = attrList[key].val.value;
+                if (targetId) {
+                    targetAttribute.setValueFromJSON(_fromResource.attributes[id + '[target]']);
+                    if (conditonList = _fromResource.attributes["[condition]"]) {
+                        var attrList = _fromResource.attributes['[attributes]'].list;
+                        var targetAttrList = {};
+                        for (var key in attrList) {
+                            if (attrList.hasOwnProperty(key)) {
+                                targetAttrList[key] = attrList[key].val.value;
+                            }
                         }
+                        cla = new ConditionListAttribute("[condition]", "Conditions", that, targetAttrList, LogicalOperator, LogicalConjunctions);
+
+                        //cla.setValueFromJSON(conditonList);
+                        that.addAttribute(cla);
+
+                        that.get$node().find('.attributes').append(cla.get$node());
                     }
-                    cla = new ConditionListAttribute("[condition]", "Conditions", that, targetAttrList, LogicalOperator, LogicalConjunctions);
-
-                    //cla.setValueFromJSON(conditonList);
-                    that.addAttribute(cla);
-
-                    that.get$node().find('.attributes').append(cla.get$node());
                 }
+                _fromResource = null;
             }
-            _fromResource = null;
         }
         that.addAttribute(targetAttribute);
 

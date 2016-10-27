@@ -119,12 +119,6 @@ define([
             _value.setValueFromJSON(json.value);
         };
 
-        /**
-         * Unregister all IWC callback
-         */
-        this.unregisterCallbacks = function(){
-            _value.unregisterCallbacks();
-        }
         
         this.registerYMap = function(){
             _key.registerYType();

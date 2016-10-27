@@ -247,13 +247,6 @@ define([
         this.unregisterCallbacks = function() {
             _iwcw.unregisterOnDataReceivedCallback(localAttributeAddCallback);
             _iwcw.unregisterOnDataReceivedCallback(localAttributeDeleteCallback);
-            
-            var attrs = this.getAttributes();
-            for(var key in attrs){
-                if(attrs.hasOwnProperty(key)){
-                    attrs[key].unregisterCallbacks();
-                }
-            }
         };
 
         _$node.find(".name").text(this.getName());

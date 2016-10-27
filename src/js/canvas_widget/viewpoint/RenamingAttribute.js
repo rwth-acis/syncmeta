@@ -122,7 +122,6 @@ define([
             _key.setValueFromJSON(json.val);
             _ref.setValueFromJSON(json.ref);
             _vis.setValueFromJSON(json.vis||{value: ""});
-            //_value3.setValueFromJSON(json.operator2 || {value: ""});
         };
 
         /**
