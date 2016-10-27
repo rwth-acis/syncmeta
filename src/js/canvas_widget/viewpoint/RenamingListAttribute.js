@@ -68,14 +68,15 @@ define([
             that.addAttribute(attribute);
             attribute.registerYMap();
             _$node.find(".list").append(attribute.get$node());
+            return attribute;
         };
 
         /**
          * Propagate an Attribute Add Operation to the remote users and the local widgets
          * @param {operations.ot.AttributeAddOperation} operation
          */
-        var propagateAttributeAddOperation = function (operation) {
-            processAttributeAddOperation(operation);
+         this.propagateAttributeAddOperation = function (operation) {
+            return processAttributeAddOperation(operation);
         };
 
         /**

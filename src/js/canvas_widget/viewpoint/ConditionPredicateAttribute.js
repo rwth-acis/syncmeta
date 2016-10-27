@@ -52,7 +52,7 @@ define([
          * @type {attribute_widget.Value}
          * @private
          */
-        var _key = new Value(id+"[val]","Attribute Value",this,this.getRootSubjectEntity());
+        var _key = new Value(id+"[value]","Attribute Value",this,this.getRootSubjectEntity());
 
         /***
          * Value object of value

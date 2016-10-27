@@ -10,7 +10,7 @@ define([
     'canvas_widget/viewpoint/LogicalOperator',
     'canvas_widget/viewpoint/LogicalConjunctions',
     'text!templates/canvas_widget/viewobject_node.html'
-],/** @lends ViewObjectNode */function(require,$,_,AbstractNode,SingleSelectionAttribute,RenamingListAttribute,ConditionListAttribute,ViewTypesUtil,LogicalOperator,LogicalConjunctions,viewobjectNodeHtml) {
+],/** @lends ViewObjectNode */function (require, $, _, AbstractNode, SingleSelectionAttribute, RenamingListAttribute, ConditionListAttribute, ViewTypesUtil, LogicalOperator, LogicalConjunctions, viewobjectNodeHtml) {
 
     ViewObjectNode.TYPE = "ViewObject";
     ViewObjectNode.DEFAULT_WIDTH = 150;
@@ -32,19 +32,19 @@ define([
      * @param {number} zIndex Position of node on z-axis
      * @param {object} jsonFromResource the ViewObjectNode is created from a json
      */
-    function ViewObjectNode(id,left,top,width,height,zIndex, jsonFromResource){
+    function ViewObjectNode(id, left, top, width, height, zIndex, jsonFromResource) {
         var that = this;
 
         var _fromResource = jsonFromResource;
 
-        AbstractNode.call(this,id,ViewObjectNode.TYPE,left,top,width,height,zIndex);
+        AbstractNode.call(this, id, ViewObjectNode.TYPE, left, top, width, height, zIndex);
 
         /**
          * jQuery object of node template
          * @type {jQuery}
          * @private
          */
-        var _$template = $(_.template(viewobjectNodeHtml,{type: that.getType()}));
+        var _$template = $(_.template(viewobjectNodeHtml, { type: that.getType() }));
 
         /**
          * jQuery object of DOM node representing the node
@@ -71,17 +71,37 @@ define([
          * Get JSON representation of the node
          * @returns {Object}
          */
-        this.toJSON = function(){
+        this.toJSON = function () {
             return AbstractNode.prototype.toJSON.call(this);
         };
 
-        var attributeList = new RenamingListAttribute("[attributes]","Attributes",this,{"show":"Visible","hide":"Hidden"});
-        this.addAttribute(attributeList);
+
+        this.createConditionListAttribute = function (refAttrs) {
+            var targetAttrList = {};
+            if (refAttrs && refAttrs.constructor.name === "RenamingListAttribute") {
+                var attrs = refAttrs.getAttributes();
+                for (var key in attrs) {
+                    if (attrs.hasOwnProperty(key)) {
+                        targetAttrList[key] = attrs[key].getKey().getValue();
+                    }
+                }
+            } else {
+                for (var key in refAttrs) {
+                    if (refAttrs.hasOwnProperty(key)) {
+                        targetAttrList[key] = refAttrs[key].val.value;
+                    }
+                }
+            }
+            var conditionListAttr = new ConditionListAttribute("[condition]", "Conditions", that, targetAttrList, LogicalOperator);
+            that.addAttribute(conditionListAttr);
+            _$attributeNode.append(conditionListAttr.get$node());
+            return conditionListAttr;
+        }
 
         this.registerYMap = function () {
             AbstractNode.prototype.registerYMap.call(this);
             that.getLabel().getValue().registerYType();
-            attributeList.registerYMap();
+            renamingList.registerYMap();
             if (cla)
                 cla.registerYMap();
             targetAttribute.getValue().registerYType();
@@ -90,57 +110,28 @@ define([
 
         _$node.find(".label").append(this.getLabel().get$node());
 
-        for(var attributeKey in _attributes){
-            if(_attributes.hasOwnProperty(attributeKey)){
-                _$attributeNode.append(_attributes[attributeKey].get$node());
-            }
-        }
 
+        var targetAttribute, renamingList, conjSelection, cla;
         var model = y.share.data.get('model');
-        if(model){
+        if (model) {
             var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes, ['Object']);
-            var targetAttribute = new SingleSelectionAttribute(id + "[target]", "Target", that, selectionValues);
+            targetAttribute = new SingleSelectionAttribute(id + "[target]", "Target", that, selectionValues);
+            that.addAttribute(targetAttribute);
+            _$attributeNode.prepend(targetAttribute.get$node());
 
-            var conjSelection = new SingleSelectionAttribute(id + '[conjunction]', 'Conjunction', that, LogicalConjunctions);
+            renamingList = new RenamingListAttribute("[attributes]", "Attributes", this, { "show": "Visible", "hide": "Hidden" });
+            that.addAttribute(renamingList);
+            _$attributeNode.append(renamingList.get$node());
 
-            var cla = null;
+            conjSelection = new SingleSelectionAttribute(id + '[conjunction]', 'Conjunction', that, LogicalConjunctions);
             that.addAttribute(conjSelection);
+            _$attributeNode.append(conjSelection.get$node());
 
-            that.get$node().find('.attributes').append(conjSelection.get$node());
-
-            if (_fromResource) {
-                var targetId;
-                var target = _fromResource.attributes[id + '[target]'];
-                if (target)
-                    targetId = target.value.value;
-
-                if (targetId) {
-                    targetAttribute.setValueFromJSON(_fromResource.attributes[id + '[target]']);
-                    if (conditonList = _fromResource.attributes["[condition]"]) {
-                        var attrList = _fromResource.attributes['[attributes]'].list;
-                        var targetAttrList = {};
-                        for (var key in attrList) {
-                            if (attrList.hasOwnProperty(key)) {
-                                targetAttrList[key] = attrList[key].val.value;
-                            }
-                        }
-                        cla = new ConditionListAttribute("[condition]", "Conditions", that, targetAttrList, LogicalOperator, LogicalConjunctions);
-
-                        //cla.setValueFromJSON(conditonList);
-                        that.addAttribute(cla);
-
-                        that.get$node().find('.attributes').append(cla.get$node());
-                    }
-                }
-                _fromResource = null;
-            }
+            cla = that.createConditionListAttribute();
         }
-        that.addAttribute(targetAttribute);
-
-        that.get$node().find('.attributes').prepend(targetAttribute.get$node());
 
 
-        this.setContextMenuItemCallback(function(){
+        this.setContextMenuItemCallback(function () {
             var NodeShapeNode = require('canvas_widget/NodeShapeNode'),
                 BiDirAssociationEdge = require('canvas_widget/BiDirAssociationEdge'),
                 UniDirAssociationEdge = require('canvas_widget/UniDirAssociationEdge');
@@ -148,29 +139,29 @@ define([
             return {
                 addShape: {
                     name: "Add Node Shape",
-                    callback: function(){
+                    callback: function () {
                         var canvas = that.getCanvas(),
                             appearance = that.getAppearance(),
                             nodeId;
 
                         //noinspection JSAccessibilityCheck
-                        canvas.createNode(NodeShapeNode.TYPE,appearance.left + appearance.width + 50,appearance.top,150,100).done(function(nodeId){
-                            canvas.createEdge(BiDirAssociationEdge.TYPE,that.getEntityId(),nodeId, null, null, viewId);
+                        canvas.createNode(NodeShapeNode.TYPE, appearance.left + appearance.width + 50, appearance.top, 150, 100).done(function (nodeId) {
+                            canvas.createEdge(BiDirAssociationEdge.TYPE, that.getEntityId(), nodeId, null, null, viewId);
                         });
                     },
-                    disabled: function() {
+                    disabled: function () {
                         var edges = that.getEdges(),
                             edge,
                             edgeId;
 
-                        for(edgeId in edges){
-                            if(edges.hasOwnProperty(edgeId)){
+                        for (edgeId in edges) {
+                            if (edges.hasOwnProperty(edgeId)) {
                                 edge = edges[edgeId];
-                                if( (edge instanceof BiDirAssociationEdge &&
+                                if ((edge instanceof BiDirAssociationEdge &&
                                     (edge.getTarget() === that && edge.getSource() instanceof NodeShapeNode ||
-                                    edge.getSource() === that && edge.getTarget() instanceof NodeShapeNode)) ||
+                                        edge.getSource() === that && edge.getTarget() instanceof NodeShapeNode)) ||
 
-                                    (edge instanceof UniDirAssociationEdge && edge.getTarget() instanceof NodeShapeNode) ){
+                                    (edge instanceof UniDirAssociationEdge && edge.getTarget() instanceof NodeShapeNode)) {
 
                                     return true;
                                 }

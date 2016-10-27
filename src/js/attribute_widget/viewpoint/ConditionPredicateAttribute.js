@@ -26,7 +26,7 @@ define([
      * @param {Object} options2 Selection options
      * @constructor
      */
-    function ConditionPredicateAttribute(id,name,subjectEntity,options,options2/*, options3*/){
+    function ConditionPredicateAttribute(id,name,subjectEntity,options,options2){
         var that = this;
 
         AbstractAttribute.call(this,id,name,subjectEntity);
@@ -46,15 +46,13 @@ define([
          * @private
          */
         var _options2 = options2;
-		
-		//var _options3 = options3;
-		
+				
         /**
          * Value object of key
          * @type {attribute_widget.Value}
          * @private
          */
-        var _key = new Value(id+"[val]","Attribute Value",this,this.getRootSubjectEntity());
+        var _key = new Value(id+"[value]","Attribute Value",this,this.getRootSubjectEntity());
 
         /***
          * Value object of value
@@ -164,16 +162,6 @@ define([
             return _value2;
         };
 
-        /*
-		 this.setValue3 = function(value){
-            _value3 = value;
-        };
-		
-		this.getValue3 = function(){
-            return _value3;
-        };
-		*/
-
         /**
          * Get jQuery object of the DOM node representing the attribute
          * @returns {jQuery}
@@ -190,7 +178,6 @@ define([
             _key.setValueFromJSON(json.val);
             _value.setValueFromJSON(json.property);
             _value2.setValueFromJSON(json.operator||{value: ""});
-			//_value3.setValueFromJSON(json.operator2 || {value: ""});
         };
 
         /**
@@ -210,7 +197,6 @@ define([
         _$node.find(".val").append(_key.get$node());
         _$node.find(".property").append(_value.get$node());
         _$node.find(".operator").append(_value2.get$node());
-		//_$node.find(".operator2").append(_value3.get$node());
         _$node.find(".ui-icon-close").click(function(){
             var operation = new AttributeDeleteOperation(that.getEntityId(),that.getSubjectEntityId(),that.getRootSubjectEntity().getEntityId(),ConditionPredicateAttribute.TYPE);
             that.propagateAttributeDeleteOperation(operation);

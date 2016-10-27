@@ -74,7 +74,7 @@ define([
          */
         var processAttributeAddOperation = function (operation) {
             var attribute = new ConditionPredicateAttribute(operation.getEntityId(), "Attribute", that, _options, _options2);
-            attribute.registerYMap(ytext);
+            attribute.registerYMap();
             that.addAttribute(attribute);
             _$node.find(".list").append(attribute.get$node());
         };
@@ -84,7 +84,7 @@ define([
          * @param {operations.ot.AttributeAddOperation} operation
          */
         var propagateAttributeAddOperation = function (operation) {
-            processAttributeAddOperation(operation, ytext);
+            processAttributeAddOperation(operation);
         };
 
         /**
@@ -231,7 +231,7 @@ define([
          */
         this.setValueFromJSON = function (json) {
             _.forEach(json.list, function (val, key) {
-                var attribute = new ConditionPredicateAttribute(key, key, that, _options, _options2, _options3);
+                var attribute = new ConditionPredicateAttribute(key, key, that, _options, _options2);
                 attribute.setValueFromJSON(json.list[key]);
                 that.addAttribute(attribute);
                 _$node.find(".list").append(attribute.get$node());
@@ -263,7 +263,7 @@ define([
             }
         }
 
-        this.registerYMap = function (disableYText) {
+        this.registerYMap = function () {
             var ymap = that.getRootSubjectEntity().getYMap();
             var attrs = that.getAttributes();
             for (var key in attrs) {
@@ -272,9 +272,8 @@ define([
                 }
             }
 
-
             ymap.observe(function (event) {
-                if (event.name.indexOf('[val]') != -1) {
+                if (event.name.indexOf('[value]') != -1) {
                     var operation;
                     var data = event.value;
                     switch (event.type) {

@@ -70,6 +70,12 @@ define([
         var processAttributeAddOperation = function(operation){
             var attribute = new ConditionPredicateAttribute(operation.getEntityId(),"Attribute",that,_options,_options2);
             that.addAttribute(attribute);
+              //this is strange if i call processAttributeAddOperation for first time ytext is undefined, but it shouldn't 
+            var ymap = y.share.nodes.get(subjectEntity.getEntityId());
+            setTimeout(function () {
+                var ytext = ymap.get(attribute.getKey().getEntityId());
+                attribute.getKey().registerYType(ytext);
+            }, 200);
             _$node.find('.list .operator2').show();
 			_$node.find(".list").append(attribute.get$node());
         };
@@ -219,6 +225,23 @@ define([
             var operation = new AttributeAddOperation(id,that.getEntityId(),that.getRootSubjectEntity().getEntityId(),ConditionPredicateAttribute.TYPE);
             propagateAttributeAddOperation(operation);
 
+        });
+
+        y.share.nodes.get(subjectEntity.getEntityId()).observe(function(event) {
+            if (event.name.indexOf('[value]') != -1) {
+                switch (event.type) {
+                    case 'add': {
+                        operation = new AttributeAddOperation(event.name.replace(/\[\w*\]/g, ''), that.getEntityId(), that.getRootSubjectEntity().getEntityId(), that.constructor.name);
+                        attributeAddCallback(operation);
+                        break;
+                    }
+                    case 'delete':{
+                        operation = new AttributeDeleteOperation(event.name.replace(/\[\w*\]/g, ''), that.getEntityId(), that.getRootSubjectEntity().getEntityId(), that.constructor.name);
+                        attributeDeleteCallback(operation);
+                        break;
+                    }
+                }
+            }
         });
 
         if(iwc){

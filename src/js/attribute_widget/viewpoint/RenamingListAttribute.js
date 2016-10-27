@@ -49,7 +49,7 @@ define([
          */
         var _$node = $(_.template(listAttributeHtml,{}));
         //remove the plus icon
-        _$node.find('.ui-icon ui-icon-plus').parent().remove();
+        _$node.find('.ui-icon-plus').parent().remove();
 
         /**
          * Inter widget communication wrapper
@@ -64,9 +64,14 @@ define([
         var processAttributeAddOperation = function(operation){
             var attribute = new RenamingAttribute(operation.getEntityId(),"Attribute",that,_options);
             that.addAttribute(attribute);
-            attribute.getRef().setValue(operation.getData());
-            attribute.getKey().setValue(operation.getData());
-
+             //this is strange if i call processAttributeAddOperation for first time ytext is undefined, but it shouldn't 
+            var ymap = y.share.nodes.get(subjectEntity.getEntityId());
+            setTimeout(function () {
+                var ytext = ymap.get(attribute.getKey().getEntityId());
+                attribute.getKey().registerYType(ytext);
+                ytext = ymap.get(attribute.getRef().getEntityId());
+                attribute.getRef().registerYType(ytext);
+            }, 200);
             _$node.find(".list").append(attribute.get$node());
         };
 
@@ -215,6 +220,22 @@ define([
         if(iwc){
             that.registerCallbacks();
         }
+        y.share.nodes.get(subjectEntity.getEntityId()).observe(function(event) {
+            if (event.name.indexOf('[val]') != -1) {
+                switch (event.type) {
+                    case 'add': {
+                        operation = new AttributeAddOperation(event.name.replace(/\[\w*\]/g, ''), that.getEntityId(), that.getRootSubjectEntity().getEntityId(), that.constructor.name);
+                        attributeAddCallback(operation);
+                        break;
+                    }
+                    case 'delete':{
+                        operation = new AttributeDeleteOperation(event.name.replace(/\[\w*\]/g, ''), that.getEntityId(), that.getRootSubjectEntity().getEntityId(), that.constructor.name);
+                        attributeDeleteCallback(operation);
+                        break;
+                    }
+                }
+            }
+        });
     }
 
     return RenamingListAttribute;

@@ -208,7 +208,6 @@ define([
             var id = Util.generateRandomId();
             var operation = new AttributeAddOperation(id, that.getEntityId(), that.getRootSubjectEntity().getEntityId(), KeySelectionValueAttribute.TYPE);
             propagateAttributeAddOperation(operation);
-
         });
 
         y.share.nodes.get(subjectEntity.getEntityId()).observe(function(event) {
@@ -226,7 +225,7 @@ define([
                     }
                 }
             }
-        })
+        });
 
     }
 

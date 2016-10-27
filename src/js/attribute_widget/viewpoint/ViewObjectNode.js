@@ -65,60 +65,48 @@ define([
              */
             var _attributes = this.getAttributes();
 
-            var attributeList = new RenamingListAttribute("[attributes]", "Attributes", this, {
-                "show": "Visible",
-                "hide": "Hidden"
-            });
-            this.addAttribute(attributeList);
+            this.createConditionListAttribute = function (refAttrs) {
+                var targetAttrList = {};
+                if (refAttrs && refAttrs.constructor.name === "RenamingListAttribute") {
+                    var attrs = refAttrs.getAttributes();
+                    for (var key in attrs) {
+                        if (attrs.hasOwnProperty(key)) {
+                            targetAttrList[key] = attrs[key].getKey().getValue();
+                        }
+                    }
+                } else {
+                    for (var key in refAttrs) {
+                        if (refAttrs.hasOwnProperty(key)) {
+                            targetAttrList[key] = refAttrs[key].val.value;
+                        }
+                    }
+                }
+                var conditionListAttr = new ConditionListAttribute("[condition]", "Conditions", that, targetAttrList, LogicalOperator);
+                that.addAttribute(conditionListAttr);
+                _$attributeNode.append(conditionListAttr.get$node());
+                return conditionListAttr;
+            }
 
+            var targetAttribute, renamingList, conjSelection, cla;
             var model = y.share.data.get('model');
             if (model) {
                 var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes, ['Object']);
-                var attribute = new SingleSelectionAttribute(id + "[target]", "Target", that, selectionValues);
+                targetAttribute = new SingleSelectionAttribute(id + "[target]", "Target", that, selectionValues);
+                that.addAttribute(targetAttribute);
+                _$attributeNode.prepend(targetAttribute.get$node());
 
-                var conjSelection = new SingleSelectionAttribute(id + '[conjunction]', 'Conjunction', that, LogicalConjunctions);
+                renamingList = new RenamingListAttribute("[attributes]", "Attributes", this, { "show": "Visible", "hide": "Hidden" });
+                that.addAttribute(renamingList);
+                _$attributeNode.append(renamingList.get$node());
+
+                conjSelection = new SingleSelectionAttribute(id + '[conjunction]', 'Conjunction', that, LogicalConjunctions);
                 that.addAttribute(conjSelection);
-                that.get$node().find('.attributes').append(conjSelection.get$node());
+                _$attributeNode.append(conjSelection.get$node());
 
-                if (_fromResource) {
-                    var targetId = null;
-                    for (var key in _fromResource.attributes) {
-                        if (_fromResource.attributes.hasOwnProperty(key) && key.indexOf('[target]') !== -1) {
-                            targetId = key;
-                            break;
-                        }
-                    }
-                    if (targetId) {
-                        attribute.setValueFromJSON(_fromResource.attributes[targetId]);
-                        var conditionList = _fromResource.attributes["[condition]"];
-                        if (conditionList) {
-                            var attrList = _fromResource.attributes['[attributes]'].list;
-                            var targetAttrList = {};
-                            for (var attrKey in attrList) {
-                                if (attrList.hasOwnProperty(attrKey)) {
-                                    targetAttrList[attrKey] = attrList[attrKey].val.value;
-                                }
-                            }
-                            var cla = new ConditionListAttribute("[condition]", "Conditions", that, targetAttrList, LogicalOperator);
-                            cla.setValueFromJSON(conditionList);
-                            that.addAttribute(cla);
-                            that.get$node().find('.attributes').append(cla.get$node());
-                        }
-                    }
-                    _fromResource = null;
-                }
-            }
-            that.addAttribute(attribute);
-            that.get$node().find('.attributes').prepend(attribute.get$node());
-
-            _$node.find(".label").append(this.getLabel().get$node());
-
-            for (var attributeKey in _attributes) {
-                if (_attributes.hasOwnProperty(attributeKey)) {
-                    _$attributeNode.append(_attributes[attributeKey].get$node());
-                }
+                cla = that.createConditionListAttribute();
             }
 
+            
             this.registerYType = function () {
                 AbstractNode.prototype.registerYType.call(this);
                 var ymap = y.share.nodes.get(that.getEntityId());

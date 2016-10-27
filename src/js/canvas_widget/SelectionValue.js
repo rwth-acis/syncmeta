@@ -5,14 +5,13 @@ define([
     'iwcw',
     'canvas_widget/AbstractValue',
     'canvas_widget/AbstractAttribute',
+    'canvas_widget/viewpoint/ViewTypesUtil',
     'operations/ot/ValueChangeOperation',
     'operations/non_ot/ActivityOperation',
-    'canvas_widget/viewpoint/LogicalOperator',
-    'canvas_widget/viewpoint/LogicalConjunctions',
     'text!templates/canvas_widget/selection_value.html',
     'text!templates/attribute_widget/selection_value.html'
 ], /** @lends SelectionValue */
-    function($, jsPlumb, _, IWCW, AbstractValue, AbstractAttribute, ValueChangeOperation, ActivityOperation, LogicalOperator, LogicalConjunctions, selectionValueHtml, attributeSelectionValueHtml) {
+    function($, jsPlumb, _, IWCW, AbstractValue, AbstractAttribute, ViewTypesUtil, ValueChangeOperation, ActivityOperation, selectionValueHtml, attributeSelectionValueHtml) {
 
         SelectionValue.prototype = new AbstractValue();
         SelectionValue.prototype.constructor = SelectionValue;
@@ -158,8 +157,14 @@ define([
                                     rootSubjectEntityType: that.getRootSubjectEntity().getType(),
                                     rootSubjectEntityId: that.getRootSubjectEntity().getEntityId()
                                 }));
+
+                            //its a view type and create a reference to the origin
+                            if (event.entityId.indexOf('[target]') != -1) {
+                                ViewTypesUtil.createReferenceToOrigin(that.getRootSubjectEntity());
+                            }
                             //trigger the save 
                             $('#save').click();
+                        
                         }
                         else {
                             //the remote users propagtes the change to their local attribute widget

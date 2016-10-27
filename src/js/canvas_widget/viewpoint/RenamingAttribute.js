@@ -141,6 +141,7 @@ define([
 
         this.registerYMap = function(){
             _key.registerYType();
+            _ref.registerYType();
             _vis.registerYType();
         }
 
