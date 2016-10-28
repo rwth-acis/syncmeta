@@ -38,9 +38,7 @@ define([
         function ViewRelationshipNode(id, left, top, width, height, zIndex, json) {
             var that = this;
 
-            var _fromResource = json;
-
-            AbstractNode.call(this, id, ViewRelationshipNode.TYPE, left, top, width, height, zIndex);
+            AbstractNode.call(this, id, ViewRelationshipNode.TYPE, left, top, width, height, zIndex, json);
 
             /**
              * jQuery object of node template
@@ -56,14 +54,14 @@ define([
              * @type {jQuery}
              * @private
              */
-            var $node = AbstractNode.prototype.get$node.call(this).append(_$template).addClass("viewrelationship");
+            var _$node = AbstractNode.prototype.get$node.call(this).append(_$template).addClass("viewrelationship");
 
             /**
              * jQuery object of DOM node representing the attributes
              * @type {jQuery}
              * @private
              */
-            var _$attributeNode = $node.find(".attributes");
+            var _$attributeNode = _$node.find(".attributes");
 
             /**
              * Attributes of node
@@ -80,15 +78,6 @@ define([
                 return AbstractNode.prototype.toJSON.call(this);
             };
 
-            var attributeList = new RenamingListAttribute("[attributes]", "Attributes", this, {
-                "hidden": "Show",
-                "top": "Show Top",
-                "center": "Show Center",
-                "bottom": "Show Bottom",
-                "hide": "Hide"
-            });
-            this.addAttribute(attributeList);
-
             this.registerYMap = function () {
                 AbstractNode.prototype.registerYMap.call(this);
                 that.getLabel().getValue().registerYType();
@@ -99,54 +88,82 @@ define([
                 conjSelection.getValue().registerYType();
             };
 
-            $node.find(".label").append(this.getLabel().get$node());
-
-            for (var attributeKey in _attributes) {
-                if (_attributes.hasOwnProperty(attributeKey)) {
-                    _$attributeNode.append(_attributes[attributeKey].get$node());
-                }
+            this.showAttributes = function () {
+                if (renamingList.get$node().is(':hidden'))
+                    renamingList.get$node().show();
+                if (conjSelection.get$node().is(':hidden'))
+                    conjSelection.get$node().show();
+                if (cla.get$node().is(':hidden'))
+                    cla.get$node().show();
+                if (!targetAttribute.get$node().is(':hidden'))
+                    targetAttribute.get$node().hide();
             }
 
+            this.createConditionListAttribute = function (refAttrs) {
+                var targetAttrList = {};
+                if (refAttrs && refAttrs.constructor.name === "RenamingListAttribute") {
+                    var attrs = refAttrs.getAttributes();
+                    for (var key in attrs) {
+                        if (attrs.hasOwnProperty(key)) {
+                            targetAttrList[key] = attrs[key].getKey().getValue();
+                        }
+                    }
+                } else {
+                    for (var key in refAttrs) {
+                        if (refAttrs.hasOwnProperty(key)) {
+                            targetAttrList[key] = refAttrs[key].val.value;
+                        }
+                    }
+                }
+                var conditionListAttr = new ConditionListAttribute("[condition]", "Conditions", that, targetAttrList, LogicalOperator);
+                that.addAttribute(conditionListAttr);
+                _$attributeNode.append(conditionListAttr.get$node());
+                conditionListAttr.get$node().hide();
+                return conditionListAttr;
+            }
+
+            this.registerYMap = function () {
+                AbstractNode.prototype.registerYMap.call(this);
+                that.getLabel().getValue().registerYType();
+                renamingList.registerYMap();
+                if (cla)
+                    cla.registerYMap();
+                targetAttribute.getValue().registerYType();
+                conjSelection.getValue().registerYType();
+            };
+
+            var targetAttribute, renamingList, conjSelection, cla;
+            _$node.find(".label").append(this.getLabel().get$node());
             var model = y.share.data.get('model');
             if (model) {
                 var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes, ['Relationship']);
-                var attribute = new SingleSelectionAttribute(id + "[target]", "Target", that, selectionValues);
-                var cla = null;
-                var conjSelection = new SingleSelectionAttribute(id + '[conjunction]', 'Conjunction', that, LogicalConjunctions);
+                targetAttribute = new SingleSelectionAttribute(id + "[target]", "Reference", that, selectionValues);
+                that.addAttribute(targetAttribute);
+                _$attributeNode.prepend(targetAttribute.get$node());
+
+                renamingList = new RenamingListAttribute("[attributes]", "Attributes", that, {
+                    "hidden": "Show",
+                    "top": "Show Top",
+                    "center": "Show Center",
+                    "bottom": "Show Bottom",
+                    "hide": "Hide"
+                });
+                that.addAttribute(renamingList);
+                _$attributeNode.append(renamingList.get$node());
+                renamingList.get$node().hide();
+
+                conjSelection = new SingleSelectionAttribute(id + '[conjunction]', 'Conjunction', that, LogicalConjunctions);
                 that.addAttribute(conjSelection);
+                _$attributeNode.append(conjSelection.get$node());
+                conjSelection.get$node().hide();
 
-                that.get$node().find('.attributes').append(conjSelection.get$node());
-
-                if (_fromResource) {
-                    var targetId;
-                    var target = _fromResource.attributes[id + '[target]'];
-                    if (target)
-                        targetId = target.value.value;
-
-                    if (targetId) {
-                        attribute.setValueFromJSON(_fromResource.attributes[id + '[target]']);
-                        if (conditonList = _fromResource.attributes["[condition]"]) {
-                            var attrList = _fromResource.attributes['[attributes]'].list;
-                            var targetAttrList = {};
-                            for (var key in attrList) {
-                                if (attrList.hasOwnProperty(key)) {
-                                    targetAttrList[key] = attrList[key].val.value;
-                                }
-                            }
-                            cla = new ConditionListAttribute("[condition]", "Conditions", that, targetAttrList, LogicalOperator, LogicalConjunctions);
-                            //cla.setValueFromJSON(conditonList);
-
-                            that.addAttribute(cla);
-                            that.get$node().find('.attributes').append(cla.get$node());
-                        }
-                    }
-                    _fromResource = null;
+                if (json) {
+                    cla = that.createConditionListAttribute(json.attributes['[attributes]'].list);
+                    that.showAttributes();
                 }
+                else cla = that.createConditionListAttribute();
             }
-            that.addAttribute(attribute);
-
-            that.get$node().find('.attributes').prepend(attribute.get$node());
-
+            
             this.setContextMenuItemCallback(function () {
                 var EdgeShapeNode = require('canvas_widget/EdgeShapeNode'),
                     BiDirAssociationEdge = require('canvas_widget/BiDirAssociationEdge'),

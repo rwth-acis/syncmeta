@@ -116,28 +116,6 @@ requirejs([
                         }
                     }
                 }
-                else if (operation instanceof ViewInitOperation) {
-                    var json = operation.getData();
-                    var nodeId, edgeId;
-                    for (nodeId in json.nodes) {
-                        if (json.nodes.hasOwnProperty(nodeId)) {
-                            var node = EntityManager.createNodeFromJSON(json.nodes[nodeId].type, nodeId, json.nodes[nodeId].left, json.nodes[nodeId].top, json.nodes[nodeId].width, json.nodes[nodeId].height, json.nodes[nodeId], json.id);
-                            node.registerYType();
-                            node.addToWrapper(wrapper);
-                            if (json.nodes[nodeId].attributes.hasOwnProperty(nodeId + '[target]'))
-                                EntityManager.addToMap(json.id, json.nodes[nodeId].attributes[nodeId + '[target]'].value.value, nodeId);
-                        }
-                    }
-                    for (edgeId in json.edges) {
-                        if (json.edges.hasOwnProperty(edgeId)) {
-                            var edge = EntityManager.createEdgeFromJSON(json.edges[edgeId].type, edgeId, json.edges[edgeId].source, json.edges[edgeId].target, json.edges[edgeId], json.id);
-                            edge.registerYType();
-                            edge.addToWrapper(wrapper);
-                            if (json.edges[edgeId].attributes.hasOwnProperty(nodeId + '[target]'))
-                                EntityManager.addToMap(json.id, json.edges[edgeId].attributes[nodeId + '[target]'].value.value, edgeId);
-                        }
-                    }
-                }
             });
 
             var operation = new SetModelAttributeNodeOperation();

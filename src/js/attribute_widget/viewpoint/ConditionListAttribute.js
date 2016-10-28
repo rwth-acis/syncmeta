@@ -67,17 +67,21 @@ define([
          * Apply an Attribute Add Operation
          * @param {operations.ot.AttributeDeleteOperation} operation
          */
-        var processAttributeAddOperation = function(operation){
-            var attribute = new ConditionPredicateAttribute(operation.getEntityId(),"Attribute",that,_options,_options2);
-            that.addAttribute(attribute);
-              //this is strange if i call processAttributeAddOperation for first time ytext is undefined, but it shouldn't 
+        var processAttributeAddOperation = function (operation) {
+            var attribute;
+            if (!that.getAttributes().hasOwnProperty(operation.getEntityId())) {
+                attribute = new ConditionPredicateAttribute(operation.getEntityId(),"Attribute",that,_options,_options2);
+                that.addAttribute(attribute);
+                _$node.find(".list").append(attribute.get$node());
+            } else attribute = that.getAttribute(operation.getEntityId());
+            //this is strange if i call processAttributeAddOperation for first time ytext is undefined, but it shouldn't 
             var ymap = y.share.nodes.get(subjectEntity.getEntityId());
             setTimeout(function () {
                 var ytext = ymap.get(attribute.getKey().getEntityId());
                 attribute.getKey().registerYType(ytext);
             }, 200);
             _$node.find('.list .operator2').show();
-			_$node.find(".list").append(attribute.get$node());
+            _$node.find(".list").append(attribute.get$node());
         };
 
         /**
@@ -198,22 +202,6 @@ define([
             });
         };
 
-        /**
-         * Register inter widget communication callbacks
-         */
-        this.registerCallbacks = function(){
-            iwc.registerOnDataReceivedCallback(attributeAddCallback);
-            iwc.registerOnDataReceivedCallback(attributeDeleteCallback);
-        };
-
-        /**
-         * Unregister inter widget communication callbacks
-         */
-        this.unregisterCallbacks = function(){
-            iwc.unregisterOnDataReceivedCallback(attributeAddCallback);
-            iwc.unregisterOnDataReceivedCallback(attributeDeleteCallback);
-        };
-
         _$node.find(".name").text(this.getName());
         for(var attrId in _list){
             if(_list.hasOwnProperty(attrId)){
@@ -227,7 +215,7 @@ define([
 
         });
 
-        y.share.nodes.get(subjectEntity.getEntityId()).observe(function(event) {
+        y.share.nodes.get(subjectEntity.getEntityId()).observe(function (event) {
             if (event.name.indexOf('[value]') != -1) {
                 switch (event.type) {
                     case 'add': {
@@ -235,20 +223,17 @@ define([
                         attributeAddCallback(operation);
                         break;
                     }
-                    case 'delete':{
+                    case 'delete': {
                         operation = new AttributeDeleteOperation(event.name.replace(/\[\w*\]/g, ''), that.getEntityId(), that.getRootSubjectEntity().getEntityId(), that.constructor.name);
                         attributeDeleteCallback(operation);
                         break;
                     }
                 }
             }
+            else if (event.name.indexOf('updateConditionOption') != -1) {
+                that.setOptions(event.value);
+            }
         });
-
-        if(iwc){
-            that.registerCallbacks();
-        }
     }
-
     return ConditionListAttribute;
-
 });

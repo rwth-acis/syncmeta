@@ -108,6 +108,7 @@ define([
         var remoteAttributeAddCallback = function(operation){
             if(operation instanceof AttributeAddOperation && operation.getRootSubjectEntityId() === that.getRootSubjectEntity().getEntityId() && operation.getSubjectEntityId() === that.getEntityId()){
                 processAttributeAddOperation(operation);
+                subjectEntity.showAttributes();
             }
         };
 

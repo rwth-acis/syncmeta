@@ -33,9 +33,7 @@ define([
         function ViewObjectNode(id, left, top, width, height, json) {
             var that = this;
 
-            var _fromResource = json;
-
-            AbstractNode.call(this, id, ViewObjectNode.TYPE, left, top, width, height);
+            AbstractNode.call(this, id, ViewObjectNode.TYPE, left, top, width, height, json);
 
             /**
              * jQuery object of node template
@@ -65,6 +63,19 @@ define([
              */
             var _attributes = this.getAttributes();
 
+            var targetAttribute, renamingList, conjSelection, cla;
+
+             this.showAttributes = function () {
+                if (renamingList.get$node().is(':hidden'))
+                    renamingList.get$node().show();
+                if (conjSelection.get$node().is(':hidden'))
+                    conjSelection.get$node().show();
+                if (cla.get$node().is(':hidden'))
+                    cla.get$node().show();
+                if (!targetAttribute.get$node().is(':hidden'))
+                    targetAttribute.get$node().hide();
+            }
+
             this.createConditionListAttribute = function (refAttrs) {
                 var targetAttrList = {};
                 if (refAttrs && refAttrs.constructor.name === "RenamingListAttribute") {
@@ -84,10 +95,11 @@ define([
                 var conditionListAttr = new ConditionListAttribute("[condition]", "Conditions", that, targetAttrList, LogicalOperator);
                 that.addAttribute(conditionListAttr);
                 _$attributeNode.append(conditionListAttr.get$node());
+                conditionListAttr.get$node().hide();
                 return conditionListAttr;
             }
 
-            var targetAttribute, renamingList, conjSelection, cla;
+            _$node.find(".label").append(this.getLabel().get$node());
             var model = y.share.data.get('model');
             if (model) {
                 var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes, ['Object']);
@@ -95,18 +107,27 @@ define([
                 that.addAttribute(targetAttribute);
                 _$attributeNode.prepend(targetAttribute.get$node());
 
-                renamingList = new RenamingListAttribute("[attributes]", "Attributes", this, { "show": "Visible", "hide": "Hidden" });
+                renamingList = new RenamingListAttribute("[attributes]", "Attributes", that, { "show": "Visible", "hide": "Hidden" });
                 that.addAttribute(renamingList);
                 _$attributeNode.append(renamingList.get$node());
+                renamingList.get$node().hide();
 
                 conjSelection = new SingleSelectionAttribute(id + '[conjunction]', 'Conjunction', that, LogicalConjunctions);
                 that.addAttribute(conjSelection);
                 _$attributeNode.append(conjSelection.get$node());
+                conjSelection.get$node().hide();
 
-                cla = that.createConditionListAttribute();
+                if (json) {
+                    cla = that.createConditionListAttribute(json.attributes['[attributes]'].list);
+                    that.showAttributes();
+                }
+                else cla = that.createConditionListAttribute();
+
             }
 
-            
+            /**
+            * register the y-object to enable NRT collaboration
+            */
             this.registerYType = function () {
                 AbstractNode.prototype.registerYType.call(this);
                 var ymap = y.share.nodes.get(that.getEntityId());

@@ -62,17 +62,20 @@ define([
          * @param {operations.ot.AttributeDeleteOperation} operation
          */
         var processAttributeAddOperation = function(operation){
-            var attribute = new RenamingAttribute(operation.getEntityId(),"Attribute",that,_options);
-            that.addAttribute(attribute);
+            var attribute;
+            if(!that.getAttributes().hasOwnProperty(operation.getEntityId())){
+                attribute = new RenamingAttribute(operation.getEntityId(),"Attribute",that,_options);
+                that.addAttribute(attribute);
+                _$node.find(".list").append(attribute.get$node());
+            } else attribute = that.getAttribute(operation.getEntityId());
              //this is strange if i call processAttributeAddOperation for first time ytext is undefined, but it shouldn't 
             var ymap = y.share.nodes.get(subjectEntity.getEntityId());
             setTimeout(function () {
                 var ytext = ymap.get(attribute.getKey().getEntityId());
                 attribute.getKey().registerYType(ytext);
-                ytext = ymap.get(attribute.getRef().getEntityId());
-                attribute.getRef().registerYType(ytext);
+                var ytext2 = ymap.get(attribute.getRef().getEntityId());
+                attribute.getRef().registerYType(ytext2);
             }, 200);
-            _$node.find(".list").append(attribute.get$node());
         };
 
         /**
@@ -102,7 +105,6 @@ define([
          * @param {operations.ot.AttributeDeleteOperation} operation
          */
         this.propagateAttributeAddOperation = function(operation){
-           processAttributeAddOperation(operation);
             iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.getOTOperation());
         };
 
@@ -113,6 +115,7 @@ define([
         var attributeAddCallback = function(operation){
             if(operation instanceof AttributeAddOperation && operation.getRootSubjectEntityId() === that.getRootSubjectEntity().getEntityId() && operation.getSubjectEntityId() === that.getEntityId()){
                 processAttributeAddOperation(operation);
+                subjectEntity.showAttributes();
             }
         };
 
@@ -183,7 +186,7 @@ define([
          */
         this.setValueFromJSON = function(json){
             _.forEach(json.list,function(val,key){
-                var attribute = new RenamingAttribute(key,key,that,_options);
+                var attribute = new RenamingAttribute(key,"Attribute",that,_options);
                 attribute.setValueFromJSON(json.list[key]);
                 if(attr = that.getAttribute(attribute.getEntityId())){
                     that.deleteAttribute(attr.getEntityId());
@@ -194,22 +197,6 @@ define([
             });
         };
 
-        /**
-         * Register inter widget communication callbacks
-         */
-        this.registerCallbacks = function(){
-            iwc.registerOnDataReceivedCallback(attributeAddCallback);
-            iwc.registerOnDataReceivedCallback(attributeDeleteCallback);
-        };
-
-        /**
-         * Unregister inter widget communication callbacks
-         */
-        this.unregisterCallbacks = function(){
-            iwc.unregisterOnDataReceivedCallback(attributeAddCallback);
-            iwc.unregisterOnDataReceivedCallback(attributeDeleteCallback);
-        };
-
         _$node.find(".name").text(this.getName());
         for(var attrId in _list){
             if(_list.hasOwnProperty(attrId)){
@@ -217,9 +204,7 @@ define([
             }
         }
 
-        if(iwc){
-            that.registerCallbacks();
-        }
+       
         y.share.nodes.get(subjectEntity.getEntityId()).observe(function(event) {
             if (event.name.indexOf('[val]') != -1) {
                 switch (event.type) {

@@ -34,7 +34,7 @@ define([
      * @param {number} height Height of node
      * @param {number} zIndex Position of node on z-axis
      */
-    function AbstractNode(id, type, left, top, width, height, zIndex) {
+    function AbstractNode(id, type, left, top, width, height, zIndex, json) {
         var that = this;
 
         /**
@@ -61,6 +61,7 @@ define([
                 _ymap.set('zIndex', zIndex);
                 _ymap.set('type', type);
                 _ymap.set('id', id);
+                if(json) _ymap.set('json', json);
                 _ymap.set('jabberId', _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
             }
         }

@@ -29,10 +29,10 @@ define([
      * @param {number} height Height of node
      * @param {number} zIndex Position of node on z-axis
      */
-    function AbstractClassNode(id,left,top,width,height,zIndex){
+    function AbstractClassNode(id,left,top,width,height,zIndex, json){
         var that = this;
 
-        AbstractNode.call(this,id,AbstractClassNode.TYPE,left,top,width,height,zIndex);
+        AbstractNode.call(this,id,AbstractClassNode.TYPE,left,top,width,height,zIndex, json);
 
         /**
          * jQuery object of node template

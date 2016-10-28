@@ -26,7 +26,8 @@ define(['jqueryui', 'lodash', 'operations/ot/AttributeAddOperation', 'Util'], fu
         var vls = y.share.data.get('metamodelpreview');
         var originEntity;
         if (vls) {
-            var originId = viewtype.getAttribute(viewtype.getEntityId() + '[target]').getValue().getValue();
+            var targetAttr = viewtype.getAttribute(viewtype.getEntityId() + '[target]');
+            var originId = targetAttr.getValue().getValue();
             if (viewtype.getType() === 'ViewObject') {
                 if (vls.nodes.hasOwnProperty(originId)) {
                     originEntity = vls.nodes[originId];
@@ -47,6 +48,7 @@ define(['jqueryui', 'lodash', 'operations/ot/AttributeAddOperation', 'Util'], fu
             //Initialize the Renaming list Attribute
             var originAttrs = originEntity.attributes;
             var renamingList = viewtype.getAttribute('[attributes]');
+            var optionMap = {};
             for (var attrKey in originAttrs) {
                 if (originAttrs.hasOwnProperty(attrKey)) {
                     var attr = originAttrs[attrKey];
@@ -55,10 +57,18 @@ define(['jqueryui', 'lodash', 'operations/ot/AttributeAddOperation', 'Util'], fu
                     var renamingAttr = renamingList.propagateAttributeAddOperation(operation);
                     renamingAttr.getKey().setValue(attr.key);
                     renamingAttr.getRef().setValue(attr.key);
+                    optionMap[id] = attr.key;
                 }
             }
             //Initialize the Condition list attribute 
-            var conditionListAttr = viewtype.getAttribute('[condition]');
+            viewtype.getYMap().set('updateConditionOption', optionMap);
+
+            //targetAttr.get$node().hide();
+            renamingList.get$node().show();
+            viewtype.getAttribute(viewtype.getEntityId()+'[conjunction]').get$node().show();
+            viewtype.getAttribute('[condition]').get$node().show();
+
+
         }
     }
 

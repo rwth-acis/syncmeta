@@ -292,6 +292,9 @@ define([
                         }
                     }
                 }
+                else if (event.name.indexOf('updateConditionOption') != -1) {
+                    that.setOptions(event.value);
+                }
             });
         };
 

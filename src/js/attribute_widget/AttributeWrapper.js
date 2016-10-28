@@ -198,7 +198,7 @@ define([
                             switch (nodeEvent.name) {
                                 case 'jabberId': {
                                     var map = nodeEvent.object;
-                                    nodeAddCallback(new NodeAddOperation(map.get('id'), map.get('type'), map.get('left'), map.get('top'), map.get('width'), map.get('height'), map.get('zIndex'), null, null, null, nodeEvent.value));
+                                    nodeAddCallback(new NodeAddOperation(map.get('id'), map.get('type'), map.get('left'), map.get('top'), map.get('width'), map.get('height'), map.get('zIndex'), map.get('json'), null, null, nodeEvent.value));
                                     break;
                                 }
                                 default:

@@ -92,7 +92,7 @@ define([
              */
             var valueChangeCallback = function (operation) {
                 if (operation instanceof ValueChangeOperation && operation.getEntityId() === that.getEntityId()) {
-                    processValueChangeOperation(operation, true);
+                    processValueChangeOperation(operation);
                 }
             };
 

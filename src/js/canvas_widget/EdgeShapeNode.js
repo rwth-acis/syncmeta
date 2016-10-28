@@ -30,10 +30,10 @@ define([
      * @param {number} height Height of node
      * @param {number} zIndex Position of node on z-axis
      */
-    function EdgeShapeNode(id,left,top,width,height,zIndex){
+    function EdgeShapeNode(id,left,top,width,height,zIndex, json){
         var that = this;
 
-        AbstractNode.call(this,id,EdgeShapeNode.TYPE,left,top,width,height,zIndex);
+        AbstractNode.call(this,id,EdgeShapeNode.TYPE,left,top,width,height,zIndex, json);
 
         /**
          * jQuery object of node template

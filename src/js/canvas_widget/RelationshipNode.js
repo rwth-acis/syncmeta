@@ -28,10 +28,10 @@ define([
      * @param {number} height Height of node
      * @param {number} zIndex Position of node on z-axis
      */
-    function RelationshipNode(id,left,top,width,height,zIndex){
+    function RelationshipNode(id,left,top,width,height,zIndex,json){
         var that = this;
 
-        AbstractNode.call(this,id,RelationshipNode.TYPE,left,top,width,height,zIndex);
+        AbstractNode.call(this,id,RelationshipNode.TYPE,left,top,width,height,zIndex,json);
 
         /**
          * jQuery object of node template

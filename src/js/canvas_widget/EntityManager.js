@@ -294,7 +294,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                 AbstractEntity.minZIndex = Math.min(AbstractEntity.minZIndex, zIndex);
              
                 if(_viewId && viewNodeTypes.hasOwnProperty(type)){
-                    node = viewNodeTypes[type](id, left, top, width, height, zIndex);
+                    node = viewNodeTypes[type](id, left, top, width, height, zIndex, json);
                 }
                 else if(nodeTypes.hasOwnProperty(type)) {
                     node = new nodeTypes[type](id, left, top, width, height, zIndex, json);
