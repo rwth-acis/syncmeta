@@ -155,7 +155,7 @@ define([
                     $('#save').click();
                 }
 
-            }, 1000));
+            }, 500));
         };
 
         this.getYText = function () {

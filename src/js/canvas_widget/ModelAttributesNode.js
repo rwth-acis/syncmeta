@@ -107,7 +107,7 @@ define([
             }
         }
 
-        this.registerYMap = function (map) {
+        this.registerYMap = function () {
             AbstractNode.prototype.registerYMap.call(this);
             var attrs = this.getAttributes();
             for (var key in attrs) {

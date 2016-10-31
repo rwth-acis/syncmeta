@@ -160,7 +160,7 @@ define([
             that.getRootSubjectEntity().getYMap().observePath([that.getEntityId()], _.debounce(function (event) {
                 if (event && event.jabberId === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
                     $('#save').click();
-            }, 750));
+            }, 500));
         };
 
         init();

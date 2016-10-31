@@ -140,7 +140,6 @@ requirejs([
 
                     canvas.resetTool();
                 }
-
                 if (CONFIG.TEST.CANVAS && (_iwcw.getUser()[CONFIG.NS.PERSON.TITLE] === CONFIG.TEST.USER || _iwcw.getUser()[CONFIG.NS.PERSON.MBOX] === CONFIG.TEST.EMAIL))
                     require(['./../test/CanvasWidgetTest'], function(CanvasWidgetTest) {
                         CanvasWidgetTest(canvas);

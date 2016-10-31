@@ -25,6 +25,13 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function($, _, Entit
         var report = { widget: 'CANVAS', createdYText: 0, modelAttributes: { attributes: {} }, nodes: {}, edges: {} };
 
 
+        if (!_.isEmpty(json.attributes)) {
+            var modelAttributesNode = EntityManager.createModelAttributesNodeFromJSON(json.attributes);
+            modelAttributesNode.registerYMap();
+            canvas.setModelAttributesNode(modelAttributesNode);
+            modelAttributesNode.addToCanvas(canvas);
+        }
+
         function createNode(nodeId, jsonNode) {
             var map = y.share.nodes.get(nodeId);
             
