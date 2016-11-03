@@ -177,7 +177,7 @@ define([
                                 appearance = that.getAppearance(),
                                 nodeId;
 
-                            //noinspection JSAccessibilityCheck
+                            //TODO rewrite
                             canvas.createNode(EdgeShapeNode.TYPE, appearance.left + appearance.width + 50, appearance.top, 150, 100).done(function (nodeId) {
                                 canvas.createEdge(BiDirAssociationEdge.TYPE, that.getEntityId(), nodeId, null, null, viewId);
                             });

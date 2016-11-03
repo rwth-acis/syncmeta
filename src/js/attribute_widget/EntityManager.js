@@ -569,39 +569,6 @@ define(['lodash',
             getLayer : function(){
                 return _layer;
             },
-            //CVG map functions
-            addToMap : function(view, key, value){
-                if(!_map.hasOwnProperty(view))
-                    _map[view] ={};
-                _map[view][key] = value;
-            },
-            lookupMap:function(view,key){
-                return _map[view][key];
-            },
-            doesMapExists:function(view,key){
-                return _map.hasOwnProperty(view) ? _map[view].hasOwnProperty(key) : false;
-            },
-            addToMapIfNotExists:function(view,key,value){
-                if(!_map.hasOwnProperty(view))
-                    _map[view] ={};
-                if(!_map[view].hasOwnProperty(key))
-                    _map[view][key] = value;
-            },
-            deleteFromMap:function(view,value){
-                if(_map.hasOwnProperty(view)){
-                    for(var key in _map[view]){
-                        if(_map[view].hasOwnProperty(key)){
-                            if(_map[view][key] === value)
-                                delete _map[view][key];
-                        }
-                    }
-                }
-            },
-            deleteViewFromMap:function(viewId){
-                if(_map.hasOwnProperty(viewId))
-                    delete _map[viewId];
-
-            },
             init:function(mm){
                 metamodel = mm;
                 if (metamodel && metamodel.hasOwnProperty("nodes")) {

@@ -164,13 +164,13 @@ define([
                 });
                 //local user wants to create an edge selected from the pallette
                 jsPlumb.bind('beforeDrop', function (info) {
-                    var allConn = jsPlumb.getConnections({target:info.targetId, source:info.sourceId});
+                    var allConn = jsPlumb.getConnections({ target: info.targetId, source: info.sourceId });
                     var length = allConn.length;
                     //if true => Detected a duplicated edge
                     if (length > 0)
                         return false; //don't create the edge
                     else return true; //no duplicate create the edge
-});
+                });
                 if(jsplumb)
                     jsPlumb.addEndpoint(_$node, jsplumb.endpoint, {uuid: id + "_ept1"});
             };

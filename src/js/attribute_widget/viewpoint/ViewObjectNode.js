@@ -65,7 +65,7 @@ define([
 
             var targetAttribute, renamingList, conjSelection, cla;
 
-             this.showAttributes = function () {
+            this.showAttributes = function () {
                 if (renamingList.get$node().is(':hidden'))
                     renamingList.get$node().show();
                 if (conjSelection.get$node().is(':hidden'))
@@ -120,6 +120,7 @@ define([
                 if (json) {
                     cla = that.createConditionListAttribute(json.attributes['[attributes]'].list);
                     that.showAttributes();
+                    targetAttribute.get$node().hide();
                 }
                 else cla = that.createConditionListAttribute();
 

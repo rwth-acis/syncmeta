@@ -99,7 +99,6 @@ define([
                 }
                 else
                     _$node.text(options[value]);
-
             };
 
             /**
@@ -161,6 +160,10 @@ define([
                             //its a view type and create a reference to the origin
                             if (event.entityId.indexOf('[target]') != -1) {
                                 ViewTypesUtil.createReferenceToOrigin(that.getRootSubjectEntity());
+                                //CVG
+                                require(['canvas_widget/viewpoint/ClosedViewGeneration'], function(CVG){
+                                    CVG(rootSubjectEntity);
+                                });
                             }
                             //trigger the save 
                             $('#save').click();

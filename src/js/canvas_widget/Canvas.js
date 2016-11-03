@@ -384,8 +384,8 @@ define([
                             "EditorGenerateActivity",
                             "-1",
                             _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
-                            "..generated new Editor <a href=\"" + data.spaceURI + "\" target=\"_blank\">" + data.spaceTitle + "</a>", {}).toNonOTOperation();
-                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, op);
+                            "..generated new Editor <a href=\"" + data.spaceURI + "\" target=\"_blank\">" + data.spaceTitle + "</a>", {});
+                            //TODO send activity to activity widget
                     }
 
                 }
@@ -712,7 +712,6 @@ define([
                 var operation = new EntitySelectOperation(entity ? entity.getEntityId() : null, entity ? entity.getType() : null, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
 
                 _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
-                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, operation.toNonOTOperation());
                 _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.toNonOTOperation());
 
                 if (entity === null) {
@@ -1210,14 +1209,9 @@ define([
                 _iwcw.registerOnDataReceivedCallback(localExportLogicalGuidanceRepresentationCallback);
                 _iwcw.registerOnDataReceivedCallback(localExportImageCallback);
                 _iwcw.registerOnDataReceivedCallback(localShowGuidanceBoxCallback);
-
-
                 _iwcw.registerOnDataReceivedCallback(localRevokeSharedActivityOperationCallback);
                 _iwcw.registerOnDataReceivedCallback(localMoveCanvasOperation);
                 _iwcw.registerOnDataReceivedCallback(localGuidanceStrategyOperationCallback);
-
-                _iwcw.registerOnDataReceivedCallback(CvgCallback);
-                _iwcw.registerOnDataReceivedCallback(DeleteCvgCallback);
             };
 
             /**
@@ -1230,44 +1224,10 @@ define([
                 _iwcw.unregisterOnDataReceivedCallback(localExportLogicalGuidanceRepresentationCallback);
                 _iwcw.unregisterOnDataReceivedCallback(localExportImageCallback);
                 _iwcw.unregisterOnDataReceivedCallback(localShowGuidanceBoxCallback);
-
-                _iwcw.unregisterOnDataReceivedCallback(CvgCallback);
-                _iwcw.unregisterOnDataReceivedCallback(DeleteCvgCallback);
-
                 _iwcw.unregisterOnLocalDataReceivedCallback(localRevokeSharedActivityOperationCallback);
                 _iwcw.unregisterOnLocalDataReceivedCallback(localMoveCanvasOperation);
                 _iwcw.unregisterOnLocalDataReceivedCallback(localGuidanceStrategyOperationCallback);
-
             };
-
-            /**
-             * visualizes the results of a CVG operation.
-             * CVG is computed on the attribute widget
-             * @param {operations.non_ot.PerformCvgOperation} operation
-             * @constructor
-             */
-            function CvgCallback(operation) {
-                if (operation instanceof PerformCvgOperation) {
-                    require(['canvas_widget/ClosedViewGeneration'], function(CVG) {
-                        CVG(that, operation.getJSON());
-                    });
-                }
-            }
-
-            /**
-             * Deletes the result of a CVG result on the canvas
-             * @param {operation.non_ot.DeleteCvgOperation} operation
-             * @constructor
-             */
-            function DeleteCvgCallback(operation) {
-                if (operation instanceof DeleteCvgOperation) {
-                    var deleteList = operation.getDeleteList();
-                    for (var i = 0; i < deleteList.length; i++) {
-                        var node = EntityManager.findNode(deleteList[i]);
-                        node.triggerDeletion();
-                    }
-                }
-            }
 
             init();
 

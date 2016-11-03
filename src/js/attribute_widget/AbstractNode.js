@@ -460,7 +460,6 @@ define([
             this.unregisterCallbacks();
             var EntityManager = require('attribute_widget/EntityManager');
             EntityManager.deleteNode(this.getEntityId());
-            EntityManager.deleteFromMap(this.getViewId(), this.getEntityId())
             this.unregisterCallbacks();
         };
 
