@@ -10,12 +10,9 @@ define([
     'operations/non_ot/ToolSelectOperation',
     'operations/non_ot/EntitySelectOperation',
     'operations/non_ot/ActivityOperation',
-    'operations/non_ot/ExportDataOperation',
     'operations/non_ot/ExportMetaModelOperation',
     'operations/non_ot/ExportLogicalGuidanceRepresentationOperation',
     'operations/non_ot/ExportImageOperation',
-    'operations/non_ot/PerformCvgOperation',
-    'operations/non_ot/DeleteCvgOperation',
     'operations/non_ot/ShowGuidanceBoxOperation',
     'operations/non_ot/CanvasViewChangeOperation',
     'operations/non_ot/RevokeSharedActivityOperation',
@@ -34,7 +31,7 @@ define([
     'canvas_widget/guidance_modeling/CollaborationGuidance',
     'jquery.transformable-PATCHED'
 ], /** @lends Canvas */
-    function($, jsPlumb, IWCW, Util, NodeAddOperation, NodeDeleteOperation, EdgeAddOperation, EdgeDeleteOperation, ToolSelectOperation, EntitySelectOperation, ActivityOperation, ExportDataOperation, ExportMetaModelOperation, ExportLogicalGuidanceRepresentationOperation, ExportImageOperation, PerformCvgOperation, DeleteCvgOperation, ShowGuidanceBoxOperation, CanvasViewChangeOperation, RevokeSharedActivityOperation, MoveCanvasOperation, GuidanceStrategyOperation, AbstractEntity, ModelAttributesNode, EntityManager, HistoryManager, AbstractCanvas, MoveTool, GuidanceBox, SelectToolGuidance, SetPropertyGuidance, GhostEdgeGuidance, CollaborationGuidance) {
+    function($, jsPlumb, IWCW, Util, NodeAddOperation, NodeDeleteOperation, EdgeAddOperation, EdgeDeleteOperation, ToolSelectOperation, EntitySelectOperation, ActivityOperation, ExportMetaModelOperation, ExportLogicalGuidanceRepresentationOperation, ExportImageOperation, ShowGuidanceBoxOperation, CanvasViewChangeOperation, RevokeSharedActivityOperation, MoveCanvasOperation, GuidanceStrategyOperation, AbstractEntity, ModelAttributesNode, EntityManager, HistoryManager, AbstractCanvas, MoveTool, GuidanceBox, SelectToolGuidance, SetPropertyGuidance, GhostEdgeGuidance, CollaborationGuidance) {
 
         Canvas.prototype = new AbstractCanvas();
         Canvas.prototype.constructor = Canvas;
@@ -359,16 +356,7 @@ define([
                 that.showGuidanceBox(operation.getEntityId());
             };
 
-            /**
-             * Callback for a local Export Data Operation
-             * @param {operations.non_ot.ExportDataOperation} operation
-             */
-            var localExportDataCallback = function(operation) {
-                if (operation instanceof ExportDataOperation) {
-                    operation.setData(EntityManager.graphToJSON());
-                    _iwcw.sendLocalNonOTOperation(operation.getRequestingComponent(), operation.toNonOTOperation());
-                }
-            };
+           
 
             /**
              * Callback for a local Export Data Operation
@@ -1205,7 +1193,6 @@ define([
              */
             this.registerCallbacks = function() {
                 _iwcw.registerOnDataReceivedCallback(localToolSelectCallback);
-                _iwcw.registerOnDataReceivedCallback(localExportDataCallback);
                 _iwcw.registerOnDataReceivedCallback(localExportMetaModelCallback);
                 _iwcw.registerOnDataReceivedCallback(localExportLogicalGuidanceRepresentationCallback);
                 _iwcw.registerOnDataReceivedCallback(localExportImageCallback);
@@ -1220,7 +1207,6 @@ define([
              */
             this.unregisterCallbacks = function() {
                 _iwcw.unregisterOnDataReceivedCallback(localToolSelectCallback);
-                _iwcw.unregisterOnDataReceivedCallback(localExportDataCallback);
                 _iwcw.unregisterOnDataReceivedCallback(localExportMetaModelCallback);
                 _iwcw.unregisterOnDataReceivedCallback(localExportLogicalGuidanceRepresentationCallback);
                 _iwcw.unregisterOnDataReceivedCallback(localExportImageCallback);

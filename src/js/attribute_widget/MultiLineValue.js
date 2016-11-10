@@ -5,9 +5,8 @@ define([
     'iwcw',
     'attribute_widget/AbstractValue',
     'operations/ot/ValueChangeOperation',
-    'operations/non_ot/BindYTextOperation',
     'text!templates/attribute_widget/multi_line_value.html'
-],/** @lends MultiLineValue */function($,jsPlumb,_,IWCW,AbstractValue,ValueChangeOperation,BindYTextOperation,multiLineValueHtml) {
+],/** @lends MultiLineValue */function($,jsPlumb,_,IWCW,AbstractValue,ValueChangeOperation,multiLineValueHtml) {
 
     MultiLineValue.prototype = new AbstractValue();
     MultiLineValue.prototype.constructor = MultiLineValue;
@@ -273,60 +272,7 @@ define([
             this.setValue(json.value);
         };
 
-        /**
-         * Register inter widget communication callbacks
-         */
-        this.registerCallbacks = function(){
-            //iwc.registerOnDataReceivedCallback(valueChangeCallback);
-            iwc.registerOnDataReceivedCallback(bindYTextCallback);
-
-        };
-
-        /**
-         * Unregister inter widget communication callbacks
-         */
-        this.unregisterCallbacks = function(){
-            //iwc.unregisterOnDataReceivedCallback(valueChangeCallback);
-            iwc.unregisterOnDataReceivedCallback(bindYTextCallback);
-
-        };
-
-        function bindYTextCallback(operation) {
-            if (operation instanceof BindYTextOperation && operation.getEntityId() === that.getEntityId()) {
-                setTimeout(function () {
-                    var entityId = that.getRootSubjectEntity().getEntityId();
-                    if (y.share.nodes.opContents.hasOwnProperty(entityId)) {
-                        y.share.nodes.get(entityId).then(function (ymap) {
-                            ymap.get(operation.getEntityId()).then(function (ytext) {
-                                ytext.bind(_$node[0]);
-
-                                if (that.getValue() !== ytext.toString()) {
-                                    if (ytext.toString().length > 0)
-                                        ytext.delete(0, ytext.toString().length);
-                                    ytext.insert(0, that.getValue());
-                                }
-
-                            })
-                        })
-                    }
-                    else if (y.share.edges.opContents.hasOwnProperty(entityId)) {
-                        y.share.edges.get(entityId).then(function (ymap) {
-                            ymap.get(operation.getEntityId()).then(function (ytext) {
-                                ytext.bind(_$node[0]);
-
-                                if (that.getValue() !== ytext.toString()) {
-                                    if (ytext.toString().length > 0)
-                                        ytext.delete(0, ytext.toString().length);
-                                    ytext.insert(0, that.getValue());
-                                }
-
-                            })
-                        })
-                    }
-                }, 300);
-            }
-        }
-
+       
         var initData = function(ytext, data){
             if(data){
                 if (data !== ytext.toString()) {
@@ -352,11 +298,6 @@ define([
         this.getYText = function(){
             return _ytext;
         };
-
-        if(iwc){
-            that.registerCallbacks();
-        }
-        //init();
     }
 
     return MultiLineValue;

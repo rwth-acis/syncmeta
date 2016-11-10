@@ -11,13 +11,12 @@ requirejs([
     'attribute_widget/AttributeWrapper',
     'attribute_widget/EntityManager',
     'attribute_widget/view/ViewGenerator',
-    'operations/non_ot/JoinOperation',
     'operations/non_ot/InitModelTypesOperation',
     'operations/non_ot/ViewInitOperation',
     'operations/non_ot/SetModelAttributeNodeOperation',
     'promise!User',
     'promise!Guidancemodel'
-], function ($, IWCW, yjsSync, WaitForCanvas, AttributeWrapper, EntityManager, ViewGenerator, JoinOperation, InitModelTypesOperation, ViewInitOperation, SetModelAttributeNodeOperation, user, guidancemodel) {
+], function ($, IWCW, yjsSync, WaitForCanvas, AttributeWrapper, EntityManager, ViewGenerator, InitModelTypesOperation, ViewInitOperation, SetModelAttributeNodeOperation, user, guidancemodel) {
 
     var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE);
     iwc.setSpace(user);
@@ -86,11 +85,8 @@ requirejs([
             }
 
             iwc.registerOnDataReceivedCallback(function (operation) {
-                var modelAttributesNode/*, model*/;
-                if (operation instanceof JoinOperation && operation.isDone()) {
-                    y.share.users.set(y.db.userId, operation.getUser());
-                }
-                else if (operation instanceof SetModelAttributeNodeOperation) {
+                var modelAttributesNode;
+                 if (operation instanceof SetModelAttributeNodeOperation) {
                     modelAttributesNode = wrapper.getModelAttributesNode();
                     if (modelAttributesNode === null) {
                         modelAttributesNode = EntityManager.createModelAttributesNode();
