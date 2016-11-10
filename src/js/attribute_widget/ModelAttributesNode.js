@@ -90,22 +90,14 @@ define([
         }
 
         this.registerYType = function () {
-            var helper = function (entityId, val) {
-                y.share.nodes.get(entityId).then(function (ymap) {
-                    var ytext = ymap.get(val.getEntityId());
-                    if (ytext)
-                        ytext.then(function (ytext) {
-                            val.registerYType(ytext);
-                        })
-                })
-            }
-
             var attrs = this.getAttributes();
             for (var key in attrs) {
                 if (attrs.hasOwnProperty(key)) {
                     var val = attrs[key].getValue();
-                    if (val.constructor.name === "Value") {
-                        helper(this.getEntityId(), val);
+                    if (val.constructor.name === "Value" || val.constructor.name === "MultiLineValue") {
+                        var ymap = y.share.nodes.get(this.getEntityId());
+                        var ytext = ymap.get(val.getEntityId());
+                        val.registerYType(ytext);
                     }
                 }
             }

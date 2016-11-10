@@ -11,7 +11,7 @@ define([
     'canvas_widget/AbstractEntity',
     'canvas_widget/SingleValueAttribute',
     'text!templates/canvas_widget/abstract_edge.html'
-],/** @lends AbstractEdge */function (require,$,jsPlumb,_,IWCW,Util,EdgeDeleteOperation,ActivityOperation,HistoryManager,AbstractEntity,SingleValueAttribute,abstractEdgeHtml) {
+],/** @lends AbstractEdge */function (require, $, jsPlumb, _, IWCW, Util, EdgeDeleteOperation, ActivityOperation, HistoryManager, AbstractEntity, SingleValueAttribute, abstractEdgeHtml) {
 
     AbstractEdge.prototype = new AbstractEntity();
     AbstractEdge.prototype.constructor = AbstractEdge;
@@ -28,12 +28,36 @@ define([
      * @param {canvas_widget.AbstractNode} target Target node
      * @param {boolean} [overlayRotate] Flag if edge overlay should be flipped automatically to avoid being upside down
      */
-    function AbstractEdge(id,type,source,target,overlayRotate){
+    function AbstractEdge(id, type, source, target, overlayRotate) {
         var that = this;
 
-        AbstractEntity.call(this,id);
+        /**
+        * Inter widget communication wrapper
+        * @type {Object}
+        */
+        var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
+
+        AbstractEntity.call(this, id);
 
         var _ymap = null;
+
+        if (window.hasOwnProperty("y")) {
+            if (y.share.edges.keys().indexOf(id) != -1) {
+                _ymap = y.share.edges.get(id);
+
+            }
+            else {
+                _ymap = y.share.edges.set(id, Y.Map);
+                _ymap.set('id', id);
+                _ymap.set('type', type);
+                _ymap.set('source', source.getEntityId());
+                _ymap.set('target', target.getEntityId());
+                _ymap.set('jabberId', _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+            }
+        }
+        this.getYMap = function () {
+            return _ymap;
+        };
 
         /**
          * Type of edge
@@ -47,7 +71,7 @@ define([
          * @type {canvas_widget.SingleValueAttribute}
          * @private
          */
-        var _label = new SingleValueAttribute(id+"[label]","Label",this);
+        var _label = new SingleValueAttribute(id + "[label]", "Label", this);
 
         /**
          * Appearance information of edge
@@ -71,7 +95,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$overlay = $(_.template(abstractEdgeHtml,{type: type})).find('.edge_label').append(_label.get$node()).parent();
+        var _$overlay = $(_.template(abstractEdgeHtml, { type: type })).find('.edge_label').append(_label.get$node()).parent();
 
         /**
          * Canvas the edge is drawn on
@@ -87,11 +111,7 @@ define([
          */
         var _jsPlumbConnection = null;
 
-        /**
-         * Inter widget communication wrapper
-         * @type {Object}
-         */
-        var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
+
 
         /**
          * Attributes of edge
@@ -118,14 +138,14 @@ define([
          * Callback to generate list of context menu items
          * @type {function}
          */
-        var _contextMenuItemCallback = function(){return{};};
+        var _contextMenuItemCallback = function () { return {}; };
 
         //noinspection JSUnusedLocalSymbols
         /**
          * Apply an Edge Delete Operation
          * @param {operations.ot.EdgeDeleteOperation} operation
          */
-        var processEdgeDeleteOperation = function(operation){
+        var processEdgeDeleteOperation = function (operation) {
             that.remove();
         };
 
@@ -133,18 +153,18 @@ define([
          * Propagate an Edge Delete Operation to the remote users and the local widgets
          * @param {operations.ot.EdgeDeleteOperation} operation
          */
-        var propagateEdgeDeleteOperation = function(operation){
+        var propagateEdgeDeleteOperation = function (operation) {
             processEdgeDeleteOperation(operation);
             $('#save').click();
 
-            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
-           
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
+            _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
+
             y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(
                 "EdgeDeleteActivity",
                 operation.getEntityId(),
                 _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
-                EdgeDeleteOperation.getOperationDescription(that.getType(),that.getLabel().getValue().getValue()),
+                EdgeDeleteOperation.getOperationDescription(that.getType(), that.getLabel().getValue().getValue()),
                 {}
             ));
 
@@ -154,10 +174,10 @@ define([
          * Callback for a remote Edge Delete Operation
          * @param {operations.ot.EdgeDeleteOperation} operation
          */
-        this.remoteEdgeDeleteCallback = function(operation){
-            if(operation instanceof EdgeDeleteOperation && operation.getEntityId() == that.getEntityId()){
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE,operation.getOTOperation());
+        this.remoteEdgeDeleteCallback = function (operation) {
+            if (operation instanceof EdgeDeleteOperation && operation.getEntityId() == that.getEntityId()) {
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
+                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
                 processEdgeDeleteOperation(operation);
             }
         };
@@ -165,16 +185,16 @@ define([
         /**
          * Get jQuery object of all DOM nodes belonging to the edge
          */
-        var getAllAssociatedDOMNodes = function(){
+        var getAllAssociatedDOMNodes = function () {
             var overlays,
                 i,
                 numOfOverlays,
-                $e = $('.'+id);
+                $e = $('.' + id);
 
-            if(_jsPlumbConnection){
+            if (_jsPlumbConnection) {
                 overlays = _jsPlumbConnection.getOverlays();
-                for(i = 0, numOfOverlays = overlays.length; i < numOfOverlays; i++){
-                    if(overlays[i] instanceof jsPlumb.Overlays.Custom){
+                for (i = 0, numOfOverlays = overlays.length; i < numOfOverlays; i++) {
+                    if (overlays[i] instanceof jsPlumb.Overlays.Custom) {
                         $e = $e.add(overlays[i].getElement());
                     }
                 }
@@ -191,7 +211,7 @@ define([
          * Set the default paint style
          * @param paintStyle
          */
-        this.setDefaultPaintStyle = function(paintStyle){
+        this.setDefaultPaintStyle = function (paintStyle) {
             _defaultPaintStyle = paintStyle;
         };
 
@@ -199,25 +219,25 @@ define([
          * Get the default paint style
          * @returns {*}
          */
-        this.getDefaultPaintStyle = function(){
+        this.getDefaultPaintStyle = function () {
             return _defaultPaintStyle;
         };
 
         /**
          * Send NodeDeleteOperation for node
          */
-        this.triggerDeletion = function(historyFlag){
+        this.triggerDeletion = function (historyFlag) {
             _canvas.select(null);
-            var operation = new EdgeDeleteOperation(id,that.getType(),that.getSource().getEntityId(),that.getTarget().getEntityId());
+            var operation = new EdgeDeleteOperation(id, that.getType(), that.getSource().getEntityId(), that.getTarget().getEntityId());
 
-            if(_ymap){
+            if (_ymap) {
                 propagateEdgeDeleteOperation(operation);
                 y.share.edges.delete(that.getEntityId());
             }
             else {
                 propagateEdgeDeleteOperation(operation);
             }
-             if(!historyFlag)
+            if (!historyFlag)
                 HistoryManager.add(operation);
         };
 
@@ -226,7 +246,7 @@ define([
          * Get callback to generate list of context menu items
          * @returns {object}
          */
-        this.getContextMenuItemCallback = function(){
+        this.getContextMenuItemCallback = function () {
             return _contextMenuItemCallback;
         };
 
@@ -234,7 +254,7 @@ define([
          * Set callback to generate list of context menu items
          * @param {function} contextMenuItemCallback
          */
-        this.setContextMenuItemCallback = function(contextMenuItemCallback){
+        this.setContextMenuItemCallback = function (contextMenuItemCallback) {
             _contextMenuItemCallback = contextMenuItemCallback;
         };
 
@@ -242,7 +262,7 @@ define([
          * Adds edge to canvas
          * @param {canvas_widget.AbstractCanvas} canvas
          */
-        this.addToCanvas = function(canvas){
+        this.addToCanvas = function (canvas) {
             _canvas = canvas;
         };
 
@@ -250,17 +270,17 @@ define([
          * Get associated canvas
          * @returns {canvas_widget.AbstractCanvas}
          */
-        this.getCanvas = function(){
+        this.getCanvas = function () {
             return _canvas;
         };
 
         /**
          * Removes edge from canvas
          */
-        this.removeFromCanvas = function(){
+        this.removeFromCanvas = function () {
             _canvas = null;
-            $.contextMenu('destroy', '.'+that.getEntityId());
-            jsPlumb.detach(_jsPlumbConnection,{fireEvent: false});
+            $.contextMenu('destroy', '.' + that.getEntityId());
+            jsPlumb.detach(_jsPlumbConnection, { fireEvent: false });
             _jsPlumbConnection = null;
         };
 
@@ -268,9 +288,9 @@ define([
          * Add attribute to edge
          * @param {canvas_widget.AbstractAttribute} attribute
          */
-        this.addAttribute = function(attribute){
+        this.addAttribute = function (attribute) {
             var id = attribute.getEntityId();
-            if(!_attributes.hasOwnProperty(id)){
+            if (!_attributes.hasOwnProperty(id)) {
                 _attributes[id] = attribute;
             }
         };
@@ -279,7 +299,7 @@ define([
          * Set edge's attributes
          * @param {Object} attributes
          */
-        this.setAttributes = function(attributes){
+        this.setAttributes = function (attributes) {
             _attributes = attributes;
         };
 
@@ -287,7 +307,7 @@ define([
          * Get edge's attributes
          * @returns {Object}
          */
-        this.getAttributes = function(){
+        this.getAttributes = function () {
             return _attributes;
         };
 
@@ -296,8 +316,8 @@ define([
          * @param {String} id Attribute's entity id
          * @returns {canvas_widget.AbstractAttribute}
          */
-        this.getAttribute = function(id){
-            if(_attributes.hasOwnProperty(id)){
+        this.getAttribute = function (id) {
+            if (_attributes.hasOwnProperty(id)) {
                 return _attributes[id];
             }
             return null;
@@ -307,8 +327,8 @@ define([
          * Delete attribute by id
          * @param {String} id Attribute's entity id
          */
-        this.deleteAttribute = function(id){
-            if(!_attributes.hasOwnProperty(id)){
+        this.deleteAttribute = function (id) {
+            if (!_attributes.hasOwnProperty(id)) {
                 delete _attributes[id];
             }
         };
@@ -317,7 +337,7 @@ define([
          * Set edge label
          * @param {canvas_widget.SingleValueAttribute} label
          */
-        this.setLabel = function(label){
+        this.setLabel = function (label) {
             _label = label;
         };
 
@@ -325,7 +345,7 @@ define([
          * Get edge label
          * @returns {canvas_widget.SingleValueAttribute}
          */
-        this.getLabel = function(){
+        this.getLabel = function () {
             return _label;
         };
 
@@ -333,7 +353,7 @@ define([
          * Get edge type
          * @returns {string}
          */
-        this.getType = function(){
+        this.getType = function () {
             return _type;
         };
 
@@ -341,7 +361,7 @@ define([
          * Get source node
          * @returns {canvas_widget.AbstractNode}
          */
-        this.getSource = function(){
+        this.getSource = function () {
             return _appearance.source;
         };
 
@@ -349,7 +369,7 @@ define([
          * Get target node
          * @returns {canvas_widget.AbstractNode}
          */
-        this.getTarget = function(){
+        this.getTarget = function () {
             //noinspection JSAccessibilityCheck
             return _appearance.target;
         };
@@ -358,7 +378,7 @@ define([
          * Get jQuery object of DOM node representing the edge's overlay
          * @returns {jQuery}
          */
-        this.get$overlay = function(){
+        this.get$overlay = function () {
             return _$overlay;
         };
 
@@ -367,7 +387,7 @@ define([
          * Set flag if edge overlay should be flipped automatically to avoid being upside down
          * @param {boolean} rotateOverlay
          */
-        this.setRotateOverlay = function(rotateOverlay){
+        this.setRotateOverlay = function (rotateOverlay) {
             _overlayRotate = rotateOverlay;
         };
 
@@ -376,7 +396,7 @@ define([
          * Get flag if edge overlay should be flipped automatically to avoid being upside down
          * @return {boolean} rotateOverlay
          */
-        this.isRotateOverlay = function(){
+        this.isRotateOverlay = function () {
             return _overlayRotate;
         };
 
@@ -384,7 +404,7 @@ define([
          * Set jsPlumb object representing the edge
          * @param {Object} jsPlumbConnection
          */
-        this.setJsPlumbConnection = function(jsPlumbConnection){
+        this.setJsPlumbConnection = function (jsPlumbConnection) {
             _jsPlumbConnection = jsPlumbConnection;
             _defaultPaintStyle = jsPlumbConnection.getPaintStyle();
         };
@@ -394,20 +414,20 @@ define([
          * Get jsPlumb object representing the edge
          * @return {Object} jsPlumbConnection
          */
-        this.getJsPlumbConnection = function(){
+        this.getJsPlumbConnection = function () {
             return _jsPlumbConnection;
         };
 
         /**
          * Repaint edge overlays (adjust angle of fixed overlays)
          */
-        this.repaintOverlays = function(){
-            function makeRotateOverlayCallback(angle){
-                return function rotateOverlay(){
+        this.repaintOverlays = function () {
+            function makeRotateOverlayCallback(angle) {
+                return function rotateOverlay() {
                     var $this = $(this),
-                        oldTransform = $this.css('transform','').css('transform');
+                        oldTransform = $this.css('transform', '').css('transform');
 
-                    if(oldTransform === "none") oldTransform = "";
+                    if (oldTransform === "none") oldTransform = "";
 
                     $this.css({
                         'transform': oldTransform + ' rotate(' + angle + 'rad)',
@@ -426,19 +446,19 @@ define([
                 targetEndpoint,
                 angle;
 
-            if(_jsPlumbConnection){
+            if (_jsPlumbConnection) {
                 sourceEndpoint = _jsPlumbConnection.endpoints[0].endpoint;
                 targetEndpoint = _jsPlumbConnection.endpoints[1].endpoint;
-                angle = Math.atan2(sourceEndpoint.y-targetEndpoint.y,sourceEndpoint.x-targetEndpoint.x);
-                if(!_overlayRotate || Math.abs(angle) > Math.PI/2) {
+                angle = Math.atan2(sourceEndpoint.y - targetEndpoint.y, sourceEndpoint.x - targetEndpoint.x);
+                if (!_overlayRotate || Math.abs(angle) > Math.PI / 2) {
                     angle += Math.PI;
                 }
                 overlays = _jsPlumbConnection.getOverlays();
-                for(i = 0, numOfOverlays = overlays.length; i < numOfOverlays; i++){
-                    if(overlays[i] instanceof jsPlumb.Overlays.Custom){
+                for (i = 0, numOfOverlays = overlays.length; i < numOfOverlays; i++) {
+                    if (overlays[i] instanceof jsPlumb.Overlays.Custom) {
                         $(overlays[i].getElement()).find('.fixed').not('.segmented').each(makeRotateOverlayCallback(angle));
                         //Always flip type overlay
-                        $(overlays[i].getElement()).find('.fixed.type').not('.segmented').each(makeRotateOverlayCallback(Math.abs(angle - Math.PI) > Math.PI/2 ? angle : angle + Math.PI));
+                        $(overlays[i].getElement()).find('.fixed.type').not('.segmented').each(makeRotateOverlayCallback(Math.abs(angle - Math.PI) > Math.PI / 2 ? angle : angle + Math.PI));
                     }
                 }
             }
@@ -447,76 +467,76 @@ define([
         /**
          * Sets position of edge on z-axis as max of the z-indices of source and target
          */
-        this.setZIndex = function(){
+        this.setZIndex = function () {
             var $e = getAllAssociatedDOMNodes(),
-                zIndex = Math.max(source.getZIndex(),target.getZIndex());
-            $e.css('zIndex',zIndex);
+                zIndex = Math.max(source.getZIndex(), target.getZIndex());
+            $e.css('zIndex', zIndex);
         };
 
         /**
          * Connect source and target node and draw the edge on canvas
          */
-        this.connect = function(){
+        this.connect = function () {
             source.addOutgoingEdge(this);
             target.addIngoingEdge(this);
             //noinspection JSAccessibilityCheck
             _jsPlumbConnection = jsPlumb.connect({
                 source: _appearance.source.get$node(),
                 target: _appearance.target.get$node(),
-                paintStyle:{ strokeStyle:"#aaaaaa", lineWidth:2},
+                paintStyle: { strokeStyle: "#aaaaaa", lineWidth: 2 },
                 endpoint: "Blank",
-                connector: ["Flowchart", {gap: 0}],
+                connector: ["Flowchart", { gap: 0 }],
                 anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
-                overlays:[
+                overlays: [
                     ["Custom", {
-                        create:function() {
+                        create: function () {
                             return _$overlay;
                         },
-                        location:0.5,
-                        id:"label"
+                        location: 0.5,
+                        id: "label"
                     }]
                 ],
                 cssClass: id
             });
             this.repaintOverlays();
-            _.each(require('canvas_widget/EntityManager').getEdges(),function(e){e.setZIndex();});
+            _.each(require('canvas_widget/EntityManager').getEdges(), function (e) { e.setZIndex(); });
         };
 
         /**
          * Lowlight the edge
          */
-        this.lowlight = function(){
-            $("."+id).addClass('lowlighted');
+        this.lowlight = function () {
+            $("." + id).addClass('lowlighted');
         };
 
         /**
          * Unlowlight the edge
          */
-        this.unlowlight = function(){
-            $("."+id).removeClass('lowlighted');
+        this.unlowlight = function () {
+            $("." + id).removeClass('lowlighted');
         };
 
         /**
          * Select the edge
          */
-        this.select = function(){
+        this.select = function () {
             var paintStyle = _.clone(_defaultPaintStyle),
                 overlays,
                 i,
                 numOfOverlays;
 
-            function makeBold(){
-                $(this).css('fontWeight','bold');
+            function makeBold() {
+                $(this).css('fontWeight', 'bold');
             }
 
             _isSelected = true;
             this.unhighlight();
-            if(_jsPlumbConnection) {
+            if (_jsPlumbConnection) {
                 paintStyle.lineWidth = 4;
                 _jsPlumbConnection.setPaintStyle(paintStyle);
                 overlays = _jsPlumbConnection.getOverlays();
-                for(i = 0, numOfOverlays = overlays.length; i < numOfOverlays; i++){
-                    if(overlays[i] instanceof jsPlumb.Overlays.Custom){
+                for (i = 0, numOfOverlays = overlays.length; i < numOfOverlays; i++) {
+                    if (overlays[i] instanceof jsPlumb.Overlays.Custom) {
                         $(overlays[i].getElement()).find('.fixed').each(makeBold);
                     }
                 }
@@ -526,48 +546,48 @@ define([
         /**
          * Unselect the edge
          */
-        this.unselect = function(){
+        this.unselect = function () {
             var overlays,
                 i,
                 numOfOverlays;
 
-            function unmakeBold(){
-                $(this).css('fontWeight','');
+            function unmakeBold() {
+                $(this).css('fontWeight', '');
             }
 
             _isSelected = false;
             this.highlight(_highlightColor);
-            if(_jsPlumbConnection){
+            if (_jsPlumbConnection) {
                 _jsPlumbConnection.setPaintStyle(_defaultPaintStyle);
                 overlays = _jsPlumbConnection.getOverlays();
-                for(i = 0, numOfOverlays = overlays.length; i < numOfOverlays; i++){
-                    if(overlays[i] instanceof jsPlumb.Overlays.Custom){
+                for (i = 0, numOfOverlays = overlays.length; i < numOfOverlays; i++) {
+                    if (overlays[i] instanceof jsPlumb.Overlays.Custom) {
                         $(overlays[i].getElement()).find('.fixed').each(unmakeBold);
                     }
                 }
             }
-             $('#save').click();
+            $('#save').click();
         };
 
         /**
          * Highlight the edge
          * @param {String} color
          */
-        this.highlight = function(color){
+        this.highlight = function (color) {
             var paintStyle = _.clone(_defaultPaintStyle);
 
-            if(color){
+            if (color) {
                 paintStyle.strokeStyle = color;
                 paintStyle.lineWidth = 4;
-                if(_jsPlumbConnection) _jsPlumbConnection.setPaintStyle(paintStyle);
+                if (_jsPlumbConnection) _jsPlumbConnection.setPaintStyle(paintStyle);
             }
         };
 
         /**
          * Unhighlight the edge
          */
-        this.unhighlight = function(){
-            if(_jsPlumbConnection){
+        this.unhighlight = function () {
+            if (_jsPlumbConnection) {
                 _jsPlumbConnection.setPaintStyle(_defaultPaintStyle);
             }
         };
@@ -575,13 +595,13 @@ define([
         /**
          * Remove the edge
          */
-        this.remove = function(){
+        this.remove = function () {
             source.deleteOutgoingEdge(this);
             target.deleteIngoingEdge(this);
             this.removeFromCanvas();
             //this.unregisterCallbacks();
             require('canvas_widget/EntityManager').deleteEdge(this.getEntityId());
-            if(_ymap){
+            if (_ymap) {
                 _ymap = null;
             }
         };
@@ -591,12 +611,12 @@ define([
          * @returns {Object}
          * @private
          */
-        this._toJSON = function(){
+        this._toJSON = function () {
             var attr = {};
-            _.forEach(this.getAttributes(),function(val,key){
+            _.forEach(this.getAttributes(), function (val, key) {
                 attr[key] = val.toJSON();
             });
-            return  {
+            return {
                 label: _label.toJSON(),
                 source: source.getEntityId(),
                 target: target.getEntityId(),
@@ -608,15 +628,15 @@ define([
         /**
          * Bind events for move tool
          */
-        this.bindMoveToolEvents = function(){
+        this.bindMoveToolEvents = function () {
 
-            if(_jsPlumbConnection){
+            if (_jsPlumbConnection) {
                 //Enable Edge Select
-                _jsPlumbConnection.bind("click", function(/*conn*/) {
+                _jsPlumbConnection.bind("click", function (/*conn*/) {
                     _canvas.select(that);
                 });
 
-                $(_jsPlumbConnection.getOverlay("label").canvas).find("input").prop("disabled",false).css('pointerEvents','');
+                $(_jsPlumbConnection.getOverlay("label").canvas).find("input").prop("disabled", false).css('pointerEvents', '');
 
                 /*$(_jsPlumbConnection.getOverlay("label").canvas).find("input[type=text]").autoGrowInput({
                  comfortZone: 10,
@@ -626,19 +646,21 @@ define([
             }
             //Define Edge Rightclick Menu
             $.contextMenu({
-                selector: "."+id,
+                selector: "." + id,
                 zIndex: AbstractEntity.CONTEXT_MENU_Z_INDEX,
-                build: function(){
-                    var menuItems = _.extend(_contextMenuItemCallback(),{
-                        delete: {name: "Delete", callback: function(/*key, opt*/){
-                            that.triggerDeletion();
-                        }}
+                build: function () {
+                    var menuItems = _.extend(_contextMenuItemCallback(), {
+                        delete: {
+                            name: "Delete", callback: function (/*key, opt*/) {
+                                that.triggerDeletion();
+                            }
+                        }
                     });
 
                     return {
                         items: menuItems,
                         events: {
-                            show: function(/*opt*/){
+                            show: function (/*opt*/) {
                                 _canvas.select(that);
                             }
                         }
@@ -653,29 +675,19 @@ define([
         /**
          * Unbind events for move tool
          */
-        this.unbindMoveToolEvents = function(){
-            if(_jsPlumbConnection){
+        this.unbindMoveToolEvents = function () {
+            if (_jsPlumbConnection) {
                 //Disable Edge Select
                 _jsPlumbConnection.unbind("click");
 
-                $(_jsPlumbConnection.getOverlay("label").canvas).find("input").prop("disabled",true).css('pointerEvents','none');
+                $(_jsPlumbConnection.getOverlay("label").canvas).find("input").prop("disabled", true).css('pointerEvents', 'none');
             }
 
             //$("."+id).contextMenu(false);
         };
 
-        this.getYMap = function(){
-            return _ymap;
-        };
-
-        this._registerYMap = function(ymap,disableYText) {
-            _ymap =ymap;
-            if(!disableYText) {
-                _ymap.get(that.getEntityId() + '[label]').then(function (ytext) {
-                    _label.registerYType(ytext);
-                });
-
-            }
+        this._registerYMap = function () {
+            that.getLabel().getValue().registerYType();
         }
 
     }
@@ -684,14 +696,14 @@ define([
      * Get JSON representation of the edge
      * @returns {{label: Object, source: string, target: string, attributes: Object, type: string}}
      */
-    AbstractEdge.prototype.toJSON = function(){
+    AbstractEdge.prototype.toJSON = function () {
         return this._toJSON();
     };
 
     /**
      * Hide a jsPlumb connection
      */
-    AbstractEdge.prototype.hide = function(){
+    AbstractEdge.prototype.hide = function () {
         var connector = this.getJsPlumbConnection();
         connector.setVisible(false);
     };
@@ -699,13 +711,13 @@ define([
     /**
      * Show a jsPlumb connection
      */
-    AbstractEdge.prototype.show = function(){
+    AbstractEdge.prototype.show = function () {
         var connector = this.getJsPlumbConnection();
         connector.setVisible(true);
     };
 
-    AbstractEdge.prototype.registerYMap = function(map,disableYText){
-        this._registerYMap(map,disableYText);
+    AbstractEdge.prototype.registerYMap = function () {
+        this._registerYMap();
     };
 
     return AbstractEdge;

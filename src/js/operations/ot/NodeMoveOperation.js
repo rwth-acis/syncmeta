@@ -15,7 +15,7 @@ define([
      * @param {String} entityId Entity id of the entity this activity works on
      * @param {number} offsetX Offset in x-direction
      * @param {number} offsetY Offset in y-direction
-     * @param {string} jabberId the jabberId of the user
+     * @param {string} optional: jabberId the jabberId of the user (is automatically set by propagateNodeMoveOperation)
      * @constructor
      */
     function NodeMoveOperation(entityId,offsetX,offsetY,jabberId){
@@ -84,6 +84,13 @@ define([
         this.getJabberId = function(){
             return _jabberId;
         };
+        /**
+         * Set the JabberId
+         * @param {string} jabberId
+         */
+        this.setJabberId = function(jabberId){
+            _jabberId = jabberId;
+        }
 
         /**
          * Get corresponding ot operation

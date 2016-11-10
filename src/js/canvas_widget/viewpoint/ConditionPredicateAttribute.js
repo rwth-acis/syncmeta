@@ -52,7 +52,7 @@ define([
          * @type {attribute_widget.Value}
          * @private
          */
-        var _key = new Value(id+"[val]","Attribute Value",this,this.getRootSubjectEntity());
+        var _key = new Value(id+"[value]","Attribute Value",this,this.getRootSubjectEntity());
 
         /***
          * Value object of value
@@ -68,7 +68,6 @@ define([
          */
         var _value2 = new SelectionValue(id+"[operator]","Logical Operator",this,this.getRootSubjectEntity(),_options2);
 		
-		//var _value3 = new SelectionValue(id+"[operator2]", "Logical Operator", this, this.getRootSubjectEntity(), _options3);
         /**
          * jQuery object of the DOM node representing the attribute
          * @type {jQuery}
@@ -143,7 +142,6 @@ define([
             _key.setValueFromJSON(json.val);
             _value.setValueFromJSON(json.property);
             _value2.setValueFromJSON(json.operator||{value: ""});
-			//_value3.setValueFromJSON(json.operator2 || {value: ""});
         };
 		/**
          * Get JSON representation of the attribute
@@ -154,7 +152,6 @@ define([
             json.val = _key.toJSON();
             json.property = _value.toJSON();
             json.operator = _value2.toJSON();
-			//json.operator2 = _value3.toJSON();
             return json;
         };
 		_$node.find(".val").append(_key.get$node());
@@ -162,10 +159,8 @@ define([
         _$node.find(".operator").append(_value2.get$node());
 		//_$node.find(".operator2").append(_value3.get$node());
 
-        this.registerYMap = function(ytext){
-            if(ytext){
-                _key.registerYType(ytext);
-            }
+        this.registerYMap = function () {
+            _key.registerYType();
             _value.registerYType();
             _value2.registerYType();
         }

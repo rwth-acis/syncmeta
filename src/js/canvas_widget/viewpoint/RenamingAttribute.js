@@ -122,7 +122,6 @@ define([
             _key.setValueFromJSON(json.val);
             _ref.setValueFromJSON(json.ref);
             _vis.setValueFromJSON(json.vis||{value: ""});
-            //_value3.setValueFromJSON(json.operator2 || {value: ""});
         };
 
         /**
@@ -140,10 +139,9 @@ define([
         _$node.find(".ref").append(_ref.get$node()).hide();
         _$node.find(".vis").append(_vis.get$node());
 
-        this.registerYMap = function(ytext){
-            if(ytext){
-                _key.registerYType(ytext);
-            }
+        this.registerYMap = function(){
+            _key.registerYType();
+            _ref.registerYType();
             _vis.registerYType();
         }
 

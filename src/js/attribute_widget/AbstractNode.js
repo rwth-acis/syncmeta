@@ -193,11 +193,11 @@ define([
         };
 
         /**
-         * Removes edge from wrapper
+         * Removes node from wrapper
          */
         this.removeFromWrapper = function () {
             _wrapper = null;
-            _$node.detach();
+            _$node.remove();
         };
 
         /**
@@ -455,12 +455,12 @@ define([
         /**
          * Remove the node
          */
-        this.remove = function () {
+        this._remove = function () {
             this.removeFromWrapper();
-            //this.unregisterCallbacks();
+            this.unregisterCallbacks();
             var EntityManager = require('attribute_widget/EntityManager');
             EntityManager.deleteNode(this.getEntityId());
-            EntityManager.deleteFromMap(this.getViewId(), this.getEntityId())
+            this.unregisterCallbacks();
         };
 
         /**
@@ -493,12 +493,11 @@ define([
         };
 
         this._registerYType = function () {
-            y.share.nodes.get(that.getEntityId()).then(function (ymap) {
-                if (ytext = ymap.get(that.getLabel().getValue().getEntityId()))
-                    ytext.then(function (ytext) {
-                        that.getLabel().getValue().registerYType(ytext);
-                    })
-            })
+            var ymap = y.share.nodes.get(that.getEntityId());
+            if(ymap){
+                var ytext = ymap.get(that.getLabel().getValue().getEntityId());
+                that.getLabel().getValue().registerYType(ytext);
+            }
         };
 
         if (_iwc) {
@@ -516,6 +515,10 @@ define([
     AbstractNode.prototype.registerYType = function () {
         this._registerYType();
     };
+    
+    AbstractNode.prototype.remove = function(){
+        this._remove();
+    }
 
     return AbstractNode;
 

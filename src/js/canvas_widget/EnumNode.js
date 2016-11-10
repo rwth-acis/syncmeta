@@ -28,10 +28,10 @@ define([
      * @param {number} height Height of node
      * @param {number} zIndex Position of node on z-axis
      */
-    function EnumNode(id,left,top,width,height,zIndex){
+    function EnumNode(id,left,top,width,height,zIndex, json){
         var that = this;
 
-        AbstractNode.call(this,id,EnumNode.TYPE,left,top,width,height,zIndex);
+        AbstractNode.call(this,id,EnumNode.TYPE,left,top,width,height,zIndex, json);
 
         /**
          * jQuery object of node template
@@ -73,12 +73,14 @@ define([
         var attr= new SingleValueListAttribute("[attributes]","Attributes",this);
         this.addAttribute(attr);
 
-        this.registerYMap = function(map,disableYText){
-            AbstractNode.prototype.registerYMap.call(this,map);
-            if(!disableYText)
-                registerYTextAttributes(map);
-            attr.registerYMap(disableYText);
+        this.registerYMap = function(){
+            AbstractNode.prototype.registerYMap.call(this);
+            that.getLabel().getValue().registerYType();
+            attr.registerYMap();
         };
+         this.unregisterCallbacks = function(){
+            that.getAttribute('[attributes]').unregisterCallbacks();
+        }
         var registerYTextAttributes = function(map){
             map.get(that.getLabel().getValue().getEntityId()).then(function(ytext){
                 that.getLabel().getValue().registerYType(ytext);

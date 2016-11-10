@@ -172,6 +172,10 @@ define([
                     case UserJoinActivity.TYPE:
                         that.addUser(operation.getSender());
                         break;
+                    case 'UserLeftActivity':{
+                        that.removeUser(operation.getSender());
+                        break;
+                    }
                     case 'ReloadWidgetOperation':
                         activity = new ReloadWidgetActivity(operation.getEntityId(), operation.getSender(), operation.getText());
                         that.addActivity(activity);
@@ -211,7 +215,7 @@ define([
         if(y){
             y.share.activity.observe(function(event){
                 operationCallback(new ActivityOperation(event.value.type, event.value.entityId, event.value.sender, event.value.text, event.value.data));
-            })
+            });
         }    
     }
 

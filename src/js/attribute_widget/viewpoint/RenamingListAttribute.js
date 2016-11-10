@@ -6,15 +6,15 @@ define([
     'operations/ot/AttributeAddOperation',
     'operations/ot/AttributeDeleteOperation',
     'attribute_widget/AbstractAttribute',
-    'attribute_widget/ConditionPredicateAttribute',
+    'attribute_widget/viewpoint/RenamingAttribute',
     'text!templates/attribute_widget/list_attribute.html'
-],function($,_,IWCW,Util,AttributeAddOperation,AttributeDeleteOperation,AbstractAttribute,ConditionPredicateAttribute,listAttributeHtml) {
+],function($,_,IWCW,Util,AttributeAddOperation,AttributeDeleteOperation,AbstractAttribute,RenamingAttribute,listAttributeHtml) {
 
-    ConditionListAttribute.prototype = new AbstractAttribute();
-    ConditionListAttribute.prototype.constructor = ConditionListAttribute;
+    RenamingListAttribute.prototype = new AbstractAttribute();
+    RenamingListAttribute.prototype.constructor = RenamingListAttribute;
     /**
      * Abstract Attribute
-     * @class attribute_widget.ConditionListAttribute
+     * @class attribute_widget.RenamingListAttribute
      * @memberof attribute_widget
      * @extends attribute_widget.AbstractAttribute
      * @constructor
@@ -22,9 +22,8 @@ define([
      * @param {string} name Name of attribute
      * @param {AbstractEntity} subjectEntity Entity the attribute is assigned to
      * @param {Object} options Selection options
-     * @param {Object} options2 Selection options
      */
-    function ConditionListAttribute(id,name,subjectEntity,options,options2/*,options3*/){
+    function RenamingListAttribute(id,name,subjectEntity,options){
         var that = this;
 
         AbstractAttribute.call(this,id,name,subjectEntity);
@@ -36,14 +35,6 @@ define([
          */
         var _options = options;
 
-        /**
-         * Selection options
-         * @type {Object}
-         * @private
-         */
-        var _options2 = options2;
-		
-		//var _options3 = options3;
         /**
          * List of attributes
          * @type {Object}
@@ -57,6 +48,8 @@ define([
          * @private
          */
         var _$node = $(_.template(listAttributeHtml,{}));
+        //remove the plus icon
+        _$node.find('.ui-icon-plus').parent().remove();
 
         /**
          * Inter widget communication wrapper
@@ -69,10 +62,20 @@ define([
          * @param {operations.ot.AttributeDeleteOperation} operation
          */
         var processAttributeAddOperation = function(operation){
-            var attribute = new ConditionPredicateAttribute(operation.getEntityId(),"Attribute",that,_options,_options2);
-            that.addAttribute(attribute);
-            _$node.find('.list .operator2').show();
-			_$node.find(".list").append(attribute.get$node());
+            var attribute;
+            if(!that.getAttributes().hasOwnProperty(operation.getEntityId())){
+                attribute = new RenamingAttribute(operation.getEntityId(),"Attribute",that,_options);
+                that.addAttribute(attribute);
+                _$node.find(".list").append(attribute.get$node());
+            } else attribute = that.getAttribute(operation.getEntityId());
+             //this is strange if i call processAttributeAddOperation for first time ytext is undefined, but it shouldn't 
+            var ymap = y.share.nodes.get(subjectEntity.getEntityId());
+            setTimeout(function () {
+                var ytext = ymap.get(attribute.getKey().getEntityId());
+                attribute.getKey().registerYType(ytext);
+                var ytext2 = ymap.get(attribute.getRef().getEntityId());
+                attribute.getRef().registerYType(ytext2);
+            }, 200);
         };
 
         /**
@@ -101,8 +104,7 @@ define([
          * Propagate an Attribute Add Operation to the remote users and the local widgets
          * @param {operations.ot.AttributeDeleteOperation} operation
          */
-        var propagateAttributeAddOperation = function(operation){
-			processAttributeAddOperation(operation);
+        this.propagateAttributeAddOperation = function(operation){
             iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.getOTOperation());
         };
 
@@ -113,6 +115,7 @@ define([
         var attributeAddCallback = function(operation){
             if(operation instanceof AttributeAddOperation && operation.getRootSubjectEntityId() === that.getRootSubjectEntity().getEntityId() && operation.getSubjectEntityId() === that.getEntityId()){
                 processAttributeAddOperation(operation);
+                subjectEntity.showAttributes();
             }
         };
 
@@ -173,17 +176,17 @@ define([
             return _$node;
         };
 
-		this.setOptions = function(options){
-			_options = options;
-		};
-		
+        this.setOptions = function(options){
+            _options = options;
+        };
+
         /**
          * Set attribute list by its JSON representation
          * @param json
          */
         this.setValueFromJSON = function(json){
             _.forEach(json.list,function(val,key){
-                var attribute = new ConditionPredicateAttribute(key,key,that,_options,_options2);
+                var attribute = new RenamingAttribute(key,"Attribute",that,_options);
                 attribute.setValueFromJSON(json.list[key]);
                 if(attr = that.getAttribute(attribute.getEntityId())){
                     that.deleteAttribute(attr.getEntityId());
@@ -194,40 +197,32 @@ define([
             });
         };
 
-        /**
-         * Register inter widget communication callbacks
-         */
-        this.registerCallbacks = function(){
-            iwc.registerOnDataReceivedCallback(attributeAddCallback);
-            iwc.registerOnDataReceivedCallback(attributeDeleteCallback);
-        };
-
-        /**
-         * Unregister inter widget communication callbacks
-         */
-        this.unregisterCallbacks = function(){
-            iwc.unregisterOnDataReceivedCallback(attributeAddCallback);
-            iwc.unregisterOnDataReceivedCallback(attributeDeleteCallback);
-        };
-
         _$node.find(".name").text(this.getName());
         for(var attrId in _list){
             if(_list.hasOwnProperty(attrId)){
                 _$node.find(".list").append(_list[attrId].get$node());
             }
         }
-        _$node.find(".ui-icon-plus").click(function(){
-            var id = Util.generateRandomId();
-            var operation = new AttributeAddOperation(id,that.getEntityId(),that.getRootSubjectEntity().getEntityId(),ConditionPredicateAttribute.TYPE);
-            propagateAttributeAddOperation(operation);
 
+       
+        y.share.nodes.get(subjectEntity.getEntityId()).observe(function(event) {
+            if (event.name.indexOf('[val]') != -1) {
+                switch (event.type) {
+                    case 'add': {
+                        operation = new AttributeAddOperation(event.name.replace(/\[\w*\]/g, ''), that.getEntityId(), that.getRootSubjectEntity().getEntityId(), that.constructor.name);
+                        attributeAddCallback(operation);
+                        break;
+                    }
+                    case 'delete':{
+                        operation = new AttributeDeleteOperation(event.name.replace(/\[\w*\]/g, ''), that.getEntityId(), that.getRootSubjectEntity().getEntityId(), that.constructor.name);
+                        attributeDeleteCallback(operation);
+                        break;
+                    }
+                }
+            }
         });
-
-        if(iwc){
-            that.registerCallbacks();
-        }
     }
 
-    return ConditionListAttribute;
+    return RenamingListAttribute;
 
 });

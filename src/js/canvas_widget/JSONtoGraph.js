@@ -24,92 +24,33 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function($, _, Entit
         var createdEdges = 0;
         var report = { widget: 'CANVAS', createdYText: 0, modelAttributes: { attributes: {} }, nodes: {}, edges: {} };
 
-        function createYTextAttribute(id, map, val) {
-            //var deferred = $.Deferred();
-            var promise = map.get(val.getEntityId());
-            if (promise === undefined) {
-                map.set(val.getEntityId(), Y.Text).then(function(ytext) {
-                    if (!val.hasOwnProperty('registerYType'))
-                        val.getValue().registerYType(ytext);
-                    else
-                        val.registerYType(ytext);
-                    if (id === 'modelAttributes') {
-                        report.modelAttributes.attributes[val.getEntityId()] = true;
-                    }
-                    else if (report.nodes.hasOwnProperty(id)) {
-                        report.nodes[id].attributes[val.getEntityId()] = true;
-                    } else if (report.edges.hasOwnProperty(id)) {
-                        report.edges[id].attributes[val.getEntityId()] = true;
-                    }
-                     report.createdYText +=1;
-                    //deferred.resolve();
-                });
-            }
-            else {
-                map.get(val.getEntityId()).then(function(ytext) {
-                    if (!val.hasOwnProperty('registerYType'))
-                        val.getValue().registerYType(ytext);
-                    else
-                        val.registerYType(ytext);
-                    if (id === 'modelAttributes') {
-                        report.modelAttributes.attributes[val.getEntityId()] = false;
-                    }
-                    if (report.nodes.hasOwnProperty(id)) {
-                        report.nodes[id].attributes[val.getEntityId()] = false;
-                    } else if (report.edges.hasOwnProperty(id)) {
-                        report.edges[id].attributes[val.getEntityId()] = false;
-                    }
-                    report.createdYText +=1;
-                    //deferred.resolve();
 
-                })
-            }
-            //return deferred.promise();
-        }
-
-        function createModelAttributeCallback(map) {
-            var promises = [];
+        if (!_.isEmpty(json.attributes)) {
             var modelAttributesNode = EntityManager.createModelAttributesNodeFromJSON(json.attributes);
-
-
-            var attrs = modelAttributesNode.getAttributes();
-            for (var key in attrs) {
-                if (attrs.hasOwnProperty(key)) {
-                    var val = attrs[key].getValue();
-                    if (val.constructor.name === "Value") {
-                        //promises.push(createYTextAttribute(map, val));
-                        createYTextAttribute('modelAttributes', map, val)
-                    }
-                }
-            }
-
-
-            if (promises.length > 0) {
-                $.when.apply(null, promises).done(function() {
-                    modelAttributesNode.registerYMap(map, true);
-                    canvas.setModelAttributesNode(modelAttributesNode);
-                    modelAttributesNode.addToCanvas(canvas);
-
-                });
-            } else {
-                modelAttributesNode.registerYMap(map, true);
-                canvas.setModelAttributesNode(modelAttributesNode);
-                modelAttributesNode.addToCanvas(canvas);
-
-            }
-
+            modelAttributesNode.registerYMap();
+            canvas.setModelAttributesNode(modelAttributesNode);
+            modelAttributesNode.addToCanvas(canvas);
         }
 
-        function createNodeCallback(deferred, map, jsonNode, nodeId) {
-            var node = EntityManager.createNodeFromJSON(
-                jsonNode.type,
-                nodeId,
-                map.get('left') ? map.get('left') : jsonNode.left,
-                map.get('top') ? map.get('top') : jsonNode.top,
-                map.get('width') ? map.get('width') : jsonNode.width,
-                map.get('height') ? map.get('height') : jsonNode.height,
-                map.get('zIndex') ? map.get('zIndex') : jsonNode.zIndex,
-                jsonNode);
+        function createNode(nodeId, jsonNode) {
+            var map = y.share.nodes.get(nodeId);
+            
+            var node = null;
+            if(map){
+               node = EntityManager.createNodeFromJSON(
+                jsonNode.type, nodeId,
+                map.get('left') ? map.get('left') : jsonNode.left, map.get('top') ? map.get('top') : jsonNode.top, 
+                map.get('width') ? map.get('width') : jsonNode.width, map.get('height') ? map.get('height') : jsonNode.height,
+                map.get('zIndex') ? map.get('zIndex') : jsonNode.zIndex, jsonNode);
+            }
+            else{
+               node = EntityManager.createNodeFromJSON(
+                jsonNode.type, nodeId,
+                jsonNode.left, jsonNode.top,
+                jsonNode.width, jsonNode.height,
+                jsonNode.zIndex,jsonNode);
+            }
+                
 
             if (node === undefined) {
                 console.error('SYNCMETA: Node undefined. Check if ' + jsonNode.type + '  type is defined in the VLS');
@@ -121,185 +62,25 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function($, _, Entit
                 return;
             }
 
-            var promises = [];
-            var attrs, attr;
-            if (EntityManager.getLayer() === CONFIG.LAYER.META) {
-                //promises.push(createYTextAttribute(map,node.getLabel()));
-                createYTextAttribute(nodeId, map, node.getLabel());
-                if (jsonNode.type === "Edge Shape") {
-                    //promises.push(createYTextAttribute(map,node.getAttribute(nodeId+'[color]')));
-                    createYTextAttribute(nodeId, map, node.getAttribute(nodeId + '[color]'));
-                    //promises.push(createYTextAttribute(map,node.getAttribute(nodeId+'[overlay]')));
-                    createYTextAttribute(nodeId, map, node.getAttribute(nodeId + '[overlay]'));
+            node.registerYMap();
+            node.addToCanvas(canvas);
+            node.bindMoveToolEvents();
+            node.draw();
 
-                } else if (jsonNode.type === "Node Shape") {
-                    //promises.push(createYTextAttribute(map,node.getAttribute(nodeId  +'[color]')));
-                    createYTextAttribute(nodeId, map, node.getAttribute(nodeId + '[color]'));
-                    //promises.push(createYTextAttribute(map,node.getAttribute(nodeId+'[customAnchors]')));
-                    createYTextAttribute(nodeId, map, node.getAttribute(nodeId + '[customAnchors]'));
-                    //promises.push(createYTextAttribute(map,node.getAttribute(nodeId+'[customShape]')));
-                    //createYTextAttribute(map,node.getAttribute(nodeId+'[customShape]'));
-                }
-                else if (jsonNode.type === 'Object' || jsonNode.type === 'Relationship' || jsonNode.type === 'Abstract Class') {
-                    attrs = node.getAttribute('[attributes]').getAttributes();
-                    for (var attrKey in attrs) {
-                        if (attrs.hasOwnProperty(attrKey)) {
-                            attr = attrs[attrKey];
-                            //promises.push(createYTextAttribute(map, attr.getKey()));
-                            createYTextAttribute(nodeId, map, attr.getKey());
-                        }
-                    }
-                }
-                else if (jsonNode.type === 'Enumeration') {
-                    attrs = node.getAttribute('[attributes]').getAttributes();
-                    for (var attrKey2 in attrs) {
-                        if (attrs.hasOwnProperty(attrKey2)) {
-                            attr = attrs[attrKey2];
-                            //promises.push(createYTextAttribute(map, attr.getValue()));
-                            createYTextAttribute(nodeId, map, attr.getValue());
-                        }
-                    }
-                } else if (jsonNode.type === 'ViewObject' || jsonNode.type === 'ViewRelationship') {
-                    attrs = node.getAttribute('[attributes]').getAttributes();
-                    for (var attrKey3 in attrs) {
-                        if (attrs.hasOwnProperty(attrKey3)) {
-                            attr = attrs[attrKey3];
-                            //promises.push(createYTextAttribute(map, attr.getValue()));
-                            createYTextAttribute(nodeId, map, attr.getKey());
-                        }
-                    }
-                    if (node.getAttribute('[condition]')) {
-                        var conditions = node.getAttribute('[condition]').getAttributes();
-                        for (var attrKey4 in conditions) {
-                            if (conditions.hasOwnProperty(attrKey4)) {
-                                attr = conditions[attrKey4];
-                                //promises.push(createYTextAttribute(map, attr.getValue()));
-                                createYTextAttribute(nodeId, map, attr.getKey());
-                            }
-                        }
-                    }
-                }
-            }
-            else {
-                attrs = node.getAttributes();
-                for (var key in attrs) {
-                    if (attrs.hasOwnProperty(key)) {
-                        var val = attrs[key].getValue();
-                        if (val.constructor.name === "Value") {
-                            //promises.push(createYTextAttribute(map,val));
-                            createYTextAttribute(nodeId, map, val);
-                        }
-                    }
-                }
-
-            }
-
-            if (promises.length > 0) {
-                $.when.apply(null, promises).done(function() {
-                    node.addToCanvas(canvas);
-                    node.bindMoveToolEvents();
-                    node.draw();
-                    node.registerYMap(map, true);
-                    deferred.resolve(nodeId);
-                });
-            } else {
-                node.addToCanvas(canvas);
-                node.bindMoveToolEvents();
-                node.draw();
-                node.registerYMap(map, true);
-                deferred.resolve(nodeId);
-            }
         }
-        function createNode(nodeId, jsonNode) {
-            var deferred = $.Deferred();
-            if (y.share.nodes.opContents.hasOwnProperty(nodeId)) {
-                y.share.nodes.get(nodeId).then(function(map) {
-                    report.nodes[nodeId] = { viaSet: false, attributes: {} };
 
-                    createNodeCallback(deferred, map, jsonNode, nodeId);
-                })
-            } else {
-                y.share.nodes.set(nodeId, Y.Map).then(function(map) {
-                    map.set('left', jsonNode.left);
-                    map.set('top', jsonNode.top);
-                    map.set('width', jsonNode.width);
-                    map.set('height', jsonNode.height);
-                    map.set('zIndex', jsonNode.zIndex);
 
-                    report.nodes[nodeId] = { viaSet: true, attributes: {} };
-
-                    createNodeCallback(deferred, map, jsonNode, nodeId);
-                })
-            }
-            return deferred.promise();
-        }
         function createNodes(nodes) {
-            var deferred = $.Deferred();
             for (var nodeId in nodes) {
                 if (nodes.hasOwnProperty(nodeId)) {
-                    createNode(nodeId, nodes[nodeId]).done(function() {
-                        createdNodes++;
-                        deferred.notify(createdNodes);
-                    });
+                    createNode(nodeId, nodes[nodeId]);
+                    createdNodes++;
                 }
             }
-            return deferred.promise();
         }
 
-        function registerEdgeCallback(deferred, edge, map) {
-            var promises = [];
-            //promises.push(createYTextAttribute(map,edge.getLabel()));
-            createYTextAttribute(edge.getEntityId(), map, edge.getLabel());
-            if (EntityManager.getLayer() === CONFIG.LAYER.MODEL) {
-                var attrs = edge.getAttributes();
-                for (var key in attrs) {
-                    if (attrs.hasOwnProperty(key)) {
-                        var val = attrs[key].getValue();
-                        if (val.constructor.name === "Value") {
-                            //promises.push(createYTextAttribute(map,val));
-                            createYTextAttribute(edge.getEntityId(), map, val);
-                        }
-                    }
-                }
-            }
 
-            if (promises.length > 0) {
-                $.when.apply(null, promises).done(function() {
-                    edge.registerYMap(map, true);
-                    edge.addToCanvas(canvas);
-                    edge.connect();
-                    edge.bindMoveToolEvents();
-                    deferred.resolve();
-                    //canvas.resetTool();
-
-                });
-            } else {
-                edge.registerYMap(map, true);
-                edge.addToCanvas(canvas);
-                edge.connect();
-                edge.bindMoveToolEvents();
-                deferred.resolve();
-                //canvas.resetTool();
-            }
-        }
-        function registerEdge(edge) {
-            var deferred = $.Deferred();
-            if (y.share.edges.opContents.hasOwnProperty(edge.getEntityId())) {
-                y.share.edges.get(edge.getEntityId()).then(function(map) {
-                    report.edges[edge.getEntityId()] = { viaSet: false, attributes: {} };
-                    registerEdgeCallback(deferred, edge, map);
-                })
-            } else {
-                y.share.edges.set(edge.getEntityId(), Y.Map).then(function(map) {
-                    report.edges[edge.getEntityId()] = { viaSet: false, attributes: {} };
-                    registerEdgeCallback(deferred, edge, map);
-                })
-            }
-            return deferred.promise();
-
-        }
-        function registerEdges(edges) {
-            var deferred = $.Deferred();
+        function createEdges(edges) {
             for (edgeId in edges) {
                 if (edges.hasOwnProperty(edgeId)) {
                     //create edge
@@ -317,50 +98,37 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function($, _, Entit
                     }
 
                     //register it to Yjs and draw it to the canvas
-                    registerEdge(edge).done(function() {
-                        createdEdges++;
-                        deferred.notify(createdEdges);
-                    });
+                    edge.registerYMap();
+                    edge.addToCanvas(canvas);
+                    edge.connect();
+                    edge.bindMoveToolEvents();
+                    createdEdges++;
                 }
             }
-            return deferred.promise();
         }
 
-        if (json.attributes && !_.isEmpty(json.attributes)) {
-            if (y.share.nodes.opContents.hasOwnProperty('modelAttributes')) {
-                y.share.nodes.get('modelAttributes').then(function(map) {
-                    createModelAttributeCallback(map);
-                });
-            } else {
-                y.share.nodes.set('modelAttributes', Y.Map).then(function(map) {
-                    createModelAttributeCallback(map);
-                });
-
-            }
-        }
 
         if (numberOfNodes > 0) {
-            createNodes(json.nodes).then(null, null, function(createdNodes) {
-                if (createdNodes === numberOfNodes) {
-                    if (numberOfEdges > 0) {
-                        registerEdges(json.edges).then(null, null, function(createdEdges) {
-                            if (createdEdges === numberOfEdges) {
-                                canvas.resetTool();
-                                report.createdNodes = createdNodes;
-                                report.createdEdges = createdEdges;
-                                deferred.resolve(report);
+            createNodes(json.nodes);
+            if (createdNodes === numberOfNodes) {
+                if (numberOfEdges > 0) {
+                    createEdges(json.edges)
+                        if (createdEdges === numberOfEdges) {
+                            canvas.resetTool();
+                            report.createdNodes = createdNodes;
+                            report.createdEdges = createdEdges;
+                          
 
-                            }
-                        });
-                    } else {
-                        report.createdNodes = createdNodes;
-                        report.createdEdges = 0;
-                        deferred.resolve(report);
-                    }
+                        }
+                    
+                } else {
+                    report.createdNodes = createdNodes;
+                    report.createdEdges = 0;
+                   
                 }
-            });
-        } else
-            deferred.resolve('SYNCMETA: Model is empty');
-        return deferred.promise();
-    }
+            }
+        }
+        else 
+            return report;
+        }
 });

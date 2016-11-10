@@ -10,12 +10,9 @@ define([
     'operations/non_ot/ToolSelectOperation',
     'operations/non_ot/EntitySelectOperation',
     'operations/non_ot/ActivityOperation',
-    'operations/non_ot/ExportDataOperation',
     'operations/non_ot/ExportMetaModelOperation',
     'operations/non_ot/ExportLogicalGuidanceRepresentationOperation',
     'operations/non_ot/ExportImageOperation',
-    'operations/non_ot/PerformCvgOperation',
-    'operations/non_ot/DeleteCvgOperation',
     'operations/non_ot/ShowGuidanceBoxOperation',
     'operations/non_ot/CanvasViewChangeOperation',
     'operations/non_ot/RevokeSharedActivityOperation',
@@ -34,7 +31,7 @@ define([
     'canvas_widget/guidance_modeling/CollaborationGuidance',
     'jquery.transformable-PATCHED'
 ], /** @lends Canvas */
-    function($, jsPlumb, IWCW, Util, NodeAddOperation, NodeDeleteOperation, EdgeAddOperation, EdgeDeleteOperation,ToolSelectOperation, EntitySelectOperation, ActivityOperation, ExportDataOperation, ExportMetaModelOperation, ExportLogicalGuidanceRepresentationOperation, ExportImageOperation, PerformCvgOperation, DeleteCvgOperation, ShowGuidanceBoxOperation, CanvasViewChangeOperation, RevokeSharedActivityOperation, MoveCanvasOperation, GuidanceStrategyOperation, AbstractEntity, ModelAttributesNode, EntityManager, HistoryManager, AbstractCanvas, MoveTool, GuidanceBox, SelectToolGuidance, SetPropertyGuidance, GhostEdgeGuidance, CollaborationGuidance) {
+    function($, jsPlumb, IWCW, Util, NodeAddOperation, NodeDeleteOperation, EdgeAddOperation, EdgeDeleteOperation, ToolSelectOperation, EntitySelectOperation, ActivityOperation, ExportMetaModelOperation, ExportLogicalGuidanceRepresentationOperation, ExportImageOperation, ShowGuidanceBoxOperation, CanvasViewChangeOperation, RevokeSharedActivityOperation, MoveCanvasOperation, GuidanceStrategyOperation, AbstractEntity, ModelAttributesNode, EntityManager, HistoryManager, AbstractCanvas, MoveTool, GuidanceBox, SelectToolGuidance, SetPropertyGuidance, GhostEdgeGuidance, CollaborationGuidance) {
 
         Canvas.prototype = new AbstractCanvas();
         Canvas.prototype.constructor = Canvas;
@@ -136,7 +133,7 @@ define([
              * @param {operations.ot.NodeAddOperation} operation
              * @param {Y.Map} ymap
              */
-            var processNodeAddOperation = function(operation, ymap) {
+            var processNodeAddOperation = function(operation) {
                 var node;
                 if (operation.getJSON()) {
                     node = EntityManager.createNodeFromJSON(operation.getType(), operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex(), operation.getJSON());
@@ -148,46 +145,23 @@ define([
                     var color = Util.getColor(y.share.userList.get(operation.getJabberId()).globalId);
                     node.refreshTraceAwareness(color);
                 }
-                /*
-                 if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()){
-                 var color = _iwcw.getUserColor(operation.getJabberId());
-                 node.refreshTraceAwareness(color);
-                 }*/
+                if (y)
+                    node.registerYMap();
 
-                if (y) {
-                    if (ymap) {
-                        node.registerYMap(ymap);
-                        node.draw();
-                        node.addToCanvas(that);
-                        node.bindMoveToolEvents();
-                        that.remountCurrentTool();
-                    } else {
-                        y.share.nodes.get(node.getEntityId()).then(function(map) {
-                            node.registerYMap(map);
-                            node.draw();
-                            node.addToCanvas(that);
-                            node.bindMoveToolEvents();
-                            that.remountCurrentTool();
-                        });
-                    }
-                }
-                else {
-                    node.draw();
-                    node.addToCanvas(that);
-                    node.bindMoveToolEvents();
-                    that.remountCurrentTool();
-                }
+                node.draw();
+                node.addToCanvas(that);
+                node.bindMoveToolEvents();
+                that.remountCurrentTool();
             };
 
             /**
              * Propagate a Node Add Operation to the remote users and the local widgets
              * @param {operations.ot.NodeAddOperation} operation
-             * @param {Y.Map} ymap
              */
-            var propagateNodeAddOperation = function(operation, ymap) {
-                processNodeAddOperation(operation, ymap);
+            var propagateNodeAddOperation = function(operation) {
+                processNodeAddOperation(operation);
                 $('#save').click();
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
+                //_iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP, operation.getOTOperation());
                 y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(
@@ -204,7 +178,7 @@ define([
              * @param {operations.ot.EdgeAddOperation} operation
              * @param {Y.Map} ymap
              */
-            var processEdgeAddOperation = function(operation, ymap) {
+            var processEdgeAddOperation = function(operation) {
                 var edge;
 
                 if (operation.getJSON()) {
@@ -213,44 +187,27 @@ define([
                     edge = EntityManager.createEdge(operation.getType(), operation.getEntityId(), EntityManager.findNode(operation.getSource()), EntityManager.findNode(operation.getTarget()));
                 }
 
-                if (y) {
-                    if (ymap) {
-                        edge.registerYMap(ymap);
-                        edge.connect();
-                        edge.addToCanvas(that);
-                        edge.bindMoveToolEvents();
-                        that.remountCurrentTool();
-                    }
-                    else {
-                        y.share.edges.get(edge.getEntityId()).then(function(map) {
-                            edge.registerYMap(map);
-                            edge.connect();
-                            edge.addToCanvas(that);
-                            edge.bindMoveToolEvents();
-                            that.remountCurrentTool();
-                        })
-                    }
-                } else {
-                    edge.connect();
-                    edge.addToCanvas(that);
-                    edge.bindMoveToolEvents();
-                    that.remountCurrentTool();
-                }
-            };
+                if (window.hasOwnProperty("y"))
+                    edge.registerYMap();
 
+                edge.connect();
+                edge.addToCanvas(that);
+                edge.bindMoveToolEvents();
+                that.remountCurrentTool();
+
+
+            };
             /**
              * Propagate an Edge Add Operation to the remote users and the local widgets
              * @param {operations.ot.EdgeAddOperation} operation
-             * @param {Y.Map} ymap
              */
-            var propagateEdgeAddOperation = function(operation, ymap) {
+            var propagateEdgeAddOperation = function(operation) {
                 var sourceNode = EntityManager.findNode(operation.getSource());
                 var targetNode = EntityManager.findNode(operation.getTarget());
 
-                processEdgeAddOperation(operation, ymap);
+                processEdgeAddOperation(operation);
                 $('#save').click();
 
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
                 y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(
                     "EdgeAddActivity",
@@ -273,7 +230,6 @@ define([
              */
             var remoteNodeAddCallback = function(operation) {
                 if (operation instanceof NodeAddOperation) {
-                    _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
                     _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP, operation.getOTOperation());
                     if (operation.getViewId() === EntityManager.getViewId() && EntityManager.getLayer() === CONFIG.LAYER.META) {
                         processNodeAddOperation(operation);
@@ -303,50 +259,23 @@ define([
                             node = EntityManager.createNode(type, operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex());
                         }
 
-
-                        if (y) {
-                            y.share.nodes.get(node.getEntityId()).then(function(map) {
-                                node.registerYMap(map);
-
-                                node.draw();
-                                node.addToCanvas(that);
-                                node.bindMoveToolEvents();
-                                //if we are in a view but the view type got no mapping in this view -> hide the element
-                                if (!viewType && EntityManager.getViewId()) {
-                                    node.hide();
-                                } else {
-                                    /*if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()){
-                                     var color = _iwcw.getUserColor(operation.getJabberId());
-                                     node.refreshTraceAwareness(color);
-                                     }*/
-                                    if (y.share.users.get(y.db.userId) !== operation.getJabberId()) {
-                                        var color = Util.getColor(y.share.userList.get(operation.getJabberId()).globalId);
-                                        node.refreshTraceAwareness(color);
-                                    }
-                                }
-                                that.remountCurrentTool();
-                            });
-                        }
-                        else {
-                            node.draw();
-                            node.addToCanvas(that);
-                            //if we are in a view but the view type got no mapping in this view -> hide the element
-                            if (!viewType && EntityManager.getViewId()) {
-                                node.hide();
-                            } else {
-                                /*
-                                 if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== operation.getJabberId()){
-                                 var color = _iwcw.getUserColor(operation.getJabberId());
-                                 node.refreshTraceAwareness(color);
-                                 }*/
-                                if (y.share.users.get(y.db.userId) !== operation.getJabberId()) {
-                                    var color = Util.getColor(y.share.userList.get(operation.getJabberId()).globalId);
-                                    node.refreshTraceAwareness(color);
-                                }
+                        node.registerYMap();
+                        node.draw();
+                        node.addToCanvas(that);
+                        node.bindMoveToolEvents();
+                         
+                        //if we are in a view but the view type got no mapping in this view -> hide the element
+                        if (!viewType && EntityManager.getViewId()) {
+                            node.hide();
+                        } else {
+                            if (y.share.users.get(y.db.userId) !== operation.getJabberId()) {
+                                var color = Util.getColor(y.share.userList.get(operation.getJabberId()).globalId);
+                                node.refreshTraceAwareness(color);
                             }
-                            that.remountCurrentTool();
                         }
+                        that.remountCurrentTool();
                     }
+
                 }
             };
 
@@ -364,8 +293,6 @@ define([
                 if (operation instanceof EdgeAddOperation) {
                     var sourceNode = EntityManager.findNode(operation.getSource());
                     var targetNode = EntityManager.findNode(operation.getTarget());
-
-                    _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
 
                     if (operation.getViewId() === EntityManager.getViewId() || EntityManager.getLayer() === CONFIG.LAYER.META) {
                         processEdgeAddOperation(operation);
@@ -394,28 +321,16 @@ define([
                             edge = EntityManager.createEdge(type, operation.getEntityId(), EntityManager.findNode(operation.getSource()), EntityManager.findNode(operation.getTarget()));
                         }
 
-                        if (y) {
-                            y.share.edges.get(edge.getEntityId()).then(function(map) {
-                                edge.registerYMap(map);
-                                edge.connect();
-                                edge.addToCanvas(that);
+                        edge.registerYMap();
+                        edge.connect();
+                        edge.addToCanvas(that);
 
-                                //if we are in a view but the view type got no mapping in this view -> hide the element
-                                if (!viewType && EntityManager.getViewId()) {
-                                    edge.hide();
-                                }
-                                that.remountCurrentTool();
-                            })
-                        } else {
-                            edge.connect();
-                            edge.addToCanvas(that);
-
-                            //if we are in a view but the view type got no mapping in this view -> hide the element
-                            if (!viewType && EntityManager.getViewId()) {
-                                edge.hide();
-                            }
-                            that.remountCurrentTool();
+                        //if we are in a view but the view type got no mapping in this view -> hide the element
+                        if (!viewType && EntityManager.getViewId()) {
+                            edge.hide();
                         }
+
+                        that.remountCurrentTool();
                     }
                 }
             };
@@ -442,16 +357,7 @@ define([
                 that.showGuidanceBox(operation.getEntityId());
             };
 
-            /**
-             * Callback for a local Export Data Operation
-             * @param {operations.non_ot.ExportDataOperation} operation
-             */
-            var localExportDataCallback = function(operation) {
-                if (operation instanceof ExportDataOperation) {
-                    operation.setData(EntityManager.graphToJSON());
-                    _iwcw.sendLocalNonOTOperation(operation.getRequestingComponent(), operation.toNonOTOperation());
-                }
-            };
+           
 
             /**
              * Callback for a local Export Data Operation
@@ -468,8 +374,8 @@ define([
                             "EditorGenerateActivity",
                             "-1",
                             _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
-                            "..generated new Editor <a href=\"" + data.spaceURI + "\" target=\"_blank\">" + data.spaceTitle + "</a>", {}).toNonOTOperation();
-                        _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, op);
+                            "..generated new Editor <a href=\"" + data.spaceURI + "\" target=\"_blank\">" + data.spaceTitle + "</a>", {});
+                            //TODO send activity to activity widget
                     }
 
                 }
@@ -700,53 +606,6 @@ define([
                 return _modelAttributesNode;
             };
 
-            //noinspection JSUnusedGlobalSymbols
-            /**
-             * Calls an event listener
-             */
-            this.callListeners = function() {
-                var i,
-                    numOfCallbacks;
-                //noinspection JSAccessibilityCheck
-                var args = Array.prototype.splice.call(arguments, 0);
-
-                var name = args.shift();
-                if (_listeners.hasOwnProperty(name)) {
-                    for (i = 0, numOfCallbacks = _listeners[name].length; i < numOfCallbacks; i++) {
-                        _listeners[name][i].apply(this, args);
-                    }
-                }
-            };
-
-            /**
-             * Register an event listener
-             * @param {string} name Name of event
-             * @param {function} callback Event Listener
-             */
-            this.registerListener = function(name, callback) {
-                if (CONFIG.CANVAS.LISTENERS.hasOwnProperty(name) && typeof callback === "function") {
-                    this.unregisterListener(name, callback);
-                    (_listeners[name] || (_listeners[name] = [])).push(callback);
-                }
-            };
-
-            /**
-             * Unregister an event listener
-             * @param {string} name Name of event
-             * @param {function} callback Event Listener which has previously been registered
-             */
-            this.unregisterListener = function(name, callback) {
-                var i,
-                    numOfCallbacks;
-
-                if (_listeners[name] && typeof callback === "function") {
-                    for (i = 0, numOfCallbacks = _listeners[name].length; i < numOfCallbacks; i++) {
-                        if (callback === _listeners[name][i]) {
-                            _listeners[name].splice(i, 1);
-                        }
-                    }
-                }
-            };
 
             /**
              * Bind events for move tool
@@ -843,7 +702,6 @@ define([
                 var operation = new EntitySelectOperation(entity ? entity.getEntityId() : null, entity ? entity.getType() : null, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
 
                 _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.toNonOTOperation());
-                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, operation.toNonOTOperation());
                 _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.toNonOTOperation());
 
                 if (entity === null) {
@@ -962,13 +820,6 @@ define([
                 //this.callListeners(CONFIG.CANVAS.LISTENERS.RESET);
             };
 
-            var createYTypeForValueOfAttribute = function(map, id, yType) {
-                var deferred = $.Deferred();
-                map.set(id, yType).then(function() {
-                    deferred.resolve();
-                });
-                return deferred.promise();
-            };
 
             /**
              * Create a new node and draw it on the canvas
@@ -982,9 +833,8 @@ define([
              * @param {string} identifier the identifier of the node, if null a new id is generated
              * @return {number} id of new node
              */
-            this.createNode = function(type, left, top, width, height, zIndex, json, identifier, historyFlag) {
+            this.createNode = function (type, left, top, width, height, zIndex, json, identifier, historyFlag) {
                 var id, oType = null;
-                var deferred = $.Deferred();
                 if (identifier)
                     id = identifier;
                 else
@@ -995,102 +845,14 @@ define([
                     oType = EntityManager.getViewNodeType(type).getTargetNodeType().TYPE;
                 }
                 var operation = new NodeAddOperation(id, type, left, top, width, height, zIndex, json || null, EntityManager.getViewId(), oType, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+
+                propagateNodeAddOperation(operation);
                 if (y) {
-                    y.share.nodes.set(id, Y.Map).then(function(map) {
-                        //create the label element of the node
-                        map.set(NodeAddOperation.TYPE, operation.toJSON());
-                        
-                        map.set('left', left);
-                        map.set('top', top);
-                        map.set('width', width);
-                        map.set('height', height);
-                        map.set('zIndex', zIndex);
-
-                        if (EntityManager.getLayer() === CONFIG.LAYER.META) {
-                            map.set(id + "[label]", Y.Text).then(function() {
-                                var attrColorPromise;
-                                if (type === 'Node Shape') {
-                                    attrColorPromise = createYTypeForValueOfAttribute(map, id + "[color]", Y.Text);
-                                    var attrAnchorsPromise = createYTypeForValueOfAttribute(map, id + "[customAnchors]", Y.Text);
-                                    var attrCustomShapePromise = createYTypeForValueOfAttribute(map, id + "[customShape]", Y.Text);
-                                    $.when(attrColorPromise, attrAnchorsPromise, attrCustomShapePromise).done(function() {
-                                        propagateNodeAddOperation(operation, map);
-                                        y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
-                                        deferred.resolve(id);
-                                    });
-                                }
-                                else if (type === 'Edge Shape') {
-                                    attrColorPromise = createYTypeForValueOfAttribute(map, id + "[color]", Y.Text);
-                                    var attrOverlayPromise = createYTypeForValueOfAttribute(map, id + "[overlay]", Y.Text);
-                                    $.when(attrColorPromise, attrOverlayPromise).done(function() {
-                                        propagateNodeAddOperation(operation, map);
-                                        y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
-                                        deferred.resolve(id);
-
-                                    });
-                                }
-                                else if (json && (type === 'Object' || type === 'Relationship' || type === 'Abstract Class')) {
-                                    var promises = [];
-                                    attrs = json.attributes['[attributes]'].list;
-                                    for (var attrKey in attrs) {
-                                        if (attrs.hasOwnProperty(attrKey)) {
-                                            attr = attrs[attrKey];
-                                            promises.push(createYTypeForValueOfAttribute(map, attr.key.id, Y.Text));
-                                        }
-                                    }
-                                    $.when(promises).done(function() {
-                                        propagateNodeAddOperation(operation, map);
-                                        y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
-                                        deferred.resolve(id);
-                                    });
-                                    
-                                    
-                                }
-                                else {
-                                    propagateNodeAddOperation(operation, map);
-                                    y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
-                                    deferred.resolve(id);
-
-                                }
-                            });
-                        }
-                        else {
-                            var attributes = null;
-                            if (oType)
-                                attributes = EntityManager.getNodeType(oType).getAttributes();
-                            else
-                                attributes = EntityManager.getNodeType(type).getAttributes();
-
-                            var attrPromises = [];
-                            for (var attrKey in attributes) {
-                                if (attributes.hasOwnProperty(attrKey) && attributes[attrKey].value === 'string') {
-                                    var attrId = id + '[' + attributes[attrKey].key + ']';
-                                    attrPromises.push(createYTypeForValueOfAttribute(map, attrId.toLowerCase(), Y.Text));
-                                }
-                            }
-                            if (attrPromises.length > 0) {
-                                $.when.apply(null, attrPromises).done(function() {
-                                    propagateNodeAddOperation(operation, map);
-                                    y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
-                                    deferred.resolve(id);
-
-                                });
-                            }
-                            else {
-                                propagateNodeAddOperation(operation, map);
-                                y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
-                                deferred.resolve(id);
-
-                            }
-                        }
-                    })
-                } else {
-                    propagateNodeAddOperation(operation);
-                    deferred.resolve(id);
+                    y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
                 }
-                if(!historyFlag)
+                if (!historyFlag)
                     HistoryManager.add(operation);
-                return deferred.promise();
+                return id;
             };
 
             /**
@@ -1104,7 +866,7 @@ define([
              */
             this.createEdge = function(type, source, target, json, identifier, historyFlag) {
                 var id = null, oType = null;
-                var deferred = $.Deferred();
+
                 if (identifier)
                     id = identifier;
                 else
@@ -1113,56 +875,14 @@ define([
                     oType = EntityManager.getViewEdgeType(type).getTargetEdgeType().TYPE;
                 }
                 var operation = new EdgeAddOperation(id, type, source, target, json || null, EntityManager.getViewId(), oType, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
-                if (y) {
-                    y.share.edges.set(id, Y.Map).then(function(map) {
-                        map.set(id + "[label]", Y.Text).then(function() {
-                            if (EntityManager.getLayer() === CONFIG.LAYER.MODEL) {
-                                var attributes = null;
-                                if (oType)
-                                    attributes = EntityManager.getEdgeType(oType).getAttributes();
-                                else
-                                    attributes = EntityManager.getEdgeType(type).getAttributes();
+                propagateEdgeAddOperation(operation);
 
-                                var attrPromises = [];
-                                for (var attrKey in attributes) {
-                                    if (attributes.hasOwnProperty(attrKey) && attributes[attrKey].value === 'string') {
-                                        var attrId = id + '[' + attributes[attrKey].key + ']';
-                                        attrPromises.push(createYTypeForValueOfAttribute(map, attrId.toLowerCase(), Y.Text));
-                                    }
-                                }
-                                if (attrPromises.length > 0) {
-                                    $.when.apply(null, attrPromises).done(function() {
-                                        propagateEdgeAddOperation(operation, map);
-                                        y.share.canvas.set(EdgeAddOperation.TYPE, operation.toJSON());
-                                        deferred.resolve(id);
+                if (window.hasOwnProperty("y"))
+                    y.share.canvas.set(EdgeAddOperation.TYPE, operation.toJSON());
 
-                                    });
-                                }
-                                else {
-                                    propagateEdgeAddOperation(operation, map);
-                                    y.share.canvas.set(EdgeAddOperation.TYPE, operation.toJSON());
-                                    deferred.resolve(id);
-
-                                }
-                            }
-                            else {
-                                propagateEdgeAddOperation(operation, map);
-                                y.share.canvas.set(EdgeAddOperation.TYPE, operation.toJSON());
-                                deferred.resolve(id);
-                            }
-                        });
-                        map.set('id', id);
-                        map.set('source', source);
-                        map.set('target', target);
-
-                    })
-                } else {
-                    propagateEdgeAddOperation(operation);
-                    deferred.resolve(id);
-                }
-                if(!historyFlag)
+                if (!historyFlag)
                     HistoryManager.add(operation);
-                return deferred.promise();
+                return id;
             };
 
             this.scrollNodeIntoView = function(nodeId) {
@@ -1474,19 +1194,13 @@ define([
              */
             this.registerCallbacks = function() {
                 _iwcw.registerOnDataReceivedCallback(localToolSelectCallback);
-                _iwcw.registerOnDataReceivedCallback(localExportDataCallback);
                 _iwcw.registerOnDataReceivedCallback(localExportMetaModelCallback);
                 _iwcw.registerOnDataReceivedCallback(localExportLogicalGuidanceRepresentationCallback);
                 _iwcw.registerOnDataReceivedCallback(localExportImageCallback);
                 _iwcw.registerOnDataReceivedCallback(localShowGuidanceBoxCallback);
-
-
                 _iwcw.registerOnDataReceivedCallback(localRevokeSharedActivityOperationCallback);
                 _iwcw.registerOnDataReceivedCallback(localMoveCanvasOperation);
                 _iwcw.registerOnDataReceivedCallback(localGuidanceStrategyOperationCallback);
-
-                _iwcw.registerOnDataReceivedCallback(CvgCallback);
-                _iwcw.registerOnDataReceivedCallback(DeleteCvgCallback);
             };
 
             /**
@@ -1494,49 +1208,14 @@ define([
              */
             this.unregisterCallbacks = function() {
                 _iwcw.unregisterOnDataReceivedCallback(localToolSelectCallback);
-                _iwcw.unregisterOnDataReceivedCallback(localExportDataCallback);
                 _iwcw.unregisterOnDataReceivedCallback(localExportMetaModelCallback);
                 _iwcw.unregisterOnDataReceivedCallback(localExportLogicalGuidanceRepresentationCallback);
                 _iwcw.unregisterOnDataReceivedCallback(localExportImageCallback);
                 _iwcw.unregisterOnDataReceivedCallback(localShowGuidanceBoxCallback);
-
-                _iwcw.unregisterOnDataReceivedCallback(CvgCallback);
-                _iwcw.unregisterOnDataReceivedCallback(DeleteCvgCallback);
-
                 _iwcw.unregisterOnLocalDataReceivedCallback(localRevokeSharedActivityOperationCallback);
                 _iwcw.unregisterOnLocalDataReceivedCallback(localMoveCanvasOperation);
                 _iwcw.unregisterOnLocalDataReceivedCallback(localGuidanceStrategyOperationCallback);
-
             };
-
-            /**
-             * visualizes the results of a CVG operation.
-             * CVG is computed on the attribute widget
-             * @param {operations.non_ot.PerformCvgOperation} operation
-             * @constructor
-             */
-            function CvgCallback(operation) {
-                if (operation instanceof PerformCvgOperation) {
-                    require(['canvas_widget/ClosedViewGeneration'], function(CVG) {
-                        CVG(that, operation.getJSON());
-                    });
-                }
-            }
-
-            /**
-             * Deletes the result of a CVG result on the canvas
-             * @param {operation.non_ot.DeleteCvgOperation} operation
-             * @constructor
-             */
-            function DeleteCvgCallback(operation) {
-                if (operation instanceof DeleteCvgOperation) {
-                    var deleteList = operation.getDeleteList();
-                    for (var i = 0; i < deleteList.length; i++) {
-                        var node = EntityManager.findNode(deleteList[i]);
-                        node.triggerDeletion();
-                    }
-                }
-            }
 
             init();
 
@@ -1578,8 +1257,8 @@ define([
                                 y.share.activity.set(ActivityOperation.TYPE, activityOperation);
                                 break;
                             }
-                            case 'triggerSave':{
-                                if(event.value === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
+                            case 'triggerSave': {
+                                if (event.value === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
                                     $('#save').click();
                                 break;
                             }
@@ -1589,7 +1268,6 @@ define([
 
                 y.share.select.observe(function(event) {
                     if (event.name !== y.db.userId) {
-
                         var userInfo = y.share.userList.get(y.share.users.get(event.name));
                         if (event.oldValue != null) {
                             var unselectedEntity = EntityManager.find(event.oldValue);
@@ -1607,28 +1285,44 @@ define([
                     }
                 });
 
-                y.share.nodes.observe(function(event){
+                y.share.nodes.observe(function(event) {
                     switch (event.type) {
                         case 'delete':
-                        {
-                            var node = EntityManager.findNode(event.name);
-                            if(node)
-                                node.remoteNodeDeleteCallback(new NodeDeleteOperation(event.name));
-                            break;
-                        }
+                            {
+                                var node = EntityManager.findNode(event.name);
+                                if (node)
+                                    node.remoteNodeDeleteCallback(new NodeDeleteOperation(event.name));
+                                break;
+                            }/*
+                        case 'add': {
+                            var yUserId = event.object.map[event.name][0];
+                            if (yUserId === y.db.userId) return;
+                            //var map = event.value;
+                            var map = y.share.nodes.get(event.name);
+                            map.observe(function(nodeEvent) {
+                                switch (nodeEvent.name) {
+                                    case 'jabberId': {
+                                        remoteNodeAddCallback(new NodeAddOperation(map.get('id'), map.get('type'), map.get('left'), map.get('top'), map.get('width'), map.get('height'), map.get('zIndex'), null, null, null, nodeEvent.value));
+                                        break;
+                                    }
+                                    default: {
+                                        break;
+                                    }
+                                }
+                            });
+                        }*/
                     }
-
                 });
 
-                y.share.edges.observe(function(event){
+                y.share.edges.observe(function(event) {
                     switch (event.type) {
                         case 'delete':
-                        {
-                            var edge = EntityManager.findEdge(event.name);
-                            if(edge)
-                                edge.remoteEdgeDeleteCallback(new EdgeDeleteOperation(event.name));
-                            break;
-                        }
+                            {
+                                var edge = EntityManager.findEdge(event.name);
+                                if (edge)
+                                    edge.remoteEdgeDeleteCallback(new EdgeDeleteOperation(event.name));
+                                break;
+                            }
                     }
 
                 });

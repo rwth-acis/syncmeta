@@ -29,6 +29,7 @@ define(['jquery', 'yjs'], function($) {
                 views: 'Map',
                 data: 'Map',
                 activity:'Map',
+                globalId: 'Array',
                 text:"Text"
             },
             type:["Text","Map"],

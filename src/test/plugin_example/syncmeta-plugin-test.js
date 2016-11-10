@@ -38,9 +38,11 @@ $(function() {
             //from the onNodeAdd callback setAttribute doesn't work  well because the ytext is created asynchonously on the canvas- and attribute widget
             //so we are only sure that the node is created but not the ytext attributes which belongs to the node
             // maybe a little timeout would help
-            syncmeta.setAttributeValue(event.id, 'isvisible', false);
-            syncmeta.setAttributeValue(event.id, 'Title', 'onNodeAdd');
-
+            syncmeta.setAttributeValue(event.id, 'id', 'Set with on Node add');
+            syncmeta.setAttributeValue(event.id, 'title', 'also set with onNodeAdd');
+            syncmeta.setAttributeValue(event.id, 'bool', false);
+            syncmeta.setAttributeValue(event.id, 'enum', 'second');
+            syncmeta.setAttributeValue(event.id, 'number', 7353);
 
 
         });
@@ -62,8 +64,8 @@ $(function() {
 
         syncmeta.onNodeSelect(function(nodeId) {
             addToList('Node select: ' + nodeId);
-            syncmeta.setAttributeValue(nodeId, nodeId+'[title]', 'OnSelect');
-            syncmeta.setAttributeValue(nodeId, 'isvisible', true);
+            /*syncmeta.setAttributeValue(nodeId, nodeId+'[title]', 'OnSelect');
+            syncmeta.setAttributeValue(nodeId, 'isvisible', true);*/
                 
         });
 

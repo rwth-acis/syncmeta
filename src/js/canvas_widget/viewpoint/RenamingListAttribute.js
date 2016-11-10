@@ -7,7 +7,7 @@ define([
     'operations/ot/AttributeAddOperation',
     'operations/ot/AttributeDeleteOperation',
     'canvas_widget/AbstractAttribute',
-    'canvas_widget/RenamingAttribute',
+    'canvas_widget/viewpoint/RenamingAttribute',
     'text!templates/canvas_widget/list_attribute.html'
 ],/** @lends RenamingListAttribute */function($,jsPlumb,_,IWCW,Util,AttributeAddOperation,AttributeDeleteOperation,AbstractAttribute,RenamingAttribute,listHtml) {
 
@@ -63,47 +63,20 @@ define([
          * @param {operations.ot.AttributeAddOperation} operation
          * @param {Y.Text} ytext
          */
-        var processAttributeAddOperation = function(operation,ytext){
-            var _ymap = that.getRootSubjectEntity().getYMap(), attribute;
-            if(_ymap) {
-                if(ytext){
-                    attribute = new RenamingAttribute(operation.getEntityId(), "Attribute", that, _options);
-                    that.addAttribute(attribute);
-                    attribute.getRef().setValue(operation.getData());
-                    attribute.getKey().setValue(operation.getData());
-                    attribute.registerYMap(ytext);
-                    _$node.find(".list").append(attribute.get$node());
-                }
-                else {
-                    _ymap.get(operation.getEntityId() + '[val]').then(function (yt) {
-                        var attribute = new RenamingAttribute(operation.getEntityId(), "Attribute", that, _options);
-                        that.addAttribute(attribute);
-                        attribute.getRef().setValue(operation.getData());
-                        attribute.getKey().setValue(operation.getData());
-                        attribute.registerYMap(yt);
-                        _$node.find(".list").append(attribute.get$node());
-                    });
-                }
-            }
-            else {
-                attribute = new RenamingAttribute(operation.getEntityId(),"Attribute",that,_options);
-                that.addAttribute(attribute);
-                _$node.find(".list").append(attribute.get$node());
-            }
+        var processAttributeAddOperation = function(operation){
+            var attribute = new RenamingAttribute(operation.getEntityId(), "Attribute", that, _options);
+            that.addAttribute(attribute);
+            attribute.registerYMap();
+            _$node.find(".list").append(attribute.get$node());
+            return attribute;
         };
 
         /**
          * Propagate an Attribute Add Operation to the remote users and the local widgets
          * @param {operations.ot.AttributeAddOperation} operation
          */
-        var propagateAttributeAddOperation = function(operation){
-            var ymap = that.getRootSubjectEntity().getYMap();
-            if(ymap){
-                ymap.set(operation.getEntityId()+"[val]", Y.Text).then(function(ytext){
-                    processAttributeAddOperation(operation, ytext);
-                    ymap.set(AttributeAddOperation.TYPE, operation.toJSON());
-                });
-            }
+         this.propagateAttributeAddOperation = function (operation) {
+            return processAttributeAddOperation(operation);
         };
 
         /**
@@ -123,12 +96,9 @@ define([
          * @param {operations.ot.AttributeDeleteOperation} operation
          */
         var propagateAttributeDeleteOperation = function(operation){
+            processAttributeDeleteOperation(operation);
             var ymap = that.getRootSubjectEntity().getYMap();
-            if(ymap){
-                ymap.delete(operation.getEntityId());
-                ymap.delete(operation.getEntityId()+'[val]');
-                ymap.set(AttributeDeleteOperation.TYPE, operation.toJSON());
-            }
+            ymap.delete(operation.getEntityId()+'[val]');
         };
 
         /**
@@ -137,8 +107,8 @@ define([
          */
         var remoteAttributeAddCallback = function(operation){
             if(operation instanceof AttributeAddOperation && operation.getRootSubjectEntityId() === that.getRootSubjectEntity().getEntityId() && operation.getSubjectEntityId() === that.getEntityId()){
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
                 processAttributeAddOperation(operation);
+                subjectEntity.showAttributes();
             }
         };
 
@@ -148,7 +118,6 @@ define([
          */
         var remoteAttributeDeleteCallback = function(operation){
             if(operation instanceof AttributeDeleteOperation && operation.getRootSubjectEntityId() === that.getRootSubjectEntity().getEntityId() && operation.getSubjectEntityId() === that.getEntityId()){
-                _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE,operation.getOTOperation());
                 processAttributeDeleteOperation(operation);
             }
         };
@@ -289,43 +258,31 @@ define([
         if(_iwcw){
             that.registerCallbacks();
         }
-        this.registerYMap = function(disableYText){
+        this.registerYMap = function(){
             var ymap = that.getRootSubjectEntity().getYMap();
-            function registerAttribute(attr, ymap,disableYText) {
-                if(!disableYText) {
-                    ymap.get(attr.getKey().getEntityId()).then(function (ytext) {
-                        attr.registerYMap(ytext, disableYText);
-                    });
-                }
-                else
-                    attr.registerYMap(null);
-
-            }
-
             var attrs = that.getAttributes();
             for (var key in attrs) {
                 if (attrs.hasOwnProperty(key)) {
                     var attr = attrs[key];
-                    registerAttribute(attr, ymap,disableYText);
+                    attr.registerYMap();
                 }
             }
 
-
             ymap.observe(function(event){
-                var operation;
-                var data = that.getRootSubjectEntity().getYMap().get(event.name);
-                var jabberId = y.share.users.get(event.object.map[event.name][0]);
-                if(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] !== jabberId) {
-                    switch (event.name) {
-                        case AttributeAddOperation.TYPE:
-                        {
-                            operation = new AttributeAddOperation(data.entityId, data.subjectEntityId, data.rootSubjectEntityId, data.type, data.data);
+                if (event.name.indexOf('[val]') != -1) {
+                    var operation;
+                    var data = event.value;
+                    switch (event.type) {
+                        case 'add': {
+                            var yUserId = event.object.map[event.name][0];
+                            if (yUserId === y.db.userId) return;
+                            operation = new AttributeAddOperation(event.name.replace(/\[\w*\]/g, ''), that.getEntityId(), that.getRootSubjectEntity().getEntityId(), that.constructor.name);
                             remoteAttributeAddCallback(operation);
+
                             break;
                         }
-                        case AttributeDeleteOperation.TYPE:
-                        {
-                            operation = new AttributeDeleteOperation(data.entityId, data.subjectEntityId, data.rootSubjectEntityId, data.type);
+                        case 'delete': {
+                            operation = new AttributeDeleteOperation(event.name.replace(/\[\w*\]/g, ''), that.getEntityId(), that.getRootSubjectEntity().getEntityId(), that.constructor.name);
                             remoteAttributeDeleteCallback(operation);
                             break;
                         }

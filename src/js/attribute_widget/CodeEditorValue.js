@@ -54,33 +54,14 @@
                 _value = event.object.toString();
                 propagateValueChange(CONFIG.OPERATION.TYPE.INSERT, _value, 0);
             })
-        }
+        };
 
-        var createYText = function () {
-            var deferred = $.Deferred();
-            try {
-                y.share.nodes.get(rootSubjectEntity.getEntityId()).then(function (ymap) {
-                    var promise = ymap.get(subjectEntity.getEntityId());
-                    if (promise) {
-                        promise.then(function (ytext) {
-                            bindAceEditor(ytext);
-                            deferred.resolve();
-                        });
-                    }
-                    else {
-                        ymap.set(subjectEntity.getEntityId(), Y.Text).then(function (ytext) {
-                            bindAceEditor(ytext);
-                            deferred.resolve();
-                        });
-                    }
-
-
-                });
+        var createYText = function() {
+            var ymap = y.share.nodes.get(rootSubjectEntity.getEntityId());
+            if (ymap) {
+                var ytext = ymap.get(subjectEntity.getEntityId());
+                bindAceEditor(ytext);
             }
-            catch (e) {
-                deferred.reject();
-            }
-            return deferred.promise();
         };
 
         _$node.click(function () {
@@ -105,12 +86,8 @@
                 editor.setTheme("ace/theme/github");
                 editor.getSession().setMode("ace/mode/svg");
 
-                createYText().done(function () {
-                    $('#loading').hide();
-                }).fail(function () {
-                    alert('Failed to create and bind code editor to yjs');
-                });
-
+                createYText();
+                $('#loading').hide();
             }
 
         });
@@ -178,58 +155,6 @@
             this.setValue(json.value);
         };
 
-        /**
-         * Register inter widget communication callbacks
-         */
-        this.registerCallbacks = function () {
-            //iwc.registerOnDataReceivedCallback(bindYTextCallback);
-
-        };
-
-        /**
-         * Unregister inter widget communication callbacks
-         */
-        this.unregisterCallbacks = function () {
-            //iwc.unregisterOnDataReceivedCallback(bindYTextCallback);
-
-        };
-
-        function bindYTextCallback(operation) {
-            if (operation instanceof BindYTextOperation && operation.getEntityId() === that.getEntityId()) {
-                setTimeout(function () {
-                    var entityId = that.getRootSubjectEntity().getEntityId();
-                    if (y.share.nodes.opContents.hasOwnProperty(entityId)) {
-                        y.share.nodes.get(entityId).then(function (ymap) {
-                            ymap.get(operation.getEntityId()).then(function (ytext) {
-                                ytext.bind(_$node[0]);
-
-                                if (that.getValue() !== ytext.toString()) {
-                                    if (ytext.toString().length > 0)
-                                        ytext.delete(0, ytext.toString().length);
-                                    ytext.insert(0, that.getValue());
-                                }
-
-                            })
-                        })
-                    }
-                    else if (y.share.edges.opContents.hasOwnProperty(entityId)) {
-                        y.share.edges.get(entityId).then(function (ymap) {
-                            ymap.get(operation.getEntityId()).then(function (ytext) {
-                                ytext.bind(_$node[0]);
-
-                                if (that.getValue() !== ytext.toString()) {
-                                    if (ytext.toString().length > 0)
-                                        ytext.delete(0, ytext.toString().length);
-                                    ytext.insert(0, that.getValue());
-                                }
-
-                            })
-                        })
-                    }
-                }, 300);
-            }
-        }
-
         var initData = function (ytext, data) {
             if (data) {
                 if (data !== ytext.toString()) {
@@ -246,22 +171,12 @@
                 }
             }
         };
-        this.registerYType = function (ytext) {
-            _ytext = ytext;
-            _ytext.observe(function (event) {
-                _value = event.object.toString();
-                propagateValueChange(CONFIG.OPERATION.TYPE.INSERT, _value, 0);
-            })
-            initData(ytext);
-        };
 
         this.getYText = function () {
             return _ytext;
         };
 
-        if (iwc) {
-            that.registerCallbacks();
-        }
+       
         //init();
     }
 

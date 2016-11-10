@@ -119,10 +119,9 @@ define([
             _value.setValueFromJSON(json.value);
         };
 
-
-        this.registerYMap = function(ytext){
-            if(ytext)
-                _key.registerYType(ytext);
+        
+        this.registerYMap = function(){
+            _key.registerYType();
             _value.registerYType();
         };
 

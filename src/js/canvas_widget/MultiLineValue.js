@@ -7,9 +7,8 @@ define([
     'canvas_widget/AbstractAttribute',
     'operations/ot/ValueChangeOperation',
     'operations/non_ot/ActivityOperation',
-    'operations/non_ot/BindYTextOperation',
     'text!templates/canvas_widget/multi_line_value.html'
-],/** @lends MultiLineValue */function ($, jsPlumb, _, IWCW, AbstractValue, AbstractAttribute, ValueChangeOperation, ActivityOperation, BindYTextOperation, multiLineValueHtml) {
+],/** @lends MultiLineValue */function ($, jsPlumb, _, IWCW, AbstractValue, AbstractAttribute, ValueChangeOperation, ActivityOperation, multiLineValueHtml) {
 
     MultiLineValue.prototype = new AbstractValue();
     MultiLineValue.prototype.constructor = MultiLineValue;
@@ -28,6 +27,12 @@ define([
         var that = this;
 
         var _ytext = null;
+        if(window.hasOwnProperty("y")){
+            if(rootSubjectEntity.getYMap().keys().indexOf(id) != -1)
+                _ytext = rootSubjectEntity.getYMap().get(id);
+            else
+                _ytext = rootSubjectEntity.getYMap().set(id, Y.Text);
+        }
 
         AbstractValue.call(this, id, name, subjectEntity, rootSubjectEntity);
 
@@ -187,8 +192,7 @@ define([
             //_iwcw.unregisterOnHistoryChangedCallback(historyValueChangeCallback);
         };
 
-        this.registerYType = function (ytext) {
-            _ytext = ytext;
+        this.registerYType = function () {
             _ytext.bind(_$node[0]);
 
             if (that.getValue() !== _ytext.toString()) {
@@ -196,8 +200,6 @@ define([
                     _ytext.delete(0, _ytext.toString().length - 1);
                 _ytext.insert(0, that.getValue());
             }
-
-            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new BindYTextOperation(that.getEntityId()).toNonOTOperation());
 
             _ytext.observe(function (event) {
                 _value = _ytext.toString();

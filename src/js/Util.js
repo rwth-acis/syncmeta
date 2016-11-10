@@ -120,6 +120,17 @@ define(['jqueryui'],/** @lends Util */function($) {
      return s.split("").reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a},0);
      };*/
 
+     Util.getGlobalId = function(user, y){
+         var mbox = user.user[CONFIG.NS.PERSON.MBOX];
+         var users = y.share.globalId.toArray();
+         var id = users.indexOf(mbox);
+         if (id === -1) {
+             y.share.globalId.push([mbox]);
+             id = y.share.globalId.length;
+         }
+         return id;
+     }
+
     /**
      * Get the current state of the primary document store
      * @returns {*}

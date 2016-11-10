@@ -15,16 +15,12 @@ define([
     'operations/non_ot/EntitySelectOperation',
     'operations/non_ot/ToolSelectOperation',
     'operations/non_ot/ActivityOperation',
-    'operations/non_ot/ExportDataOperation',
     'operations/non_ot/ExportMetaModelOperation',
     'operations/non_ot/ExportLogicalGuidanceRepresentationOperation',
     'operations/non_ot/ExportImageOperation',
-    'operations/non_ot/JoinOperation',
     'operations/non_ot/SetViewTypesOperation',
     'operations/non_ot/InitModelTypesOperation',
     'operations/non_ot/ViewInitOperation',
-    'operations/non_ot/PerformCvgOperation',
-    'operations/non_ot/DeleteCvgOperation',
     'operations/non_ot/DeleteViewOperation',
     'operations/non_ot/SetModelAttributeNodeOperation',
     'operations/non_ot/UpdateViewListOperation',
@@ -33,10 +29,8 @@ define([
     'operations/non_ot/RevokeSharedActivityOperation',
     'operations/non_ot/CollaborateInActivityOperation',
     'operations/non_ot/MoveCanvasOperation',
-    'operations/non_ot/GuidanceStrategyOperation',
-    'operations/non_ot/BindYTextOperation'
-
-],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeMoveZOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,NonOTOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportDataOperation,ExportMetaModelOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,JoinOperation,SetViewTypesOperation,InitModelTypesOperation,ViewInitOperation,PerformCvgOperation,DeleteCvgOperation,DeleteViewOperation,SetModelAttributeNodeOperation,UpdateViewListOperation,ShowGuidanceBoxOperation, CanvasViewChangeOperation, RevokeSharedActivityOperation,CollaborateInActivityOperation, MoveCanvasOperation, GuidanceStrategyOperation,BindYTextOperation) {
+    'operations/non_ot/GuidanceStrategyOperation'
+],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeMoveZOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,NonOTOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportMetaModelOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,SetViewTypesOperation,InitModelTypesOperation,ViewInitOperation,DeleteViewOperation,SetModelAttributeNodeOperation,UpdateViewListOperation,ShowGuidanceBoxOperation, CanvasViewChangeOperation, RevokeSharedActivityOperation,CollaborateInActivityOperation, MoveCanvasOperation, GuidanceStrategyOperation) {
 
     /**
      * OperationFactory
@@ -50,7 +44,7 @@ define([
              * Creates an Operation from a received NonOTOperation
              * @memberof operations.OperationFactory#
              * @param operation
-             * @returns {ActivityOperation|EntitySelectOperation|ToolSelectOperation|ExportDataOperation}
+             * @returns {ActivityOperation|EntitySelectOperation|ToolSelectOperation}
              */
             createOperationFromNonOTOperation: function(operation){
                 var type = operation.getType(),
@@ -75,9 +69,6 @@ define([
                     case ActivityOperation.TYPE:
                         resOperation = new ActivityOperation(data.type,data.entityId,data.sender,data.text,data.data);
                         break;
-                    case ExportDataOperation.TYPE:
-                        resOperation = new ExportDataOperation(data.requestingComponent,data.data);
-                        break;
                     case ExportMetaModelOperation.TYPE:
                         resOperation = new ExportMetaModelOperation(data.requestingComponent,data.data);
                         break;
@@ -87,9 +78,6 @@ define([
                     case ExportImageOperation.TYPE:
                         resOperation = new ExportImageOperation(data.requestingComponent,data.data);
                         break;
-                    case JoinOperation.TYPE:
-                        resOperation = new JoinOperation(data.user,data.done,data.sender,data.data);
-                        break;
                     case SetViewTypesOperation.TYPE:
                         resOperation = new SetViewTypesOperation(data.flag);
                         break;
@@ -98,12 +86,6 @@ define([
                         break;
                     case ViewInitOperation.TYPE:
                         resOperation = new ViewInitOperation(data.data, data.viewpoint);
-                        break;
-                    case PerformCvgOperation.TYPE:
-                        resOperation = new PerformCvgOperation(data.json, data.map);
-                        break;
-                    case DeleteCvgOperation.TYPE:
-                        resOperation = new DeleteCvgOperation(data.deleteList);
                         break;
                     case DeleteViewOperation.TYPE:
                         resOperation = new DeleteViewOperation(data.viewId);
@@ -132,10 +114,6 @@ define([
                         break;
                     case GuidanceStrategyOperation.TYPE:
                         resOperation = new GuidanceStrategyOperation(data.data);
-                        resOperation.setNonOTOperation(operation);
-                        break;
-                    case BindYTextOperation.TYPE:
-                        resOperation = new BindYTextOperation(data.entityId,data.data);
                         resOperation.setNonOTOperation(operation);
                         break;
                     default:

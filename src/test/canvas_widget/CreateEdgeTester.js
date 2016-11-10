@@ -1,16 +1,17 @@
 define(['chai','canvas_widget/EntityManager'], function(chai, EntityManager){
 
-    function CreateEdgeTester(title, canvas, args, callback){
+    function CreateEdgeTester(title, canvas, args, testOnly, callback){
         var expect = chai.expect;
         var p_type = args[0];
-
+        var p_id = args[4];
         describe('CANVAS - ' + title, function(){
             var edgeId = null;
-            before(function(done){
-                canvas.createEdge.apply(this,args).done(function(id){
-                    edgeId = id;
-                    done()
-                });
+            before(function (done) {
+                if(!testOnly)
+                edgeId = canvas.createEdge.apply(this, args);
+                else 
+                edgeId = p_id;
+                done();
             });
             it(p_type + ':'+ edgeId + ' should be in EntityManager',function(){
                 expect(EntityManager.findEdge(edgeId)).to.be.not.null;

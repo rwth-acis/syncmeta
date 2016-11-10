@@ -36,13 +36,17 @@
 </div>
 
 <div id="vlsDiv" class="seperating_box">
-<h5> Import/Export/Delete a <strong>VLS</strong> (Model Editor only) </h5>
+<h5> Import/Export/Delete a <strong>Metamodel</strong> (Model Editor only)</h5>
 <button id="import-meta-model" title="Refresh the role space to apply the new VLS.">Import</button>
 <button id="export-meta-model" title="Download the VLS as JSON">Export </button>
-<button id="delete-meta-model" title="Refresh the role space.">Delete</button>
-<button id="import-guidance-model">Import Guidancemodel</button>
-<button id="export-guidance-model">Export Guidancemodel</button>
-<button id="delete-guidance-model">Delete Guidancemodel</button>
+<button id="delete-meta-model" title="Refresh the role space and delete the current modeling language">Delete</button>
+</div>
+
+<div id="guidanceDiv" class="seperating_box">
+<h5> Import/Export/Delete a <strong>Guidancemodel</strong> (Model Editor only) </h5>
+<button id="import-guidance-model">Import</button>
+<button id="export-guidance-model">Export</button>
+<button id="delete-guidance-model">Delete</button>
 </div>
 <p class="hint">After import or delete refresh the canvas widget to apply the new model. After deleting and importing a new VLS refresh the whole role space.</p>
 <p id="feedback"></p>

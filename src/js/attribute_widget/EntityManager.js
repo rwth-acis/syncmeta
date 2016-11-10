@@ -12,10 +12,10 @@ define(['lodash',
 		'attribute_widget/GeneralisationEdge',
 		'attribute_widget/BiDirAssociationEdge',
 		'attribute_widget/UniDirAssociationEdge',
-		'attribute_widget/ViewObjectNode',
-		'attribute_widget/ViewRelationshipNode',
-        'attribute_widget/ViewNode',
-        'attribute_widget/ViewEdge'
+		'attribute_widget/viewpoint/ViewObjectNode',
+		'attribute_widget/viewpoint/ViewRelationshipNode',
+        'attribute_widget/view/ViewNode',
+        'attribute_widget/view/ViewEdge'
 ], /** @lends EntityManager */
 	function (_, Node, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, ModelAttributesNode, Edge, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNode, ViewRelationshipNode, ViewNode, ViewEdge) {
 
@@ -122,14 +122,7 @@ define(['lodash',
         var viewEdgeTypes = {};
 
 		var _edges = {};
-		/**
-		 * Deleted nodes and edges
-		 * @type {{nodes: {}, edges: {}}}
-		 */
-		var _recycleBin = {
-			nodes : {},
-			edges : {}
-		};
+		
 		//noinspection JSUnusedGlobalSymbols
 		return {
 			/**
@@ -147,12 +140,7 @@ define(['lodash',
 			//TODO: switch id and type
 			createNode : function (type, id, left, top, width, height,json) {
 				var node;
-				if (_recycleBin.nodes.hasOwnProperty(id)) {
-					node = _recycleBin.nodes[id];
-					delete _recycleBin.nodes[id];
-					_nodes[id] = node;
-					return node;
-				}
+				
                 if (viewNodeTypes.hasOwnProperty(type) && viewId) {
                     node = viewNodeTypes[type](id, left, top, width, height, json);
                 }
@@ -193,7 +181,6 @@ define(['lodash',
 			 */
 			deleteNode : function (id) {
 				if (_nodes.hasOwnProperty(id)) {
-					_recycleBin.nodes[id] = _nodes[id];
 					delete _nodes[id];
 				}
 			},
@@ -255,12 +242,7 @@ define(['lodash',
 			//TODO: switch id and type
 			createEdge : function (type, id, source, target) {
 				var edge;
-				if (_recycleBin.edges.hasOwnProperty(id)) {
-					edge = _recycleBin.edges[id];
-					delete _recycleBin.edges[id];
-					_edges[id] = edge;
-					return edge;
-				}
+                
                 if(viewId && viewEdgeTypes.hasOwnProperty(type)){
                     edge = viewEdgeTypes[type](id, source, target);
                 }
@@ -292,7 +274,6 @@ define(['lodash',
 			 */
 			deleteEdge : function (id) {
 				if (_edges.hasOwnProperty(id)) {
-					_recycleBin.edges[id] = _edges[id];
 					delete _edges[id];
 				}
 			},
@@ -500,15 +481,6 @@ define(['lodash',
                 this.initEdgeTypes(vls);
             },
             /**
-             * clears the recycle bin
-             */
-            clearBin :function(){
-                _recycleBin = {
-                    nodes : {},
-                    edges : {}
-                };
-            },
-            /**
              * Get the node type by its name
              * @param type the name of the node type
              * @returns {object}
@@ -596,39 +568,6 @@ define(['lodash',
             },
             getLayer : function(){
                 return _layer;
-            },
-            //CVG map functions
-            addToMap : function(view, key, value){
-                if(!_map.hasOwnProperty(view))
-                    _map[view] ={};
-                _map[view][key] = value;
-            },
-            lookupMap:function(view,key){
-                return _map[view][key];
-            },
-            doesMapExists:function(view,key){
-                return _map.hasOwnProperty(view) ? _map[view].hasOwnProperty(key) : false;
-            },
-            addToMapIfNotExists:function(view,key,value){
-                if(!_map.hasOwnProperty(view))
-                    _map[view] ={};
-                if(!_map[view].hasOwnProperty(key))
-                    _map[view][key] = value;
-            },
-            deleteFromMap:function(view,value){
-                if(_map.hasOwnProperty(view)){
-                    for(var key in _map[view]){
-                        if(_map[view].hasOwnProperty(key)){
-                            if(_map[view][key] === value)
-                                delete _map[view][key];
-                        }
-                    }
-                }
-            },
-            deleteViewFromMap:function(viewId){
-                if(_map.hasOwnProperty(viewId))
-                    delete _map[viewId];
-
             },
             init:function(mm){
                 metamodel = mm;

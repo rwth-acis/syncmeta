@@ -62,17 +62,20 @@
          * @param value Char that was inserted or deleted
          * @param position Position the change took place
          */
-        var propagateValueChange = function(type,value,position){
-            var operation = new ValueChangeOperation(that.getEntityId(),value,type,position);
+        var propagateValueChange = function (type, value, position) {
+            var operation = new ValueChangeOperation(that.getEntityId(), value, type, position, _iwc.getUser()[CONFIG.NS.PERSON.JABBERID]);
             propagateValueChangeOperation(operation);
         };
         /**
          * Propagate a Value Change Operation to the remote users and the local widgets
          * @param {operations.ot.ValueChangeOperation} operation
          */
-        var propagateValueChangeOperation = function(operation){
+        var propagateValueChangeOperation = function (operation) {
             processValueChangeOperation(operation);
-            _iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.getOTOperation());
+            var ymap = y.share.nodes.get(rootSubjectEntity.getEntityId());
+            if (ymap) {
+                ymap.set(that.getEntityId(), operation.toJSON());
+            }
         };
 
         /**

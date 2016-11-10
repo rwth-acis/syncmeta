@@ -87,7 +87,6 @@ define([
                                 break;
                             case "string":
                                 attrObj[attributeId] = new SingleValueAttribute(id+"["+attribute.key.toLowerCase()+"]",attribute.key,that);
-                                //TODO: Add option to set identifier attribute in metamodel
                                 if(attribute.key.toLowerCase() === 'label' || attribute.key.toLowerCase() === 'title' || attribute.key.toLowerCase() === "name"){
                                     that.setLabel(attrObj[attributeId]);
                                 }
@@ -165,15 +164,17 @@ define([
                 });
                 //local user wants to create an edge selected from the pallette
                 jsPlumb.bind('beforeDrop', function (info) {
-                    var allConn = jsPlumb.getConnections({target:info.targetId, source:info.sourceId});
+
+                    var allConn = jsPlumb.getConnections({ target: info.targetId, source: info.sourceId });
                     var length = allConn.length;
                     //if true => Detected a duplicated edge
                     if (length > 0)
                         return false; //don't create the edge
                     else return true; //no duplicate create the edge
                 });
-                if (jsplumb)
-                    jsPlumb.addEndpoint(_$node, jsplumb.endpoint, { uuid: id + "_ept1" });
+
+                if(jsplumb)
+                    jsPlumb.addEndpoint(_$node, jsplumb.endpoint, {uuid: id + "_ept1"});
             };
 
             /**
@@ -228,29 +229,20 @@ define([
 
             init();
 
-            this.registerYMap = function(map,disableYText){
-                AbstractNode.prototype.registerYMap.call(this,map);
-                var registerYText = function(ymap, val){
-                    ymap.get(val.getEntityId()).then(function(ytext){
-                        val.registerYType(ytext);
-                    });
-                };
+            this.registerYMap = function(){
+                AbstractNode.prototype.registerYMap.call(this);
+                var labelAttr = that.getLabel();
+                if(labelAttr)
+                    labelAttr.registerYType();
                 var attr = that.getAttributes();
                 for(var key in attr){
                     if(attr.hasOwnProperty(key)){
                         var val = attr[key].getValue();
                         if(val.hasOwnProperty('registerYType')){
-                            if(val.constructor.name !== "Value" ){
-                                val.registerYType();
-                            }
-                            else{
-                                if(!disableYText)
-                                    registerYText(map,val);
-                            }
+                            val.registerYType();  
                         }
                     }
                 }
-
             }
         }
 

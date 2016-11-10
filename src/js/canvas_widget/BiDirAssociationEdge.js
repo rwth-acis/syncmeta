@@ -11,8 +11,8 @@ define([
     'canvas_widget/EnumNode',
     'canvas_widget/NodeShapeNode',
     'canvas_widget/EdgeShapeNode',
-    'canvas_widget/ViewObjectNode',
-    'canvas_widget/ViewRelationshipNode'
+    'canvas_widget/viewpoint/ViewObjectNode',
+    'canvas_widget/viewpoint/ViewRelationshipNode'
 ],/** @lends BiDirAssociationEdge */function(require,$,jsPlumb,_,AbstractEdge,AbstractClassNode,ObjectNode,RelationshipNode,RelationshipGroupNode,EnumNode,NodeShapeNode,EdgeShapeNode, ViewObjectNode,ViewRelationshipNode) {
 
     BiDirAssociationEdge.TYPE = "Bi-Dir-Association";
@@ -114,21 +114,6 @@ define([
 
         this.get$overlay().find('.type').addClass('segmented');
 
-        /*this.setContextMenuItems({
-            sep0: "---------",
-            convertToUniDirAssociationEdge: {
-                name: "Convert to Uni-Dir. Assoc. Edge",
-                callback: function(){
-                    var canvas = that.getCanvas();
-
-                    //noinspection JSAccessibilityCheck
-                    canvas.createEdge(require('canvas_widget/UniDirAssociationEdge').TYPE,that.getSource().getEntityId(),that.getTarget().getEntityId(),that.toJSON());
-
-                    that.triggerDeletion();
-
-                }
-            }
-        });*/
     }
 
     return BiDirAssociationEdge;

@@ -2,7 +2,7 @@ define([
     'jqueryui',
     'jsplumb',
     'canvas_widget/NodeTool',
-    'canvas_widget/ViewRelationshipNode'
+    'canvas_widget/viewpoint/ViewRelationshipNode'
 ],/** @lends ViewRelationshipNodeTool */function($,jsPlumb,NodeTool,ViewRelationshipNode) {
 
     ViewRelationshipNodeTool.prototype = new NodeTool();
