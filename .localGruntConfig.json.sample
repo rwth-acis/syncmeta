@@ -1,8 +1,12 @@
 {
-    "baseUrl_use_for_commit" : "https://rwth-acis.github.io/syncmeta/html",
-    "baseUrl" : "http://localhost:8081",
-    "roleSandboxUrl":"http://127.0.0.1:8073",
-    "yjsConnectorUrl" : "http://localhost:1234",
-    "yjsConnectorUrl_use_for_commit":"http://yjs.dbis.rwth-aachen.de:5079"
+    "deployLocally":true,
+    "baseUrl" : "https://rwth-acis.github.io/syncmeta/syncmeta6",
+    "baseUrl_local" : "http://localhost:8081",
+    "roleSandboxUrl_local":"http://127.0.0.1:8073",
+    "roleSandboxUrl":"http://role-sandbox.eu",
+    "yjsConnector":"websockets-client",
+    "yjsDatabaseAdapter":"memory",
+    "yjsConnectorUrl_local" : "http://localhost:1234",
+    "yjsConnectorUrl":"http://yjs.dbis.rwth-aachen.de:5081"
     
 }
