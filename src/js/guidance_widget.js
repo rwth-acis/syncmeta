@@ -24,7 +24,7 @@ requirejs([
     'guidance_widget/CollaborationStrategy',
     'promise!Space',
     'bootstrap'
-], function($, _, require, IWCW, yjsSync, EntitySelectOperation, GuidanceStrategyOperation, NodeAddOperation, EdgeAddOperation, NodeDeleteOperation, EdgeDeleteOperation, ValueChangeOperation, NodeMoveOperation, NodeMoveZOperation, NodeResizeOperation, NoStrategy, AvoidConflictsStrategy, CollaborationStrategy, LogicalGuidanceRepresentation, Space) {
+], function($, _, require, IWCW, yjsSync, EntitySelectOperation, GuidanceStrategyOperation, NodeAddOperation, EdgeAddOperation, NodeDeleteOperation, EdgeDeleteOperation, ValueChangeOperation, NodeMoveOperation, NodeMoveZOperation, NodeResizeOperation, NoStrategy, AvoidConflictsStrategy, CollaborationStrategy, Space) {
     yjsSync().done(function(y) {
         window.y = y;
         console.info('GUIDANCE: Yjs Initialized successfully');
@@ -54,7 +54,7 @@ requirejs([
             initStrategy(index);
         });
         var getOriginType = function(operation) {
-            if (operation.getViewId() !== null)
+            if (operation.getViewId())
                 return operation.getOriginType();
             else
                 return operation.getType();

@@ -1,4 +1,5 @@
-requirejs(['jqueryui', 'lodash', 'lib/yjs-sync', 'canvas_widget/GenerateViewpointModel'], function ($, _, yjsSync, GenerateViewpointModel) {
+requirejs(['jqueryui', 'lodash', 'lib/yjs-sync', 'canvas_widget/GenerateViewpointModel', 'canvas_widget/EntityManager','promise!Guidancemodel'],
+ function ($, _, yjsSync, GenerateViewpointModel, EntityManager, guidance) {
     $(function () {
         yjsSync().done(function (y) {
             console.info('DEBUG: Yjs successfully initialized');
@@ -130,7 +131,10 @@ requirejs(['jqueryui', 'lodash', 'lib/yjs-sync', 'canvas_widget/GenerateViewpoin
                             }
                         }
                     }
-                    y.share.data.set('model', data);
+                    if(guidance.isGuidanceEditor())
+                        y.share.data.set('guidancemodel', data);
+                    else
+                        y.share.data.set('model', data);
                     for(var key in data.nodes){
                         if (data.nodes.hasOwnProperty(key)) {
                             var entity = data.nodes[key];
@@ -182,7 +186,8 @@ requirejs(['jqueryui', 'lodash', 'lib/yjs-sync', 'canvas_widget/GenerateViewpoin
                 getFileContent().then(function (data) {
                     $exportGuidancemodel.prop('disabled', false);
                     $deleteGuidancemodel.prop('disabled', false);
-                    y.share.data.set('guidancemodel', data);
+                    EntityManager.setGuidance(guidance);
+                    y.share.data.set('guidancemodel', EntityManager.generateLogicalGuidanceRepresentation(data));
                     feedback("Done!");
                 });
             });

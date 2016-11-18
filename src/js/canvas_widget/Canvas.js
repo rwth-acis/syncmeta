@@ -770,7 +770,7 @@ define([
                     ghostEdgeGuidance = new GhostEdgeGuidance(that, source, target);
                     _ghostEdges.push(ghostEdgeGuidance);
                 }
-                if (EntityManager.getViewId() !== null && EntityManager.getLayer() === CONFIG.LAYER.MODEL) {
+                if (EntityManager.getViewId() && EntityManager.getLayer() === CONFIG.LAYER.MODEL) {
                     ghostEdgeGuidance.addEdge(EntityManager.getViewEdgeType(relationshipType), source, target);
                 }
                 else {

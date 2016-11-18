@@ -265,7 +265,6 @@ define(['Util', 'iwcw', 'guidance_widget/GuidanceStrategy', 'guidance_widget/Act
             switch(node.type){
                 case "CREATE_OBJECT_ACTION":
                     return "Create a new " + node.objectType;
-                    break;
                 default:
                     break;
 

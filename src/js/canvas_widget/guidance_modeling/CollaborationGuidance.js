@@ -7,10 +7,7 @@ define([
 ],function(IWCW, $,_, CollaborateInActivityOperation, selectToolGuidanceHtml) {
     function CollaborationGuidance(id, label, activityId, objectId, canvas){
         var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
-        //var _id = id;
-        //var _label = label;
         var _canvas = canvas;
-        //var _activityId = activityId;
         var _$node = $(_.template(selectToolGuidanceHtml, {text: label, icon:"users"}));
 
         _$node.click(function(){
