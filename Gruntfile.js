@@ -8,10 +8,11 @@ module.exports = function(grunt) {
     grunt.initConfig({
 
         pkg: grunt.file.readJSON('package.json'),
-
-        baseUrl: localConfig.baseUrl,
-        roleSandboxUrl: localConfig.roleSandboxUrl,
-        yjsConnectorUrl: localConfig.yjsConnectorUrl,
+        baseUrl: localConfig.deployLocally ? localConfig.baseUrl_local : localConfig.baseUrl,
+        roleSandboxUrl: localConfig.deployLocally ? localConfig.roleSandboxUrl_local : localConfig.roleSandboxUrl,
+        yjsConnectorUrl: localConfig.deployLocally ? localConfig.yjsConnectorUrl_local : localConfig.yjsConnectorUrl,
+        yjsConnector : localConfig.yjsConnector,
+        yjsDatabaseAdapter: localConfig.yjsDatabaseAdapter,
         bowerdir: grunt.file.readJSON('.bowerrc')['directory'],
         distdir: 'html',
         srcdir:  'src',

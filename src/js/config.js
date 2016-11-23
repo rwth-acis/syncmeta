@@ -70,7 +70,6 @@ var require = {
         classjs: "lib/Class",
         graphlib: "lib/vendor/graphlib.core.min",
         bootstrap: "lib/vendor/bootstrap/dropdown.prefixed",
-        yjs: "lib/vendor/yjs/y",
         ace: "lib/vendor/ace/ace"
     }
 };

@@ -33,18 +33,14 @@ define([
             _propertyInput.getValue().setValue(_entityAttribute.getValue().getValue());
             
             if (_entityAttribute.getRootSubjectEntity().constructor.name === 'Edge') {
-                y.share.edges.get(entity.getEntityId()).then(function(ymap) {
-                    ymap.get(entity.getEntityId() + "[" + propertyName.toLowerCase() + "]").then(function(ytext) {
-                        ytext.bind(_propertyInput.getValue().get$node()[0]);
-                    })
-                })
+                var ymap =y.share.edges.get(entity.getEntityId());
+                var ytext = ymap.get(entity.getEntityId() + "[" + propertyName.toLowerCase() + "]");
+                ytext.bind(_propertyInput.getValue().get$node()[0]);
             }
             else {
-                y.share.nodes.get(entity.getEntityId()).then(function(ymap) {
-                    ymap.get(entity.getEntityId() + "[" + propertyName.toLowerCase() + "]").then(function(ytext) {
-                        ytext.bind(_propertyInput.getValue().get$node()[0]);
-                    })
-                })
+                var ymap  = y.share.nodes.get(entity.getEntityId());
+                var ytext = ymap.get(entity.getEntityId() + "[" + propertyName.toLowerCase() + "]");
+                ytext.bind(_propertyInput.getValue().get$node()[0]);
             }
 
             /* _entityAttribute.get$node().find(".val").bind("input", function(){

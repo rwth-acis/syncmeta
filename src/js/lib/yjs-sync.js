@@ -1,4 +1,4 @@
-define(['jquery', 'yjs'], function($) {
+define(['jquery'], function($) {
     return function(spaceTitle) {
 
         var deferred = $.Deferred();
@@ -9,12 +9,13 @@ define(['jquery', 'yjs'], function($) {
                 spaceTitle = spaceTitle.replace(/[#|\\?]\S*/g, '');
             }
         }
+        
         Y({
             db: {
-                name: 'memory' // store the shared data in memory
+                name: "<%= grunt.config('yjsDatabaseAdapter') %>" // store the shared data in memory
             },
             connector: {
-                name: 'websockets-client', // use the websockets connector
+                name: "<%= grunt.config('yjsConnector') %>", // use the websockets connector
                 room: spaceTitle,
                 url:"<%= grunt.config('yjsConnectorUrl') %>"
             },

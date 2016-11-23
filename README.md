@@ -19,14 +19,14 @@ For explanations, presentations, demos and links to modeling sandboxes and other
 
 ## Library Documentation
 ### Widgets
-  * [Canvas widget](https://rwth-acis.github.io/syncmeta/html/widget.xml) The model canvas
-  * [Palette widget](https://rwth-acis.github.io/syncmeta/html/palette.xml) Palette of elements that can be put on the canvas widget
-  * [Activity widget](https://rwth-acis.github.io/syncmeta/html/activity.xml) Widget that gives awareness of activities of other users
-  * [Attribute widget](https://rwth-acis.github.io/syncmeta/html/attribute.xml) Edit model attributes
-  * [Export widget](https://rwth-acis.github.io/syncmeta/html/export.xml) Export the design to JSON.
-  * [IMSLD Export widget](https://rwth-acis.github.io/syncmeta/html/imsld_export.xml) Export the design as ZIP (in the IMSLD format) or link the design to [ILDE](http://ilde.upf.edu/)
-  * [Instancelist widget](https://rwth-acis.github.io/syncmeta/html/instances.xml) List all generated instances.
-  * [Generate Instance widget](https://rwth-acis.github.io/syncmeta/html/generated_instances.xml) Generate a new SyncMeta instance.
+  * [Canvas widget](https://rwth-acis.github.io/syncmeta/syncmeta6/widget.xml) The model canvas
+  * [Palette widget](https://rwth-acis.github.io/syncmeta/syncmeta6/palette.xml) Palette of elements that can be put on the canvas widget
+  * [Activity widget](https://rwth-acis.github.io/syncmeta/syncmeta6/activity.xml) Widget that gives awareness of activities of other users
+  * [Attribute widget](https://rwth-acis.github.io/syncmeta/syncmeta6/attribute.xml) Edit model attributes
+  * [Export widget](https://rwth-acis.github.io/syncmeta/syncmeta6/export.xml) Export the design to JSON.
+  * [IMSLD Export widget](https://rwth-acis.github.io/syncmeta/syncmeta6/imsld_export.xml) Export the design as ZIP (in the IMSLD format) or link the design to [ILDE](http://ilde.upf.edu/)
+  * [Instancelist widget](https://rwth-acis.github.io/syncmeta/syncmeta6/instances.xml) List all generated instances.
+  * [Generate Instance widget](https://rwth-acis.github.io/syncmeta/syncmeta6/generated_instances.xml) Generate a new SyncMeta instance.
   
 ### Deploy
 

@@ -1221,8 +1221,12 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
 
                 return guidanceMetamodel;
             },
-            generateLogicalGuidanceRepresentation: function(){
+            generateLogicalGuidanceRepresentation: function(m){
                 var graph = new graphlib.Graph();
+                var model;
+                if(m)
+                    model = m;
+                else 
                 var model = y.share.data.get('guidancemodel');
                 if(!model) 
                     return null;
@@ -2007,9 +2011,11 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
             getRelations: function(){
                 return relations;
             },
+            setGuidance: function(guidance){
+                guidancemodel = guidance;
+            },
             init:function(mm, gm){
                 metamodel = mm;
-                guidancemodel  = gm;
                 if (metamodel && metamodel.hasOwnProperty("nodes")) {
                     nodeTypes = _initNodeTypes(metamodel);
                     _layer = CONFIG.LAYER.MODEL;

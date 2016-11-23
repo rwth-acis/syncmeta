@@ -76,7 +76,8 @@ requirejs([
             metamodel = y.share.data.get('metamodel');
             model = y.share.data.get('model');
         }
-        EntityManager.init(metamodel, guidancemodel);
+        EntityManager.init(metamodel);
+        EntityManager.setGuidance(guidancemodel);
         window.y = y;
         InitMainWidget(metamodel, model);
     }).fail(function () {
@@ -328,7 +329,8 @@ requirejs([
             //Add View Types
             canvas.addTool(ViewObjectNode.TYPE, new ViewObjectNodeTool());
             canvas.addTool(ViewRelationshipNode.TYPE, new ViewRelationshipNodeTool());
-
+            
+            
             //Init control elements for views
             $("#btnCreateViewpoint").click(function () {
                 ShowViewCreateMenu();
@@ -615,6 +617,12 @@ requirejs([
         if (model) {
             var report = JSONtoGraph(model, canvas);
             console.info(report);
+            //initialize guidance model's if we are in metamodeling layer
+            if(EntityManager.getLayer() === CONFIG.LAYER.META){
+                y.share.data.set('guidancemetamodel', EntityManager.generateGuidanceMetamodel());
+                y.share.data.set('metamodelpreview', EntityManager.generateMetaModel());
+            }
+
         } else {
             if (canvas.getModelAttributesNode() === null) {
                 var modelAttributesNode = EntityManager.createModelAttributesNode();
@@ -626,6 +634,9 @@ requirejs([
         //local user joins
         y.share.join.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], false);
         ViewManager.GetViewpointList();
+       
+          
+
     }
 
 });

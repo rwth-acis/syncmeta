@@ -29,7 +29,7 @@
 </div>
 
 <div id="modelDiv" class="seperating_box">
-<h5> Import/Export/Delete a <strong>(Meta-)Model</strong> </h5>
+<h5> Import/Export/Delete a <strong>(Meta- or Guidance-)Model</strong> </h5>
 <button id="import-model" title="Import a model to the canvas">Import</button>
 <button id="export-model" title="export the model as JSON">Export</button>
 <button id="delete-model" title="delete the model">Delete</button>
@@ -43,7 +43,7 @@
 </div>
 
 <div id="guidanceDiv" class="seperating_box">
-<h5> Import/Export/Delete a <strong>Guidancemodel</strong> (Model Editor only) </h5>
+<h5> Import/Export/Delete a <strong>Logical Guidancemodel</strong> (Model Editor only) </h5>
 <button id="import-guidance-model">Import</button>
 <button id="export-guidance-model">Export</button>
 <button id="delete-guidance-model">Delete</button>
