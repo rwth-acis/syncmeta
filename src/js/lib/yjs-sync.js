@@ -1,4 +1,4 @@
-define(['jquery', 'yjs'], function($) {
+define(['jquery'], function($) {
     return function(spaceTitle) {
 
         var deferred = $.Deferred();
@@ -9,6 +9,7 @@ define(['jquery', 'yjs'], function($) {
                 spaceTitle = spaceTitle.replace(/[#|\\?]\S*/g, '');
             }
         }
+        
         Y({
             db: {
                 name: "<%= grunt.config('yjsDatabaseAdapter') %>" // store the shared data in memory
