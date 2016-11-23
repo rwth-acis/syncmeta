@@ -159,6 +159,9 @@ define(['jqueryui'],/** @lends Util */function($) {
         return deferred.promise();
     };
 
+    Util.getSpaceTitle = function(url){
+        return url.substring(url.lastIndexOf('spaces/')).replace(/spaces|#\S*|\?\S*|\//g, '');
+    }
     return Util;
 
 });
