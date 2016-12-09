@@ -1227,7 +1227,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                 if(m)
                     model = m;
                 else 
-                var model = y.share.data.get('guidancemodel');
+                    model = y.share.data.get('guidancemodel');
                 if(!model) 
                     return null;
                 var nodes = model.nodes;
@@ -2014,7 +2014,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
             setGuidance: function(guidance){
                 guidancemodel = guidance;
             },
-            init:function(mm, gm){
+            init:function(mm){
                 metamodel = mm;
                 if (metamodel && metamodel.hasOwnProperty("nodes")) {
                     nodeTypes = _initNodeTypes(metamodel);
