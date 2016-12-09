@@ -24,9 +24,14 @@ define([
      * @constructor
      */
     function NodeMoveActivity(entityId,sender,text,nodeType){
-        var that = this;
-
         Activity.call(this,entityId,sender,text);
+
+        this.toJSON = function(){
+            var json = Activity.prototype.toJSON.call(this);
+            json.type = NodeMoveActivity.TYPE;
+            json.nodeType = nodeType;
+            return json;
+        }
     }
 
     return NodeMoveActivity;

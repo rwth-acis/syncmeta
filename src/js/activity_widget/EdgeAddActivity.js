@@ -157,10 +157,27 @@ define([
             iwc.unregisterOnDataReceivedCallback(targetNodeLabelChangeCallback);
         };
         
+        /**
+         * activity to json
+         */
+        this.toJSON = function(){
+            var json = Activity.prototype.toJSON.call(this);
+            json.type = EdgeAddActivity.TYPE;
+            json.edgeType = _edgeType;
+            json.edgeLabel = _edgeLabel;
+            json.sourceNodeLabel = _sourceNodeLabel;
+            json.sourceNodeId = _sourceNodeId;
+            json.sourceNodeType = _sourceNodeType;
+            json.targetNodeLabel = _targetNodeLabel;
+            json.targetNodeId = _targetNodeId;
+            json.targetNodeType = _targetNodeType;
+            return json;
+        }
+
         if(iwc){
             this.registerCallbacks();
         }
-
+        
     }
 
     return EdgeAddActivity;

@@ -39,6 +39,13 @@ define([
         var _text = text;
 
         /**
+         * the timestamp of the activity
+         * @type {number}
+         * @private
+         */
+        var _timestamp = Date.now();
+
+        /**
          * Activity box template
          * @type {function}
          * @private
@@ -96,6 +103,13 @@ define([
         };
 
         /**
+         * Get the timestamp of the activity
+         */
+        this.getTimestampe = function(){
+            return _timestamp;
+        }
+
+        /**
          * Get the text of this activity which is displayed in the activity widget
          * @returns {string}
          */
@@ -134,6 +148,24 @@ define([
             this.get$node().show();
         };
 
+        /**
+         * activity to JSON
+         */
+        this._toJSON = function(){
+            return {
+                entityId: entityId,
+                sender: sender,
+                text: text,
+                timestamp:_timestamp
+            }
+        }
+
+    }
+    /**
+     * activity to JSON
+     */
+    Activity.prototype.toJSON = function(){
+        return this._toJSON();
     }
 
     return Activity;

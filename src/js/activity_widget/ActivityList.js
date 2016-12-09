@@ -55,7 +55,7 @@ define([
          * @type {Array}
          */
         var activityList = [];
-
+        
         /**
          * Add an user to the user list
          * @param {string} jabberId
@@ -105,8 +105,26 @@ define([
          */
         this.addActivity = function(activity){
             activityList.unshift(activity);
-            _$activityListNode.prepend(activity.get$node().show("clip",{},200));
+            _$activityListNode.prepend(activity.get$node().show("clip",{},200));            
         };
+        
+        this.addActivityToLog = function(activity){
+            //add activity to yjs log, also start the log if not already 
+            var jsonActivityList = y.share.activity.get('log');
+            if(!jsonActivityList)
+                y.share.activity.set('log', that.toJSON());
+            else {
+                if(activity instanceof ValueChangeActivity && jsonActivityList.length > 0){
+                    var first = jsonActivityList[0];
+                    if(first.type=== ValueChangeActivity.TYPE)
+                        first.text = activity.text;
+                }
+                else
+                    jsonActivityList.unshift(activity.toJSON());
+                y.share.activity.set('log', jsonActivityList);    
+            }
+
+        }
 
         /**
          * Get first activity from the list
@@ -118,6 +136,17 @@ define([
             }
             return null;
         };
+
+        /**
+         * Activity List to JSON
+         */
+        this.toJSON = function(){
+            var list = [];
+            _.forEach(activityList, function(activity){
+                list.unshift(activity.toJSON());
+            });
+            return list;
+        }
 
         /**
          * Callback for received Operations
@@ -135,26 +164,32 @@ define([
                     case NodeAddActivity.TYPE:
                         activity = new NodeAddActivity(operation.getEntityId(),operation.getSender(),operation.getText(),data.nodeType);
                         that.addActivity(activity);
+                        that.addActivityToLog(activity);
                         break;
                     case EdgeAddActivity.TYPE:
                         activity = new EdgeAddActivity(operation.getEntityId(),operation.getSender(),operation.getText(),data.nodeType,data.sourceNodeLabel,data.sourceNodeId,data.sourceNodeType,data.targetNodeLabel,data.targetNodeId,data.targetNodeType);
                         that.addActivity(activity);
+                        that.addActivityToLog(activity);
                         break;
                     case NodeDeleteActivity.TYPE:
                         activity = new NodeDeleteActivity(operation.getEntityId(),operation.getSender(),operation.getText());
                         that.addActivity(activity);
+                        that.addActivityToLog(activity);
                         break;
                     case EdgeDeleteActivity.TYPE:
                         activity = new EdgeDeleteActivity(operation.getEntityId(),operation.getSender(),operation.getText());
                         that.addActivity(activity);
+                        that.addActivityToLog(activity);
                         break;
                     case NodeMoveActivity.TYPE:
                         activity = new NodeMoveActivity(operation.getEntityId(),operation.getSender(),operation.getText(),data.nodeType);
                         that.addActivity(activity);
+                        that.addActivityToLog(activity);                        
                         break;
                     case NodeResizeActivity.TYPE:
                         activity = new NodeResizeActivity(operation.getEntityId(),operation.getSender(),operation.getText(),data.nodeType);
                         that.addActivity(activity);
+                        that.addActivityToLog(activity);
                         break;
                     case ValueChangeActivity.TYPE:
                         activity = new ValueChangeActivity(operation.getEntityId(),operation.getSender(),operation.getText(),data.value,data.subjectEntityName,data.rootSubjectEntityType,data.rootSubjectEntityId);
@@ -164,10 +199,12 @@ define([
                         } else {
                             that.addActivity(activity);
                         }
+                        that.addActivityToLog(activity);
                         break;
                     case EditorGenerateActivity.TYPE:
                         activity = new EditorGenerateActivity(operation.getEntityId(),operation.getSender(),operation.getText());
                         that.addActivity(activity);
+                        that.addActivityToLog(activity);
                         break;
                     case UserJoinActivity.TYPE:
                         that.addUser(operation.getSender());
@@ -212,7 +249,51 @@ define([
                 }
             }
         };
+        this.init = function () {
+            //initialize the activity list with activities of previous session
+            var list = y.share.activity.get('log');
+            if (list) {
+                _.forEachRight(list, function (activity) {
+                    switch (activity.type) {
+                        case NodeAddActivity.TYPE: {
+                            that.addActivity(new NodeAddActivity(activity.entityId, activity.sender, activity.text, activity.nodeType));
+                            break;
+                        }
+                        case NodeDeleteActivity.TYPE: {
+                            that.addActivity(new NodeDeleteActivity(activity.entityId, activity.sender, activity.text));
+                            break;
+                        }
+                        case EdgeAddActivity.TYPE: {
+                            that.addActivity(new EdgeAddActivity(activity.entityId, activity.sender, activity.text, activity.nodeType, activity.sourceNodeLabel, activity.sourceNodeId, activity.sourceNodeType, activity.targetNodeLabel, activity.targetNodeId, activity.targetNodeType));
+                            break;
+                        }
+                        case EdgeDeleteActivity.TYPE: {
+                            that.addActivity(new EdgeDeleteActivity(activity.entityId, activity.sender, activity.text));
+                            break;
+                        }
+                        case NodeMoveActivity.TYPE: {
+                            that.addActivity(new NodeMoveActivity(activity.entityId, activity.sender, activity.text, activity.nodeType));
+                            break;
+                        }
+                        case NodeResizeActivity.TYPE: {
+                            that.addActivity(new NodeResizeActivity(activity.entityId, activity.sender, activity.text, activity.nodeType));
+                            break;
+                        }
+                        case ValueChangeActivity.TYPE: {
+                            that.addActivity(new ValueChangeActivity(activity.entityId, activity.sender, activity.text, activity.value, activity.subjectEntityName, activity.rootSubjectEntityType, activity.rootSubjectEntityId));
+                            break;
+                        }
+                        case EditorGenerateActivity.TYPE: {
+                            that.addActivity(new EditorGenerateActivity(activity.entityId, activity.sender, activity.text));
+                            break;
+                        }
+                    }
+                });
+            }
+        }
         if(y){
+          
+
             y.share.activity.observe(function(event){
                 operationCallback(new ActivityOperation(event.value.type, event.value.entityId, event.value.sender, event.value.text, event.value.data));
             });

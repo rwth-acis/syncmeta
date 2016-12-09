@@ -90,6 +90,19 @@ define([
         this.getRootSubjectEntityId = function(){
             return _rootSubjectEntityId;
         };
+
+        /**
+         * activity to json
+         */
+        this.toJSON = function(){
+            var json = Activity.prototype.toJSON.call(this);
+            json.value = _value;
+            json.type = ValueChangeActivity.TYPE;
+            json.subjectEntityName = _subjectEntityName;
+            json.rootSubjectEntityId = _rootSubjectEntityId;
+            json.rootSubjectEntityType = _rootSubjectEntityType;
+            return json;
+        }
     }
     return ValueChangeActivity;
 

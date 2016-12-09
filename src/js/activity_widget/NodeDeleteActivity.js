@@ -15,6 +15,12 @@ define(['activity_widget/Activity'],/** @lends NodeDeleteActivity */function(Act
      */
     function NodeDeleteActivity(entityId,sender,text){
         Activity.call(this,entityId,sender,text);
+
+        this.toJSON = function(){
+            var json = Activity.prototype.toJSON.call(this);
+            json.type = NodeDeleteActivity.TYPE;
+            return json;
+        }
     }
 
     return NodeDeleteActivity;

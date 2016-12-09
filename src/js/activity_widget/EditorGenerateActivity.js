@@ -15,6 +15,12 @@ define(['activity_widget/Activity'],/** @lends EditorGenerateActivity */function
      */
     function EditorGenerateActivity(entityId,sender,text){
         Activity.call(this,entityId,sender,text);
+
+        this.toJSON = function(){
+            var json = Activity.prototype.toJSON.call(this);
+            json.type = EditorGenerateActivity.TYPE;
+            return json;
+        }
     }
 
     return EditorGenerateActivity;
