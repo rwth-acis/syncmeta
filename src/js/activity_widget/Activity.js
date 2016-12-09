@@ -53,6 +53,22 @@ define([
         var _activityBoxTemplate = _.template(activityBoxHtml);
 
         /**
+         * Convert timestamp to a nice string to display in the activity list
+         */
+        var getDateTimeAsString = function () {
+            var d = new Date(_timestamp);
+            var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            var year = d.getFullYear();
+            var month = months[d.getMonth()];
+            var date = d.getDate();
+            var hour = d.getHours();
+            var min = d.getMinutes();
+            var sec = d.getSeconds();
+            var dateTime = date + '.' + month + '.' + year + '/' + hour + ':' + min + ':' + sec;
+            return dateTime;
+        }
+
+        /**
          * jQuery object of DOM node representing the activity
          * @type {jQuery}
          * @private
@@ -63,17 +79,20 @@ define([
          color: space.members.hasOwnProperty(_sender) ? Util.getColor(space.members[_sender].globalId) : "#000000"
          })).hide();*/
         var _$node;
-        if(_sender)
+        if (_sender)
             _$node = $(_activityBoxTemplate({
                 heading: y.share.userList.get(_sender) ? y.share.userList.get(_sender)[CONFIG.NS.PERSON.TITLE] : "",
                 text: _text,
-                color: y.share.userList.get(_sender) ? Util.getColor(y.share.userList.get(_sender).globalId) : "#000000"
+                color: y.share.userList.get(_sender) ? Util.getColor(y.share.userList.get(_sender).globalId) : "#000000",
+                timestamp: getDateTimeAsString()
             })).hide();
         else
             _$node = $(_activityBoxTemplate({
                 heading: "",
                 text: "",
-                color:"#000000"
+                color: "#000000",
+                timestamp: getDateTimeAsString()
+
             })).hide();
 
 
