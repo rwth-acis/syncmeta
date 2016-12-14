@@ -117,13 +117,12 @@ define([
                 if(activity instanceof ValueChangeActivity && jsonActivityList.length > 0){
                     var first = jsonActivityList[0];
                     if(first.type=== ValueChangeActivity.TYPE)
-                        first.text = activity.text;
+                        first.text = activity.getText();
                 }
                 else
                     jsonActivityList.unshift(activity.toJSON());
                 y.share.activity.set('log', jsonActivityList);    
             }
-
         }
 
         /**

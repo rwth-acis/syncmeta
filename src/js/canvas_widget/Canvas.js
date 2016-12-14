@@ -940,6 +940,8 @@ define([
             this.scrollEntityIntoView = function (entityId) {
                 if (!entityId)
                     return null;
+                if(entityId.indexOf('[') != -1 && entityId.indexOf(']') != -1)
+                    entityId = entityId.replace(/\[\w*\]/g,'');
                 var entity = EntityManager.findNode(entityId);
                 if (!entity) {
                     entity = EntityManager.findEdge(entityId);
