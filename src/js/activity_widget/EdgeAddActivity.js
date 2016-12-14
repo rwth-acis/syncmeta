@@ -1,12 +1,11 @@
 define([
     'jqueryui',
     'lodash',
-    'iwcw',
     'activity_widget/Activity',
     'activity_widget/ValueChangeActivity',
     'operations/ot/EdgeAddOperation',
     'operations/non_ot/ActivityOperation'
-],/** @lends EdgeAddActivity */function($,_,IWCW,Activity,ValueChangeActivity,EdgeAddOperation,ActivityOperation) {
+],/** @lends EdgeAddActivity */function($,_,Activity,ValueChangeActivity,EdgeAddOperation,ActivityOperation) {
 
     EdgeAddActivity.TYPE = "EdgeAddActivity";
 
@@ -89,73 +88,6 @@ define([
          * @private
          */
         var _edgeLabel = "";
-
-        /**
-         * Inter widget communication wrapper
-         * @type {Object}
-         */
-        var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ACTIVITY);
-
-        /**
-         * Callback for received Value Change Activity referring the edge label
-         * @param {operations.non_ot.ActivityOperation} operation
-         */
-        var edgeLabelChangeCallback = function (operation) {
-            if (operation instanceof ActivityOperation &&
-                operation.getType() === ValueChangeActivity.TYPE &&
-                that.getEntityId() + "[label]" === operation.getEntityId()) {
-
-                _edgeLabel = operation.getData().value;
-                that.setText(EdgeAddOperation.getOperationDescription(_edgeType, _edgeLabel, _sourceNodeType, _sourceNodeLabel, _targetNodeType, _targetNodeLabel));
-            }
-        };
-
-        /**
-         * Callback for received Value Change Activity referring the source node label
-         * @param {operations.non_ot.ActivityOperation} operation
-         */
-        var sourceNodeLabelChangeCallback = function(operation) {
-            if (operation instanceof ActivityOperation &&
-                operation.getType() === ValueChangeActivity.TYPE &&
-                _sourceNodeId + "[label]" === operation.getEntityId()) {
-
-                _sourceNodeLabel = operation.getData().value;
-                that.setText(EdgeAddOperation.getOperationDescription(_edgeType, _edgeLabel, _sourceNodeType, _sourceNodeLabel, _targetNodeType, _targetNodeLabel));
-            }
-
-        };
-
-        /**
-         * Callback for received Value Change Activity referring the target node label
-         * @param {operations.non_ot.ActivityOperation} operation
-         */
-        var targetNodeLabelChangeCallback = function(operation) {
-            if (operation instanceof ActivityOperation &&
-                operation.getType() === ValueChangeActivity.TYPE &&
-                _targetNodeId + "[label]" === operation.getEntityId()) {
-
-                _targetNodeLabel = operation.getData().value;
-                that.setText(EdgeAddOperation.getOperationDescription(_edgeType, _edgeLabel, _sourceNodeType, _sourceNodeLabel, _targetNodeType, _targetNodeLabel));
-            }
-        };
-
-        /**
-         * Register inter widget communication callbacks
-         */
-        this.registerCallbacks = function(){
-            iwc.registerOnDataReceivedCallback(edgeLabelChangeCallback);
-            iwc.registerOnDataReceivedCallback(sourceNodeLabelChangeCallback);
-            iwc.registerOnDataReceivedCallback(targetNodeLabelChangeCallback);
-        };
-
-        /**
-         * Unregister inter widget communication callbacks
-         */
-        this.unregisterCallbacks = function(){
-            iwc.unregisterOnDataReceivedCallback(edgeLabelChangeCallback);
-            iwc.unregisterOnDataReceivedCallback(sourceNodeLabelChangeCallback);
-            iwc.unregisterOnDataReceivedCallback(targetNodeLabelChangeCallback);
-        };
         
         /**
          * activity to json
@@ -173,13 +105,6 @@ define([
             json.targetNodeType = _targetNodeType;
             return json;
         }
-
-        if(iwc){
-            this.registerCallbacks();
-        }
-        
     }
-
     return EdgeAddActivity;
-
 });

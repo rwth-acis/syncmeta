@@ -1,10 +1,11 @@
 define([
     'jqueryui',
     'lodash',
+    'iwcw',
     'Util',
-    //'promise!Space',
+    'operations/non_ot/MoveCanvasOperation',
     'text!templates/activity_widget/activity_box.html'
-],/** @lends Activity */function($,_,Util/*,space*/,activityBoxHtml) {
+],/** @lends Activity */function($,_,IWCW, Util, MoveCanvasOperation, activityBoxHtml) {
 
     /**
      * An abstract user activity issued by one of the users
@@ -16,6 +17,13 @@ define([
      * @param {string} text Text of this activity which is displayed in the activity widget
      */
     function Activity(entityId,sender,text){
+        var that = this;
+        /**
+        * Inter widget communication wrapper
+        * @type {Object}
+        */
+        var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.ACTIVITY);
+
 
         /**
          * Entity id of the entity this activity works on
@@ -95,8 +103,10 @@ define([
 
             })).hide();
 
-
-
+           _$node.click(function(event){
+               var operation = new MoveCanvasOperation(that.getEntityId(), false);
+               _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN, operation.toNonOTOperation());
+           }); 
 
         /**
          * jQuery object of DOM node representing the activity text

@@ -166,7 +166,7 @@ module.exports = function(grunt) {
                             title: "User Activity",
                             description: "",
                             width: "120",
-                            height: "400"
+                            height: "420"
                         },
                         bodyPartial: '_activity_widget.tpl'
                     }
