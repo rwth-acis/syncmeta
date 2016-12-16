@@ -8,18 +8,31 @@ $(function() {
         }, 3000);
     }
     var nc = 0, ec = 0;
-
+    var nodeId1, nodeId2, edgeId1;
     /*It is also possible to use syncmeta.init(yInstance) if you are already connected to syncmeta yjs room.
     * This doesn't require the async promise call like above
     */
     syncmeta.connect().done(function() {
-        $('#modelAttr').click(function(){
-             syncmeta.setAttributeValue('modelAttributes', 'id', 'the empty model');
+        $('#modelAttr').click(function () {
+            syncmeta.setAttributeValue('modelAttributes', 'id', 'the empty model');
+            syncmeta.setAttributeValue('modelAttributes', 'Name', 'the empty model');
             syncmeta.setAttributeValue('modelAttributes', 'boolean', false);
             syncmeta.setAttributeValue('modelAttributes', 'version', 2);
             syncmeta.setAttributeValue('modelAttributes', 'enum', 'third');
-        });
-       
+                    });
+       $('#createTest').click(function(){
+            nodeId1 = syncmeta.createNode('Object', 4500, 4500, 200,200, 1);
+            nodeId2 = syncmeta.createNode('Relationship', 5000,4500,200,200,1);
+            setTimeout(function(){
+                edgeId1 = syncmeta.createEdge('Generalisation', nodeId1, nodeId2);
+            },100);
+            //syncmeta.setAttributeValue(nodeId1, "label", "Some cool stuff");
+       });
+       $('#deleteTest').click(function(){
+           syncmeta.deleteEdge(edgeId1);
+           syncmeta.deleteNode(nodeId1);
+           syncmeta.deleteNode(nodeId2);
+       });
         syncmeta.onNodeAdd(function(event) {
             addToList('Node created: ' + event.id);
 

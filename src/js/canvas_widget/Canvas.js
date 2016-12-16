@@ -1266,13 +1266,13 @@ define([
                         switch (event.name) {
                             case NodeAddOperation.TYPE:
                                 {
-                                    operation = new NodeAddOperation(data.id, data.type, data.left, data.top, data.width, data.height, data.zIndex, data.json, data.viewId, data.oType, jabberId);
+                                    operation = new NodeAddOperation(data.id, data.type, data.left, data.top, data.width, data.height, data.zIndex, data.json, data.viewId, data.oType, jabberId || data.jabberId);
                                     remoteNodeAddCallback(operation);
                                     break;
                                 }
                             case EdgeAddOperation.TYPE:
                                 {
-                                    operation = new EdgeAddOperation(data.id, data.type, data.source, data.target, data.json, data.viewId, data.oType, jabberId);
+                                    operation = new EdgeAddOperation(data.id, data.type, data.source, data.target, data.json, data.viewId, data.oType, jabberId || data.jabberId);
                                     remoteEdgeAddCallback(operation);
                                     break;
                                 }

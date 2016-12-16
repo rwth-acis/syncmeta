@@ -16,8 +16,7 @@ define([
     'activity_widget/User',
     'operations/non_ot/ActivityOperation',
     'operations/non_ot/EntitySelectOperation'
-    //'promise!Space'
-],/** @lends ActivityList */function($,_,Activity,NodeAddActivity,NodeDeleteActivity,NodeMoveActivity,NodeResizeActivity,EdgeAddActivity,EdgeDeleteActivity,EditorGenerateActivity,UserJoinActivity,ValueChangeActivity,ViewApplyActivity, ReloadWidgetActivity, User,ActivityOperation,EntitySelectOperation/*,space*/) {
+],/** @lends ActivityList */function($,_,Activity,NodeAddActivity,NodeDeleteActivity,NodeMoveActivity,NodeResizeActivity,EdgeAddActivity,EdgeDeleteActivity,EditorGenerateActivity,UserJoinActivity,ValueChangeActivity,ViewApplyActivity, ReloadWidgetActivity, User,ActivityOperation,EntitySelectOperation) {
 
     /**
      * List of user activities
@@ -29,7 +28,7 @@ define([
      */
     function ActivityList($userListNode,$activityListNode){
         var that = this;
-
+        
         /**
          * jQuery object of DOM node representing the user list
          * @type {jQuery}
