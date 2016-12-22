@@ -14,7 +14,7 @@ define(['activity_widget/Activity'],/** @lends ViewApplyActivity */function(Acti
      * @param {string} sender JabberId of the user who issued this activity
      * @constructor
      */
-    function ViewApplyActivity(viewId,sender){
+    function ViewApplyActivity(viewId,sender,timestamp){
 
         var _viewId= viewId;
 
@@ -25,7 +25,7 @@ define(['activity_widget/Activity'],/** @lends ViewApplyActivity */function(Acti
         this.getViewId = function(){
             return _viewId;
         };
-        Activity.call(this,null,sender);
+        Activity.call(this,null,sender,timestamp);
     }
 
     return ViewApplyActivity;

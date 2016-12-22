@@ -14,8 +14,8 @@ define(['activity_widget/Activity'],/** @lends UserJoinActivity */function(Activ
      * @param {string} text Text of this activity which is displayed in the activity widget
      * @constructor
      */
-    function ReloadWidgetActivity(entityId,sender,text){
-        Activity.call(this,entityId,sender,text);
+    function ReloadWidgetActivity(entityId,sender,text,timestamp){
+        Activity.call(this,entityId,sender,text,timestamp);
     }
 
     return ReloadWidgetActivity;

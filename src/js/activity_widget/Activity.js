@@ -16,8 +16,11 @@ define([
      * @param {string} sender JabberId of the user who issued this activity
      * @param {string} text Text of this activity which is displayed in the activity widget
      */
-    function Activity(entityId,sender,text){
+    function Activity(entityId,sender,text, timestamp){
         var that = this;
+
+        var isTrackable = false;
+
         /**
         * Inter widget communication wrapper
         * @type {Object}
@@ -51,7 +54,7 @@ define([
          * @type {number}
          * @private
          */
-        var _timestamp = Date.now();
+        var _timestamp = timestamp;
 
         /**
          * Activity box template
@@ -102,12 +105,7 @@ define([
                 timestamp: getDateTimeAsString()
 
             })).hide();
-
-           _$node.click(function(event){
-               var operation = new MoveCanvasOperation(that.getEntityId(), false);
-               _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN, operation.toNonOTOperation());
-           }); 
-
+       
         /**
          * jQuery object of DOM node representing the activity text
          * @type {jQuery}
@@ -163,6 +161,9 @@ define([
             return _$node;
         };
 
+        this.isTrackable = function(){
+            return isTrackable;
+        }
         /**
          * Hide the DOM node of this attribute
          */
@@ -188,6 +189,27 @@ define([
                 timestamp:_timestamp
             }
         }
+
+         this.trackable = function () {
+            _$node.click(function (event) {
+                var operation = new MoveCanvasOperation(that.getEntityId(), false);
+                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN, operation.toNonOTOperation());
+            });
+            _$node.hover(function (event) {
+                $(this).css('border', '5px solid #ccc');
+            }, function (event) {
+                $(this).css('border', '1px solid #ccc');
+            });
+            _$node.find('.timestamp').css('border-color', '#66fd5a');
+             isTrackable = true;
+        }
+
+        this.untrackable = function(){
+            _$node.off();
+            _$node.find('.timestamp').css('border-color', 'red');
+            isTrackable = false;
+        }
+       
 
     }
     /**

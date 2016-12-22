@@ -28,10 +28,10 @@ define([
      * @param {string} targetNodeId Entity id of the target node
      * @param {string} targetNodeType Type of the tarhet node
      */
-    function EdgeAddActivity(entityId,sender,text,edgeType,sourceNodeLabel,sourceNodeId,sourceNodeType,targetNodeLabel,targetNodeId,targetNodeType){
+    function EdgeAddActivity(entityId,sender,text, timestamp, edgeType,sourceNodeLabel,sourceNodeId,sourceNodeType,targetNodeLabel,targetNodeId,targetNodeType){
         var that = this;
         
-        Activity.call(this,entityId,sender,text);
+        Activity.call(this,entityId,sender,text, timestamp);
 
         /**
          * Type of created edge

@@ -23,8 +23,8 @@ define([
      * @param {string} nodeType Type of the created node
      * @constructor
      */
-    function NodeAddActivity(entityId,sender,text,nodeType){
-        Activity.call(this,entityId,sender,text);
+    function NodeAddActivity(entityId,sender,text,timestamp,nodeType){
+        Activity.call(this,entityId,sender,text,timestamp);
 
         this.toJSON = function(){
             var json = Activity.prototype.toJSON.call(this);
