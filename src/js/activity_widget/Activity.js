@@ -200,13 +200,13 @@ define([
             }, function (event) {
                 $(this).css('border', '1px solid #ccc');
             });
-            _$node.find('.timestamp').css('border-color', '#66fd5a');
+            _$node.find('.timestamp').css('border-color', 'rgb(112, 222, 148)');
              isTrackable = true;
         }
 
         this.untrackable = function(){
             _$node.off();
-            _$node.find('.timestamp').css('border-color', 'red');
+            _$node.find('.timestamp').css('border-color', '#ea7f7f');
             isTrackable = false;
         }
        
