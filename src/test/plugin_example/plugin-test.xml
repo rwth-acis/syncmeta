@@ -76,6 +76,7 @@
     <button id="modelAttr" >Set ModelAttribute values </button>
     <br>
     <button id="createTest" >Create some cool Stuff.:-) </button>
+    <button id="createTestModel" >Create some cool Stuff for ER.:-) </button>
     <button id="deleteTest" >Delete the cool Stuff.:-( </button>
 
     <ul id="eventList"></ul>

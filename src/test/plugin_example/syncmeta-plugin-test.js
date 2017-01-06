@@ -8,7 +8,7 @@ $(function() {
         }, 3000);
     }
     var nc = 0, ec = 0;
-    var nodeId1, nodeId2, edgeId1;
+    var nodeId1, nodeId2, nodeId3, nodeId4, edgeId1;
     /*It is also possible to use syncmeta.init(yInstance) if you are already connected to syncmeta yjs room.
     * This doesn't require the async promise call like above
     */
@@ -23,9 +23,23 @@ $(function() {
        $('#createTest').click(function(){
             nodeId1 = syncmeta.createNode('Object', 4500, 4500, 200,200, 1);
             nodeId2 = syncmeta.createNode('Relationship', 5000,4500,200,200,1);
-            setTimeout(function(){
-                edgeId1 = syncmeta.createEdge('Generalisation', nodeId1, nodeId2);
-            },100);
+            nodeId3 = syncmeta.createNode('Node Shape', 4500, 4100, 200, 300,1);
+            nodeId4 = syncmeta.createNode('Edge Shape', 5500, 4500, 200, 300);
+            edgeId1 = syncmeta.createEdge('Generalisation', nodeId1, nodeId2);
+            edgeId1 = syncmeta.createEdge('Bi-Dir-Association', nodeId1, nodeId3);
+            edgeId1 = syncmeta.createEdge('Uni-Dir-Association', nodeId2, nodeId4);
+           
+            //syncmeta.setAttributeValue(nodeId1, "label", "Some cool stuff");
+       });
+
+        $('#createTestModel').click(function(){
+            nodeId1 = syncmeta.createNode('Entity', 4500, 4500, 200,200, 1);
+            nodeId2 = syncmeta.createNode('Attribute', 5000,4500,200,200,1);
+            nodeId3 = syncmeta.createNode('Relationship', 4500, 4100, 200, 300,1);
+            edgeId1 = syncmeta.createEdge('AttrAssociation', nodeId1, nodeId2);
+            edgeId1 = syncmeta.createEdge('Associations', nodeId1, nodeId3);
+           
+           
             //syncmeta.setAttributeValue(nodeId1, "label", "Some cool stuff");
        });
        $('#deleteTest').click(function(){
@@ -51,11 +65,11 @@ $(function() {
             //from the onNodeAdd callback setAttribute doesn't work  well because the ytext is created asynchonously on the canvas- and attribute widget
             //so we are only sure that the node is created but not the ytext attributes which belongs to the node
             // maybe a little timeout would help
-            syncmeta.setAttributeValue(event.id, 'id', 'Set with on Node add');
-            syncmeta.setAttributeValue(event.id, 'title', 'also set with onNodeAdd');
-            syncmeta.setAttributeValue(event.id, 'bool', false);
-            syncmeta.setAttributeValue(event.id, 'enum', 'second');
-            syncmeta.setAttributeValue(event.id, 'number', 7353);
+            //syncmeta.setAttributeValue(event.id, 'id', 'Set with on Node add');
+            //syncmeta.setAttributeValue(event.id, 'title', 'also set with onNodeAdd');
+            //syncmeta.setAttributeValue(event.id, 'bool', false);
+            //syncmeta.setAttributeValue(event.id, 'enum', 'second');
+            //syncmeta.setAttributeValue(event.id, 'number', 7353);
 
 
         });
