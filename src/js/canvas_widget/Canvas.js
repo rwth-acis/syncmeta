@@ -383,7 +383,7 @@ define([
 
             var localMoveCanvasOperation = function(operation) {
                 if (operation instanceof MoveCanvasOperation) {
-                    that.scrollNodeIntoView(operation.getObjectId(), operation.getTransition());
+                    that.scrollEntityIntoView(operation.getObjectId());
                 }
             };
 
@@ -885,19 +885,14 @@ define([
                 return id;
             };
 
-            this.scrollNodeIntoView = function(nodeId) {
+            this.scrollNodeIntoView = function (node) {
+                if (!node)
+                    return;
+
                 var frameOffset = $("#canvas-frame").offset();
                 var frameWidth = $("#canvas-frame").width();
                 var frameHeight = $("#canvas-frame").height();
 
-                var node = null;
-                if (!nodeId)
-                    node = _selectedEntity;
-                else {
-                    node = EntityManager.findNode(nodeId);
-                }
-                if (!node)
-                    return;
                 var nodeOffset = node.get$node().offset();
                 var nodeWidth = node.get$node().width();
                 var nodeHeight = node.get$node().height();
@@ -907,16 +902,57 @@ define([
                 var canvasTop = _$node.position().top;
                 var canvasLeft = _$node.position().left;
 
-
                 _$node.animate({
                     top: "+=" + (frameHeight / 2 - scrollY - nodeHeight / 2),
                     left: "+=" + (frameWidth / 2 - scrollX - nodeWidth / 2)
                 }, 1000);
-                // _$node.css({
-                //     top: canvasTop + frameHeight / 2 - scrollY - nodeHeight / 2,
-                //     left: canvasLeft + frameWidth / 2 - scrollX - nodeWidth / 2
-                // });
             };
+
+            this.scrollEdgeIntoView = function (edge) {
+                if (!edge)
+                    return;
+                var frameOffset = $("#canvas-frame").offset();
+                var frameWidth = $("#canvas-frame").width();
+                var frameHeight = $("#canvas-frame").height();    
+
+                var srcNode = edge.getSource();
+                var targetNode = edge.getTarget();
+
+                var srcNodeOffset = srcNode.get$node().offset();
+                var srcNodeWidth = srcNode.get$node().width();
+                var srcNodeHeight = srcNode.get$node().height();
+
+                var targetNodeOffset = targetNode.get$node().offset();
+                var targetNodeWidth = targetNode.get$node().width();
+                var targetNodeHeight = targetNode.get$node().height();
+
+                var scrollX = (srcNodeOffset.left + targetNodeOffset.left)/2 - frameOffset.left;
+                var scrollY = (srcNodeOffset.top + targetNodeOffset.top)/2 - frameOffset.top;
+                var canvasTop = _$node.position().top;
+                var canvasLeft = _$node.position().left;
+
+                _$node.animate({
+                    top: "+=" + (frameHeight / 2 - scrollY - Math.max(srcNodeHeight, targetNodeHeight) / 2),
+                    left: "+=" + (frameWidth / 2 - scrollX - Math.max(srcNodeWidth, targetNodeWidth) / 2)
+                }, 1000);
+            };
+
+            this.scrollEntityIntoView = function (entityId) {
+                if (!entityId)
+                    return null;
+                if(entityId.indexOf('[') != -1 && entityId.indexOf(']') != -1)
+                    entityId = entityId.replace(/\[\w*\]/g,'');
+                var entity = EntityManager.findNode(entityId);
+                if (!entity) {
+                    entity = EntityManager.findEdge(entityId);
+                    if (!entity) 
+                        return null;
+                    else that.scrollEdgeIntoView(entity);
+                }
+                else
+                    that.scrollNodeIntoView(entity);
+                return true;
+            }
 
             /**
              * Convert current canvas content to PNG image file
@@ -1230,13 +1266,13 @@ define([
                         switch (event.name) {
                             case NodeAddOperation.TYPE:
                                 {
-                                    operation = new NodeAddOperation(data.id, data.type, data.left, data.top, data.width, data.height, data.zIndex, data.json, data.viewId, data.oType, jabberId);
+                                    operation = new NodeAddOperation(data.id, data.type, data.left, data.top, data.width, data.height, data.zIndex, data.json, data.viewId, data.oType, jabberId || data.jabberId);
                                     remoteNodeAddCallback(operation);
                                     break;
                                 }
                             case EdgeAddOperation.TYPE:
                                 {
-                                    operation = new EdgeAddOperation(data.id, data.type, data.source, data.target, data.json, data.viewId, data.oType, jabberId);
+                                    operation = new EdgeAddOperation(data.id, data.type, data.source, data.target, data.json, data.viewId, data.oType, jabberId || data.jabberId);
                                     remoteEdgeAddCallback(operation);
                                     break;
                                 }

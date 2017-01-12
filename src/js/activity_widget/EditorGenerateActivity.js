@@ -13,8 +13,14 @@ define(['activity_widget/Activity'],/** @lends EditorGenerateActivity */function
      * @param {string} text Text of this activity which is displayed in the activity widget
      * @constructor
      */
-    function EditorGenerateActivity(entityId,sender,text){
-        Activity.call(this,entityId,sender,text);
+    function EditorGenerateActivity(entityId,sender,text, timestamp){
+        Activity.call(this,entityId,sender,text, timestamp);
+
+        this.toJSON = function(){
+            var json = Activity.prototype.toJSON.call(this);
+            json.type = EditorGenerateActivity.TYPE;
+            return json;
+        }
     }
 
     return EditorGenerateActivity;

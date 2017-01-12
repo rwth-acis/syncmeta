@@ -22,10 +22,15 @@ define([
      * @param {string} nodeType Type of the created node
      * @constructor
      */
-    function NodeResizeActivity(entityId,sender,text,nodeType){
-        var that = this;
+    function NodeResizeActivity(entityId,sender,text,timestamp,nodeType){
+        Activity.call(this,entityId,sender,text,timestamp);
 
-        Activity.call(this,entityId,sender,text);
+        this.toJSON = function(){
+            var json = Activity.prototype.toJSON.call(this);
+            json.type = NodeResizeActivity.TYPE;
+            json.nodeType = nodeType;
+            return json;
+        }
     }
 
     return NodeResizeActivity;

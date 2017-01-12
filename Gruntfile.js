@@ -165,7 +165,7 @@ module.exports = function(grunt) {
                         meta: {
                             title: "User Activity",
                             description: "",
-                            width: "120",
+                            width: "150",
                             height: "400"
                         },
                         bodyPartial: '_activity_widget.tpl'
@@ -200,7 +200,7 @@ module.exports = function(grunt) {
                             title: "Import Tool",
                             description: "",
                             width: "400",
-                            height: "300"
+                            height: "400"
                         },
                         bodyPartial: '_debug_widget.tpl'
                     }

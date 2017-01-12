@@ -15,6 +15,8 @@ requirejs(['jqueryui', 'lodash', 'lib/yjs-sync', 'canvas_widget/GenerateViewpoin
                 $importGuidancemodel = $("#import-guidance-model"),
                 $fileObject = $("#file-object"),
                 $feedback = $("#feedback"),
+                $activityExport = $('#export-activity-list').prop('disabled', false),
+                $activityDelete = $('#delete-activity-list').prop('disabled', false),
                 feedbackTimeout,
 
                 feedback = function (msg) {
@@ -76,6 +78,11 @@ requirejs(['jqueryui', 'lodash', 'lib/yjs-sync', 'canvas_widget/GenerateViewpoin
                 feedback("Done!");
             });
 
+            $activityDelete.click(function(){
+                y.share.activity.set('log', null);
+                feedback("Done!");
+            });
+
             $exportModel.click(function () {
                 var link = document.createElement('a');
                 link.download = "model.json";
@@ -94,6 +101,14 @@ requirejs(['jqueryui', 'lodash', 'lib/yjs-sync', 'canvas_widget/GenerateViewpoin
                 var link = document.createElement('a');
                 link.download = "guidance_model.json";
                 link.href = 'data:,' + encodeURI(JSON.stringify(y.share.data.get('guidancemodel'), null, 4));
+                link.click();
+
+            });
+
+            $activityExport.click(function(){
+                var link = document.createElement('a');
+                link.download = "activityList.json";
+                link.href = 'data:,' + encodeURI(JSON.stringify(y.share.activity.get('log'), null, 4));
                 link.click();
 
             });
@@ -212,6 +227,13 @@ requirejs(['jqueryui', 'lodash', 'lib/yjs-sync', 'canvas_widget/GenerateViewpoin
                     $deleteMetamodel.prop('disabled', false);
                 }
 
+                if(!y.share.activity.get('log')){
+                    $activityExport.prop('disabled', true);
+                    $activityDelete.prop('disabled', true);
+                }else{
+                    $activityExport.prop('disabled', false);
+                    $activityDelete.prop('disabled', false);
+                }
 
                 if (!y.share.data.get('guidancemodel')) {
                     console.log("No guidance model found!");

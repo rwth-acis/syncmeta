@@ -1,10 +1,11 @@
 define([
     'jqueryui',
     'lodash',
+    'iwcw',
     'Util',
-    //'promise!Space',
+    'operations/non_ot/MoveCanvasOperation',
     'text!templates/activity_widget/activity_box.html'
-],/** @lends Activity */function($,_,Util/*,space*/,activityBoxHtml) {
+],/** @lends Activity */function($,_,IWCW, Util, MoveCanvasOperation, activityBoxHtml) {
 
     /**
      * An abstract user activity issued by one of the users
@@ -15,7 +16,17 @@ define([
      * @param {string} sender JabberId of the user who issued this activity
      * @param {string} text Text of this activity which is displayed in the activity widget
      */
-    function Activity(entityId,sender,text){
+    function Activity(entityId,sender,text, timestamp){
+        var that = this;
+
+        var isTrackable = false;
+
+        /**
+        * Inter widget communication wrapper
+        * @type {Object}
+        */
+        var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.ACTIVITY);
+
 
         /**
          * Entity id of the entity this activity works on
@@ -39,11 +50,34 @@ define([
         var _text = text;
 
         /**
+         * the timestamp of the activity
+         * @type {number}
+         * @private
+         */
+        var _timestamp = timestamp;
+
+        /**
          * Activity box template
          * @type {function}
          * @private
          */
         var _activityBoxTemplate = _.template(activityBoxHtml);
+
+        /**
+         * Convert timestamp to a nice string to display in the activity list
+         */
+        var getDateTimeAsString = function () {
+            var d = new Date(_timestamp);
+            var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            var year = d.getFullYear();
+            var month = months[d.getMonth()];
+            var date = d.getDate();
+            var hour = d.getHours();
+            var min = d.getMinutes();
+            var sec = d.getSeconds();
+            var dateTime = date + '.' + month + '.' + year + '/' + hour + ':' + min + ':' + sec;
+            return dateTime;
+        }
 
         /**
          * jQuery object of DOM node representing the activity
@@ -56,22 +90,22 @@ define([
          color: space.members.hasOwnProperty(_sender) ? Util.getColor(space.members[_sender].globalId) : "#000000"
          })).hide();*/
         var _$node;
-        if(_sender)
+        if (_sender)
             _$node = $(_activityBoxTemplate({
                 heading: y.share.userList.get(_sender) ? y.share.userList.get(_sender)[CONFIG.NS.PERSON.TITLE] : "",
                 text: _text,
-                color: y.share.userList.get(_sender) ? Util.getColor(y.share.userList.get(_sender).globalId) : "#000000"
+                color: y.share.userList.get(_sender) ? Util.getColor(y.share.userList.get(_sender).globalId) : "#000000",
+                timestamp: getDateTimeAsString()
             })).hide();
         else
             _$node = $(_activityBoxTemplate({
                 heading: "",
                 text: "",
-                color:"#000000"
+                color: "#000000",
+                timestamp: getDateTimeAsString()
+
             })).hide();
-
-
-
-
+       
         /**
          * jQuery object of DOM node representing the activity text
          * @type {jQuery}
@@ -94,6 +128,13 @@ define([
         this.getSender = function(){
             return _sender;
         };
+
+        /**
+         * Get the timestamp of the activity
+         */
+        this.getTimestampe = function(){
+            return _timestamp;
+        }
 
         /**
          * Get the text of this activity which is displayed in the activity widget
@@ -120,6 +161,9 @@ define([
             return _$node;
         };
 
+        this.isTrackable = function(){
+            return isTrackable;
+        }
         /**
          * Hide the DOM node of this attribute
          */
@@ -134,6 +178,52 @@ define([
             this.get$node().show();
         };
 
+        /**
+         * activity to JSON
+         */
+        this._toJSON = function(){
+            var json = {
+                entityId: entityId,
+                sender: sender,
+                text: text,
+                timestamp:_timestamp
+            };
+            var user = y.share.userList.get(sender);
+            if(user){
+                json.user = {};
+                json.user.title = user[CONFIG.NS.PERSON.TITLE];   
+                json.user.mail = user[CONFIG.NS.PERSON.MBOX]; 
+            }
+            return json;
+        }
+
+         this.trackable = function () {
+            _$node.click(function (event) {
+                var operation = new MoveCanvasOperation(that.getEntityId(), false);
+                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN, operation.toNonOTOperation());
+            });
+            _$node.hover(function (event) {
+                $(this).css('border', '5px solid #ccc');
+            }, function (event) {
+                $(this).css('border', '1px solid #ccc');
+            });
+            _$node.find('.timestamp').css('border-color', 'rgb(112, 222, 148)');
+             isTrackable = true;
+        }
+
+        this.untrackable = function(){
+            _$node.off();
+            _$node.find('.timestamp').css('border-color', '#ea7f7f');
+            isTrackable = false;
+        }
+       
+
+    }
+    /**
+     * activity to JSON
+     */
+    Activity.prototype.toJSON = function(){
+        return this._toJSON();
     }
 
     return Activity;

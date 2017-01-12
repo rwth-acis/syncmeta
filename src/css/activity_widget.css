@@ -73,3 +73,10 @@ h2 {
 #activity_list .item p {
     margin: .4em .2em;
 }
+
+.timestamp{
+    border-radius: 8px;
+    border-style: solid;
+    border-width: 0.5px;
+    text-align: center;
+}

@@ -61,12 +61,24 @@
     <style>
      #eventList{max-height: 400px; overflow: auto;}
     </style>
+    <script src="<%= grunt.config('baseUrl') %>/js/lib/vendor/yjs/y.js"></script>
+    <script src="<%= grunt.config('baseUrl') %>/js/lib/vendor/y-array/y-array.js"></script>
+    <script src="<%= grunt.config('baseUrl') %>/js/lib/vendor/y-map/y-map.js"></script>
+    <script src="<%= grunt.config('baseUrl') %>/js/lib/vendor/y-text/y-text.js"></script>
+    <script src="<%= grunt.config('baseUrl') %>/js/lib/vendor/y-memory/y-memory.js"></script>
+    <script src="<%= grunt.config('baseUrl') %>/js/lib/vendor/y-websockets-client/y-websockets-client.js"></script>
+
     <script src="<%= grunt.config('baseUrl') %>/js/lib/vendor/require.js"></script>    
     <script src="<%= grunt.config('baseUrl') %>/js/lib/vendor/jquery.js""></script>
+
     <script src="<%= grunt.config('baseUrl') %>/plugin/syncmeta-plugin.js"></script>
     <script src="<%= grunt.config('baseUrl') %>/test/plugin_example/syncmeta-plugin-test.js"></script>
     <button id="modelAttr" >Set ModelAttribute values </button>
     <br>
+    <button id="createTest" >Create some cool Stuff.:-) </button>
+    <button id="createTestModel" >Create some cool Stuff for ER.:-) </button>
+    <button id="deleteTest" >Delete the cool Stuff.:-( </button>
+
     <ul id="eventList"></ul>
     ]]>
     </Content>

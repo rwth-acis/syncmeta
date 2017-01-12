@@ -1,12 +1,12 @@
-define(['lib/yjs-sync'], function(yjsSync) {
+define(['lib/yjs-sync','Util'], function(yjsSync, Util) {
     'use strict';
 
     /**
-        * Listen to node manipulations. Private helper function
-         * @private
-         * @param {array} keys - the operations to listen to. All possible options are  ['NodeMoveOperation', 'NodeResizeOperation', 'NodeMoveZOperation']
-         * @param {function} callback - the callback if one of the operations defined in keys were issued
-         */
+    * Listen to node manipulations. Private helper function
+    * @private
+    * @param {array} keys - the operations to listen to. All possible options are  ['NodeMoveOperation', 'NodeResizeOperation', 'NodeMoveZOperation']
+    * @param {function} callback - the callback if one of the operations defined in keys were issued
+    */
     var onNode = function(key, callback) {
         var newObersever = function(event) {
             if (key.indexOf(event.name) != -1) {
@@ -95,6 +95,28 @@ define(['lib/yjs-sync'], function(yjsSync) {
         }
     };
 
+    /**
+     * creates all ytexts for a node/edge created via the API
+     * @param {object} metamodel the vls
+     * @param {string} entityId the id of the node/edge
+     * @param {string} entityType where is the concrete type to find which u want to create in nodes or edges
+     * @param {string} type the concrete node/edge type to create
+     * @param {Y.Map} ymap the ymap of the node/edge
+     */
+    var createYTextsForEntityType = function(metamodel, entityId, entityType, type, ymap){
+        var types = metamodel[entityType];   
+        for(var key in types){
+            if(types.hasOwnProperty(key) && types[key].label === type){
+                var attrs = types[key].attributes;
+                for(var attrKey in attrs){
+                    if(attrs.hasOwnProperty(attrKey) && attrs[attrKey].value === 'string'){
+                        ymap.set(entityId +'['+attrs[attrKey].key+']', Y.Text);
+                    }
+                }
+            }
+        } 
+    }
+    
 
     return {
         /**
@@ -147,7 +169,12 @@ define(['lib/yjs-sync'], function(yjsSync) {
             })
 
             openapp.resource.get(openapp.param.user(), function(user) {
-                jabberId = user.subject['http://xmlns.com/foaf/0.1/jabberID'][0].value.replace("xmpp:", "");
+                try{
+                    jabberId = user.subject['http://xmlns.com/foaf/0.1/jabberID'][0].value.replace("xmpp:", "");
+                }catch(e){
+                    console.error("Unable to retrieve the jabberId from role space api." + e);
+                }
+
             })
         },
         /**
@@ -402,6 +429,123 @@ define(['lib/yjs-sync'], function(yjsSync) {
                     return;
                 }
             }
+        }, 
+        /**
+         * Create a node 
+         * @param {String} type the type of the node
+         * @param {integer} left the x-coordinate
+         * @param {integer} top the y-coordinate
+         * @param {integer} width the width of the node 
+         * @param {integer} height the height of the node
+         * @param {integer} zIndex the z-index of the node
+         * @param {Object} json some json data
+         * @returns returns the id of the created node as string
+         */
+        createNode: function (type, left, top, width, height, zIndex, json) {
+            var metamodel = ySyncMetaInstance.share.data.get('metamodel');
+            
+            var id = Util.generateRandomId();
+            var _ymap = ySyncMetaInstance.share.nodes.set(id, Y.Map);
+            if(metamodel){
+                createYTextsForEntityType(metamodel, id, "nodes",type,_ymap);
+            }
+            else{
+                _ymap.set(id+'[label]', Y.Text);
+                if(type === 'Node Shape'){
+                    _ymap.set(id+'[color]', Y.Text);
+                    _ymap.set(id+'[customAnchors]', Y.Text);
+                    _ymap.set(id+'[customShape]', Y.Text);
+                }else if(type === 'Edge Shape'){
+                    _ymap.set(id+'[color]', Y.Text);
+                    _ymap.set(id+'[overlay]', Y.Text);
+                }
+            }
+            _ymap.set('left', left);
+            _ymap.set('top', top);
+            _ymap.set('width', width);
+            _ymap.set('height', height);
+            _ymap.set('zIndex', zIndex);
+            _ymap.set('type', type);
+            _ymap.set('id', id);
+            if (json) _ymap.set('json', json);
+            _ymap.set('jabberId', jabberId);
+
+            ySyncMetaInstance.share.canvas.set('NodeAddOperation', {
+                id: id,
+                type: type,
+                left: left,
+                top: top,
+                width: width,
+                height: height,
+                zIndex: zIndex,
+                json: json,
+                viewId: undefined,
+                oType: undefined,
+                jabberId: jabberId
+            });
+            setTimeout(function () {
+                if (jabberId)
+                    ySyncMetaInstance.share.canvas.set('triggerSave', jabberId);
+            }, 500);  
+            return id;   
+        },
+        /**
+         * delete a node
+         * @param {string} id of the node to delete
+         */
+        deleteNode: function(entityId){
+            ySyncMetaInstance.share.nodes.delete(entityId);
+        },
+        /**
+         * create a edge
+         * @param {string} type type of the edge
+         * @param {source} source the id of the source node
+         * @param {target} target the id of the target node
+         * @param {Object} json some additional data
+         */
+        createEdge: function (type, source, target, json) {
+             var id = Util.generateRandomId();
+            setTimeout(function () {
+                var metamodel = ySyncMetaInstance.share.data.get('metamodel');
+               
+                var _ymap = ySyncMetaInstance.share.edges.set(id, Y.Map);
+                if (metamodel) {
+                    createYTextsForEntityType(metamodel, id, "edges", type, _ymap);
+                }
+                else {
+                    _ymap.set(id + '[label]', Y.Text);
+                }
+                _ymap.set('id', id);
+                _ymap.set('type', type);
+                _ymap.set('source', source);
+                _ymap.set('target', target);
+                _ymap.set('jabberId', jabberId);
+                //if source and target nodes are created previously just wait here for a 
+
+                ySyncMetaInstance.share.canvas.set('EdgeAddOperation', {
+                    id: id,
+                    type: type,
+                    source: source,
+                    target: target,
+                    json: json,
+                    viewId: undefined,
+                    oType: undefined,
+                    jabberId: jabberId
+                });
+
+                setTimeout(function () {
+                    if (jabberId)
+                        ySyncMetaInstance.share.canvas.set('triggerSave', jabberId);
+                }, 100);
+            }, 200);
+            return id; 
+        },
+        /**
+         * Delete a edge
+         * @param {string} the id of the edge to delete
+         */
+        deleteEdge: function(entityId){
+            ySyncMetaInstance.share.edges.delete(entityId);
         }
 
         /**

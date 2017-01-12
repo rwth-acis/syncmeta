@@ -35,7 +35,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(singleColorValueAttributeHtml,{}));
+        var _$node = $(_.template(singleColorValueAttributeHtml,{id:id}));
 
         /**
          * Set Value object of value

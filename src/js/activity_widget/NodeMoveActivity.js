@@ -23,10 +23,15 @@ define([
      * @param {string} nodeType Type of the created node
      * @constructor
      */
-    function NodeMoveActivity(entityId,sender,text,nodeType){
-        var that = this;
+    function NodeMoveActivity(entityId,sender,text,timestamp,nodeType){
+        Activity.call(this,entityId,sender,text,timestamp);
 
-        Activity.call(this,entityId,sender,text);
+        this.toJSON = function(){
+            var json = Activity.prototype.toJSON.call(this);
+            json.type = NodeMoveActivity.TYPE;
+            json.nodeType = nodeType;
+            return json;
+        }
     }
 
     return NodeMoveActivity;

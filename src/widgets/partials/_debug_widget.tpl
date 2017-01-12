@@ -48,5 +48,12 @@
 <button id="export-guidance-model">Export</button>
 <button id="delete-guidance-model">Delete</button>
 </div>
+
+<div id="activityDiv" class="seperating_box">
+<h5> Export/Delete a <strong>Activity list</strong> </h5>
+<button id="export-activity-list">Export</button>
+<button id="delete-activity-list">Delete</button>
+</div>
+
 <p class="hint">After import or delete refresh the canvas widget to apply the new model. After deleting and importing a new VLS refresh the whole role space.</p>
 <p id="feedback"></p>

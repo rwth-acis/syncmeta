@@ -1,15 +1,11 @@
-define(['jquery'], function($) {
+define(['jquery', 'Util'], function($, Util) {
     return function(spaceTitle) {
 
         var deferred = $.Deferred();
-        if (!spaceTitle) {
-            //try to get space title from url if space promise fails
-            spaceTitle = frameElement.baseURI.substring(frameElement.baseURI.lastIndexOf('/') + 1);
-            if (spaceTitle.indexOf('#') != -1 || spaceTitle.indexOf('?') != -1) {
-                spaceTitle = spaceTitle.replace(/[#|\\?]\S*/g, '');
-            }
-        }
-        
+        //if space is not provided by the parameter, get it yourself from frameElement
+        if (!spaceTitle) 
+            spaceTitle = Util.getSpaceTitle(frameElement.baseURI);
+                
         Y({
             db: {
                 name: "<%= grunt.config('yjsDatabaseAdapter') %>" // store the shared data in memory

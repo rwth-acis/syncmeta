@@ -61,7 +61,8 @@ define([
                 attribute.getValue().registerYType(ytext);
             }, 200);
             that.addAttribute(attribute);
-            _$node.find(".list").append(attribute.get$node());
+            if (_$node.find(".list").find("#" + attribute.getEntityId().replace('[','\\[').replace(']','\\]')).length === 0)
+                _$node.find(".list").append(attribute.get$node());
         };
 
         /**

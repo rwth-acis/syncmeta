@@ -566,7 +566,7 @@ define([
         this.getZIndex = function () {
             return _zIndex;
         };
-
+        
         this.refreshTraceAwareness = function (color) {
             refreshTraceAwareness(color);
         };

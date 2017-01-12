@@ -13,8 +13,14 @@ define(['activity_widget/Activity'],/** @lends NodeDeleteActivity */function(Act
      * @param {string} text Text of this activity which is displayed in the activity widget
      * @constructor
      */
-    function NodeDeleteActivity(entityId,sender,text){
-        Activity.call(this,entityId,sender,text);
+    function NodeDeleteActivity(entityId,sender,text,timestamp){
+        Activity.call(this,entityId,sender,text,timestamp);
+
+        this.toJSON = function(){
+            var json = Activity.prototype.toJSON.call(this);
+            json.type = NodeDeleteActivity.TYPE;
+            return json;
+        }
     }
 
     return NodeDeleteActivity;

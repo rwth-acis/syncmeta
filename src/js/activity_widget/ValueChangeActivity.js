@@ -24,10 +24,10 @@ define([
      * @param {string} rootSubjectEntityId Entity id of topmost entity in the chain of entities the attribute is assigned to
      * @constructor
      */
-    function ValueChangeActivity(entityId,sender,text,value,subjectEntityName,rootSubjectEntityType,rootSubjectEntityId){
+    function ValueChangeActivity(entityId,sender,text,timestamp,value,subjectEntityName,rootSubjectEntityType,rootSubjectEntityId){
         var that = this;
 
-        Activity.call(this,entityId,sender,text);
+        Activity.call(this,entityId,sender,text,timestamp);
 
         /**
          * Value of the attribute
@@ -90,6 +90,19 @@ define([
         this.getRootSubjectEntityId = function(){
             return _rootSubjectEntityId;
         };
+
+        /**
+         * activity to json
+         */
+        this.toJSON = function(){
+            var json = Activity.prototype.toJSON.call(this);
+            json.value = _value;
+            json.type = ValueChangeActivity.TYPE;
+            json.subjectEntityName = _subjectEntityName;
+            json.rootSubjectEntityId = _rootSubjectEntityId;
+            json.rootSubjectEntityType = _rootSubjectEntityType;
+            return json;
+        }
     }
     return ValueChangeActivity;
 

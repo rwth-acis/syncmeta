@@ -15,8 +15,14 @@ define(['activity_widget/Activity'],/** @lends EdgeDeleteActivity */function(Act
      * @param {string} text Text of this activity which is displayed in the activity widget
      * @constructor
      */
-    function EdgeDeleteActivity(entityId,sender,text){
-        Activity.call(this,entityId,sender,text);
+    function EdgeDeleteActivity(entityId,sender,text, timestamp){
+        Activity.call(this,entityId,sender,text, timestamp);
+
+        this.toJSON = function(){
+            var json = Activity.prototype.toJSON.call(this);
+            json.type = EdgeDeleteActivity.TYPE;
+            return json;
+        }
     }
 
     return EdgeDeleteActivity;
