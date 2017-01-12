@@ -73,10 +73,10 @@ h2 {
 #activity_list .item p {
     margin: .4em .2em;
 }
-#activity_list .item:hover{
-    border:  5px solid #ccc;
-}
+
 .timestamp{
-    border-radius: 2px;
-    border: 3px solid white;
+    border-radius: 8px;
+    border-style: solid;
+    border-width: 0.5px;
+    text-align: center;
 }

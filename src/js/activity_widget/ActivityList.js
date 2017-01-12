@@ -160,37 +160,50 @@ define([
                 data = operation.getData();
                 switch(operation.getType()){
                     case NodeAddActivity.TYPE:
-                        activity = new NodeAddActivity(operation.getEntityId(),operation.getSender(),operation.getText(),data.nodeType);
+                        activity = new NodeAddActivity(operation.getEntityId(),operation.getSender(),operation.getText(), Date.now(),data.nodeType);
                         that.addActivity(activity);
                         that.addActivityToLog(activity);
+
+                        that.findTrackableActivities(activity);
                         break;
                     case EdgeAddActivity.TYPE:
-                        activity = new EdgeAddActivity(operation.getEntityId(),operation.getSender(),operation.getText(),data.nodeType,data.sourceNodeLabel,data.sourceNodeId,data.sourceNodeType,data.targetNodeLabel,data.targetNodeId,data.targetNodeType);
+                        activity = new EdgeAddActivity(operation.getEntityId(),operation.getSender(),operation.getText(), Date.now(),data.nodeType,data.sourceNodeLabel,data.sourceNodeId,data.sourceNodeType,data.targetNodeLabel,data.targetNodeId,data.targetNodeType);
+                        that.findTrackableActivities(activity);
                         that.addActivity(activity);
                         that.addActivityToLog(activity);
+                        
+                        that.findTrackableActivities(activity);
                         break;
                     case NodeDeleteActivity.TYPE:
-                        activity = new NodeDeleteActivity(operation.getEntityId(),operation.getSender(),operation.getText());
+                        activity = new NodeDeleteActivity(operation.getEntityId(),operation.getSender(),operation.getText(), Date.now());
                         that.addActivity(activity);
                         that.addActivityToLog(activity);
+
+                        that.findUntrackableActivities(activity);
                         break;
                     case EdgeDeleteActivity.TYPE:
-                        activity = new EdgeDeleteActivity(operation.getEntityId(),operation.getSender(),operation.getText());
+                        activity = new EdgeDeleteActivity(operation.getEntityId(),operation.getSender(),operation.getText(), Date.now());
                         that.addActivity(activity);
                         that.addActivityToLog(activity);
+
+                        that.findUntrackableActivities(activity);
                         break;
                     case NodeMoveActivity.TYPE:
-                        activity = new NodeMoveActivity(operation.getEntityId(),operation.getSender(),operation.getText(),data.nodeType);
+                        activity = new NodeMoveActivity(operation.getEntityId(),operation.getSender(),operation.getText(), Date.now(),data.nodeType);
                         that.addActivity(activity);
-                        that.addActivityToLog(activity);                        
+                        that.addActivityToLog(activity);  
+
+                        activity.trackable();
                         break;
                     case NodeResizeActivity.TYPE:
-                        activity = new NodeResizeActivity(operation.getEntityId(),operation.getSender(),operation.getText(),data.nodeType);
+                        activity = new NodeResizeActivity(operation.getEntityId(),operation.getSender(),operation.getText(), Date.now(),data.nodeType);
                         that.addActivity(activity);
                         that.addActivityToLog(activity);
+
+                        activity.trackable();
                         break;
                     case ValueChangeActivity.TYPE:
-                        activity = new ValueChangeActivity(operation.getEntityId(),operation.getSender(),operation.getText(),data.value,data.subjectEntityName,data.rootSubjectEntityType,data.rootSubjectEntityId);
+                        activity = new ValueChangeActivity(operation.getEntityId(),operation.getSender(),operation.getText(), Date.now(),data.value,data.subjectEntityName,data.rootSubjectEntityType,data.rootSubjectEntityId);
                         firstActivity = that.getFirst();
                         if(firstActivity && firstActivity instanceof ValueChangeActivity && firstActivity.getEntityId() === activity.getEntityId() && firstActivity.getSender() === activity.getSender()){
                             firstActivity.setText(activity.getText());
@@ -198,9 +211,11 @@ define([
                             that.addActivity(activity);
                         }
                         that.addActivityToLog(activity);
+
+                        activity.trackable();
                         break;
                     case EditorGenerateActivity.TYPE:
-                        activity = new EditorGenerateActivity(operation.getEntityId(),operation.getSender(),operation.getText());
+                        activity = new EditorGenerateActivity(operation.getEntityId(),operation.getSender(),operation.getText(), Date.now());
                         that.addActivity(activity);
                         that.addActivityToLog(activity);
                         break;
@@ -212,7 +227,7 @@ define([
                         break;
                     }
                     case 'ReloadWidgetOperation':
-                        activity = new ReloadWidgetActivity(operation.getEntityId(), operation.getSender(), operation.getText());
+                        activity = new ReloadWidgetActivity(operation.getEntityId(), operation.getSender(), operation.getText(), Date.now());
                         that.addActivity(activity);
                     case ViewApplyActivity.TYPE:
                         activity = new ViewApplyActivity(operation.getEntityId(),operation.getSender());
@@ -233,8 +248,8 @@ define([
                         activity.show();
                     });
                 } else {
-                    _.each(activityList,function(actvity){
-                        actvity.show();
+                    _.each(activityList,function(activity){
+                        activity.show();
                     });
                     _.each(_.filter(activityList,function(activity){
                         if(activity instanceof ValueChangeActivity){
@@ -247,45 +262,81 @@ define([
                 }
             }
         };
+
+        this.findUntrackableActivities = function(activity){
+            for (var i = 0; i < activityList.length; i++) {
+                var a = activityList[i];
+                if (a.isTrackable && (activity.getEntityId() === a.getEntityId() || a instanceof NodeDeleteActivity || a instanceof EdgeAddActivity)) {
+                    a.untrackable();
+                }
+            }
+        }
+
+        this.findTrackableActivities = function(activity){
+            for (var i = 0; i < activityList.length; i++) {
+                var a = activityList[i];
+                if (!a.isTrackable() && activity.getEntityId() === a.getEntityId() && !(a instanceof NodeDeleteActivity || a instanceof EdgeDeleteActivity) ) {
+                    a.trackable();
+                }
+            }
+        }
+
         this.init = function () {
             //initialize the activity list with activities of previous session
             var list = y.share.activity.get('log');
+            var activity;
+            var checkEntity = function(entityId){
+                if(y.share.nodes.keys().indexOf(entityId) !=-1 || y.share.edges.keys().indexOf(entityId) != -1)
+                    return true;
+                    else return false;
+            }
             if (list) {
-                _.forEachRight(list, function (activity) {
-                    switch (activity.type) {
+                _.forEachRight(list, function (a) {
+                    switch (a.type) {
                         case NodeAddActivity.TYPE: {
-                            that.addActivity(new NodeAddActivity(activity.entityId, activity.sender, activity.text, activity.nodeType));
+                            activity = new NodeAddActivity(a.entityId, a.sender, a.text, a.timestamp, a.nodeType);
+                            that.addActivity(activity);
                             break;
                         }
                         case NodeDeleteActivity.TYPE: {
-                            that.addActivity(new NodeDeleteActivity(activity.entityId, activity.sender, activity.text));
+                            activity = new NodeDeleteActivity(a.entityId, a.sender, a.text, a.timestamp);
+                            that.addActivity(activity);
                             break;
                         }
                         case EdgeAddActivity.TYPE: {
-                            that.addActivity(new EdgeAddActivity(activity.entityId, activity.sender, activity.text, activity.nodeType, activity.sourceNodeLabel, activity.sourceNodeId, activity.sourceNodeType, activity.targetNodeLabel, activity.targetNodeId, activity.targetNodeType));
+                            activity = new EdgeAddActivity(a.entityId, a.sender, a.text, a.timestamp, a.nodeType, a.sourceNodeLabel, a.sourceNodeId, a.sourceNodeType, a.targetNodeLabel, a.targetNodeId, a.targetNodeType);
+                            that.addActivity(activity);
                             break;
                         }
                         case EdgeDeleteActivity.TYPE: {
-                            that.addActivity(new EdgeDeleteActivity(activity.entityId, activity.sender, activity.text));
+                            activity = new EdgeDeleteActivity(a.entityId, a.sender, a.text, a.timestamp);
+                            that.addActivity(activity);
                             break;
                         }
                         case NodeMoveActivity.TYPE: {
-                            that.addActivity(new NodeMoveActivity(activity.entityId, activity.sender, activity.text, activity.nodeType));
+                            activity = new NodeMoveActivity(a.entityId, a.sender, a.text, a.timestamp, a.nodeType);                            
+                            that.addActivity(activity);
                             break;
                         }
                         case NodeResizeActivity.TYPE: {
-                            that.addActivity(new NodeResizeActivity(activity.entityId, activity.sender, activity.text, activity.nodeType));
+                            activity = new NodeResizeActivity(a.entityId, a.sender, a.text, a.timestamp, a.nodeType);
+                            that.addActivity(activity);
+                            if(y.share.nodes.keys().indexOf())
                             break;
                         }
                         case ValueChangeActivity.TYPE: {
-                            that.addActivity(new ValueChangeActivity(activity.entityId, activity.sender, activity.text, activity.value, activity.subjectEntityName, activity.rootSubjectEntityType, activity.rootSubjectEntityId));
+                            activity = new ValueChangeActivity(a.entityId, a.sender, a.text, a.timestamp, a.value, a.subjectEntityName, a.rootSubjectEntityType, a.rootSubjectEntityId);
+                            that.addActivity(activity);
                             break;
                         }
                         case EditorGenerateActivity.TYPE: {
-                            that.addActivity(new EditorGenerateActivity(activity.entityId, activity.sender, activity.text));
+                            that.addActivity(new EditorGenerateActivity(a.entityId, a.sender, a.text, a.timestamp));
                             break;
                         }
                     }
+                    if(checkEntity(activity.getEntityId()))
+                        activity.trackable();
+                    else activity.untrackable();
                 });
             }
         }

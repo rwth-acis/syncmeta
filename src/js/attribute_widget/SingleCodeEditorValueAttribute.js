@@ -35,7 +35,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(SingleCodeEditorValueAttributeHtml,{}));
+        var _$node = $(_.template(SingleCodeEditorValueAttributeHtml,{id:id}));
 
         /**
          * Set Value object of value

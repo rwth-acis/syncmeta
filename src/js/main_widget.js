@@ -62,9 +62,11 @@ requirejs([
         console.info('CANVAS: Yjs Initialized successfully');
 
         y.share.users.set(y.db.userId, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
-        var userInfo = _iwcw.getUser();
-        userInfo.globalId = Util.getGlobalId(user, y);
-        y.share.userList.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], userInfo);
+        if(!y.share.userList.get(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])){
+            var userInfo = _iwcw.getUser();
+            userInfo.globalId = Util.getGlobalId(user, y);
+            y.share.userList.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], userInfo);
+        }
         var metamodel, model;
         if (guidancemodel.isGuidanceEditor()) {
             //Set the model which is shown by the editor to the guidancemodel

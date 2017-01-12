@@ -22,8 +22,8 @@ define([
      * @param {string} nodeType Type of the created node
      * @constructor
      */
-    function NodeResizeActivity(entityId,sender,text,nodeType){
-        Activity.call(this,entityId,sender,text);
+    function NodeResizeActivity(entityId,sender,text,timestamp,nodeType){
+        Activity.call(this,entityId,sender,text,timestamp);
 
         this.toJSON = function(){
             var json = Activity.prototype.toJSON.call(this);

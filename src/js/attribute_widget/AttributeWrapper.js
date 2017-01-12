@@ -198,7 +198,7 @@ define([
                                     break;
                                 }
                                 default:
-                                    if (nodeEvent.name.search(/\w*\[(\w|\s)*\]/g) != -1 && nodeEvent.type != 'delete') {
+                                    if (nodeEvent.name.search(/\w*\[(\w|\s)*\]/g) != -1 && nodeEvent.type === 'add') {
                                         var node = EntityManager.findNode(nodeEvent.object.get('id'));
                                         //Check for label
                                         if (node.getLabel().getEntityId() === nodeEvent.name)
@@ -218,7 +218,7 @@ define([
                                                     if (attr.hasOwnProperty('getKey')) {
                                                         if (nodeEvent.name.indexOf('ref') != -1)
                                                             attr.getRef().registerYType(nodeEvent.value);
-                                                        else if (attr.getKey().hasOwnProperty('registerYType'))
+                                                        else if (attr.getKey().hasOwnProperty('registerYType') && nodeEvent.name.indexOf('value') === -1)
                                                             attr.getKey().registerYType(nodeEvent.object.get(nodeEvent.name));
                                                     } else if (attr.hasOwnProperty('getValue')) {
                                                         if (attr.getValue().hasOwnProperty('registerYType'))
@@ -264,7 +264,7 @@ define([
                                     break;
                                 }
                                 default: {
-                                    if (edgeEvent.name.search(/\w*\[(\w|\s)*\]/g) != -1) {
+                                    if (edgeEvent.name.search(/\w*\[(\w|\s)*\]/g) != -1 && edgeEvent.type === 'add') {
                                         var edge = EntityManager.findEdge(edgeEvent.object.get('id'));
                                         var attrs = edge.getAttributes();
                                         if (edge.getLabel().getEntityId() === edgeEvent.name)
