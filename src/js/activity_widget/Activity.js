@@ -182,12 +182,19 @@ define([
          * activity to JSON
          */
         this._toJSON = function(){
-            return {
+            var json = {
                 entityId: entityId,
                 sender: sender,
                 text: text,
                 timestamp:_timestamp
+            };
+            var user = y.share.userList.get(sender);
+            if(user){
+                json.user = {};
+                json.user.title = user[CONFIG.NS.PERSON.TITLE];   
+                json.user.mail = user[CONFIG.NS.PERSON.MBOX]; 
             }
+            return json;
         }
 
          this.trackable = function () {
