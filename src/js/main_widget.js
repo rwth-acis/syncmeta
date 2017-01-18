@@ -525,7 +525,11 @@ requirejs([
         $("#zoomout").click(function () {
             canvas.setZoom(canvas.getZoom() - 0.1);
         });
-
+        
+        $("#applyLayout").click(function(){
+            window.y.share.canvas.set('applyLayout', window.y.share.users.get(window.y.db.userId));
+        });
+        
         var $feedback = $("#feedback");
 
         var saveFunction = function () {

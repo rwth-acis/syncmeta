@@ -40,6 +40,9 @@ var require = {
         },
         bootstrap: {
             deps: ["jquery"]
+        },
+        dagre: {
+            deps:['graphlib']
         }
     },
     paths: {
@@ -70,7 +73,8 @@ var require = {
         classjs: "lib/Class",
         graphlib: "lib/vendor/graphlib.core.min",
         bootstrap: "lib/vendor/bootstrap/dropdown.prefixed",
-        ace: "lib/vendor/ace/ace"
+        ace: "lib/vendor/ace/ace",
+        dagre: "lib/vendor/dagre.min"
     }
 };
 

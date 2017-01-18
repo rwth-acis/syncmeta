@@ -727,6 +727,21 @@ define([
             repaint();
         };
 
+        this.moveAbs = function(left, top, zIndex){
+            _appearance.left = left;
+            _appearance.top = top;
+
+            if(zIndex) _zIndex = zIndex;
+
+            if (_ymap) {
+                _ymap.set('left', _appearance.left);
+                _ymap.set('top', _appearance.top);
+                if(zIndex) _ymap.set('zIndex', _zIndex);
+            }
+            this._draw();
+            repaint();
+        }
+
         /**
          * Resize the node
          * @param {number} offsetX Offset in x-direction

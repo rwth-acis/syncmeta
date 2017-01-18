@@ -29,9 +29,10 @@ define([
     'canvas_widget/guidance_modeling/SetPropertyGuidance',
     'canvas_widget/guidance_modeling/GhostEdgeGuidance',
     'canvas_widget/guidance_modeling/CollaborationGuidance',
+    'canvas_widget/DagreLayout',
     'jquery.transformable-PATCHED'
 ], /** @lends Canvas */
-    function($, jsPlumb, IWCW, Util, NodeAddOperation, NodeDeleteOperation, EdgeAddOperation, EdgeDeleteOperation, ToolSelectOperation, EntitySelectOperation, ActivityOperation, ExportMetaModelOperation, ExportLogicalGuidanceRepresentationOperation, ExportImageOperation, ShowGuidanceBoxOperation, CanvasViewChangeOperation, RevokeSharedActivityOperation, MoveCanvasOperation, GuidanceStrategyOperation, AbstractEntity, ModelAttributesNode, EntityManager, HistoryManager, AbstractCanvas, MoveTool, GuidanceBox, SelectToolGuidance, SetPropertyGuidance, GhostEdgeGuidance, CollaborationGuidance) {
+    function($, jsPlumb, IWCW, Util, NodeAddOperation, NodeDeleteOperation, EdgeAddOperation, EdgeDeleteOperation, ToolSelectOperation, EntitySelectOperation, ActivityOperation, ExportMetaModelOperation, ExportLogicalGuidanceRepresentationOperation, ExportImageOperation, ShowGuidanceBoxOperation, CanvasViewChangeOperation, RevokeSharedActivityOperation, MoveCanvasOperation, GuidanceStrategyOperation, AbstractEntity, ModelAttributesNode, EntityManager, HistoryManager, AbstractCanvas, MoveTool, GuidanceBox, SelectToolGuidance, SetPropertyGuidance, GhostEdgeGuidance, CollaborationGuidance, DagreLayout) {
 
         Canvas.prototype = new AbstractCanvas();
         Canvas.prototype.constructor = Canvas;
@@ -1298,8 +1299,15 @@ define([
                                     $('#save').click();
                                 break;
                             }
+                            case 'applyLayout':{
+                                //remote user
+                                DagreLayout.apply();   
+                                break;
+                            }
                         }
-                    }
+                        //local user. todo ugly coding style
+                    } else if(event.name === "applyLayout")
+                        DagreLayout.apply();  
                 });
 
                 y.share.select.observe(function(event) {
