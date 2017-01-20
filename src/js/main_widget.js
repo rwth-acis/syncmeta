@@ -99,8 +99,8 @@ requirejs([
 
         //not working pretty well 
         window.onbeforeunload = function (event) {
-            y.share.userList.delete(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
-            y.share.users.delete(y.db.userId);
+             //y.share.userList.delete(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+             //y.share.users.delete(y.db.userId);
             y.share.activity.set('UserLeftActivity', new ActivityOperation('UserLeftActivity', null, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]));
         }
         
@@ -528,7 +528,8 @@ requirejs([
         
         $("#applyLayout").click(function(){
             window.y.share.canvas.set('applyLayout', window.y.share.users.get(window.y.db.userId));
-        });
+            window.y.share.activity.set('ApplyLayoutActivity', new ActivityOperation('ApplyLayoutActivity', null, window.y.share.users.get(window.y.db.userId),"..applied Layout"));
+    });
         
         var $feedback = $("#feedback");
 

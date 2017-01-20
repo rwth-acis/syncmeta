@@ -223,7 +223,18 @@ define([
                         that.addUser(operation.getSender());
                         break;
                     case 'UserLeftActivity':{
+                        var activity = new Activity(null, operation.getSender(), '.. left the role space', Date.now());
+                        activity.setType('UserLeftActivity');
+                        that.addActivity(activity);
+                        that.addActivityToLog(activity);
                         that.removeUser(operation.getSender());
+                        break;
+                    }
+                    case 'ApplyLayoutActivity':{
+                        var activity = new Activity(null, operation.getSender(), operation.getText(), Date.now());
+                        activity.setType('ApplyLayoutActivity');
+                        that.addActivity(activity);
+                        that.addActivityToLog(activity);
                         break;
                     }
                     case 'ReloadWidgetOperation':
@@ -331,6 +342,10 @@ define([
                         }
                         case EditorGenerateActivity.TYPE: {
                             that.addActivity(new EditorGenerateActivity(a.entityId, a.sender, a.text, a.timestamp));
+                            break;
+                        }
+                        default: {
+                            that.addActivity(new Activity(a.entityId, a.sender, a.text, a.timestamp));
                             break;
                         }
                     }

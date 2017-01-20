@@ -14,7 +14,7 @@ requirejs([
         yjsSync().done(function(y){
             window.y = y;
 
-            console.info('ACTIVITY: Yjs uccessfully initialized.');
+            console.info('ACTIVITY: Yjs successfully initialized.');
             var activtyList = new ActivityList($("#user_list"),$("#activity_list"));   
             
             if(User){
