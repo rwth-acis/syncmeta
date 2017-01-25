@@ -356,8 +356,6 @@ define([
             }
         }
         if(y){
-          
-
             y.share.activity.observe(function(event){
                 operationCallback(new ActivityOperation(event.value.type, event.value.entityId, event.value.sender, event.value.text, event.value.data));
             });

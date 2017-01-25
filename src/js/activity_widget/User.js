@@ -2,9 +2,8 @@ define([
     'jqueryui',
     'lodash',
     'Util',
-    //'promise!Space',
     'text!templates/activity_widget/user_box.html'
-],/** @lends User */function($,_,Util/*,space*/,userBoxHtml) {
+],/** @lends User */function ($, _, Util, userBoxHtml) {
 
     /**
      * A user working on the model
@@ -14,7 +13,7 @@ define([
      * @param {string} jabberId JabberId of the user
      * @param {Date} lastActivityDate Date of the user's last activity
      */
-    function User(jabberId,lastActivityDate){
+    function User(jabberId, lastActivityDate) {
         var that = this;
 
         /**
@@ -50,19 +49,12 @@ define([
          * @type {jQuery}
          * @private
          */
-        /*var _$node = $(_userBoxTemplate({
-            heading: space.members.hasOwnProperty(jabberId) ? space.members[jabberId][CONFIG.NS.PERSON.TITLE] : "",
+        var _$node = $(_userBoxTemplate({
+            heading: y.share.userList.get(jabberId) ? y.share.userList.get(jabberId)[CONFIG.NS.PERSON.TITLE] : "",
             text: "",
-            color: space.members.hasOwnProperty(jabberId) ? Util.getColor(space.members[jabberId].globalId) : "#000000",
+            color: y.share.userList.get(jabberId) ? Util.getColor(y.share.userList.get(jabberId).globalId) : "#000000",
             view: ""
-        })).hide();*/
-
-            var _$node = $(_userBoxTemplate({
-                heading: y.share.userList.get(jabberId) ? y.share.userList.get(jabberId)[CONFIG.NS.PERSON.TITLE] : "",
-                text: "",
-                color: y.share.userList.get(jabberId) ? Util.getColor(y.share.userList.get(jabberId).globalId) : "#000000",
-                view: ""
-            })).hide();
+        })).hide();
 
 
         /**
@@ -77,7 +69,7 @@ define([
          * Get the entity id of the entity this user works onActivity
          * @returns {string}
          */
-        this.getJabberId = function(){
+        this.getJabberId = function () {
             return _entityId;
         };
 
@@ -85,7 +77,7 @@ define([
          * Set the timestamp of the user's last activity
          * @param {Date} lastActivityDate
          */
-        this.setLastActivityDate = function(lastActivityDate){
+        this.setLastActivityDate = function (lastActivityDate) {
             _lastActivityDate = lastActivityDate;
             updateText();
         };
@@ -94,7 +86,7 @@ define([
          * Get the timestamp of the user's last activity
          * @returns {Date}
          */
-        this.getLastActivityDate = function(){
+        this.getLastActivityDate = function () {
             return _lastActivityDate;
         };
 
@@ -102,7 +94,7 @@ define([
          * Set the text of this user which is displayed in the user widget
          * @param {string} text
          */
-        var setText = function(text){
+        var setText = function (text) {
             _text = text;
             _$textNode.text(text);
         };
@@ -111,38 +103,38 @@ define([
          * Get the DOM node of this user as jquery object
          * @returns {jQuery}
          */
-        this.get$node = function(){
+        this.get$node = function () {
             return _$node;
         };
 
         /**
          * Hide the DOM node of this attribute
          */
-        this.hide = function(){
+        this.hide = function () {
             this.get$node().hide();
         };
 
         /**
          * Show the DOM node of this attribute
          */
-        this.show = function(){
+        this.show = function () {
             this.get$node().show();
         };
 
         /**
          * Updates text with last time of activity
          */
-        var updateText = function(){
+        var updateText = function () {
             var diff = Math.floor((new Date() - that.getLastActivityDate()));
-            var secs = Math.floor(diff/10000)*10;
-            var mins = Math.floor(secs/60);
-            var hours = Math.floor(mins/60);
-            var days = Math.floor(hours/24);
-            if(secs < 60){
+            var secs = Math.floor(diff / 10000) * 10;
+            var mins = Math.floor(secs / 60);
+            var hours = Math.floor(mins / 60);
+            var days = Math.floor(hours / 24);
+            if (secs < 60) {
                 setText(secs + "s");
-            } else if(mins < 60) {
+            } else if (mins < 60) {
                 setText(mins + "m");
-            } else if(hours < 24){
+            } else if (hours < 24) {
                 setText(hours + "h");
             } else {
                 setText(days + "d");
@@ -150,7 +142,7 @@ define([
         };
 
         updateText();
-        setInterval(updateText,10000);
+        setInterval(updateText, 10000);
 
     }
 
