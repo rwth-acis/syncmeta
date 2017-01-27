@@ -636,6 +636,7 @@ requirejs([
         //local user joins
         y.share.join.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], false);
         ViewManager.GetViewpointList();
+        
         /*
         y.share.data.observe(function (event) {
             var model = event.value;
@@ -653,8 +654,6 @@ requirejs([
                 }
             }
         });*/
-          
-
     }
 
 });

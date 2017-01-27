@@ -79,7 +79,7 @@ define(['lib/yjs-sync','Util'], function(yjsSync, Util) {
                 if (keys[i].search(/\w*\[(\w|\s)*\]/g) != -1) {
                     var ytext = ymap.get(keys[i]);
                     //is it relly a y-text object?
-                    if(ytext.constructor.name === "t")
+                    if(ytext.constructor.name === "e")
                         listentoAttributesHelper(keys[i], ytext, entityId);
                 }
             }
@@ -132,7 +132,7 @@ define(['lib/yjs-sync','Util'], function(yjsSync, Util) {
                     ymap.observe(function(e) {
                         if (e.type === 'add' && e.name.search(/\w*\[(\w|\s)*\]/g) != -1) {
                             var attrId = e.name;
-                            if (e.value.constructor.name === "t") {
+                            if (e.value.constructor.name === "e") {
                                 var ytext = e.value;
                                 var newObserver = attrObservers[type].attributeYTextObserver(id, attrId);
                                 ytext.observe(newObserver);
@@ -394,7 +394,7 @@ define(['lib/yjs-sync','Util'], function(yjsSync, Util) {
                 if (keys != -1) {
                     var attr = ymap.get(attrId);
 
-                    if (attr.constructor.name === "t") {
+                    if (attr.constructor.name === "e") {
                         var ytext = attr;
                        
                             var l = ytext.toString().length;
