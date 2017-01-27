@@ -640,9 +640,11 @@ requirejs([
         y.share.data.observe(function(event){
             var model = event.value;
             if(event.name==="CAEmodel"){
-                model.fromCAE = true;   
-                console.log('Number of nodes: ' + Object.keys(model.nodes).length + 'Number of edges: ' + Object.keys(model.edges).length);    
-                y.share.data.set('model', model);
+                if(model){
+                    model.fromCAE = true;   
+                    console.log('Number of nodes: ' + Object.keys(model.nodes).length + 'Number of edges: ' + Object.keys(model.edges).length);    
+                    y.share.data.set('model', model);
+                }
             }
             else if(event.name==='model'){
                 if(model.hasOwnProperty('fromCAE') && model.fromCAE){
