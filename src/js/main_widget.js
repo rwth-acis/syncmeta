@@ -91,12 +91,7 @@ requirejs([
         var userList = [];
         var canvas = new Canvas($("#canvas"));
         HistoryManager.init(canvas);
-        y.connector.onUserEvent(function (event) {
-            if (event.action === 'userLeft') {
-                var breakpoint = true;
-            }
-        });
-
+       
         //not working pretty well 
         window.onbeforeunload = function (event) {
              //y.share.userList.delete(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
@@ -179,11 +174,11 @@ requirejs([
                                     break;
                                 }
                             }
-                            var activityOperation = new ActivityOperation("ReloadWidgetOperation", undefined, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], text);
-                            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
-
-                            //Users should not initlaize the new model at the same time, thus wait between 0 and 3 seconds before refreshing
+                            y.share.activity.set('ReloadWidgetOperation', new ActivityOperation("ReloadWidgetOperation", undefined, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], text));
                             frameElement.contentWindow.location.reload();
+                            //$("#canvas").empty();
+                            //$('#loading').show();
+                            //InitMainWidget()
                         }
                     }
 
@@ -533,7 +528,7 @@ requirejs([
         $("#applyLayout").click(function(){
             window.y.share.canvas.set('applyLayout', window.y.share.users.get(window.y.db.userId));
             window.y.share.activity.set('ApplyLayoutActivity', new ActivityOperation('ApplyLayoutActivity', null, window.y.share.users.get(window.y.db.userId),"..applied Layout"));
-    });
+        });
         
         var $feedback = $("#feedback");
 

@@ -223,7 +223,7 @@ define([
                         that.addUser(operation.getSender());
                         break;
                     case 'UserLeftActivity':{
-                        var activity = new Activity(null, operation.getSender(), '.. left the role space', Date.now());
+                        activity = new Activity(null, operation.getSender(), '.. left the role space', Date.now());
                         activity.setType('UserLeftActivity');
                         that.addActivity(activity);
                         that.addActivityToLog(activity);
@@ -231,7 +231,7 @@ define([
                         break;
                     }
                     case 'ApplyLayoutActivity':{
-                        var activity = new Activity(null, operation.getSender(), operation.getText(), Date.now());
+                        activity = new Activity(null, operation.getSender(), operation.getText(), Date.now());
                         activity.setType('ApplyLayoutActivity');
                         that.addActivity(activity);
                         that.addActivityToLog(activity);
@@ -239,7 +239,10 @@ define([
                     }
                     case 'ReloadWidgetOperation':
                         activity = new ReloadWidgetActivity(operation.getEntityId(), operation.getSender(), operation.getText(), Date.now());
+                        activity.setType('ReloadWidgetOperation');
                         that.addActivity(activity);
+                        that.addActivityToLog(activity);
+                        break;
                     case ViewApplyActivity.TYPE:
                         activity = new ViewApplyActivity(operation.getEntityId(),operation.getSender());
                         if (userList.hasOwnProperty(activity.getSender())) {
