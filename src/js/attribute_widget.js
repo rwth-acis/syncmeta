@@ -14,16 +14,13 @@ requirejs([
     'operations/non_ot/InitModelTypesOperation',
     'operations/non_ot/ViewInitOperation',
     'operations/non_ot/SetModelAttributeNodeOperation',
-    'promise!User',
     'promise!Guidancemodel'
-], function ($, IWCW, yjsSync, WaitForCanvas, AttributeWrapper, EntityManager, ViewGenerator, InitModelTypesOperation, ViewInitOperation, SetModelAttributeNodeOperation, user, guidancemodel) {
-
-    var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE);
-    iwc.setSpace(user);
-
-    WaitForCanvas(CONFIG.WIDGET.NAME.ATTRIBUTE, 7).done(function () {
+], function ($, IWCW, yjsSync, WaitForCanvas, AttributeWrapper, EntityManager, ViewGenerator, InitModelTypesOperation, ViewInitOperation, SetModelAttributeNodeOperation, guidancemodel) {
+    WaitForCanvas(CONFIG.WIDGET.NAME.ATTRIBUTE, 7).done(function (user) {
         $('#wrapper').find('h1').text('Got Response from Canvas! Connecting to Yjs....');
-
+        var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE);
+        iwc.setSpace(user);
+        
         yjsSync().done(function (y) {
             window.y = y;
             window.syncmetaLog = {

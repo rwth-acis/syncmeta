@@ -57,6 +57,13 @@ define([
         var _timestamp = timestamp;
 
         /**
+         * the type of the activity
+         * @type {string}
+         * @private
+         */
+        var _type = undefined;
+
+        /**
          * Activity box template
          * @type {function}
          * @private

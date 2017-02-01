@@ -376,7 +376,7 @@ define([
                             "-1",
                             _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
                             "..generated new Editor <a href=\"" + data.spaceURI + "\" target=\"_blank\">" + data.spaceTitle + "</a>", {});
-                            //TODO send activity to activity widget
+                            y.share.activity.set('EditorGenerateActivity', op);
                     }
 
                 }
