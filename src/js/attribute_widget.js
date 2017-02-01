@@ -52,7 +52,7 @@ requirejs([
 
             if (model)
                 JSONtoGraph(model);
-            console.info(window.syncmetaLog);
+            console.info('ATTRIBUTE: Initialization of model completed' , window.syncmetaLog);
 
 
             function JSONtoGraph(json) {

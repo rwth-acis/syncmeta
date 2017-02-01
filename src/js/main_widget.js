@@ -78,6 +78,8 @@ requirejs([
             metamodel = y.share.data.get('metamodel');
             model = y.share.data.get('model');
         }
+        if(model)
+            console.info('CANVAS: Found model in yjs room with ' + Object.keys(model.nodes).length + ' nodes and ' + Object.keys(model.edges).length + ' edges.');
         EntityManager.init(metamodel);
         EntityManager.setGuidance(guidancemodel);
         window.y = y;
@@ -158,7 +160,8 @@ requirejs([
                             var text;
                             switch (event.value) {
                                 case 'import': {
-                                    text = 'ATTENTION! Imported new model. Some widgets will reload';
+                                    var model = y.share.data.get('model');
+                                    text = 'ATTENTION! Imported new model containing <strong>'+ Object.keys(model.nodes).length + ' nodes</strong> and <strong>' + Object.keys(model.edges).length  + ' edges</strong>. Some widgets will reload';
                                     break;
                                 }
                                 case 'delete': {
@@ -176,9 +179,6 @@ requirejs([
                             }
                             y.share.activity.set('ReloadWidgetOperation', new ActivityOperation("ReloadWidgetOperation", undefined, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], text));
                             frameElement.contentWindow.location.reload();
-                            //$("#canvas").empty();
-                            //$('#loading').show();
-                            //InitMainWidget()
                         }
                     }
 
@@ -622,7 +622,7 @@ requirejs([
 
         if (model) {
             var report = JSONtoGraph(model, canvas);
-            console.info(report);
+            console.info('CANVAS: Initialization of model completed ', report);
             //initialize guidance model's if we are in metamodeling layer
             if(EntityManager.getLayer() === CONFIG.LAYER.META){
                 y.share.data.set('guidancemetamodel', EntityManager.generateGuidanceMetamodel());

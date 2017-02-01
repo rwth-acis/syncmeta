@@ -1,5 +1,5 @@
-define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function($, _, EntityManager) {
-    return function(json, canvas) {
+define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function ($, _, EntityManager) {
+    return function (json, canvas) {
         if (!canvas)
             return new Error('No canvas object defined!');
 
@@ -34,23 +34,23 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function($, _, Entit
 
         function createNode(nodeId, jsonNode) {
             var map = y.share.nodes.get(nodeId);
-            
+
             var node = null;
-            if(map){
-               node = EntityManager.createNodeFromJSON(
-                jsonNode.type, nodeId,
-                map.get('left') ? map.get('left') : jsonNode.left, map.get('top') ? map.get('top') : jsonNode.top, 
-                map.get('width') ? map.get('width') : jsonNode.width, map.get('height') ? map.get('height') : jsonNode.height,
-                map.get('zIndex') ? map.get('zIndex') : jsonNode.zIndex, jsonNode);
+            if (map) {
+                node = EntityManager.createNodeFromJSON(
+                    jsonNode.type, nodeId,
+                    map.get('left') ? map.get('left') : jsonNode.left, map.get('top') ? map.get('top') : jsonNode.top,
+                    map.get('width') ? map.get('width') : jsonNode.width, map.get('height') ? map.get('height') : jsonNode.height,
+                    map.get('zIndex') ? map.get('zIndex') : jsonNode.zIndex, jsonNode);
             }
-            else{
-               node = EntityManager.createNodeFromJSON(
-                jsonNode.type, nodeId,
-                jsonNode.left, jsonNode.top,
-                jsonNode.width, jsonNode.height,
-                jsonNode.zIndex,jsonNode);
+            else {
+                node = EntityManager.createNodeFromJSON(
+                    jsonNode.type, nodeId,
+                    jsonNode.left, jsonNode.top,
+                    jsonNode.width, jsonNode.height,
+                    jsonNode.zIndex, jsonNode);
             }
-                
+
 
             if (node === undefined) {
                 console.error('SYNCMETA: Node undefined. Check if ' + jsonNode.type + '  type is defined in the VLS');
@@ -113,22 +113,18 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function($, _, Entit
             if (createdNodes === numberOfNodes) {
                 if (numberOfEdges > 0) {
                     createEdges(json.edges)
-                        if (createdEdges === numberOfEdges) {
-                            canvas.resetTool();
-                            report.createdNodes = createdNodes;
-                            report.createdEdges = createdEdges;
-                          
-
-                        }
-                    
+                    if (createdEdges === numberOfEdges) {
+                        canvas.resetTool();
+                        report.createdNodes = createdNodes;
+                        report.createdEdges = createdEdges;
+                    }
                 } else {
                     report.createdNodes = createdNodes;
                     report.createdEdges = 0;
-                   
+
                 }
             }
         }
-        else 
-            return report;
-        }
+        return report;
+    }
 });

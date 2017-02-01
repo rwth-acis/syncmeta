@@ -39,7 +39,7 @@ define([
                 space.user[CONFIG.NS.PERSON.JABBERID] = person[CONFIG.NS.PERSON.JABBERID][0].value.replace("xmpp:", "");
                 space.user[CONFIG.NS.PERSON.MBOX] = person[CONFIG.NS.PERSON.MBOX][0].value;
                 space.user.globalId = -1;
-                console.info('User promise by ' + frameElement.name);
+                console.info('User promise by ' + frameElement.name, space);
                 deferred.resolve(space);
             }
             catch (e) {
