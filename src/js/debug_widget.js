@@ -1,8 +1,8 @@
 requirejs(['jqueryui', 'lodash', 'lib/yjs-sync', 'canvas_widget/GenerateViewpointModel', 'canvas_widget/EntityManager','promise!Guidancemodel'],
  function ($, _, yjsSync, GenerateViewpointModel, EntityManager, guidance) {
     $(function () {
-        yjsSync().done(function (y) {
-            console.info('DEBUG: Yjs successfully initialized');
+        yjsSync().done(function (y, spaceTitle) {
+            console.info('DEBUG: Yjs successfully initialized in room ' + spaceTitle + ' with y-user-id: ' + y.db.userId);
 
             var $deleteMetamodel = $("#delete-meta-model").prop('disabled', false),
                 $exportMetamodel = $("#export-meta-model").prop('disabled', false),

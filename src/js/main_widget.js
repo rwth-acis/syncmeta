@@ -58,8 +58,8 @@ requirejs([
     _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
     _iwcw.setSpace(user);
 
-    yjsSync().done(function (y) {
-        console.info('CANVAS: Yjs Initialized successfully');
+    yjsSync().done(function (y, spaceTitle) {
+        console.info('CANVAS: Yjs Initialized successfully in room ' + spaceTitle + ' with y-user-id: ' + y.db.userId);
 
         y.share.users.set(y.db.userId, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
         if(!y.share.userList.get(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])){

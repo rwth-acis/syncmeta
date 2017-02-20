@@ -19,8 +19,8 @@ requirejs([
     'WaitForCanvas'
     //'promise!Guidancemodel',
 ], function ($, _, require, IWCW, yjsSync, Util, NodePreview, NodeAddOperation, NodeMoveOperation, NodeResizeOperation, NodeDeleteOperation, CanvasViewChangeOperation, WaitForCanvas/*, guidancemodel*/) {
-    yjsSync().done(function (y) {
-        console.info('HEATMAP: Yjs successfully initialized');
+    yjsSync().done(function (y, spaceTitle) {
+        console.info('HEATMAP: Yjs successfully initialized in room ' + spaceTitle + ' with y-user-id: ' + y.db.userId);
         var model = y.share.data.get('model');
         var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.HEATMAP);
         WaitForCanvas(CONFIG.WIDGET.NAME.HEATMAP, 7).done(function (user) {

@@ -9,9 +9,9 @@ requirejs([
     'operations/non_ot/ExportMetaModelOperation',
     'promise!Guidancemodel'
 ], function($, _, Util, IWCW, yjsSync, EntityManager, GenerateViewpointModel, ExportMetaModelOperation, guidancemodel) {
-    yjsSync().done(function(y) {
+    yjsSync().done(function(y, spaceTitle) {
         window.y = y;
-        console.info('GENERATE_INSTANCE: Yjs successfully initialized');
+        console.info('GENERATE_INSTANCE: Yjs successfully initialized in room ' + spaceTitle + ' with y-user-id: ' + y.db.userId);
 
         var componentName = "export" + Util.generateRandomId();
 

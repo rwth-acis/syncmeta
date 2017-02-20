@@ -9,10 +9,10 @@ requirejs([
     'activity_widget/ActivityList',
     'WaitForCanvas',
     'Util'],function ($, yjsSync, ActivityList, WaitForCanvas, Util) {
-        yjsSync().done(function(y){
+        yjsSync().done(function(y, spaceTitle){
             window.y = y;
 
-            console.info('ACTIVITY: Yjs successfully initialized.');
+            console.info('ACTIVITY: Yjs successfully initialized in room ' + spaceTitle + ' with y-user-id: ' + y.db.userId);
             var activtyList = new ActivityList($("#user_list"),$("#activity_list"));   
             
             y.share.join.observe(function(event){

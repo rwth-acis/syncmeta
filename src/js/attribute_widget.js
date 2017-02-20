@@ -21,7 +21,7 @@ requirejs([
         var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE);
         iwc.setSpace(user);
         
-        yjsSync().done(function (y) {
+        yjsSync().done(function (y, spaceTitle) {
             window.y = y;
             window.syncmetaLog = {
                 widget: "Attribute",
@@ -34,7 +34,7 @@ requirejs([
             setTimeout(function () {
                 $('#wrapper').find('h1').remove();
             }, 2000);
-            console.info('ATTRIBUTE: Yjs successfully initialized');
+            console.info('ATTRIBUTE: Yjs successfully initialized in room ' + spaceTitle + ' with y-user-id: ' + y.db.userId);
             y.share.users.set(y.db.userId, iwc.getUser()[CONFIG.NS.PERSON.JABBERID]);
 
             var model = y.share.data.get('model');
