@@ -38,6 +38,8 @@ requirejs([
             y.share.users.set(y.db.userId, iwc.getUser()[CONFIG.NS.PERSON.JABBERID]);
 
             var model = y.share.data.get('model');
+            if(model)
+                console.info('ATTRIBUTE: Found model in yjs room with ' + Object.keys(model.nodes).length + ' nodes and ' + Object.keys(model.edges).length + ' edges.');
             InitAttributeWidget(model);
         });
         function InitAttributeWidget(model) {
