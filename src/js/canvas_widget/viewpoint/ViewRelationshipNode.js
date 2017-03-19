@@ -164,7 +164,7 @@ define([
             _$attributeNode.append(conjSelection.get$node());
             conjSelection.get$node().hide();
 
-            if(json)
+            if(json && conjSelection && cla && renamingList && targetAttribute)
                 that.showAttributes();
                 
             this.setContextMenuItemCallback(function () {
