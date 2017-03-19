@@ -8,7 +8,6 @@ requirejs(['jqueryui',
     function($,_,IWC, yjsSync, Util, UpdateViewListOperation,GenerateViewpointModel){
 
         yjsSync().done(function(y,spaceTitle){
-            window.y = y;
             console.info('VIEWCONTROL: Yjs successfully initialized in room ' + spaceTitle + ' with y-user-id: ' + y.db.userId);
 
             var metamodel = y.share.data.get('metamodel');
@@ -85,6 +84,7 @@ requirejs(['jqueryui',
                                 y.share.views.set(vvs.id,vvs);
                             }
                             catch (e){
+                                console.error(e);
                                 y.share.views.set(data.id,data);
                             }
                         }

@@ -46,7 +46,7 @@ define([
                 _ymap = y.share.edges.get(id);
 
             }
-            else {
+            else if (id && type && source && target){
                 _ymap = y.share.edges.set(id, Y.Map);
                 _ymap.set('id', id);
                 _ymap.set('type', type);

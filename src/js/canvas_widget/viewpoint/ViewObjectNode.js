@@ -120,32 +120,32 @@ define([
 
         var targetAttribute, renamingList, conjSelection, cla;
         _$node.find(".label").append(this.getLabel().get$node());
-        var model = y.share.data.get('model');
-        if (model) {
-            var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes, ['Object']);
-            targetAttribute = new SingleSelectionAttribute(id + "[target]", "Target", that, selectionValues);
-            that.addAttribute(targetAttribute);
-            _$attributeNode.prepend(targetAttribute.get$node());
-
-            renamingList = new RenamingListAttribute("[attributes]", "Attributes", that, { "show": "Visible", "hide": "Hidden" });
-            that.addAttribute(renamingList);
-            _$attributeNode.append(renamingList.get$node());
-            renamingList.get$node().hide();
-
-            conjSelection = new SingleSelectionAttribute(id + '[conjunction]', 'Conjunction', that, LogicalConjunctions);
-            that.addAttribute(conjSelection);
-            _$attributeNode.append(conjSelection.get$node());
-            conjSelection.get$node().hide();
-
-            
-            if(json){
-                cla = that.createConditionListAttribute(json.attributes['[attributes]'].list);
-                that.showAttributes();
+        if (window.hasOwnProperty("y")) {
+            var model = y.share.data.get('model');
+            if (model) {
+                var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes, ['Object']);
+                targetAttribute = new SingleSelectionAttribute(id + "[target]", "Target", that, selectionValues);
+                that.addAttribute(targetAttribute);
+                _$attributeNode.prepend(targetAttribute.get$node());
             }
-            else cla = that.createConditionListAttribute(); 
+            if (json)
+                cla = that.createConditionListAttribute(json.attributes['[attributes]'].list);
+            else cla = that.createConditionListAttribute();
         }
 
-        
+        renamingList = new RenamingListAttribute("[attributes]", "Attributes", that, { "show": "Visible", "hide": "Hidden" });
+        that.addAttribute(renamingList);
+        _$attributeNode.append(renamingList.get$node());
+        renamingList.get$node().hide();
+
+        conjSelection = new SingleSelectionAttribute(id + '[conjunction]', 'Conjunction', that, LogicalConjunctions);
+        that.addAttribute(conjSelection);
+        _$attributeNode.append(conjSelection.get$node());
+        conjSelection.get$node().hide();
+
+        if(json)
+            that.showAttributes();
+
         this.setContextMenuItemCallback(function () {
             var NodeShapeNode = require('canvas_widget/NodeShapeNode'),
                 BiDirAssociationEdge = require('canvas_widget/BiDirAssociationEdge'),
