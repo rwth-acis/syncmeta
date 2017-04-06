@@ -134,36 +134,39 @@ define([
 
             var targetAttribute, renamingList, conjSelection, cla;
             _$node.find(".label").append(this.getLabel().get$node());
-            var model = y.share.data.get('model');
-            if (model) {
-                var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes, ['Relationship']);
-                targetAttribute = new SingleSelectionAttribute(id + "[target]", "Reference", that, selectionValues);
-                that.addAttribute(targetAttribute);
-                _$attributeNode.prepend(targetAttribute.get$node());
+            if (window.hasOwnProperty("y")) {
+                var model = y.share.data.get('model');
+                if (model) {
+                    var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes, ['Relationship']);
+                    targetAttribute = new SingleSelectionAttribute(id + "[target]", "Reference", that, selectionValues);
+                    that.addAttribute(targetAttribute);
+                    _$attributeNode.prepend(targetAttribute.get$node());
 
-                renamingList = new RenamingListAttribute("[attributes]", "Attributes", that, {
-                    "hidden": "Show",
-                    "top": "Show Top",
-                    "center": "Show Center",
-                    "bottom": "Show Bottom",
-                    "hide": "Hide"
-                });
-                that.addAttribute(renamingList);
-                _$attributeNode.append(renamingList.get$node());
-                renamingList.get$node().hide();
-
-                conjSelection = new SingleSelectionAttribute(id + '[conjunction]', 'Conjunction', that, LogicalConjunctions);
-                that.addAttribute(conjSelection);
-                _$attributeNode.append(conjSelection.get$node());
-                conjSelection.get$node().hide();
-
-                if (json) {
-                    cla = that.createConditionListAttribute(json.attributes['[attributes]'].list);
-                    that.showAttributes();
+                    if (json)
+                        cla = that.createConditionListAttribute(json.attributes['[attributes]'].list);
+                    else cla = that.createConditionListAttribute();
                 }
-                else cla = that.createConditionListAttribute();
             }
-            
+
+            renamingList = new RenamingListAttribute("[attributes]", "Attributes", that, {
+                "hidden": "Show",
+                "top": "Show Top",
+                "center": "Show Center",
+                "bottom": "Show Bottom",
+                "hide": "Hide"
+            });
+            that.addAttribute(renamingList);
+            _$attributeNode.append(renamingList.get$node());
+            renamingList.get$node().hide();
+
+            conjSelection = new SingleSelectionAttribute(id + '[conjunction]', 'Conjunction', that, LogicalConjunctions);
+            that.addAttribute(conjSelection);
+            _$attributeNode.append(conjSelection.get$node());
+            conjSelection.get$node().hide();
+
+            if(json && conjSelection && cla && renamingList && targetAttribute)
+                that.showAttributes();
+                
             this.setContextMenuItemCallback(function () {
                 var EdgeShapeNode = require('canvas_widget/EdgeShapeNode'),
                     BiDirAssociationEdge = require('canvas_widget/BiDirAssociationEdge'),
@@ -177,10 +180,8 @@ define([
                                 appearance = that.getAppearance(),
                                 nodeId;
 
-                            //TODO rewrite
-                            canvas.createNode(EdgeShapeNode.TYPE, appearance.left + appearance.width + 50, appearance.top, 150, 100).done(function (nodeId) {
-                                canvas.createEdge(BiDirAssociationEdge.TYPE, that.getEntityId(), nodeId, null, null, viewId);
-                            });
+                            canvas.createNode(EdgeShapeNode.TYPE, appearance.left + appearance.width + 50, appearance.top, 150, 100);
+                            canvas.createEdge(BiDirAssociationEdge.TYPE, that.getEntityId(), nodeId, null, null, viewId);
                         },
                         disabled: function () {
                             var edges = that.getEdges(),

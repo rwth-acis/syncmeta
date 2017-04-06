@@ -137,7 +137,6 @@ define(['lodash',
              * @param {object} json  the json representation of the node
 			 * @returns {attribute_widget.AbstractNode}
 			 */
-			//TODO: switch id and type
 			createNode : function (type, id, left, top, width, height,json) {
 				var node;
 				
@@ -239,7 +238,6 @@ define(['lodash',
 			 * @param {attribute_widget.AbstractNode} target Target node
 			 * @returns {attribute_widget.AbstractEdge}
 			 */
-			//TODO: switch id and type
 			createEdge : function (type, id, source, target) {
 				var edge;
                 

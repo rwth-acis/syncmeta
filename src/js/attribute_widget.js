@@ -14,17 +14,14 @@ requirejs([
     'operations/non_ot/InitModelTypesOperation',
     'operations/non_ot/ViewInitOperation',
     'operations/non_ot/SetModelAttributeNodeOperation',
-    'promise!User',
     'promise!Guidancemodel'
-], function ($, IWCW, yjsSync, WaitForCanvas, AttributeWrapper, EntityManager, ViewGenerator, InitModelTypesOperation, ViewInitOperation, SetModelAttributeNodeOperation, user, guidancemodel) {
-
-    var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE);
-    iwc.setSpace(user);
-
-    WaitForCanvas(CONFIG.WIDGET.NAME.ATTRIBUTE, 7).done(function () {
+], function ($, IWCW, yjsSync, WaitForCanvas, AttributeWrapper, EntityManager, ViewGenerator, InitModelTypesOperation, ViewInitOperation, SetModelAttributeNodeOperation, guidancemodel) {
+    WaitForCanvas(CONFIG.WIDGET.NAME.ATTRIBUTE, 7).done(function (user) {
         $('#wrapper').find('h1').text('Got Response from Canvas! Connecting to Yjs....');
-
-        yjsSync().done(function (y) {
+        var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE);
+        iwc.setSpace(user);
+        
+        yjsSync().done(function (y, spaceTitle) {
             window.y = y;
             window.syncmetaLog = {
                 widget: "Attribute",
@@ -37,10 +34,12 @@ requirejs([
             setTimeout(function () {
                 $('#wrapper').find('h1').remove();
             }, 2000);
-            console.info('ATTRIBUTE: Yjs successfully initialized');
+            console.info('ATTRIBUTE: Yjs successfully initialized in room ' + spaceTitle + ' with y-user-id: ' + y.db.userId);
             y.share.users.set(y.db.userId, iwc.getUser()[CONFIG.NS.PERSON.JABBERID]);
 
             var model = y.share.data.get('model');
+            if(model)
+                console.info('ATTRIBUTE: Found model in yjs room with ' + Object.keys(model.nodes).length + ' nodes and ' + Object.keys(model.edges).length + ' edges.');
             InitAttributeWidget(model);
         });
         function InitAttributeWidget(model) {
@@ -55,7 +54,7 @@ requirejs([
 
             if (model)
                 JSONtoGraph(model);
-            console.info(window.syncmetaLog);
+            console.info('ATTRIBUTE: Initialization of model completed' , window.syncmetaLog);
 
 
             function JSONtoGraph(json) {

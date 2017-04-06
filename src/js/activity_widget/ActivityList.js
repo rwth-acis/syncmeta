@@ -223,12 +223,26 @@ define([
                         that.addUser(operation.getSender());
                         break;
                     case 'UserLeftActivity':{
+                        activity = new Activity(null, operation.getSender(), '.. left the role space', Date.now());
+                        activity.setType('UserLeftActivity');
+                        that.addActivity(activity);
+                        that.addActivityToLog(activity);
                         that.removeUser(operation.getSender());
+                        break;
+                    }
+                    case 'ApplyLayoutActivity':{
+                        activity = new Activity(null, operation.getSender(), operation.getText(), Date.now());
+                        activity.setType('ApplyLayoutActivity');
+                        that.addActivity(activity);
+                        that.addActivityToLog(activity);
                         break;
                     }
                     case 'ReloadWidgetOperation':
                         activity = new ReloadWidgetActivity(operation.getEntityId(), operation.getSender(), operation.getText(), Date.now());
+                        activity.setType('ReloadWidgetOperation');
                         that.addActivity(activity);
+                        that.addActivityToLog(activity);
+                        break;
                     case ViewApplyActivity.TYPE:
                         activity = new ViewApplyActivity(operation.getEntityId(),operation.getSender());
                         if (userList.hasOwnProperty(activity.getSender())) {
@@ -333,6 +347,10 @@ define([
                             that.addActivity(new EditorGenerateActivity(a.entityId, a.sender, a.text, a.timestamp));
                             break;
                         }
+                        default: {
+                            that.addActivity(new Activity(a.entityId, a.sender, a.text, a.timestamp));
+                            break;
+                        }
                     }
                     if(checkEntity(activity.getEntityId()))
                         activity.trackable();
@@ -341,8 +359,6 @@ define([
             }
         }
         if(y){
-          
-
             y.share.activity.observe(function(event){
                 operationCallback(new ActivityOperation(event.value.type, event.value.entityId, event.value.sender, event.value.text, event.value.data));
             });

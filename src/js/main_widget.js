@@ -58,8 +58,8 @@ requirejs([
     _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
     _iwcw.setSpace(user);
 
-    yjsSync().done(function (y) {
-        console.info('CANVAS: Yjs Initialized successfully');
+    yjsSync().done(function (y, spaceTitle) {
+        console.info('CANVAS: Yjs Initialized successfully in room ' + spaceTitle + ' with y-user-id: ' + y.db.userId);
 
         y.share.users.set(y.db.userId, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
         if(!y.share.userList.get(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])){
@@ -78,6 +78,8 @@ requirejs([
             metamodel = y.share.data.get('metamodel');
             model = y.share.data.get('model');
         }
+        if(model)
+            console.info('CANVAS: Found model in yjs room with ' + Object.keys(model.nodes).length + ' nodes and ' + Object.keys(model.edges).length + ' edges.');
         EntityManager.init(metamodel);
         EntityManager.setGuidance(guidancemodel);
         window.y = y;
@@ -91,16 +93,11 @@ requirejs([
         var userList = [];
         var canvas = new Canvas($("#canvas"));
         HistoryManager.init(canvas);
-        y.connector.onUserEvent(function (event) {
-            if (event.action === 'userLeft') {
-                var breakpoint = true;
-            }
-        });
-
+       
         //not working pretty well 
         window.onbeforeunload = function (event) {
-            y.share.userList.delete(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
-            y.share.users.delete(y.db.userId);
+             //y.share.userList.delete(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+             //y.share.users.delete(y.db.userId);
             y.share.activity.set('UserLeftActivity', new ActivityOperation('UserLeftActivity', null, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]));
         }
         
@@ -117,7 +114,7 @@ requirejs([
                     if (operation.hasOwnProperty('getType') && operation.getType() === 'WaitForCanvasOperation') {
                         switch (operation.getData().widget) {
                             case CONFIG.WIDGET.NAME.ATTRIBUTE:
-                                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new NonOTOperation('WaitForCanvasOperation', true));
+                                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new NonOTOperation('WaitForCanvasOperation', JSON.stringify(user)));
                                 break;
                         }
                     }
@@ -142,8 +139,12 @@ requirejs([
                         if (operation.getType() === 'WaitForCanvasOperation') {
                             switch (operation.getData().widget) {
                                 case CONFIG.WIDGET.NAME.ACTIVITY:
-                                    _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new NonOTOperation('WaitForCanvasOperation', JSON.stringify(userList)));
+                                    _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new NonOTOperation('WaitForCanvasOperation', JSON.stringify({local: user, list:userList})));
                                     break;
+                                case CONFIG.WIDGET.NAME.HEATMAP:{
+                                    _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.HEATMAP, new NonOTOperation('WaitForCanvasOperation', JSON.stringify(user)));
+                                    break;
+                                }
                             }
                         }
                     }
@@ -159,7 +160,8 @@ requirejs([
                             var text;
                             switch (event.value) {
                                 case 'import': {
-                                    text = 'ATTENTION! Imported new model. Some widgets will reload';
+                                    var model = y.share.data.get('model');
+                                    text = 'ATTENTION! Imported new model containing <strong>'+ Object.keys(model.nodes).length + ' nodes</strong> and <strong>' + Object.keys(model.edges).length  + ' edges</strong>. Some widgets will reload';
                                     break;
                                 }
                                 case 'delete': {
@@ -175,10 +177,7 @@ requirejs([
                                     break;
                                 }
                             }
-                            var activityOperation = new ActivityOperation("ReloadWidgetOperation", undefined, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], text);
-                            _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
-
-                            //Users should not initlaize the new model at the same time, thus wait between 0 and 3 seconds before refreshing
+                            y.share.activity.set('ReloadWidgetOperation', new ActivityOperation("ReloadWidgetOperation", undefined, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], text));
                             frameElement.contentWindow.location.reload();
                         }
                     }
@@ -525,7 +524,12 @@ requirejs([
         $("#zoomout").click(function () {
             canvas.setZoom(canvas.getZoom() - 0.1);
         });
-
+        
+        $("#applyLayout").click(function(){
+            window.y.share.canvas.set('applyLayout', window.y.share.users.get(window.y.db.userId));
+            window.y.share.activity.set('ApplyLayoutActivity', new ActivityOperation('ApplyLayoutActivity', null, window.y.share.users.get(window.y.db.userId),"..applied Layout"));
+        });
+        
         var $feedback = $("#feedback");
 
         var saveFunction = function () {
@@ -618,7 +622,7 @@ requirejs([
 
         if (model) {
             var report = JSONtoGraph(model, canvas);
-            console.info(report);
+            console.info('CANVAS: Initialization of model completed ', report);
             //initialize guidance model's if we are in metamodeling layer
             if(EntityManager.getLayer() === CONFIG.LAYER.META){
                 y.share.data.set('guidancemetamodel', EntityManager.generateGuidanceMetamodel());

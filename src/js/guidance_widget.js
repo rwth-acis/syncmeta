@@ -25,9 +25,9 @@ requirejs([
     'promise!Space',
     'bootstrap'
 ], function($, _, require, IWCW, yjsSync, EntitySelectOperation, GuidanceStrategyOperation, NodeAddOperation, EdgeAddOperation, NodeDeleteOperation, EdgeDeleteOperation, ValueChangeOperation, NodeMoveOperation, NodeMoveZOperation, NodeResizeOperation, NoStrategy, AvoidConflictsStrategy, CollaborationStrategy, Space) {
-    yjsSync().done(function(y) {
+    yjsSync().done(function(y, spaceTitle) {
         window.y = y;
-        console.info('GUIDANCE: Yjs Initialized successfully');
+        console.info('GUIDANCE: Yjs Initialized successfully in room ' + spaceTitle + ' with y-user-id: ' + y.db.userId);
         initGuidanceWidget();
     });
 

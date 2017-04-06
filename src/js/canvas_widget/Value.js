@@ -28,7 +28,7 @@ define([
         var that = this;
         var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
         var _ytext = null;
-        if (window.hasOwnProperty("y")) {
+        if (window.hasOwnProperty("y") && id.indexOf("undefined") == -1) {
             if (rootSubjectEntity.getYMap().keys().indexOf(id) != -1)
                 _ytext = rootSubjectEntity.getYMap().get(id);
             else _ytext = rootSubjectEntity.getYMap().set(id, Y.Text);
@@ -125,7 +125,8 @@ define([
             }
             _ytext.observe(function (event) {
                 _value = _ytext.toString().replace(/\n/g,'');
-                //TODO i can not find out who triggered the delete :-(. Therefore do this only for non delete event types
+                //Not able to find out who triggered the delete.
+                //Therefore do this only for non delete event types
                 if (event.type !== "delete") {
                     var jabberId = y.share.users.get(event.object._content[event.index].id[0]);
                     y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(

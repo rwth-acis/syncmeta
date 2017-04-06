@@ -57,6 +57,13 @@ define([
         var _timestamp = timestamp;
 
         /**
+         * the type of the activity
+         * @type {string}
+         * @private
+         */
+        var _type = undefined;
+
+        /**
          * Activity box template
          * @type {function}
          * @private
@@ -178,15 +185,23 @@ define([
             this.get$node().show();
         };
 
+        this.setType = function(type){
+            _type = type;
+        }
+        this.getType = function(){
+            return _type;
+        }
+        
         /**
          * activity to JSON
          */
         this._toJSON = function(){
             var json = {
-                entityId: entityId,
-                sender: sender,
-                text: text,
-                timestamp:_timestamp
+                entityId: _entityId,
+                sender: _sender,
+                text: _text,
+                timestamp:_timestamp,
+                type: _type
             };
             var user = y.share.userList.get(sender);
             if(user){

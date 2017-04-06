@@ -36,7 +36,6 @@
 <h5>Control Elements</h5>
     <button id="btnRefresh">Refresh Lists</button>
     <button id="btnLoadViewpoint">Load a Viewpoint</button>
-    <button id="btnDelAllView">Delete all Views</button>
 </div>
 <div class="seperating_box">
     <strong>Viewpoint List</strong>

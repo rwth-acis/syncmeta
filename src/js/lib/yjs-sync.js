@@ -31,8 +31,8 @@ define(['jquery', 'Util'], function($, Util) {
             },
             type:["Text","Map"],
             sourceDir: '<%= grunt.config("baseUrl") %>/js/lib/vendor'
-        }).then(function(y) {   
-            deferred.resolve(y);
+        }).then(function(y) {
+            deferred.resolve(y, spaceTitle);
         });
         return deferred.promise();
     };

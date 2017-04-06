@@ -29,6 +29,7 @@
    <button id="viewsShow" title="Show the View Panel"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/viewShow.png"/></button>
   <button id="showtype" title="Show the types of nodes and edges"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/hidetype.png" /></button>
   <button id="hidetype" title="Hide types of nodes and edges"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/showtype.png" /></button>
+  <button id="applyLayout" title="Apply Layout"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/layout.png" /></button>
   <button id="zoomin" title="Zoom in"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/zoomin.png" /></button>
   <button id="zoomout" title="Zoom out"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/zoomout.png" /></button>
   <button id="undo" title="Undo your latest changes"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/undo.png" /></button>
