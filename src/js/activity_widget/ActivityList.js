@@ -344,11 +344,13 @@ define([
                             break;
                         }
                         case EditorGenerateActivity.TYPE: {
-                            that.addActivity(new EditorGenerateActivity(a.entityId, a.sender, a.text, a.timestamp));
+                            activity = new EditorGenerateActivity(a.entityId, a.sender, a.text, a.timestamp);
+                            that.addActivity(activity);
                             break;
                         }
                         default: {
-                            that.addActivity(new Activity(a.entityId, a.sender, a.text, a.timestamp));
+                            activity = new Activity(a.entityId, a.sender, a.text, a.timestamp)
+                            that.addActivity(activity);
                             break;
                         }
                     }
