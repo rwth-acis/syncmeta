@@ -12,8 +12,9 @@ define([
 
         var deferred = $.Deferred();
         //Check whether this is the guidance modeling editor based on the activity name
-        var act = openapp.param.get("http://purl.org/role/terms/activity");
-        openapp.resource.get(act, function(resource){
+        //var act = openapp.param.get("http://purl.org/role/terms/activity");
+        //openapp.resource.get(act, function(resource){
+            var resource = {};//delete this line and uncomment the first to line above to enable guidance modeling, requires also openapp
             var activityName;
             console.info('Guidance promise by ' + frameElement.name, resource);
             try {
@@ -123,7 +124,7 @@ define([
 
             deferred.resolve(guidancemodeling);
 
-        });
+        //});
         return deferred.promise();
 
     }

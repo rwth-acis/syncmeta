@@ -1,10 +1,10 @@
 define([
-    'iwc',
     'operations/ot/OTOperation',
     'operations/non_ot/NonOTOperation',
     'operations/OperationFactory',
-    'Util'
-],/** @lends IWC */function(IIWC,OTOperation,NonOTOperation,OperationFactory, Util){
+    'Util', 
+    'iwc'
+],/** @lends IWCW */function(OTOperation,NonOTOperation,OperationFactory, Util){
 
     var PAYLOAD_DATA_TYPE = {
         OT_OPERATION: "OTOperation",
@@ -13,9 +13,9 @@ define([
 
     /**
      * Inter widget communication and OT client module
-     * @exports IWC
+     * @exports IWCW
      */
-    var IWC={};
+    var IWCW={};
 
     /**
      * Inter-widget communication wrapper
@@ -69,7 +69,7 @@ define([
          * @type {iwc.Client}
          * @private
          */
-        var _iwc = new IIWC.Client(componentName);
+        var _iwc = new IWC.Client(componentName);
         window._iwc_instance_ = _iwc;
 
 
@@ -133,7 +133,7 @@ define([
                     //sendBufferTimer.pause();
                     if (data.length == 1) {
                         intent = encapsulateMessage(receiver, CONFIG.IWC.FLAG.PUBLISH_LOCAL, CONFIG.IWC.ACTION.DATA, data[0]);
-                        if (IIWC.util.validateIntent(intent)) {
+                        if (IWC.util.validateIntent(intent)) {
 
                             console.log("=== " + intent.flags.toString().replace(/PUBLISH_/g, "") + " INTENT TRANSMITTED AT COMPONENT " + componentName + " ===");
                             console.log(intent);
@@ -142,7 +142,7 @@ define([
                         }
                     } else if (data.length > 1) {
                         intent = encapsulateMessage(receiver, CONFIG.IWC.FLAG.PUBLISH_LOCAL, CONFIG.IWC.ACTION.DATA_ARRAY, data);
-                        if (IIWC.util.validateIntent(intent)) {
+                        if (IWC.util.validateIntent(intent)) {
 
                             console.log("=== " + intent.flags.toString().replace(/PUBLISH_/g, "") + " INTENT TRANSMITTED AT COMPONENT " + componentName + " ===");
                             console.log(intent);
@@ -281,7 +281,7 @@ define([
                             //sendBufferTimer.resume();
                 } else {
                     intent = encapsulateMessage(receiver, CONFIG.IWC.FLAG.PUBLISH_LOCAL, CONFIG.IWC.ACTION.DATA, data);
-                    if (IIWC.util.validateIntent(intent)) {
+                    if (IWC.util.validateIntent(intent)) {
 
                         console.log("=== " + intent.flags.toString().replace(/PUBLISH_/g,"") + " INTENT TRANSMITTED AT COMPONENT " + componentName + " ===");
                         console.log(intent);
@@ -369,7 +369,7 @@ define([
      */
     var instance = null;
 
-    IWC.hasInstance = function(){
+    IWCW.hasInstance = function(){
         if(instance === null){
             return false;
         } else {
@@ -382,7 +382,7 @@ define([
      * @param {string} componentName Name of component (widget) using the wrapper
      * @returns {IWCWrapper}
      */
-    IWC.getInstance = function(componentName){
+    IWCW.getInstance = function(componentName){
         if(instance === null){
             instance = new IWCWrapper(componentName);
             instance.connect();
@@ -391,6 +391,6 @@ define([
     };
 
 
-    return IWC;
+    return IWCW;
 
 });
