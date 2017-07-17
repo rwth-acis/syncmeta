@@ -8,7 +8,7 @@
     author_email="<%= grunt.config('pkg.author.email') %>"
     width="<%= meta.width %>"
     height="<%= meta.height %>">
-    <!--
+    
     <Require feature="opensocial-0.8" ></Require>
     <Require feature="openapp" ></Require>
     <Require feature="dynamic-height"></Require>
@@ -22,7 +22,7 @@
         <Access method="" url=""></Access>
       </Service>
     </OAuth>
-	-->
+	
   </ModulePrefs>
   <Content type="html">
     <![CDATA[

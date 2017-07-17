@@ -60,7 +60,7 @@ var require = {
         coweb: "lib/vendor/coweb",
         ot: "lib/vendor/coweb/jsoe/OTEngine",
         //iwc: "iwc",
-        iwc: "lib/iwc",
+        iwc: "lib/vendor/iwc",
         iwcw: "lib/IWCWrapper",
         iwcotw: "lib/IWCOTWrapper",
         text: "lib/vendor/requirejs-text",
@@ -93,12 +93,12 @@ CONFIG = {
     },
     WIDGET: {
         NAME: {
-            MAIN: "canvas",
-            PALETTE: "palette",
-            ATTRIBUTE: "property browser",
-            ACTIVITY: "user activity",
-            GUIDANCE: "GUIDANCE",
-            HEATMAP: "HEATMAP"
+            MAIN: "Canvas",
+            PALETTE: "Palette",
+            ATTRIBUTE: "Property Browser",
+            ACTIVITY: "User Activity",
+            GUIDANCE: "Guidance",
+            HEATMAP: "Heatmap"
         }
     },
     ENTITY: {

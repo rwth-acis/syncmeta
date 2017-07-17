@@ -69,7 +69,7 @@ define([
          * @type {iwc.Client}
          * @private
          */
-        var _iwc = new IWC.Client(componentName);
+        var _iwc = new IWC.Client(componentName, "*");
         window._iwc_instance_ = _iwc;
 
 
@@ -107,7 +107,7 @@ define([
             receiver = receiver || "";
 
             return {
-                "component": receiver,
+                "receiver": receiver,
                 "sender": componentName,
                 "data": "",
                 "dataType": "",
