@@ -505,7 +505,7 @@ module.exports = function(grunt) {
     // plugin's task(s), then test the result.
     grunt.registerTask('build', 'Build', function(){
         grunt.task.run(['clean','requirejs:compile','copy:lib','copy:main', 'bootstrap_prefix','buildwidgets']);
-        grunt.task.run(['requirejs:plugin']);
+        //grunt.task.run();
     });
     grunt.registerTask('deploy', 'Deploy', function(){
         grunt.config.set('baseUrl', localConfig.deployUrl);
@@ -513,5 +513,6 @@ module.exports = function(grunt) {
         grunt.task.run(['clean','requirejs:compile','copy:lib','copy:main','bootstrap_prefix','buildwidgets'/*,'sftp'*/]);
     });
     grunt.registerTask('serve',['build','connect']);
+    grunt.registerTask('plugin',['requirejs:plugin']);
 
 };

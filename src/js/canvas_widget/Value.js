@@ -29,8 +29,11 @@ define([
         var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
         var _ytext = null;
         if (window.hasOwnProperty("y") && id.indexOf("undefined") == -1) {
-            if (rootSubjectEntity.getYMap().keys().indexOf(id) != -1)
+            if (rootSubjectEntity.getYMap().keys().indexOf(id) != -1){
                 _ytext = rootSubjectEntity.getYMap().get(id);
+                if(!(_ytext instanceof Y.Text.typeDefinition.class))
+                    _ytext = rootSubjectEntity.getYMap().set(id, Y.Text);
+            }
             else _ytext = rootSubjectEntity.getYMap().set(id, Y.Text);
         }
         AbstractValue.call(this, id, name, subjectEntity, rootSubjectEntity);
