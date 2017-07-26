@@ -3,7 +3,7 @@ var require = {
     waitSeconds: 0,
     shim: {
         iwc: {
-            exports: "iwc"
+            deps:["jquery"]
         },
         jqueryui: {
             exports: "$",
