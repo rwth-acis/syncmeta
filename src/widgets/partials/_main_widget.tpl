@@ -9,7 +9,8 @@
 <div id="loading" class="loading"></div>
 <div class="button_bar left">
   <button id="save" title="Save the current state of the model"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/save.png" /></button>
-  <!--<button id="save_image"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/save_image.png" /></button>-->
+  <!-- Uncommented the below line for Export as PNG! --> 
+  <button id="save_image"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/save_image.png" /></button>
   <!--<button id="generate" style="display: none"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/generate.png" /></button>-->
   <span id="feedback"></span>
   <strong id="lblCurrentView">View:<span id="lblCurrentViewId"></span></strong>
