@@ -138,7 +138,12 @@ requirejs([
                                     _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new NonOTOperation('WaitForCanvasOperation', JSON.stringify(user)));
                                     break;
                                 case CONFIG.WIDGET.NAME.PALETTE:
-                                    _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, new NonOTOperation('WaitForCanvasOperation', JSON.stringify(y.share.data.get('metamodel'))));
+                                    var metamodel = y.share.data.get('metamodel');
+                                    if(!metamodel)
+                                        metamodel = '{}';
+                                    else 
+                                        metamodel = JSON.stringify(metamodel);
+                                    _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, new NonOTOperation('WaitForCanvasOperation', metamodel));
                                 break;
                             }
                         }

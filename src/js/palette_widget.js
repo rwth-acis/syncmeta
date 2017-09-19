@@ -23,13 +23,13 @@ requirejs([
     'promise!Guidancemodel'
 ],function ($,WaitForCanvas,Palette,MoveTool,ObjectNodeTool,AbstractClassNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,GeneralisationEdgeTool,ViewObjectNodeTool,ViewRelationshipNodeTool,guidancemodel) {
 
-    WaitForCanvas(CONFIG.WIDGET.NAME.PALETTE, 10, 500).done(function (metamodel) {        
+    WaitForCanvas(CONFIG.WIDGET.NAME.PALETTE, 10, 1500).done(function (metamodel) {        
         var palette = new Palette($("#palette"), $("#info"));
 
         palette.addTool(new MoveTool());
         palette.addSeparator();
 
-        if (metamodel) {
+        if (!$.isEmptyObject(metamodel)) {
             if (metamodel.hasOwnProperty('nodes')) {
                 palette.initNodePalette(metamodel);
             }
