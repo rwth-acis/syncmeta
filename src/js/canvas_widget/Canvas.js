@@ -269,7 +269,7 @@ define([
                         if (!viewType && EntityManager.getViewId()) {
                             node.hide();
                         } else {
-                            if (y.share.users.get(y.db.userId) !== operation.getJabberId()) {
+                            if (y.share.users.get(y.db.userId) !== operation.getJabberId() && operation.getJabberId() != null) {
                                 var color = Util.getColor(y.share.userList.get(operation.getJabberId()).globalId);
                                 node.refreshTraceAwareness(color);
                             }
