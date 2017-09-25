@@ -24,7 +24,7 @@ requirejs([
                 var user = data.local.user;
                 if(!y.share.userList.get(user[CONFIG.NS.PERSON.JABBERID])){
                     user.globalId = Util.getGlobalId(data.local, y);   
-                    y.share.userList.set(User.user[CONFIG.NS.PERSON.JABBERID], user);
+                    y.share.userList.set(user[CONFIG.NS.PERSON.JABBERID], user);
                 }
 
                 var userList = data.list;
