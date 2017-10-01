@@ -1304,6 +1304,32 @@ define([
                                 DagreLayout.apply();   
                                 break;
                             }
+                            case 'highlight':{
+                                var userId =  _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID];
+                                if(!event.value.remote && userId !== event.value.userId) return;
+                                
+                                for(var i=0;i<event.value.entities.length;i++){
+                                    var entityId = event.value.entities[i];
+                                    var entity = EntityManager.find(entityId);
+                                    if(entity){
+                                        entity.highlight(event.value.color, event.value.label);
+                                    }
+                                }
+                                
+                                break;
+                            }
+                            case 'unhighlight':{
+                                var userId =  _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID];
+                                if(!event.value.remote && userId !== event.value.userId) return;
+                                for(var i=0;i<event.value.entities.length;i++){
+                                    var entityId = event.value.entities[i];
+                                    var entity = EntityManager.find(entityId);
+                                    if(entity){
+                                        entity.unhighlight();
+                                    }
+                                }
+                                break;
+                            }
                         }
                         //local user. todo ugly coding style
                     } else if(event.name === "applyLayout")
