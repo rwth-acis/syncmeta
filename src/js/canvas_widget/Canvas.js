@@ -706,10 +706,10 @@ define([
                 _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.toNonOTOperation());
 
                 if (entity === null) {
-                    y.share.select.set(y.db.userId, null);
+                    y.share.select.set(y.share.users.get(y.db.userId), null);
                 }
                 else {
-                    y.share.select.set(y.db.userId, entity.getEntityId());
+                    y.share.select.set(y.share.users.get(y.db.userId), entity.getEntityId());
 
 
                 }
@@ -1337,8 +1337,8 @@ define([
                 });
 
                 y.share.select.observe(function(event) {
-                    if (event.name !== y.db.userId) {
-                        var userInfo = y.share.userList.get(y.share.users.get(event.name));
+                    if (event.name !== y.share.users.get(y.db.userId)) {
+                        var userInfo = y.share.userList.get(event.name);
                         if (event.oldValue != null) {
                             var unselectedEntity = EntityManager.find(event.oldValue);
                             if (unselectedEntity)
