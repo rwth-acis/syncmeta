@@ -1304,6 +1304,7 @@ define([
                                 DagreLayout.apply();   
                                 break;
                             }
+                            //used by the syncmeta-plugin only
                             case 'highlight':{
                                 var userId =  _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID];
                                 if(!event.value.remote && userId !== event.value.userId) return;
@@ -1318,6 +1319,7 @@ define([
                                 
                                 break;
                             }
+                            //used by the syncmeta-plugin only
                             case 'unhighlight':{
                                 var userId =  _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID];
                                 if(!event.value.remote && userId !== event.value.userId) return;
@@ -1330,10 +1332,26 @@ define([
                                 }
                                 break;
                             }
+                            //used by the syncmeta-plugin only
+                            case NodeDeleteOperation.TYPE:{
+                                var userId =  _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID];
+                                if(event.value.jabberId === userId)
+                                    y.share.nodes.delete(event.value.entityId);
+                                    setTimeout(function(){
+                                        $('#save').click();
+                                    },300);
+                                break;
+                            }
+                            //used by the syncmeta-plugin only
+                            case EdgeDeleteOperation.TYPE:{
+                                break;
+                            }
                         }
                         //local user. todo ugly coding style
-                    } else if(event.name === "applyLayout")
+                    } else if(event.name === "applyLayout"){
                         DagreLayout.apply();  
+                        $('#save').click();                        
+                    }
                 });
 
                 y.share.select.observe(function(event) {
@@ -1361,7 +1379,7 @@ define([
                             {
                                 var node = EntityManager.findNode(event.name);
                                 if (node)
-                                    node.remoteNodeDeleteCallback(new NodeDeleteOperation(event.name));
+                                    node.remoteNodeDeleteCallback(new NodeDeleteOperation(event.name));                                 
                                 break;
                             }/*
                         case 'add': {
