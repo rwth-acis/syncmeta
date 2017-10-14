@@ -119,10 +119,10 @@ define([
                         first.text = activity.getText();
                 }
                 else{*/
-                    var json = activity.toJSON();
-                    if(data)
-                        json.data = data;
-                    jsonActivityList.unshift(json);
+                var json = activity.toJSON();
+                if (data)
+                    json.data = data;
+                jsonActivityList.unshift(json);
                 //}
                 y.share.activity.set('log', jsonActivityList);
             }
@@ -166,7 +166,6 @@ define([
                     case NodeAddActivity.TYPE:
                         activity = new NodeAddActivity(operation.getEntityId(), operation.getSender(), operation.getText(), Date.now(), data.nodeType);
                         that.addActivity(activity);
-                        that.addActivityToLog(activity);
 
                         that.findTrackableActivities(activity);
                         break;
@@ -174,35 +173,30 @@ define([
                         activity = new EdgeAddActivity(operation.getEntityId(), operation.getSender(), operation.getText(), Date.now(), data.nodeType, data.sourceNodeLabel, data.sourceNodeId, data.sourceNodeType, data.targetNodeLabel, data.targetNodeId, data.targetNodeType);
                         that.findTrackableActivities(activity);
                         that.addActivity(activity);
-                        that.addActivityToLog(activity);
 
                         that.findTrackableActivities(activity);
                         break;
                     case NodeDeleteActivity.TYPE:
                         activity = new NodeDeleteActivity(operation.getEntityId(), operation.getSender(), operation.getText(), Date.now());
                         that.addActivity(activity);
-                        that.addActivityToLog(activity);
 
                         that.findUntrackableActivities(activity);
                         break;
                     case EdgeDeleteActivity.TYPE:
                         activity = new EdgeDeleteActivity(operation.getEntityId(), operation.getSender(), operation.getText(), Date.now());
                         that.addActivity(activity);
-                        that.addActivityToLog(activity);
 
                         that.findUntrackableActivities(activity);
                         break;
                     case NodeMoveActivity.TYPE:
                         activity = new NodeMoveActivity(operation.getEntityId(), operation.getSender(), operation.getText(), Date.now(), data.nodeType);
                         that.addActivity(activity);
-                        that.addActivityToLog(activity);
 
                         activity.trackable();
                         break;
                     case NodeResizeActivity.TYPE:
                         activity = new NodeResizeActivity(operation.getEntityId(), operation.getSender(), operation.getText(), Date.now(), data.nodeType);
                         that.addActivity(activity);
-                        that.addActivityToLog(activity);
 
                         activity.trackable();
                         break;
@@ -214,14 +208,12 @@ define([
                         } else {
                             that.addActivity(activity);
                         }
-                        that.addActivityToLog(activity, data);
 
                         activity.trackable();
                         break;
                     case EditorGenerateActivity.TYPE:
                         activity = new EditorGenerateActivity(operation.getEntityId(), operation.getSender(), operation.getText(), Date.now());
                         that.addActivity(activity);
-                        that.addActivityToLog(activity, data);
                         break;
                     case UserJoinActivity.TYPE:
                         that.addUser(operation.getSender());
@@ -230,7 +222,6 @@ define([
                         activity = new Activity(null, operation.getSender(), '.. left the role space', Date.now());
                         activity.setType('UserLeftActivity');
                         that.addActivity(activity);
-                        that.addActivityToLog(activity, data);
                         that.removeUser(operation.getSender());
                         break;
                     }
@@ -238,14 +229,12 @@ define([
                         activity = new Activity(null, operation.getSender(), operation.getText(), Date.now());
                         activity.setType('ApplyLayoutActivity');
                         that.addActivity(activity);
-                        that.addActivityToLog(activity, data);
                         break;
                     }
                     case 'ReloadWidgetOperation':
                         activity = new ReloadWidgetActivity(operation.getEntityId(), operation.getSender(), operation.getText(), Date.now());
                         activity.setType('ReloadWidgetOperation');
                         that.addActivity(activity);
-                        that.addActivityToLog(activity, data);
                         break;
                     case ViewApplyActivity.TYPE:
                         activity = new ViewApplyActivity(operation.getEntityId(), operation.getSender());
@@ -253,38 +242,25 @@ define([
                             userList[activity.getSender()].get$node().find('.lblViewId').text(activity.getViewId());
                         }
                         break;
+                    case 'WidgetTrackingActivity':
+                        activity = new Activity(operation.getEntityId(), operation.getSender(), operation.getText(), Date.now());
+                        activity.setType(operation.getType());
+                        //Don't add this to the activity widget
+                        break;
                     default: {
                         activity = new Activity(operation.getEntityId(), operation.getSender(), operation.getText(), Date.now());
                         activity.setType(operation.getType());
                         that.addActivity(activity);
-                        that.addActivityToLog(activity, data);
                         break;
                     }
                 }
                 user = that.getUser(operation.getSender());
                 if (user) {
                     user.setLastActivityDate(new Date());
+                    if(y.share.users.get(y.db.userId) === operation.getSender())
+                        that.addActivityToLog(activity, data);
                 }
                 return;
-            }
-            if (operation instanceof EntitySelectOperation) {
-                if (operation.getSelectedEntityId() === null) {
-                    _.each(activityList, function (activity) {
-                        activity.show();
-                    });
-                } else {
-                    _.each(activityList, function (activity) {
-                        activity.show();
-                    });
-                    _.each(_.filter(activityList, function (activity) {
-                        if (activity instanceof ValueChangeActivity) {
-                            return activity.getRootSubjectEntityId() !== operation.getSelectedEntityId();
-                        }
-                        return activity.getEntityId() !== operation.getSelectedEntityId();
-                    }), function (activity) {
-                        activity.hide();
-                    });
-                }
             }
         };
 
@@ -373,8 +349,29 @@ define([
         }
         if (y) {
             y.share.activity.observe(function (event) {
-                if(event.name === 'log' || event.value.sender == null) return;
+                if (event.name === 'log' || event.value.sender == null) return;
                 operationCallback(new ActivityOperation(event.value.type, event.value.entityId, event.value.sender, event.value.text, event.value.data));
+            });
+
+            y.share.select.observe(function (event) {
+                if (event.value === null) {
+                    _.each(activityList, function (activity) {
+                        activity.show();
+                    });
+                } else {
+                    _.each(activityList, function (activity) {
+                        activity.show();
+                    });
+                    _.each(_.filter(activityList, function (activity) {
+                        if (activity instanceof ValueChangeActivity) {
+                            return activity.getRootSubjectEntityId() !== event.value;
+                        }
+                        return activity.getEntityId() !== event.value;
+                    }), function (activity) {
+                        activity.hide();
+                    });
+                }
+
             });
         }
     }

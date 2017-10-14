@@ -208,6 +208,7 @@ define([
                 json.user = {};
                 json.user.title = user[CONFIG.NS.PERSON.TITLE];   
                 json.user.mail = user[CONFIG.NS.PERSON.MBOX]; 
+                json.user.color = Util.getColor(user.globalId);
             }
             return json;
         }
