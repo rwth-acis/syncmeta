@@ -160,6 +160,23 @@ define([
          * @param {object} intent Message content in Android Intent-like format required by the iwc client
          */
         var onIntentReceivedCallback = function(intent){
+            //some CAE widgets still use the old iwc.js library
+            //then it happens that intent are not parsed and processes correctly by the new iwc and then 
+            //the complete message as string is returned 
+            //this workaround should help for now to make it work with syncmeta
+            if(typeof intent === 'string'){
+                try{
+                    intent = JSON.parse(intent);
+                    if(intent.hasOwnProperty("OpenApplicationEvent")){
+                        intent = intent["OpenApplicationEvent"];
+                        if(intent.hasOwnProperty("message"))
+                            intent = intent.message;
+                    }
+                }
+                catch(e){
+                    console.error(e);
+                }
+            }
             var payload = intent.extras.payload,
                 senderTime = intent.extras.time,
                 senderTimes = _times[intent.extras.sender];
