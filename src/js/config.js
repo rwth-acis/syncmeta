@@ -98,7 +98,9 @@ CONFIG = {
             ATTRIBUTE: "ATTRIBUTE",
             ACTIVITY: "ACTIVITY",
             GUIDANCE: "GUIDANCE",
-            HEATMAP: "HEATMAP"
+            HEATMAP: "HEATMAP",
+            METADATA: "METADATA",
+            OPENAPI: "OPENAPI"
         }
     },
     ENTITY: {

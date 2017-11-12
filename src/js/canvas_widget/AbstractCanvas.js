@@ -45,6 +45,8 @@ define([],/** @lends AbstractCanvas */function () {
          * @param {canvas_widget.AbstractCanvasTool} tool Canvas tool
          */
         this.addTool = function(name,tool){
+            console.log("[Abstract canvas] Add tool " + name);
+            console.log(tool);
             if(!_tools.hasOwnProperty(name) && typeof tool.mount === 'function' && typeof tool.unmount === 'function' && typeof tool.setCanvas === 'function'){
                 tool.setCanvas(this);
                 _tools[name] = tool;
@@ -69,6 +71,9 @@ define([],/** @lends AbstractCanvas */function () {
          * @param {string} name Name of tool
          */
         this.mountTool = function(name){
+            console.log("[Mount tool] Abstract canvas mount tool " + name);
+            console.log(_tools);
+            console.log(_currentToolName);
             if(_currentToolName && _tools[_currentToolName]) _tools[_currentToolName].unmount();
             if(_tools.hasOwnProperty(name)){
                 _tools[name].mount();

@@ -187,6 +187,8 @@ requirejs([
         });
 
         if (metamodel) {
+            console.log("[main widget] Metamodel detected");
+            console.log(metamodel);
             if (metamodel.hasOwnProperty("nodes")) {
                 var nodes = metamodel.nodes, node;
                 for (var nodeId in nodes) {
@@ -252,6 +254,8 @@ requirejs([
                 var operation = new InitModelTypesOperation(vvs, true).toNonOTOperation();
                 _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation);
                 _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation);
+                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.METADATA, operation);
+                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.OPENAPI, operation);
 
                 var activityOperation = new ActivityOperation("ViewApplyActivity", vvs.id, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
                 _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());
