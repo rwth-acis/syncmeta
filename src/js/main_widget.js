@@ -535,12 +535,12 @@ requirejs([
         // Add code for PNG export
 	
         // Work later on moving this functionality to Export Widget
-        var uri = canvas.toPNG();
+        //var uri = canvas.toPNG();
         // y.share.canvas.set('PngMap', uri);
         // Work later on moving this functionality to Export Widget
         
         // Export as PNG
-        var $saveImage = $("#save_image");
+        /*var $saveImage = $("#save_image");
         $saveImage.show();
         $saveImage.click(function () {
              canvas.toPNG().then(function (uri) {
@@ -550,6 +550,7 @@ requirejs([
                 link.click();
              });
         });
+        */
 
 	// Export as PNG ends
 
