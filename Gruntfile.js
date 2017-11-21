@@ -28,7 +28,7 @@ module.exports = function(grunt) {
             },
             lib: {
                 files: [
-                    {src: '<%= bowerdir %>/iwc/index.js', dest: '<%= distdir %>/js/lib/vendor/iwc.js'},
+                    {src: '<%= bowerdir %>/iwc/iwc.js', dest: '<%= distdir %>/js/lib/vendor/iwc.js'},
                     {src: '<%= bowerdir %>/jquery/jquery.js', dest: '<%= distdir %>/js/lib/vendor/jquery.js'},
                     {src: '<%= bowerdir %>/jquery-migrate/jquery-migrate.js', dest: '<%= distdir %>/js/lib/vendor/jquery-migrate.js'},
                     {src: '<%= bowerdir %>/jquery-ui/ui/jquery-ui.js', dest: '<%= distdir %>/js/lib/vendor/jquery-ui.js'},
@@ -224,7 +224,7 @@ module.exports = function(grunt) {
                     }
                 },
                 files: {
-                    'html/instances.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
+                    'html/instances.xml': ['<%= srcdir %>/widgets/widget.xml.openapp.tpl']
                 }
             },
 
@@ -241,7 +241,7 @@ module.exports = function(grunt) {
                     }
                 },
                 files: {
-                    'html/generated_instances.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
+                    'html/generated_instances.xml': ['<%= srcdir %>/widgets/widget.xml.openapp.tpl']
                 }
             },
 
@@ -266,7 +266,7 @@ module.exports = function(grunt) {
                 options: {
                     data: {
                         meta: {
-                            title: "Guidance widget",
+                            title: "Guidance",
                             description: "",
                             width: "300",
                             height: "400"
@@ -283,7 +283,7 @@ module.exports = function(grunt) {
                 options: {
                     data: {
                         meta: {
-                            title: "Collaboration Overview",
+                            title: "Heatmap",
                             description: "",
                             width: "400",
                             height: "400"
@@ -505,7 +505,7 @@ module.exports = function(grunt) {
     // plugin's task(s), then test the result.
     grunt.registerTask('build', 'Build', function(){
         grunt.task.run(['clean','requirejs:compile','copy:lib','copy:main', 'bootstrap_prefix','buildwidgets']);
-        grunt.task.run(['requirejs:plugin']);
+        //grunt.task.run();
     });
     grunt.registerTask('deploy', 'Deploy', function(){
         grunt.config.set('baseUrl', localConfig.deployUrl);
@@ -513,5 +513,6 @@ module.exports = function(grunt) {
         grunt.task.run(['clean','requirejs:compile','copy:lib','copy:main','bootstrap_prefix','buildwidgets'/*,'sftp'*/]);
     });
     grunt.registerTask('serve',['build','connect']);
+    grunt.registerTask('plugin',['requirejs:plugin']);
 
 };

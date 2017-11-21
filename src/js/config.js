@@ -3,7 +3,7 @@ var require = {
     waitSeconds: 0,
     shim: {
         iwc: {
-            exports: "iwc"
+            deps:["jquery"]
         },
         jqueryui: {
             exports: "$",
@@ -60,7 +60,7 @@ var require = {
         coweb: "lib/vendor/coweb",
         ot: "lib/vendor/coweb/jsoe/OTEngine",
         //iwc: "iwc",
-        iwc: "lib/iwc",
+        iwc: "lib/vendor/iwc",
         iwcw: "lib/IWCWrapper",
         iwcotw: "lib/IWCOTWrapper",
         text: "lib/vendor/requirejs-text",
@@ -82,8 +82,8 @@ CONFIG = {
     TEST:{
         USER:"Luigi Test",
         EMAIL:"luigi.test05@gmail.com",
-        CANVAS: true,
-        ATTRIBUTE: true,
+        CANVAS: false,
+        ATTRIBUTE: false,
         PALETTE: false,
         ACTIVITY: false
     },
@@ -93,12 +93,12 @@ CONFIG = {
     },
     WIDGET: {
         NAME: {
-            MAIN: "MAIN",
-            PALETTE: "PALETTE",
-            ATTRIBUTE: "ATTRIBUTE",
-            ACTIVITY: "ACTIVITY",
-            GUIDANCE: "GUIDANCE",
-            HEATMAP: "HEATMAP"
+            MAIN: "Canvas",
+            PALETTE: "Palette",
+            ATTRIBUTE: "Property Browser",
+            ACTIVITY: "User Activity",
+            GUIDANCE: "Guidance",
+            HEATMAP: "Heatmap"
         }
     },
     ENTITY: {

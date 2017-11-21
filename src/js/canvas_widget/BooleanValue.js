@@ -36,7 +36,7 @@ define([
          * @type {boolean}
          * @private
          */
-        var _value = true;
+        var _value = false;
 
         /**
          * jQuery object of DOM node representing the node

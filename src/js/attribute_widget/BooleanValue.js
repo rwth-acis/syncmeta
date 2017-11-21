@@ -32,7 +32,7 @@ define([
          * @type {boolean}
          * @private
          */
-        var _value = true;
+        var _value = false;
 
         /**
          * jQuery object of DOM node representing the node
@@ -75,7 +75,9 @@ define([
             processValueChangeOperation(operation);
             var ymap = y.share.nodes.get(rootSubjectEntity.getEntityId());
             if(ymap){
-                ymap.set(that.getEntityId(), operation.toJSON());
+                var json = operation.toJSON();
+                json.userId = _iwc.getUser()[CONFIG.NS.PERSON.JABBERID];
+                ymap.set(that.getEntityId(), json);
             }
         };
 

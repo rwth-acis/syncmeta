@@ -5,7 +5,7 @@
 
 requirejs([
     'jqueryui',
-    'lib/yjs-sync',
+    'WaitForCanvas',    
     'palette_widget/Palette',
     'palette_widget/MoveTool',
     'palette_widget/ObjectNodeTool',
@@ -21,23 +21,15 @@ requirejs([
     'palette_widget/ViewObjectNodeTool',
     'palette_widget/ViewRelationshipNodeTool',
     'promise!Guidancemodel'
-],function ($,yjsSync,Palette,MoveTool,ObjectNodeTool,AbstractClassNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,GeneralisationEdgeTool,ViewObjectNodeTool,ViewRelationshipNodeTool,guidancemodel) {
+],function ($,WaitForCanvas,Palette,MoveTool,ObjectNodeTool,AbstractClassNodeTool,EnumNodeTool,NodeShapeNodeTool,EdgeShapeNodeTool,RelationshipNodeTool,RelationshipGroupNodeTool,BiDirAssociationEdgeTool,UniDirAssociationEdgeTool,GeneralisationEdgeTool,ViewObjectNodeTool,ViewRelationshipNodeTool,guidancemodel) {
 
-    yjsSync().done(function(y, spaceTitle) {
-        
-        console.info('PALETTE:Yjs successfully initialized in room ' + spaceTitle + ' with y-user-id: ' + y.db.userId);
-        var metamodel = y.share.data.get('metamodel');
+    WaitForCanvas(CONFIG.WIDGET.NAME.PALETTE, 10, 1500).done(function (metamodel) {        
         var palette = new Palette($("#palette"), $("#info"));
 
         palette.addTool(new MoveTool());
         palette.addSeparator();
 
-        //Set the metamodel to the guidance metamodel in the guidance editor
-        if (guidancemodel.isGuidanceEditor()) {
-            metamodel = y.share.data.get('guidancemetamodel');
-        }
-
-        if (metamodel) {
+        if (!$.isEmptyObject(metamodel)) {
             if (metamodel.hasOwnProperty('nodes')) {
                 palette.initNodePalette(metamodel);
             }
@@ -74,17 +66,6 @@ requirejs([
 
         if (CONFIG.TEST.PALETTE)
             require(['./../test/PaletteWidgetTest']);
-        window.y = y;
-        y.share.canvas.observe(function(event){
-            switch(event.name){
-                case 'ReloadWidgetOperation':{
-                    if(event.value === 'meta_delete'){
-                        frameElement.contentWindow.location.reload();
-                    }
-                }
-            }
-        });
-        
     });
 
 });
