@@ -269,7 +269,7 @@ define([
                         if (!viewType && EntityManager.getViewId()) {
                             node.hide();
                         } else {
-                            if (y.share.users.get(y.db.userId) !== operation.getJabberId()) {
+                            if (y.share.users.get(y.db.userId) !== operation.getJabberId() && operation.getJabberId() != null) {
                                 var color = Util.getColor(y.share.userList.get(operation.getJabberId()).globalId);
                                 node.refreshTraceAwareness(color);
                             }
@@ -705,10 +705,10 @@ define([
                 _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.OPENAPI, operation.toNonOTOperation());
 
                 if (entity === null) {
-                    y.share.select.set(y.db.userId, null);
-                } else {
-                    y.share.select.set(y.db.userId, entity.getEntityId());
-
+                    y.share.select.set(y.share.users.get(y.db.userId), null);
+                }
+                else {
+                    y.share.select.set(y.share.users.get(y.db.userId), entity.getEntityId());
 
                 }
                 _selectedEntity = entity;
@@ -1286,33 +1286,74 @@ define([
                                     remoteGuidanceStrategyOperation(operation);
                                     break;
                                 }
-                            case 'ViewApplyActivity':
-                                {
-                                    var activityOperation = new ActivityOperation("ViewApplyActivity", event.value.viewId, event.value.jabberId);
-                                    y.share.activity.set(ActivityOperation.TYPE, activityOperation);
-                                    break;
+                            case 'ViewApplyActivity': {
+                                var activityOperation = new ActivityOperation("ViewApplyActivity", event.value.viewId, event.value.jabberId);
+                                y.share.activity.set(ActivityOperation.TYPE, activityOperation);
+                                break;
+                            }
+                            case 'triggerSave': {
+                                if (event.value === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
+                                    $('#save').click();
+                                break;
+                            }
+                            case 'applyLayout':{
+                                //remote user
+                                DagreLayout.apply();   
+                                break;
+                            }
+                            //used by the syncmeta-plugin only
+                            case 'highlight':{
+                                var userId =  _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID];
+                                if(!event.value.remote && userId !== event.value.userId) return;
+                                
+                                for(var i=0;i<event.value.entities.length;i++){
+                                    var entityId = event.value.entities[i];
+                                    var entity = EntityManager.find(entityId);
+                                    if(entity){
+                                        entity.highlight(event.value.color, event.value.label);
+                                    }
                                 }
-                            case 'triggerSave':
-                                {
-                                    if (event.value === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
+                                
+                                break;
+                            }
+                            //used by the syncmeta-plugin only
+                            case 'unhighlight':{
+                                var userId =  _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID];
+                                if(!event.value.remote && userId !== event.value.userId) return;
+                                for(var i=0;i<event.value.entities.length;i++){
+                                    var entityId = event.value.entities[i];
+                                    var entity = EntityManager.find(entityId);
+                                    if(entity){
+                                        entity.unhighlight();
+                                    }
+                                }
+                                break;
+                            }
+                            //used by the syncmeta-plugin only
+                            case NodeDeleteOperation.TYPE:{
+                                var userId =  _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID];
+                                if(event.value.jabberId === userId)
+                                    y.share.nodes.delete(event.value.entityId);
+                                    setTimeout(function(){
                                         $('#save').click();
-                                    break;
-                                }
-                            case 'applyLayout':
-                                {
-                                    //remote user
-                                    DagreLayout.apply();
-                                    break;
-                                }
+                                    },300);
+                                break;
+                            }
+                            //used by the syncmeta-plugin only
+                            case EdgeDeleteOperation.TYPE:{
+                                break;
+                            }
                         }
                         //local user. todo ugly coding style
-                    } else if (event.name === "applyLayout")
-                        DagreLayout.apply();
+                    } else if(event.name === "applyLayout"){
+                        DagreLayout.apply();  
+                        $('#save').click();                        
+                    }
                 });
 
-                y.share.select.observe(function (event) {
-                    if (event.name !== y.db.userId) {
-                        var userInfo = y.share.userList.get(y.share.users.get(event.name));
+                y.share.select.observe(function(event) {
+                    if (event.name !== y.share.users.get(y.db.userId)) {
+                        var userInfo = y.share.userList.get(event.name);
                         if (event.oldValue != null) {
                             var unselectedEntity = EntityManager.find(event.oldValue);
                             if (unselectedEntity)
@@ -1335,7 +1376,7 @@ define([
                             {
                                 var node = EntityManager.findNode(event.name);
                                 if (node)
-                                    node.remoteNodeDeleteCallback(new NodeDeleteOperation(event.name));
+                                    node.remoteNodeDeleteCallback(new NodeDeleteOperation(event.name));                                 
                                 break;
                             }
                             /*

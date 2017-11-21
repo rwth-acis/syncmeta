@@ -29,8 +29,11 @@ define([
         var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
         var _ytext = null;
         if (window.hasOwnProperty("y") && id.indexOf("undefined") == -1) {
-            if (rootSubjectEntity.getYMap().keys().indexOf(id) != -1)
+            if (rootSubjectEntity.getYMap().keys().indexOf(id) != -1){
                 _ytext = rootSubjectEntity.getYMap().get(id);
+                if(!(_ytext instanceof Y.Text.typeDefinition.class))
+                    _ytext = rootSubjectEntity.getYMap().set(id, Y.Text);
+            }
             else _ytext = rootSubjectEntity.getYMap().set(id, Y.Text);
         }
         AbstractValue.call(this, id, name, subjectEntity, rootSubjectEntity);
@@ -125,35 +128,32 @@ define([
             }
             _ytext.observe(function (event) {
                 _value = _ytext.toString().replace(/\n/g,'');
-                //Not able to find out who triggered the delete.
-                //Therefore do this only for non delete event types
-                if (event.type !== "delete") {
-                    var jabberId = y.share.users.get(event.object._content[event.index].id[0]);
-                    y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(
-                        "ValueChangeActivity",
-                        that.getEntityId(),
-                        jabberId,
-                        ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(), that.getRootSubjectEntity().getType(), that.getRootSubjectEntity().getLabel().getValue().getValue()),
-                        {
-                            value: _value,
-                            subjectEntityName: that.getSubjectEntity().getName(),
-                            rootSubjectEntityType: that.getRootSubjectEntity().getType(),
-                            rootSubjectEntityId: that.getRootSubjectEntity().getEntityId()
-                        }
-                    ));
-                }
             });
 
             _ytext.observe(_.debounce(function (event) {
                 if (event.type !== "delete") {
                     var jabberId = y.share.users.get(event.object._content[event.index].id[0]);
-                    if (jabberId === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
+                    if (jabberId === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]){
                         $('#save').click();
+                        y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(
+                            "ValueChangeActivity",
+                            that.getEntityId(),
+                            jabberId,
+                            ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(), that.getRootSubjectEntity().getType(), that.getRootSubjectEntity().getLabel().getValue().getValue()),
+                            {
+                                value: _value,
+                                subjectEntityName: that.getSubjectEntity().getName(),
+                                rootSubjectEntityType: that.getRootSubjectEntity().getType(),
+                                rootSubjectEntityId: that.getRootSubjectEntity().getEntityId()
+                            }
+                        ));
+                    }
                 }
                 else {
                     //I don't know who deleted here, so everyone save's  the current state for now
                     $('#save').click();
                 }
+                
 
             }, 500));
         };

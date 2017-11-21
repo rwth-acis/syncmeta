@@ -14,8 +14,8 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function ($, _, Enti
             }
         }
 
-        cleanUpYSpace('nodes');
-        cleanUpYSpace('edges');
+        //cleanUpYSpace('nodes');
+        //cleanUpYSpace('edges');
 
         var deferred = $.Deferred();
         var numberOfNodes = _.keys(json.nodes).length;
