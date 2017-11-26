@@ -64,7 +64,6 @@ define([
                         resOperation.setNonOTOperation(operation);
                         break;
                     case ToolSelectOperation.TYPE:
-                        console.log("[createOperationFromNonOTOperation] Tool select operation " + data.selectedToolName);
                         resOperation = new ToolSelectOperation(data.selectedToolName);
                         break;
                     case ActivityOperation.TYPE:

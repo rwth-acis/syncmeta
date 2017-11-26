@@ -187,8 +187,6 @@ define([
                 numOfMessages;
 
             function handleMessage(payload){
-
-                console.log("[onIntentReceivedCallback] Handle intent message");
                 var type,
                     data,
                     sender,
@@ -209,8 +207,6 @@ define([
                         operation.setSender(sender);
                         resOperation = OperationFactory.createOperationFromOTOperation(operation);
                         //adjustHistory(remoteOp);
-                        console.log("[_onDataReceivedCallbacks]");
-                        console.log(_onDataReceivedCallbacks);
                         for(i = 0, numOfCallbacks = _onDataReceivedCallbacks.length; i < numOfCallbacks; i++){
                             if(typeof _onDataReceivedCallbacks[i] === 'function'){
                                 var caller = _onDataReceivedCallers[i] || this;
@@ -219,14 +215,10 @@ define([
                         }
                         break;
                     case PAYLOAD_DATA_TYPE.NON_OT_OPERATION:
-
-                        console.log("[onIntentReceivedCallback] Payload data type non ot operation");
                         operation = new NonOTOperation(data.type,data.data);
                         operation.setSender(sender);
                         resOperation = OperationFactory.createOperationFromNonOTOperation(operation);
                         //adjustHistory(remoteOp);
-                        console.log("[_onDataReceivedCallbacks]");
-                        console.log(_onDataReceivedCallbacks);
                         for(i = 0, numOfCallbacks = _onDataReceivedCallbacks.length; i < numOfCallbacks; i++){
                             if(typeof _onDataReceivedCallbacks[i] === 'function'){
                                 var caller = _onDataReceivedCallers[i] || this;
@@ -351,8 +343,6 @@ define([
              * @param {function} callback
              */
             registerOnDataReceivedCallback: function(callback, caller){
-                console.log("[registerOnDataReceivedCallback] Register callback");
-                console.log(callback);
                 if(typeof callback === "function"){
                     this.unregisterOnDataReceivedCallback(callback);
                     _onDataReceivedCallbacks.push(callback);

@@ -126,7 +126,6 @@ define([
              * @param {ToolSelectOperation} operation
              */
             var processToolSelectOperation = function (operation) {
-                console.log("[processToolSelectOperation] Operation " + operation);
                 that.mountTool(operation.getSelectedToolName());
             };
 
@@ -339,7 +338,6 @@ define([
              * @param {operations.non_ot.ToolSelectOperation} operation
              */
             var localToolSelectCallback = function (operation) {
-                console.log("[Local tool select callback] Operation " + operation);
                 if (operation instanceof ToolSelectOperation) {
                     processToolSelectOperation(operation);
                 }
