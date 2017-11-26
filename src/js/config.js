@@ -93,12 +93,12 @@ CONFIG = {
     },
     WIDGET: {
         NAME: {
-            MAIN: "MAIN",
-            PALETTE: "PALETTE",
-            ATTRIBUTE: "ATTRIBUTE",
-            ACTIVITY: "ACTIVITY",
-            GUIDANCE: "GUIDANCE",
-            HEATMAP: "HEATMAP",
+            MAIN: "Canvas",
+            PALETTE: "Palette",
+            ATTRIBUTE: "Property Browser",
+            ACTIVITY: "User Activity",
+            GUIDANCE: "Guidance",
+            HEATMAP: "Heatmap",
             METADATA: "METADATA",
             OPENAPI: "OPENAPI"
         }
