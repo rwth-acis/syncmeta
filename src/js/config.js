@@ -82,8 +82,8 @@ CONFIG = {
     TEST:{
         USER:"Luigi Test",
         EMAIL:"luigi.test05@gmail.com",
-        CANVAS: true,
-        ATTRIBUTE: true,
+        CANVAS: false,
+        ATTRIBUTE: false,
         PALETTE: false,
         ACTIVITY: false
     },

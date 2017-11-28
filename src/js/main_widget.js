@@ -110,19 +110,9 @@ requirejs([
                  //send to activity widget that a remote user has joined.
                 y.share.join.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], true);
             } else if (event.name === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] && !event.value) {  
-                _iwcw.registerOnDataReceivedCallback(function (operation) {
-                    if (operation.hasOwnProperty('getType') && operation.getType() === 'WaitForCanvasOperation') {
-                        switch (operation.getData().widget) {
-                            case CONFIG.WIDGET.NAME.ATTRIBUTE:
-                                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new NonOTOperation('WaitForCanvasOperation', JSON.stringify(user)));
-                                break;
-                        }
-                    }
-                });
-
-                $("#loading").hide();
                 canvas.resetTool();
-
+                $("#loading").hide();
+                
                 if (CONFIG.TEST.CANVAS && (_iwcw.getUser()[CONFIG.NS.PERSON.TITLE] === CONFIG.TEST.USER || _iwcw.getUser()[CONFIG.NS.PERSON.MBOX] === CONFIG.TEST.EMAIL))
                     require(['./../test/CanvasWidgetTest'], function (CanvasWidgetTest) {
                         CanvasWidgetTest(canvas);
@@ -141,10 +131,20 @@ requirejs([
                                 case CONFIG.WIDGET.NAME.ACTIVITY:
                                     _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, new NonOTOperation('WaitForCanvasOperation', JSON.stringify({local: user, list:userList})));
                                     break;
-                                case CONFIG.WIDGET.NAME.HEATMAP:{
+                                case CONFIG.WIDGET.NAME.HEATMAP:
                                     _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.HEATMAP, new NonOTOperation('WaitForCanvasOperation', JSON.stringify(user)));
                                     break;
-                                }
+                                case CONFIG.WIDGET.NAME.ATTRIBUTE:
+                                    _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, new NonOTOperation('WaitForCanvasOperation', JSON.stringify(user)));
+                                    break;
+                                case CONFIG.WIDGET.NAME.PALETTE:
+                                    var metamodel = y.share.data.get('metamodel');
+                                    if(!metamodel)
+                                        metamodel = '{}';
+                                    else 
+                                        metamodel = JSON.stringify(metamodel);
+                                    _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, new NonOTOperation('WaitForCanvasOperation', metamodel));
+                                break;
                             }
                         }
                     }
@@ -535,12 +535,12 @@ requirejs([
         // Add code for PNG export
 	
         // Work later on moving this functionality to Export Widget
-        var uri = canvas.toPNG();
+        //var uri = canvas.toPNG();
         // y.share.canvas.set('PngMap', uri);
         // Work later on moving this functionality to Export Widget
         
         // Export as PNG
-        var $saveImage = $("#save_image");
+        /*var $saveImage = $("#save_image");
         $saveImage.show();
         $saveImage.click(function () {
              canvas.toPNG().then(function (uri) {
@@ -550,6 +550,7 @@ requirejs([
                 link.click();
              });
         });
+        */
 
 	// Export as PNG ends
 
@@ -661,24 +662,6 @@ requirejs([
         //local user joins
         y.share.join.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], false);
         ViewManager.GetViewpointList();
-        
-        /*
-        y.share.data.observe(function (event) {
-            var model = event.value;
-            if (model) {
-                if (event.name === "CAEmodel") {
-                    model.fromCAE = true;
-                    console.log('Number of nodes: ' + Object.keys(model.nodes).length + 'Number of edges: ' + Object.keys(model.edges).length);
-                    y.share.data.set('model', model);
-                }
-                else if (event.name === 'model') {
-                    if (model.hasOwnProperty('fromCAE') && model.fromCAE) {
-                        console.log('Number of nodes: ' + Object.keys(model.nodes).length + 'Number of edges: ' + Object.keys(model.edges).length);
-                        frameElement.contentWindow.location.reload();
-                    }
-                }
-            }
-        });*/
     }
 
 });

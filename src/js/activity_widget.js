@@ -8,7 +8,8 @@ requirejs([
     'lib/yjs-sync',
     'activity_widget/ActivityList',
     'WaitForCanvas',
-    'Util'],function ($, yjsSync, ActivityList, WaitForCanvas, Util) {
+    'Util',
+    'activity_widget/WidgetTracker'],function ($, yjsSync, ActivityList, WaitForCanvas, Util, WidgetTracker) {
         yjsSync().done(function(y, spaceTitle){
             window.y = y;
 
@@ -22,9 +23,11 @@ requirejs([
             WaitForCanvas(CONFIG.WIDGET.NAME.ACTIVITY,7).done(function (data) {
                 console.info('ACTIVITY: Got message from CANVAS');
                 var user = data.local.user;
+                y.share.users.set(y.db.userId, user[CONFIG.NS.PERSON.JABBERID]);
+                WidgetTracker.init(user[CONFIG.NS.PERSON.JABBERID]);
                 if(!y.share.userList.get(user[CONFIG.NS.PERSON.JABBERID])){
                     user.globalId = Util.getGlobalId(data.local, y);   
-                    y.share.userList.set(User.user[CONFIG.NS.PERSON.JABBERID], user);
+                    y.share.userList.set(user[CONFIG.NS.PERSON.JABBERID], user);
                 }
 
                 var userList = data.list;
