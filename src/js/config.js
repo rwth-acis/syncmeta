@@ -100,7 +100,7 @@ CONFIG = {
             GUIDANCE: "Guidance",
             HEATMAP: "Heatmap",
             METADATA: "METADATA",
-            OPENAPI: "OPENAPI"
+            OPENAPI: "Metadata Widget"
         }
     },
     ENTITY: {
