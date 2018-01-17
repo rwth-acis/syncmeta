@@ -135,8 +135,8 @@ define([
                         intent = encapsulateMessage(receiver, CONFIG.IWC.FLAG.PUBLISH_LOCAL, CONFIG.IWC.ACTION.DATA, data[0]);
                         if (IWC.util.validateIntent(intent)) {
 
-                            console.log("=== " + intent.flags.toString().replace(/PUBLISH_/g, "") + " INTENT TRANSMITTED AT COMPONENT " + componentName + " ===");
-                            console.log(intent);
+                            //console.log("=== " + intent.flags.toString().replace(/PUBLISH_/g, "") + " INTENT TRANSMITTED AT COMPONENT " + componentName + " ===");
+                            //console.log(intent);
 
                             _iwc.publish(intent);
                         }
@@ -144,8 +144,8 @@ define([
                         intent = encapsulateMessage(receiver, CONFIG.IWC.FLAG.PUBLISH_LOCAL, CONFIG.IWC.ACTION.DATA_ARRAY, data);
                         if (IWC.util.validateIntent(intent)) {
 
-                            console.log("=== " + intent.flags.toString().replace(/PUBLISH_/g, "") + " INTENT TRANSMITTED AT COMPONENT " + componentName + " ===");
-                            console.log(intent);
+                            //console.log("=== " + intent.flags.toString().replace(/PUBLISH_/g, "") + " INTENT TRANSMITTED AT COMPONENT " + componentName + " ===");
+                            //console.log(intent);
 
                             _iwc.publish(intent);
                         }
@@ -177,6 +177,7 @@ define([
                     console.error(e);
                 }
             }
+
             var payload = intent.extras.payload,
                 senderTime = intent.extras.time,
                 senderTimes = _times[intent.extras.sender];
@@ -242,8 +243,8 @@ define([
 
             senderTimes.push(senderTime);
 
-            console.log("=== " + intent.flags.toString().replace(/PUBLISH_/g,"") + " INTENT RECEIVED AT COMPONENT " + componentName + " ===");
-            console.log(intent);
+            //console.log("=== " + intent.flags.toString().replace(/PUBLISH_/g,"") + " INTENT RECEIVED AT COMPONENT " + componentName + " ===");
+            //console.log(intent);
 
             switch(intent.action){
                 case CONFIG.IWC.ACTION.DATA:
@@ -300,8 +301,8 @@ define([
                     intent = encapsulateMessage(receiver, CONFIG.IWC.FLAG.PUBLISH_LOCAL, CONFIG.IWC.ACTION.DATA, data);
                     if (IWC.util.validateIntent(intent)) {
 
-                        console.log("=== " + intent.flags.toString().replace(/PUBLISH_/g,"") + " INTENT TRANSMITTED AT COMPONENT " + componentName + " ===");
-                        console.log(intent);
+                        //console.log("=== " + intent.flags.toString().replace(/PUBLISH_/g,"") + " INTENT TRANSMITTED AT COMPONENT " + componentName + " ===");
+                        //console.log(intent);
 
                         _iwc.publish(intent);
                     }

@@ -19,7 +19,7 @@
     "dagre": "~0.7.4",
     "font-awesome": "~4.4.0",
     "graphlib": "*",
-    "iwc": "https://github.com/Mari0/InterwidgetCommunication.git",
+    "iwc": "git://github.com/rwth-acis/InterwidgetCommunication",
     "jquery": "~2.0.3",
     "jQuery-contextMenu": "git://github.com/medialize/jQuery-contextMenu.git#1.7.0",
     "jquery-migrate": "~1.4.0",
