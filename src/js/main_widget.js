@@ -187,8 +187,6 @@ requirejs([
         });
 
         if (metamodel) {
-            console.log("[main widget] Metamodel detected");
-            console.log(metamodel);
             if (metamodel.hasOwnProperty("nodes")) {
                 var nodes = metamodel.nodes, node;
                 for (var nodeId in nodes) {
