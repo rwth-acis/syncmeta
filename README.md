@@ -48,6 +48,10 @@ Otherwise u can use [nginx](http://nginx.org/en/download.html) or [AIDeX Mini-We
 ##### Yjs
 The current version of SyncMeta needs a y-websockets-server. 
 Please have a look a the [README](https://github.com/y-js/y-websockets-server) on how to install y-websocket-server and adjust the ```yjsConnectorUrl``` in the *.localGruntConfig.json* accordingly.
+
+##### Inter-Widget Communication(IWC)
+For the __local__ communication between the various widgets of the SyncMeta the new [the IWC library](https://github.com/rwth-acis/InterwidgetCommunication) from the chair is used.
+
 ### Versions
 Syncmeta uses the awesome [Yjs](http://y-js.org/) framework to provide near-realtime collaborative modeling in the web browser.
 The previous version of Syncmeta uses the [OpenCoWeb OT](https://github.com/opencoweb/coweb) framework and is still available in the [opencoweb-ot](https://github.com/rwth-acis/syncmeta/tree/opencoweb-ot) branch.

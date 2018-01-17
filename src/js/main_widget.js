@@ -252,6 +252,8 @@ requirejs([
                 var operation = new InitModelTypesOperation(vvs, true).toNonOTOperation();
                 _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, operation);
                 _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation);
+                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.METADATA, operation);
+                _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.OPENAPI, operation);
 
                 var activityOperation = new ActivityOperation("ViewApplyActivity", vvs.id, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
                 _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.ACTIVITY, activityOperation.toNonOTOperation());

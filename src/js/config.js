@@ -98,7 +98,9 @@ CONFIG = {
             ATTRIBUTE: "Property Browser",
             ACTIVITY: "User Activity",
             GUIDANCE: "Guidance",
-            HEATMAP: "Heatmap"
+            HEATMAP: "Heatmap",
+            METADATA: "METADATA",
+            OPENAPI: "Metadata Widget"
         }
     },
     ENTITY: {
