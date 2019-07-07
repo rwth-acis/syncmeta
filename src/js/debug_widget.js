@@ -86,7 +86,7 @@ requirejs(['jqueryui', 'lodash', 'lib/yjs-sync', 'canvas_widget/GenerateViewpoin
             $exportModel.click(function () {
                 var link = document.createElement('a');
                 link.download = "model.json";
-                link.href = 'data:,' + encodeURI(JSON.stringify(y.share.data.get('model'), null, 4));
+                link.href = 'data:,' + encodeURIComponent(JSON.stringify(y.share.data.get('model'), null, 4));
                 link.click();
             });
 
