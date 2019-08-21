@@ -2,8 +2,8 @@ FROM node:8
 USER root
 
 ENV WEBHOST "http:\/\/localhost:8081"
-ENV ROLEHOST "http:\/\/l127.0.0.1:8073"
-ENV YJS "http:\/\/llocalhost:1234"
+ENV ROLEHOST "http:\/\/127.0.0.1:8073"
+ENV YJS "http:\/\/localhost:1234"
 
 # replace this with your application's default port
 EXPOSE 8081
