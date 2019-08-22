@@ -477,6 +477,7 @@ module.exports = function(grunt) {
             server : {
                 options : {
                     port : 8081,
+                    host : '*',
                     base : 'html',
                     keepalive:true
                 }
