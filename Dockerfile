@@ -11,7 +11,7 @@ EXPOSE 8081
 COPY . .
 
 RUN npm_config_user=root npm install -g bower grunt-cli grunt
-RUN npm install
+RUN npm install && bower install
 RUN mv .localGruntConfig.json.sample .localGruntConfig.json
 CMD sed -i "s/http:\/\/localhost:8081/${WEBHOST}/g" .localGruntConfig.json \
     && sed -i "s/http:\/\/127.0.0.1:8073/${ROLEHOST}/g" .localGruntConfig.json \
