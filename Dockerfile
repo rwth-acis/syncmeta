@@ -11,9 +11,9 @@ RUN npm_config_user=root npm install -g bower grunt-cli grunt
 RUN npm install && bower install --allow-root
 RUN mv .localGruntConfig.json.sample .localGruntConfig.json
 
-CMD sed -i "s/http:\/\/localhost:8081/${WEBHOST}/g" .localGruntConfig.json \
-    && sed -i "s/http:\/\/127.0.0.1:8073/${ROLEHOST}/g" .localGruntConfig.json \
-    && sed -i "s/http:\/\/localhost:1234/${YJS}/g" .localGruntConfig.json \
-    && sed -i "s/8081/${WEBPORT}/g" Gruntfile.js \
+CMD sed -i "s=http://localhost:8081=${WEBHOST}=g" .localGruntConfig.json \
+    && sed -i "s=http://127.0.0.1:8073=${ROLEHOST}=g" .localGruntConfig.json \
+    && sed -i "s=http://localhost:1234=${YJS}=g" .localGruntConfig.json \
+    && sed -i "s=8081=${WEBPORT}=g" Gruntfile.js \
     && grunt build \
     && grunt connect

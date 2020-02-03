@@ -126,6 +126,17 @@ module.exports = function(grunt) {
                 }
             },
 
+            main_widget_html: {
+                options: {
+                    data: {
+                        bodyPartial: '_main_widget.tpl' 
+                    }
+                },
+                files: {
+                    'html/widget.html': ['<%= srcdir %>/widgets/widget.html.tpl']
+                }
+            },
+
             palette_widget: {
                 options: {
                     data: {
@@ -140,6 +151,17 @@ module.exports = function(grunt) {
                 },
                 files: {
                     'html/palette.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
+                }
+            },
+
+            palette_widget_html: {
+                options: {
+                    data: {
+                        bodyPartial: '_palette_widget.tpl' 
+                    }
+                },
+                files: {
+                    'html/palette.html': ['<%= srcdir %>/widgets/widget.html.tpl']
                 }
             },
 
@@ -160,6 +182,17 @@ module.exports = function(grunt) {
                 }
             },
 
+            attribute_widget_html: {
+                options: {
+                    data: {
+                        bodyPartial: '_attribute_widget.tpl' 
+                    }
+                },
+                files: {
+                    'html/attribute.html': ['<%= srcdir %>/widgets/widget.html.tpl']
+                }
+            },
+
             activity_widget: {
                 options: {
                     data: {
@@ -174,6 +207,17 @@ module.exports = function(grunt) {
                 },
                 files: {
                     'html/activity.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
+                }
+            },
+
+            activity_widget_html: {
+                options: {
+                    data: {
+                        bodyPartial: '_activity_widget.tpl' 
+                    }
+                },
+                files: {
+                    'html/activity.html': ['<%= srcdir %>/widgets/widget.html.tpl']
                 }
             },
 
@@ -208,6 +252,17 @@ module.exports = function(grunt) {
                 },
                 files: {
                     'html/debug.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
+                }
+            },
+
+            debug_widget_html: {
+                options: {
+                    data: {
+                        bodyPartial: '_debug_widget.tpl' 
+                    }
+                },
+                files: {
+                    'html/debug.html': ['<%= srcdir %>/widgets/widget.html.tpl']
                 }
             },
 
