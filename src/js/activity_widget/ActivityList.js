@@ -219,7 +219,7 @@ define([
                         that.addUser(operation.getSender());
                         break;
                     case 'UserLeftActivity': {
-                        activity = new Activity(null, operation.getSender(), '.. left the role space', Date.now());
+                        activity = new Activity(null, operation.getSender(), '.. left the space', Date.now());
                         activity.setType('UserLeftActivity');
                         that.addActivity(activity);
                         that.removeUser(operation.getSender());
