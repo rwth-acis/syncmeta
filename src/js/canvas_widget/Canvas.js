@@ -611,11 +611,13 @@ define([
                 //Enable Canvas Dragging
                 _$node.draggable("enable");
 
-                _$node.transformable({
-                    rotatable: false,
-                    skewable: false,
-                    scalable: false
-                });
+                if (_$node.transformable != null) {
+                    _$node.transformable({
+                        rotatable: false,
+                        skewable: false,
+                        scalable: false
+                    });
+                }
 
                 //Define Node Rightclick Menu
                 $.contextMenu({
@@ -674,7 +676,9 @@ define([
                 //Disable Canvas Dragging
                 _$node.draggable("disable");
 
-                _$node.transformable('destroy');
+                if (_$node.transformable != null) {
+                    _$node.transformable('destroy');
+                }
 
                 //Unbind Node and Edge Events
                 //this.select(null);

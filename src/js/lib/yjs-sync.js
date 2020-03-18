@@ -3,8 +3,13 @@ define(['jquery', 'Util'], function($, Util) {
 
         var deferred = $.Deferred();
         //if space is not provided by the parameter, get it yourself from frameElement
-        if (!spaceTitle) 
-            spaceTitle = Util.getSpaceTitle(frameElement.baseURI);
+        if (!spaceTitle) {
+            if (parent.caeRoom) {
+                spaceTitle = parent.caeRoom;
+            } else {
+                spaceTitle = Util.getSpaceTitle(frameElement.baseURI);
+            }
+        }
                 
         Y({
             db: {
