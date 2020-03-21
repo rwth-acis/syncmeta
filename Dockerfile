@@ -4,6 +4,7 @@ USER root
 ENV WEBHOST "http:\/\/localhost:8081"
 ENV ROLEHOST "http:\/\/127.0.0.1:8073"
 ENV YJS "http:\/\/localhost:1234"
+ENV YJS_RESOURCE_PATH "/socket.io"
 ENV WEBPORT 8081
 COPY . .
 
@@ -14,6 +15,7 @@ RUN mv .localGruntConfig.json.sample .localGruntConfig.json
 CMD sed -i "s=http://localhost:8081=${WEBHOST}=g" .localGruntConfig.json \
     && sed -i "s=http://127.0.0.1:8073=${ROLEHOST}=g" .localGruntConfig.json \
     && sed -i "s=http://localhost:1234=${YJS}=g" .localGruntConfig.json \
+    && sed -i "s=/socket.io=${YJS_RESOURCE_PATH}=g" .localGruntConfig.json \
     && sed -i "s=8081=${WEBPORT}=g" Gruntfile.js \
     && grunt build \
     && grunt connect

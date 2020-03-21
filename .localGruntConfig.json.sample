@@ -7,6 +7,6 @@
     "yjsConnector":"websockets-client",
     "yjsDatabaseAdapter":"memory",
     "yjsConnectorUrl_local" : "http://localhost:1234",
-    "yjsConnectorUrl":"http://yjs.dbis.rwth-aachen.de:5081"
-    
+    "yjsConnectorUrl":"http://yjs.dbis.rwth-aachen.de:5081",
+    "yjsResourcePath":"/socket.io"    
 }

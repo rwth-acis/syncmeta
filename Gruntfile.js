@@ -13,6 +13,7 @@ module.exports = function(grunt) {
         yjsConnectorUrl: localConfig.deployLocally ? localConfig.yjsConnectorUrl_local : localConfig.yjsConnectorUrl,
         yjsConnector : localConfig.yjsConnector,
         yjsDatabaseAdapter: localConfig.yjsDatabaseAdapter,
+        yjsResourcePath: localConfig.yjsResourcePath,
         bowerdir: grunt.file.readJSON('.bowerrc')['directory'],
         distdir: 'html',
         srcdir:  'src',
