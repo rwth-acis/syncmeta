@@ -64,7 +64,7 @@ define([
                         resOperation.setNonOTOperation(operation);
                         break;
                     case ToolSelectOperation.TYPE:
-                        resOperation = new ToolSelectOperation(data.selectedToolName);
+                        resOperation = new ToolSelectOperation(data.selectedToolName, data.name);
                         break;
                     case ActivityOperation.TYPE:
                         resOperation = new ActivityOperation(data.type,data.entityId,data.sender,data.text,data.data);

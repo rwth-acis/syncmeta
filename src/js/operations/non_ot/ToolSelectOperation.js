@@ -11,7 +11,7 @@ define([
      * @constructor
      * @param {string} toolName Name of selected tool
      */
-    function ToolSelectOperation(toolName){
+    function ToolSelectOperation(toolName, label){
         /**
          * Name of selected tool
          * @type {string}
@@ -26,12 +26,26 @@ define([
         var nonOTOperation = null;
 
         /**
+         * Default label of selected tool
+         * @type {string}
+         */
+        var defaultLabel = label;
+
+        /**
          * Get name of selected tool
          * @returns {string}
          */
         this.getSelectedToolName = function(){
             return selectedToolName;
         };
+
+        /**
+         * Get default label of selected tool
+         * @returns {string}
+         */
+        this.getDefaultLabel = function() {
+            return defaultLabel;
+        }
 
         /**
          * Convert operation to NonOTOperation

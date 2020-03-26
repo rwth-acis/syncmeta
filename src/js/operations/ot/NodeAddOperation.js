@@ -25,7 +25,7 @@ define([
      * @param {string} jabberId the jabberId of the user
      * @constructor
      */
-    function NodeAddOperation(entityId,type,left,top,width,height,zIndex,json, viewId, oType,jabberId){
+    function NodeAddOperation(entityId,type,left,top,width,height,zIndex,json, viewId, oType,jabberId, defaultLabel){
         var that = this;
 
         EntityOperation.call(this,EntityOperation.TYPES.NodeAddOperation,entityId,CONFIG.ENTITY.NODE);
@@ -94,6 +94,13 @@ define([
          * @private
          */
         var _json = json;
+
+        /**
+         * Default label of node
+         * @type {String}
+         * @private
+         */
+        var _defaultLabel = defaultLabel;
 
         /**
          * Create OTOperation for operation
@@ -196,6 +203,14 @@ define([
         };
 
         /**
+         * Get default label of node
+         * @returns {string}
+         */
+        this.getDefaultLabel = function() {
+            return _defaultLabel;
+        }
+
+        /**
          * Get corresponding ot operation
          * @returns {operations.ot.OTOperation}
          * @private
@@ -262,7 +277,8 @@ define([
             json: this.getJSON(),
             viewId:this.getViewId(),
             oType: this.getOriginType(),
-            jabberId:this.getJabberId()
+            jabberId:this.getJabberId(),
+            defaultLabel:this.getDefaultLabel()
         }
     };
 
