@@ -126,7 +126,7 @@ define([
              * @param {ToolSelectOperation} operation
              */
             var processToolSelectOperation = function (operation) {
-                that.mountTool(operation.getSelectedToolName());
+                that.mountTool(operation.getSelectedToolName(), operation.getDefaultLabel());
             };
 
             /**
@@ -140,6 +140,10 @@ define([
                     node = EntityManager.createNodeFromJSON(operation.getType(), operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex(), operation.getJSON());
                 } else {
                     node = EntityManager.createNode(operation.getType(), operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex());
+                }
+
+                if (operation.getDefaultLabel()) {
+                    node.getLabel().getValue().setValue(operation.getDefaultLabel());
                 }
 
                 if (y.share.users.get(y.db.userId) !== operation.getJabberId()) {
@@ -257,6 +261,10 @@ define([
                             node = EntityManager.createNodeFromJSON(type, operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex(), operation.getJSON());
                         } else {
                             node = EntityManager.createNode(type, operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex());
+                        }
+
+                        if (operation.getDefaultLabel()) {
+                            node.getLabel().getValue().setValue(operation.getDefaultLabel());
                         }
 
                         node.registerYMap();
@@ -833,7 +841,7 @@ define([
              * @param {string} identifier the identifier of the node, if null a new id is generated
              * @return {number} id of new node
              */
-            this.createNode = function (type, left, top, width, height, zIndex, json, identifier, historyFlag) {
+            this.createNode = function (type, left, top, width, height, zIndex, json, identifier, historyFlag, defaultLabel) {
                 var id, oType = null;
                 if (identifier)
                     id = identifier;
@@ -844,7 +852,7 @@ define([
                 if (EntityManager.getViewId() !== undefined && EntityManager.getLayer() === CONFIG.LAYER.MODEL) {
                     oType = EntityManager.getViewNodeType(type).getTargetNodeType().TYPE;
                 }
-                var operation = new NodeAddOperation(id, type, left, top, width, height, zIndex, json || null, EntityManager.getViewId(), oType, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+                var operation = new NodeAddOperation(id, type, left, top, width, height, zIndex, json || null, EntityManager.getViewId(), oType, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], defaultLabel);
 
                 propagateNodeAddOperation(operation);
                 if (y) {
@@ -1266,7 +1274,7 @@ define([
                         switch (event.name) {
                             case NodeAddOperation.TYPE:
                                 {
-                                    operation = new NodeAddOperation(data.id, data.type, data.left, data.top, data.width, data.height, data.zIndex, data.json, data.viewId, data.oType, jabberId || data.jabberId);
+                                    operation = new NodeAddOperation(data.id, data.type, data.left, data.top, data.width, data.height, data.zIndex, data.json, data.viewId, data.oType, jabberId || data.jabberId, data.defaultLabel);
                                     remoteNodeAddCallback(operation);
                                     break;
                                 }

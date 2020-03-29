@@ -28,7 +28,7 @@ define([
         /**
          * Mount the tool on canvas
          */
-        this.mount = function(){
+        this.mount = function(defaultLabel){
             var $canvas = this.getCanvas().get$canvas();
             var that = this;
             AbstractCanvasTool.prototype.mount.call(this);
@@ -46,7 +46,7 @@ define([
                 var nodeY = (ev.pageY - offsetCanvas.top) / zoom - _defaultHeight / 2;
 
                 //if(this == ev.target){
-                    that.getCanvas().createNode(that.getName(),nodeX,nodeY,_defaultWidth,_defaultHeight);
+                    that.getCanvas().createNode(that.getName(),nodeX,nodeY,_defaultWidth,_defaultHeight, null, null, null, null, defaultLabel);
                     //that.canvas.callListeners(CONFIG.CANVAS.LISTENERS.NODEADD,that.name,ev.originalEvent.offsetX,ev.originalEvent.offsetY,_defaultWidth,_defaultHeight);
                 //}
                 that.getCanvas().resetTool();

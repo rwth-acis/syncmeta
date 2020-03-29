@@ -18,6 +18,7 @@ define(['jquery', 'Util'], function($, Util) {
             connector: {
                 name: "<%= grunt.config('yjsConnector') %>", // use the websockets connector
                 room: spaceTitle,
+                options: { resource: "<%= grunt.config('yjsResourcePath') %>"},
                 url:"<%= grunt.config('yjsConnectorUrl') %>"
             },
             share: { // specify the shared content
