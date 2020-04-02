@@ -1,0 +1,15 @@
+.git
+**/.idea
+**/.vscode
+**/node_modules
+**/components
+**/doc
+**/.dbis.secret.json
+**/.localGruntConfig.json
+**/.project
+**/.codio
+**/.settings
+**/bower_components
+**/package-lock.json
+
+**/npm-debug.log

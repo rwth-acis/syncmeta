@@ -29,8 +29,9 @@ define([
     'operations/non_ot/RevokeSharedActivityOperation',
     'operations/non_ot/CollaborateInActivityOperation',
     'operations/non_ot/MoveCanvasOperation',
-    'operations/non_ot/GuidanceStrategyOperation'
-],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeMoveZOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,NonOTOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportMetaModelOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,SetViewTypesOperation,InitModelTypesOperation,ViewInitOperation,DeleteViewOperation,SetModelAttributeNodeOperation,UpdateViewListOperation,ShowGuidanceBoxOperation, CanvasViewChangeOperation, RevokeSharedActivityOperation,CollaborateInActivityOperation, MoveCanvasOperation, GuidanceStrategyOperation) {
+    'operations/non_ot/GuidanceStrategyOperation',
+    'operations/non_ot/UpdateMetamodelOperation'
+],/** @lends OperationFactory */function(OTOperation,EntityOperation,NodeAddOperation,NodeDeleteOperation,NodeMoveOperation,NodeMoveZOperation,NodeResizeOperation,EdgeAddOperation,EdgeDeleteOperation,AttributeAddOperation,AttributeDeleteOperation,ValueChangeOperation,NonOTOperation,EntitySelectOperation,ToolSelectOperation,ActivityOperation,ExportMetaModelOperation,ExportLogicalGuidanceRepresentationOperation,ExportImageOperation,SetViewTypesOperation,InitModelTypesOperation,ViewInitOperation,DeleteViewOperation,SetModelAttributeNodeOperation,UpdateViewListOperation,ShowGuidanceBoxOperation, CanvasViewChangeOperation, RevokeSharedActivityOperation,CollaborateInActivityOperation, MoveCanvasOperation, GuidanceStrategyOperation, UpdateMetamodelOperation) {
 
     /**
      * OperationFactory
@@ -115,6 +116,9 @@ define([
                     case GuidanceStrategyOperation.TYPE:
                         resOperation = new GuidanceStrategyOperation(data.data);
                         resOperation.setNonOTOperation(operation);
+                        break;
+                    case UpdateMetamodelOperation.TYPE:
+                        resOperation = new UpdateMetamodelOperation(data.metamodelingRoomName, data.modelingRoomName);
                         break;
                     default:
                         resOperation = new NonOTOperation(type, data);
