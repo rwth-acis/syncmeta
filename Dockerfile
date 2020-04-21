@@ -1,21 +1,24 @@
 FROM node:8
 USER root
 
-ENV WEBHOST "http:\/\/localhost:8081"
-ENV ROLEHOST "http:\/\/127.0.0.1:8073"
-ENV YJS "http:\/\/localhost:1234"
 ENV YJS_RESOURCE_PATH "/socket.io"
-ENV WEBPORT 8081
+ENV PORT 8070
+
+WORKDIR /usr/src/app
 COPY . .
 
-RUN npm_config_user=root npm install -g bower grunt-cli grunt
-RUN npm install && bower install --allow-root
-RUN mv .localGruntConfig.json.sample .localGruntConfig.json
+RUN apt-get update
+RUN apt-get install -y --no-install-recommends supervisor git nginx
+RUN npm_config_user=root npm install -g bower grunt-cli grunt polymer-cli
 
-CMD sed -i "s=http://localhost:8081=${WEBHOST}=g" .localGruntConfig.json \
-    && sed -i "s=http://127.0.0.1:8073=${ROLEHOST}=g" .localGruntConfig.json \
-    && sed -i "s=http://localhost:1234=${YJS}=g" .localGruntConfig.json \
-    && sed -i "s=/socket.io=${YJS_RESOURCE_PATH}=g" .localGruntConfig.json \
-    && sed -i "s=8081=${WEBPORT}=g" Gruntfile.js \
-    && grunt build \
-    && grunt connect
+COPY docker/supervisorConfigs /etc/supervisor/conf.d
+
+WORKDIR /usr/src/app/widgets
+RUN npm install && bower install --allow-root
+
+WORKDIR /usr/src/app/app
+RUN npm install && bower install --allow-root
+
+WORKDIR /usr/src/app
+COPY docker/docker-entrypoint.sh docker-entrypoint.sh
+ENTRYPOINT ["./docker-entrypoint.sh"]

@@ -6,6 +6,8 @@ define(['jquery', 'Util'], function($, Util) {
         if (!spaceTitle) {
             if (parent.caeRoom) {
                 spaceTitle = parent.caeRoom;
+            } else if (parent.syncmetaRoom) {
+                spaceTitle = parent.syncmetaRoom;
             } else {
                 spaceTitle = Util.getSpaceTitle(frameElement.baseURI);
             }
@@ -33,7 +35,8 @@ define(['jquery', 'Util'], function($, Util) {
                 data: 'Map',
                 activity:'Map',
                 globalId: 'Array',
-                text:"Text"
+                text:"Text",
+                metamodelStatus: 'Map'
             },
             type:["Text","Map"],
             sourceDir: '<%= grunt.config("baseUrl") %>/js/lib/vendor'

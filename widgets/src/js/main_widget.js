@@ -18,6 +18,7 @@ requirejs([
     'operations/non_ot/SetViewTypesOperation',
     'operations/non_ot/InitModelTypesOperation',
     'operations/non_ot/SetModelAttributeNodeOperation',
+    'operations/non_ot/UpdateMetamodelOperation',
     'canvas_widget/Canvas',
     'canvas_widget/EntityManager',
     'canvas_widget/NodeTool',
@@ -50,9 +51,10 @@ requirejs([
     'canvas_widget/view/ViewGenerator',
     'canvas_widget/HistoryManager',
     'canvas_widget/JSONtoGraph',
+    'canvas_widget/GenerateViewpointModel',
     'promise!User',
     'promise!Guidancemodel'
-], function ($, jsPlumb, IWCW, yjsSync, Util, NonOTOperation, ToolSelectOperation, ActivityOperation, ViewInitOperation, UpdateViewListOperation, DeleteViewOperation, SetViewTypesOperation, InitModelTypesOperation, SetModelAttributeNodeOperation, Canvas, EntityManager, NodeTool, ObjectNodeTool, AbstractClassNodeTool, RelationshipNodeTool, RelationshipGroupNodeTool, EnumNodeTool, NodeShapeNodeTool, EdgeShapeNodeTool, EdgeTool, GeneralisationEdgeTool, BiDirAssociationEdgeTool, UniDirAssociationEdgeTool, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNode, ViewObjectNodeTool, ViewRelationshipNode, ViewRelationshipNodeTool, ViewManager, ViewGenerator, HistoryManager, JSONtoGraph, user, guidancemodel) {
+], function ($, jsPlumb, IWCW, yjsSync, Util, NonOTOperation, ToolSelectOperation, ActivityOperation, ViewInitOperation, UpdateViewListOperation, DeleteViewOperation, SetViewTypesOperation, InitModelTypesOperation, SetModelAttributeNodeOperation, UpdateMetamodelOperation, Canvas, EntityManager, NodeTool, ObjectNodeTool, AbstractClassNodeTool, RelationshipNodeTool, RelationshipGroupNodeTool, EnumNodeTool, NodeShapeNodeTool, EdgeShapeNodeTool, EdgeTool, GeneralisationEdgeTool, BiDirAssociationEdgeTool, UniDirAssociationEdgeTool, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNode, ViewObjectNodeTool, ViewRelationshipNode, ViewRelationshipNodeTool, ViewManager, ViewGenerator, HistoryManager, JSONtoGraph, GenerateViewpointModel, user, guidancemodel) {
 
     var _iwcw;
     _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
@@ -124,6 +126,16 @@ requirejs([
                     }
                     else if (operation instanceof UpdateViewListOperation) {
                         y.share.canvas.set(UpdateViewListOperation.TYPE, true);
+                    }
+                    else if (operation instanceof UpdateMetamodelOperation) {
+                        var model = y.share.data.get('model');
+                        var vls = GenerateViewpointModel(model);
+                        yjsSync(operation.getModelingRoomName()).done(function (y, spaceTitle) {
+                            y.share.data.set('metamodel', vls);
+                            yjsSync(operation.getMetaModelingRoomName()).done(function(y, spaceTitle){
+                                y.share.metamodelStatus.set('uploaded', true);
+                            }).fail(() => y.share.metamodelStatus.set('error', true));
+                        }).fail(() => y.share.metamodelStatus.set('error', true));
                     }
                     else if (operation.hasOwnProperty('getType')) {
                         if (operation.getType() === 'WaitForCanvasOperation') {

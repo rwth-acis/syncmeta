@@ -1,0 +1,7 @@
+{
+  "name": "Syncmeta",
+  "short_name": "Syncmeta",
+  "description": "Static application for Syncmeta",
+  "start_url": "/",
+  "display": "standalone"
+}

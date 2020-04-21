@@ -5,21 +5,45 @@
 
 For explanations, presentations, demos and links to modeling sandboxes and other stuff please visit the [SyncMeta homepage](http://dbis.rwth-aachen.de/cms/research/ACIS/SyncMeta). 
 
-## Build steps
-1. Make sure to have *npm*, *bower* and *grunt* installed
-    * Use your favorite package manager or grab *npm* from [here](https://nodejs.org/en/)
-    * Use *npm* to install *bower*: ```npm install -g bower```
-    * Use *npm* to first install grunt-cli and then grunt itself: ```npm install -g grunt-cli grunt```
-2. Install development dependencies: ```npm install```
-3. Install dependencies: ```bower install```
-4. Copy *.localGruntConfig.json.sample* and name it *.localGruntConfig.json*
-5. Change *baseUrl*, *roleSandboxUrl* and *yjsConnectorUrl* in *.localGruntConfig.json* if necessary
-6. Run ```grunt build``` to build the widgets.
+## Build and Run
+First build the Docker image
+```
+$ cd syncmeta
+$ docker build -t rwthacis/syncmeta .
+```
+
+Then you can run the image like this:
+```
+$ docker run -p 8070:8070 -e WEBHOST=<host_address> -e YJS=<yjs_address> -e OIDC_CLIENT_ID=<oidc_client_id> -d rwthacis/syncmeta
+```
+After container started to run, application will be accessible via http://127.0.0.1:8070 \
+Also, individual widgets can be accessed via http://127.0.0.1:8070/widgets/<widget_name>
+
+SyncMeta is using [YJS][yjs-github] for interwidget communication, therefore it needs [y-websocket-server][y-websocket-server] instance. 
+It can be started with following command:
+```
+docker run -p 1234:1234  -d rwthacis/y-websockets-server
+```
+Then, address of y-websockets-server instance need to be passed to SyncMeta Docker container during initialization with `YJS` environment variable. If websocket server is started with previous command, its address will be `127.0.0.1:1234` and this value need to be passed to SyncMeta Docker container during initialization.
+
+
+Following environment variables are needed to be passed to container during initialization:
+
+* `WEBHOST`: Url address of SyncMeta application
+* `YJS`: Root url address of Yjs websocket server. If it is running behind reverse proxy, relative path need to be provided with the `YJS_RESOURCE_PATH` env variable.
+* `OIDC_CLIENT_ID`: OIDC client id which is used in SyncMeta for authentication purpose. Client id can be acquired from Learning Layers after client registration
+
+Following environment variables have default values however they can be changed during initialization:
+
+* `PORT`: Port which Nginx server is listening locally. This port need to be made accessible to outside with port mapping during initialization. Default value is `8070`.
+* `YJS_RESOURCE_PATH`: Resource path of Yjs websocker server. If websocket server running behind reverse proxy and `/yjs` path is redirected to websocket server, this env variable need to be `/yjs/socket.io`. Default value is `/socket.io`.
+
+## Usage
+When application is up and running, you will see two option in the main page as meta modeling space and modeling space. As their names imply, you can create meta model in the meta modeling space and after creating the meta model, it can be uploaded to modeling space with 'Generate Metamodel' button. Created meta model can be tried instantly in the modeling space with this way. 
 
 ## Library Documentation
 
 ### Widgets
-__Note:__ Widgets with a '*' require the openapp library.
   * [Canvas widget](https://rwth-acis.github.io/syncmeta/syncmeta6/widget.xml) The model canvas
   * [Palette widget](https://rwth-acis.github.io/syncmeta/syncmeta6/palette.xml) Palette of elements that can be put on the canvas widget
   * [Activity widget](https://rwth-acis.github.io/syncmeta/syncmeta6/activity.xml) Widget that gives awareness of activities of other users
@@ -28,28 +52,8 @@ __Note:__ Widgets with a '*' require the openapp library.
   * [Viewcontrol widget](https://rwth-acis.github.io/syncmeta/syncmeta6/viewcontrol.xml) Import/Export/Delete viewpoint and views.
   * [Export widget](https://rwth-acis.github.io/syncmeta/syncmeta6/export.xml) Export the design to JSON.
   * [IMSLD Export widget](https://rwth-acis.github.io/syncmeta/syncmeta6/imsld_export.xml) Export the design as ZIP (in the IMSLD format) or link the design to [ILDE](http://ilde.upf.edu/)
-  * [Instancelist widget](https://rwth-acis.github.io/syncmeta/syncmeta6/instances.xml)* List all generated instances.
-  * [Generate Instance widget](https://rwth-acis.github.io/syncmeta/syncmeta6/generated_instances.xml)* Generate a new SyncMeta instance.
- 
-### Deploy
 
-In order to deploy SyncMeta to [http://role-sandbox.eu/spaces/syncmeta](http://role-sandbox.eu/spaces/syncmeta), 
-you have to push your latest changes to the `gh-pages` github branch. 
-(See [github pages](https://pages.github.com/) for explanation)
-
-_Attention!_, Please be aware that any changes you commit to the gh-pages branch will affect all ROLE spaces that link to widget definitions in this branch. Therefore only push very goodly tested commits to gh-pages.
-
-### Local Deployment
-_Attention!_, We don't recommend to use the Pyhton's SimpleHTTPServer. See this [issue](http://layers.dbis.rwth-aachen.de/jira/browse/SYNCMETA-23) for more information.
-
-If you only want to deploy the SyncMeta widgets just run ```grunt connect``` after building the widgets. It starts a http server on port 8081. 
-Otherwise u can use [nginx](http://nginx.org/en/download.html) or [AIDeX Mini-Webserver](http://www.aidex.de/software/webserver/)  
-
-##### Yjs
-The current version of SyncMeta needs a y-websockets-server. 
-Please have a look a the [README](https://github.com/y-js/y-websockets-server) on how to install y-websocket-server and adjust the ```yjsConnectorUrl``` in the *.localGruntConfig.json* accordingly.
-
-##### Inter-Widget Communication(IWC)
+### Inter-Widget Communication(IWC)
 For the __local__ communication between the various widgets of the SyncMeta the new [the IWC library](https://github.com/rwth-acis/InterwidgetCommunication) from the chair is used.
 
 ### Versions
@@ -64,3 +68,5 @@ The previous version of Syncmeta uses the [OpenCoWeb OT](https://github.com/open
 * [Community Application Editor Live Coding](https://youtu.be/vxW6k_L0iOk) Model-Driven Web Engineering Framework with model to code synchronization, live coding and live preview, based on SyncMeta, using Yjs.
 * [Storytelling Tool](https://youtu.be/enKijrMpYe0) Collaborative Storytelling with 3D Objects, realized with SyncMeta using Yjs
 
+[yjs-github]: https://github.com/yjs/yjs
+[y-websocket-server]: https://github.com/y-js/y-websockets-server

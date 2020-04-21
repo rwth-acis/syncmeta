@@ -267,40 +267,6 @@ module.exports = function(grunt) {
                 }
             },
 
-            instance_list_widget: {
-                options: {
-                    data: {
-                        meta: {
-                            title: "Instances",
-                            description: "",
-                            width: "100",
-                            height: "300"
-                        },
-                        bodyPartial: '_instance_list_widget.tpl'
-                    }
-                },
-                files: {
-                    'html/instances.xml': ['<%= srcdir %>/widgets/widget.xml.openapp.tpl']
-                }
-            },
-
-            generated_instances_widget: {
-                options: {
-                    data: {
-                        meta: {
-                            title: "Generate Instance",
-                            description: "",
-                            width: "300",
-                            height: "300"
-                        },
-                        bodyPartial: '_generated_instances_widget.tpl'
-                    }
-                },
-                files: {
-                    'html/generated_instances.xml': ['<%= srcdir %>/widgets/widget.xml.openapp.tpl']
-                }
-            },
-
             imsld_export_widget: {
                 options: {
                     data: {
