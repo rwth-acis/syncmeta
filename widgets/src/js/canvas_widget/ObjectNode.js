@@ -67,7 +67,7 @@ define([
         this.toJSON = function(){
             return AbstractNode.prototype.toJSON.call(this);
         };
-        var attr = new KeySelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File"});
+        var attr = new KeySelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File" , "quiz":"Questions"});
         this.addAttribute(attr);
 
 
