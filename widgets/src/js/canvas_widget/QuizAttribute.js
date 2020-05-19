@@ -102,12 +102,11 @@ define([
             var input3 = document.createElement("input");
             input0.id = rows+"0";
             input1.id = rows+"1";
-            input2.id = rows+ "2";
+            input2.id = rows+"2";
             input3.id = rows+"3";
             input1.type = "text";            
             input2.type = "text";
             input3.type = "text";
-            input0.style["width"] = "30px";
             cell0.appendChild(input0) ;
             cell1.appendChild(input1) ;
             cell2.appendChild(input2) ;
@@ -117,9 +116,15 @@ define([
         _$node.find("#b").click(function() {        
             addRow();
         }); 
+        
+        _$node.find("#c").click(function() {        
+            // todo: need to write delete row function
+        });        
+        
+        
         _$node.find("#submit").click(function() {        
             var table = _$node.find("#table")[0];
-            var yes= _$node.find("#topic")[0].value + ";"; 
+            var text = _$node.find("#topic")[0].value + ";"; 
             var row = table.rows.length;
             var currID = "";
             for(var i = 2; i < row ; i++){
@@ -129,21 +134,22 @@ define([
                        _$node.find("#"+ currID)[0].value  = "No Hint Available for this Question";
                     }
                     if(i== row-1 && j==3){
-                        yes = yes + _$node.find("#"+ currID)[0].value;
+                        text = text + _$node.find("#"+ currID)[0].value;
                         
                     } else {
-                        yes = yes + _$node.find("#"+ currID)[0].value + ";";
+                        text = text + _$node.find("#"+ currID)[0].value + ";";
                     }
                 }
             }
-            _$node.find(".val")[0].value = yes;
-      
+            _$node.find(".val")[0].value = text;
+            var field = _$node.find(".val")[0];
+            field.dispatchEvent(new Event('input'));
         }); 
 
         _$node.find("#display").click(function() {        
             var table = _$node.find("#table")[0];
-            var yes = _$node.find(".val")[0].value;   
-            var list = yes.split(";");
+            var text = _$node.find(".val")[0].value;   
+            var list = text.split(";");
             _$node.find("#topic")[0].value = list[0];
             var rowNumb = (list.length-1)/4;
             var currRows = table.rows.length-2;
@@ -161,9 +167,8 @@ define([
                     curr++;
                 }
             }
-        });       
-
-
+        });         
+           
     }
 
     return QuizAttribute;
