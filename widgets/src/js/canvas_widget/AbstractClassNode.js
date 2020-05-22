@@ -72,7 +72,7 @@ define([
             return json;
         };
 
-        var attr= new KeySelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File"});
+        var attr= new KeySelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File", "quiz":"Questions"});
         this.addAttribute(attr);
 
         this.registerYMap = function(){

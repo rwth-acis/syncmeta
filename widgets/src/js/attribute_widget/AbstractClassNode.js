@@ -57,7 +57,7 @@ define([
          */
         var _attributes = this.getAttributes();
 
-        this.addAttribute(new KeySelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File" , "quiz": "Questions"}}));
+        this.addAttribute(new KeySelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File" , "quiz": "Questions"}));
 
         _$node.find(".label").append(this.getLabel().get$node());
 
