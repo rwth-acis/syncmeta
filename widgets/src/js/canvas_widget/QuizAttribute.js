@@ -113,21 +113,28 @@ define([
             cell3.appendChild(input3) ;    
         };
         
+        
         _$node.find("#b").click(function() {        
             addRow();
         }); 
         
+        // remove rows from table
         _$node.find("#c").click(function() {        
-            // todo: need to write delete row function
+            var table = _$node.find("#table")[0];
+            var rows = table.rows.length;
+            table.deleteRow(rows-1);            
         });        
         
-        
+        // write table input into attribute field
         _$node.find("#submit").click(function() {        
             var table = _$node.find("#table")[0];
             var text = _$node.find("#topic")[0].value + ";"; 
             var row = table.rows.length;
             var currID = "";
             for(var i = 2; i < row ; i++){
+                if(_$node.find("#"+ i.toString() + "1")[0].value== "" || _$node.find("#"+ i.toString() + "2")[0].value== ""){
+                    continue;                                       
+                    }                
                 for(var j = 0; j < 4 ; j++){
                     currID = i.toString() + j.toString();
                     if(j==3 &&  _$node.find("#"+ currID)[0].value == ""){
@@ -145,7 +152,8 @@ define([
             var field = _$node.find(".val")[0];
             field.dispatchEvent(new Event('input'));
         }); 
-
+        
+        // take content from attribute field and display as table
         _$node.find("#display").click(function() {        
             var table = _$node.find("#table")[0];
             var text = _$node.find(".val")[0].value;   
