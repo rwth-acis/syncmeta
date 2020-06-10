@@ -113,54 +113,63 @@ define([
         // write table input into attribute field
         _$node.find("#submit").click(function() {        
             var table = _$node.find("#table")[0];
-            var text = _$node.find("#topic")[0].value + ";"; 
+            var Json = {};
+            Json["topic"] = _$node.find("#topic")[0].value 
+            var Sequence = [];            
+            var Questions = [];
+            var Intents = [];
+            var Hints = [];            
             var row = table.rows.length;
             var currID = "";
             for(var i = 2; i < row ; i++){
                 if(_$node.find("#"+ i.toString() + "1")[0].value== "" || _$node.find("#"+ i.toString() + "2")[0].value== ""){
                     continue;                                       
-                    }                
-                for(var j = 0; j < 4 ; j++){
-                    currID = i.toString() + j.toString();
-                    if(j==3 &&  _$node.find("#"+ currID)[0].value == ""){
-                       _$node.find("#"+ currID)[0].value  = "No Hint Available for this Question";
                     }
-                    if(i== row-1 && j==3){
-                        text = text + _$node.find("#"+ currID)[0].value;
-                        
-                    } else {
-                        text = text + _$node.find("#"+ currID)[0].value + ";";
-                    }
-                }
+                Sequence.push(_$node.find("#"+ i.toString() + "0")[0].value);
+                Questions.push(_$node.find("#"+ i.toString() + "1")[0].value);
+                Intents.push(_$node.find("#"+ i.toString() + "2")[0].value);
+                if(_$node.find("#"+ i.toString() + "3")[0].value == ""){
+                    Hints.push("No Hint Available for this Question");
+                   } else Hints.push(_$node.find("#"+ i.toString() + "3")[0].value);                
             }
-            _$node.find(".val")[0].value = text;
+            Json["Questions"] = Questions;
+            Json["Sequence"] = Sequence;
+            Json["Intents"] = Intents;
+            Json["Hints"] = Hints;    
+            console.log(JSON.stringify(Json));             
+            _$node.find(".val")[0].value = JSON.stringify(Json);
             var field = _$node.find(".val")[0];
             field.dispatchEvent(new Event('input'));
+          
         }); 
         
         // take content from attribute field and display as table
-        _$node.find("#display").click(function() {        
+        _$node.find("#display").click(function() {         
             var table = _$node.find("#table")[0];
-            var text = _$node.find(".val")[0].value;   
-            var list = text.split(";");
-            _$node.find("#topic")[0].value = list[0];
-            var rowNumb = (list.length-1)/4;
+            var Json = _$node.find(".val")[0].value;   
+            console.log(Json);
+            var content = JSON.parse(Json);
+            _$node.find("#topic")[0].value = content.topic;
+            var rowNumb = (content.Questions.length);
+            console.log(rowNumb);
             var currRows = table.rows.length-2;
+            console.log(currRows);
             if(currRows < rowNumb){
                 for(currRows; currRows<rowNumb; currRows++){
                     addRow();
                 }
             }
-            var curr=1;
-            var currID = "";            
             for(var i = 2; i < rowNumb+2 ; i++){
-                for(var j = 0; j < 4 ; j++){
-                    currID = i.toString() + j.toString();
-                    _$node.find("#"+ currID)[0].value = list[curr];
-                    curr++;
+                if(_$node.find("#"+ i.toString() + "0")[0].value == null ){
+                    break;
                 }
+                _$node.find("#"+ i.toString() + "0")[0].value = content.Sequence[i-2];
+                _$node.find("#"+ i.toString() + "1")[0].value = content.Questions[i-2];                
+                _$node.find("#"+ i.toString() + "2")[0].value = content.Intents[i-2];
+                _$node.find("#"+ i.toString() + "3")[0].value = content.Hints[i-2];                
             }
-        });         
+                     
+        });          
            
     }
 
