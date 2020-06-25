@@ -627,7 +627,22 @@ define([
                     });
                 }
 
+                // view_only is used by the CAE and allows to show a model in the Canvas which is not editable
+                // therefore, the context menu in the Canvas must be disabled
+                var viewOnly = y.share.widgetConfig.get('view_only');
+
                 //Define Node Rightclick Menu
+                if(viewOnly) {
+                    // view only mode is activated, no context menu should be shown
+                    $.contextMenu({
+                        selector: '#' + _$node.attr('id'),
+                        build: function($trigger, e) {
+                            return false;
+                        }
+                    });
+                    return;
+                }
+                // otherwise show normal context menu
                 $.contextMenu({
                     selector: '#' + _$node.attr('id'),
                     zIndex: AbstractEntity.CONTEXT_MENU_Z_INDEX,
