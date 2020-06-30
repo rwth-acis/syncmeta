@@ -6,12 +6,13 @@ define([
     'canvas_widget/AbstractValue',
     'canvas_widget/AbstractAttribute',
     'canvas_widget/viewpoint/ViewTypesUtil',
+    'canvas_widget/QuizAttribute',
     'operations/ot/ValueChangeOperation',
     'operations/non_ot/ActivityOperation',
     'text!templates/canvas_widget/selection_value.html',
     'text!templates/attribute_widget/selection_value.html'
 ], /** @lends SelectionValue */
-    function($, jsPlumb, _, IWCW, AbstractValue, AbstractAttribute, ViewTypesUtil, ValueChangeOperation, ActivityOperation, selectionValueHtml, attributeSelectionValueHtml) {
+    function($, jsPlumb, _, IWCW, AbstractValue, AbstractAttribute, ViewTypesUtil, QuizAttribute, ValueChangeOperation, ActivityOperation, selectionValueHtml, attributeSelectionValueHtml) {
 
         SelectionValue.prototype = new AbstractValue();
         SelectionValue.prototype.constructor = SelectionValue;
@@ -96,9 +97,15 @@ define([
                 _value = value;
                 if (useAttributeHtml) {
                     _$node.val(value);
+                    if(value == "Quiz"){
+                        Object.values(rootSubjectEntity.getAttributes()).forEach((value) => {if(value instanceof QuizAttribute){value.showTable();}})
+                    } else  Object.values(rootSubjectEntity.getAttributes()).forEach((value) => {if(value instanceof QuizAttribute){value.hideTable();}})
+
                 }
                 else
                     _$node.text(options[value]);
+
+
             };
 
             /**

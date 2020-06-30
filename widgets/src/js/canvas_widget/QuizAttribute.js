@@ -112,6 +112,22 @@ define([
             cell2.appendChild(input2) ;
             cell3.appendChild(input3) ;    
         };
+
+        this.showTable = function(){
+            _$node.find("#as")[0].style.visibility = "visible";
+            _$node.find("#b")[0].style.visibility = "visible";
+            _$node.find("#c")[0].style.visibility = "visible";
+            _$node.find("#submit")[0].style.visibility = "visible";
+            _$node.find("#display")[0].style.visibility = "visible";
+        }
+        
+        this.hideTable = function(){
+            _$node.find("#as")[0].style.visibility = "hidden";
+            _$node.find("#b")[0].style.visibility = "hidden";
+            _$node.find("#c")[0].style.visibility = "hidden";
+            _$node.find("#submit")[0].style.visibility = "hidden";
+            _$node.find("#display")[0].style.visibility = "hidden";
+        }   
         
         
         _$node.find("#b").click(function() {        
