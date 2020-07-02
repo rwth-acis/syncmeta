@@ -113,8 +113,9 @@ define([
                     if(value == "Quiz" ){
                         Object.values(rootSubjectEntity.getAttributes()).forEach((value) => {if(value instanceof QuizAttribute){value.showTable();}})
                     } else  Object.values(rootSubjectEntity.getAttributes()).forEach((value) => {if(value instanceof QuizAttribute){value.hideTable();}})
-                    _value = value;
-                    _$node.val(value);
+                }
+                _value = value;
+                _$node.val(value);
                     
             };
 
