@@ -101,7 +101,7 @@ define([
         };
 
         this.showTable = function(){
-            _$node.find("#as")[0].style.visibility = "visible";
+            _$node.find("#table")[0].style.visibility = "visible";
             _$node.find("#b")[0].style.visibility = "visible";
             _$node.find("#c")[0].style.visibility = "visible";
             _$node.find("#submit")[0].style.visibility = "visible";
@@ -109,7 +109,7 @@ define([
         }
         
         this.hideTable = function(){
-            _$node.find("#as")[0].style.visibility = "hidden";
+            _$node.find("#table")[0].style.visibility = "hidden";
             _$node.find("#b")[0].style.visibility = "hidden";
             _$node.find("#c")[0].style.visibility = "hidden";
             _$node.find("#submit")[0].style.visibility = "hidden";
