@@ -147,7 +147,7 @@ define([
                 }
 
                 if (operation.getDefaultAttributeValues()) {
-                    for(const [key, value] of operation.getDefaultAttributeValues()) {
+                    for(const [key, value] of Object.entries(operation.getDefaultAttributeValues())) {
                         node.getAttribute(key).getValue().setValue(value);
                     }
                 }
@@ -274,7 +274,7 @@ define([
                         }
 
                         if (operation.getDefaultAttributeValues()) {
-                            for(const [key, value] of operation.getDefaultAttributeValues()) {
+                            for(const [key, value] of Object.entries(operation.getDefaultAttributeValues())) {
                                 node.getAttribute(key).getValue().setValue(value);
                             }
                         }
