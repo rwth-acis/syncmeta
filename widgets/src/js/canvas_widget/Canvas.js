@@ -1302,7 +1302,7 @@ define([
                         switch (event.name) {
                             case NodeAddOperation.TYPE:
                                 {
-                                    operation = new NodeAddOperation(data.id, data.type, data.left, data.top, data.width, data.height, data.zIndex, data.json, data.viewId, data.oType, jabberId || data.jabberId, data.defaultLabel);
+                                    operation = new NodeAddOperation(data.id, data.type, data.left, data.top, data.width, data.height, data.zIndex, data.json, data.viewId, data.oType, jabberId || data.jabberId, data.defaultLabel, data.defaultAttributeValues);
                                     remoteNodeAddCallback(operation);
                                     break;
                                 }
