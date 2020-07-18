@@ -189,6 +189,13 @@ requirejs([
                                     break;
                                 }
                             }
+                            
+                            // delete the nodes y-map, because otherwise after importing a different model,
+                            // the node positions are not updated
+                            for(var key of y.share.nodes.keys()) {
+                                y.share.nodes.delete(key);
+                            }
+
                             y.share.activity.set('ReloadWidgetOperation', new ActivityOperation("ReloadWidgetOperation", undefined, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], text));
                             frameElement.contentWindow.location.reload();
                         }
