@@ -123,10 +123,10 @@ define([
 
             /**
              * Apply a Tool Select Operation
-             * @param {ToolSelectOperation} operation
+             * @param {operations.non_ot.ToolSelectOperation} operation
              */
             var processToolSelectOperation = function (operation) {
-                that.mountTool(operation.getSelectedToolName(), operation.getDefaultLabel());
+                that.mountTool(operation.getSelectedToolName(), operation.getDefaultLabel(), operation.getDefaultAttributeValues());
             };
 
             /**
@@ -144,6 +144,12 @@ define([
 
                 if (operation.getDefaultLabel()) {
                     node.getLabel().getValue().setValue(operation.getDefaultLabel());
+                }
+
+                if (operation.getDefaultAttributeValues()) {
+                    for(const [key, value] of Object.entries(operation.getDefaultAttributeValues())) {
+                        node.getAttribute(key).getValue().setValue(value);
+                    }
                 }
 
                 if (y.share.users.get(y.db.userId) !== operation.getJabberId()) {
@@ -267,6 +273,12 @@ define([
                             node.getLabel().getValue().setValue(operation.getDefaultLabel());
                         }
 
+                        if (operation.getDefaultAttributeValues()) {
+                            for(const [key, value] of Object.entries(operation.getDefaultAttributeValues())) {
+                                node.getAttribute(key).getValue().setValue(value);
+                            }
+                        }
+
                         node.registerYMap();
                         node.draw();
                         node.addToCanvas(that);
@@ -343,7 +355,7 @@ define([
 
             /**
              * Callback for a local Tool Select Operation
-             * @param {operations.non_ot.ToolSelectOperation} operation
+             * @param {operations.non_ot.ToolSelectOperation.non_ot.ToolSelectOperation} operation
              */
             var localToolSelectCallback = function (operation) {
                 if (operation instanceof ToolSelectOperation) {
@@ -627,7 +639,22 @@ define([
                     });
                 }
 
+                // view_only is used by the CAE and allows to show a model in the Canvas which is not editable
+                // therefore, the context menu in the Canvas must be disabled
+                var viewOnly = y.share.widgetConfig.get('view_only');
+
                 //Define Node Rightclick Menu
+                if(viewOnly) {
+                    // view only mode is activated, no context menu should be shown
+                    $.contextMenu({
+                        selector: '#' + _$node.attr('id'),
+                        build: function($trigger, e) {
+                            return false;
+                        }
+                    });
+                    return;
+                }
+                // otherwise show normal context menu
                 $.contextMenu({
                     selector: '#' + _$node.attr('id'),
                     zIndex: AbstractEntity.CONTEXT_MENU_Z_INDEX,
@@ -839,9 +866,10 @@ define([
              * @param {number} [zIndex] Position of node on z-axis
              * @param {object} [json] representation of node
              * @param {string} identifier the identifier of the node, if null a new id is generated
+             * @param defaultAttributeValues May be used to set default values for node attributes.
              * @return {number} id of new node
              */
-            this.createNode = function (type, left, top, width, height, zIndex, json, identifier, historyFlag, defaultLabel) {
+            this.createNode = function (type, left, top, width, height, zIndex, json, identifier, historyFlag, defaultLabel, defaultAttributeValues) {
                 var id, oType = null;
                 if (identifier)
                     id = identifier;
@@ -852,7 +880,7 @@ define([
                 if (EntityManager.getViewId() !== undefined && EntityManager.getLayer() === CONFIG.LAYER.MODEL) {
                     oType = EntityManager.getViewNodeType(type).getTargetNodeType().TYPE;
                 }
-                var operation = new NodeAddOperation(id, type, left, top, width, height, zIndex, json || null, EntityManager.getViewId(), oType, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], defaultLabel);
+                var operation = new NodeAddOperation(id, type, left, top, width, height, zIndex, json || null, EntityManager.getViewId(), oType, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], defaultLabel, defaultAttributeValues);
 
                 propagateNodeAddOperation(operation);
                 if (y) {
@@ -1274,7 +1302,7 @@ define([
                         switch (event.name) {
                             case NodeAddOperation.TYPE:
                                 {
-                                    operation = new NodeAddOperation(data.id, data.type, data.left, data.top, data.width, data.height, data.zIndex, data.json, data.viewId, data.oType, jabberId || data.jabberId, data.defaultLabel);
+                                    operation = new NodeAddOperation(data.id, data.type, data.left, data.top, data.width, data.height, data.zIndex, data.json, data.viewId, data.oType, jabberId || data.jabberId, data.defaultLabel, data.defaultAttributeValues);
                                     remoteNodeAddCallback(operation);
                                     break;
                                 }

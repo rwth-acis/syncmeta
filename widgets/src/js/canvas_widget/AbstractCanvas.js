@@ -67,11 +67,13 @@ define([],/** @lends AbstractCanvas */function () {
         /**
          * Mount a canvas tool previously added to the canvas
          * @param {string} name Name of tool
+         * @param defaultLabel
+         * @param defaultAttributeValues May be used to set default values for node attributes.
          */
-        this.mountTool = function(name, defaultLabel){
+        this.mountTool = function(name, defaultLabel, defaultAttributeValues){
             if(_currentToolName && _tools[_currentToolName]) _tools[_currentToolName].unmount();
             if(_tools.hasOwnProperty(name)){
-                _tools[name].mount(defaultLabel);
+                _tools[name].mount(defaultLabel, defaultAttributeValues);
             }
             else
                 _tools['MoveTool'].mount();

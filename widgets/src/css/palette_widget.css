@@ -1,7 +1,5 @@
-#palette {
-
+#main {
     max-height: 400px;
-    overflow: auto;
 }
 
 button {

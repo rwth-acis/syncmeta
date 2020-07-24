@@ -189,6 +189,22 @@ requirejs([
                                     break;
                                 }
                             }
+
+                            // when event.value is "import", then previously the model in the Yjs room should have
+                            // been changed
+                            // Problem: when the new model contains a node, that the previous model also contained,
+                            // then the position of the node does not get updated
+                            // therefore, this is manually done here
+                            for(var key of y.share.nodes.keys()) {
+                                // check if the node also exists in the updated model
+                                var nodeInModel = y.share.data.get('model').nodes[key];
+                                if (nodeInModel) {
+                                    // update left and top position values
+                                    y.share.nodes.get(key).set("left", nodeInModel.left);
+                                    y.share.nodes.get(key).set("top", nodeInModel.top);
+                                }
+                            }
+
                             y.share.activity.set('ReloadWidgetOperation', new ActivityOperation("ReloadWidgetOperation", undefined, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], text));
                             frameElement.contentWindow.location.reload();
                         }
