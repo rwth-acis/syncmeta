@@ -1351,6 +1351,13 @@ define([
                                         entity.highlight(event.value.color, event.value.label);
                                     }
                                 }
+
+                                // when an entity (or multiple entities) get(s) highlighted, then
+                                // one of them can be selected where the canvas should move to
+                                if(event.value.moveCanvasToEntity) {
+                                    // move canvas to entity
+                                    that.scrollEntityIntoView(event.value.moveCanvasToEntity);
+                                }
                                 
                                 break;
                             }
