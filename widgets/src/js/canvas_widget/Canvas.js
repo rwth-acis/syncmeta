@@ -1343,20 +1343,28 @@ define([
                             case 'highlight':{
                                 var userId =  _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID];
                                 if(!event.value.remote && userId !== event.value.userId) return;
-                                
+
+                                // when an entity (or multiple entities) get highlighted, then
+                                // one of them can be selected where the canvas should move to
+                                if(event.value.moveCanvasToEntity) {
+                                    var entityId = event.value.moveCanvasToEntity;
+                                    var entity = EntityManager.find(entityId);
+
+                                    // move canvas to entity
+                                    that.scrollEntityIntoView(entityId);
+
+                                    // select the entity (note: this needs to be done before the highlighting,
+                                    // because otherwise the "select" overwrites the highlighting)
+                                    that.select(entity);
+                                }
+
+                                // highlight entity/entities
                                 for(var i=0;i<event.value.entities.length;i++){
                                     var entityId = event.value.entities[i];
                                     var entity = EntityManager.find(entityId);
                                     if(entity){
                                         entity.highlight(event.value.color, event.value.label);
                                     }
-                                }
-
-                                // when an entity (or multiple entities) get(s) highlighted, then
-                                // one of them can be selected where the canvas should move to
-                                if(event.value.moveCanvasToEntity) {
-                                    // move canvas to entity
-                                    that.scrollEntityIntoView(event.value.moveCanvasToEntity);
                                 }
                                 
                                 break;
