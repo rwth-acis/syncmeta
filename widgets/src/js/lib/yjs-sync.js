@@ -36,8 +36,12 @@ define(['jquery', 'Util'], function($, Util) {
                 activity:'Map',
                 globalId: 'Array',
                 text:"Text",
+                widgetConfig: 'Map',
                 metamodelStatus: 'Map',
-                widgetConfig: 'Map'
+                rasa: 'Text',
+                sbfManager: 'Text',
+                storeName: 'Text',
+                loadName: 'Text'
             },
             type:["Text","Map"],
             sourceDir: '<%= grunt.config("baseUrl") %>/js/lib/vendor'
