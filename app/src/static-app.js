@@ -228,7 +228,7 @@ class StaticApp extends PolymerElement {
             metamodelStatus: 'Map'
         },
         type:["Text","Map"],
-        sourceDir: '/bower_components'
+        sourceDir: '/node_modules'
       }).then(callback);
     }
   }
