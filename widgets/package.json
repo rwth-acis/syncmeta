@@ -5,6 +5,14 @@
     "name": "Stephan Erdtmann",
     "email": "erdtmann@dbis.rwth-aachen.de"
   },
+  "dependencies": {
+    "y-array": "^10.0.4",
+    "y-map": "^10.0.3",
+    "y-memory": "^8.0.7",
+    "y-text": "^9.0.2",
+    "y-websockets-client": "^8.0.11",
+    "yjs": "^12.0.4"
+  },
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-amdcheck": "^0.2.1",
