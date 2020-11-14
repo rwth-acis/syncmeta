@@ -134,7 +134,7 @@ define([
                     _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
                     processValueChangeOperation(operation);
 
-                    //Only the local user Propagates the activity and saves the state of the model
+                    //Only the local user Propagates the activity
                     if (_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] === operation.getJabberId()) {
                         y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(
                             "ValueChangeActivity",
