@@ -17,7 +17,7 @@ WORKDIR /usr/src/app/widgets
 RUN npm install && bower install --allow-root
 
 WORKDIR /usr/src/app/app
-RUN npm install && bower install --allow-root
+RUN npm install
 
 WORKDIR /usr/src/app
 COPY docker/docker-entrypoint.sh docker-entrypoint.sh
