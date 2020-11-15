@@ -132,7 +132,7 @@ define([
                     _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
                     processValueChangeOperation(operation);
 
-                    //Only the local user Propagates the activity and saves the state of the model
+                    //Only the local user Propagates the activity
                     if (_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] === operation.getJabberId()) {
                         y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(
                             "ValueChangeActivity",
@@ -146,7 +146,6 @@ define([
                                 rootSubjectEntityId: that.getRootSubjectEntity().getEntityId()
                             }
                         ));
-                        $('#save').click();
                     } else {
                         //the remote users propagtes the change to their local attribute widget
                         //TODO(PENDING): can be replace with yjs as well
@@ -154,6 +153,12 @@ define([
                     }
                 }
             });
+
+            //Debounce the save function
+            that.getRootSubjectEntity().getYMap().observePath([that.getEntityId()], _.debounce(function (event) {
+                if (event && event.jabberId === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
+                    $('#save').click();
+            }, 500));
         };
 
         init();
