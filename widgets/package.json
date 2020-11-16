@@ -5,9 +5,35 @@
     "name": "Stephan Erdtmann",
     "email": "erdtmann@dbis.rwth-aachen.de"
   },
+  "dependencies": {
+    "ace-builds": "^1.2.3",
+    "async": "^1.5.2",
+    "bootstrap": "^3.3.7",
+    "dagre": "^0.7.4",
+    "font-awesome": "~4.4.0",
+    "graphlib": "^2.1.8",
+    "jquery": "^2.1.4",
+    "jquery-contextmenu": "^1.8.0",
+    "jquery-migrate": "^1.4.1",
+    "jquery-mousewheel": "^3.1.13",
+    "jquery-ui": "^1.10.5",
+    "jsplumb": "^1.7.9",
+    "jszip": "^2.0.0",
+    "lodash": "^2.4.2",
+    "requirejs": "^2.1.22",
+    "requirejs-text": "^2.0.15",
+    "y-array": "10.1.4",
+    "y-map": "10.1.3",
+    "y-memory": "8.0.9",
+    "y-text": "9.5.1",
+    "y-websockets-client": "8.0.16",
+    "yjs": "12.3.3"
+  },
   "devDependencies": {
+    "chai": "^3.5.0",
     "grunt": "~0.4.1",
     "grunt-amdcheck": "^0.2.1",
+    "grunt-bootstrap-prefix": "~0.1.0",
     "grunt-contrib-clean": "~0.5.0",
     "grunt-contrib-connect": "^0.11.2",
     "grunt-contrib-copy": "~0.4.1",
@@ -18,6 +44,6 @@
     "grunt-contrib-watch": "~0.5.3",
     "grunt-jsdoc": "~0.5.1",
     "grunt-ssh": "~0.7.0",
-    "grunt-bootstrap-prefix": "~0.1.0"
+    "mocha": "^2.4.5"
   }
 }

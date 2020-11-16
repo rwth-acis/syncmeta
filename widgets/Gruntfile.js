@@ -17,6 +17,7 @@ module.exports = function(grunt) {
         bowerdir: grunt.file.readJSON('.bowerrc')['directory'],
         distdir: 'html',
         srcdir:  'src',
+        nodemodules: 'node_modules',
 
         clean: ["<%= distdir %>//*"],
 
@@ -30,37 +31,37 @@ module.exports = function(grunt) {
             lib: {
                 files: [
                     {src: '<%= bowerdir %>/iwc/iwc.js', dest: '<%= distdir %>/js/lib/vendor/iwc.js'},
-                    {src: '<%= bowerdir %>/jquery/jquery.js', dest: '<%= distdir %>/js/lib/vendor/jquery.js'},
-                    {src: '<%= bowerdir %>/jquery-migrate/jquery-migrate.js', dest: '<%= distdir %>/js/lib/vendor/jquery-migrate.js'},
+                    {src: '<%= nodemodules %>/jquery/dist/jquery.js', dest: '<%= distdir %>/js/lib/vendor/jquery.js'},
+                    {src: '<%= nodemodules %>/jquery-migrate/dist/jquery-migrate.js', dest: '<%= distdir %>/js/lib/vendor/jquery-migrate.js'},
                     {src: '<%= bowerdir %>/jquery-ui/ui/jquery-ui.js', dest: '<%= distdir %>/js/lib/vendor/jquery-ui.js'},
                     {src: '<%= bowerdir %>/jquery-ui/themes/base/jquery-ui.css', dest: '<%= distdir %>/css/vendor/jquery-ui.css'},
                     {cwd: '<%= bowerdir %>/jquery-ui/themes/base', expand: true, src: ['images/*'], dest: '<%= distdir %>/css/vendor/'},
-                    {src: '<%= bowerdir %>/jsPlumb/dist/js/jquery.jsPlumb-1.5.*.js', dest: '<%= distdir %>/js/lib/vendor/jquery.jsPlumb.js'},
-                    {src: '<%= bowerdir %>/jQuery-contextMenu/src/jquery.contextMenu.js', dest: '<%= distdir %>/js/lib/vendor/jquery.contextMenu.js'},
-                    {src: '<%= bowerdir %>/jQuery-contextMenu/src/jquery.contextMenu.css', dest: '<%= distdir %>/css/vendor/jquery.contextMenu.css'},
-                    {src: '<%= bowerdir %>/jquery-mousewheel/jquery.mousewheel.js', dest: '<%= distdir %>/js/lib/vendor/jquery.mousewheel.js'},
-                    {src: '<%= bowerdir %>/requirejs/require.js', dest: '<%= distdir %>/js/lib/vendor/require.js'},
-                    {src: '<%= bowerdir %>/requirejs-text/text.js', dest: '<%= distdir %>/js/lib/vendor/requirejs-text.js'},
+                    {src: '<%= nodemodules %>/jsplumb/dist/js/jsPlumb-1.7.9.js', dest: '<%= distdir %>/js/lib/vendor/jquery.jsPlumb.js'},
+                    {src: '<%= nodemodules %>/jquery-contextmenu/dist/jquery.contextMenu.js', dest: '<%= distdir %>/js/lib/vendor/jquery.contextMenu.js'},
+                    {src: '<%= nodemodules %>/jquery-contextmenu/dist/jquery.contextMenu.css', dest: '<%= distdir %>/css/vendor/jquery.contextMenu.css'},
+                    {src: '<%= nodemodules %>/jquery-mousewheel/jquery.mousewheel.js', dest: '<%= distdir %>/js/lib/vendor/jquery.mousewheel.js'},
+                    {src: '<%= nodemodules %>/requirejs/require.js', dest: '<%= distdir %>/js/lib/vendor/require.js'},
+                    {src: '<%= nodemodules %>/requirejs-text/text.js', dest: '<%= distdir %>/js/lib/vendor/requirejs-text.js'},
                     {src: '<%= bowerdir %>/requirejs-promise/requirejs-promise.js', dest: '<%= distdir %>/js/lib/vendor/requirejs-promise.js'},
-                    {src: '<%= bowerdir %>/lodash/dist/lodash.js', dest: '<%= distdir %>/js/lib/vendor/lodash.js'},
-                    {src: '<%= bowerdir %>/jszip/jszip.js', dest: '<%= distdir %>/js/lib/vendor/jszip.js'},
-                    {src: '<%= bowerdir %>/graphlib/dist/graphlib.core.min.js', dest: '<%= distdir %>/js/lib/vendor/graphlib.core.min.js'},
-                    {cwd: '<%= bowerdir %>/font-awesome/',expand: true, src: ['css/**', 'fonts/**'], dest: '<%= distdir %>/css/vendor/font-awesome/'},
-                    {cwd:'<%= bowerdir %>/yjs',expand:true, src: ['*.*'], dest:'<%=distdir%>/js/lib/vendor/yjs'},
-                    {cwd:'<%= bowerdir %>/y-array',expand:true, src: ['*.*'], dest:'<%=distdir%>/js/lib/vendor/y-array'},
-                    {cwd:'<%= bowerdir %>/y-map',expand:true, src: ['*.*'], dest:'<%=distdir%>/js/lib/vendor/y-map'},
-                    {cwd:'<%= bowerdir %>/y-text',expand:true,src: ['*.*'], dest:'<%=distdir%>/js/lib/vendor/y-text'},
-                    {cwd:'<%= bowerdir %>/y-websockets-client',expand:true, src: ['*.*'], dest:'<%=distdir%>/js/lib/vendor/y-websockets-client'},
-                    {cwd:'<%= bowerdir %>/y-memory',expand:true, src: ['*.*'], dest:'<%=distdir%>/js/lib/vendor/y-memory'},
-                    {src: '<%= bowerdir %>/dagre/dist/dagre.core.min.js', dest: '<%= distdir %>/js/lib/vendor/dagre.min.js'},
-                    {src: '<%= bowerdir %>/chai/chai.js', dest: '<%= distdir %>/js/lib/vendor/test/chai.js'},
-                    {src: '<%= bowerdir %>/mocha/mocha.js', dest: '<%= distdir %>/js/lib/vendor/test/mocha.js'},
-                    {src: '<%= bowerdir %>/mocha/mocha.css', dest: '<%= distdir %>/js/lib/vendor/test/mocha.css'},
-                    {src: '<%= bowerdir %>/ace-builds/src-min-noconflict/ace.js', dest: '<%= distdir %>/js/lib/vendor/ace/ace.js'},
-                    {src: '<%= bowerdir %>/ace-builds/src-min-noconflict/mode-svg.js', dest: '<%= distdir %>/js/lib/vendor/ace/mode-svg.js'},
-                    {src: '<%= bowerdir %>/ace-builds/src-min-noconflict/theme-github.js', dest: '<%= distdir %>/js/lib/vendor/ace/theme-github.js'},
-                    {src: '<%= bowerdir %>/ace-builds/src-min-noconflict/worker-xml.js', dest: '<%= distdir %>/js/lib/vendor/ace/worker-xml.js'},
-                    {src: '<%= bowerdir %>/async/dist/async.min.js', dest: '<%= distdir %>/js/lib/vendor/async.js'},
+                    {src: '<%= nodemodules %>/lodash/dist/lodash.js', dest: '<%= distdir %>/js/lib/vendor/lodash.js'},
+                    {src: '<%= nodemodules %>/jszip/dist/jszip.js', dest: '<%= distdir %>/js/lib/vendor/jszip.js'},
+                    {src: '<%= nodemodules %>/graphlib/dist/graphlib.core.min.js', dest: '<%= distdir %>/js/lib/vendor/graphlib.core.min.js'},
+                    {cwd: '<%= nodemodules %>/font-awesome/',expand: true, src: ['css/**', 'fonts/**'], dest: '<%= distdir %>/css/vendor/font-awesome/'},
+                    {cwd: '<%= nodemodules %>/yjs/dist',expand:true, src: ['*.*'], dest:'<%=distdir%>/js/lib/vendor/yjs'},
+                    {cwd: '<%= nodemodules %>/y-array/dist',expand:true, src: ['*.*'], dest:'<%=distdir%>/js/lib/vendor/y-array'},
+                    {cwd: '<%= nodemodules %>/y-map/dist',expand:true, src: ['*.*'], dest:'<%=distdir%>/js/lib/vendor/y-map'},
+                    {cwd: '<%= nodemodules %>/y-text/dist',expand:true,src: ['*.*'], dest:'<%=distdir%>/js/lib/vendor/y-text'},
+                    {cwd: '<%= nodemodules %>/y-websockets-client/dist',expand:true, src: ['*.*'], dest:'<%=distdir%>/js/lib/vendor/y-websockets-client'},
+                    {cwd: '<%= nodemodules %>/y-memory/dist',expand:true, src: ['*.*'], dest:'<%=distdir%>/js/lib/vendor/y-memory'},
+                    {src: '<%= nodemodules %>/dagre/dist/dagre.core.min.js', dest: '<%= distdir %>/js/lib/vendor/dagre.min.js'},
+                    {src: '<%= nodemodules %>/chai/chai.js', dest: '<%= distdir %>/js/lib/vendor/test/chai.js'},
+                    {src: '<%= nodemodules %>/mocha/mocha.js', dest: '<%= distdir %>/js/lib/vendor/test/mocha.js'},
+                    {src: '<%= nodemodules %>/mocha/mocha.css', dest: '<%= distdir %>/js/lib/vendor/test/mocha.css'},
+                    {src: '<%= nodemodules %>/ace-builds/src-min-noconflict/ace.js', dest: '<%= distdir %>/js/lib/vendor/ace/ace.js'},
+                    {src: '<%= nodemodules %>/ace-builds/src-min-noconflict/mode-svg.js', dest: '<%= distdir %>/js/lib/vendor/ace/mode-svg.js'},
+                    {src: '<%= nodemodules %>/ace-builds/src-min-noconflict/theme-github.js', dest: '<%= distdir %>/js/lib/vendor/ace/theme-github.js'},
+                    {src: '<%= nodemodules %>/ace-builds/src-min-noconflict/worker-xml.js', dest: '<%= distdir %>/js/lib/vendor/ace/worker-xml.js'},
+                    {src: '<%= nodemodules %>/async/dist/async.min.js', dest: '<%= distdir %>/js/lib/vendor/async.js'},
                     {src: '<%= bowerdir %>/JSCheck/jscheck.js', dest: '<%= distdir %>/js/lib/vendor/test/jscheck.js'},
                     {src:'plugin/syncmeta-plugin.js', dest:'<%= distdir %>/plugin/syncmeta-plugin.js'}
                 ]
@@ -78,11 +79,11 @@ module.exports = function(grunt) {
                     // (Required) List of bootstrap CSS file(s). The first file must be the main bootstrap CSS file. The
                     // script parse it to retrieve all the bootstrap CSS classes which are then used to prefix the JS file(s).
                     // It's also possible to put minified CSS files in the list.
-                    cssSource: ['<%= bowerdir %>/bootstrap/dist/css/bootstrap.min.css'],
+                    cssSource: ['<%= nodemodules %>/bootstrap/dist/css/bootstrap.min.css'],
 
                     //(Required) Path to the folder where the prefixed CSS files will be created
                     cssDest: '<%= distdir %>/css/vendor/',
-                    jsSource: ['<%= bowerdir %>/bootstrap/js/dropdown.js'],
+                    jsSource: ['<%= nodemodules %>/bootstrap/js/dropdown.js'],
                     jsDest: '<%= distdir %>/js/lib/vendor/bootstrap'
                 }
             }
@@ -364,7 +365,7 @@ module.exports = function(grunt) {
                         name: 'templates/templates'
                     }],
                     paths: {
-                        text: "../components/requirejs-text/text"
+                        text: "../node_modules/requirejs-text/text"
                     }
                 }
             },
