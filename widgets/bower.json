@@ -15,8 +15,7 @@
   "dependencies": {
     "iwc": "git://github.com/rwth-acis/InterwidgetCommunication",
     "requirejs-i18n": "~2.0.4",
-    "requirejs-promise": "*",
-    "jquery-ui": "~1.10.3"
+    "requirejs-promise": "*"
   },
   "resolutions": {
     "lodash": "~2.4.1"
