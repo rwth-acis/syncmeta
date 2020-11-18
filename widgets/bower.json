@@ -14,15 +14,6 @@
   ],
   "dependencies": {
     "iwc": "git://github.com/rwth-acis/InterwidgetCommunication",
-    "requirejs-i18n": "~2.0.4",
-    "requirejs-promise": "*"
-  },
-  "resolutions": {
-    "lodash": "~2.4.1"
-  },
-  "devDependencies": {
-    "chai": "^3.5.0",
-    "JSCheck": "https://github.com/douglascrockford/JSCheck.git",
-    "mocha": "^2.4.5"
+    "requirejs-i18n": "~2.0.4"
   }
 }

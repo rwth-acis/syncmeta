@@ -21,6 +21,7 @@
     "jszip": "^2.0.0",
     "lodash": "^2.4.2",
     "requirejs": "^2.1.22",
+    "requirejs-promise": "github:jokeyrhyme/requirejs-promise",
     "requirejs-text": "^2.0.15",
     "y-array": "10.1.4",
     "y-map": "10.1.3",

@@ -42,7 +42,7 @@ module.exports = function(grunt) {
                     {src: '<%= nodemodules %>/jquery-mousewheel/jquery.mousewheel.js', dest: '<%= distdir %>/js/lib/vendor/jquery.mousewheel.js'},
                     {src: '<%= nodemodules %>/requirejs/require.js', dest: '<%= distdir %>/js/lib/vendor/require.js'},
                     {src: '<%= nodemodules %>/requirejs-text/text.js', dest: '<%= distdir %>/js/lib/vendor/requirejs-text.js'},
-                    {src: '<%= bowerdir %>/requirejs-promise/requirejs-promise.js', dest: '<%= distdir %>/js/lib/vendor/requirejs-promise.js'},
+                    {src: '<%= nodemodules %>/requirejs-promise/requirejs-promise.js', dest: '<%= distdir %>/js/lib/vendor/requirejs-promise.js'},
                     {src: '<%= nodemodules %>/lodash/dist/lodash.js', dest: '<%= distdir %>/js/lib/vendor/lodash.js'},
                     {src: '<%= nodemodules %>/jszip/dist/jszip.js', dest: '<%= distdir %>/js/lib/vendor/jszip.js'},
                     {src: '<%= nodemodules %>/graphlib/dist/graphlib.core.min.js', dest: '<%= distdir %>/js/lib/vendor/graphlib.core.min.js'},
