@@ -4,8 +4,7 @@ requirejs.config({
         chai: "lib/vendor/test/chai",
         mocha: 'lib/vendor/test/mocha',
         WebConsoleReporter: './../test/WebConsole',
-        async: 'lib/vendor/async',
-        jscheck: 'lib/vendor/test/jscheck'
+        async: 'lib/vendor/async'
     }
 });
 define(['jquery', 'chai', 'WebConsoleReporter',

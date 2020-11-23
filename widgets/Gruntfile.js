@@ -14,7 +14,6 @@ module.exports = function(grunt) {
         yjsConnector : localConfig.yjsConnector,
         yjsDatabaseAdapter: localConfig.yjsDatabaseAdapter,
         yjsResourcePath: localConfig.yjsResourcePath,
-        bowerdir: grunt.file.readJSON('.bowerrc')['directory'],
         distdir: 'html',
         srcdir:  'src',
         nodemodules: 'node_modules',
@@ -30,7 +29,7 @@ module.exports = function(grunt) {
             },
             lib: {
                 files: [
-                    {src: '<%= bowerdir %>/iwc/iwc.js', dest: '<%= distdir %>/js/lib/vendor/iwc.js'},
+                    {src: '<%= nodemodules %>/@rwth-acis/iwc/iwc.js', dest: '<%= distdir %>/js/lib/vendor/iwc.js'},
                     {src: '<%= nodemodules %>/jquery/dist/jquery.js', dest: '<%= distdir %>/js/lib/vendor/jquery.js'},
                     {src: '<%= nodemodules %>/jquery-migrate/dist/jquery-migrate.js', dest: '<%= distdir %>/js/lib/vendor/jquery-migrate.js'},
                     {src: '<%= nodemodules %>/jquery-ui/jquery-ui.js', dest: '<%= distdir %>/js/lib/vendor/jquery-ui.js'},
@@ -62,7 +61,6 @@ module.exports = function(grunt) {
                     {src: '<%= nodemodules %>/ace-builds/src-min-noconflict/theme-github.js', dest: '<%= distdir %>/js/lib/vendor/ace/theme-github.js'},
                     {src: '<%= nodemodules %>/ace-builds/src-min-noconflict/worker-xml.js', dest: '<%= distdir %>/js/lib/vendor/ace/worker-xml.js'},
                     {src: '<%= nodemodules %>/async/dist/async.min.js', dest: '<%= distdir %>/js/lib/vendor/async.js'},
-                    {src: '<%= bowerdir %>/JSCheck/jscheck.js', dest: '<%= distdir %>/js/lib/vendor/test/jscheck.js'},
                     {src:'plugin/syncmeta-plugin.js', dest:'<%= distdir %>/plugin/syncmeta-plugin.js'}
                 ]
             },

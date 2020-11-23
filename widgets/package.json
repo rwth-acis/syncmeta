@@ -6,6 +6,7 @@
     "email": "erdtmann@dbis.rwth-aachen.de"
   },
   "dependencies": {
+    "@rwth-acis/iwc": "^1.0.0",
     "ace-builds": "^1.2.3",
     "async": "^1.5.2",
     "bootstrap": "^3.3.7",
