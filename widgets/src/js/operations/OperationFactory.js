@@ -45,7 +45,7 @@ define([
              * Creates an Operation from a received NonOTOperation
              * @memberof operations.OperationFactory#
              * @param operation
-             * @returns {ActivityOperation|EntitySelectOperation|ToolSelectOperation}
+             * @returns {operations.non_ot.ToolSelectOperation|EntitySelectOperation|ToolSelectOperation}
              */
             createOperationFromNonOTOperation: function(operation){
                 var type = operation.getType(),
@@ -65,7 +65,7 @@ define([
                         resOperation.setNonOTOperation(operation);
                         break;
                     case ToolSelectOperation.TYPE:
-                        resOperation = new ToolSelectOperation(data.selectedToolName, data.name);
+                        resOperation = new ToolSelectOperation(data.selectedToolName, data.name, data.defaultAttributeValues);
                         break;
                     case ActivityOperation.TYPE:
                         resOperation = new ActivityOperation(data.type,data.entityId,data.sender,data.text,data.data);

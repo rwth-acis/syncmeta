@@ -16,7 +16,7 @@ requirejs([
     'operations/non_ot/SetModelAttributeNodeOperation',
     'promise!Guidancemodel'
 ], function ($, IWCW, yjsSync, WaitForCanvas, AttributeWrapper, EntityManager, ViewGenerator, InitModelTypesOperation, ViewInitOperation, SetModelAttributeNodeOperation, guidancemodel) {
-    WaitForCanvas(CONFIG.WIDGET.NAME.ATTRIBUTE, 7).done(function (user) {
+    WaitForCanvas(CONFIG.WIDGET.NAME.ATTRIBUTE, 10, 1500).done(function (user) {
         $('#wrapper').find('h1').text('Got Response from Canvas! Connecting to Yjs....');
         var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE);
         iwc.setSpace(user);

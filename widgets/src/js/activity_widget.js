@@ -17,7 +17,11 @@ requirejs([
             var activtyList = new ActivityList($("#user_list"),$("#activity_list"));   
             
             y.share.join.observe(function(event){
-                activtyList.addUser(event.name);
+                // the username "invisible_user" is a special one, which can be used to join without 
+                // appearing in the activity list
+                if(event.name != "invisible_user") {
+                    activtyList.addUser(event.name);
+                }
             });
            
             WaitForCanvas(CONFIG.WIDGET.NAME.ACTIVITY,7).done(function (data) {

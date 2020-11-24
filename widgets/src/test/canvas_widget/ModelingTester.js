@@ -8,8 +8,7 @@ define(['chai', 'async',
     './../canvas_widget/NodeMoveZTester',
     './../canvas_widget/NodeResizeTester',
     './../canvas_widget/UndoTester',
-    './../canvas_widget/RedoTester',
-    'jscheck'],
+    './../canvas_widget/RedoTester'],
     function (chai, async, EntityManager, CreateNodeTester, CreateEdgeTester, NodeDeleteTester, EdgeDeleteTester, NodeMoveTester, NodeMoveZTester, NodeResizeTester, UndoTester, RedoTester) {
         return function ModelingTester(canvas) {
 
