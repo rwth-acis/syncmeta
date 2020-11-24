@@ -35,7 +35,7 @@ module.exports = function(grunt) {
                     {src: '<%= nodemodules %>/jquery-ui/jquery-ui.js', dest: '<%= distdir %>/js/lib/vendor/jquery-ui.js'},
                     {src: '<%= nodemodules %>/jquery-ui/themes/base/jquery-ui.css', dest: '<%= distdir %>/css/vendor/jquery-ui.css'},
                     {cwd: '<%= nodemodules %>/jquery-ui/themes/base', expand: true, src: ['images/*'], dest: '<%= distdir %>/css/vendor/'},
-                    {src: '<%= nodemodules %>/jsplumb/dist/js/jsPlumb-1.7.9.js', dest: '<%= distdir %>/js/lib/vendor/jquery.jsPlumb.js'},
+                    {src: '<%= nodemodules %>/jsPlumb/dist/js/jquery.jsPlumb-1.5.*.js', dest: '<%= distdir %>/js/lib/vendor/jquery.jsPlumb.js'},
                     {src: '<%= nodemodules %>/jquery-contextmenu/dist/jquery.contextMenu.js', dest: '<%= distdir %>/js/lib/vendor/jquery.contextMenu.js'},
                     {src: '<%= nodemodules %>/jquery-contextmenu/dist/jquery.contextMenu.css', dest: '<%= distdir %>/css/vendor/jquery.contextMenu.css'},
                     {src: '<%= nodemodules %>/jquery-mousewheel/jquery.mousewheel.js', dest: '<%= distdir %>/js/lib/vendor/jquery.mousewheel.js'},
