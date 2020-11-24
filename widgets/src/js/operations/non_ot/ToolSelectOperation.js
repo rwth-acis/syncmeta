@@ -1,17 +1,19 @@
 define([
     'operations/non_ot/NonOTOperation'
-],/** @lends ToolSelectOperation */function(NonOTOperation) {
+],/** @lends operations.non_ot.ToolSelectOperation */function(NonOTOperation) {
 
     ToolSelectOperation.TYPE = "ToolSelectOperation";
 
     /**
      * ToolSelectOperation
-     * @class operations.non_ot.ToolSelectOperation
+     * @class operations.non_ot.ToolSelectOperation.non_ot.ToolSelectOperation
      * @memberof operations.non_ot
      * @constructor
      * @param {string} toolName Name of selected tool
+     * @param label
+     * @param {map} defaultAttributeValues Map containing default values for the attributes of a node.
      */
-    function ToolSelectOperation(toolName, label){
+    function ToolSelectOperation(toolName, label, defaultAttributeValues = {}){
         /**
          * Name of selected tool
          * @type {string}
@@ -32,6 +34,12 @@ define([
         var defaultLabel = label;
 
         /**
+         * May be used to set default values for node attributes.
+         * @type {map}
+         */
+        var defaultAttributeValues = defaultAttributeValues;
+
+        /**
          * Get name of selected tool
          * @returns {string}
          */
@@ -45,7 +53,15 @@ define([
          */
         this.getDefaultLabel = function() {
             return defaultLabel;
-        }
+        };
+
+        /**
+         * Get default values for node attributes.
+         * @returns {map}
+         */
+        this.getDefaultAttributeValues = function() {
+            return defaultAttributeValues;
+        };
 
         /**
          * Convert operation to NonOTOperation

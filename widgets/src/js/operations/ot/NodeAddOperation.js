@@ -23,9 +23,10 @@ define([
      * @param {string} viewId the identifier of the view
      * @param {string} oType the original Type, only set in views
      * @param {string} jabberId the jabberId of the user
+     * @param defaultAttributeValues May be used to set default attribute values for nodes.
      * @constructor
      */
-    function NodeAddOperation(entityId,type,left,top,width,height,zIndex,json, viewId, oType,jabberId, defaultLabel){
+    function NodeAddOperation(entityId,type,left,top,width,height,zIndex,json, viewId, oType,jabberId, defaultLabel, defaultAttributeValues){
         var that = this;
 
         EntityOperation.call(this,EntityOperation.TYPES.NodeAddOperation,entityId,CONFIG.ENTITY.NODE);
@@ -101,6 +102,11 @@ define([
          * @private
          */
         var _defaultLabel = defaultLabel;
+
+        /**
+         * May be used to set default values for node attributes.
+         */
+        var _defaultAttributeValues = defaultAttributeValues;
 
         /**
          * Create OTOperation for operation
@@ -208,7 +214,15 @@ define([
          */
         this.getDefaultLabel = function() {
             return _defaultLabel;
-        }
+        };
+
+        /**
+         * Get default values for node attributes.
+         * @returns {*}
+         */
+        this.getDefaultAttributeValues = function() {
+            return _defaultAttributeValues;
+        };
 
         /**
          * Get corresponding ot operation
@@ -278,7 +292,8 @@ define([
             viewId:this.getViewId(),
             oType: this.getOriginType(),
             jabberId:this.getJabberId(),
-            defaultLabel:this.getDefaultLabel()
+            defaultLabel:this.getDefaultLabel(),
+            defaultAttributeValues:this.getDefaultAttributeValues()
         }
     };
 

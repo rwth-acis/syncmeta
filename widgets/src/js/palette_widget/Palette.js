@@ -65,7 +65,7 @@ define([
 
         /**
          * Callback for a local Tool Select Operation
-         * @param {operations.non_ot.ToolSelectOperation} operation
+         * @param {operations.non_ot.ToolSelectOperation.non_ot.ToolSelectOperation} operation
          */
         var toolSelectionCallback = function (operation) {
             if (operation instanceof ToolSelectOperation) {
