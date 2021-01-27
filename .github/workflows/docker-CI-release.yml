@@ -28,7 +28,7 @@ jobs:
         
     - name: Build the Docker image
       run: |
-        docker build -t registry.tech4comp.dbis.rwth-aachen.de/rwthacis/syncmeta:${{ steps.get_tag.outputs.tag }}
+        docker build -t registry.tech4comp.dbis.rwth-aachen.de/rwthacis/syncmeta:${{ steps.get_tag.outputs.tag }} .
     #    docker tag registry.tech4comp.dbis.rwth-aachen.de/rwthacis/syncmeta:${{ steps.get_tag.outputs.tag }} registry.tech4comp.dbis.rwth-aachen.de/rwthacis/syncmeta:${{ steps.get_version.outputs.version }}
     
     - name: Push to the registry
