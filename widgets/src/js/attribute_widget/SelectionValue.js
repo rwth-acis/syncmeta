@@ -6,9 +6,10 @@ define([
     'Util',
     'attribute_widget/AbstractValue',
     'operations/ot/ValueChangeOperation',
+    'attribute_widget/QuizAttribute',
     'text!templates/attribute_widget/selection_value.html'
 ], /** @lends SelectionValue */
-    function ($, jsPlumb, _, IWCW, Util, AbstractValue, ValueChangeOperation, selectionValueHtml) {
+    function ($, jsPlumb, _, IWCW, Util, AbstractValue, ValueChangeOperation, QuizAttribute, selectionValueHtml) {
 
         SelectionValue.prototype = new AbstractValue();
         SelectionValue.prototype.constructor = SelectionValue;
@@ -108,8 +109,14 @@ define([
              * @param {string} value
              */
             this.setValue = function (value) {
+                if(name == "Content Type"){
+                    if(value == "Quiz" ){
+                        Object.values(rootSubjectEntity.getAttributes()).forEach((value) => {if(value instanceof QuizAttribute){value.showTable();}})
+                    } else  Object.values(rootSubjectEntity.getAttributes()).forEach((value) => {if(value instanceof QuizAttribute){value.hideTable();}})
+                }
                 _value = value;
                 _$node.val(value);
+                    
             };
 
             /**
