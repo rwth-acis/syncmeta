@@ -1,0 +1,41 @@
+name: Docker Build and Push for releases
+
+on:
+  release:
+    types: [ published, edited ]  
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    
+    # get the tag of the release, e.g. 1.2.3
+    - name: Get tag
+      id: get_tag
+      shell: bash
+      run: echo "##[set-output name=tag;]$(echo ${GITHUB_REF#refs/tags/})"
+    
+    # get the major version of the release, e.g. for 1.2.3 -> 1
+    # use this if you want to have an image with the major version as tag that is always the latest release of this major version
+    # e.g. new release from 1.2.3 to 1.2.4: create new image with tag 1.2.4 and update image with tag 1
+    #- name: Get version
+    #  id: get_version
+    #  shell: bash
+    #  run: |
+    #    TAG=${{ steps.get_tag.outputs.tag }}
+    #    echo "##[set-output name=version;]$(echo ${TAG%%.*})"
+        
+    - name: Build the Docker image
+      run: |
+        docker build -t registry.tech4comp.dbis.rwth-aachen.de/rwthacis/syncmeta:${{ steps.get_tag.outputs.tag }} .
+    #    docker tag registry.tech4comp.dbis.rwth-aachen.de/rwthacis/syncmeta:${{ steps.get_tag.outputs.tag }} registry.tech4comp.dbis.rwth-aachen.de/rwthacis/syncmeta:${{ steps.get_version.outputs.version }}
+    
+    - name: Push to the registry
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}  
+        DOCKER_PW: ${{ secrets.DOCKER_PW }}
+      run: |
+        docker login -u $DOCKER_USERNAME -p $DOCKER_PW registry.tech4comp.dbis.rwth-aachen.de
+        docker push registry.tech4comp.dbis.rwth-aachen.de/rwthacis/syncmeta:${{ steps.get_tag.outputs.tag }}
+    #    docker push registry.tech4comp.dbis.rwth-aachen.de/rwthacis/syncmeta:${{ steps.get_version.outputs.version }}
