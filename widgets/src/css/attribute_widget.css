@@ -40,7 +40,16 @@
     overflow: auto;
 }
 
+.single_quiz_attribute {
+    overflow: auto;
+}
+
 .single_value_attribute div{
+    float: left;
+    margin-right: 10px;
+}
+
+.single_quiz_attribute div{
     float: left;
     margin-right: 10px;
 }
@@ -48,8 +57,14 @@
 .list .single_value_attribute .name {
     display: none;
 }
+.list .single_quiz_attribute .name {
+    display: none;
+}
 
 .single_value_attribute .name{
+    width: 120px;
+}
+.single_quiz_attribute .name{
     width: 120px;
 }
 
@@ -57,6 +72,14 @@
 .single_value_attribute div.value input[type=number],
 .single_value_attribute div.value textarea,
 .single_value_attribute div.value select {
+    border: 1px solid #4A4A4A;
+    width: 200px;
+}
+
+.single_quiz_attribute div.value input[type=text],
+.single_quiz_attribute div.value input[type=number],
+.single_quiz_attribute div.value textarea,
+.single_quiz_attribute div.value select {
     border: 1px solid #4A4A4A;
     width: 200px;
 }
@@ -72,7 +95,23 @@
     left: -14px;
 }
 
+.single_quiz_attribute div.value span.color_preview{
+    width: 12px;
+    height: 18px;
+    background-color: #FFFFFF;
+    display: inline-block;
+    border: 1px solid #4a4a4a;
+    position: relative;
+    top: 5px;
+    left: -14px;
+}
+
 .single_value_attribute div.value textarea {
+    width: 400px;
+    height: 80px;
+}
+
+.single_quiz_attribute div.value textarea {
     width: 400px;
     height: 80px;
 }

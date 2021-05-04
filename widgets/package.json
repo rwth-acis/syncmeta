@@ -1,7 +1,7 @@
 {
   "name": "@rwth-acis/syncmeta-widgets",
   "description": "SyncMeta is a near real-time collaborative modeling framework. This package only contains the used widgets. If you want to use the SyncMeta app in a docker container, see https://github.com/rwth-acis/syncmeta.",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "author": {
     "name": "ACIS Group, RWTH Aachen",
     "email": "acis@dbis.rwth-aachen.de"
@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/rwth-acis/SyncMeta.git"
   },
-  "license" : "SEE LICENSE IN LICENSE",
+  "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
     "@rwth-acis/iwc": "^1.0.0",
     "ace-builds": "^1.2.3",

@@ -6,10 +6,11 @@ define([
     'attribute_widget/BooleanAttribute',
     'attribute_widget/IntegerAttribute',
     'attribute_widget/FileAttribute',
+    'attribute_widget/QuizAttribute',    
     'attribute_widget/SingleSelectionAttribute',
     'attribute_widget/SingleValueAttribute',
     'text!templates/attribute_widget/node.html'
-],/** @lends Node */function($, jsPlumb, _, AbstractNode, BooleanAttribute, IntegerAttribute, FileAttribute, SingleSelectionAttribute, SingleValueAttribute, nodeHtml) {
+],/** @lends Node */function($, jsPlumb, _, AbstractNode, BooleanAttribute, IntegerAttribute, FileAttribute, QuizAttribute, SingleSelectionAttribute, SingleValueAttribute, nodeHtml) {
 
     //noinspection JSUnusedLocalSymbols
     /**
@@ -84,6 +85,11 @@ define([
                             case "file":
                                 attrObj[attributeId] = new FileAttribute(id + "[" + attribute.key.toLowerCase() + "]", attribute.key, that);
                                 break;
+                            case "quiz":
+                                attrObj[attributeId] = new QuizAttribute(id + "[" + attribute.key.toLowerCase() + "]", attribute.key, that);
+                                if (attribute.key.toLowerCase() === 'label' || attribute.key.toLowerCase() === 'title' || attribute.key.toLowerCase() === "name") {
+                                        that.setLabel(attrObj[attributeId]);
+                                }                                
                             default:
                                 if (attribute.options) {
                                     attrObj[attributeId] = new SingleSelectionAttribute(id + "[" + attribute.key.toLowerCase() + "]", attribute.key, that, attribute.options);
