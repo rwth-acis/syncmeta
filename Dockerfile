@@ -4,12 +4,12 @@ USER root
 ENV YJS_RESOURCE_PATH "/socket.io"
 ENV PORT 8070
 
-WORKDIR /usr/src/app
-COPY . .
-
 RUN apt-get update
 RUN apt-get install -y --no-install-recommends supervisor git nginx
 RUN npm_config_user=root npm install -g grunt-cli grunt polymer-cli
+
+WORKDIR /usr/src/app
+COPY . .
 
 COPY docker/supervisorConfigs /etc/supervisor/conf.d
 
