@@ -51,7 +51,7 @@ define([
              * @type {jQuery}
              * @private
              */
-            var _$node = $(_.template(selectionValueHtml, {
+            var _$node = $(_.template(selectionValueHtml)({
                 name: name,
                 options: options
             }));

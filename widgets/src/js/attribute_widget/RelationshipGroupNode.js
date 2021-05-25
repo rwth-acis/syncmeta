@@ -34,7 +34,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$template = $(_.template(relationshipGroupNodeHtml,{}));
+        var _$template = $(_.template(relationshipGroupNodeHtml)());
 
         /**
          * jQuery object of DOM node representing the node

@@ -39,7 +39,7 @@
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(integerValueHtml,{name: name, options: options}));
+        var _$node = $(_.template(integerValueHtml)({name: name, options: options}));
 
         /**
          * Inter widget communication wrapper

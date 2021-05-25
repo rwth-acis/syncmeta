@@ -42,7 +42,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$template = $(_.template(viewobjectNodeHtml, { type: that.getType() }));
+        var _$template = $(_.template(viewobjectNodeHtml)({ type: that.getType() }));
 
         /**
          * jQuery object of DOM node representing the node

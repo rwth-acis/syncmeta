@@ -78,7 +78,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(abstractNodeHtml, { id: id }));
+        var _$node = $(_.template(abstractNodeHtml)({ id: id }));
 
         /**
          * Inter widget communication wrapper

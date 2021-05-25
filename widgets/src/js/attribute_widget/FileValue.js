@@ -39,7 +39,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(fileValueHtml,{name: name, options: options}));
+        var _$node = $(_.template(fileValueHtml)({name: name, options: options}));
 
         /**
          * jQuery object of DOM node representing the file selection node

@@ -17,7 +17,7 @@ define([
         var _propertyName = propertyName;
         var _canvas = canvas;
         var _entityAttribute = null;
-        var _$node = $(_.template(setPropertyGuidanceHtml, { text: label, icon: 'edit' }));
+        var _$node = $(_.template(setPropertyGuidanceHtml)({ text: label, icon: 'edit' }));
         var _propertyInput;
 
         var entityAttributes = entity.getAttributes();

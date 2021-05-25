@@ -40,7 +40,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$template = $(_.template(nodeShapeNodeHtml, { type: that.getType() }));
+        var _$template = $(_.template(nodeShapeNodeHtml)({ type: that.getType() }));
 
         /**
          * jQuery object of DOM node representing the node

@@ -37,7 +37,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$template = $(_.template(edgeShapeNodeHtml,{}));
+        var _$template = $(_.template(edgeShapeNodeHtml)());
 
         /**
          * jQuery object of DOM node representing the node

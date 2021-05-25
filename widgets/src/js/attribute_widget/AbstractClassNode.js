@@ -34,7 +34,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$template = $(_.template(abstractClassNodeHtml,{}));
+        var _$template = $(_.template(abstractClassNodeHtml)());
 
         /**
          * jQuery object of DOM node representing the node

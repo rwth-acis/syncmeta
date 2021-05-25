@@ -50,7 +50,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(valueHtml, { name: name }));
+        var _$node = $(_.template(valueHtml)({ name: name }));
 
 
         /**

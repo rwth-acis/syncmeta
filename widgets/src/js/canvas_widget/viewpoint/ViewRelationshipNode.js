@@ -45,7 +45,7 @@ define([
              * @type {jQuery}
              * @private
              */
-            var _$template = $(_.template(viewrelationshipNodeHtml, {
+            var _$template = $(_.template(viewrelationshipNodeHtml)({
                 type: that.getType()
             }));
 

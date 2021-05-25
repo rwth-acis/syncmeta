@@ -9,7 +9,7 @@ define([
         //var _label = label;
         //var _tool = tool;
         var _canvas = canvas;
-        var _$node = $(_.template(selectToolGuidanceHtml, {text: label, icon: icon || 'plus-circle'}));
+        var _$node = $(_.template(selectToolGuidanceHtml)({text: label, icon: icon || 'plus-circle'}));
 
         _$node.click(function(){
             if(EntityManager.getViewId() !== undefined && EntityManager.getLayer() === CONFIG.LAYER.MODEL) {

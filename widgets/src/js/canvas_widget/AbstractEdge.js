@@ -95,7 +95,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$overlay = $(_.template(abstractEdgeHtml, { type: type })).find('.edge_label').append(_label.get$node()).parent();
+        var _$overlay = $(_.template(abstractEdgeHtml)({ type: type })).find('.edge_label').append(_label.get$node()).parent();
 
         /**
          * Canvas the edge is drawn on

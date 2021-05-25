@@ -44,7 +44,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(integerValueHtml,{value: _value}));
+        var _$node = $(_.template(integerValueHtml)({value: _value}));
 
         /**
          * Inter widget communication wrapper

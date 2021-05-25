@@ -62,7 +62,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(renamingAttrHTML,{}));
+        var _$node = $(_.template(renamingAttrHTML)());
 
         //noinspection JSUnusedGlobalSymbols
         /**

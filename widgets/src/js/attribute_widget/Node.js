@@ -52,7 +52,7 @@ define([
              * @type {jQuery}
              * @private
              */
-            var $template = $(_.template(nodeHtml, { type: type }));
+            var $template = $(_.template(nodeHtml)({ type: type }));
 
             /**
              * jQuery object of DOM node representing the node

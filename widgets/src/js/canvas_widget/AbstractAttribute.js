@@ -42,7 +42,7 @@ define('canvas_widget/AbstractAttribute',[
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(abstractAttributeHtml,{}));
+        var _$node = $(_.template(abstractAttributeHtml)());
 
         /**
          * Entity the attribute is assigned to

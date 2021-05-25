@@ -56,7 +56,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(abstractToolHtml,{icon: toolIcon instanceof $ || !toolIcon ? "" : "<%= grunt.config('baseUrl') %>/img/"+_icon, label: _label, color: _color}));
+        var _$node = $(_.template(abstractToolHtml)({icon: toolIcon instanceof $ || !toolIcon ? "" : "<%= grunt.config('baseUrl') %>/img/"+_icon, label: _label, color: _color}));
 
         /**
          * Get jQuery object of DOM node representing the tool

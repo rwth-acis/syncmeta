@@ -36,7 +36,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(fileAttributeHtml,{}));
+        var _$node = $(_.template(fileAttributeHtml)());
 
         /**
          * Set Value object of value
