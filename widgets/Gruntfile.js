@@ -348,7 +348,17 @@ module.exports = function(grunt) {
                 files: {
                     'html/test.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
                 }
+            },
 
+            test_widget_html: {
+                options: {
+                    data: {
+                        bodyPartial: '_test_widget.tpl'
+                    }
+                },
+                files: {
+                    'html/test.html': ['<%= srcdir %>/widgets/widget.html.tpl']
+                }
             }
         },
 
