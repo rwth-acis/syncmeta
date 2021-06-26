@@ -36,7 +36,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(integerAttributeHtml,{}));
+        var _$node = $(_.template(integerAttributeHtml)());
 
         /**
          * Set Value object of value

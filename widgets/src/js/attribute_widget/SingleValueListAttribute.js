@@ -40,7 +40,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(singleValueListAttributeHtml, {}));
+        var _$node = $(_.template(singleValueListAttributeHtml)());
 
         /**
          * Inter widget communication wrapper

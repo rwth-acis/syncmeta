@@ -39,7 +39,7 @@ define([
              * @type {jQuery}
              * @private
              */
-            var $template = $(_.template(relationshipNodeHtml, { type: "ViewRelationship" }));
+            var $template = $(_.template(relationshipNodeHtml)({ type: "ViewRelationship" }));
 
             /**
              * jQuery object of DOM node representing the node

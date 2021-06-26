@@ -35,7 +35,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(singleMultiLineValueAttributeHtml,{id:id}));
+        var _$node = $(_.template(singleMultiLineValueAttributeHtml)({id:id}));
 
         /**
          * Set Value object of value

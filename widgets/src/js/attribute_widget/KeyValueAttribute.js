@@ -48,7 +48,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(keyValueAttributeHtml,{}));
+        var _$node = $(_.template(keyValueAttributeHtml)());
 
         /**
          * Inter widget communication wrapper

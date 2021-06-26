@@ -36,7 +36,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(singleQuizAttributeHtml,{id:id}));
+        var _$node = $(_.template(singleQuizAttributeHtml)({id:id}));
 
         /**
          * Set Value object of value

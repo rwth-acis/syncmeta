@@ -34,7 +34,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$template = $(_.template(enumNodeHtml, {}));
+        var _$template = $(_.template(enumNodeHtml)());
 
         /**
          * jQuery object of DOM node representing the node

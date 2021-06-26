@@ -40,7 +40,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(multiLineValueHtml,{name: name}));
+        var _$node = $(_.template(multiLineValueHtml)({name: name}));
 
         /**
          * Inter widget communication wrapper

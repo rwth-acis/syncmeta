@@ -39,7 +39,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(colorValueHtml,{name: name}));
+        var _$node = $(_.template(colorValueHtml)({name: name}));
 
         /**
          * Inter widget communication wrapper

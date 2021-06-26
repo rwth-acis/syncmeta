@@ -66,7 +66,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(abstractEdgeHtml, { id: id, type: type }));
+        var _$node = $(_.template(abstractEdgeHtml)({ id: id, type: type }));
 
         /**
          * Wrapper the edge is drawn on

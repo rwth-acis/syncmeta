@@ -36,7 +36,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(booleanAttributeHtml,{}));
+        var _$node = $(_.template(booleanAttributeHtml)());
 
         /**
          * Set Value object of value

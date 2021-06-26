@@ -55,7 +55,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(listAttributeHtml,{}));
+        var _$node = $(_.template(listAttributeHtml)());
 
         /**
          * Inter widget communication wrapper

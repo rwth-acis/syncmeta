@@ -39,7 +39,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(listSingleValueAttributeHtml,{id:id}));
+        var _$node = $(_.template(listSingleValueAttributeHtml)({id:id}));
 
         /**
          * Inter widget communication wrapper

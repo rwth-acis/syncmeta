@@ -137,7 +137,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                     }
                 }
                 var color = node.shape.color ? $colorTestElement.css('color', '#FFFFFF').css('color', node.shape.color).css('color') : '#FFFFFF';
-                var $shape = $(_.template(shape, {color: color, type: node.label}));
+                var $shape = $(_.template(shape)({color: color, type: node.label}));
 
                 if (node.hasOwnProperty('targetName') && !$.isEmptyObject(nodeTypes) && nodeTypes.hasOwnProperty(node.targetName)) {
                     _nodeTypes[node.label] = ViewNode(node.label, $shape, anchors, node.attributes, nodeTypes[node.targetName], node.conditions, node.conjunction);
@@ -960,7 +960,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                                 color: "",
                                 defaultWidth: 100,
                                 defaultHeight: 50,
-                                customShape: _.template(actionNodeHtml, {label: node.label, icon: "plus"}),
+                                customShape: _.template(actionNodeHtml)({label: node.label, icon: "plus"}),
                                 customAnchors: ""
                             }
                         };
@@ -979,7 +979,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                                 color: "",
                                 defaultWidth: 100,
                                 defaultHeight: 50,
-                                customShape: _.template(entityNodeHtml, {icon: "square", label: node.label}),
+                                customShape: _.template(entityNodeHtml)({icon: "square", label: node.label}),
                                 customAnchors: ""
                             }
                         };
@@ -995,7 +995,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                                 shape: "",
                                 defaultWidth: 130,
                                 defaultHeight: 50,
-                                customShape: _.template(setPropertyNodeHtml, {}),
+                                customShape: _.template(setPropertyNodeHtml)(),
                                 customAnchors: ""
                             }
                         };
@@ -1067,7 +1067,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                                 color: "",
                                 defaultWidth: 100,
                                 defaultHeight: 50,
-                                customShape: _.template(actionNodeHtml, {label: edge.label, icon: "plus"}),
+                                customShape: _.template(actionNodeHtml)({label: edge.label, icon: "plus"}),
                                 customAnchors: ""
                             }
                         };
@@ -1086,7 +1086,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                                 color: "blue",
                                 defaultWidth: 100,
                                 defaultHeight: 50,
-                                customShape: _.template(entityNodeHtml, {icon: "exchange", label: edge.label}),
+                                customShape: _.template(entityNodeHtml)({icon: "exchange", label: edge.label}),
                                 customAnchors: ""
                             }
                         };
@@ -1105,7 +1105,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                                     shape: "",
                                     defaultWidth: 0,
                                     defaultHeight: 0,
-                                    customShape: _.template(setPropertyNodeHtml, {type: setPropertyLabel, color: "white"}),
+                                    customShape: _.template(setPropertyNodeHtml)({type: setPropertyLabel, color: "white"}),
                                     customAnchors: ""
                                 }
                             };

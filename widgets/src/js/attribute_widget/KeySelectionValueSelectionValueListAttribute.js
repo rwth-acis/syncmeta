@@ -56,7 +56,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(keySelectionValueSelectionValueListAttributeHtml, {}));
+        var _$node = $(_.template(keySelectionValueSelectionValueListAttributeHtml)());
 
         /**
          * Inter widget communication wrapper

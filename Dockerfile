@@ -8,15 +8,15 @@ RUN apt-get update
 RUN apt-get install -y --no-install-recommends supervisor git nginx
 RUN npm_config_user=root npm install -g grunt-cli grunt polymer-cli
 
-WORKDIR /usr/src/app
-COPY . .
-
+COPY docker /usr/src/app/docker
 COPY docker/supervisorConfigs /etc/supervisor/conf.d
 
-WORKDIR /usr/src/app/widgets
+COPY app /usr/src/app/app
+WORKDIR /usr/src/app/app
 RUN npm install
 
-WORKDIR /usr/src/app/app
+COPY widgets /usr/src/app/widgets
+WORKDIR /usr/src/app/widgets
 RUN npm install
 
 WORKDIR /usr/src/app

@@ -5,7 +5,7 @@ define([
     'text!templates/guidance_modeling/guidance_box_node.html'
 ],function($,_,abstractNodeHtml, guidanceBoxNodeHtml) {
     function GuidanceBox(id, label, left, top){
-        var _$node = $(_.template(abstractNodeHtml,{id: id})).append(guidanceBoxNodeHtml);
+        var _$node = $(_.template(abstractNodeHtml)({id: id})).append(guidanceBoxNodeHtml);
         var _canvas;
         var _numGuidanceItems = 0;
 
