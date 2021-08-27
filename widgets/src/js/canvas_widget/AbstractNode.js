@@ -1053,10 +1053,23 @@ define([
             var $sizePreview = $("<div class=\"size-preview\"></div>").hide();
             var clickedNode = _$node.on("click", function () {
                 _canvas.select(that);
+
+                if(that.getContainment()) {
+                  console.log(that.getOutgoingEdges());
+                  _.each(that.getOutgoingEdges(), function(edge){
+                    console.log(edge.getTarget());
+                    _$node.append(edge.getTarget());
+                  });
+                }
             });
-            console.log(that.getContainment());
 
             if(that.getContainment()) {
+              console.log(that.getOutgoingEdges());
+              _.each(that.getOutgoingEdges(), function(edge){
+                console.log(edge.getTarget());
+                _$node.append(edge.getTarget());
+              });
+
               clickedNode.droppable({
                   hoverClass: 'selected',
                   drop: function (event, ui) {
