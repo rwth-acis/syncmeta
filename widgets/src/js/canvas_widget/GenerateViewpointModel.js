@@ -21,7 +21,7 @@ define(['Util',
             for(var node_key in viewpointModel.nodes){
                 if(viewpointModel.nodes.hasOwnProperty(node_key)){
                     var vpNode = viewpointModel.nodes[node_key];
-                    EntityManager.createNodeFromJSON(vpNode.type, node_key, vpNode.left, vpNode.top, vpNode.widget, vpNode.height, vpNode.zIndex, vpNode);
+                    EntityManager.createNodeFromJSON(vpNode.type, node_key, vpNode.left, vpNode.top, vpNode.widget, vpNode.height, vpNode.zIndex, vpNode.containment, vpNode);
                 }
             }
 
@@ -288,6 +288,7 @@ define(['Util',
                                             color : neighbor.getAttribute(neighbor.getEntityId() + "[color]").getValue().getValue(),
                                             defaultWidth : parseInt(neighbor.getAttribute(neighbor.getEntityId() + "[defaultWidth]").getValue().getValue()),
                                             defaultHeight : parseInt(neighbor.getAttribute(neighbor.getEntityId() + "[defaultHeight]").getValue().getValue()),
+                                            containment : neighbor.getAttribute(neighbor.getEntityId() + "[containment]").getValue().getValue(),
                                             customShape : neighbor.getAttribute(neighbor.getEntityId() + "[customShape]").getValue().getValue(),
                                             customAnchors : neighbor.getAttribute(neighbor.getEntityId() + "[customAnchors]").getValue().getValue()
                                         };
@@ -301,6 +302,7 @@ define(['Util',
                                 shape : shape || {
                                     shape : "rectangle",
                                     color : "white",
+                                    containment: false,
                                     customShape : "",
                                     customAnchors : "",
                                     defaultWidth : 0,

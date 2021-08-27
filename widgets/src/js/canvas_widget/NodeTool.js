@@ -14,7 +14,7 @@ define([
      * @memberof canvas_widget
      * @constructor
      */
-    function NodeTool(name,className,description,defaultWidth,defaultHeight){
+    function NodeTool(name,className,description,containment,defaultWidth,defaultHeight){
         AbstractCanvasTool.call(
             this,
             name,
@@ -46,7 +46,7 @@ define([
                 var nodeY = (ev.pageY - offsetCanvas.top) / zoom - _defaultHeight / 2;
 
                 //if(this == ev.target){
-                    that.getCanvas().createNode(that.getName(),nodeX,nodeY,_defaultWidth,_defaultHeight, null, null, null, null, defaultLabel, defaultAttributeValues);
+                    that.getCanvas().createNode(that.getName(),nodeX,nodeY,_defaultWidth,_defaultHeight, null, containment, null, null, null, defaultLabel, defaultAttributeValues);
                     //that.canvas.callListeners(CONFIG.CANVAS.LISTENERS.NODEADD,that.name,ev.originalEvent.offsetX,ev.originalEvent.offsetY,_defaultWidth,_defaultHeight);
                 //}
                 that.getCanvas().resetTool();

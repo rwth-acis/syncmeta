@@ -122,7 +122,7 @@ define(['lodash',
         var viewEdgeTypes = {};
 
 		var _edges = {};
-		
+
 		//noinspection JSUnusedGlobalSymbols
 		return {
 			/**
@@ -137,9 +137,9 @@ define(['lodash',
              * @param {object} json  the json representation of the node
 			 * @returns {attribute_widget.AbstractNode}
 			 */
-			createNode : function (type, id, left, top, width, height,json) {
+			createNode : function (type, id, left, top, width, height, containment, json) {
 				var node;
-				
+
                 if (viewNodeTypes.hasOwnProperty(type) && viewId) {
                     node = viewNodeTypes[type](id, left, top, width, height, json);
                 }
@@ -240,7 +240,7 @@ define(['lodash',
 			 */
 			createEdge : function (type, id, source, target) {
 				var edge;
-                
+
                 if(viewId && viewEdgeTypes.hasOwnProperty(type)){
                     edge = viewEdgeTypes[type](id, source, target);
                 }
@@ -317,8 +317,8 @@ define(['lodash',
 			 * @param {object} json JSON representation
 			 * @returns {attribute_widget.AbstractNode}
 			 */
-			createNodeFromJSON : function (type, id, left, top, width, height, json) {
-				var node = this.createNode(type, id, left, top, width, height, json);
+			createNodeFromJSON : function (type, id, left, top, width, height, containment, json) {
+				var node = this.createNode(type, id, left, top, width, height, containment, json);
 				if (node) {
 					node.getLabel().getValue().setValue(json.label.value.value);
 					for (var attrId in json.attributes) {

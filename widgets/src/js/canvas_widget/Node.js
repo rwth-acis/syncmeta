@@ -6,7 +6,7 @@ define([
     'canvas_widget/BooleanAttribute',
     'canvas_widget/IntegerAttribute',
     'canvas_widget/FileAttribute',
-    'canvas_widget/QuizAttribute',    
+    'canvas_widget/QuizAttribute',
     'canvas_widget/SingleSelectionAttribute',
     'canvas_widget/SingleValueAttribute'
 ],/** @lends makeNode */function($,jsPlumb,_,AbstractNode,BooleanAttribute,IntegerAttribute,FileAttribute,QuizAttribute,SingleSelectionAttribute,SingleValueAttribute) {
@@ -38,11 +38,12 @@ define([
          * @param {number} width Width of node
          * @param {number} height Height of node
          * @param {number} zIndex Position of node on z-axis
+         * @param {number} containment containment
          */
-        function Node(id,left,top,width,height,zIndex){
+        function Node(id,left,top,width,height,zIndex,containment){
             var that = this;
 
-            AbstractNode.call(this,id,type,left,top,width,height,zIndex);
+            AbstractNode.call(this,id,type,left,top,width,height,zIndex,containment);
 
             var currentViewType = null;
 
@@ -102,7 +103,7 @@ define([
                                 attrObj[attributeId] = new QuizAttribute(id + "[" + attribute.key.toLowerCase() + "]", attribute.key, that);
                                 if(attribute.key.toLowerCase() === 'label' || attribute.key.toLowerCase() === 'title' || attribute.key.toLowerCase() === "name"){
                                     that.setLabel(attrObj[attributeId]);
-                                }                                 
+                                }
                             default:
                                 if(attribute.options){
                                     attrObj[attributeId] = new SingleSelectionAttribute(id+"["+attribute.key.toLowerCase()+"]",attribute.key,that,attribute.options);
@@ -245,7 +246,7 @@ define([
                     if(attr.hasOwnProperty(key)){
                         var val = attr[key].getValue();
                         if(val.hasOwnProperty('registerYType')){
-                            val.registerYType();  
+                            val.registerYType();
                         }
                     }
                 }

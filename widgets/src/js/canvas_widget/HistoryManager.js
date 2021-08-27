@@ -8,15 +8,15 @@ define(['jqueryui',
     'operations/ot/NodeResizeOperation'
 ], function($, NodeAddOperation, EdgeAddOperation, NodeDeleteOperation, EdgeDeleteOperation, NodeMoveOperation, NodeMoveZOperation, NodeResizeOperation) {
     function HistoryManager() {
-        
+
         var bufferSize = 20;
-        
+
         var _canvas = null;
 
-        var latestOp = null;    
+        var latestOp = null;
         var undo = [];
         var redo = [];
-            
+
         var $undo = $('#undo');
 
         var $redo = $('#redo');
@@ -29,14 +29,14 @@ define(['jqueryui',
                     entity = EntityManager.findNode(json.id);
                     if (entity) {
                         entity.triggerDeletion(true);
-                        operation =  new NodeDeleteOperation(json.id, json.type, json.left, json.top, json.width, json.height, json.zIndex, json.json);
+                        operation =  new NodeDeleteOperation(json.id, json.type, json.left, json.top, json.width, json.height, json.zIndex, json.containment, json.json);
 
                     }
                     break;
                 }
                 case NodeAddOperation.TYPE: {
-                    _canvas.createNode(json.type, json.left, json.top, json.width, json.height, json.zIndex, json.json, json.id, true);
-                    operation = new NodeAddOperation(json.id, json.type, json.left, json.top, json.width, json.height, json.zIndex, json.json);
+                    _canvas.createNode(json.type, json.left, json.top, json.width, json.height, json.zIndex, json.containment, json.json, json.id, true);
+                    operation = new NodeAddOperation(json.id, json.type, json.left, json.top, json.width, json.height, json.zIndex, json.containment, json.json);
                     break;
                 }
                 case EdgeAddOperation.TYPE: {
@@ -48,7 +48,7 @@ define(['jqueryui',
                     entity = EntityManager.findEdge(json.id);
                     if (entity) {
                         entity.triggerDeletion(true);
-                        operation = new EdgeDeleteOperation(json.id, json.type, json.source, json.target, json.json);    
+                        operation = new EdgeDeleteOperation(json.id, json.type, json.source, json.target, json.json);
                     }
                     break;
                 }
@@ -71,7 +71,7 @@ define(['jqueryui',
                         data = operation.toJSON();
                         data.historyFlag = true;
                         ymap.set(NodeMoveZOperation.TYPE, data);
-                        
+
                     }
                     break;
                 }
@@ -83,7 +83,7 @@ define(['jqueryui',
                         data = operation.toJSON();
                         data.historyFlag = true;
                         ymap.set(NodeResizeOperation.TYPE, data);
-                        
+
                     }
                     break;
                 }
@@ -93,7 +93,7 @@ define(['jqueryui',
 
         return {
             init:function(canvas){
-              _canvas = canvas;  
+              _canvas = canvas;
             },
             add: function(operation) {
                 if (operation.hasOwnProperty('inverse')) {
@@ -120,7 +120,7 @@ define(['jqueryui',
                         this.undo();
                         return;
                     } else latestOp = operation;
-                    
+
                     var inverseOp = operation.inverse();
                     var json = inverseOp.toJSON();
                     json.TYPE = inverseOp.constructor.name;
@@ -171,7 +171,7 @@ define(['jqueryui',
                 if (redo.length === 0) {
                     $redo.prop('disabled', true);
                 }
-                    
+
             },
             getLatestOperation: function(){
                 return latestOp;

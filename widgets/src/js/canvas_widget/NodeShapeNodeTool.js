@@ -15,7 +15,7 @@ define([
      * @constructor
      */
     function NodeShapeNodeTool(){
-        NodeTool.call(this,NodeShapeNode.TYPE,null,null,NodeShapeNode.DEFAULT_WIDTH,NodeShapeNode.DEFAULT_HEIGHT);
+        NodeTool.call(this,NodeShapeNode.TYPE,null,null,null,NodeShapeNode.DEFAULT_WIDTH,NodeShapeNode.DEFAULT_HEIGHT);
     }
 
     return NodeShapeNodeTool;

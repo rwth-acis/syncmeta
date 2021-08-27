@@ -32,9 +32,12 @@ define([
      * @param {number} top y-coordinate of node position
      * @param {number} width Width of node
      * @param {number} height Height of node
+     * @param {boolean} containment containment
      * @param {number} zIndex Position of node on z-axis
      */
-    function AbstractNode(id, type, left, top, width, height, zIndex, json) {
+    function AbstractNode(id, type, left, top, width, height, zIndex, containment, json) {
+
+
         var that = this;
 
         /**
@@ -59,6 +62,7 @@ define([
                 _ymap.set('width', width);
                 _ymap.set('height', height);
                 _ymap.set('zIndex', zIndex);
+                _ymap.set('containment', containment);
                 _ymap.set('type', type);
                 _ymap.set('id', id);
                 if(json) _ymap.set('json', json);
@@ -93,7 +97,8 @@ define([
             left: left,
             top: top,
             width: width,
-            height: height
+            height: height,
+            containment: containment
         };
 
         /**
@@ -102,6 +107,13 @@ define([
          * @private
          */
         var _zIndex = zIndex;
+
+        /**
+         * Type of node
+         * @containment {boolean}
+         * @private
+         */
+        var _containment = containment;
 
         /**
          * Canvas the node is drawn on
@@ -185,6 +197,7 @@ define([
          * @param {operations.ot.NodeMoveOperation} operation
          */
         var processNodeMoveOperation = function (operation) {
+          console.log('processNodeMoveOperation..............................');
             _canvas.hideGuidanceBox();
             that.move(operation.getOffsetX(), operation.getOffsetY(), 0);
             _canvas.showGuidanceBox();
@@ -204,6 +217,7 @@ define([
          * @param {operations.ot.NodeMoveOperation} operation
          */
         this.propagateNodeMoveOperation = function (operation) {
+          console.log('propagateNodeMoveOperation..................................');
             operation.setJabberId(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
             processNodeMoveOperation(operation);
             HistoryManager.add(operation);
@@ -352,6 +366,7 @@ define([
          * @param {operations.ot.NodeMoveOperation} operation
          */
         var remoteNodeMoveCallback = function (operation) {
+          console.log('remoteNodeMoveCallback................................');
             if (operation instanceof NodeMoveOperation && operation.getEntityId() === that.getEntityId()) {
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
                 _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.HEATMAP, operation.getOTOperation());
@@ -416,6 +431,7 @@ define([
         };
 
         this.init = function () {
+
             //Define Node Rightclick Menu
             $.contextMenu({
                 selector: "#" + id,
@@ -480,6 +496,7 @@ define([
          * Triggers jsPlumb's repaint function and adjusts the angle of the edge labels
          */
         var repaint = function () {
+          console.log('repaint..................................');
             //var edgeId,
             //    edges = that.getEdges();
             jsPlumb.repaint(_$node);
@@ -510,6 +527,7 @@ define([
          * Send NodeDeleteOperation for node
          */
         this.triggerDeletion = function (historyFlag) {
+          console.log('triggerDeletion.................................');
             var edgeId,
                 edges = this.getEdges(),
                 edge;
@@ -520,7 +538,7 @@ define([
                     edge.triggerDeletion();
                 }
             }
-            var operation = new NodeDeleteOperation(id, that.getType(), _appearance.left, _appearance.top, _appearance.width, _appearance.height, _zIndex, that.toJSON());
+            var operation = new NodeDeleteOperation(id, that.getType(), _appearance.left, _appearance.top, _appearance.width, _appearance.height, _zIndex, _appearance.containment, that.toJSON());
             if (_ymap) {
                 propagateNodeDeleteOperation(operation);
                 y.share.nodes.delete(that.getEntityId());
@@ -566,7 +584,7 @@ define([
         this.getZIndex = function () {
             return _zIndex;
         };
-        
+
         this.refreshTraceAwareness = function (color) {
             refreshTraceAwareness(color);
         };
@@ -576,6 +594,7 @@ define([
          * @param {canvas_widget.AbstractCanvas} canvas
          */
         this.addToCanvas = function (canvas) {
+          console.log('addToCanvas...........................');
             _canvas = canvas;
             canvas.get$canvas().append(_$awarenessTrace);
             canvas.get$canvas().append(_$node);
@@ -676,6 +695,14 @@ define([
         };
 
         /**
+         * Get edge type
+         * @returns {boolean}
+         */
+        this.getContainment = function () {
+            return _containment;
+        };
+
+        /**
          * Get jQuery object of DOM node representing the node
          * @returns {jQuery}
          * @private
@@ -689,6 +716,7 @@ define([
          * @private
          */
         this._draw = function () {
+          console.log('draw.........................................');
             //noinspection JSAccessibilityCheck
             _$awarenessTrace.css({
                 left: _appearance.left + _appearance.width / 2,
@@ -713,6 +741,7 @@ define([
          * @param {number} offsetZ Offset in z-direction
          */
         this.move = function (offsetX, offsetY, offsetZ) {
+          console.log('move...............................');
             _appearance.left += offsetX;
             _appearance.top += offsetY;
 
@@ -1011,6 +1040,7 @@ define([
          * Bind events for move tool
          */
         this.bindMoveToolEvents = function () {
+          console.log('bindMoveToolEvents.................................');
 
             //$canvas.find(".node.ui-draggable").draggable("option","disabled",false);
             var originalPos = {
@@ -1021,9 +1051,21 @@ define([
             //Enable Node Selection
             var drag = false;
             var $sizePreview = $("<div class=\"size-preview\"></div>").hide();
-            _$node.on("click", function () {
+            var clickedNode = _$node.on("click", function () {
                 _canvas.select(that);
-            })
+            });
+            console.log(that.getContainment());
+
+            if(that.getContainment()) {
+              clickedNode.droppable({
+                  hoverClass: 'selected',
+                  drop: function (event, ui) {
+                      $(this).append(ui.draggable);
+                  }
+              });
+            }
+
+            clickedNode
                 //Enable Node Resizing
                 .resizable({
                     containment: "parent",
@@ -1053,7 +1095,7 @@ define([
                         that.propagateNodeResizeOperation(operation);
                         _$node.resizable("option", "aspectRatio", false);
                         _$node.resizable("option", "grid", '');
-                        
+
                         //TODO: check that! Already called in processNodeResizeOperation called by propagateNodeResizeOperation
                         //_canvas.showGuidanceBox();
                     }
@@ -1063,6 +1105,7 @@ define([
                 .draggable({
                     containment: 'parent',
                     start: function (ev, ui) {
+                      console.log('draggable start......................................');
                         originalPos.top = ui.position.top;
                         originalPos.left = ui.position.left;
                         //ui.position.top = 0;
@@ -1075,6 +1118,7 @@ define([
                         _$node.draggable("option", "grid", ev.ctrlKey ? [20, 20] : '');
                     },
                     drag: function (ev) {
+                      console.log('draggable drag......................................');
                         // ui.position.left = Math.round(ui.position.left  / _canvas.getZoom());
                         // ui.position.top = Math.round(ui.position.top / _canvas.getZoom());
 
@@ -1085,6 +1129,7 @@ define([
                         _$node.draggable("option", "grid", ev.ctrlKey ? [20, 20] : '');
                     },
                     stop: function (ev, ui) {
+                      console.log('draggable stop......................................');
                         _$node.css({ opacity: '' });
                         _$node.resizable("enable");
                         var id = _$node.attr("id");
@@ -1125,6 +1170,7 @@ define([
          * Unbind events for move tool
          */
         this.unbindMoveToolEvents = function () {
+          console.log('unbindMoveToolEvents..................................');
             //Disable Node Selection
             _$node.off("click")
 
@@ -1148,6 +1194,7 @@ define([
          * Bind source node events for edge tool
          */
         this.makeSource = function () {
+          console.log('makeSource..........................................');
             _$node.addClass("source");
             jsPlumb.makeSource(_$node, {
                 connectorPaintStyle: { strokeStyle: "#aaaaaa", lineWidth: 2 },
@@ -1166,6 +1213,7 @@ define([
          * Bind target node events for edge tool
          */
         this.makeTarget = function () {
+          console.log('makeTarget...........................................');
             _$node.addClass("target");
             jsPlumb.makeTarget(_$node, {
                 isTarget: false,

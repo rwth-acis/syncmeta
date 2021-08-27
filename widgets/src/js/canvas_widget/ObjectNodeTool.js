@@ -14,7 +14,7 @@ define([
      * @constructor
      */
     function ObjectNodeTool(){
-        NodeTool.call(this,ObjectNode.TYPE,null,null,ObjectNode.DEFAULT_WIDTH,ObjectNode.DEFAULT_HEIGHT);
+        NodeTool.call(this,ObjectNode.TYPE,null,null,null,ObjectNode.DEFAULT_WIDTH,ObjectNode.DEFAULT_HEIGHT);
     }
 
     return ObjectNodeTool;

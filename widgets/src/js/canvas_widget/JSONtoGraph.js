@@ -41,14 +41,15 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function ($, _, Enti
                     jsonNode.type, nodeId,
                     map.get('left') ? map.get('left') : jsonNode.left, map.get('top') ? map.get('top') : jsonNode.top,
                     map.get('width') ? map.get('width') : jsonNode.width, map.get('height') ? map.get('height') : jsonNode.height,
-                    map.get('zIndex') ? map.get('zIndex') : jsonNode.zIndex, jsonNode);
+                    map.get('zIndex') ? map.get('zIndex') : jsonNode.zIndex, map.get('containment') ? map.get('containment') : jsonNode.containment, jsonNode);
             }
             else {
                 node = EntityManager.createNodeFromJSON(
                     jsonNode.type, nodeId,
                     jsonNode.left, jsonNode.top,
                     jsonNode.width, jsonNode.height,
-                    jsonNode.zIndex, jsonNode);
+                    jsonNode.zIndex, jsonNode.containment,
+                    jsonNode);
             }
 
 

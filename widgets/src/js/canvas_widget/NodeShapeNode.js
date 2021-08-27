@@ -3,13 +3,14 @@ define([
     'jsplumb',
     'lodash',
     'canvas_widget/AbstractNode',
+    'canvas_widget/BooleanAttribute',
     'canvas_widget/SingleSelectionAttribute',
     'canvas_widget/SingleValueAttribute',
     'canvas_widget/IntegerAttribute',
     'canvas_widget/SingleColorValueAttribute',
     'canvas_widget/SingleMultiLineValueAttribute',
     'text!templates/canvas_widget/node_shape_node.html'
-],/** @lends NodeShapeNode */function($, jsPlumb, _, AbstractNode, SingleSelectionAttribute, SingleValueAttribute, IntegerAttribute, SingleColorValueAttribute, SingleMultiLineValueAttribute, nodeShapeNodeHtml) {
+],/** @lends NodeShapeNode */function($, jsPlumb, _, AbstractNode, BooleanAttribute, SingleSelectionAttribute, SingleValueAttribute, IntegerAttribute, SingleColorValueAttribute, SingleMultiLineValueAttribute, nodeShapeNodeHtml) {
 
     NodeShapeNode.TYPE = "Node Shape";
     NodeShapeNode.DEFAULT_WIDTH = 150;
@@ -29,11 +30,12 @@ define([
      * @param {number} width Width of node
      * @param {number} height Height of node
      * @param {number} zIndex Position of node on z-axis
+     * @param {boolean} containment containment
      */
-    function NodeShapeNode(id, left, top, width, height, zIndex, json) {
+    function NodeShapeNode(id, left, top, width, height, zIndex, containment, json) {
         var that = this;
 
-        AbstractNode.call(this, id, NodeShapeNode.TYPE, left, top, width, height, zIndex, json);
+        AbstractNode.call(this, id, NodeShapeNode.TYPE, left, top, width, height, zIndex, containment, json);
 
         /**
          * jQuery object of node template
@@ -77,6 +79,7 @@ define([
         var attrWidth = new IntegerAttribute(this.getEntityId() + "[defaultWidth]", "Default Width", this);
         var attrHeight = new IntegerAttribute(this.getEntityId() + "[defaultHeight]", "Default Height", this);
         var attrColor = new SingleColorValueAttribute(this.getEntityId() + "[color]", "Color", this);
+        var attrContaintment = new BooleanAttribute(this.getEntityId() + "[containment]", "Containment", this);
         var attrCustomShape = new SingleMultiLineValueAttribute(this.getEntityId() + "[customShape]", "Custom Shape", this);
         var attrAnchors = new SingleValueAttribute(this.getEntityId() + "[customAnchors]", "Custom Anchors", this);
 
@@ -86,6 +89,7 @@ define([
         this.addAttribute(attrColor);
         this.addAttribute(attrWidth);
         this.addAttribute(attrHeight);
+        this.addAttribute(attrContaintment);
         this.addAttribute(attrCustomShape);
         this.addAttribute(attrAnchors);
 
@@ -102,6 +106,7 @@ define([
             attrShapeSelect.getValue().registerYType();
             attrWidth.getValue().registerYType();
             attrHeight.getValue().registerYType();
+            attrContaintment.getValue().registerYType();
             that.getLabel().getValue().registerYType();
             attrColor.getValue().registerYType();
             attrAnchors.getValue().registerYType();

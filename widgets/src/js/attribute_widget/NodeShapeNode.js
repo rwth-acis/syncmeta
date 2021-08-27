@@ -3,13 +3,14 @@ define([
     'jsplumb',
     'lodash',
     'attribute_widget/AbstractNode',
+    'attribute_widget/BooleanAttribute',
     'attribute_widget/SingleSelectionAttribute',
     'attribute_widget/SingleValueAttribute',
     'attribute_widget/IntegerAttribute',
     'attribute_widget/SingleColorValueAttribute',
     'attribute_widget/SingleCodeEditorValueAttribute',
     'text!templates/attribute_widget/node_shape_node.html'
-],/** @lends NodeShapeNode */function($,jsPlumb,_,AbstractNode,SingleSelectionAttribute,SingleValueAttribute,IntegerAttribute,SingleColorValueAttribute,SingleCodeEditorValueAttribute,nodeShapeNodeHtml) {
+],/** @lends NodeShapeNode */function($,jsPlumb,_,AbstractNode,BooleanAttribute,SingleSelectionAttribute,SingleValueAttribute,IntegerAttribute,SingleColorValueAttribute,SingleCodeEditorValueAttribute,nodeShapeNodeHtml) {
 
     NodeShapeNode.TYPE = "Node Shape";
 
@@ -26,12 +27,13 @@ define([
      * @param {number} top y-coordinate of node position
      * @param {number} width Width of node
      * @param {number} height Height of node
+     * @param {boolean} containment Height of node
      */
-    function NodeShapeNode(id,left,top,width,height){
+    function NodeShapeNode(id,left,top,width,height,containment){
 
         var that = this;
 
-        AbstractNode.call(this,id,NodeShapeNode.TYPE,left,top,width,height);
+        AbstractNode.call(this,id,NodeShapeNode.TYPE,left,top,width,height,containment);
 
         /**
          * jQuery object of node template
@@ -65,6 +67,7 @@ define([
         this.addAttribute(new SingleColorValueAttribute(this.getEntityId()+"[color]","Color",this));
         this.addAttribute(new IntegerAttribute(this.getEntityId()+"[defaultWidth]","Default Width",this));
         this.addAttribute(new IntegerAttribute(this.getEntityId()+"[defaultHeight]","Default Height",this));
+        this.addAttribute(new BooleanAttribute(this.getEntityId()+"[containment]","Containment",this));
         this.addAttribute(new SingleCodeEditorValueAttribute(this.getEntityId()+"[customShape]","Custom Shape",this));
         this.addAttribute(new SingleValueAttribute(this.getEntityId()+"[customAnchors]","Custom Anchors",this));
 
