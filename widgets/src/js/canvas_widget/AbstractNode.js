@@ -1054,26 +1054,56 @@ define([
             var clickedNode = _$node.on("click", function () {
                 _canvas.select(that);
 
-                if(that.getContainment()) {
-                  console.log(that.getOutgoingEdges());
-                  _.each(that.getOutgoingEdges(), function(edge){
-                    console.log(edge.getTarget());
-                    _$node.append(edge.getTarget());
-                  });
-                }
+                // if(that.getContainment()) {
+                //   console.log(that.getOutgoingEdges());
+                //   _.each(that.getOutgoingEdges(), function(edge){
+                //     console.log(edge.getTarget());
+                //     var _$child = $(_.template(abstractNodeHtml)({ id: edge.getTarget().getEntityId }));
+                //     _$node.append(_$child);
+                //   });
+                // }
             });
 
             if(that.getContainment()) {
-              console.log(that.getOutgoingEdges());
-              _.each(that.getOutgoingEdges(), function(edge){
-                console.log(edge.getTarget());
-                _$node.append(edge.getTarget());
-              });
+              // console.log(that.getOutgoingEdges());
+              // _.each(that.getOutgoingEdges(), function(edge){
+              //   console.log(edge.getTarget());
+              //   _$node.append(edge.getTarget());
+              // });
 
               clickedNode.droppable({
                   hoverClass: 'selected',
                   drop: function (event, ui) {
                       $(this).append(ui.draggable);
+                      console.log('!!!!!!!!!!');
+                      const EntityManager = require('canvas_widget/EntityManager');
+
+                      var containerNode = EntityManager.getNodes()[$(this).attr("id")];
+
+                      var isConnected = false;
+
+                       _.each(containerNode.getOutgoingEdges(), function(edge){
+                         if(edge.getTarget().getEntityId() === ui.draggable.attr("id"))
+                         {
+                           isConnected = true;
+                           return false;
+                         }
+                       });
+
+                       if(!isConnected){
+                         _canvas.createEdge('Widget to View Component',$(this).attr("id"), ui.draggable.attr("id"));
+                       }
+
+                      // // now, the attributes left and top of the node are not related to the top left corner of the
+                      // // canvas anymore, but instead they are related to the top left corner of the parent element
+                      // // => move node to correct left and right attribute
+                      // const EntityManager = require('canvas_widget/EntityManager');
+                      //
+                      // const containerLeft = that.getAppearance().left;
+                      // const containerTop = that.getAppearance().top;
+                      //
+                      // const operation = new NodeMoveOperation(ui.draggable.attr("id"), -containerLeft, -containerTop);
+                      // EntityManager.getNodes()[ui.draggable.attr("id")].propagateNodeMoveOperation(operation);
                   }
               });
             }
@@ -1119,6 +1149,15 @@ define([
                     containment: 'parent',
                     start: function (ev, ui) {
                       console.log('draggable start......................................');
+                      // if(that.getContainment()) {
+                      //   console.log(that.getOutgoingEdges());
+                      //   _.each(that.getOutgoingEdges(), function(edge){
+                      //     console.log(edge.getTarget().getEntityId());
+                      //     var _$child = $(_.template(abstractNodeHtml)({ id: edge.getTarget().getEntityId() }));
+                      //     _$node.append(_$child);
+                      //   });
+                      // }
+
                         originalPos.top = ui.position.top;
                         originalPos.left = ui.position.left;
                         //ui.position.top = 0;
@@ -1130,10 +1169,18 @@ define([
                         drag = false;
                         _$node.draggable("option", "grid", ev.ctrlKey ? [20, 20] : '');
                     },
-                    drag: function (ev) {
+                    drag: function (ev, ui) {
                       console.log('draggable drag......................................');
                         // ui.position.left = Math.round(ui.position.left  / _canvas.getZoom());
                         // ui.position.top = Math.round(ui.position.top / _canvas.getZoom());
+
+                        var offsetX = Math.round((ui.position.left - originalPos.left) / _canvas.getZoom());
+                        var offsetY = Math.round((ui.position.top - originalPos.top) / _canvas.getZoom());
+
+
+                        _.each(that.getOutgoingEdges(), function(edge){
+                          $('#' + edge.getTarget().getEntityId()).offset({ top: $('#' + edge.getTarget().getEntityId()).offset().top + offsetY, left: $('#' + edge.getTarget().getEntityId()).offset().left + offsetX});
+                        });
 
                         if (drag) repaint();
                         drag = true;
