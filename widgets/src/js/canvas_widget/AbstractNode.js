@@ -1074,7 +1074,6 @@ define([
               clickedNode.droppable({
                   hoverClass: 'selected',
                   drop: function (event, ui) {
-                      $(this).append(ui.draggable);
                       console.log('!!!!!!!!!!');
                       const EntityManager = require('canvas_widget/EntityManager');
 
