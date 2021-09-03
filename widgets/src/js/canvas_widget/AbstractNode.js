@@ -1058,44 +1058,54 @@ define([
             var $sizePreview = $("<div class=\"size-preview\"></div>").hide();
             var clickedNode = _$node.on("click", function () {
                 _canvas.select(that);
-
-                // if(that.getContainment()) {
-                //   console.log(that.getOutgoingEdges());
-                //   _.each(that.getOutgoingEdges(), function(edge){
-                //     console.log(edge.getTarget());
-                //     var _$child = $(_.template(abstractNodeHtml)({ id: edge.getTarget().getEntityId }));
-                //     _$node.append(_$child);
-                //   });
-                // }
             });
 
             if(that.getContainment()) {
-              // console.log(that.getOutgoingEdges());
-              // _.each(that.getOutgoingEdges(), function(edge){
-              //   console.log(edge.getTarget());
-              //   _$node.append(edge.getTarget());
-              // });
-
               clickedNode.droppable({
                   hoverClass: 'selected',
                   drop: function (event, ui) {
                       console.log('!!!!!!!!!!');
                       const EntityManager = require('canvas_widget/EntityManager');
+                      console.log(EntityManager.getRelations());
 
                       var containerNode = EntityManager.getNodes()[$(this).attr("id")];
+                      var childNode = EntityManager.getNodes()[ui.draggable.attr("id")];
+                      var relations = EntityManager.getRelations();
+
+                      console.log(containerNode.getType());
 
                       var isConnected = false;
+                      var relationshipType = null;
 
-                       _.each(containerNode.getOutgoingEdges(), function(edge){
-                         if(edge.getTarget().getEntityId() === ui.draggable.attr("id"))
-                         {
+                       _.each(containerNode.getOutgoingEdges(), function(edge) {
+                         if(edge.getTarget().getEntityId() === childNode.getEntityId()) {
                            isConnected = true;
                            return false;
                          }
                        });
 
-                       if(!isConnected){
-                         _canvas.createEdge('Widget to View Component',$(this).attr("id"), ui.draggable.attr("id"));
+                       console.log('target...');
+                       console.log(childNode.getType());
+
+                       _.each(relations, function(relation, key) {
+
+                         _.each(relation, function(r) {
+                           _.each(r.sourceTypes, function(source) {
+                             if (containerNode.getType() === source) {
+                               _.each(r.targetTypes, function(target) {
+                                 if (childNode.getType() === target) {
+                                   console.log(key);
+                                   relationshipType = key
+                                   return false;
+                                 }
+                               });
+                             }
+                           });
+                         });
+                       });
+
+                       if(!isConnected && relationshipType){
+                         _canvas.createEdge(relationshipType,$(this).attr("id"), ui.draggable.attr("id"));
                        }
 
                       // // now, the attributes left and top of the node are not related to the top left corner of the
@@ -1153,14 +1163,6 @@ define([
                     containment: 'parent',
                     start: function (ev, ui) {
                       console.log('draggable start......................................');
-                      // if(that.getContainment()) {
-                      //   console.log(that.getOutgoingEdges());
-                      //   _.each(that.getOutgoingEdges(), function(edge){
-                      //     console.log(edge.getTarget().getEntityId());
-                      //     var _$child = $(_.template(abstractNodeHtml)({ id: edge.getTarget().getEntityId() }));
-                      //     _$node.append(_$child);
-                      //   });
-                      // }
 
                         originalPos.top = ui.position.top;
                         originalPos.left = ui.position.left;
@@ -1186,10 +1188,14 @@ define([
                         var offsetX = Math.round((ui.position.left - lastDragPos.left) / _canvas.getZoom());
                         var offsetY = Math.round((ui.position.top - lastDragPos.top) / _canvas.getZoom());
 
+                        function setChildPosition(node) {
+                          _.each(node.getOutgoingEdges(), function(edge){
+                            $('#' + edge.getTarget().getEntityId()).offset({ top: $('#' + edge.getTarget().getEntityId()).offset().top + offsetY, left: $('#' + edge.getTarget().getEntityId()).offset().left + offsetX});
+                            setChildPosition(edge.getTarget())
+                          });
+                        }
 
-                        _.each(that.getOutgoingEdges(), function(edge){
-                          $('#' + edge.getTarget().getEntityId()).offset({ top: $('#' + edge.getTarget().getEntityId()).offset().top + offsetY, left: $('#' + edge.getTarget().getEntityId()).offset().left + offsetX});
-                        });
+                        setChildPosition(that);
 
                         lastDragPos.top = ui.position.top;
                         lastDragPos.left = ui.position.left;
@@ -1208,8 +1214,16 @@ define([
                         //_$node.css({top: originalPos.top / _canvas.getZoom(), left: originalPos.left / _canvas.getZoom()});
                         var offsetX = Math.round((ui.position.left - originalPos.left) / _canvas.getZoom());
                         var offsetY = Math.round((ui.position.top - originalPos.top) / _canvas.getZoom());
-                        var operation = new NodeMoveOperation(id, offsetX, offsetY);
-                        that.propagateNodeMoveOperation(operation);
+
+                        function propagateChildPosition(node) {
+                          var operation = new NodeMoveOperation(node.getEntityId(), offsetX, offsetY);
+                          node.propagateNodeMoveOperation(operation);
+                          _.each(node.getOutgoingEdges(), function(edge){
+                            propagateChildPosition(edge.getTarget())
+                          });
+                        }
+
+                        propagateChildPosition(that);
 
                         //Avoid node selection on drag stop
                         _$node.draggable("option", "grid", '');
