@@ -1048,6 +1048,11 @@ define([
                 top: 0
             };
 
+            var lastDragPos = {
+                left: 0,
+                top: 0
+            };
+
             //Enable Node Selection
             var drag = false;
             var $sizePreview = $("<div class=\"size-preview\"></div>").hide();
@@ -1159,6 +1164,11 @@ define([
 
                         originalPos.top = ui.position.top;
                         originalPos.left = ui.position.left;
+
+                        lastDragPos.top = ui.position.top;
+                        lastDragPos.left = ui.position.left;
+
+
                         //ui.position.top = 0;
                         //ui.position.left = 0;
                         _canvas.select(that);
@@ -1173,13 +1183,16 @@ define([
                         // ui.position.left = Math.round(ui.position.left  / _canvas.getZoom());
                         // ui.position.top = Math.round(ui.position.top / _canvas.getZoom());
 
-                        var offsetX = Math.round((ui.position.left - originalPos.left) / _canvas.getZoom());
-                        var offsetY = Math.round((ui.position.top - originalPos.top) / _canvas.getZoom());
+                        var offsetX = Math.round((ui.position.left - lastDragPos.left) / _canvas.getZoom());
+                        var offsetY = Math.round((ui.position.top - lastDragPos.top) / _canvas.getZoom());
 
 
                         _.each(that.getOutgoingEdges(), function(edge){
                           $('#' + edge.getTarget().getEntityId()).offset({ top: $('#' + edge.getTarget().getEntityId()).offset().top + offsetY, left: $('#' + edge.getTarget().getEntityId()).offset().left + offsetX});
                         });
+
+                        lastDragPos.top = ui.position.top;
+                        lastDragPos.left = ui.position.left;
 
                         if (drag) repaint();
                         drag = true;
