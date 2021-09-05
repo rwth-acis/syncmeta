@@ -1195,7 +1195,9 @@ define([
                           });
                         }
 
-                        setChildPosition(that);
+                        if(that.getContainment()) {
+                          setChildPosition(that);
+                        }
 
                         lastDragPos.top = ui.position.top;
                         lastDragPos.left = ui.position.left;
@@ -1215,15 +1217,20 @@ define([
                         var offsetX = Math.round((ui.position.left - originalPos.left) / _canvas.getZoom());
                         var offsetY = Math.round((ui.position.top - originalPos.top) / _canvas.getZoom());
 
+                        var operation = new NodeMoveOperation(that.getEntityId(), offsetX, offsetY);
+                        that.propagateNodeMoveOperation(operation);
+
                         function propagateChildPosition(node) {
-                          var operation = new NodeMoveOperation(node.getEntityId(), offsetX, offsetY);
-                          node.propagateNodeMoveOperation(operation);
                           _.each(node.getOutgoingEdges(), function(edge){
+                            var operation = new NodeMoveOperation(edge.getTarget().getEntityId(), offsetX, offsetY);
+                            edge.getTarget().propagateNodeMoveOperation(operation);
                             propagateChildPosition(edge.getTarget())
                           });
                         }
 
-                        propagateChildPosition(that);
+                        if(that.getContainment()) {
+                          propagateChildPosition(that);
+                        }
 
                         //Avoid node selection on drag stop
                         _$node.draggable("option", "grid", '');
