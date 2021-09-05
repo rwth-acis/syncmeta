@@ -19,7 +19,6 @@ define([
      * @constructor
      */
     function NodeResizeOperation(entityId,offsetX,offsetY,jabberId){
-      console.log('NodeResizeOperation..src...................................');
         var that = this;
 
         EntityOperation.call(this,EntityOperation.TYPES.NodeResizeOperation,entityId,CONFIG.ENTITY.NODE);
