@@ -1189,10 +1189,12 @@ define([
                         var offsetY = Math.round((ui.position.top - lastDragPos.top) / _canvas.getZoom());
 
                         function setChildPosition(node) {
-                          _.each(node.getOutgoingEdges(), function(edge){
-                            $('#' + edge.getTarget().getEntityId()).offset({ top: $('#' + edge.getTarget().getEntityId()).offset().top + offsetY, left: $('#' + edge.getTarget().getEntityId()).offset().left + offsetX});
-                            setChildPosition(edge.getTarget())
-                          });
+                          if(that.getContainment()) {
+                            _.each(node.getOutgoingEdges(), function(edge){
+                              $('#' + edge.getTarget().getEntityId()).offset({ top: $('#' + edge.getTarget().getEntityId()).offset().top + offsetY, left: $('#' + edge.getTarget().getEntityId()).offset().left + offsetX});
+                              setChildPosition(edge.getTarget())
+                            });
+                          }
                         }
 
                         setChildPosition(that);
@@ -1215,12 +1217,17 @@ define([
                         var offsetX = Math.round((ui.position.left - originalPos.left) / _canvas.getZoom());
                         var offsetY = Math.round((ui.position.top - originalPos.top) / _canvas.getZoom());
 
+                        var operation = new NodeMoveOperation(that.getEntityId(), offsetX, offsetY);
+                        that.propagateNodeMoveOperation(operation);
+
                         function propagateChildPosition(node) {
-                          var operation = new NodeMoveOperation(node.getEntityId(), offsetX, offsetY);
-                          node.propagateNodeMoveOperation(operation);
-                          _.each(node.getOutgoingEdges(), function(edge){
-                            propagateChildPosition(edge.getTarget())
-                          });
+                          if(node.getContainment()) {
+                            _.each(node.getOutgoingEdges(), function(edge){
+                              var operation = new NodeMoveOperation(edge.getTarget().getEntityId(), offsetX, offsetY);
+                              edge.getTarget().propagateNodeMoveOperation(operation);
+                              propagateChildPosition(edge.getTarget())
+                            });
+                          }
                         }
 
                         propagateChildPosition(that);
