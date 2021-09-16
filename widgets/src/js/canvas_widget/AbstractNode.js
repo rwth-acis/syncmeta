@@ -1182,6 +1182,8 @@ define([
                     },
                     drag: function (ev, ui) {
                       console.log('draggable drag......................................');
+                      console.log(that.getContainment());
+                      console.log(that.getOutgoingEdges());
                         // ui.position.left = Math.round(ui.position.left  / _canvas.getZoom());
                         // ui.position.top = Math.round(ui.position.top / _canvas.getZoom());
 
@@ -1189,7 +1191,7 @@ define([
                         var offsetY = Math.round((ui.position.top - lastDragPos.top) / _canvas.getZoom());
 
                         function setChildPosition(node) {
-                          if(that.getContainment()) {
+                          if(node.getContainment()) {
                             _.each(node.getOutgoingEdges(), function(edge){
                               $('#' + edge.getTarget().getEntityId()).offset({ top: $('#' + edge.getTarget().getEntityId()).offset().top + offsetY, left: $('#' + edge.getTarget().getEntityId()).offset().left + offsetX});
                               setChildPosition(edge.getTarget())
