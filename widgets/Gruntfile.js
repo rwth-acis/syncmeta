@@ -266,6 +266,17 @@ module.exports = function(grunt) {
                 }
             },
 
+            debug_widget_slim_html: {
+                options: {
+                    data: {
+                        bodyPartial: '_debug_widget_slim.tpl' 
+                    }
+                },
+                files: {
+                    'html/debug_slim.html': ['<%= srcdir %>/widgets/widget.html.tpl']
+                }
+            },
+
             imsld_export_widget: {
                 options: {
                     data: {
