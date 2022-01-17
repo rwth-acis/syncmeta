@@ -48,9 +48,9 @@ define([
         var _$node;
 
         if(useAttributeHtml)
-            _$node = $(_.template(fileValueHtml,{name: name}));
+            _$node = $(_.template(fileValueHtml)({name: name}));
         else
-            _$node = $(_.template(fileValueHtml,{value: _value}));
+            _$node = $(_.template(fileValueHtml)({value: _value}));
 
         var _$selectFile = _$node.find('.select_file');
 

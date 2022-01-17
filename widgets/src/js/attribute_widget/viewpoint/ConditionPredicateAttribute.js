@@ -75,7 +75,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(condition_predicateHtml,{}));
+        var _$node = $(_.template(condition_predicateHtml)());
 
         /**
          * Inter widget communication wrapper

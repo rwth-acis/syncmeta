@@ -59,7 +59,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(listHtml, {}));
+        var _$node = $(_.template(listHtml)());
 
         /**
          * Inter widget communication wrapper

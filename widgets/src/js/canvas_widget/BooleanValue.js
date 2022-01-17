@@ -43,7 +43,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(booleanValueHtml,{value: _value}));
+        var _$node = $(_.template(booleanValueHtml)({value: _value}));
 
         /**
          * Inter widget communication wrapper

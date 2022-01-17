@@ -115,9 +115,9 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(abstractNodeHtml, { id: id }));
+        var _$node = $(_.template(abstractNodeHtml)({ id: id }));
 
-        var _$awarenessTrace = $(_.template(awarenessTraceHtml, { id: id + "_awareness" }));
+        var _$awarenessTrace = $(_.template(awarenessTraceHtml)({ id: id + "_awareness" }));
 
         var _awarenessTimer = setInterval(function () {
             var opacity = _$awarenessTrace.css("opacity");

@@ -47,7 +47,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(listAttributeHtml,{}));
+        var _$node = $(_.template(listAttributeHtml)());
         //remove the plus icon
         _$node.find('.ui-icon-plus').parent().remove();
 

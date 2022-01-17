@@ -36,7 +36,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_.template(singleSelectionAttributeHtml,{}));
+        var _$node = $(_.template(singleSelectionAttributeHtml)());
 
         /**
          * Set Value object of value

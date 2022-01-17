@@ -38,7 +38,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$template = $(_.template(relationshipGroupNodeHtml,{type: that.getType()}));
+        var _$template = $(_.template(relationshipGroupNodeHtml)({type: that.getType()}));
 
         /**
          * jQuery object of DOM node representing the node

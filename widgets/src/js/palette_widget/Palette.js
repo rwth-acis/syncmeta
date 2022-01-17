@@ -244,7 +244,7 @@ define([
                         }
                     }
                     color = node.shape.color ? $colorTestElement.css('color', '#FFFFFF').css('color', node.shape.color).css('color') : '#FFFFFF';
-                    $shape = $('<div>').css('display', 'table-cell').css('verticalAlign', 'middle').css('width', node.shape.defaultWidth || 100).css('height', node.shape.defaultHeight || 50).append($(_.template(shape, {
+                    $shape = $('<div>').css('display', 'table-cell').css('verticalAlign', 'middle').css('width', node.shape.defaultWidth || 100).css('height', node.shape.defaultHeight || 50).append($(_.template(shape)({
                         color: color,
                         type: node.label
                     })));

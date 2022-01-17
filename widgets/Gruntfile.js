@@ -17,6 +17,7 @@ module.exports = function(grunt) {
         distdir: 'html',
         srcdir:  'src',
         nodemodules: 'node_modules',
+        type: undefined,
 
         clean: ["<%= distdir %>//*"],
 
@@ -42,7 +43,7 @@ module.exports = function(grunt) {
                     {src: '<%= nodemodules %>/requirejs/require.js', dest: '<%= distdir %>/js/lib/vendor/require.js'},
                     {src: '<%= nodemodules %>/requirejs-text/text.js', dest: '<%= distdir %>/js/lib/vendor/requirejs-text.js'},
                     {src: '<%= nodemodules %>/requirejs-promise/requirejs-promise.js', dest: '<%= distdir %>/js/lib/vendor/requirejs-promise.js'},
-                    {src: '<%= nodemodules %>/lodash/dist/lodash.js', dest: '<%= distdir %>/js/lib/vendor/lodash.js'},
+                    {src: '<%= nodemodules %>/lodash/lodash.js', dest: '<%= distdir %>/js/lib/vendor/lodash.js'},
                     {src: '<%= nodemodules %>/jszip/dist/jszip.js', dest: '<%= distdir %>/js/lib/vendor/jszip.js'},
                     {src: '<%= nodemodules %>/graphlib/dist/graphlib.core.min.js', dest: '<%= distdir %>/js/lib/vendor/graphlib.core.min.js'},
                     {cwd: '<%= nodemodules %>/font-awesome/',expand: true, src: ['css/**', 'fonts/**'], dest: '<%= distdir %>/css/vendor/font-awesome/'},
@@ -109,23 +110,6 @@ module.exports = function(grunt) {
                 partials: '<%= srcdir %>/widgets/partials'
             },
 
-            main_widget: {
-                options: {
-                    data: {
-                        meta: {
-                            title: "Canvas",
-                            description: "",
-                            width: "560",
-                            height: "400"
-                        },
-                        bodyPartial: '_main_widget.tpl'
-                    }
-                },
-                files: {
-                    'html/widget.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
-                }
-            },
-
             main_widget_html: {
                 options: {
                     data: {
@@ -134,23 +118,6 @@ module.exports = function(grunt) {
                 },
                 files: {
                     'html/widget.html': ['<%= srcdir %>/widgets/widget.html.tpl']
-                }
-            },
-
-            palette_widget: {
-                options: {
-                    data: {
-                        meta: {
-                            title: "Palette",
-                            description: "",
-                            width: "160",
-                            height: "400"
-                        },
-                        bodyPartial: '_palette_widget.tpl'
-                    }
-                },
-                files: {
-                    'html/palette.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
                 }
             },
 
@@ -165,23 +132,6 @@ module.exports = function(grunt) {
                 }
             },
 
-            attribute_widget: {
-                options: {
-                    data: {
-                        meta: {
-                            title: "Property Browser",
-                            description: "",
-                            width: "560",
-                            height: "200"
-                        },
-                        bodyPartial: '_attribute_widget.tpl'
-                    }
-                },
-                files: {
-                    'html/attribute.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
-                }
-            },
-
             attribute_widget_html: {
                 options: {
                     data: {
@@ -190,23 +140,6 @@ module.exports = function(grunt) {
                 },
                 files: {
                     'html/attribute.html': ['<%= srcdir %>/widgets/widget.html.tpl']
-                }
-            },
-
-            activity_widget: {
-                options: {
-                    data: {
-                        meta: {
-                            title: "User Activity",
-                            description: "",
-                            width: "150",
-                            height: "400"
-                        },
-                        bodyPartial: '_activity_widget.tpl'
-                    }
-                },
-                files: {
-                    'html/activity.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
                 }
             },
 
@@ -221,37 +154,14 @@ module.exports = function(grunt) {
                 }
             },
 
-            json_export_widget: {
+            json_export_widget_html: {
                 options: {
                     data: {
-                        meta: {
-                            title: "Export",
-                            description: "",
-                            width: "120",
-                            height: "100"
-                        },
                         bodyPartial: '_json_export_widget.tpl'
                     }
                 },
                 files: {
-                    'html/export.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
-                }
-            },
-
-            debug_widget: {
-                options: {
-                    data: {
-                        meta: {
-                            title: "Import Tool",
-                            description: "",
-                            width: "400",
-                            height: "400"
-                        },
-                        bodyPartial: '_debug_widget.tpl'
-                    }
-                },
-                files: {
-                    'html/debug.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
+                    'html/export.html': ['<%= srcdir %>/widgets/widget.html.tpl']
                 }
             },
 
@@ -266,89 +176,60 @@ module.exports = function(grunt) {
                 }
             },
 
-            imsld_export_widget: {
+            imsld_export_widget_html: {
                 options: {
                     data: {
-                        meta: {
-                            title: "IMS LD Export",
-                            description: "",
-                            width: "320",
-                            height: "310"
-                        },
                         bodyPartial: '_imsld_export_widget.tpl'
                     }
                 },
                 files: {
-                    'html/imsld_export.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
+                    'html/imsld_export.html': ['<%= srcdir %>/widgets/widget.html.tpl']
                 }
             },
 
-            guidance_widget: {
+            guidance_widget_html: {
                 options: {
                     data: {
-                        meta: {
-                            title: "Guidance",
-                            description: "",
-                            width: "300",
-                            height: "400"
-                        },
                         bodyPartial: '_guidance_widget.tpl'
                     }
                 },
                 files: {
-                    'html/guidance.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
+                    'html/guidance.html': ['<%= srcdir %>/widgets/widget.html.tpl']
                 }
             },
 
-            heatmap_widget: {
+            heatmap_widget_html: {
                 options: {
                     data: {
-                        meta: {
-                            title: "Heatmap",
-                            description: "",
-                            width: "400",
-                            height: "400"
-                        },
                         bodyPartial: '_heat_map_widget.tpl'
                     }
                 },
                 files: {
-                    'html/heatmap.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
+                    'html/heatmap.html': ['<%= srcdir %>/widgets/widget.html.tpl']
                 }
             },
-            viewcontrol_widget: {
+
+            viewcontrol_widget_html: {
                 options: {
                     data: {
-                        meta: {
-                            title: "View Control",
-                            description: "",
-                            width: "400",
-                            height: "500"
-                        },
                         bodyPartial: '_viewcontrol_widget.tpl'
                     }
                 },
                 files: {
-                    'html/viewcontrol.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
+                    'html/viewcontrol.html': ['<%= srcdir %>/widgets/widget.html.tpl']
                 }
 
             },
-            test_widget: {
+
+            test_widget_html: {
                 options: {
                     data: {
-                        meta: {
-                            title: "Test Widget",
-                            description: "",
-                            width: "400",
-                            height: "500"
-                        },
                         bodyPartial: '_test_widget.tpl'
                     }
                 },
                 files: {
-                    'html/test.xml': ['<%= srcdir %>/widgets/widget.xml.tpl']
+                    'html/test.html': ['<%= srcdir %>/widgets/widget.html.tpl']
                 }
-
             }
         },
 
