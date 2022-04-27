@@ -39,7 +39,7 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "grunt": "~1.4.0",
+    "grunt": "~1.5.2",
     "grunt-amdcheck": "^2.0.0",
     "grunt-bootstrap-prefix": "~0.1.0",
     "grunt-contrib-clean": "~2.0.0",
