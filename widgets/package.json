@@ -14,7 +14,7 @@
   "dependencies": {
     "@rwth-acis/iwc": "^1.0.0",
     "ace-builds": "^1.2.3",
-    "async": "^1.5.2",
+    "async": "^2.6.4",
     "bootstrap": "^3.3.7",
     "dagre": "^0.7.4",
     "font-awesome": "~4.4.0",
