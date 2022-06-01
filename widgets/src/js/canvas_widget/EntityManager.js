@@ -161,8 +161,6 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
 
 
         }
-        console.log('_nodeTypes...........................................');
-        console.log(_nodeTypes);
         return _nodeTypes;
     };
 
@@ -291,21 +289,16 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
              * @returns {canvas_widget.AbstractNode}
              */
             createNode : function (type, id, left, top, width, height, zIndex, containment, json) {
-              console.log('em canvas crate node');
                 var node;
                 AbstractEntity.maxZIndex = Math.max(AbstractEntity.maxZIndex, zIndex);
                 AbstractEntity.minZIndex = Math.min(AbstractEntity.minZIndex, zIndex);
 
                 if(_viewId && viewNodeTypes.hasOwnProperty(type)){
-                  console.log('if');
                     node = viewNodeTypes[type](id, left, top, width, height, zIndex, containment, json);
                 }
                 else if(nodeTypes.hasOwnProperty(type)) {
-                  console.log('elseif');
-                  console.log(nodeTypes);
                     node = new nodeTypes[type](id, left, top, width, height, zIndex, containment, json);
                 }
-                console.log(node);
                 _nodes[id] = node;
                 return node;
             },

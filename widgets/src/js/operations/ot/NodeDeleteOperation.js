@@ -71,7 +71,7 @@ define([
         var _zIndex = zIndex;
 
         /**
-         * Position of node on z-axis
+         * is containment type
          * @type {boolean}
          * @private
          */
@@ -155,8 +155,8 @@ define([
         };
 
         /**
-         * Get position of node on z-axis
-         * @returns {number}
+         * is containment type
+         * @returns {boolean}
          */
         this.getContainment = function(){
             return _containment;

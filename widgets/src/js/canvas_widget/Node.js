@@ -38,7 +38,7 @@ define([
          * @param {number} width Width of node
          * @param {number} height Height of node
          * @param {number} zIndex Position of node on z-axis
-         * @param {number} containment containment
+         * @param {boolean} containment containment
          */
         function Node(id,left,top,width,height,zIndex,containment){
             var that = this;

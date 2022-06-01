@@ -46,7 +46,6 @@ define([
          * @param {jQuery} $node jquery Selector of canvas node
          */
         function Canvas($node) {
-          console.log('canvas....................................');
             var that = this;
 
             AbstractCanvas.call(this, $node);
@@ -136,7 +135,6 @@ define([
              * @param {Y.Map} ymap
              */
             var processNodeAddOperation = function (operation) {
-              console.log('processNodeAddOperation..........................');
                 var node;
                 if (operation.getJSON()) {
                     node = EntityManager.createNodeFromJSON(operation.getType(), operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex(), operation.getContainment(), operation.getJSON());
@@ -885,7 +883,7 @@ define([
                 if (EntityManager.getViewId() !== undefined && EntityManager.getLayer() === CONFIG.LAYER.MODEL) {
                     oType = EntityManager.getViewNodeType(type).getTargetNodeType().TYPE;
                 }
-                //TODO: change false to containment
+    
                 var operation = new NodeAddOperation(id, type, left, top, width, height, zIndex, containment, json || null, EntityManager.getViewId(), oType, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], defaultLabel, defaultAttributeValues);
 
                 propagateNodeAddOperation(operation);

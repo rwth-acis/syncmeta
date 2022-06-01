@@ -28,8 +28,6 @@ define([
      * @constructor
      */
     function NodeAddOperation(entityId,type,left,top,width,height,zIndex,containment,json, viewId, oType,jabberId, defaultLabel, defaultAttributeValues){
-      console.log('NodeAddOperation.......................');
-      console.log(containment);
         var that = this;
 
         EntityOperation.call(this,EntityOperation.TYPES.NodeAddOperation,entityId,CONFIG.ENTITY.NODE);
@@ -93,8 +91,8 @@ define([
         var _zIndex = zIndex;
 
         /**
-         * Position of node on z-axis
-         * @type {number}
+         * is containment type
+         * @type {boolean}
          * @private
          */
         var _containment = containment;
