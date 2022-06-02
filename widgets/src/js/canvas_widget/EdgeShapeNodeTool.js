@@ -15,7 +15,7 @@ define([
      * @constructor
      */
     function EdgeShapeNodeTool(){
-        NodeTool.call(this,EdgeShapeNode.TYPE,null,null,EdgeShapeNode.DEFAULT_WIDTH,EdgeShapeNode.DEFAULT_HEIGHT);
+        NodeTool.call(this,EdgeShapeNode.TYPE,null,null,null,EdgeShapeNode.DEFAULT_WIDTH,EdgeShapeNode.DEFAULT_HEIGHT);
     }
 
     return EdgeShapeNodeTool;

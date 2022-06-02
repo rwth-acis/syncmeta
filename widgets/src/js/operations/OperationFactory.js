@@ -163,6 +163,7 @@ define([
                                                 value.width,
                                                 value.height,
                                                 value.zIndex,
+                                                value.containment,
                                                 value.json,
                                                 value.viewId,
                                                 value.oType,
@@ -177,6 +178,7 @@ define([
                                                 value.width,
                                                 value.height,
                                                 value.zIndex,
+                                                value.containment,
                                                 value.json
                                             );
                                             break;

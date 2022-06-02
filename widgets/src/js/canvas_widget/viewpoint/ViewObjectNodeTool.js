@@ -14,7 +14,7 @@ define([
      * @constructor
      */
     function ViewObjectNodeTool(){
-        NodeTool.call(this,ViewObjectNode.TYPE,null,null,ViewObjectNode.DEFAULT_WIDTH,ViewObjectNode.DEFAULT_HEIGHT);
+        NodeTool.call(this,ViewObjectNode.TYPE,null,null,null,ViewObjectNode.DEFAULT_WIDTH,ViewObjectNode.DEFAULT_HEIGHT);
     }
 
     return ViewObjectNodeTool;

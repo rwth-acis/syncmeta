@@ -80,11 +80,11 @@ define([
             that.getLabel().getValue().registerYType();
             attr.registerYMap();
         };
-        
+
         this.unregisterCallbacks = function(){
             that.getAttribute('[attributes]').unregisterCallbacks();
         }
-        
+
         _$node.find(".label").append(this.getLabel().get$node());
 
         for(var attributeKey in _attributes){
@@ -106,7 +106,7 @@ define([
                                     nodeId;
 
                                 //noinspection JSAccessibilityCheck
-                                nodeId = canvas.createNode(require('canvas_widget/ObjectNode').TYPE,appearance.left,appearance.top,appearance.width,appearance.height,that.getZIndex(),that.toJSON());
+                                nodeId = canvas.createNode(require('canvas_widget/ObjectNode').TYPE,appearance.left,appearance.top,appearance.width,appearance.height,that.getZIndex(),that.getContainment(),that.toJSON());
                                 var edges = that.getOutgoingEdges(),
                                     edge,
                                     edgeId;
@@ -141,7 +141,7 @@ define([
                                     nodeId;
 
                                 //noinspection JSAccessibilityCheck
-                                nodeId = canvas.createNode(require('canvas_widget/RelationshipNode').TYPE,appearance.left,appearance.top,appearance.width,appearance.height,that.getZIndex(),that.toJSON());
+                                nodeId = canvas.createNode(require('canvas_widget/RelationshipNode').TYPE,appearance.left,appearance.top,appearance.width,appearance.height,that.getZIndex(),that.getContainment(),that.toJSON());
                                 var edges = that.getOutgoingEdges(),
                                     edge,
                                     edgeId;
@@ -176,7 +176,7 @@ define([
                                     nodeId;
 
                                 //noinspection JSAccessibilityCheck
-                                nodeId = canvas.createNode(require('canvas_widget/RelationshipGroupNode').TYPE,appearance.left,appearance.top,appearance.width,appearance.height,that.getZIndex(),that.toJSON());
+                                nodeId = canvas.createNode(require('canvas_widget/RelationshipGroupNode').TYPE,appearance.left,appearance.top,appearance.width,appearance.height,that.getZIndex(),that.getContainment(),that.toJSON());
                                 var edges = that.getOutgoingEdges(),
                                     edge,
                                     edgeId;

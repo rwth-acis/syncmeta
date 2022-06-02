@@ -35,7 +35,7 @@ define(['lodash', 'lib/vendor/test/chai', 'canvas_widget/EntityManager'], functi
                     before(function(done) {
                         objectNode = EntityManager.createNode('Object', '1234567890', 4000, 4000, 150, 100, 1000, null);
 
-                        enumNode = EntityManager.createNodeFromJSON(json.type, id, json.left, json.top, json.width, json.height, json.zIndex, json);
+                        enumNode = EntityManager.createNodeFromJSON(json.type, id, json.left, json.top, json.width, json.height, json.zIndex, null, json);
 
                         biDirAsso = EntityManager.createEdge('Bi-Dir-Association', '1234567891', objectNode, enumNode);
 
@@ -74,7 +74,7 @@ define(['lodash', 'lib/vendor/test/chai', 'canvas_widget/EntityManager'], functi
                         //Check label
                         expect(enumNode.getLabel().getValue().getValue()).to.be.equal("enum");
 
-                        //Check attributes                                    
+                        //Check attributes
                         var attributes = enumNode.getAttribute('[attributes]');
                         expect(attributes).not.to.be.null;
                         expect(attributes.constructor.name).to.be.equal('SingleValueListAttribute');
