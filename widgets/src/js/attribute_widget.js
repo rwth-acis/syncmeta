@@ -20,7 +20,7 @@ requirejs([
         $('#wrapper').find('h1').text('Got Response from Canvas! Connecting to Yjs....');
         var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE);
         iwc.setSpace(user);
-        
+
         yjsSync().done(function (y, spaceTitle) {
             window.y = y;
             window.syncmetaLog = {
@@ -69,7 +69,7 @@ requirejs([
                 }
                 for (nodeId in json.nodes) {
                     if (json.nodes.hasOwnProperty(nodeId)) {
-                        var node = EntityManager.createNodeFromJSON(json.nodes[nodeId].type, nodeId, json.nodes[nodeId].left, json.nodes[nodeId].top, json.nodes[nodeId].width, json.nodes[nodeId].height, json.nodes[nodeId]);
+                        var node = EntityManager.createNodeFromJSON(json.nodes[nodeId].type, nodeId, json.nodes[nodeId].left, json.nodes[nodeId].top, json.nodes[nodeId].width, json.nodes[nodeId].height, json.nodes[nodeId].zIndex, json.nodes[nodeId]);
                         node.registerYType();
                         node.addToWrapper(wrapper);
                     }

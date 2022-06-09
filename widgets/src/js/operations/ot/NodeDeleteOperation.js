@@ -19,10 +19,11 @@ define([
      * @param {number} width Width of node
      * @param {number} height Height of node
      * @param {number} zIndex Position of node on z-axis
+     * @param {boolean} containment containment
      * @param {object} json JSON representation of node
      * @constructor
      */
-    function NodeDeleteOperation(entityId,type,left,top,width,height,zIndex,json){
+    function NodeDeleteOperation(entityId,type,left,top,width,height,zIndex,containment,json){
         var that = this;
 
         EntityOperation.call(this,EntityOperation.TYPES.NodeDeleteOperation,entityId,CONFIG.ENTITY.NODE);
@@ -70,6 +71,13 @@ define([
         var _zIndex = zIndex;
 
         /**
+         * is containment type
+         * @type {boolean}
+         * @private
+         */
+        var _containment = containment;
+
+        /**
          * JSON representation of node
          * @type {Object}
          * @private
@@ -90,6 +98,7 @@ define([
                     width: _width,
                     height: _height,
                     zIndex: _zIndex,
+                    containment: _containment,
                     json: _json
                 }),
                 CONFIG.OPERATION.TYPE.UPDATE,
@@ -143,6 +152,14 @@ define([
          */
         this.getZIndex = function(){
             return _zIndex;
+        };
+
+        /**
+         * is containment type
+         * @returns {boolean}
+         */
+        this.getContainment = function(){
+            return _containment;
         };
 
         /**
@@ -232,6 +249,8 @@ define([
                 this.getWidth(),
                 this.getHeight(),
                 this.getZIndex(),
+                this.getContainment(),
+                this.getContainment(),
                 json
             );
         };
@@ -246,6 +265,7 @@ define([
             width: this.getWidth(),
             height: this.getHeight(),
             zIndex: this.getZIndex(),
+            containment: this.getContainment(),
             json: this.getJSON()
         }
     };

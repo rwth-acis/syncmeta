@@ -149,6 +149,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                 _nodeTypes[node.label].TYPE = node.label;
                 _nodeTypes[node.label].DEFAULT_WIDTH = node.shape.defaultWidth;
                 _nodeTypes[node.label].DEFAULT_HEIGHT = node.shape.defaultHeight;
+                _nodeTypes[node.label].CONTAINMENT = node.shape.containment;
                 _nodeTypes[node.label].SHAPE = $shape;
                 /*
                  nodeTypes[node.label] = Node(node.label, $shape, anchors, node.attributes, node.jsplumb);
@@ -287,16 +288,16 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
              * @param {object} json the json representation
              * @returns {canvas_widget.AbstractNode}
              */
-            createNode : function (type, id, left, top, width, height, zIndex,json) {
+            createNode : function (type, id, left, top, width, height, zIndex, containment, json) {
                 var node;
                 AbstractEntity.maxZIndex = Math.max(AbstractEntity.maxZIndex, zIndex);
                 AbstractEntity.minZIndex = Math.min(AbstractEntity.minZIndex, zIndex);
-             
+
                 if(_viewId && viewNodeTypes.hasOwnProperty(type)){
-                    node = viewNodeTypes[type](id, left, top, width, height, zIndex, json);
+                    node = viewNodeTypes[type](id, left, top, width, height, zIndex, containment, json);
                 }
                 else if(nodeTypes.hasOwnProperty(type)) {
-                    node = new nodeTypes[type](id, left, top, width, height, zIndex, json);
+                    node = new nodeTypes[type](id, left, top, width, height, zIndex, containment, json);
                 }
                 _nodes[id] = node;
                 return node;
@@ -391,7 +392,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
             //TODO: switch id and type
             createEdge: function(type,id,source,target){
                 var edge;
-                
+
                 if(_viewId && viewEdgeTypes.hasOwnProperty(type)){
                     edge = viewEdgeTypes[type](id,source,target);
                 }
@@ -514,8 +515,8 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
              * @param {number} zIndex Position of node on z-axis
              * @returns {canvas_widget.AbstractNode}
              */
-            createNodeFromJSON: function(type,id,left,top,width,height,zIndex,json){
-                var node = this.createNode(type,id,left,top,width,height,zIndex,json);
+            createNodeFromJSON: function(type,id,left,top,width,height,zIndex,containment,json){
+                var node = this.createNode(type,id,left,top,width,height,zIndex,containment,json);
                 if(node){
                     node.getLabel().getValue().setValue(json.label.value.value);
                     for(var attrId in json.attributes){
@@ -569,9 +570,9 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
              * @returns {object} Menu items
              */
             generateAddNodeMenu: function(canvas,left,top){
-                function makeAddNodeCallback(nodeType,width,height){
+                function makeAddNodeCallback(nodeType,width,height,containment){
                     return function(){
-                        canvas.createNode(nodeType,left,top,width,height);
+                        canvas.createNode(nodeType,left,top,width,height,that.getZIndex(),containment);
                     };
                 }
                 var items = {},
@@ -594,7 +595,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
 
                         items[nodeType] = {
                             name: '..' + nodeType,
-                            callback: makeAddNodeCallback(nodeType,_nodeTypes[nodeType].DEFAULT_WIDTH,_nodeTypes[nodeType].DEFAULT_HEIGHT)
+                            callback: makeAddNodeCallback(nodeType,_nodeTypes[nodeType].DEFAULT_WIDTH,_nodeTypes[nodeType].DEFAULT_HEIGHT,_nodeTypes[nodeType].CONTAINMENT)
                         };
                     }
                 }
@@ -840,6 +841,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                         color: "",
                         defaultWidth: 200,
                         defaultHeight: 60,
+                        containment: false,
                         customShape: startActivityNodeHtml,
                         customAnchors: ""
                     },
@@ -863,6 +865,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                         color: "",
                         defaultWidth: 50,
                         defaultHeight: 50,
+                        containment: false,
                         customShape: activityFinalNodeHtml,
                         customAnchors: [ "Perimeter", { shape:"Circle", anchorCount: 60} ]
                     },
@@ -880,6 +883,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                         color: "yellow",
                         defaultWidth: 0,
                         defaultHeight: 0,
+                        containment: false,
                         customShape: "",
                         customAnchors: ""
                     },
@@ -897,6 +901,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                         color: "",
                         defaultWidth: 100,
                         defaultHeight: 50,
+                        containment: false,
                         customShape: callActivityNodeHtml,
                         customAnchors: ""
                     },
@@ -922,6 +927,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                         color: "black",
                         defaultWidth: 10,
                         defaultHeight: 200,
+                        containment: false,
                         customShape: "",
                         customAnchors: ""
                     },
@@ -960,6 +966,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                                 color: "",
                                 defaultWidth: 100,
                                 defaultHeight: 50,
+                                containment: false,
                                 customShape: _.template(actionNodeHtml)({label: node.label, icon: "plus"}),
                                 customAnchors: ""
                             }
@@ -979,6 +986,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                                 color: "",
                                 defaultWidth: 100,
                                 defaultHeight: 50,
+                                containment: false,
                                 customShape: _.template(entityNodeHtml)({icon: "square", label: node.label}),
                                 customAnchors: ""
                             }
@@ -995,6 +1003,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                                 shape: "",
                                 defaultWidth: 130,
                                 defaultHeight: 50,
+                                containment: false,
                                 customShape: _.template(setPropertyNodeHtml)(),
                                 customAnchors: ""
                             }
@@ -1067,6 +1076,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                                 color: "",
                                 defaultWidth: 100,
                                 defaultHeight: 50,
+                                containment: false,
                                 customShape: _.template(actionNodeHtml)({label: edge.label, icon: "plus"}),
                                 customAnchors: ""
                             }
@@ -1086,6 +1096,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                                 color: "blue",
                                 defaultWidth: 100,
                                 defaultHeight: 50,
+                                containment: false,
                                 customShape: _.template(entityNodeHtml)({icon: "exchange", label: edge.label}),
                                 customAnchors: ""
                             }
@@ -1105,6 +1116,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                                     shape: "",
                                     defaultWidth: 0,
                                     defaultHeight: 0,
+                                    containment: false,
                                     customShape: _.template(setPropertyNodeHtml)({type: setPropertyLabel, color: "white"}),
                                     customAnchors: ""
                                 }
@@ -1225,9 +1237,9 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                 var model;
                 if(m)
                     model = m;
-                else 
+                else
                     model = y.share.data.get('guidancemodel');
-                if(!model) 
+                if(!model)
                     return null;
                 var nodes = model.nodes;
                 var edges = model.edges;
@@ -1633,6 +1645,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                                                 color: neighbor.getAttribute(neighbor.getEntityId()+"[color]").getValue().getValue(),
                                                 defaultWidth: parseInt(neighbor.getAttribute(neighbor.getEntityId()+"[defaultWidth]").getValue().getValue()),
                                                 defaultHeight: parseInt(neighbor.getAttribute(neighbor.getEntityId()+"[defaultHeight]").getValue().getValue()),
+                                                containment: neighbor.getAttribute(neighbor.getEntityId()+"[containment]").getValue().getValue(),
                                                 customShape: neighbor.getAttribute(neighbor.getEntityId()+"[customShape]").getValue().getValue(),
                                                 customAnchors: neighbor.getAttribute(neighbor.getEntityId()+"[customAnchors]").getValue().getValue()
                                             };
@@ -1642,7 +1655,7 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                                 metamodel.nodes[nodeId] = {
                                     label: node.getLabel().getValue().getValue(),
                                     attributes: attributes,
-                                    shape: shape || {shape: "rectangle", color: "white", customShape: "", customAnchors: "", defaultWidth: 0, defaultHeight: 0}
+                                    shape: shape || {shape: "rectangle", color: "white", containment: false, customShape: "", customAnchors: "", defaultWidth: 0, defaultHeight: 0}
                                 };
                             }
                         } else if(node instanceof RelationshipNode){

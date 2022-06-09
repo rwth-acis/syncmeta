@@ -15,7 +15,7 @@ define([
      * @constructor
      */
     function RelationshipGroupNodeTool(){
-        NodeTool.call(this,RelationshipGroupNode.TYPE,null,null,RelationshipGroupNode.DEFAULT_WIDTH,RelationshipGroupNode.DEFAULT_HEIGHT);
+        NodeTool.call(this,RelationshipGroupNode.TYPE,null,null,null,RelationshipGroupNode.DEFAULT_WIDTH,RelationshipGroupNode.DEFAULT_HEIGHT);
     }
 
     return RelationshipGroupNodeTool;

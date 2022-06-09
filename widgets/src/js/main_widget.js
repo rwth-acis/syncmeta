@@ -95,14 +95,14 @@ requirejs([
         var userList = [];
         var canvas = new Canvas($("#canvas"));
         HistoryManager.init(canvas);
-       
-        //not working pretty well 
+
+        //not working pretty well
         window.onbeforeunload = function (event) {
              //y.share.userList.delete(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
              //y.share.users.delete(y.db.userId);
             y.share.activity.set('UserLeftActivity', new ActivityOperation('UserLeftActivity', null, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]));
         }
-        
+
         y.share.join.observe(function (event) {
             if(userList.indexOf(event.name)===-1){
                 userList.push(event.name);
@@ -111,10 +111,10 @@ requirejs([
              if (!event.value && event.name !== _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]) {
                  //send to activity widget that a remote user has joined.
                 y.share.join.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], true);
-            } else if (event.name === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] && !event.value) {  
+            } else if (event.name === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] && !event.value) {
                 canvas.resetTool();
                 $("#loading").hide();
-                
+
                 if (CONFIG.TEST.CANVAS && (_iwcw.getUser()[CONFIG.NS.PERSON.TITLE] === CONFIG.TEST.USER || _iwcw.getUser()[CONFIG.NS.PERSON.MBOX] === CONFIG.TEST.EMAIL))
                     require(['./../test/CanvasWidgetTest'], function (CanvasWidgetTest) {
                         CanvasWidgetTest(canvas);
@@ -153,7 +153,7 @@ requirejs([
                                     var metamodel = y.share.data.get('metamodel');
                                     if(!metamodel)
                                         metamodel = '{}';
-                                    else 
+                                    else
                                         metamodel = JSON.stringify(metamodel);
                                     _iwcw.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.PALETTE, new NonOTOperation('WaitForCanvasOperation', metamodel));
                                 break;
@@ -220,7 +220,7 @@ requirejs([
                 for (var nodeId in nodes) {
                     if (nodes.hasOwnProperty(nodeId)) {
                         node = nodes[nodeId];
-                        canvas.addTool(node.label, new NodeTool(node.label, null, null, node.shape.defaultWidth, node.shape.defaultHeight));
+                        canvas.addTool(node.label, new NodeTool(node.label, null, null, node.shape.containment, node.shape.defaultWidth, node.shape.defaultHeight));
                     }
                 }
             }
@@ -249,7 +249,7 @@ requirejs([
                     for (var nodeId in nodes) {
                         if (nodes.hasOwnProperty(nodeId)) {
                             node = nodes[nodeId];
-                            canvas.addTool(node.label, new NodeTool(node.label, null, null, node.shape.defaultWidth, node.shape.defaultHeight));
+                            canvas.addTool(node.label, new NodeTool(node.label, null, null, node.shape.containment, node.shape.defaultWidth, node.shape.defaultHeight));
                         }
                     }
                 }
@@ -360,8 +360,8 @@ requirejs([
             //Add View Types
             canvas.addTool(ViewObjectNode.TYPE, new ViewObjectNodeTool());
             canvas.addTool(ViewRelationshipNode.TYPE, new ViewRelationshipNodeTool());
-            
-            
+
+
             //Init control elements for views
             $("#btnCreateViewpoint").click(function () {
                 ShowViewCreateMenu();
@@ -554,21 +554,21 @@ requirejs([
         $("#zoomout").click(function () {
             canvas.setZoom(canvas.getZoom() - 0.1);
         });
-        
+
         $("#applyLayout").click(function(){
             window.y.share.canvas.set('applyLayout', window.y.share.users.get(window.y.db.userId));
             window.y.share.activity.set('ApplyLayoutActivity', new ActivityOperation('ApplyLayoutActivity', null, window.y.share.users.get(window.y.db.userId),"..applied Layout"));
         });
-        
+
         var $feedback = $("#feedback");
 
         // Add code for PNG export
-	
+
         // Work later on moving this functionality to Export Widget
         //var uri = canvas.toPNG();
         // y.share.canvas.set('PngMap', uri);
         // Work later on moving this functionality to Export Widget
-        
+
         // Export as PNG
         /*var $saveImage = $("#save_image");
         $saveImage.show();
@@ -695,4 +695,3 @@ requirejs([
     }
 
 });
-

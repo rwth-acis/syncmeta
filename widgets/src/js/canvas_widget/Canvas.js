@@ -137,10 +137,12 @@ define([
             var processNodeAddOperation = function (operation) {
                 var node;
                 if (operation.getJSON()) {
-                    node = EntityManager.createNodeFromJSON(operation.getType(), operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex(), operation.getJSON());
+                    node = EntityManager.createNodeFromJSON(operation.getType(), operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex(), operation.getContainment(), operation.getJSON());
                 } else {
-                    node = EntityManager.createNode(operation.getType(), operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex());
+                    node = EntityManager.createNode(operation.getType(), operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex(), operation.getContainment());
                 }
+
+                console.log(node.getContainment());
 
                 if (operation.getDefaultLabel()) {
                     node.getLabel().getValue().setValue(operation.getDefaultLabel());
@@ -264,9 +266,9 @@ define([
 
                         //processNodeAddOperation
                         if (operation.getJSON()) {
-                            node = EntityManager.createNodeFromJSON(type, operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex(), operation.getJSON());
+                            node = EntityManager.createNodeFromJSON(type, operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex(), operation.getContainment(), operation.getJSON());
                         } else {
-                            node = EntityManager.createNode(type, operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex());
+                            node = EntityManager.createNode(type, operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), operation.getZIndex(), operation.getContainment());
                         }
 
                         if (operation.getDefaultLabel()) {
@@ -864,12 +866,13 @@ define([
              * @param {number} width Width of node
              * @param {number} height Height of node
              * @param {number} [zIndex] Position of node on z-axis
+             * @param {boolean} containment containment
              * @param {object} [json] representation of node
              * @param {string} identifier the identifier of the node, if null a new id is generated
              * @param defaultAttributeValues May be used to set default values for node attributes.
              * @return {number} id of new node
              */
-            this.createNode = function (type, left, top, width, height, zIndex, json, identifier, historyFlag, defaultLabel, defaultAttributeValues) {
+            this.createNode = function (type, left, top, width, height, zIndex, containment, json, identifier, historyFlag, defaultLabel, defaultAttributeValues) {
                 var id, oType = null;
                 if (identifier)
                     id = identifier;
@@ -880,7 +883,8 @@ define([
                 if (EntityManager.getViewId() !== undefined && EntityManager.getLayer() === CONFIG.LAYER.MODEL) {
                     oType = EntityManager.getViewNodeType(type).getTargetNodeType().TYPE;
                 }
-                var operation = new NodeAddOperation(id, type, left, top, width, height, zIndex, json || null, EntityManager.getViewId(), oType, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], defaultLabel, defaultAttributeValues);
+    
+                var operation = new NodeAddOperation(id, type, left, top, width, height, zIndex, containment, json || null, EntityManager.getViewId(), oType, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], defaultLabel, defaultAttributeValues);
 
                 propagateNodeAddOperation(operation);
                 if (y) {
@@ -1302,7 +1306,7 @@ define([
                         switch (event.name) {
                             case NodeAddOperation.TYPE:
                                 {
-                                    operation = new NodeAddOperation(data.id, data.type, data.left, data.top, data.width, data.height, data.zIndex, data.json, data.viewId, data.oType, jabberId || data.jabberId, data.defaultLabel, data.defaultAttributeValues);
+                                    operation = new NodeAddOperation(data.id, data.type, data.left, data.top, data.width, data.height, data.zIndex, data.containment, data.json, data.viewId, data.oType, jabberId || data.jabberId, data.defaultLabel, data.defaultAttributeValues);
                                     remoteNodeAddCallback(operation);
                                     break;
                                 }
@@ -1336,7 +1340,7 @@ define([
                             }
                             case 'applyLayout':{
                                 //remote user
-                                DagreLayout.apply();   
+                                DagreLayout.apply();
                                 break;
                             }
                             //used by the syncmeta-plugin only
@@ -1366,7 +1370,7 @@ define([
                                         entity.highlight(event.value.color, event.value.label);
                                     }
                                 }
-                                
+
                                 break;
                             }
                             //used by the syncmeta-plugin only
@@ -1399,8 +1403,8 @@ define([
                         }
                         //local user. todo ugly coding style
                     } else if(event.name === "applyLayout"){
-                        DagreLayout.apply();  
-                        $('#save').click();                        
+                        DagreLayout.apply();
+                        $('#save').click();
                     }
                 });
 
@@ -1429,7 +1433,7 @@ define([
                             {
                                 var node = EntityManager.findNode(event.name);
                                 if (node)
-                                    node.remoteNodeDeleteCallback(new NodeDeleteOperation(event.name));                                 
+                                    node.remoteNodeDeleteCallback(new NodeDeleteOperation(event.name));
                                 break;
                             }
                             /*

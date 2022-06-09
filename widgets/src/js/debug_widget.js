@@ -93,7 +93,7 @@ requirejs(['jqueryui', 'lodash', 'lib/yjs-sync', 'canvas_widget/GenerateViewpoin
             $exportMetamodel.click(function () {
                 var link = document.createElement('a');
                 link.download = "vls.json";
-                link.href = 'data:,' + encodeURI(JSON.stringify(y.share.data.get('metamodel'), null, 4));
+                link.href = 'data:,' + encodeURIComponent(JSON.stringify(y.share.data.get('metamodel'), null, 4));
                 link.click();
             });
 
@@ -125,7 +125,7 @@ requirejs(['jqueryui', 'lodash', 'lib/yjs-sync', 'canvas_widget/GenerateViewpoin
                                         var ytext = map.set(attr[key].key.id, Y.Text);
                                         ytext.insert(0, attr[key].key.value);
                                     }
-                                    else { 
+                                    else {
                                         var ytext = map.set(attr[key].value.id, Y.Text);
                                         ytext.insert(0, attr[key].value.value);
                                     }

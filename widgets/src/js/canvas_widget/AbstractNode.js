@@ -32,9 +32,12 @@ define([
      * @param {number} top y-coordinate of node position
      * @param {number} width Width of node
      * @param {number} height Height of node
+     * @param {boolean} containment containment
      * @param {number} zIndex Position of node on z-axis
      */
-    function AbstractNode(id, type, left, top, width, height, zIndex, json) {
+    function AbstractNode(id, type, left, top, width, height, zIndex, containment, json) {
+
+
         var that = this;
 
         /**
@@ -59,6 +62,7 @@ define([
                 _ymap.set('width', width);
                 _ymap.set('height', height);
                 _ymap.set('zIndex', zIndex);
+                _ymap.set('containment', containment);
                 _ymap.set('type', type);
                 _ymap.set('id', id);
                 if(json) _ymap.set('json', json);
@@ -93,7 +97,8 @@ define([
             left: left,
             top: top,
             width: width,
-            height: height
+            height: height,
+            containment: containment
         };
 
         /**
@@ -102,6 +107,13 @@ define([
          * @private
          */
         var _zIndex = zIndex;
+
+        /**
+         * Type of node
+         * @containment {boolean}
+         * @private
+         */
+        var _containment = containment;
 
         /**
          * Canvas the node is drawn on
@@ -416,6 +428,7 @@ define([
         };
 
         this.init = function () {
+
             //Define Node Rightclick Menu
             $.contextMenu({
                 selector: "#" + id,
@@ -520,7 +533,7 @@ define([
                     edge.triggerDeletion();
                 }
             }
-            var operation = new NodeDeleteOperation(id, that.getType(), _appearance.left, _appearance.top, _appearance.width, _appearance.height, _zIndex, that.toJSON());
+            var operation = new NodeDeleteOperation(id, that.getType(), _appearance.left, _appearance.top, _appearance.width, _appearance.height, _zIndex, _appearance.containment, that.toJSON());
             if (_ymap) {
                 propagateNodeDeleteOperation(operation);
                 y.share.nodes.delete(that.getEntityId());
@@ -566,7 +579,7 @@ define([
         this.getZIndex = function () {
             return _zIndex;
         };
-        
+
         this.refreshTraceAwareness = function (color) {
             refreshTraceAwareness(color);
         };
@@ -673,6 +686,14 @@ define([
          */
         this.getType = function () {
             return _type;
+        };
+
+        /**
+         * Get edge type
+         * @returns {boolean}
+         */
+        this.getContainment = function () {
+            return _containment;
         };
 
         /**
@@ -1018,12 +1039,73 @@ define([
                 top: 0
             };
 
+            var lastDragPos = {
+                left: 0,
+                top: 0
+            };
+
             //Enable Node Selection
             var drag = false;
             var $sizePreview = $("<div class=\"size-preview\"></div>").hide();
-            _$node.on("click", function () {
+            var clickedNode = _$node.on("click", function () {
                 _canvas.select(that);
-            })
+            });
+
+            if(that.getContainment()) {
+              clickedNode.droppable({
+                  hoverClass: 'selected',
+                  drop: function (event, ui) {
+                      const EntityManager = require('canvas_widget/EntityManager');
+
+                      var containerNode = EntityManager.getNodes()[$(this).attr("id")];
+                      var childNode = EntityManager.getNodes()[ui.draggable.attr("id")];
+                      var relations = EntityManager.getRelations();
+
+                      var isConnected = false;
+                      var relationshipType = null;
+
+                       _.each(containerNode.getOutgoingEdges(), function(edge) {
+                         if(edge.getTarget().getEntityId() === childNode.getEntityId()) {
+                           isConnected = true;
+                           return false;
+                         }
+                       });
+
+                       _.each(relations, function(relation, key) {
+
+                         _.each(relation, function(r) {
+                           _.each(r.sourceTypes, function(source) {
+                             if (containerNode.getType() === source) {
+                               _.each(r.targetTypes, function(target) {
+                                 if (childNode.getType() === target) {
+                                   relationshipType = key
+                                   return false;
+                                 }
+                               });
+                             }
+                           });
+                         });
+                       });
+
+                       if(!isConnected && relationshipType){
+                         _canvas.createEdge(relationshipType,$(this).attr("id"), ui.draggable.attr("id"));
+                       }
+
+                      // // now, the attributes left and top of the node are not related to the top left corner of the
+                      // // canvas anymore, but instead they are related to the top left corner of the parent element
+                      // // => move node to correct left and right attribute
+                      // const EntityManager = require('canvas_widget/EntityManager');
+                      //
+                      // const containerLeft = that.getAppearance().left;
+                      // const containerTop = that.getAppearance().top;
+                      //
+                      // const operation = new NodeMoveOperation(ui.draggable.attr("id"), -containerLeft, -containerTop);
+                      // EntityManager.getNodes()[ui.draggable.attr("id")].propagateNodeMoveOperation(operation);
+                  }
+              });
+            }
+
+            clickedNode
                 //Enable Node Resizing
                 .resizable({
                     containment: "parent",
@@ -1053,7 +1135,7 @@ define([
                         that.propagateNodeResizeOperation(operation);
                         _$node.resizable("option", "aspectRatio", false);
                         _$node.resizable("option", "grid", '');
-                        
+
                         //TODO: check that! Already called in processNodeResizeOperation called by propagateNodeResizeOperation
                         //_canvas.showGuidanceBox();
                     }
@@ -1063,8 +1145,14 @@ define([
                 .draggable({
                     containment: 'parent',
                     start: function (ev, ui) {
+
                         originalPos.top = ui.position.top;
                         originalPos.left = ui.position.left;
+
+                        lastDragPos.top = ui.position.top;
+                        lastDragPos.left = ui.position.left;
+
+
                         //ui.position.top = 0;
                         //ui.position.left = 0;
                         _canvas.select(that);
@@ -1074,9 +1162,26 @@ define([
                         drag = false;
                         _$node.draggable("option", "grid", ev.ctrlKey ? [20, 20] : '');
                     },
-                    drag: function (ev) {
+                    drag: function (ev, ui) {
                         // ui.position.left = Math.round(ui.position.left  / _canvas.getZoom());
                         // ui.position.top = Math.round(ui.position.top / _canvas.getZoom());
+
+                        var offsetX = Math.round((ui.position.left - lastDragPos.left) / _canvas.getZoom());
+                        var offsetY = Math.round((ui.position.top - lastDragPos.top) / _canvas.getZoom());
+
+                        function setChildPosition(node) {
+                          if(node.getContainment()) {
+                            _.each(node.getOutgoingEdges(), function(edge){
+                              $('#' + edge.getTarget().getEntityId()).offset({ top: $('#' + edge.getTarget().getEntityId()).offset().top + offsetY, left: $('#' + edge.getTarget().getEntityId()).offset().left + offsetX});
+                              setChildPosition(edge.getTarget())
+                            });
+                          }
+                        }
+
+                        setChildPosition(that);
+
+                        lastDragPos.top = ui.position.top;
+                        lastDragPos.left = ui.position.left;
 
                         if (drag) repaint();
                         drag = true;
@@ -1091,8 +1196,21 @@ define([
                         //_$node.css({top: originalPos.top / _canvas.getZoom(), left: originalPos.left / _canvas.getZoom()});
                         var offsetX = Math.round((ui.position.left - originalPos.left) / _canvas.getZoom());
                         var offsetY = Math.round((ui.position.top - originalPos.top) / _canvas.getZoom());
-                        var operation = new NodeMoveOperation(id, offsetX, offsetY);
+
+                        var operation = new NodeMoveOperation(that.getEntityId(), offsetX, offsetY);
                         that.propagateNodeMoveOperation(operation);
+
+                        function propagateChildPosition(node) {
+                          if(node.getContainment()) {
+                            _.each(node.getOutgoingEdges(), function(edge){
+                              var operation = new NodeMoveOperation(edge.getTarget().getEntityId(), offsetX, offsetY);
+                              edge.getTarget().propagateNodeMoveOperation(operation);
+                              propagateChildPosition(edge.getTarget())
+                            });
+                          }
+                        }
+
+                        propagateChildPosition(that);
 
                         //Avoid node selection on drag stop
                         _$node.draggable("option", "grid", '');

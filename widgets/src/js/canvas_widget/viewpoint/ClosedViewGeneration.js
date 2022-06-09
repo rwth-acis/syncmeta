@@ -31,7 +31,7 @@ define(['lodash', 'Util', 'graphlib', 'canvas_widget/EntityManager'],
                 if (node.type === 'Node Shape' || node.type === 'Edge Shape' || node.type === 'Relation') {
                     newNodeId = viewpointName + '_' + neighborId;
                     if (!EntityManager.findNode(newNodeId))
-                        canvas.createNode(node.type, node.left, node.top, node.width, node.height, node.zIndex, node, newNodeId);
+                        canvas.createNode(node.type, node.left, node.top, node.width, node.height, node.zIndex, node.containment, node, newNodeId);
                 }
                 else if (viewType.getType() === 'ViewObject' && node.type === 'Relationship') {
                     var viewtypes = EntityManager.getNodesByType('ViewRelationship');
@@ -55,7 +55,7 @@ define(['lodash', 'Util', 'graphlib', 'canvas_widget/EntityManager'],
                 if (newNodeId) {
                     var edge = metaGraph.edge(originId, neighborId);
                     if (!edge) {
-                        //try the other direction 
+                        //try the other direction
                         edge = metaGraph.edge(neighborId, originId);
                         canvas.createEdge(edge.type, newNodeId, viewType.getEntityId(), edge, viewpointName + '_' + edge.id, viewpointName);
                     } else {

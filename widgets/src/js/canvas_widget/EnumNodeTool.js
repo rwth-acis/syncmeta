@@ -16,7 +16,7 @@ define([
      * @constructor
      */
     function EnumNodeTool(){
-        NodeTool.call(this,EnumNode.TYPE,null,null,EnumNode.DEFAULT_WIDTH,EnumNode.DEFAULT_HEIGHT);
+        NodeTool.call(this,EnumNode.TYPE,null,null,null,EnumNode.DEFAULT_WIDTH,EnumNode.DEFAULT_HEIGHT);
     }
 
     return EnumNodeTool;

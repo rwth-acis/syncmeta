@@ -25,10 +25,11 @@ define([
      * @param {number} top y-coordinate of node position
      * @param {number} width Width of node
      * @param {number} height Height of node
+     * @param {boolean} containment containment
      * @param {string} viewId the identifier of the view the node belongs to
      * @constructor
      */
-    function AbstractNode(id, type, left, top, width, height, viewId) {
+    function AbstractNode(id, type, left, top, width, height, containment, viewId) {
         var that = this;
 
         AbstractEntity.call(this, id);
@@ -46,6 +47,13 @@ define([
          * @private
          */
         var _type = type;
+
+        /**
+         * Type of node
+         * @containment {boolean}
+         * @private
+         */
+        var _containment = containment;
 
         /**
          * Label of edge
@@ -285,6 +293,14 @@ define([
         };
 
         /**
+         * Get edge type
+         * @returns {boolean}
+         */
+        this.getContainment = function () {
+            return _containment;
+        };
+
+        /**
          * Get jQuery object of DOM node representing the node
          * @returns {jQuery}
          * @private
@@ -515,7 +531,7 @@ define([
     AbstractNode.prototype.registerYType = function () {
         this._registerYType();
     };
-    
+
     AbstractNode.prototype.remove = function(){
         this._remove();
     }

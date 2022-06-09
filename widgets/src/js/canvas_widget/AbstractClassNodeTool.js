@@ -15,7 +15,7 @@ define([
      * @constructor
      */
     function AbstractClassNodeTool(){
-        NodeTool.call(this,AbstractClassNode.TYPE,null,null,AbstractClassNode.DEFAULT_WIDTH,AbstractClassNode.DEFAULT_HEIGHT);
+        NodeTool.call(this,AbstractClassNode.TYPE,null,null,null,AbstractClassNode.DEFAULT_WIDTH,AbstractClassNode.DEFAULT_HEIGHT);
     }
 
     return AbstractClassNodeTool;

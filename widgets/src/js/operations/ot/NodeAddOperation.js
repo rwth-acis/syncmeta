@@ -19,6 +19,7 @@ define([
      * @param {number} width Width of node
      * @param {number} height Height of node
      * @param {number} zIndex Position of node on z-axis
+     * @param {boolean} containment containment
      * @param {object} json JSON representation of node
      * @param {string} viewId the identifier of the view
      * @param {string} oType the original Type, only set in views
@@ -26,7 +27,7 @@ define([
      * @param defaultAttributeValues May be used to set default attribute values for nodes.
      * @constructor
      */
-    function NodeAddOperation(entityId,type,left,top,width,height,zIndex,json, viewId, oType,jabberId, defaultLabel, defaultAttributeValues){
+    function NodeAddOperation(entityId,type,left,top,width,height,zIndex,containment,json, viewId, oType,jabberId, defaultLabel, defaultAttributeValues){
         var that = this;
 
         EntityOperation.call(this,EntityOperation.TYPES.NodeAddOperation,entityId,CONFIG.ENTITY.NODE);
@@ -90,6 +91,13 @@ define([
         var _zIndex = zIndex;
 
         /**
+         * is containment type
+         * @type {boolean}
+         * @private
+         */
+        var _containment = containment;
+
+        /**
          * JSON representation of node
          * @type {Object}
          * @private
@@ -122,6 +130,7 @@ define([
                     width: _width,
                     height: _height,
                     zIndex: _zIndex,
+                    containment: _containment,
                     json: _json,
                     viewId:_viewId,
                     oType: _oType,
@@ -182,6 +191,14 @@ define([
          */
         this.getZIndex = function(){
             return _zIndex;
+        };
+
+        /**
+         * Get containment
+         * @returns {boolean}
+         */
+        this.getContainment = function(){
+            return _containment;
         };
 
         /**
@@ -265,6 +282,7 @@ define([
                 this.getWidth(),
                 this.getHeight(),
                 this.getZIndex(),
+                this.getContainment(),
                 json
             );
         };
@@ -288,6 +306,7 @@ define([
             width: this.getWidth(),
             height: this.getHeight(),
             zIndex: this.getZIndex(),
+            containment: this.getContainment(),
             json: this.getJSON(),
             viewId:this.getViewId(),
             oType: this.getOriginType(),
