@@ -14,12 +14,12 @@
     "@polymer/polymer": "^3.5.1",
     "las2peer-frontend-statusbar": "github:rwth-acis/las2peer-frontend-statusbar#0.3.6",
     "las2peer-frontend-user-widget": "github:rwth-acis/las2peer-frontend-user-widget#0.3.3",
-    "y-array": "10.1.4",
-    "y-map": "10.1.3",
-    "y-memory": "8.0.9",
-    "y-text": "9.5.1",
-    "y-websockets-client": "8.0.16",
-    "yjs": "13.5.41"
+    "y-array": "github:y-js/y-array#v11.0.0-5",
+    "y-map": "github:y-js/y-map#v11.0.0-1",
+    "y-memory": "github:y-js/y-memory#v9.0.0-1",
+    "y-text": "github:y-js/y-text#v10.0.0-1",
+    "y-websockets-client": "github:y-js/y-websockets-client#v9.0.0-4",
+    "yjs": "^13.0.0-17"
   },
   "devDependencies": {
     "@polymer/test-fixture": "^4.0.2",
