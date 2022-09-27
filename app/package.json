@@ -19,7 +19,7 @@
     "y-memory": "8.0.9",
     "y-text": "9.5.1",
     "y-websockets-client": "8.0.16",
-    "yjs": "12.3.3"
+    "yjs": "13.5.41"
   },
   "devDependencies": {
     "@polymer/test-fixture": "^4.0.2",
