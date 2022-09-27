@@ -51,7 +51,6 @@
     "grunt-contrib-uglify": "~5.0.1",
     "grunt-contrib-watch": "~1.1.0",
     "grunt-jsdoc": "~2.4.1",
-    "grunt-ssh": "~0.12.9",
     "mocha": "^5.0.0"
   }
 }
