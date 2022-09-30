@@ -10,8 +10,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - run: cd widgets
-    - name: Install Grunt-CLI
-      run: sudo npm install -g grunt-cli
+    # - name: Install Grunt-CLI
+    #   run: sudo npm install -g grunt-cli
     - name: Install dependencies 
       run: RUN npm install --verbose
     - name: Run Grunt Build
