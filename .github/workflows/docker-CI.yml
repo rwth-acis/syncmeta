@@ -12,6 +12,7 @@ jobs:
     - run: cd widgets
     # - name: Install Grunt-CLI
     #   run: sudo npm install -g grunt-cli
+    - run : ls
     - name: Install dependencies 
       run: npm install --verbose
     - name: Run Grunt Build
