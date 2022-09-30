@@ -11,8 +11,8 @@ jobs:
       working-directory: ./widgets
     steps:
       - uses: actions/checkout@v2
-      - name: Install Grunt-CLI
-        run: sudo npm install -g grunt-cli
+      # - name: Install Grunt-CLI
+      #   run: sudo npm install -g grunt-cli
       - run: pwd
       - name: Install dependencies
         run: npm install --verbose
