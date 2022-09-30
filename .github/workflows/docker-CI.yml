@@ -7,13 +7,13 @@ on:
 jobs:
   test-widget-build:
     runs-on: ubuntu-18.04
+    env: 
+      working-directory: ./widgets
     steps:
       - uses: actions/checkout@v2
-      # - name: Install Grunt-CLI
-      #   run: sudo npm install -g grunt-cli
+      - name: Install Grunt-CLI
+        run: sudo npm install -g grunt-cli
       - run: pwd
-      - run: ls
-      - run: cd widgets & pwd
       - name: Install dependencies
         run: npm install --verbose
       - name: Run Grunt Build
