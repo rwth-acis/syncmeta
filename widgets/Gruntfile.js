@@ -51,11 +51,11 @@ module.exports = function(grunt) {
               dest: "<%= distdir %>/js/lib/vendor/jquery-migrate.js",
             },
             {
-              src: "<%= nodemodules %>/jquery-ui/jquery-ui.js",
+              src: "<%= nodemodules %>/jquery-ui/dist/jquery-ui.js",
               dest: "<%= distdir %>/js/lib/vendor/jquery-ui.js",
             },
             {
-              src: "<%= nodemodules %>/jquery-ui/themes/base/jquery-ui.css",
+              src: "<%= nodemodules %>/jquery-ui/dist/themes/base/jquery-ui.css",
               dest: "<%= distdir %>/css/vendor/jquery-ui.css",
             },
             {

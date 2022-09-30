@@ -27,4 +27,5 @@ RUN npm install --verbose
 WORKDIR /usr/src/app
 COPY docker/docker-entrypoint.sh docker-entrypoint.sh
 RUN dos2unix docker-entrypoint.sh
+EXPOSE 8070
 ENTRYPOINT ["./docker-entrypoint.sh"]
