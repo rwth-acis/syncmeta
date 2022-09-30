@@ -2,39 +2,39 @@ name: Docker Build and Push
 
 on:
   push:
-    branches: [ master, develop , yjs13]
+    branches: [master, develop, yjs13]
 
 jobs:
   test-widget-build:
     runs-on: ubuntu-18.04
     steps:
-    - uses: actions/checkout@v2
-    # - name: Install Grunt-CLI
-    #   run: sudo npm install -g grunt-cli
-    - run : pwd
-    - shell: bash
-      run: cd widgets & pwd
-    - name: Install dependencies 
-      run: npm install --verbose
-    - name: Run Grunt Build
-      run: grunt build --stack
+      - uses: actions/checkout@v2
+      # - name: Install Grunt-CLI
+      #   run: sudo npm install -g grunt-cli
+      - run: pwd
+      - run: ls
+      - run: cd widgets & pwd
+      - name: Install dependencies
+        run: npm install --verbose
+      - name: Run Grunt Build
+        run: grunt build --stack
 
   build:
     runs-on: ubuntu-latest
     needs: test-widget-build
     steps:
-    - uses: actions/checkout@v2
-    - name: Extract branch name
-      shell: bash
-      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-      id: extract_branch
-    - name: Build the Docker image
-      run: | 
-        docker build -t registry.tech4comp.dbis.rwth-aachen.de/rwthacis/syncmeta:${{ steps.extract_branch.outputs.branch }} .
-    - name: Push to registry
-      env:
-        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}  
-        DOCKER_PW: ${{ secrets.DOCKER_PW }}
-      run: |
-        docker login -u $DOCKER_USERNAME -p $DOCKER_PW registry.tech4comp.dbis.rwth-aachen.de
-        docker push registry.tech4comp.dbis.rwth-aachen.de/rwthacis/syncmeta:${{ steps.extract_branch.outputs.branch }}
+      - uses: actions/checkout@v2
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+      - name: Build the Docker image
+        run: |
+          docker build -t registry.tech4comp.dbis.rwth-aachen.de/rwthacis/syncmeta:${{ steps.extract_branch.outputs.branch }} .
+      - name: Push to registry
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PW: ${{ secrets.DOCKER_PW }}
+        run: |
+          docker login -u $DOCKER_USERNAME -p $DOCKER_PW registry.tech4comp.dbis.rwth-aachen.de
+          docker push registry.tech4comp.dbis.rwth-aachen.de/rwthacis/syncmeta:${{ steps.extract_branch.outputs.branch }}
