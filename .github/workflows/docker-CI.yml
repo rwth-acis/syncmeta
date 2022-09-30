@@ -2,11 +2,24 @@ name: Docker Build and Push
 
 on:
   push:
-    branches: [ master, develop ]
+    branches: [ master, develop , yjs13]
 
 jobs:
+  test-widget-build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - run: cd widgets
+    - name: Install Grunt-CLI
+      run: sudo npm install -g grunt-cli
+    - name: Install dependencies 
+      run: RUN npm install --verbose
+    - name: Run Grunt Build
+      run: grunt build --stack
+
   build:
     runs-on: ubuntu-latest
+    needs: test-widget-build
     steps:
     - uses: actions/checkout@v2
     - name: Extract branch name
