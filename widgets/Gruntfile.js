@@ -104,12 +104,12 @@ module.exports = function(grunt) {
               src: "<%= nodemodules %>/graphlib/dist/graphlib.core.min.js",
               dest: "<%= distdir %>/js/lib/vendor/graphlib.core.min.js",
             },
-            {
-              cwd: "<%= nodemodules %>/font-awesome/",
-              expand: true,
-              src: ["css/**", "fonts/**"],
-              dest: "<%= distdir %>/css/vendor/font-awesome/",
-            },
+            // {
+            //   cwd: "<%= nodemodules %>/font-awesome/",
+            //   expand: true,
+            //   src: ["css/**", "fonts/**"],
+            //   dest: "<%= distdir %>/css/vendor/font-awesome/",
+            // },
             {
               cwd: "<%= nodemodules %>/yjs/dist",
               expand: true,
