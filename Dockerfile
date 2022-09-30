@@ -9,7 +9,7 @@ ENV WEBHOST http://127.0.0.1:8070
 ENV OIDC_CLIENT_ID localtestclient
 
 RUN apt-get update
-RUN apt-get install -y --no-install-recommends supervisor git nginx dos2unix
+RUN apt-get install -y --no-install-recommends supervisor git nginx dos2unix chromium
 RUN npm_config_user=root npm install -g grunt-cli grunt polymer-cli
 
 COPY docker /usr/src/app/docker
