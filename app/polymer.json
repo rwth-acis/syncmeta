@@ -1,9 +1,7 @@
 {
   "entrypoint": "index.html",
   "shell": "src/static-app.js",
-  "sources": [
-    "images/**/*"
-  ],
+  "sources": ["images/**/*"],
   "extraDependencies": [
     "manifest.json",
     "node_modules/@webcomponents/webcomponentsjs/*.js",
@@ -13,10 +11,7 @@
   "builds": [
     {
       "name": "esm-bundled",
-      "browserCapabilities": [
-        "es2015",
-        "modules"
-      ],
+      "browserCapabilities": ["es2015", "modules"],
       "js": {
         "minify": true
       },
@@ -31,9 +26,7 @@
     },
     {
       "name": "es6-bundled",
-      "browserCapabilities": [
-        "es2015"
-      ],
+      "browserCapabilities": ["es2015"],
       "js": {
         "minify": true,
         "transformModulesToAmd": true
@@ -67,8 +60,6 @@
   "moduleResolution": "node",
   "npm": true,
   "lint": {
-    "rules": [
-      "polymer-3"
-    ]
+    "rules": ["polymer-3"]
   }
 }

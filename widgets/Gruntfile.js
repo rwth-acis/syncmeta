@@ -51,11 +51,11 @@ module.exports = function(grunt) {
               dest: "<%= distdir %>/js/lib/vendor/jquery-migrate.js",
             },
             {
-              src: "<%= nodemodules %>/jquery-ui/dist/jquery-ui.js",
+              src: "<%= nodemodules %>/jquery-ui/jquery-ui.js",
               dest: "<%= distdir %>/js/lib/vendor/jquery-ui.js",
             },
             {
-              src: "<%= nodemodules %>/jquery-ui/dist/themes/base/jquery-ui.css",
+              src: "<%= nodemodules %>/jquery-ui/themes/base/jquery-ui.css",
               dest: "<%= distdir %>/css/vendor/jquery-ui.css",
             },
             {
@@ -104,12 +104,6 @@ module.exports = function(grunt) {
               src: "<%= nodemodules %>/graphlib/dist/graphlib.core.min.js",
               dest: "<%= distdir %>/js/lib/vendor/graphlib.core.min.js",
             },
-            // {
-            //   cwd: "<%= nodemodules %>/font-awesome/",
-            //   expand: true,
-            //   src: ["css/**", "fonts/**"],
-            //   dest: "<%= distdir %>/css/vendor/font-awesome/",
-            // },
             {
               cwd: "<%= nodemodules %>/yjs/dist",
               expand: true,

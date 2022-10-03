@@ -6,8 +6,8 @@ import '@polymer/iron-pages/iron-pages.js';
 import '@polymer/paper-button/paper-button.js';
 import Common from './common.js';
 import Static from './static.js';
-import * as Y from "yjs";
-import { WebsocketProvider } from "y-websockets-client";
+// import * as Y from "yjs";
+// import { WebsocketProvider } from "y-websockets-client";
 
 /**
  * @customElement
@@ -184,8 +184,8 @@ class StaticApp extends PolymerElement {
 
   ready() {
     super.ready();
-    window.Y = Y;
-    window.WebsocketProvider = WebsocketProvider;
+    // window.Y = Y;
+    // window.WebsocketProvider = WebsocketProvider;
     parent.caeFrames = this.shadowRoot.querySelectorAll("iframe");
     const statusBar = this.shadowRoot.querySelector("#statusBar");
     statusBar.addEventListener("signed-in", this.handleLogin);
