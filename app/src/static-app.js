@@ -7,7 +7,6 @@ import '@polymer/paper-button/paper-button.js';
 import Common from './common.js';
 import Static from './static.js';
 import * as Y from "yjs";
-import { WebsocketProvider } from "y-websockets-client";
 
 /**
  * @customElement
@@ -184,9 +183,8 @@ class StaticApp extends PolymerElement {
 
   ready() {
     super.ready();
-    console.log(Y, WebsocketProvider);
     window.Y = Y;
-    window.WebsocketProvider = WebsocketProvider;
+    console.log(window.Y);
     parent.caeFrames = this.shadowRoot.querySelectorAll("iframe");
     const statusBar = this.shadowRoot.querySelector("#statusBar");
     statusBar.addEventListener("signed-in", this.handleLogin);
@@ -281,13 +279,28 @@ class StaticApp extends PolymerElement {
   }
 
   handleLogin(event) {
-    localStorage.setItem("access_token", event.detail.access_token);
+    var cached_access_token = localStorage.getItem("access_token");
     localStorage.setItem(
       "userinfo_endpoint",
-      "https://api.learning-layers.eu/auth/realms/main/protocol/openid-connect/userinfo"
+      "https://auth.las2peer.org/auth/realms/main/protocol/openid-connect/userinfo"
     );
-    location.reload();
+    if (!event.detail.access_token || event.detail?.expired === true) {
+      alert("Login failed. Please try again.");
+    } 
+    if (event.detail.access_token === cached_access_token) {
+      return; // already logged in
+    }
+    localStorage.setItem("access_token", event.detail.access_token);
+    this.reloadFrames();
   }
+
+  // refreshIframes() {
+  //   console.info("refreshing iframes");
+  //   const iframes = document.querySelectorAll("iframe");
+  //   iframes.forEach((iframe) => {
+  //     iframe.contentWindow.location.reload();
+  //   });
+  // }
 
   handleLogout() {
     localStorage.removeItem("access_token");
