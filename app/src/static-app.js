@@ -94,7 +94,11 @@ class StaticApp extends PolymerElement {
 
       <p id="currentRoom">Current Space: Test</p>
       <div id="yjsroomcontainer">
-        <paper-input always-float-label label="Space"></paper-input>
+        <paper-input
+          always-float-label
+          label="Space"
+          id="roomNameInput"
+        ></paper-input>
         <paper-button on-click="_onChangeButtonClicked">Enter</paper-button>
         <div class="loader" id="roomEnterLoader"></div>
       </div>
@@ -193,7 +197,7 @@ class StaticApp extends PolymerElement {
   }
 
   _onChangeButtonClicked() {
-    var roomName = this.shadowRoot.querySelector("paper-input").value;
+    var roomName = this.shadowRoot.querySelector("#roomNameInput").value;
     Common.setYjsRoomName(roomName);
     this.changeVisibility("#roomEnterLoader", true);
     location.reload();
