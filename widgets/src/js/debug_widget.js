@@ -102,7 +102,8 @@ requirejs(
         });
 
         $activityDelete.click(function () {
-          y.share.activity.set("log", null);
+          const activityMap = y.getMap("activity");
+          activityMap.set("log", null);
           feedback("Done!");
         });
 
@@ -139,11 +140,12 @@ requirejs(
         });
 
         $activityExport.click(function () {
+          const activityMap = y.getMap("activity");
           var link = document.createElement("a");
           link.download = "activityList.json";
           link.href =
             "data:," +
-            encodeURI(JSON.stringify(y.share.activity.get("log"), null, 4));
+            encodeURI(JSON.stringify(activityMap.get("log"), null, 4));
           link.click();
         });
 
@@ -264,8 +266,8 @@ requirejs(
             $exportMetamodel.prop("disabled", false);
             $deleteMetamodel.prop("disabled", false);
           }
-
-          if (!y.share.activity.get("log")) {
+          const activityMap = y.getMap("activity");
+          if (!activityMap.get("log")) {
             $activityExport.prop("disabled", true);
             $activityDelete.prop("disabled", true);
           } else {

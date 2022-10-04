@@ -258,8 +258,8 @@ define([
         CONFIG.WIDGET.NAME.GUIDANCE,
         operation.getOTOperation()
       );
-
-      y.share.activity.set(
+      const activityMap = y.getMap("activity");
+      activityMap.set(
         ActivityOperation.TYPE,
         new ActivityOperation(
           "NodeMoveActivity",
@@ -296,7 +296,8 @@ define([
         CONFIG.WIDGET.NAME.GUIDANCE,
         operation.getOTOperation()
       );
-      y.share.activity.set(
+      const activityMap = y.getMap("activity");
+      activityMap.set(
         ActivityOperation.TYPE,
         new ActivityOperation(
           "NodeMoveActivity",
@@ -345,7 +346,8 @@ define([
         CONFIG.WIDGET.NAME.GUIDANCE,
         operation.getOTOperation()
       );
-      y.share.activity.set(
+      const activityMap = y.getMap("activity");
+      activityMap.set(
         ActivityOperation.TYPE,
         new ActivityOperation(
           "NodeResizeActivity",
@@ -407,7 +409,8 @@ define([
         CONFIG.WIDGET.NAME.HEATMAP,
         operation.getOTOperation()
       );
-      y.share.activity.set(
+      const activityMap = y.getMap("activity");
+      activityMap.set(
         ActivityOperation.TYPE,
         new ActivityOperation(
           "NodeDeleteActivity",

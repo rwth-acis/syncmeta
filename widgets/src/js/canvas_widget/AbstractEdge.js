@@ -159,14 +159,20 @@ define([
 
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
             _iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
-
-            y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(
+            const activityMap = y.getMap("activity");
+            activityMap.set(
+              ActivityOperation.TYPE,
+              new ActivityOperation(
                 "EdgeDeleteActivity",
                 operation.getEntityId(),
                 _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
-                EdgeDeleteOperation.getOperationDescription(that.getType(), that.getLabel().getValue().getValue()),
+                EdgeDeleteOperation.getOperationDescription(
+                  that.getType(),
+                  that.getLabel().getValue().getValue()
+                ),
                 {}
-            ));
+              )
+            );
 
         };
 

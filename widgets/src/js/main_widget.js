@@ -167,7 +167,8 @@ requirejs(
         const usersMap = y.getMap("users");
         //userList.delete(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
         //usersMap.delete(y.clientID);
-        y.share.activity.set(
+        const activityMap = y.getMap("activity");
+        activityMap.set(
           "UserLeftActivity",
           new ActivityOperation(
             "UserLeftActivity",
@@ -336,8 +337,8 @@ requirejs(
                     y.share.nodes.get(key).set("top", nodeInModel.top);
                   }
                 }
-
-                y.share.activity.set(
+                const activityMap = y.getMap("activity");
+                activityMap.set(
                   "ReloadWidgetOperation",
                   new ActivityOperation(
                     "ReloadWidgetOperation",
@@ -798,7 +799,8 @@ requirejs(
         const usersMap = window.y.getMap("users");
         const canvasMap = window.y.getMap("canvas");
         canvasMap.set("applyLayout", usersMap.get(window.y.clientID));
-        window.y.share.activity.set(
+        const activityMap = window.y.getMap("activity");
+        activityMap.set(
           "ApplyLayoutActivity",
           new ActivityOperation(
             "ApplyLayoutActivity",

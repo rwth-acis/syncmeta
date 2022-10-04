@@ -240,7 +240,8 @@ define([
         CONFIG.WIDGET.NAME.HEATMAP,
         operation.getOTOperation()
       );
-      y.share.activity.set(
+      const activityMap = y.getMap("activity");
+      activityMap.set(
         ActivityOperation.TYPE,
         new ActivityOperation(
           "NodeAddActivity",
@@ -301,7 +302,8 @@ define([
         CONFIG.WIDGET.NAME.GUIDANCE,
         operation.getOTOperation()
       );
-      y.share.activity.set(
+      const activityMap = y.getMap("activity");
+      activityMap.set(
         ActivityOperation.TYPE,
         new ActivityOperation(
           "EdgeAddActivity",
@@ -546,7 +548,8 @@ define([
               "</a>",
             {}
           );
-          y.share.activity.set("EditorGenerateActivity", op);
+          const activityMap = y.getMap("activity");
+          activityMap.set("EditorGenerateActivity", op);
         }
       }
     };
@@ -1754,7 +1757,9 @@ define([
                 event.value.viewId,
                 event.value.jabberId
               );
-              y.share.activity.set(ActivityOperation.TYPE, activityOperation);
+              const activityMap = y.getMap("activity");
+
+              activityMap.set(ActivityOperation.TYPE, activityOperation);
               break;
             }
             case "triggerSave": {
