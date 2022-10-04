@@ -184,7 +184,6 @@ class StaticApp extends PolymerElement {
   ready() {
     super.ready();
     window.Y = Y;
-    console.log(window.Y);
     parent.caeFrames = this.shadowRoot.querySelectorAll("iframe");
     const statusBar = this.shadowRoot.querySelector("#statusBar");
     statusBar.addEventListener("signed-in", this.handleLogin);
@@ -291,7 +290,9 @@ class StaticApp extends PolymerElement {
       return; // already logged in
     }
     localStorage.setItem("access_token", event.detail.access_token);
-    this.reloadFrames();
+    if (parent.caeFrames) {
+      parent.caeFrames.forEach((f) => f.contentWindow.location.reload());
+    }
   }
 
   // refreshIframes() {
