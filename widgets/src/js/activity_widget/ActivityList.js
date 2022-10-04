@@ -387,8 +387,9 @@ define([
           var list = activityMap.get("log");
           var activity;
           var checkEntity = function (entityId) {
+            const nodesMap = y.getMap("nodes");
             if (
-              y.share.nodes.keys().indexOf(entityId) != -1 ||
+              nodesMap.keys().indexOf(entityId) != -1 ||
               y.share.edges.keys().indexOf(entityId) != -1
             )
               return true;
@@ -465,7 +466,8 @@ define([
                     a.nodeType
                   );
                   that.addActivity(activity);
-                  if (y.share.nodes.keys().indexOf()) break;
+                  const nodesMap = y.getMap("nodes");
+                  if (nodesMap.keys().indexOf()) break;
                 }
                 case ValueChangeActivity.TYPE: {
                   activity = new ValueChangeActivity(
@@ -508,32 +510,42 @@ define([
           }
         };
         if (y) {
-            const activityMap = y.getMap("activity");
-            activityMap.observe(function (event) {
-                if (event.name === 'log' || event.value.sender == null) return;
-                operationCallback(new ActivityOperation(event.value.type, event.value.entityId, event.value.sender, event.value.text, event.value.data));
-            });
-
-            y.share.select.observe(function (event) {
-                if (event.value === null) {
-                    _.each(activityList, function (activity) {
-                        activity.show();
-                    });
-                } else {
-                    _.each(activityList, function (activity) {
-                        activity.show();
-                    });
-                    _.each(_.filter(activityList, function (activity) {
-                        if (activity instanceof ValueChangeActivity) {
-                            return activity.getRootSubjectEntityId() !== event.value;
-                        }
-                        return activity.getEntityId() !== event.value;
-                    }), function (activity) {
-                        activity.hide();
-                    });
+          const activityMap = y.getMap("activity");
+          activityMap.observe(function (event) {
+            if (event.name === "log" || event.value.sender == null) return;
+            operationCallback(
+              new ActivityOperation(
+                event.value.type,
+                event.value.entityId,
+                event.value.sender,
+                event.value.text,
+                event.value.data
+              )
+            );
+          });
+          const selectionMap = y.getMap("select");
+          selectionMap.observe(function (event) {
+            if (event.value === null) {
+              _.each(activityList, function (activity) {
+                activity.show();
+              });
+            } else {
+              _.each(activityList, function (activity) {
+                activity.show();
+              });
+              _.each(
+                _.filter(activityList, function (activity) {
+                  if (activity instanceof ValueChangeActivity) {
+                    return activity.getRootSubjectEntityId() !== event.value;
+                  }
+                  return activity.getEntityId() !== event.value;
+                }),
+                function (activity) {
+                  activity.hide();
                 }
-
-            });
+              );
+            }
+          });
         }
     }
 

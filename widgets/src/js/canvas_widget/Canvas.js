@@ -970,12 +970,13 @@ define([
         CONFIG.WIDGET.NAME.OPENAPI,
         operation.toNonOTOperation()
       );
-
+      const selectionMap = y.getMap("select");
       if (entity === null) {
         const userMap = y.getMap("users");
-        y.share.select.set(userMap.get(y.clientID), null);
+
+        selectionMap.set(userMap.get(y.clientID), null);
       } else {
-        y.share.select.set(userMap.get(y.clientID), entity.getEntityId());
+        selectionMap.set(userMap.get(y.clientID), entity.getEntityId());
       }
       _selectedEntity = entity;
     };
@@ -1818,8 +1819,9 @@ define([
             //used by the syncmeta-plugin only
             case NodeDeleteOperation.TYPE: {
               var userId = _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID];
+              const nodesMap = y.getMap("nodes");
               if (event.value.jabberId === userId)
-                y.share.nodes.delete(event.value.entityId);
+                nodesMap.delete(event.value.entityId);
               setTimeout(function () {
                 $("#save").click();
               }, 300);
@@ -1836,8 +1838,8 @@ define([
           $("#save").click();
         }
       });
-
-      y.share.select.observe(function (event) {
+      const selectionMap = y.getMap("select");
+      selectionMap.observe(function (event) {
         const userMap = y.getMap("users");
         if (event.name !== userMap.get(y.clientID)) {
           const userList = y.getMap("usersList");
@@ -1857,8 +1859,8 @@ define([
           }
         }
       });
-
-      y.share.nodes.observe(function (event) {
+      const nodesMap = y.getMap("nodes");
+      nodesMap.observe(function (event) {
         switch (event.type) {
           case "delete": {
             var node = EntityManager.findNode(event.name);
@@ -1873,7 +1875,8 @@ define([
                                                         var yUserId = event.object.map[event.name][0];
                                                         if (yUserId === y.clientID) return;
                                                         //var map = event.value;
-                                                        var map = y.share.nodes.get(event.name);
+                                                        const nodesMap = y.getMap('nodes');
+                                                        var map = nodesMap.get(event.name);
                                                         map.observe(function(nodeEvent) {
                                                             switch (nodeEvent.name) {
                                                                 case 'jabberId': {

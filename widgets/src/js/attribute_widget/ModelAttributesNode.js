@@ -95,7 +95,8 @@ define([
                 if (attrs.hasOwnProperty(key)) {
                     var val = attrs[key].getValue();
                     if (val.constructor.name === "Value" || val.constructor.name === "MultiLineValue") {
-                        var ymap = y.share.nodes.get(this.getEntityId());
+                        const nodesMap = y.getMap("nodes");
+                        var ymap = nodesMap.get(this.getEntityId());
                         var ytext = ymap.get(val.getEntityId());
                         val.registerYType(ytext);
                     }

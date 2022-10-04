@@ -33,7 +33,8 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function ($, _, Enti
         }
 
         function createNode(nodeId, jsonNode) {
-            var map = y.share.nodes.get(nodeId);
+            const nodesMap = y.getMap("nodes");
+            var map = nodesMap.get(nodeId);
 
             var node = null;
             if (map) {

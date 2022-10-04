@@ -76,10 +76,11 @@ define([
      * */
     var _ymap = null;
     if (window.hasOwnProperty("y")) {
-      if (y.share.nodes.keys().indexOf(id) != -1) {
-        _ymap = y.share.nodes.get(id);
+      const nodesMap = y.getMap("nodes");
+      if (nodesMap.keys().indexOf(id) != -1) {
+        _ymap = nodesMap.get(id);
       } else {
-        _ymap = y.share.nodes.set(id, Y.Map);
+        _ymap = nodesMap.set(id, Y.Map);
         _ymap.set("left", left);
         _ymap.set("top", top);
         _ymap.set("width", width);
@@ -689,7 +690,8 @@ define([
       );
       if (_ymap) {
         propagateNodeDeleteOperation(operation);
-        y.share.nodes.delete(that.getEntityId());
+        const nodesMap = y.getMap("nodes");
+        nodesMap.delete(that.getEntityId());
       } else {
         propagateNodeDeleteOperation(operation);
       }

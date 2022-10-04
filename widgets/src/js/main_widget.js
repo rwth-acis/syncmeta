@@ -327,14 +327,15 @@ requirejs(
                 // then the position of the node does not get updated
                 // therefore, this is manually done here
                 const dataMap = y.getMap("data");
-                for (var key of y.share.nodes.keys()) {
+                const nodesMap = y.getMap("nodes");
+                for (var key of nodesMap.keys()) {
                   // check if the node also exists in the updated model
 
                   var nodeInModel = dataMap.get("model").nodes[key];
                   if (nodeInModel) {
                     // update left and top position values
-                    y.share.nodes.get(key).set("left", nodeInModel.left);
-                    y.share.nodes.get(key).set("top", nodeInModel.top);
+                    nodesMap.get(key).set("left", nodeInModel.left);
+                    nodesMap.get(key).set("top", nodeInModel.top);
                   }
                 }
                 const activityMap = y.getMap("activity");

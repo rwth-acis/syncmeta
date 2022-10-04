@@ -186,7 +186,8 @@ requirejs(
             for (var key in data.nodes) {
               if (data.nodes.hasOwnProperty(key)) {
                 var entity = data.nodes[key];
-                var map = y.share.nodes.set(key, Y.Map);
+                const nodesMap = y.getMap("nodes");
+                nodesMap.set(key, Y.Map);
                 var attrs = entity.attributes;
                 if (entity.hasOwnProperty("label")) {
                   var ytext = map.set(entity.label.value.id, Y.Text);

@@ -38,7 +38,8 @@ define([
                 ytext.bind(_propertyInput.getValue().get$node()[0]);
             }
             else {
-                var ymap  = y.share.nodes.get(entity.getEntityId());
+                const nodesMap = y.getMap("nodes");
+                var ymap = nodesMap.get(entity.getEntityId());
                 var ytext = ymap.get(entity.getEntityId() + "[" + propertyName.toLowerCase() + "]");
                 ytext.bind(_propertyInput.getValue().get$node()[0]);
             }
