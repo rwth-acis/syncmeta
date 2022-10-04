@@ -284,7 +284,7 @@ class StaticApp extends PolymerElement {
       "userinfo_endpoint",
       "https://auth.las2peer.org/auth/realms/main/protocol/openid-connect/userinfo"
     );
-    if (!event.detail.access_token || event.detail?.expired === true) {
+    if (!event.detail.access_token || event.detail.expired === true) {
       alert("Login failed. Please try again.");
     } 
     if (event.detail.access_token === cached_access_token) {
