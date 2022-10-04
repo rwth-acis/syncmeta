@@ -207,7 +207,8 @@ class StaticApp extends PolymerElement {
     this.publishUpdateMetamodelOperation();
     this.changeVisibility("#generateModelLoader", true);
     this.initY((y) => {
-      y.share.metamodelStatus.observe((event) => {
+      const metaModelStatus = y.getMap("metaModelStatus");
+      metaModelStatus.observe((event) => {
         var message;
         if (event.name == "uploaded") {
           message =

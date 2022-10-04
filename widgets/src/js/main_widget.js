@@ -3,59 +3,111 @@
  * @namespace canvas_widget
  */
 
-requirejs([
-    'jqueryui',
-    'jsplumb',
-    'iwcw',
-    'lib/yjs-sync',
-    'Util',
-    'operations/non_ot/NonOTOperation',
-    'operations/non_ot/ToolSelectOperation',
-    'operations/non_ot/ActivityOperation',
-    'operations/non_ot/ViewInitOperation',
-    'operations/non_ot/UpdateViewListOperation',
-    'operations/non_ot/DeleteViewOperation',
-    'operations/non_ot/SetViewTypesOperation',
-    'operations/non_ot/InitModelTypesOperation',
-    'operations/non_ot/SetModelAttributeNodeOperation',
-    'operations/non_ot/UpdateMetamodelOperation',
-    'canvas_widget/Canvas',
-    'canvas_widget/EntityManager',
-    'canvas_widget/NodeTool',
-    'canvas_widget/ObjectNodeTool',
-    'canvas_widget/AbstractClassNodeTool',
-    'canvas_widget/RelationshipNodeTool',
-    'canvas_widget/RelationshipGroupNodeTool',
-    'canvas_widget/EnumNodeTool',
-    'canvas_widget/NodeShapeNodeTool',
-    'canvas_widget/EdgeShapeNodeTool',
-    'canvas_widget/EdgeTool',
-    'canvas_widget/GeneralisationEdgeTool',
-    'canvas_widget/BiDirAssociationEdgeTool',
-    'canvas_widget/UniDirAssociationEdgeTool',
-    'canvas_widget/ObjectNode',
-    'canvas_widget/AbstractClassNode',
-    'canvas_widget/RelationshipNode',
-    'canvas_widget/RelationshipGroupNode',
-    'canvas_widget/EnumNode',
-    'canvas_widget/NodeShapeNode',
-    'canvas_widget/EdgeShapeNode',
-    'canvas_widget/GeneralisationEdge',
-    'canvas_widget/BiDirAssociationEdge',
-    'canvas_widget/UniDirAssociationEdge',
-    'canvas_widget/viewpoint/ViewObjectNode',
-    'canvas_widget/viewpoint/ViewObjectNodeTool',
-    'canvas_widget/viewpoint/ViewRelationshipNode',
-    'canvas_widget/viewpoint/ViewRelationshipNodeTool',
-    'canvas_widget/viewpoint/ViewManager',
-    'canvas_widget/view/ViewGenerator',
-    'canvas_widget/HistoryManager',
-    'canvas_widget/JSONtoGraph',
-    'canvas_widget/GenerateViewpointModel',
-    'promise!User',
-    'promise!Guidancemodel'
-], function ($, jsPlumb, IWCW, yjsSync, Util, NonOTOperation, ToolSelectOperation, ActivityOperation, ViewInitOperation, UpdateViewListOperation, DeleteViewOperation, SetViewTypesOperation, InitModelTypesOperation, SetModelAttributeNodeOperation, UpdateMetamodelOperation, Canvas, EntityManager, NodeTool, ObjectNodeTool, AbstractClassNodeTool, RelationshipNodeTool, RelationshipGroupNodeTool, EnumNodeTool, NodeShapeNodeTool, EdgeShapeNodeTool, EdgeTool, GeneralisationEdgeTool, BiDirAssociationEdgeTool, UniDirAssociationEdgeTool, ObjectNode, AbstractClassNode, RelationshipNode, RelationshipGroupNode, EnumNode, NodeShapeNode, EdgeShapeNode, GeneralisationEdge, BiDirAssociationEdge, UniDirAssociationEdge, ViewObjectNode, ViewObjectNodeTool, ViewRelationshipNode, ViewRelationshipNodeTool, ViewManager, ViewGenerator, HistoryManager, JSONtoGraph, GenerateViewpointModel, user, guidancemodel) {
-
+requirejs(
+  [
+    "jqueryui",
+    "jsplumb",
+    "iwcw",
+    "lib/yjs-sync",
+    "Util",
+    "operations/non_ot/NonOTOperation",
+    "operations/non_ot/ToolSelectOperation",
+    "operations/non_ot/ActivityOperation",
+    "operations/non_ot/ViewInitOperation",
+    "operations/non_ot/UpdateViewListOperation",
+    "operations/non_ot/DeleteViewOperation",
+    "operations/non_ot/SetViewTypesOperation",
+    "operations/non_ot/InitModelTypesOperation",
+    "operations/non_ot/SetModelAttributeNodeOperation",
+    "operations/non_ot/UpdateMetamodelOperation",
+    "canvas_widget/Canvas",
+    "canvas_widget/EntityManager",
+    "canvas_widget/NodeTool",
+    "canvas_widget/ObjectNodeTool",
+    "canvas_widget/AbstractClassNodeTool",
+    "canvas_widget/RelationshipNodeTool",
+    "canvas_widget/RelationshipGroupNodeTool",
+    "canvas_widget/EnumNodeTool",
+    "canvas_widget/NodeShapeNodeTool",
+    "canvas_widget/EdgeShapeNodeTool",
+    "canvas_widget/EdgeTool",
+    "canvas_widget/GeneralisationEdgeTool",
+    "canvas_widget/BiDirAssociationEdgeTool",
+    "canvas_widget/UniDirAssociationEdgeTool",
+    "canvas_widget/ObjectNode",
+    "canvas_widget/AbstractClassNode",
+    "canvas_widget/RelationshipNode",
+    "canvas_widget/RelationshipGroupNode",
+    "canvas_widget/EnumNode",
+    "canvas_widget/NodeShapeNode",
+    "canvas_widget/EdgeShapeNode",
+    "canvas_widget/GeneralisationEdge",
+    "canvas_widget/BiDirAssociationEdge",
+    "canvas_widget/UniDirAssociationEdge",
+    "canvas_widget/viewpoint/ViewObjectNode",
+    "canvas_widget/viewpoint/ViewObjectNodeTool",
+    "canvas_widget/viewpoint/ViewRelationshipNode",
+    "canvas_widget/viewpoint/ViewRelationshipNodeTool",
+    "canvas_widget/viewpoint/ViewManager",
+    "canvas_widget/view/ViewGenerator",
+    "canvas_widget/HistoryManager",
+    "canvas_widget/JSONtoGraph",
+    "canvas_widget/GenerateViewpointModel",
+    "promise!User",
+    "promise!Guidancemodel",
+  ],
+  function (
+    $,
+    jsPlumb,
+    IWCW,
+    yjsSync,
+    Util,
+    NonOTOperation,
+    ToolSelectOperation,
+    ActivityOperation,
+    ViewInitOperation,
+    UpdateViewListOperation,
+    DeleteViewOperation,
+    SetViewTypesOperation,
+    InitModelTypesOperation,
+    SetModelAttributeNodeOperation,
+    UpdateMetamodelOperation,
+    Canvas,
+    EntityManager,
+    NodeTool,
+    ObjectNodeTool,
+    AbstractClassNodeTool,
+    RelationshipNodeTool,
+    RelationshipGroupNodeTool,
+    EnumNodeTool,
+    NodeShapeNodeTool,
+    EdgeShapeNodeTool,
+    EdgeTool,
+    GeneralisationEdgeTool,
+    BiDirAssociationEdgeTool,
+    UniDirAssociationEdgeTool,
+    ObjectNode,
+    AbstractClassNode,
+    RelationshipNode,
+    RelationshipGroupNode,
+    EnumNode,
+    NodeShapeNode,
+    EdgeShapeNode,
+    GeneralisationEdge,
+    BiDirAssociationEdge,
+    UniDirAssociationEdge,
+    ViewObjectNode,
+    ViewObjectNodeTool,
+    ViewRelationshipNode,
+    ViewRelationshipNodeTool,
+    ViewManager,
+    ViewGenerator,
+    HistoryManager,
+    JSONtoGraph,
+    GenerateViewpointModel,
+    user,
+    guidancemodel
+  ) {
     var _iwcw;
     _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
     _iwcw.setSpace(user);
@@ -69,17 +121,11 @@ requirejs([
             y.clientID
         );
 
-        y.share.set(
-          y.clientID,
-          _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]
-        );
+        y.share.set(y.clientID, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
         if (!y.share.get(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])) {
           var userInfo = _iwcw.getUser();
           userInfo.globalId = Util.getGlobalId(user, y);
-          y.share.set(
-            _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
-            userInfo
-          );
+          y.share.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], userInfo);
         }
         var metamodel, model;
         if (guidancemodel.isGuidanceEditor()) {
@@ -175,11 +221,18 @@ requirejs([
                   y.share.data.set("metamodel", vls);
                   yjsSync(operation.getMetaModelingRoomName())
                     .done(function (y, spaceTitle) {
-                      y.share.metamodelStatus.set("uploaded", true);
+                      const metaModelStatus = y.getMap("metaModelStatus");
+                      metaModelStatus.set("uploaded", true);
                     })
-                    .fail(() => y.share.metamodelStatus.set("error", true));
+                    .fail(() => {
+                      const metaModelStatus = y.getMap("metaModelStatus");
+                      metaModelStatus.set("error", true);
+                    });
                 })
-                .fail(() => y.share.metamodelStatus.set("error", true));
+                .fail(() => {
+                  const metaModelStatus = y.getMap("metaModelStatus");
+                  metaModelStatus.set("error", true);
+                });
             } else if (operation.hasOwnProperty("getType")) {
               if (operation.getType() === "WaitForCanvasOperation") {
                 switch (operation.getData().widget) {
@@ -905,5 +958,5 @@ requirejs([
       y.share.join.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], false);
       ViewManager.GetViewpointList();
     }
-
-});
+  }
+);
