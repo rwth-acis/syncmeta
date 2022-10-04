@@ -574,19 +574,18 @@ define([
     };
 
     var localGuidanceStrategyOperationCallback = function (operation) {
+      const canvasMap = y.getMap("canvas");
       if (operation instanceof GuidanceStrategyOperation) {
         //Just forward the message to remote users
-        y.share.canvas.set(GuidanceStrategyOperation.TYPE, operation.toJSON());
+        canvasMap.set(GuidanceStrategyOperation.TYPE, operation.toJSON());
       }
     };
 
     var localRevokeSharedActivityOperationCallback = function (operation) {
       if (operation instanceof RevokeSharedActivityOperation) {
+        const canvasMap = y.getMap("canvas");
         //Just forward the message to remote users
-        y.share.canvas.set(
-          RevokeSharedActivityOperation.TYPE,
-          operation.toJSON()
-        );
+        canvasMap.set(RevokeSharedActivityOperation.TYPE, operation.toJSON());
       }
     };
 
@@ -1156,7 +1155,8 @@ define([
 
       propagateNodeAddOperation(operation);
       if (y) {
-        y.share.canvas.set(NodeAddOperation.TYPE, operation.toJSON());
+        const canvasMap = y.getMap("canvas");
+        canvasMap.set(NodeAddOperation.TYPE, operation.toJSON());
       }
       if (!historyFlag) HistoryManager.add(operation);
       return id;
@@ -1202,8 +1202,10 @@ define([
       );
       propagateEdgeAddOperation(operation);
 
-      if (window.hasOwnProperty("y"))
-        y.share.canvas.set(EdgeAddOperation.TYPE, operation.toJSON());
+      if (window.hasOwnProperty("y")) {
+        const canvasMap = y.getMap("canvas");
+        canvasMap.set(EdgeAddOperation.TYPE, operation.toJSON());
+      }
 
       if (!historyFlag) HistoryManager.add(operation);
       return id;
@@ -1692,7 +1694,8 @@ define([
     init();
 
     if (y) {
-      y.share.canvas.observe(function (event) {
+      const canvasMap = y.getMap("canvas");
+      canvasMap.observe(function (event) {
         var yUserId = event.object.map[event.name][0];
 
         if (yUserId !== y.clientID || event.value.historyFlag) {

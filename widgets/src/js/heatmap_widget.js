@@ -26,7 +26,7 @@ requirejs([
             " with y-user-id: " +
             y.clientID
         );
-        var model = y.share.data.get("model");
+        var model = y.getMap("data").get("model");
         var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.HEATMAP);
         WaitForCanvas(CONFIG.WIDGET.NAME.HEATMAP, 7).done(function (user) {
           iwc.setSpace(user);

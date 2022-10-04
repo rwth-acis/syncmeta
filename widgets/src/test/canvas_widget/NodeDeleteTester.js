@@ -17,7 +17,9 @@ define(['chai','canvas_widget/EntityManager'], function(chai, EntityManager){
             });
 
             it(nodeId + ' node should no longer be in Yjs data model', function(){
-                expect(y.share.data.get('model').nodes.hasOwnProperty(nodeId)).to.be.false;
+                const dataMap = y.getMap("data");
+                expect(dataMap.get("model").nodes.hasOwnProperty(nodeId)).to.be
+                  .false;
             });
             
             it(nodeId + 'node should no longer b in y nodes map', function(){

@@ -1233,12 +1233,11 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
                 return guidanceMetamodel;
             },
             generateLogicalGuidanceRepresentation: function(m){
+                const dataMap = y.getMap("data");
                 var graph = new graphlib.Graph();
                 var model;
-                if(m)
-                    model = m;
-                else
-                    model = y.share.data.get('guidancemodel');
+                if (m) model = m;
+                else model = dataMap.get("guidancemodel");
                 if(!model)
                     return null;
                 var nodes = model.nodes;
@@ -1854,16 +1853,18 @@ function (_, Util, AbstractEntity, Node, ObjectNode, AbstractClassNode, Relation
             },
             storeDataYjs: function(){
                 var data = this.graphToJSON();
+                const dataMap = y.getMap("data");
                 if(guidancemodel.isGuidanceEditor()){
-                    y.share.data.set('guidancemodel',data);
+                    
+                    dataMap.set('guidancemodel',data);
 
                 }else if(!metamodel){
-                    y.share.data.set('metamodelpreview', this.generateMetaModel());
-                    y.share.data.set('guidancemetamodel', this.generateGuidanceMetamodel());
-                    y.share.data.set('model', data);
+                    dataMap.set('metamodelpreview', this.generateMetaModel());
+                    dataMap.set('guidancemetamodel', this.generateGuidanceMetamodel());
+                    dataMap.set('model', data);
                 }
                 else{
-                    y.share.data.set('model', data);
+                    dataMap.set('model', data);
                 }
             },
             /**

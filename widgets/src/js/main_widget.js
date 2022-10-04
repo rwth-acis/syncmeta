@@ -129,13 +129,14 @@ requirejs(
         }
         var metamodel, model;
         if (guidancemodel.isGuidanceEditor()) {
+          const dataMap = y.getMap("data");
           //Set the model which is shown by the editor to the guidancemodel
-          model = y.share.data.get("guidancemodel");
+          model = dataMap.get("guidancemodel");
           //Set the metamodel to the guidance metamodel
-          metamodel = y.share.data.get("guidancemetamodel");
+          metamodel = dataMap.get("guidancemetamodel");
         } else {
-          metamodel = y.share.get("metamodel");
-          model = y.share.get("model");
+          metamodel = y.getMap("data").get("metamodel");
+          model = y.getMap("data").get("model");
         }
         if (model)
           console.info(
@@ -207,19 +208,22 @@ requirejs(
             });
 
           _iwcw.registerOnDataReceivedCallback(function (operation) {
+            const canvasMap = y.getMap("canvas");
             if (operation instanceof SetModelAttributeNodeOperation) {
               _iwcw.sendLocalNonOTOperation(
                 CONFIG.WIDGET.NAME.ATTRIBUTE,
                 new SetModelAttributeNodeOperation().toNonOTOperation()
               );
             } else if (operation instanceof UpdateViewListOperation) {
-              y.share.canvas.set(UpdateViewListOperation.TYPE, true);
+              canvasMap.set(UpdateViewListOperation.TYPE, true);
             } else if (operation instanceof UpdateMetamodelOperation) {
-              var model = y.share.data.get("model");
+              const dataMap = y.getMap("data");
+              var model = dataMap.get("model");
               var vls = GenerateViewpointModel(model);
               yjsSync(operation.getModelingRoomName())
                 .done(function (y, spaceTitle) {
-                  y.share.data.set("metamodel", vls);
+                  const dataMap = y.getMap("data");
+                  dataMap.set("metamodel", vls);
                   yjsSync(operation.getMetaModelingRoomName())
                     .done(function (y, spaceTitle) {
                       const metaModelStatus = y.getMap("metaModelStatus");
@@ -265,7 +269,8 @@ requirejs(
                     );
                     break;
                   case CONFIG.WIDGET.NAME.PALETTE:
-                    var metamodel = y.share.data.get("metamodel");
+                    const dataMap = y.getMap("data");
+                    var metamodel = dataMap.get("metamodel");
                     if (!metamodel) metamodel = "{}";
                     else metamodel = JSON.stringify(metamodel);
                     _iwcw.sendLocalNonOTOperation(
@@ -277,7 +282,8 @@ requirejs(
               }
             }
           });
-          y.share.canvas.observe(function (event) {
+          const canvasMap = y.getMap("canvas");
+          canvasMap.observe(function (event) {
             switch (event.name) {
               case UpdateViewListOperation.TYPE: {
                 ViewManager.GetViewpointList();
@@ -287,7 +293,8 @@ requirejs(
                 var text;
                 switch (event.value) {
                   case "import": {
-                    var model = y.share.data.get("model");
+                    const dataMap = y.getMap("data");
+                    var model = dataMap.get("model");
                     text =
                       "ATTENTION! Imported new model containing <strong>" +
                       Object.keys(model.nodes).length +
@@ -318,9 +325,11 @@ requirejs(
                 // Problem: when the new model contains a node, that the previous model also contained,
                 // then the position of the node does not get updated
                 // therefore, this is manually done here
+                const dataMap = y.getMap("data");
                 for (var key of y.share.nodes.keys()) {
                   // check if the node also exists in the updated model
-                  var nodeInModel = y.share.data.get("model").nodes[key];
+
+                  var nodeInModel = dataMap.get("model").nodes[key];
                   if (nodeInModel) {
                     // update left and top position values
                     y.share.nodes.get(key).set("left", nodeInModel.left);
@@ -456,7 +465,8 @@ requirejs(
             CONFIG.WIDGET.NAME.ACTIVITY,
             activityOperation.toNonOTOperation()
           );
-          y.share.canvas.set("ViewApplyActivity", {
+          const canvasMap = y.getMap("canvas");
+          canvasMap.set("ViewApplyActivity", {
             viewId: viewId,
             jabberId: _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
           });
@@ -501,7 +511,8 @@ requirejs(
               CONFIG.WIDGET.NAME.ACTIVITY,
               activityOperation.toNonOTOperation()
             );
-            y.share.canvas.set("ViewApplyActivity", {
+            const canvasMap = y.getMap("canvas");
+            canvasMap.set("ViewApplyActivity", {
               viewId: "",
               jabberId: _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
             });
@@ -600,7 +611,8 @@ requirejs(
           }
           ViewManager.addView(viewId);
           HideCreateMenu();
-          y.share.canvas.set(UpdateViewListOperation.TYPE, true);
+          const canvasMap = y.getMap("canvas");
+          canvasMap.set(UpdateViewListOperation.TYPE, true);
         });
 
         //Meta-modelling layer implementation
@@ -610,11 +622,12 @@ requirejs(
           $("#ViewCtrlContainer").hide();
           $("#canvas-frame").css("margin-top", "32px");
           var $lblCurrentViewId = $("#lblCurrentViewId");
+          const dataMap = y.getMap("data");
           if ($lblCurrentViewId.text().length > 0) {
             var $loading = $("#loading");
             $loading.show();
 
-            var model = y.share.data.get("model");
+            var model = dataMap.get("model");
             //Disable the view types in the palette
             var operation = new SetViewTypesOperation(false);
             _iwcw.sendLocalNonOTOperation(
@@ -631,7 +644,8 @@ requirejs(
               CONFIG.WIDGET.NAME.ACTIVITY,
               activityOperation.toNonOTOperation()
             );
-            y.share.canvas.set("ViewApplyActivity", {
+            const canvasMap = y.getMap("canvas");
+            canvasMap.set("ViewApplyActivity", {
               viewId: "",
               jabberId: _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
             });
@@ -725,7 +739,8 @@ requirejs(
           CONFIG.WIDGET.NAME.ACTIVITY,
           activityOperation.toNonOTOperation()
         );
-        y.share.canvas.set("ViewApplyActivity", {
+        const canvasMap = y.getMap("canvas");
+        canvasMap.set("ViewApplyActivity", {
           viewId: json.id,
           jabberId: _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
         });
@@ -781,10 +796,8 @@ requirejs(
 
       $("#applyLayout").click(function () {
         const usersMap = window.y.getMap("users");
-        window.y.share.canvas.set(
-          "applyLayout",
-          usersMap.get(window.y.clientID)
-        );
+        const canvasMap = window.y.getMap("canvas");
+        canvasMap.set("applyLayout", usersMap.get(window.y.clientID));
         window.y.share.activity.set(
           "ApplyLayoutActivity",
           new ActivityOperation(
@@ -802,7 +815,8 @@ requirejs(
 
       // Work later on moving this functionality to Export Widget
       //var uri = canvas.toPNG();
-      // y.share.canvas.set('PngMap', uri);
+      // const canvasMap = y.getMap("canvas");
+      // canvasMap.set('PngMap', uri);
       // Work later on moving this functionality to Export Widget
 
       // Export as PNG
@@ -937,15 +951,13 @@ requirejs(
         var report = JSONtoGraph(model, canvas);
         console.info("CANVAS: Initialization of model completed ", report);
         //initialize guidance model's if we are in metamodeling layer
+        const dataMap = y.getMap("data");
         if (EntityManager.getLayer() === CONFIG.LAYER.META) {
-          y.share.data.set(
+          dataMap.set(
             "guidancemetamodel",
             EntityManager.generateGuidanceMetamodel()
           );
-          y.share.data.set(
-            "metamodelpreview",
-            EntityManager.generateMetaModel()
-          );
+          dataMap.set("metamodelpreview", EntityManager.generateMetaModel());
         }
       } else {
         if (canvas.getModelAttributesNode() === null) {

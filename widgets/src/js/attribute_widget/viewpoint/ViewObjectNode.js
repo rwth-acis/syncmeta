@@ -100,7 +100,8 @@ define([
             }
 
             _$node.find(".label").append(this.getLabel().get$node());
-            var model = y.share.data.get('model');
+            const dataMap = y.getMap("data");
+            var model = dataMap.get("model");
             if (model) {
                 var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes, ['Object']);
                 targetAttribute = new SingleSelectionAttribute(id + "[target]", "Target", that, selectionValues);
