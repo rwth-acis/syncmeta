@@ -121,7 +121,7 @@ requirejs(
             y.clientID
         );
         const userMap = y.getMap("users");
-        usersMap.set(y.clientID, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+        userMap.set(y.clientID, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
         if (!userMap.get(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])) {
           var userInfo = _iwcw.getUser();
           userInfo.globalId = Util.getGlobalId(user, y);
