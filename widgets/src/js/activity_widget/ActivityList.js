@@ -257,8 +257,9 @@ define([
                 user = that.getUser(operation.getSender());
                 if (user) {
                     user.setLastActivityDate(new Date());
-                    if(y.share.users.get(y.db.userId) === operation.getSender())
-                        that.addActivityToLog(activity, data);
+                    const userMap = y.getMap("users");
+                    if (userMap.get(y.clientID) === operation.getSender())
+                      that.addActivityToLog(activity, data);
                 }
                 return;
             }

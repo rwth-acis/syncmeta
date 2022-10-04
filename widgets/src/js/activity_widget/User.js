@@ -49,12 +49,19 @@ define([
          * @type {jQuery}
          * @private
          */
-        var _$node = $(_userBoxTemplate({
-            heading: y.share.userList.get(jabberId) ? y.share.userList.get(jabberId)[CONFIG.NS.PERSON.TITLE] : "",
+        const userList = y.getMap("usersList");
+        var _$node = $(
+          _userBoxTemplate({
+            heading: userList.get(jabberId)
+              ? userList.get(jabberId)[CONFIG.NS.PERSON.TITLE]
+              : "",
             text: "",
-            color: y.share.userList.get(jabberId) ? Util.getColor(y.share.userList.get(jabberId).globalId) : "#000000",
-            view: ""
-        })).hide();
+            color: userList.get(jabberId)
+              ? Util.getColor(userList.get(jabberId).globalId)
+              : "#000000",
+            view: "",
+          })
+        ).hide();
 
 
         /**

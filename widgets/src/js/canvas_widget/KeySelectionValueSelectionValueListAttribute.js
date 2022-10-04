@@ -278,7 +278,7 @@ define([
                     switch (event.type) {
                         case 'add': {
                             var yUserId = event.object.map[event.name][0];
-                            if (yUserId === y.db.userId) return;
+                            if (yUserId === y.clientID) return;
                             operation = new AttributeAddOperation(event.name.replace(/\[\w*\]/g, ''), that.getEntityId(), that.getRootSubjectEntity().getEntityId(), that.constructor.name);
                             remoteAttributeAddCallback(operation);
                             break;

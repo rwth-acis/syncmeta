@@ -8,7 +8,12 @@ requirejs(['jqueryui',
     function($,_,IWC, yjsSync, Util, UpdateViewListOperation,GenerateViewpointModel){
 
         yjsSync().done(function(y,spaceTitle){
-            console.info('VIEWCONTROL: Yjs successfully initialized in room ' + spaceTitle + ' with y-user-id: ' + y.db.userId);
+            console.info(
+              "VIEWCONTROL: Yjs successfully initialized in room " +
+                spaceTitle +
+                " with y-user-id: " +
+                y.clientID
+            );
 
             var metamodel = y.share.data.get('metamodel');
             var iwc  = IWC.getInstance("VIEWCONTROL");

@@ -206,7 +206,10 @@ define([
 
                 //TODO i can not find out who triggered the delete :-(. Therefore do this only for non delete event types
                 if (event.type !== "delete") {
-                    var jabberId = y.share.users.get(event.object._content[event.index].id[0]);
+                    const userMap = y.getMap("users");
+                    var jabberId = userMap.get(
+                      event.object._content[event.index].id[0]
+                    );
                     y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(
                         "ValueChangeActivity",
                         that.getEntityId(),

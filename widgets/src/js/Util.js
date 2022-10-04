@@ -135,7 +135,7 @@ define(["jqueryui"], /** @lends Util */ function ($) {
       usersMap.set(y.clientID, mbox);
     }
     return id;
-  };;
+  };
 
   /**
    * Get the current state of the primary document store

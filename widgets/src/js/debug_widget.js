@@ -2,7 +2,12 @@ requirejs(['jqueryui', 'lodash', 'lib/yjs-sync', 'canvas_widget/GenerateViewpoin
  function ($, _, yjsSync, GenerateViewpointModel, EntityManager, guidance) {
     $(function () {
         yjsSync().done(function (y, spaceTitle) {
-            console.info('DEBUG: Yjs successfully initialized in room ' + spaceTitle + ' with y-user-id: ' + y.db.userId);
+            console.info(
+              "DEBUG: Yjs successfully initialized in room " +
+                spaceTitle +
+                " with y-user-id: " +
+                y.clientID
+            );
 
             var $deleteMetamodel = $("#delete-meta-model").prop('disabled', false),
                 $exportMetamodel = $("#export-meta-model").prop('disabled', false),

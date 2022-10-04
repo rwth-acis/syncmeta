@@ -132,7 +132,10 @@ define([
 
             _ytext.observe(_.debounce(function (event) {
                 if (event.type !== "delete") {
-                    var jabberId = y.share.users.get(event.object._content[event.index].id[0]);
+                    const userMap = y.getMap("users");
+                    var jabberId = userMap.get(
+                      event.object._content[event.index].id[0]
+                    );
                     if (jabberId === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]){
                         $('#save').click();
                         y.share.activity.set(ActivityOperation.TYPE, new ActivityOperation(

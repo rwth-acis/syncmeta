@@ -34,8 +34,14 @@ requirejs([
             setTimeout(function () {
                 $('#wrapper').find('h1').remove();
             }, 2000);
-            console.info('ATTRIBUTE: Yjs successfully initialized in room ' + spaceTitle + ' with y-user-id: ' + y.db.userId);
-            y.share.users.set(y.db.userId, iwc.getUser()[CONFIG.NS.PERSON.JABBERID]);
+            console.info(
+              "ATTRIBUTE: Yjs successfully initialized in room " +
+                spaceTitle +
+                " with y-user-id: " +
+                y.clientID
+            );
+            const usersMap = y.getMap("users");
+            usersMap.set(y.clientID, iwc.getUser()[CONFIG.NS.PERSON.JABBERID]);
 
             var model = y.share.data.get('model');
             if(model)
