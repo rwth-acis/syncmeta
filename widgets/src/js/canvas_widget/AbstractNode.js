@@ -80,7 +80,7 @@ define([
       if (nodesMap.has(id)) {
         _ymap = nodesMap.get(id);
       } else {
-        _ymap = nodesMap.set(id, Y.Map);
+        _ymap = nodesMap.set(id, new Y.Map());
         _ymap.set("left", left);
         _ymap.set("top", top);
         _ymap.set("width", width);

@@ -55,10 +55,10 @@ define([
 
     if (window.hasOwnProperty("y")) {
       const edgeMap = y.getMap("edges");
-      if (edgeMap.keys().indexOf(id) != -1) {
+      if (edgeMap.has(id) != -1) {
         _ymap = edgeMap.get(id);
       } else if (id && type && source && target) {
-        _ymap = edgeMap.set(id, Y.Map);
+        _ymap = edgeMap.set(id, new Y.Map());
         _ymap.set("id", id);
         _ymap.set("type", type);
         _ymap.set("source", source.getEntityId());

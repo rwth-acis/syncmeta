@@ -157,10 +157,10 @@ requirejs(
                 for (var key in attr) {
                   if (attr.hasOwnProperty(key)) {
                     if (attr[key].hasOwnProperty("key")) {
-                      var ytext = map.set(attr[key].key.id, Y.Text);
+                      var ytext = map.set(attr[key].key.id, new Y.Text());
                       ytext.insert(0, attr[key].key.value);
                     } else {
-                      var ytext = map.set(attr[key].value.id, Y.Text);
+                      var ytext = map.set(attr[key].value.id, new Y.Text());
                       ytext.insert(0, attr[key].value.value);
                     }
                   }
@@ -171,7 +171,7 @@ requirejs(
                     var value = attrs[key].value;
                     if (!value.hasOwnProperty("option")) {
                       if (value.value instanceof String) {
-                        var ytext = map.set(value.id, Y.Text);
+                        var ytext = map.set(value.id, new Y.Text());
                         ytext.insert(0, value.value);
                       }
                     }
@@ -187,10 +187,10 @@ requirejs(
               if (data.nodes.hasOwnProperty(key)) {
                 var entity = data.nodes[key];
                 const nodesMap = y.getMap("nodes");
-                nodesMap.set(key, Y.Map);
+                nodesMap.set(key, new Y.Map());
                 var attrs = entity.attributes;
                 if (entity.hasOwnProperty("label")) {
-                  var ytext = map.set(entity.label.value.id, Y.Text);
+                  var ytext = map.set(entity.label.value.id, new Y.Text());
                   ytext.insert(0, entity.label.value.value);
                 }
                 initAttributes(attrs, map);
@@ -200,10 +200,10 @@ requirejs(
               if (data.edges.hasOwnProperty(key)) {
                 var entity = data.edges[key];
                 const edgeMap = y.getMap("edges");
-                var map = edgeMap.set(key, Y.Map);
+                var map = edgeMap.set(key, new new Y.Map()());
                 var attrs = entity.attributes;
                 if (entity.hasOwnProperty("label")) {
-                  var ytext = map.set(entity.label.value.id, Y.Text);
+                  var ytext = map.set(entity.label.value.id, new Y.Text());
                   ytext.insert(0, entity.label.value.value);
                 }
                 initAttributes(attrs, map);

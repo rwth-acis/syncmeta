@@ -37,9 +37,9 @@ define([
 
     var _ytext = null;
     if (window.hasOwnProperty("y")) {
-      if (rootSubjectEntity.getYMap().keys().indexOf(id) != -1)
+      if (rootSubjectEntity.getYMap().has(id) != -1)
         _ytext = rootSubjectEntity.getYMap().get(id);
-      else _ytext = rootSubjectEntity.getYMap().set(id, Y.Text);
+      else _ytext = rootSubjectEntity.getYMap().set(id, new Y.Text());
     }
 
     AbstractValue.call(this, id, name, subjectEntity, rootSubjectEntity);
