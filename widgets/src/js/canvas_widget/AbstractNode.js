@@ -77,7 +77,7 @@ define([
     var _ymap = null;
     if (window.hasOwnProperty("y")) {
       const nodesMap = y.getMap("nodes");
-      if (nodesMap.keys().indexOf(id) != -1) {
+      if (nodesMap.has(id)) {
         _ymap = nodesMap.get(id);
       } else {
         _ymap = nodesMap.set(id, Y.Map);
