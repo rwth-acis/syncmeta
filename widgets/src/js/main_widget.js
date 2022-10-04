@@ -120,12 +120,12 @@ requirejs(
             " with y-user-id: " +
             y.clientID
         );
-
-        y.share.set(y.clientID, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
-        if (!y.share.get(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])) {
+        const userMap = y.getMap("users");
+        usersMap.set(y.clientID, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+        if (!userMap.get(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])) {
           var userInfo = _iwcw.getUser();
           userInfo.globalId = Util.getGlobalId(user, y);
-          y.share.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], userInfo);
+          userMap.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], userInfo);
         }
         var metamodel, model;
         if (guidancemodel.isGuidanceEditor()) {
@@ -441,8 +441,8 @@ requirejs(
           var viewId = ViewManager.getViewIdOfSelected();
           var $currentViewIdLabel = $("#lblCurrentViewId");
           if (viewId === $currentViewIdLabel.text()) return;
-
-          var vvs = y.share.views.get(viewId);
+          const viewsMap = y.getMap("views");
+          var vvs = viewsMap.get(viewId);
           EntityManager.initViewTypes(vvs);
 
           //send the new tools to the palette as well
@@ -590,16 +590,17 @@ requirejs(
         });
 
         $("#btnDelViewPoint").click(function () {
+          const viewsMap = y.getMap("views");
           var viewId = ViewManager.getViewIdOfSelected();
           if (viewId !== $("#lblCurrentViewId").text()) {
-            y.share.views.set(viewId, null);
+            viewsMap.set(viewId, null);
             _iwcw.sendLocalNonOTOperation(
               CONFIG.WIDGET.NAME.ATTRIBUTE,
               new DeleteViewOperation(viewId).toNonOTOperation()
             );
             ViewManager.deleteView(viewId);
           } else {
-            y.share.views.set(viewId, null);
+            viewsMap.set(viewId, null);
             ViewManager.deleteView(viewId);
             $("#viewsHide").click();
           }
@@ -704,8 +705,9 @@ requirejs(
       }
 
       var visualizeView = function (viewId) {
+        const viewsMap = y.getMap("views");
         //ViewManager.getViewResource(viewId).getRepresentation('rdfjson', function (viewData) {
-        var viewData = y.share.views.get(viewId);
+        var viewData = viewsMap.get(viewId);
         if (viewData) {
           resetCanvas();
           ViewToGraph(viewData);

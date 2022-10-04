@@ -388,9 +388,10 @@ define([
           var activity;
           var checkEntity = function (entityId) {
             const nodesMap = y.getMap("nodes");
+            const edgesMap = y.getMap("edges");
             if (
               nodesMap.keys().indexOf(entityId) != -1 ||
-              y.share.edges.keys().indexOf(entityId) != -1
+              edgesMap.keys().indexOf(entityId) != -1
             )
               return true;
             else return false;

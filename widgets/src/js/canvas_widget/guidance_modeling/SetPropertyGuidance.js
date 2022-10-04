@@ -33,7 +33,8 @@ define([
             _propertyInput.getValue().setValue(_entityAttribute.getValue().getValue());
             
             if (_entityAttribute.getRootSubjectEntity().constructor.name === 'Edge') {
-                var ymap =y.share.edges.get(entity.getEntityId());
+                const edgeMap = y.getMap("edges");
+                var ymap = edgeMap.get(entity.getEntityId());
                 var ytext = ymap.get(entity.getEntityId() + "[" + propertyName.toLowerCase() + "]");
                 ytext.bind(_propertyInput.getValue().get$node()[0]);
             }

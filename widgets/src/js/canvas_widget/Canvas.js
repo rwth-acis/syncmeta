@@ -1891,8 +1891,8 @@ define([
                                                     }*/
         }
       });
-
-      y.share.edges.observe(function (event) {
+      const edgeMap = y.getMap("edges");
+      edgeMap.observe(function (event) {
         switch (event.type) {
           case "delete": {
             var edge = EntityManager.findEdge(event.name);

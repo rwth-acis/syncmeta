@@ -17,8 +17,11 @@ define(['chai'], function(chai){
                 expect($('#ddmViewSelection').find('#' + viewpointName).length).to.be.equal(1);
             })
             
-            it('CANVAS - View should be in y.share.views', function(){
-                expect(y.share.views.keys().indexOf(viewpointName)).to.be.not.equal(-1);
+            it('CANVAS - View should be in y.getMap("views")', function () {
+              const viewsMap = y.getMap("views");
+              expect(viewsMap.keys().indexOf(viewpointName)).to.be.not.equal(
+                -1
+              );
             });
 
             after(function(done){

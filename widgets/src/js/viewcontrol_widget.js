@@ -29,9 +29,10 @@ requirejs(
       var iwc = IWC.getInstance("VIEWCONTROL");
 
       var GetList = function (appendTo, tpl) {
-        var list = y.share.views.keys();
+        const viewsMap = y.getMap("views");
+        var list = viewsMap.keys();
         for (var i = 0; i < list.length; i++) {
-          var data = y.share.views.get(list[i]);
+          var data = viewsMap.get(list[i]);
           if (data) {
             var $viewEntry = $(tpl({ name: data.id }));
             $viewEntry.find(".json").click(function (event) {
@@ -40,7 +41,8 @@ requirejs(
                 .parents("tr")
                 .find(".lblviewname")
                 .text();
-              var data = y.share.views.get(viewId);
+
+              var data = viewsMap.get(viewId);
               var link = document.createElement("a");
               link.download = data.id + ".json";
               link.href = "data:," + encodeURI(JSON.stringify(data, null, 4));
@@ -52,7 +54,7 @@ requirejs(
                 .parents("tr")
                 .find(".lblviewname")
                 .text();
-              y.share.views.set(viewId, null);
+              viewsMap.set(viewId, null);
               $("#btnRefresh").click();
             });
             $viewEntry.find(".ToSpace").click(function (event) {
@@ -60,9 +62,7 @@ requirejs(
                 .parents("tr")
                 .find(".lblviewname")
                 .text();
-              var viewpointmodel = GenerateViewpointModel(
-                y.share.views.get(viewId)
-              );
+              var viewpointmodel = GenerateViewpointModel(viewsMap.get(viewId));
               addMetamodelToYjs($("#space_label_view").val(), viewpointmodel);
             });
             $(appendTo).append($viewEntry);
@@ -101,17 +101,18 @@ requirejs(
       };
 
       var LoadFileAndStoreToSpace = function () {
+        const viewsMap = y.getMap("views");
         getFileContent().then(function (data) {
           if (data.id) {
             if (metamodel) {
               try {
                 var vvs = GenerateViewpointModel(data);
-                y.share.views.set(vvs.id, vvs);
+                viewsMap.set(vvs.id, vvs);
               } catch (e) {
                 console.error(e);
-                y.share.views.set(data.id, data);
+                viewsMap.set(data.id, data);
               }
-            } else y.share.views.set(data.id, data);
+            } else viewsMap.set(data.id, data);
 
             $("#btnRefresh").click();
           }

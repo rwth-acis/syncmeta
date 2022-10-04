@@ -199,7 +199,8 @@ requirejs(
             for (var key in data.edges) {
               if (data.edges.hasOwnProperty(key)) {
                 var entity = data.edges[key];
-                var map = y.share.edges.set(key, Y.Map);
+                const edgeMap = y.getMap("edges");
+                var map = edgeMap.set(key, Y.Map);
                 var attrs = entity.attributes;
                 if (entity.hasOwnProperty("label")) {
                   var ytext = map.set(entity.label.value.id, Y.Text);

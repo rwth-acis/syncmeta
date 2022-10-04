@@ -37,8 +37,9 @@ define(['jquery', 'lodash', 'chai',
                       edges.hasOwnProperty(key) &&
                       json.edges.hasOwnProperty(key)
                     ) {
+                      const edgeMap = y.getMap("edges");
                       expect(edges[key]).to.be.not.null;
-                      expect(y.share.edges.get(key)).to.be.not.undefined;
+                      expect(edgeMap.get(key)).to.be.not.undefined;
                       expect($("." + key).length).to.be.equal(1);
                     }
                   }
@@ -72,8 +73,9 @@ define(['jquery', 'lodash', 'chai',
 
                     it("Should no longer have edges", function () {
                       _.each(edgeKeys, function (key) {
+                        const edgeMap = y.getMap("edges");
                         expect(EntityManager.findEdge(key)).to.be.null;
-                        expect(y.share.edges.get(key)).to.be.undefined;
+                        expect(edgeMap.get(key)).to.be.undefined;
                         expect($("." + key).length).to.be.equal(0);
                       });
                     });
