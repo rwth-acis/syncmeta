@@ -175,8 +175,8 @@ requirejs(
           )
         );
       };
-
-      y.share.join.observe(function (event) {
+      const joinMap = y.getMap("join");
+      joinMap.observe(function (event) {
         if (userList.indexOf(event.name) === -1) {
           userList.push(event.name);
         }
@@ -186,7 +186,8 @@ requirejs(
           event.name !== _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]
         ) {
           //send to activity widget that a remote user has joined.
-          y.share.join.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], true);
+          const joinMap = y.getMap("join");
+          joinMap.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], true);
         } else if (
           event.name === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] &&
           !event.value
@@ -955,7 +956,7 @@ requirejs(
         }
       }
       //local user joins
-      y.share.join.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], false);
+      joinMap.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], false);
       ViewManager.GetViewpointList();
     }
   }
