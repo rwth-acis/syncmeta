@@ -119,14 +119,19 @@ define(["jqueryui"], /** @lends Util */ function ($) {
   /*function hashCode(s){
      return s.split("").reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a},0);
      };*/
-
+  /**
+   * Returns the id of the given user (will be its index in the user list)
+   * @param {*} user
+   * @param {*} y the shared yjs document
+   * @returns
+   */
   Util.getGlobalId = function (user, y) {
-    var mbox = user.user[CONFIG.NS.PERSON.MBOX];
-    var users = y.share.globalId.toArray();
+    var mbox = user.user[CONFIG.NS.PERSON.MBOX]; // mailbox of the user
+    var users = Array.from(y.share.values()); // get all users
     var id = users.indexOf(mbox);
     if (id === -1) {
-      y.share.globalId.push([mbox]);
-      id = y.share.globalId.length;
+      id = users.length;
+      y.share.set(y.clientID, mbox);
     }
     return id;
   };
