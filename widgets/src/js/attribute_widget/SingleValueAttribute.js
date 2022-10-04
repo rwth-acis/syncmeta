@@ -78,8 +78,9 @@ define([
         // check if view only mode is enabled for the property browser
         // because then the input fields should be disabled
         if (window.hasOwnProperty("y")) {
-            if(y.share.widgetConfig.get("view_only_property_browser")) {
-                _$node.find(".val").attr("disabled", "true");
+            const widgetConfigMap = y.getMap("widgetConfig");
+            if (widgetConfigMap.get("view_only_property_browser")) {
+              _$node.find(".val").attr("disabled", "true");
             }
         }
     }

@@ -1433,7 +1433,8 @@ define([
 
       // view_only is used by the CAE and allows to show a model in the Canvas which is not editable
       // therefore, the nodes should not be draggable and their context menu should be disabled
-      var viewOnly = y.share.widgetConfig.get("view_only");
+      const widgetConfigMap = y.getMap("widgetConfig");
+      var viewOnly = widgetConfigMap.get("view_only");
       if (viewOnly) {
         _$node.on("click").draggable().draggable("destroy");
         _$node.on("click").contextMenu(false);

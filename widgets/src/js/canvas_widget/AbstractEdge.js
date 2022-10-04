@@ -701,7 +701,8 @@ define([
       if (id) {
         // view_only is used by the CAE and allows to show a model in the Canvas which is not editable
         // therefore, the context menu of every edge must be disabled
-        var viewOnly = y.share.widgetConfig.get("view_only");
+        const widgetConfigMap = y.getMap("widgetConfig");
+        var viewOnly = widgetConfigMap.get("view_only");
         if (viewOnly) return;
       }
 
