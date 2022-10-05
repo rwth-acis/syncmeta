@@ -75,7 +75,7 @@ requirejs([
             var color = null;
             //if(senderJabberId != localUserId)
             //color = iwc.getUserColor(senderJabberId);
-            const userList = y.getMap("usersList");
+            const userList = y.getMap("userList");
             color = Util.getColor(userList.get(senderJabberId).globalId);
             node = addNodePreview(
               operation.getEntityId(),
@@ -122,34 +122,32 @@ requirejs([
         };
 
         var registerCallbacks = function () {
-            iwc.registerOnDataReceivedCallback(operationCallback);
+          iwc.registerOnDataReceivedCallback(operationCallback);
         };
 
         var updateWindow = function (viewChangeOperation) {
-            var top = viewChangeOperation.getTop();
-            var left = viewChangeOperation.getLeft();
-            var width = viewChangeOperation.getWidth();
-            var height = viewChangeOperation.getHeight();
-            var zoom = viewChangeOperation.getZoom();
-            $window.css({
-                top: -top * scaleFactor / zoom,
-                left: -left * scaleFactor / zoom,
-                width: width * scaleFactor / zoom,
-                height: height * scaleFactor / zoom
-            });
-            $window.show();
+          var top = viewChangeOperation.getTop();
+          var left = viewChangeOperation.getLeft();
+          var width = viewChangeOperation.getWidth();
+          var height = viewChangeOperation.getHeight();
+          var zoom = viewChangeOperation.getZoom();
+          $window.css({
+            top: (-top * scaleFactor) / zoom,
+            left: (-left * scaleFactor) / zoom,
+            width: (width * scaleFactor) / zoom,
+            height: (height * scaleFactor) / zoom,
+          });
+          $window.show();
         };
 
         var updateColor = function (node, userId) {
-            if (userId == localUserId) {
-                node.resetColor();
-            }
-            else {
-                //node.setColor(iwc.getUserColor(userId));
-                const userList = y.getMap("usersList");
-                node.setColor(Util.getColor(userList.get(userId).globalId));
-
-            }
+          if (userId == localUserId) {
+            node.resetColor();
+          } else {
+            //node.setColor(iwc.getUserColor(userId));
+            const userList = y.getMap("userList");
+            node.setColor(Util.getColor(userList.get(userId).globalId));
+          }
         };
 
         var updateZoom = function () {

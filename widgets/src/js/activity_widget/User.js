@@ -49,7 +49,7 @@ define([
          * @type {jQuery}
          * @private
          */
-        const userList = y.getMap("usersList");
+        const userList = y.getMap("userList");
         var _$node = $(
           _userBoxTemplate({
             heading: userList.get(jabberId)

@@ -462,7 +462,7 @@ define([
         );
         const userMap = y.getMap("users");
         if (userMap.get(y.clientID) !== operation.getJabberId()) {
-          const userList = y.getMap("usersList");
+          const userList = y.getMap("userList");
           var color = Util.getColor(
             userList.get(operation.getJabberId()).globalId
           );
@@ -492,7 +492,7 @@ define([
         );
         const userMap = y.getMap("users");
         if (userMap.get(y.clientID) !== operation.getJabberId()) {
-          const userList = y.getMap("usersList");
+          const userList = y.getMap("userList");
           var color = Util.getColor(
             userList.get(operation.getJabberId()).globalId
           );
@@ -525,7 +525,7 @@ define([
         );
         const userMap = y.getMap("users");
         if (userMap.get(y.clientID) !== operation.getJabberId()) {
-          const userList = y.getMap("usersList");
+          const userList = y.getMap("userList");
           var color = Util.getColor(
             userList.get(operation.getJabberId()).globalId
           );

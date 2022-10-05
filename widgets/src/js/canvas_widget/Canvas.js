@@ -210,7 +210,7 @@ define([
       }
       const userMap = y.getMap("users");
       if (userMap.get(y.clientID) !== operation.getJabberId()) {
-        const userList = y.getMap("usersList");
+        const userList = y.getMap("userList");
         var color = Util.getColor(
           userList.get(operation.getJabberId()).globalId
         );
@@ -413,7 +413,7 @@ define([
               userMap.get(y.clientID) !== operation.getJabberId() &&
               operation.getJabberId() != null
             ) {
-              const userList = y.getMap("usersList");
+              const userList = y.getMap("userList");
               var color = Util.getColor(
                 userList.get(operation.getJabberId()).globalId
               );
@@ -1843,7 +1843,7 @@ define([
       selectionMap.observe(function (event) {
         const userMap = y.getMap("users");
         if (event.name !== userMap.get(y.clientID)) {
-          const userList = y.getMap("usersList");
+          const userList = y.getMap("userList");
           var userInfo = userList.get(event.name);
           if (event.oldValue != null) {
             var unselectedEntity = EntityManager.find(event.oldValue);

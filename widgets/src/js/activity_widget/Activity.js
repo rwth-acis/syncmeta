@@ -98,7 +98,7 @@ define([
          })).hide();*/
         var _$node;
         if (_sender) {
-          const userList = y.getMap("usersList");
+          const userList = y.getMap("userList");
           _$node = $(
             _activityBoxTemplate({
               heading: userList.get(_sender)
@@ -211,7 +211,7 @@ define([
             timestamp: _timestamp,
             type: _type,
           };
-          const userList = y.getMap("usersList");
+          const userList = y.getMap("userList");
           var user = userList.get(sender);
           if (user) {
             json.user = {};
