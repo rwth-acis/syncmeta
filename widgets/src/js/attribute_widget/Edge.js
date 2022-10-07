@@ -89,8 +89,8 @@ define([
             
              this.registerYType = function(){
                 AbstractEdge.prototype.registerYType.call(this);
-                
-                var ymap = y.share.edges.get(that.getEntityId());
+                const edgeMap = y.getMap("edges");
+                var ymap = edgeMap.get(that.getEntityId());
                 var attr = that.getAttributes();
                 for(var key in attr){
                     if(attr.hasOwnProperty(key)){

@@ -75,7 +75,8 @@ define([
 
         this.registerYType = function(){
             AbstractNode.prototype.registerYType.call(this);
-            var ymap = y.share.nodes.get(that.getEntityId());
+            const nodesMap = y.getMap("nodes");
+            var ymap = nodesMap.get(that.getEntityId());
 
             var colorVal = that.getAttribute(that.getEntityId() + '[color]').getValue();
             var ytextColor = ymap.get(colorVal.getEntityId());

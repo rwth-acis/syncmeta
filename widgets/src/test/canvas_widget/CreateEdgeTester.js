@@ -22,7 +22,8 @@ define(['chai','canvas_widget/EntityManager'], function(chai, EntityManager){
             });
 
             it(p_type + ':'+ edgeId +' node should be in Yjs', function(){
-                expect(y.share.edges.opContents.hasOwnProperty(edgeId)).to.be.true;
+                const edgeMap = y.getMap("edges");
+                expect(edgeMap.opContents.hasOwnProperty(edgeId)).to.be.true;
             });
 
             after(function(done){

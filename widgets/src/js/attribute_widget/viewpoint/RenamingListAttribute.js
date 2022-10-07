@@ -61,73 +61,92 @@ define([
          * Apply an Attribute Add Operation
          * @param {operations.ot.AttributeDeleteOperation} operation
          */
-        var processAttributeAddOperation = function(operation){
-            var attribute;
-            if(!that.getAttributes().hasOwnProperty(operation.getEntityId())){
-                attribute = new RenamingAttribute(operation.getEntityId(),"Attribute",that,_options);
-                that.addAttribute(attribute);
-                _$node.find(".list").append(attribute.get$node());
-            } else attribute = that.getAttribute(operation.getEntityId());
-             //this is strange if i call processAttributeAddOperation for first time ytext is undefined, but it shouldn't 
-            var ymap = y.share.nodes.get(subjectEntity.getEntityId());
-            setTimeout(function () {
-                var ytext = ymap.get(attribute.getKey().getEntityId());
-                attribute.getKey().registerYType(ytext);
-                var ytext2 = ymap.get(attribute.getRef().getEntityId());
-                attribute.getRef().registerYType(ytext2);
-            }, 200);
+        var processAttributeAddOperation = function (operation) {
+          var attribute;
+          if (!that.getAttributes().hasOwnProperty(operation.getEntityId())) {
+            attribute = new RenamingAttribute(
+              operation.getEntityId(),
+              "Attribute",
+              that,
+              _options
+            );
+            that.addAttribute(attribute);
+            _$node.find(".list").append(attribute.get$node());
+          } else attribute = that.getAttribute(operation.getEntityId());
+          //this is strange if i call processAttributeAddOperation for first time ytext is undefined, but it shouldn't
+          const nodesMap = y.getMap("nodes");
+          var ymap = nodesMap.get(subjectEntity.getEntityId());
+          setTimeout(function () {
+            var ytext = ymap.get(attribute.getKey().getEntityId());
+            attribute.getKey().registerYType(ytext);
+            var ytext2 = ymap.get(attribute.getRef().getEntityId());
+            attribute.getRef().registerYType(ytext2);
+          }, 200);
         };
 
         /**
          * Apply an Attribute Delete Operation
          * @param {operations.ot.AttributeDeleteOperation} operation
          */
-        var processAttributeDeleteOperation = function(operation){
-            var attribute = that.getAttribute(operation.getEntityId());
-            if(attribute){
-                that.deleteAttribute(attribute.getEntityId());
-                attribute.get$node().remove();
-            }
+        var processAttributeDeleteOperation = function (operation) {
+          var attribute = that.getAttribute(operation.getEntityId());
+          if (attribute) {
+            that.deleteAttribute(attribute.getEntityId());
+            attribute.get$node().remove();
+          }
         };
 
         /**
          * Callback for an Attribute Delete Operation
          * @param {operations.ot.AttributeDeleteOperation} operation
          */
-        var attributeDeleteCallback = function(operation){
-            if(operation instanceof AttributeDeleteOperation && operation.getRootSubjectEntityId() === that.getRootSubjectEntity().getEntityId() && operation.getSubjectEntityId() === that.getEntityId()){
-                processAttributeDeleteOperation(operation);
-            }
+        var attributeDeleteCallback = function (operation) {
+          if (
+            operation instanceof AttributeDeleteOperation &&
+            operation.getRootSubjectEntityId() ===
+              that.getRootSubjectEntity().getEntityId() &&
+            operation.getSubjectEntityId() === that.getEntityId()
+          ) {
+            processAttributeDeleteOperation(operation);
+          }
         };
 
         /**
          * Propagate an Attribute Add Operation to the remote users and the local widgets
          * @param {operations.ot.AttributeDeleteOperation} operation
          */
-        this.propagateAttributeAddOperation = function(operation){
-            iwc.sendLocalOTOperation(CONFIG.WIDGET.NAME.MAIN,operation.getOTOperation());
+        this.propagateAttributeAddOperation = function (operation) {
+          iwc.sendLocalOTOperation(
+            CONFIG.WIDGET.NAME.MAIN,
+            operation.getOTOperation()
+          );
         };
 
         /**
          * Callback for an Attribute Add Operation
          * @param {operations.ot.AttributeAddOperation} operation
          */
-        var attributeAddCallback = function(operation){
-            if(operation instanceof AttributeAddOperation && operation.getRootSubjectEntityId() === that.getRootSubjectEntity().getEntityId() && operation.getSubjectEntityId() === that.getEntityId()){
-                processAttributeAddOperation(operation);
-                subjectEntity.showAttributes();
-            }
+        var attributeAddCallback = function (operation) {
+          if (
+            operation instanceof AttributeAddOperation &&
+            operation.getRootSubjectEntityId() ===
+              that.getRootSubjectEntity().getEntityId() &&
+            operation.getSubjectEntityId() === that.getEntityId()
+          ) {
+            processAttributeAddOperation(operation);
+            subjectEntity.showAttributes();
+          }
         };
 
         /**
          * Add attribute to attribute list
          * @param {attribute_widget.AbstractAttribute} attribute
          */
-        this.addAttribute = function(attribute){
-            var id = attribute.getEntityId();
-            if(!_list.hasOwnProperty(id)){
-                _list[id] = attribute;
-            }
+        this.addAttribute = function (attribute) {
+          var id = attribute.getEntityId();
+          if (!_list.hasOwnProperty(id)) {
+            _list[id] = attribute;
+          }
         };
 
         /**
@@ -135,91 +154,106 @@ define([
          * @param id
          * @returns {attribute_widget.AbstractAttribute}
          */
-        this.getAttribute = function(id){
-            if(_list.hasOwnProperty(id)){
-                return _list[id];
-            }
-            return null;
+        this.getAttribute = function (id) {
+          if (_list.hasOwnProperty(id)) {
+            return _list[id];
+          }
+          return null;
         };
 
         /**
          * Delete attribute from attribute list by its entity id
          * @param {string} id
          */
-        this.deleteAttribute = function(id){
-            if(_list.hasOwnProperty(id)){
-                delete _list[id];
-            }
+        this.deleteAttribute = function (id) {
+          if (_list.hasOwnProperty(id)) {
+            delete _list[id];
+          }
         };
 
         /**
          * Get attribute list
          * @returns {Object}
          */
-        this.getAttributes = function(){
-            return _list;
+        this.getAttributes = function () {
+          return _list;
         };
 
         /**
          * Set attribute list
          * @param {Object} list
          */
-        this.setAttributes = function(list){
-            _list = list;
+        this.setAttributes = function (list) {
+          _list = list;
         };
 
         /**
          * Get jQuery object of the DOM node representing the attribute (list)
          * @returns {jQuery}
          */
-        this.get$node = function(){
-            return _$node;
+        this.get$node = function () {
+          return _$node;
         };
 
-        this.setOptions = function(options){
-            _options = options;
+        this.setOptions = function (options) {
+          _options = options;
         };
 
         /**
          * Set attribute list by its JSON representation
          * @param json
          */
-        this.setValueFromJSON = function(json){
-            _.forEach(json.list,function(val,key){
-                var attribute = new RenamingAttribute(key,"Attribute",that,_options);
-                attribute.setValueFromJSON(json.list[key]);
-                if(attr = that.getAttribute(attribute.getEntityId())){
-                    that.deleteAttribute(attr.getEntityId());
-                    attr.get$node().remove();
-                }
-                that.addAttribute(attribute);
-                _$node.find(".list").append(attribute.get$node());
-            });
+        this.setValueFromJSON = function (json) {
+          _.forEach(json.list, function (val, key) {
+            var attribute = new RenamingAttribute(
+              key,
+              "Attribute",
+              that,
+              _options
+            );
+            attribute.setValueFromJSON(json.list[key]);
+            if ((attr = that.getAttribute(attribute.getEntityId()))) {
+              that.deleteAttribute(attr.getEntityId());
+              attr.get$node().remove();
+            }
+            that.addAttribute(attribute);
+            _$node.find(".list").append(attribute.get$node());
+          });
         };
 
         _$node.find(".name").text(this.getName());
-        for(var attrId in _list){
-            if(_list.hasOwnProperty(attrId)){
-                _$node.find(".list").append(_list[attrId].get$node());
-            }
+        for (var attrId in _list) {
+          if (_list.hasOwnProperty(attrId)) {
+            _$node.find(".list").append(_list[attrId].get$node());
+          }
         }
 
-       
-        y.share.nodes.get(subjectEntity.getEntityId()).observe(function(event) {
-            if (event.name.indexOf('[val]') != -1) {
-                switch (event.type) {
-                    case 'add': {
-                        operation = new AttributeAddOperation(event.name.replace(/\[\w*\]/g, ''), that.getEntityId(), that.getRootSubjectEntity().getEntityId(), that.constructor.name);
-                        attributeAddCallback(operation);
-                        break;
-                    }
-                    case 'delete':{
-                        operation = new AttributeDeleteOperation(event.name.replace(/\[\w*\]/g, ''), that.getEntityId(), that.getRootSubjectEntity().getEntityId(), that.constructor.name);
-                        attributeDeleteCallback(operation);
-                        break;
-                    }
-                }
+        const nodesMap = y.getMap("nodes");
+        nodesMap.get(subjectEntity.getEntityId()).observe(function (event) {
+          if (event.name.indexOf("[val]") != -1) {
+            switch (event.type) {
+              case "add": {
+                operation = new AttributeAddOperation(
+                  event.name.replace(/\[\w*\]/g, ""),
+                  that.getEntityId(),
+                  that.getRootSubjectEntity().getEntityId(),
+                  that.constructor.name
+                );
+                attributeAddCallback(operation);
+                break;
+              }
+              case "delete": {
+                operation = new AttributeDeleteOperation(
+                  event.name.replace(/\[\w*\]/g, ""),
+                  that.getEntityId(),
+                  that.getRootSubjectEntity().getEntityId(),
+                  that.constructor.name
+                );
+                attributeDeleteCallback(operation);
+                break;
+              }
             }
+          }
         });
     }
 

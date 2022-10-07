@@ -18,12 +18,15 @@ define(['chai', 'canvas_widget/EntityManager'], function(chai, EntityManager) {
             });
 
             it(id + ' edge should no longer be in Yjs data model', function() {
-                expect(y.share.data.get('model').edges.hasOwnProperty(id)).to.be.false;
+                const dataMap = y.getMap("data");
+                expect(dataMap.get("model").edges.hasOwnProperty(id)).to.be
+                  .false;
             });
 
             it(id + ' edge should no longer be in y nodes', function() {
-                expect(y.share.edges.get(id)).to.be.undefined;
-                expect(y.share.edges.keys().indexOf(id)).to.be.equal(-1);
+                const edgeMap = y.getMap("edges");
+                expect(edgeMap.get(id)).to.be.undefined;
+                expect(edgeMap.has(id)).to.be.equal(-1);
             });
 
             after(function(done) {

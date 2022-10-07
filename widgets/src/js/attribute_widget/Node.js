@@ -111,7 +111,8 @@ define([
         
         Node.prototype.registerYType = function() {
             AbstractNode.prototype.registerYType.call(this);
-            var ymap = y.share.nodes.get(this.getEntityId());
+            const nodesMap = y.getMap("nodes");
+            var ymap = nodesMap.get(this.getEntityId());
             var attr = this.getAttributes();
             for (var key in attr) {
                 if (attr.hasOwnProperty(key)) {

@@ -22,112 +22,149 @@ requirejs([
         iwc.setSpace(user);
 
         yjsSync().done(function (y, spaceTitle) {
-            window.y = y;
-            window.syncmetaLog = {
-                widget: "Attribute",
-                initializedYTexts: 0,
-                objects: {},
-                errors: {},
-                firstAttemptFail: {}
-            };
-            $('#wrapper').find('h1').text('Successfully connected to Yjs.');
-            setTimeout(function () {
-                $('#wrapper').find('h1').remove();
-            }, 2000);
-            console.info('ATTRIBUTE: Yjs successfully initialized in room ' + spaceTitle + ' with y-user-id: ' + y.db.userId);
-            y.share.users.set(y.db.userId, iwc.getUser()[CONFIG.NS.PERSON.JABBERID]);
-
-            var model = y.share.data.get('model');
-            if(model)
-                console.info('ATTRIBUTE: Found model in yjs room with ' + Object.keys(model.nodes).length + ' nodes and ' + Object.keys(model.edges).length + ' edges.');
-            InitAttributeWidget(model);
+          window.y = y;
+          window.syncmetaLog = {
+            widget: "Attribute",
+            initializedYTexts: 0,
+            objects: {},
+            errors: {},
+            firstAttemptFail: {},
+          };
+          $("#wrapper").find("h1").text("Successfully connected to Yjs.");
+          setTimeout(function () {
+            $("#wrapper").find("h1").remove();
+          }, 2000);
+          console.info(
+            "ATTRIBUTE: Yjs successfully initialized in room " +
+              spaceTitle +
+              " with y-user-id: " +
+              y.clientID
+          );
+          const usersMap = y.getMap("users");
+          usersMap.set(y.clientID, iwc.getUser()[CONFIG.NS.PERSON.JABBERID]);
+          const dataMap = y.getMap("data");
+          var model = dataMap.get("model");
+          if (model)
+            console.info(
+              "ATTRIBUTE: Found model in yjs room with " +
+                Object.keys(model.nodes).length +
+                " nodes and " +
+                Object.keys(model.edges).length +
+                " edges."
+            );
+          InitAttributeWidget(model);
         });
         function InitAttributeWidget(model) {
+          if (guidancemodel.isGuidanceEditor()) {
+            const dataMap = y.getMap("data");
+            EntityManager.init(dataMap.get("guidancemetamodel"));
+            model = dataMap.get("guidancemodel");
+          } else {
+            EntityManager.init(dataMap.get("metamodel"));
+          }
+          var wrapper = new AttributeWrapper($("#wrapper"));
 
-            if (guidancemodel.isGuidanceEditor()) {
-                EntityManager.init(y.share.data.get('guidancemetamodel'));
-                model = y.share.data.get('guidancemodel');
-            } else {
-                EntityManager.init(y.share.data.get('metamodel'));
+          if (model) JSONtoGraph(model);
+          console.info(
+            "ATTRIBUTE: Initialization of model completed",
+            window.syncmetaLog
+          );
+
+          function JSONtoGraph(json) {
+            var modelAttributesNode;
+            var nodeId, edgeId;
+            if (json.attributes && !_.isEmpty(json.attributes)) {
+              modelAttributesNode =
+                EntityManager.createModelAttributesNodeFromJSON(
+                  json.attributes
+                );
+              wrapper.setModelAttributesNode(modelAttributesNode);
+              modelAttributesNode.registerYType();
+              modelAttributesNode.addToWrapper(wrapper);
+              wrapper.select(modelAttributesNode);
             }
-            var wrapper = new AttributeWrapper($("#wrapper"));
-
-            if (model)
-                JSONtoGraph(model);
-            console.info('ATTRIBUTE: Initialization of model completed' , window.syncmetaLog);
-
-
-            function JSONtoGraph(json) {
-                var modelAttributesNode;
-                var nodeId, edgeId;
-                if (json.attributes && !_.isEmpty(json.attributes)) {
-                    modelAttributesNode = EntityManager.createModelAttributesNodeFromJSON(json.attributes);
-                    wrapper.setModelAttributesNode(modelAttributesNode);
-                    modelAttributesNode.registerYType();
-                    modelAttributesNode.addToWrapper(wrapper);
-                    wrapper.select(modelAttributesNode);
-                }
-                for (nodeId in json.nodes) {
-                    if (json.nodes.hasOwnProperty(nodeId)) {
-                        var node = EntityManager.createNodeFromJSON(json.nodes[nodeId].type, nodeId, json.nodes[nodeId].left, json.nodes[nodeId].top, json.nodes[nodeId].width, json.nodes[nodeId].height, json.nodes[nodeId].zIndex, json.nodes[nodeId]);
-                        node.registerYType();
-                        node.addToWrapper(wrapper);
-                    }
-                }
-                for (edgeId in json.edges) {
-                    if (json.edges.hasOwnProperty(edgeId)) {
-                        var edge = EntityManager.createEdgeFromJSON(json.edges[edgeId].type, edgeId, json.edges[edgeId].source, json.edges[edgeId].target, json.edges[edgeId]);
-                        edge.registerYType();
-                        edge.addToWrapper(wrapper);
-                    }
-                }
+            for (nodeId in json.nodes) {
+              if (json.nodes.hasOwnProperty(nodeId)) {
+                var node = EntityManager.createNodeFromJSON(
+                  json.nodes[nodeId].type,
+                  nodeId,
+                  json.nodes[nodeId].left,
+                  json.nodes[nodeId].top,
+                  json.nodes[nodeId].width,
+                  json.nodes[nodeId].height,
+                  json.nodes[nodeId].zIndex,
+                  json.nodes[nodeId]
+                );
+                node.registerYType();
+                node.addToWrapper(wrapper);
+              }
             }
+            for (edgeId in json.edges) {
+              if (json.edges.hasOwnProperty(edgeId)) {
+                var edge = EntityManager.createEdgeFromJSON(
+                  json.edges[edgeId].type,
+                  edgeId,
+                  json.edges[edgeId].source,
+                  json.edges[edgeId].target,
+                  json.edges[edgeId]
+                );
+                edge.registerYType();
+                edge.addToWrapper(wrapper);
+              }
+            }
+          }
 
-            iwc.registerOnDataReceivedCallback(function (operation) {
-                var modelAttributesNode;
-                 if (operation instanceof SetModelAttributeNodeOperation) {
-                    modelAttributesNode = wrapper.getModelAttributesNode();
-                    if (modelAttributesNode === null) {
-                        modelAttributesNode = EntityManager.createModelAttributesNode();
-                        wrapper.setModelAttributesNode(modelAttributesNode);
-                        modelAttributesNode.registerYType();
-                        modelAttributesNode.addToWrapper(wrapper);
-                    }
-                    wrapper.select(modelAttributesNode);
+          iwc.registerOnDataReceivedCallback(function (operation) {
+            var modelAttributesNode;
+            if (operation instanceof SetModelAttributeNodeOperation) {
+              modelAttributesNode = wrapper.getModelAttributesNode();
+              if (modelAttributesNode === null) {
+                modelAttributesNode = EntityManager.createModelAttributesNode();
+                wrapper.setModelAttributesNode(modelAttributesNode);
+                modelAttributesNode.registerYType();
+                modelAttributesNode.addToWrapper(wrapper);
+              }
+              wrapper.select(modelAttributesNode);
+            } else if (operation instanceof InitModelTypesOperation) {
+              var vvs = operation.getVLS();
+              const dataMap = y.getMap("data");
+              var metamodel = dataMap.get("metamodel");
+              if (vvs.hasOwnProperty("id")) {
+                EntityManager.initViewTypes(vvs);
+                if (operation.getViewGenerationFlag()) {
+                  ViewGenerator.generate(metamodel, vvs);
                 }
-                else if (operation instanceof InitModelTypesOperation) {
-                    var vvs = operation.getVLS();
-                    var metamodel = y.share.data.get('metamodel');
-                    if (vvs.hasOwnProperty('id')) {
-                        EntityManager.initViewTypes(vvs);
-                        if (operation.getViewGenerationFlag()) {
-                            ViewGenerator.generate(metamodel, vvs);
-                        }
-
-                    } else {
-                        EntityManager.setViewId(null);
-                        if (operation.getViewGenerationFlag()) {
-                            ViewGenerator.reset(metamodel);
-                        }
-                    }
+              } else {
+                EntityManager.setViewId(null);
+                if (operation.getViewGenerationFlag()) {
+                  ViewGenerator.reset(metamodel);
                 }
-            });
+              }
+            }
+          });
 
-            var operation = new SetModelAttributeNodeOperation();
-            iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN, operation.toNonOTOperation());
+          var operation = new SetModelAttributeNodeOperation();
+          iwc.sendLocalNonOTOperation(
+            CONFIG.WIDGET.NAME.MAIN,
+            operation.toNonOTOperation()
+          );
 
-            if (CONFIG.TEST.ATTRIBUTE && (iwc.getUser()[CONFIG.NS.PERSON.TITLE] === CONFIG.TEST.USER || iwc.getUser()[CONFIG.NS.PERSON.MBOX] === CONFIG.TEST.EMAIL))
-                require(['./../test/AttributeWidgetTest']);
+          if (
+            CONFIG.TEST.ATTRIBUTE &&
+            (iwc.getUser()[CONFIG.NS.PERSON.TITLE] === CONFIG.TEST.USER ||
+              iwc.getUser()[CONFIG.NS.PERSON.MBOX] === CONFIG.TEST.EMAIL)
+          )
+            require(["./../test/AttributeWidgetTest"]);
+          const canvas = y.getMap("canvas");
+          canvas.observe(function (event) {
+            switch (event.name) {
+              case "ReloadWidgetOperation": {
+                frameElement.contentWindow.location.reload();
+              }
+            }
+          });
 
-            y.share.canvas.observe(function (event) {
-                switch (event.name) {
-                    case 'ReloadWidgetOperation': {
-                        frameElement.contentWindow.location.reload();
-                    }
-                }
-            });
-
-            $("#loading").hide();
+          $("#loading").hide();
         }
     }).fail(function () {
         $('#wrapper').find('h1').text('Add Canvas Widget to Space and refresh the widget.');

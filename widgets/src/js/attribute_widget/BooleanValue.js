@@ -73,7 +73,8 @@ define([
          */
         var propagateValueChangeOperation = function(operation){
             processValueChangeOperation(operation);
-            var ymap = y.share.nodes.get(rootSubjectEntity.getEntityId());
+            const nodesMap = y.getMap("nodes");
+            var ymap = nodesMap.get(rootSubjectEntity.getEntityId());
             if(ymap){
                 var json = operation.toJSON();
                 json.userId = _iwc.getUser()[CONFIG.NS.PERSON.JABBERID];
