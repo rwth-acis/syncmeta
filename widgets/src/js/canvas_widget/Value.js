@@ -40,9 +40,11 @@ define([
     if (window.hasOwnProperty("y") && id.indexOf("undefined") == -1) {
       if (rootSubjectEntity.getYMap().has(id)) {
         _ytext = rootSubjectEntity.getYMap().get(id);
-        if (!(_ytext instanceof new Y.Text().typeDefinition.class))
+        if (!(_ytext instanceof Y.Text))
           _ytext = rootSubjectEntity.getYMap().set(id, new Y.Text());
-      } else _ytext = rootSubjectEntity.getYMap().set(id, new Y.Text());
+      } else {
+        _ytext = rootSubjectEntity.getYMap().set(id, new Y.Text());
+      }
     }
     AbstractValue.call(this, id, name, subjectEntity, rootSubjectEntity);
 
