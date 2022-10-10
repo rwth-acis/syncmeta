@@ -172,19 +172,17 @@ requirejs(
 
       //not working pretty well
       window.onbeforeunload = function (event) {
-        const userList = y.getMap("userList");
-        const userMap = y.getMap("users");
+        // const userList = y.getMap("userList");
+        // const userMap = y.getMap("users");
         //userList.delete(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
         //userMap.delete(y.clientID);
         const activityMap = y.getMap("activity");
-        activityMap.set(
+        const leaveActivity = new ActivityOperation(
           "UserLeftActivity",
-          new ActivityOperation(
-            "UserLeftActivity",
-            null,
-            _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]
-          )
+          null,
+          _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]
         );
+        activityMap.set("UserLeftActivity", leaveActivity.toJSON());
       };;
       const joinMap = y.getMap("join");
       joinMap.observe(function (event) {
