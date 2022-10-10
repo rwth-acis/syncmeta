@@ -121,7 +121,16 @@ requirejs(
             y.clientID
         );
         const userMap = y.getMap("users");
-        userMap.set(y.clientID, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+          try {
+            if (_iwcw.getUser().globalId !== -1) {
+              userMap.set(
+                y.clientID,
+                _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]
+              );
+            }
+          } catch (error) {
+            console.error(error);
+          }
         if (!userMap.get(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])) {
           var userInfo = _iwcw.getUser();
           userInfo.globalId = Util.getGlobalId(user, y);
@@ -164,9 +173,9 @@ requirejs(
       //not working pretty well
       window.onbeforeunload = function (event) {
         const userList = y.getMap("userList");
-        const usersMap = y.getMap("users");
+        const userMap = y.getMap("users");
         //userList.delete(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
-        //usersMap.delete(y.clientID);
+        //userMap.delete(y.clientID);
         const activityMap = y.getMap("activity");
         activityMap.set(
           "UserLeftActivity",
@@ -176,7 +185,7 @@ requirejs(
             _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]
           )
         );
-      };
+      };;
       const joinMap = y.getMap("join");
       joinMap.observe(function (event) {
         if (userList.indexOf(event.name) === -1) {
@@ -799,16 +808,16 @@ requirejs(
       });
 
       $("#applyLayout").click(function () {
-        const usersMap = window.y.getMap("users");
+        const userMap = window.y.getMap("users");
         const canvasMap = window.y.getMap("canvas");
-        canvasMap.set("applyLayout", usersMap.get(window.y.clientID));
+        canvasMap.set("applyLayout", userMap.get(window.y.clientID));
         const activityMap = window.y.getMap("activity");
         activityMap.set(
           "ApplyLayoutActivity",
           new ActivityOperation(
             "ApplyLayoutActivity",
             null,
-            usersMap.get(window.y.clientID),
+            userMap.get(window.y.clientID),
             "..applied Layout"
           )
         );

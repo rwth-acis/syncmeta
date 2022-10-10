@@ -41,8 +41,8 @@ requirejs([
         $heatmap.append($window);
         //$('#viewpoint').draggable({ cursor: "move", containment:'#heatmap'});
         var previewNodes = {};
-        const usersMap = y.getMap("users");
-        var localUserId = usersMap.get(y.clientID);
+        const userMap = y.getMap("users");
+        var localUserId = userMap.get(y.clientID);
 
         /*if(guidancemodel.isGuidanceEditor()){
          model = guidancemodel.guidancemodel;

@@ -40,8 +40,8 @@ requirejs([
               " with y-user-id: " +
               y.clientID
           );
-          const usersMap = y.getMap("users");
-          usersMap.set(y.clientID, iwc.getUser()[CONFIG.NS.PERSON.JABBERID]);
+          const userMap = y.getMap("users");
+          userMap.set(y.clientID, iwc.getUser()[CONFIG.NS.PERSON.JABBERID]);
           const dataMap = y.getMap("data");
           var model = dataMap.get("model");
           if (model)
