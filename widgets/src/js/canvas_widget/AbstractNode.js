@@ -90,7 +90,8 @@ define([
         _ymap.set("type", type);
         _ymap.set("id", id);
         if (json) _ymap.set("json", json);
-        _ymap.set("jabberId", _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+        if (_iwcw.getUser().globalId !== -1)
+          _ymap.set("jabberId", _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
       }
     }
     this.getYMap = function () {
