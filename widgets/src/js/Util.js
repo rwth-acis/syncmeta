@@ -127,15 +127,15 @@ define(["jqueryui"], /** @lends Util */ function ($) {
    */
   Util.getGlobalId = function (user, y) {
     var mbox = user.user[CONFIG.NS.PERSON.MBOX]; // mailbox of the user
-    const usersMap = y.getMap("users");
-    var users = Array.from(usersMap.values()); // get all users
+    const userMap = y.getMap("users");
+    var users = Array.from(userMap.values()); // get all users
     var id = users.indexOf(mbox);
     if (id === -1) {
       id = users.length;
-      usersMap.set(y.clientID, mbox);
+      userMap.set(y.clientID, mbox);
     }
     return id;
-  };
+  };;;
 
   /**
    * Get the current state of the primary document store

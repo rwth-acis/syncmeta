@@ -35,9 +35,9 @@ requirejs(
       WaitForCanvas(CONFIG.WIDGET.NAME.ACTIVITY, 7).done(function (data) {
         console.info("ACTIVITY: Got message from CANVAS");
         var user = data.local.user;
-        const usersMap = y.getMap("users");
+        const userMap = y.getMap("users");
         const userList = y.getMap("userList");
-        usersMap.set(y.clientID, user[CONFIG.NS.PERSON.JABBERID]);
+        userMap.set(y.clientID, user[CONFIG.NS.PERSON.JABBERID]);
         WidgetTracker.init(user[CONFIG.NS.PERSON.JABBERID]);
         if (!userList.get(user[CONFIG.NS.PERSON.JABBERID])) {
           user.globalId = Util.getGlobalId(data.local, y);
