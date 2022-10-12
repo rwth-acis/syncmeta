@@ -32,12 +32,8 @@
     "requirejs-promise": "github:jokeyrhyme/requirejs-promise",
     "requirejs-text": "^2.0.16",
     "utf-8-validate": "^5.0.9",
-    "y-array": "github:y-js/y-array#v11.0.0-5",
-    "y-map": "github:y-js/y-map#v11.0.0-1",
-    "y-memory": "github:y-js/y-memory#v9.0.0-1",
-    "y-text": "github:y-js/y-text#v10.0.0-1",
     "y-websockets-client": "github:y-js/y-websockets-client#v9.0.0-4",
-    "yjs": "^13.0.0-17"
+    "yjs": "^13.5.41"
   },
   "devDependencies": {
     "chai": "^4.3.6",
