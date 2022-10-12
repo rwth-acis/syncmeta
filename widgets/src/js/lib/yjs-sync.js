@@ -72,6 +72,6 @@ define(['jquery', 'Util'], function($, Util) {
       // }).then(function(y) {
       //     deferred.resolve(y, spaceTitle);
       // });
-      // return deferred.promise();
+      return deferred.promise();
     };
 });
