@@ -7,6 +7,7 @@ import '@polymer/paper-button/paper-button.js';
 import Common from './common.js';
 import Static from './static.js';
 import * as Y from "yjs";
+import { WebsocketProvider } from "y-websocket";
 
 /**
  * @customElement
@@ -188,6 +189,7 @@ class StaticApp extends PolymerElement {
   ready() {
     super.ready();
     window.Y = Y;
+    window.WebsocketProvider = WebsocketProvider;
     parent.caeFrames = this.shadowRoot.querySelectorAll("iframe");
     const statusBar = this.shadowRoot.querySelector("#statusBar");
     statusBar.addEventListener("signed-in", this.handleLogin);
@@ -290,7 +292,7 @@ class StaticApp extends PolymerElement {
     );
     if (!event.detail.access_token || event.detail.expired === true) {
       alert("Login failed. Please try again.");
-    } 
+    }
     if (event.detail.access_token === cached_access_token) {
       return; // already logged in
     }

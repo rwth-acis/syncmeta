@@ -14,7 +14,7 @@
     "@polymer/polymer": "^3.5.1",
     "las2peer-frontend-statusbar": "github:rwth-acis/las2peer-frontend-statusbar#0.3.6",
     "las2peer-frontend-user-widget": "github:rwth-acis/las2peer-frontend-user-widget#0.3.3",
-    "y-websockets-client": "github:y-js/y-websockets-client#v9.0.0-4",
+    "y-websocket": "^1.4.5",
     "yjs": "^13.5.41"
   },
   "devDependencies": {
