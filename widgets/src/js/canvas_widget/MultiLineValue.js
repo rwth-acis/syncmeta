@@ -37,7 +37,7 @@ define([
 
     var _ytext = null;
     if (window.hasOwnProperty("y")) {
-      if (rootSubjectEntity.getYMap().has(id) != -1)
+      if (rootSubjectEntity.getYMap().has(id))
         _ytext = rootSubjectEntity.getYMap().get(id);
       else _ytext = rootSubjectEntity.getYMap().set(id, new Y.Text());
     }
@@ -225,8 +225,19 @@ define([
     };
 
     this.registerYType = function () {
-      _ytext.bind(_$node[0]);
-
+      // _$node.on("input", function () {
+      //   if (_ytext) {
+      //     if (_$node.val() !== _ytext.toString()) {
+      //       if (_ytext.toString().length > 0)
+      //         _ytext.delete(0, _ytext.toString().length);
+      //       _ytext.insert(0, _$node.val());
+      //     }
+      //   }
+      // });
+      // _ytext.bind(_$node[0]);
+      // if (!_ytext) {
+      //   _ytext = y.getText(that.getEntityId());
+      // }
       if (that.getValue() !== _ytext.toString()) {
         if (_ytext.toString().length > 0)
           _ytext.delete(0, _ytext.toString().length - 1);
