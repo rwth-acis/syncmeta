@@ -113,39 +113,39 @@ requirejs(
     _iwcw.setSpace(user);
 
     yjsSync()
-      .done(function (y, spaceTitle) {
+      .done(function (ydoc, spaceTitle) {
         console.info(
           "CANVAS: Yjs Initialized successfully in room " +
             spaceTitle +
             " with y-user-id: " +
-            y.clientID
+            ydoc.clientID
         );
-        const userMap = y.getMap("users");
-          try {
-            if (_iwcw.getUser().globalId !== -1) {
-              userMap.set(
-                y.clientID,
-                _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]
-              );
-            }
-          } catch (error) {
-            console.error(error);
+        const userMap = ydoc.getMap("users");
+        try {
+          if (_iwcw.getUser().globalId !== -1) {
+            userMap.set(
+              ydoc.clientID,
+              _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]
+            );
           }
+        } catch (error) {
+          console.error(error);
+        }
         if (!userMap.get(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])) {
           var userInfo = _iwcw.getUser();
-          userInfo.globalId = Util.getGlobalId(user, y);
+          userInfo.globalId = Util.getGlobalId(user, ydoc);
           userMap.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], userInfo);
         }
         var metamodel, model;
         if (guidancemodel.isGuidanceEditor()) {
-          const dataMap = y.getMap("data");
+          const dataMap = ydoc.getMap("data");
           //Set the model which is shown by the editor to the guidancemodel
           model = dataMap.get("guidancemodel");
           //Set the metamodel to the guidance metamodel
           metamodel = dataMap.get("guidancemetamodel");
         } else {
-          metamodel = y.getMap("data").get("metamodel");
-          model = y.getMap("data").get("model");
+          metamodel = ydoc.getMap("data").get("metamodel");
+          model = ydoc.getMap("data").get("model");
         }
         if (model)
           console.info(
@@ -157,12 +157,12 @@ requirejs(
           );
         EntityManager.init(metamodel);
         EntityManager.setGuidance(guidancemodel);
-        window.y = y;
+        window.ydoc = ydoc;
         InitMainWidget(metamodel, model);
       })
       .fail(function () {
         console.info("yjs log: Yjs intialization failed!");
-        window.y = undefined;
+        window.ydoc = undefined;
         InitMainWidget();
       });
     function InitMainWidget(metamodel, model) {
@@ -183,7 +183,7 @@ requirejs(
           _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]
         );
         activityMap.set("UserLeftActivity", leaveActivity.toJSON());
-      };;
+      };
       const joinMap = y.getMap("join");
       joinMap.observe(function (event) {
         if (userList.indexOf(event.name) === -1) {
@@ -806,16 +806,16 @@ requirejs(
       });
 
       $("#applyLayout").click(function () {
-        const userMap = window.y.getMap("users");
-        const canvasMap = window.y.getMap("canvas");
-        canvasMap.set("applyLayout", userMap.get(window.y.clientID));
-        const activityMap = window.y.getMap("activity");
+        const userMap = window.ydoc.getMap("users");
+        const canvasMap = window.ydoc.getMap("canvas");
+        canvasMap.set("applyLayout", userMap.get(window.ydoc.clientID));
+        const activityMap = window.ydoc.getMap("activity");
         activityMap.set(
           "ApplyLayoutActivity",
           new ActivityOperation(
             "ApplyLayoutActivity",
             null,
-            userMap.get(window.y.clientID),
+            userMap.get(window.ydoc.clientID),
             "..applied Layout"
           )
         );
