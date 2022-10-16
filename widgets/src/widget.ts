@@ -5,9 +5,9 @@ import { WebsocketProvider } from "y-websocket";
 import { CONFIG } from "./js/config";
 import init from "./js/shared";
 
-// main widget body used by all syncmeta widgets
+// widget body used by all syncmeta widgets
 @customElement("widget-body")
-class WidgetBody extends LitElement {
+export class SyncMetaWidget extends LitElement {
   render() {
     return html` <div>Hello from MyElement!</div> `;
   }
@@ -15,6 +15,8 @@ class WidgetBody extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     init();
+    window.Y = Y;
+    window.WebsocketProvider = WebsocketProvider;
   }
 
   disconnectedCallback() {
