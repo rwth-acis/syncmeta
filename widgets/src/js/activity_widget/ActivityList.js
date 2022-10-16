@@ -512,6 +512,10 @@ define([
         };
         if (y) {
           const activityMap = y.getMap("activity");
+          var userMap = y.getMap("users");
+          /*
+              https://docs.yjs.dev/api/y.event
+            */
           activityMap.observe(function (event) {
             if (event.name === "log" || event.value.sender == null) return;
             operationCallback(
