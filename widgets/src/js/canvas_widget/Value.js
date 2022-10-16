@@ -40,7 +40,8 @@ define([
     if (window.hasOwnProperty("y") && id.indexOf("undefined") == -1) {
       if (rootSubjectEntity.getYMap().has(id)) {
         _ytext = rootSubjectEntity.getYMap().get(id);
-        if (!(_ytext instanceof Y.Text))
+        if (!(_ytext.constructor.name === Y.Text.name))
+          //This is a very dangerous hack for checking if _ytext is instance of Y.Text, but it works for now (might break if code is minified or uglified)
           _ytext = rootSubjectEntity.getYMap().set(id, new Y.Text());
       } else {
         _ytext = rootSubjectEntity.getYMap().set(id, new Y.Text());
@@ -128,15 +129,15 @@ define([
     };
 
     this.registerYType = function () {
-      _$node.on("input", function () {
-        if (_ytext) {
-          if (_$node.val() !== _ytext.toString()) {
-            if (_ytext.toString().length > 0)
-              _ytext.delete(0, _ytext.toString().length);
-            _ytext.insert(0, _$node.val());
-          }
-        }
-      });
+      // _$node.on("input", function () {
+      //   if (_ytext) {
+      //     if (_$node.val() !== _ytext.toString()) {
+      //       if (_ytext.toString().length > 0)
+      //         _ytext.delete(0, _ytext.toString().length);
+      //       _ytext.insert(0, _$node.val());
+      //     }
+      //   }
+      // });
       // _ytext.bind(_$node[0]);
       if (that.getValue() !== _ytext.toString()) {
         if (_ytext.toString().length > 0)
