@@ -27,11 +27,13 @@
     "jquery-ui": "~1.10.3",
     "jsPlumb": "github:jsplumb/jsplumb#1.5.5",
     "jszip": "^3.10.1",
+    "lit": "^2.4.0",
     "lodash": "^4.17.21",
     "requirejs": "^2.3.6",
     "requirejs-promise": "github:jokeyrhyme/requirejs-promise",
     "requirejs-text": "^2.0.16",
     "utf-8-validate": "^5.0.9",
+    "y-websocket": "^1.4.5",
     "y-websockets-client": "github:y-js/y-websockets-client#v9.0.0-4",
     "yjs": "^13.5.41"
   },

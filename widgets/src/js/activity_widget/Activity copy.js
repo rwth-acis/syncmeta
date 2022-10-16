@@ -1,18 +1,5 @@
-import $ from 'jquery';
-import jQueryui from 'jquery-ui';
-import IWCW from '@rwth-acis/iwc'
-import _ from 'lodash'
-
-import Util from "../Util";
-import MoveCanvasOperation from '../operations/non_ot/MoveCanvasOperation'
 
 
-Promise.all([
-  import("../Util"),
-  import("../operations/non_ot/MoveCanvasOperation"),
-]).then(([Util, MoveCanvasOperation]) => {
-  
-});
 define([
     'jqueryui',
     'lodash',
