@@ -1,4 +1,4 @@
-import { LitElement, html } from "lit";
+import { LitElement, html, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
@@ -20,11 +20,6 @@ export class PaletteWidget extends SyncMetaWidget {
         type="text/css"
         href="<%= grunt.config('baseUrl') %>/css/style.css"
       />
-      <link
-        rel="stylesheet"
-        type="text/css"
-        href="<%= grunt.config('baseUrl') %>/css/palette_widget.css"
-      />
       <script src="<%= grunt.config('baseUrl') %>/js/palette_widget.js"></script>
       <div id="main">
         <div id="palette"></div>
@@ -37,6 +32,48 @@ export class PaletteWidget extends SyncMetaWidget {
     super.connectedCallback();
     init();
   }
+
+  static styles = css`
+    #main {
+      max-height: 400px;
+    }
+
+    button {
+      border: 1px dotted #cccccc;
+      background: none;
+      text-align: left;
+      width: 100%;
+    }
+    button.selected {
+      border: 1px solid #999999;
+      background-color: #eeeeee;
+    }
+
+    button .icon > div {
+      /*
+    zoom: 0.1;
+    -moz-transform: scale(0.2,0.2);
+    -moz-transform-origin: left center;*/
+      width: 15px !important;
+      height: 9px !important;
+    }
+    button .icon div.fill_parent {
+      display: none;
+    }
+
+    button span {
+      padding-left: 10px;
+    }
+
+    hr {
+      border-width: 0 0 1px 0;
+      border-color: #cccccc;
+      margin: 0.2em 0;
+    }
+    p#info {
+      font-size: 0.6em;
+    }
+  `;
 
   disconnectedCallback() {
     super.disconnectedCallback();
