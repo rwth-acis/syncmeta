@@ -7,7 +7,7 @@ import $ from "jquery-ui";
 import jsPlumb from "jsplumb";
 import Util from "../../util/Util";
 import IWCW from "../../util/IWCW";
-
+import CanvasWidgetTest from "./../test/CanvasWidgetTest";
 Promise.all([
   import("iwcw"),
   import("lib/yjs-sync"),
@@ -205,9 +205,7 @@ Promise.all([
           (_iwcw.getUser()[CONFIG.NS.PERSON.TITLE] === CONFIG.TEST.USER ||
             _iwcw.getUser()[CONFIG.NS.PERSON.MBOX] === CONFIG.TEST.EMAIL)
         )
-          require(["./../test/CanvasWidgetTest"], function (CanvasWidgetTest) {
-            CanvasWidgetTest(canvas);
-          });
+          CanvasWidgetTest(canvas);
 
         _iwcw.registerOnDataReceivedCallback(function (operation) {
           const canvasMap = y.getMap("canvas");
