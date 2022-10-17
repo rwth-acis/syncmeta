@@ -9,7 +9,7 @@ import init from "./js/shared";
 @customElement("widget-body")
 export class SyncMetaWidget extends LitElement {
   render() {
-    return html` <div>Hello from MyElement!</div> `;
+    return html``;
   }
 
   connectedCallback() {
