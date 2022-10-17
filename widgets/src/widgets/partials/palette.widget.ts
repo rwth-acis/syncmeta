@@ -20,7 +20,7 @@ export class PaletteWidget extends SyncMetaWidget {
         type="text/css"
         href="<%= grunt.config('baseUrl') %>/css/style.css"
       />
-      <script src="<%= grunt.config('baseUrl') %>/js/palette_widget.js"></script>
+      <script src="<%= grunt.config('baseUrl') %>/es6/palette_widget.js"></script>
       <div id="main">
         <div id="palette"></div>
         <p id="info"></p>

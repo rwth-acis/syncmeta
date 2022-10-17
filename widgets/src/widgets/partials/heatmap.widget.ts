@@ -31,7 +31,7 @@ export class HeatMapWidget extends SyncMetaWidget {
         rel="stylesheet"
         href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"
       />
-      <script src="<%= grunt.config('baseUrl') %>/js/heatmap_widget.js"></script>
+      <script src="<%= grunt.config('baseUrl') %>/es6/heatmap_widget.js"></script>
       <div
         id="heatmap"
         style="background-color: #f5f5f5; width: 100%;height: 100%;"

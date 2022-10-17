@@ -15,7 +15,7 @@ export class ActivityWidget extends SyncMetaWidget {
         type="text/css"
         href="<%= grunt.config('baseUrl') %>/css/vendor/jquery-ui.css"
       />
-      <script src="<%= grunt.config('baseUrl') %>/js/activity_widget.js"></script>
+      <script src="<%= grunt.config('baseUrl') %>/es6/activity_widget.js"></script>
       <h2>Users online</h2>
       <div class="list_wrapper">
         <div id="user_list" class="list"></div>

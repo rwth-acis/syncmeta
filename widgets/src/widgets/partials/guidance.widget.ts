@@ -31,7 +31,7 @@ export class GuidanceWidget extends SyncMetaWidget {
         rel="stylesheet"
         href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"
       />
-      <script src="<%= grunt.config('baseUrl') %>/js/guidance_widget.js"></script>
+      <script src="<%= grunt.config('baseUrl') %>/es6/guidance_widget.js"></script>
       <div id="guidance">
         <div class="bs-btn-group">
           <div class="bs-form-group">

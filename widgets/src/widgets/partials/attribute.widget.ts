@@ -21,13 +21,7 @@ export class AttributeWidget extends SyncMetaWidget {
         type="text/css"
         href="<%= grunt.config('baseUrl') %>/css/style.css"
       />
-      <script src="<%= grunt.config('baseUrl') %>/js/attribute_widget.js"></script>
-      <style>
-        #wrapper {
-          /*overflow-y: scroll;*/
-          height: 100%;
-        }
-      </style>
+      <script src="<%= grunt.config('baseUrl') %>/es6/attribute_widget.js"></script>
       <div id="loading" class="loading"></div>
       <div id="wrapper"><h1>Wait For Canvas Widget!</h1></div>
       <div id="q"></div>
@@ -38,6 +32,7 @@ export class AttributeWidget extends SyncMetaWidget {
     #wrapper {
       max-height: 200px;
       overflow: auto;
+      height: 100%;
     }
     .list_attribute ul.list {
       list-style: none;

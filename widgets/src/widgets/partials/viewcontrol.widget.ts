@@ -1,4 +1,4 @@
-import { LitElement, html } from "lit";
+import { LitElement, html, CSSResultGroup, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
@@ -21,26 +21,8 @@ export class ViewControlWidget extends SyncMetaWidget {
         type="text/css"
         href="<%= grunt.config('baseUrl') %>/css/style.css"
       />
-      <script src="<%= grunt.config('baseUrl') %>/js/viewcontrol_widget.js"></script>
-      <style>
-        td {
-          padding: 5;
-        }
-        .seperating_box {
-          border: 1px solid;
-          border-radius: 7px;
-          margin: 18px 20px 7px 7px;
-          padding: 7px 20px 7px 7px;
-          position: relative;
-        }
-        .seperating_box > h5 {
-          font-weight: normal;
-          font-style: italic;
-          position: absolute;
-          top: -40px;
-          left: 4px;
-        }
-      </style>
+      <script src="<%= grunt.config('baseUrl') %>/es6/viewcontrol_widget.js"></script>
+
       <div id="viewcontrol">
         <div class="seperating_box" style="display:none" id="div1">
           <h5>Add a Viewpoint to a Model Editor instance</h5>
@@ -70,6 +52,26 @@ export class ViewControlWidget extends SyncMetaWidget {
       </div>
     `;
   }
+
+  static styles?: CSSResultGroup = css`
+    td {
+      padding: 5;
+    }
+    .seperating_box {
+      border: 1px solid;
+      border-radius: 7px;
+      margin: 18px 20px 7px 7px;
+      padding: 7px 20px 7px 7px;
+      position: relative;
+    }
+    .seperating_box > h5 {
+      font-weight: normal;
+      font-style: italic;
+      position: absolute;
+      top: -40px;
+      left: 4px;
+    }
+  `;
 
   connectedCallback() {
     super.connectedCallback();

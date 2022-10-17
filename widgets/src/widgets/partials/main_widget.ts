@@ -1,7 +1,6 @@
 import { css, html } from "lit";
 import { customElement } from "lit/decorators.js";
 import { SyncMetaWidget } from "../../widget";
-import $ from "jquery-ui";
 
 // canvas widget
 @customElement("syncmeta-canvas")
@@ -33,7 +32,7 @@ export class CanvasWidget extends SyncMetaWidget {
         type="text/css"
         href="<%= grunt.config('baseUrl') %>/css/style.css"
       />
-      <script src="<%= grunt.config('baseUrl') %>/js/main_widget.js"></script>
+      <script src="<%= grunt.config('baseUrl') %>/es6/main_widget.js"></script>
       <div id="loading" class="loading"></div>
       <div class="button_bar left">
         <button id="save" title="Save the current state of the model">

@@ -1,4 +1,4 @@
-import { LitElement, html } from "lit";
+import { LitElement, html, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
@@ -11,32 +11,7 @@ import { SyncMetaWidget } from "../../widget";
 export class DebugWidget extends SyncMetaWidget {
   render() {
     return html`
-      <script src="<%= grunt.config('baseUrl') %>/js/debug_widget.js"></script>
-
-      <style>
-        textarea,
-        button {
-          width: 100px;
-        }
-        .seperating_box {
-          border: 1px solid;
-          border-radius: 7px;
-          margin: 18px 20px 7px 7px;
-          padding: 7px 20px 7px 7px;
-          position: relative;
-        }
-        .seperating_box > h5 {
-          font-weight: normal;
-          font-style: italic;
-          position: absolute;
-          top: -40px;
-          left: 4px;
-        }
-        .hint {
-          font-size: 10;
-        }
-      </style>
-
+      <script src="<%= grunt.config('baseUrl') %>/es6/debug_widget.js"></script>
       <div class="seperating_box">
         <h5>Select a JSON file</h5>
         <input type="file" id="file-object" value="Load a file" />
@@ -99,6 +74,30 @@ export class DebugWidget extends SyncMetaWidget {
       <p id="feedback"></p>
     `;
   }
+
+  static styles = css`
+    textarea,
+    button {
+      width: 100px;
+    }
+    .seperating_box {
+      border: 1px solid;
+      border-radius: 7px;
+      margin: 18px 20px 7px 7px;
+      padding: 7px 20px 7px 7px;
+      position: relative;
+    }
+    .seperating_box > h5 {
+      font-weight: normal;
+      font-style: italic;
+      position: absolute;
+      top: -40px;
+      left: 4px;
+    }
+    .hint {
+      font-size: 10;
+    }
+  `;
 
   connectedCallback() {
     super.connectedCallback();

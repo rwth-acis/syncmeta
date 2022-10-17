@@ -1,4 +1,4 @@
-import { LitElement, html } from "lit";
+import { LitElement, html, CSSResultGroup, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
@@ -19,12 +19,6 @@ export class TestWidget extends SyncMetaWidget {
       <script src="<%= grunt.config('baseUrl') %>/js/lib/vendor/jquery.js"></script>
       <script src="<%= grunt.config('baseUrl') %>/js/lib/vendor/test/mocha.js"></script>
       <script src="<%= grunt.config('baseUrl') %>/test/test_widget.js"></script>
-      <style>
-        #wrapper {
-          max-height: 500px;
-          overflow-y: scroll;
-        }
-      </style>
       <div id="wrapper">
         <div id="mocha"></div>
         <div id="messages"></div>
@@ -32,6 +26,13 @@ export class TestWidget extends SyncMetaWidget {
       </div>
     `;
   }
+
+  static styles = css`
+    #wrapper {
+      max-height: 500px;
+      overflow-y: scroll;
+    }
+  `;
 
   connectedCallback() {
     super.connectedCallback();
