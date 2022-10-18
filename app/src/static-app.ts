@@ -1,5 +1,10 @@
-import { LitElement, html } from "lit";
-import { customElement } from "lit/decorators.js";
+import { LitElement, html, css } from "lit";
+import { customElement, property } from "lit/decorators.js";
+import * as Y from "yjs";
+import { WebsocketProvider } from "y-websocket";
+import $ from "jquery";
+import "@polymer/app-route/app-location.js";
+import "@polymer/app-route/app-route.js";
 
 import "las2peer-frontend-statusbar/las2peer-frontend-statusbar.js";
 import "@polymer/app-route/app-location.js";
@@ -8,83 +13,36 @@ import "@polymer/iron-pages/iron-pages.js";
 import "@polymer/paper-button/paper-button.js";
 import Common from "./common.js";
 import Static from "./static.js";
-import * as Y from "yjs";
-import { WebsocketProvider } from "y-websocket";
+import IWC from "../../widgets/src/es6/lib/iwc.js";
 
-/**
- * @customElement
- * @polymer
- */
-class StaticApp extends PolymerElement {
-  static get template() {
+@customElement("static-app")
+class StaticApp extends LitElement {
+  constructor() {
+    super();
+  }
+
+  private _page: string = "meta-modeling-space";
+
+  iwcClient: IWC.Client;
+
+  @property({ type: String })
+  prop1: string = "static-app";
+
+  // workaround for implementing observer behavior from polymer, see https://www.thisdot.co/blog/how-to-observe-property-changes-with-litelement-and-typescript
+  @property({ type: String }) set page(newPage: string) {
+    const oldPage = this._page;
+    if (newPage && oldPage !== newPage) {
+      this.requestUpdate("page", oldPage);
+      this._pageChanged(newPage, oldPage);
+    }
+  }
+
+  get page() {
+    return this._page;
+  }
+
+  render() {
     return html`
-      <style>
-        :host {
-          display: block;
-        }
-        paper-input {
-          max-width: 300px;
-        }
-        paper-button {
-          color: rgb(240, 248, 255);
-          background: rgb(30, 144, 255);
-          max-height: 30px;
-        }
-        paper-button:hover {
-          color: rgb(240, 248, 255);
-          background: rgb(65, 105, 225);
-        }
-        #yjsroomcontainer,
-        #generateModelContainer {
-          display: flex;
-          margin: 5px;
-          flex: 1;
-          align-items: center;
-        }
-        .loader {
-          border: 5px solid #f3f3f3; /* Light grey */
-          border-top: 5px solid #3498db; /* Blue */
-          border-radius: 50%;
-          width: 30px;
-          height: 30px;
-          animation: spin 2s linear infinite;
-          display: none;
-        }
-        @keyframes spin {
-          0% {
-            transform: rotate(0deg);
-          }
-          100% {
-            transform: rotate(360deg);
-          }
-        }
-        iframe {
-          width: 100%;
-          height: 100%;
-        }
-        .maincontainer {
-          display: flex;
-          height: 600px;
-          flex-flow: row wrap;
-        }
-        .innercontainer {
-          padding: 5px;
-          margin: 5px;
-          flex: 1;
-        }
-        .innercontainer:nth-of-type(1) {
-          flex: 4;
-          display: flex;
-          flex-flow: column;
-        }
-
-        .innercontainer:nth-of-type(2) {
-          flex: 2;
-          display: flex;
-          flex-flow: column;
-        }
-      </style>
-
       <las2peer-frontend-statusbar
         id="statusBar"
         service="Syncmeta"
@@ -92,7 +50,7 @@ class StaticApp extends PolymerElement {
         oidcpopupsignouturl="/callbacks/popup-signout-callback.html"
         oidcsilentsigninturl="/callbacks/silent-callback.html"
         oidcclientid="{OIDC_CLIENT_ID}"
-        ?autoAppendWidget="${true}"
+        autoAppendWidget="true"
       ></las2peer-frontend-statusbar>
 
       <p id="currentRoom">Current Space: Test</p>
@@ -147,31 +105,85 @@ class StaticApp extends PolymerElement {
       </div>
     `;
   }
+  static styles = css`
+    :host {
+      display: block;
+    }
+    paper-input {
+      max-width: 300px;
+    }
+    paper-button {
+      color: rgb(240, 248, 255);
+      background: rgb(30, 144, 255);
+      max-height: 30px;
+    }
+    paper-button:hover {
+      color: rgb(240, 248, 255);
+      background: rgb(65, 105, 225);
+    }
+    #yjsroomcontainer,
+    #generateModelContainer {
+      display: flex;
+      margin: 5px;
+      flex: 1;
+      align-items: center;
+    }
+    .loader {
+      border: 5px solid #f3f3f3; /* Light grey */
+      border-top: 5px solid #3498db; /* Blue */
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 2s linear infinite;
+      display: none;
+    }
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+    }
+    .maincontainer {
+      display: flex;
+      height: 600px;
+      flex-flow: row wrap;
+    }
+    .innercontainer {
+      padding: 5px;
+      margin: 5px;
+      flex: 1;
+    }
+    .innercontainer:nth-of-type(1) {
+      flex: 4;
+      display: flex;
+      flex-flow: column;
+    }
 
-  static get properties() {
-    return {
-      prop1: {
-        type: String,
-        value: "static-app",
-      },
-      page: {
-        type: String,
-        value: "meta-modeling-space",
-        observer: "_pageChanged",
-      },
-    };
-  }
+    .innercontainer:nth-of-type(2) {
+      flex: 2;
+      display: flex;
+      flex-flow: column;
+    }
+  `;
 
-  static get observers() {
+  static observers() {
     return ["_routerChanged(routeData.page)"];
   }
 
-  _routerChanged(page) {
+  _routerChanged(page: string) {
     this.page = page || "meta-modeling-space";
   }
 
-  /* this pagechanged triggers for simple onserver written in page properties written above */
-  _pageChanged(currentPage, oldPage) {
+  /**
+   * Called when the page property changes.
+   */
+  _pageChanged(currentPage: string, oldPage: string) {
     switch (currentPage) {
       case "meta-modeling-space":
         Common.setSpace(Static.MetaModelingSpaceId);
@@ -188,8 +200,8 @@ class StaticApp extends PolymerElement {
     }
   }
 
-  ready() {
-    super.ready();
+  connectedCallback() {
+    super.connectedCallback();
     window.Y = Y;
     window.WebsocketProvider = WebsocketProvider;
     parent.caeFrames = this.shadowRoot.querySelectorAll("iframe");
@@ -201,7 +213,7 @@ class StaticApp extends PolymerElement {
   }
 
   _onChangeButtonClicked() {
-    var roomName = this.shadowRoot.querySelector("#roomNameInput").value;
+    var roomName = this.shadowRoot.getElementById("roomNameInput").nodeValue;
     Common.setYjsRoomName(roomName);
     this.changeVisibility("#roomEnterLoader", true);
     location.reload();
@@ -210,16 +222,18 @@ class StaticApp extends PolymerElement {
   _onGenerateMetamodelClicked() {
     this.publishUpdateMetamodelOperation();
     this.changeVisibility("#generateModelLoader", true);
-    this.initY((y) => {
+
+    this.initY((y: Y.Doc) => {
       const metaModelStatus = y.getMap("metaModelStatus");
-      metaModelStatus.observe((event) => {
-        var message;
-        if (event.name == "uploaded") {
-          message =
-            "Metamodel is generated and uploaded to modeling space successfully!";
-        } else if (event.name == "error") {
-          message = "Error while uploading metamodel";
-        }
+      metaModelStatus.observe((event: Y.YMapEvent<any>) => {
+        let message;
+        if (event.keysChanged.has("uploaded"))
+          if (metaModelStatus.get("uploaded") === true) {
+            message =
+              "Metamodel is generated and uploaded to modeling space successfully!";
+          } else {
+            message = "Error while uploading metamodel";
+          }
         this.changeVisibility("#generateModelLoader", false);
         this.changeVisibility("#generateModelMessage", true);
         this.shadowRoot.querySelector("#generateModelMessage").innerHTML =
@@ -258,25 +272,20 @@ class StaticApp extends PolymerElement {
     this.iwcClient.publish(intent);
   }
 
-  initY(callback) {
+  /**
+   * Initialize Yjs and connect to the Yjs room.
+   * @param callback callback function that is called when the connection is established. returns the shared document
+   * @returns
+   */
+  initY(callback: (doc: Y.Doc) => void) {
     if (parent.syncmetaRoom) {
-      Y({
-        db: {
-          name: "memory", // store the shared data in memory
-        },
-        connector: {
-          name: "websockets-client", // use the websockets connector
-          room: parent.syncmetaRoom,
-          options: { resource: "{YJS_RESOURCE_PATH}" },
-          url: "{YJS_ADDRESS}",
-        },
-        share: {
-          // specify the shared content
-          metamodelStatus: "Map",
-        },
-        type: ["Text", "Map"],
-        sourceDir: "/node_modules",
-      }).then(callback);
+      const doc = new Y.Doc();
+      const provider = new WebsocketProvider(
+        "{YJS_ADDRESS}",
+        parent.syncmetaRoom,
+        doc
+      );
+      callback(doc);
     }
   }
 
@@ -336,5 +345,3 @@ class StaticApp extends PolymerElement {
     }
   }
 }
-
-window.customElements.define("static-app", StaticApp);

@@ -38,6 +38,9 @@
     "yjs": "^13.5.41"
   },
   "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.0.0",
+    "@web/rollup-plugin-copy": "^0.3.0",
+    "@web/rollup-plugin-html": "^1.11.0",
     "chai": "^4.3.6",
     "grunt": "~1.5.3",
     "grunt-amdcheck": "^2.0.0",
@@ -51,6 +54,10 @@
     "grunt-contrib-uglify": "~5.2.2",
     "grunt-contrib-watch": "~1.1.0",
     "grunt-jsdoc": "~2.4.1",
-    "mocha": "^10.0.0"
+    "mocha": "^10.0.0",
+    "rollup": "^3.2.3",
+    "rollup-plugin-minify-html-literals": "^1.2.6",
+    "rollup-plugin-summary": "^1.4.3",
+    "rollup-plugin-terser": "^7.0.2"
   }
 }

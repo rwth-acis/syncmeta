@@ -12,13 +12,16 @@
     "@polymer/app-route": "^3.0.2",
     "@polymer/iron-pages": "^3.0.1",
     "@polymer/polymer": "^3.5.1",
+    "jquery": "^3.6.1",
     "las2peer-frontend-statusbar": "github:rwth-acis/las2peer-frontend-statusbar#0.3.6",
     "las2peer-frontend-user-widget": "github:rwth-acis/las2peer-frontend-user-widget#0.3.3",
+    "lit": "^2.4.0",
     "y-websocket": "^1.4.5",
     "yjs": "^13.5.41"
   },
   "devDependencies": {
     "@polymer/test-fixture": "^4.0.2",
+    "@types/jquery": "^3.5.14",
     "@webcomponents/webcomponentsjs": "^2.6.0",
     "chai": "^4.3.6",
     "mocha": "^7.0.0",
