@@ -17,8 +17,8 @@ export default {
       input: "index.html",
     }),
     // Resolve bare module specifiers to relative paths
-    nodeResolve({ moduleDirectories: ["node_modules"] }),
-    commonjs(),
+    nodeResolve(),
+    commonjs(), // makes sure that any commonjs modules are transformed to es6 to be bundled
     // Minify HTML template literals
     minifyHTML.default(),
     // Minify JS
@@ -37,15 +37,15 @@ export default {
   output: {
     dir: "build",
     sourcemap: true,
-    format: "cjs",
+    // format: "cjs",
   },
-  external: [
-    "y-websocket",
-    "yjs",
-    "jquery",
-    "@polymer/paper-button/paper-button.js",
-    "@polymer/iron-pages/iron-pages.js",
-    "las2peer-frontend-statusbar/las2peer-frontend-statusbar.js",
-  ],
+  // external: [
+  //   "y-websocket",
+  //   "yjs",
+  //   "jquery",
+  //   "@polymer/paper-button/paper-button.js",
+  //   "@polymer/iron-pages/iron-pages.js",
+  //   "las2peer-frontend-statusbar/las2peer-frontend-statusbar.js",
+  // ],
   preserveEntrySignatures: "strict",
 };
