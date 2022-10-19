@@ -8,7 +8,7 @@ import "las2peer-frontend-statusbar/las2peer-frontend-statusbar.js";
 import "@polymer/iron-pages/iron-pages.js";
 import "@polymer/paper-button/paper-button.js";
 import { Common } from "./common";
-import { Static } from "./static";
+import Static from "./static";
 import IWC from "../../widgets/src/es6/lib/iwc.js";
 
 @customElement("static-app")
