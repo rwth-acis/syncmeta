@@ -1,14 +1,19 @@
 {
   "compilerOptions": {
-    "module": "ES6",
-    "target": "ES5",
+    "target": "es2019",
+    "module": "es2015",
+    "lib": ["es2019", "dom"],
     "noImplicitAny": true,
     "removeComments": true,
     "preserveConstEnums": true,
     "sourceMap": true,
     "experimentalDecorators": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "declaration": true,
+    "useDefineForClassFields": false,
+    "declarationMap": true,
+    "outDir": "./build"
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "rollup.config.js"],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }

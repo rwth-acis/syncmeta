@@ -3,16 +3,12 @@ import { customElement, property } from "lit/decorators.js";
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
 import $ from "jquery";
-import "@polymer/app-route/app-location.js";
-import "@polymer/app-route/app-route.js";
 
 import "las2peer-frontend-statusbar/las2peer-frontend-statusbar.js";
-import "@polymer/app-route/app-location.js";
-import "@polymer/app-route/app-route.js";
 import "@polymer/iron-pages/iron-pages.js";
 import "@polymer/paper-button/paper-button.js";
-import Common from "./common.js";
-import Static from "./static.js";
+import { Common } from "./common";
+import { Static } from "./static";
 import IWC from "../../widgets/src/es6/lib/iwc.js";
 
 @customElement("static-app")
@@ -75,13 +71,13 @@ class StaticApp extends LitElement {
         <p id="generateModelMessage"></p>
       </div>
 
-      <app-location route="${route}"></app-location>
+      <!-- <app-location route="${route}"></app-location>
       <app-route
         route="${route}"
         pattern="/:page"
         data="${routeData}"
         tail="${subroute}"
-      ></app-route>
+      ></app-route> -->
       <ul>
         <li><a href="/meta-modeling-space">Meta Modeling</a></li>
         <li><a href="/modeling-space">Modeling</a></li>
@@ -240,7 +236,7 @@ class StaticApp extends LitElement {
         this.shadowRoot.querySelector("#generateModelMessage").innerHTML =
           message;
         setTimeout(
-          (_) => this.changeVisibility("#generateModelMessage", false),
+          () => this.changeVisibility("#generateModelMessage", false),
           8000
         );
       });
@@ -296,7 +292,7 @@ class StaticApp extends LitElement {
     }
   }
 
-  handleLogin(event) {
+  handleLogin(event: any) {
     var cached_access_token = localStorage.getItem("access_token");
     localStorage.setItem(
       "userinfo_endpoint",
@@ -337,7 +333,7 @@ class StaticApp extends LitElement {
     this.shadowRoot.querySelector("#currentRoom").innerHTML = spaceHTML;
   }
 
-  changeVisibility(htmlQuery, show) {
+  changeVisibility(htmlQuery: string, show: boolean) {
     var item = this.shadowRoot.querySelector(htmlQuery);
     if (show) {
       $(item).show();

@@ -183,3 +183,5 @@ iwc.util.FLAGS = {
 iwc.util.ACTIONS = {
 		INVOKE : "ACTION_INVOKE_SERVICE" //TODO
 };
+
+export default iwc;
