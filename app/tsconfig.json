@@ -6,6 +6,7 @@
     "noImplicitAny": true,
     "removeComments": true,
     "preserveConstEnums": true,
+    "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "experimentalDecorators": true,
     "moduleResolution": "node",
