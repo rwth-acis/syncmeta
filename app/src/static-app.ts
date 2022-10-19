@@ -43,6 +43,7 @@ class StaticApp extends LitElement {
 
   render() {
     return html`
+      <script type="module" src="./src/index.js"></script>
       <las2peer-frontend-statusbar
         id="statusBar"
         service="Syncmeta"
@@ -85,7 +86,7 @@ class StaticApp extends LitElement {
         <li><a href="/meta-modeling-space">Meta Modeling</a></li>
         <li><a href="/modeling-space">Modeling</a></li>
       </ul>
-      <p>[[page]]</p>
+      <p id="outlet">[[page]]</p>
       <div class="maincontainer">
         <div class="innercontainer">
           <iframe id="Canvas" src="{WEBHOST}/widgets/widget.html"> </iframe>
