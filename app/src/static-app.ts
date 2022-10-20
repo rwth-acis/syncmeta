@@ -39,7 +39,6 @@ class StaticApp extends LitElement {
 
   render() {
     return html`
-      <script type="module" src="./src/index.js"></script>
       <las2peer-frontend-statusbar
         id="statusBar"
         service="Syncmeta"
@@ -71,13 +70,6 @@ class StaticApp extends LitElement {
         <p id="generateModelMessage"></p>
       </div>
 
-      <!-- <app-location route="${route}"></app-location>
-      <app-route
-        route="${route}"
-        pattern="/:page"
-        data="${routeData}"
-        tail="${subroute}"
-      ></app-route> -->
       <ul>
         <li><a href="/meta-modeling-space">Meta Modeling</a></li>
         <li><a href="/modeling-space">Modeling</a></li>
@@ -201,12 +193,16 @@ class StaticApp extends LitElement {
     super.connectedCallback();
     window.Y = Y;
     window.WebsocketProvider = WebsocketProvider;
+
+    this.iwcClient = new IWC.Client(null, null, null);
+  }
+
+  firstUpdated() {
     parent.caeFrames = this.shadowRoot.querySelectorAll("iframe");
     const statusBar = this.shadowRoot.querySelector("#statusBar");
     statusBar.addEventListener("signed-in", this.handleLogin);
     statusBar.addEventListener("signed-out", this.handleLogout);
     this.displayCurrentRoomName();
-    this.iwcClient = new IWC.Client(null, null, null);
   }
 
   _onChangeButtonClicked() {
