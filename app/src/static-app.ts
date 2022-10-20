@@ -193,8 +193,6 @@ class StaticApp extends LitElement {
     super.connectedCallback();
     window.Y = Y;
     window.WebsocketProvider = WebsocketProvider;
-
-    this.iwcClient = new IWC.Client(null, null, null);
   }
 
   firstUpdated() {
@@ -202,6 +200,7 @@ class StaticApp extends LitElement {
     const statusBar = this.shadowRoot.querySelector("#statusBar");
     statusBar.addEventListener("signed-in", this.handleLogin);
     statusBar.addEventListener("signed-out", this.handleLogout);
+    this.iwcClient = new IWC.Client(null, null, null);
     this.displayCurrentRoomName();
   }
 
