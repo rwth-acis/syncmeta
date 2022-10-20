@@ -8,17 +8,20 @@ import summary from "rollup-plugin-summary";
 import typescript from "@rollup/plugin-typescript";
 import commonjs from "@rollup/plugin-commonjs";
 
+const pkg = require("./package.json");
+
 export default {
   plugins: [
+    // Resolve bare module specifiers to relative paths
+    nodeResolve(),
+    commonjs(), // makes sure that any commonjs modules are transformed to es6 to be bundled
     typescript(),
     // Entry point for application build; can specify a glob to build multiple
     // HTML files for non-SPA app
     html({
       input: "index.html",
     }),
-    // Resolve bare module specifiers to relative paths
-    nodeResolve(),
-    commonjs(), // makes sure that any commonjs modules are transformed to es6 to be bundled
+
     // Minify HTML template literals
     minifyHTML.default(),
     // Minify JS
@@ -37,15 +40,14 @@ export default {
   output: {
     dir: "build",
     sourcemap: true,
-    // format: "cjs",
+    format: "iife",
+    globals: {
+      jquery: "$",
+      lit: "lit",
+      yjs: "Y",
+      "y-websocket": "WebsocketProvider",
+    },
   },
-  // external: [
-  //   "y-websocket",
-  //   "yjs",
-  //   "jquery",
-  //   "@polymer/paper-button/paper-button.js",
-  //   "@polymer/iron-pages/iron-pages.js",
-  //   "las2peer-frontend-statusbar/las2peer-frontend-statusbar.js",
-  // ],
+  external: Object.keys(pkg.dependencies),
   preserveEntrySignatures: "strict",
 };

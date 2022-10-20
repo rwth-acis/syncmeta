@@ -1,9 +1,8 @@
 {
   "compilerOptions": {
-    "target": "es2019",
+    "target": "ES2019",
     "module": "es2015",
     "lib": ["es2019", "dom"],
-    "noImplicitAny": true,
     "removeComments": true,
     "preserveConstEnums": true,
     "allowSyntheticDefaultImports": true,

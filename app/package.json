@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "polymer serve --port 8082",
-    "build": "npx rollup -c",
+    "build": "npx rollup -c --bundleConfigAsCjs",
     "lint": "polymer lint",
     "test": "polymer test",
     "test:integration": "polymer build # test that psk builds without error with the CLI"
