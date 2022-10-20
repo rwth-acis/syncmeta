@@ -1,5 +1,5 @@
 {
-  "name": "Syncmeta",
+  "name": "syncmeta",
   "description": "Static application for Syncmeta",
   "types": "static-app.d.ts",
   "type": "module",
@@ -11,9 +11,6 @@
     "test:integration": "polymer build # test that psk builds without error with the CLI"
   },
   "dependencies": {
-    "@polymer/app-route": "^3.0.2",
-    "@polymer/iron-pages": "^3.0.1",
-    "@polymer/polymer": "^3.5.1",
     "@vaadin/router": "^1.7.4",
     "jquery": "^3.6.1",
     "las2peer-frontend-statusbar": "github:rwth-acis/las2peer-frontend-statusbar#0.3.6",
@@ -23,7 +20,6 @@
     "yjs": "^13.5.41"
   },
   "devDependencies": {
-    "@polymer/test-fixture": "^4.0.2",
     "@rollup/plugin-commonjs": "^21.0.0",
     "@rollup/plugin-node-resolve": "^13.1.2",
     "@rollup/plugin-typescript": "^9.0.1",

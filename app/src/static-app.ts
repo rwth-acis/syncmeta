@@ -305,14 +305,6 @@ class StaticApp extends LitElement {
     }
   }
 
-  // refreshIframes() {
-  //   console.info("refreshing iframes");
-  //   const iframes = document.querySelectorAll("iframe");
-  //   iframes.forEach((iframe) => {
-  //     iframe.contentWindow.location.reload();
-  //   });
-  // }
-
   handleLogout() {
     localStorage.removeItem("access_token");
     localStorage.removeItem("userinfo_endpoint");
