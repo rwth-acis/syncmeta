@@ -1,7 +1,7 @@
 import { css, html } from "lit";
 import { customElement } from "lit/decorators.js";
 import { SyncMetaWidget } from "../../widget";
-
+import "../../css/style.css";
 // canvas widget
 @customElement("syncmeta-canvas")
 export class CanvasWidget extends SyncMetaWidget {
@@ -26,11 +26,6 @@ export class CanvasWidget extends SyncMetaWidget {
       <link
         rel="stylesheet"
         href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"
-      />
-      <link
-        rel="stylesheet"
-        type="text/css"
-        href="<%= grunt.config('baseUrl') %>/css/style.css"
       />
       <script src="<%= grunt.config('baseUrl') %>/es6/main_widget.js"></script>
       <div id="loading" class="loading"></div>

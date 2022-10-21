@@ -7,11 +7,15 @@ import minifyHTML from "rollup-plugin-minify-html-literals";
 import summary from "rollup-plugin-summary";
 import typescript from "@rollup/plugin-typescript";
 import commonjs from "@rollup/plugin-commonjs";
+import css from "rollup-plugin-import-css";
 
 // const pkg = require("./package.json");
 
 export default {
   plugins: [
+    typescript(),
+    commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required
+    css(),
     // Entry point for application build; can specify a glob to build multiple
     // HTML files for non-SPA app
     html({
@@ -19,8 +23,6 @@ export default {
     }),
     // Resolve bare module specifiers to relative paths
     resolve(),
-    commonjs(), // makes sure that any commonjs modules are transformed to es6 to be bundled
-    typescript(),
 
     // Minify HTML template literals
     minifyHTML(),

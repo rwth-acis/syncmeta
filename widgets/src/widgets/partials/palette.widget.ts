@@ -5,7 +5,7 @@ import { WebsocketProvider } from "y-websocket";
 import { CONFIG } from "../../js/config";
 import init from "../../js/shared";
 import { SyncMetaWidget } from "../../widget";
-
+import "../../css/style.css";
 // widget body used by all syncmeta widgets
 @customElement("palette-widget")
 export class PaletteWidget extends SyncMetaWidget {
@@ -14,11 +14,6 @@ export class PaletteWidget extends SyncMetaWidget {
         rel="stylesheet"
         type="text/css"
         href="<%= grunt.config('baseUrl') %>/css/vendor/jquery-ui.css"
-      />
-      <link
-        rel="stylesheet"
-        type="text/css"
-        href="<%= grunt.config('baseUrl') %>/css/style.css"
       />
       <script src="<%= grunt.config('baseUrl') %>/es6/palette_widget.js"></script>
       <div id="main">

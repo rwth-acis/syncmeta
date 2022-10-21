@@ -16,6 +16,7 @@
     "las2peer-frontend-statusbar": "github:rwth-acis/las2peer-frontend-statusbar#0.3.6",
     "las2peer-frontend-user-widget": "github:rwth-acis/las2peer-frontend-user-widget#0.3.3",
     "lit": "^2.4.0",
+    "rollup-plugin-import-css": "^3.0.3",
     "y-websocket": "^1.4.5",
     "yjs": "^13.5.41"
   },
