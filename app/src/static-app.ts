@@ -7,6 +7,14 @@ import $ from "jquery";
 import "las2peer-frontend-statusbar/las2peer-frontend-statusbar.js";
 import "@polymer/iron-pages/iron-pages.js";
 import "@polymer/paper-button/paper-button.js";
+
+// // Syncmeta Widgets
+import "../../widgets/src/widgets/partials/main_widget";
+import "../../widgets/src/widgets/partials/attribute.widget";
+import "../../widgets/src/widgets/partials/debug.widget";
+import "../../widgets/src/widgets/partials/palette.widget";
+import "../../widgets/src/widgets/partials/activity.widget";
+
 import { Common } from "./common";
 import Static from "./static";
 import IWC from "../../widgets/src/es6/lib/iwc.js";
@@ -77,19 +85,17 @@ class StaticApp extends LitElement {
       <p id="outlet">[[page]]</p>
       <div class="maincontainer">
         <div class="innercontainer">
-          <iframe id="Canvas" src="{WEBHOST}/widgets/widget.html"> </iframe>
+          <main-widget></main-widget>
         </div>
         <div class="innercontainer">
-          <iframe id="Property Browser" src="{WEBHOST}/widgets/attribute.html">
-          </iframe>
-          <iframe id="Import Tool" src="{WEBHOST}/widgets/debug.html"> </iframe>
+          <attribute-widget></attribute-widget>
+          <debug-widget></debug-widget>
         </div>
         <div class="innercontainer">
-          <iframe id="Palette" src="{WEBHOST}/widgets/palette.html"> </iframe>
+          <palette-widget> </palette-widget>
         </div>
         <div class="innercontainer">
-          <iframe id="User Activity" src="{WEBHOST}/widgets/activity.html">
-          </iframe>
+          <activity-widget></activity-widget>
         </div>
       </div>
     `;
