@@ -8,7 +8,7 @@ import { SyncMetaWidget } from "../../widget";
 import "../../css/style.css";
 // widget body used by all syncmeta widgets
 @customElement("heatmap-widget")
-export class HeatMapWidget extends SyncMetaWidget {
+export class HeatMapWidget extends SyncMetaWidget(LitElement) {
   render() {
     return html`
       <link

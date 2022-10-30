@@ -8,7 +8,7 @@ import { SyncMetaWidget } from "../../widget";
 
 // widget body used by all syncmeta widgets
 @customElement("test-widget")
-export class TestWidget extends SyncMetaWidget {
+export class TestWidget extends SyncMetaWidget(LitElement) {
   render() {
     return html`
       <link

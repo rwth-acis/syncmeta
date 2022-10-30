@@ -8,7 +8,7 @@ import { SyncMetaWidget } from "../../widget";
 
 // widget body used by all syncmeta widgets
 @customElement("json-export-widget")
-export class JSONExportWidget extends SyncMetaWidget {
+export class JSONExportWidget extends SyncMetaWidget(LitElement) {
   render() {
     return html`
       <script src="<%= grunt.config('baseUrl') %>/es6/jsonexport_widget.js"></script>

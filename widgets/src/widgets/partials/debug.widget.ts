@@ -8,7 +8,7 @@ import { SyncMetaWidget } from "../../widget";
 
 // widget body used by all syncmeta widgets
 @customElement("debug-widget")
-export class DebugWidget extends SyncMetaWidget {
+export class DebugWidget extends SyncMetaWidget(LitElement) {
   render() {
     return html`
       <script src="<%= grunt.config('baseUrl') %>/es6/debug_widget.js"></script>

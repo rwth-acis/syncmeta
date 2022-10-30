@@ -1,10 +1,10 @@
-import { css, html } from "lit";
+import { LitElement, css, html } from "lit";
 import { customElement } from "lit/decorators.js";
 import { SyncMetaWidget } from "../../widget";
 import "../../css/style.css";
 // canvas widget
 @customElement("syncmeta-canvas")
-export class CanvasWidget extends SyncMetaWidget {
+export class CanvasWidget extends SyncMetaWidget(LitElement) {
   render() {
     return html`
       <link

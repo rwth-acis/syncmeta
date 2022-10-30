@@ -8,7 +8,7 @@ import { SyncMetaWidget } from "../../widget";
 import "../../css/style.css";
 // widget body used by all syncmeta widgets
 @customElement("palette-widget")
-export class PaletteWidget extends SyncMetaWidget {
+export class PaletteWidget extends SyncMetaWidget(LitElement) {
   render() {
     return html`<link
         rel="stylesheet"

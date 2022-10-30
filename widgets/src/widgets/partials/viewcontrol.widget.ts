@@ -8,7 +8,7 @@ import { SyncMetaWidget } from "../../widget";
 import "../../css/style.css";
 // widget body used by all syncmeta widgets
 @customElement("viewcontrol-widget")
-export class ViewControlWidget extends SyncMetaWidget {
+export class ViewControlWidget extends SyncMetaWidget(LitElement) {
   render() {
     return html`
       <link

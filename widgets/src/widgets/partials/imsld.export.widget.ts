@@ -8,7 +8,7 @@ import { SyncMetaWidget } from "../../widget";
 
 // widget body used by all syncmeta widgets
 @customElement("imsld-export-widget")
-export class IMSLDExportWidget extends SyncMetaWidget {
+export class IMSLDExportWidget extends SyncMetaWidget(LitElement) {
   render() {
     return html`
       <script src="<%= grunt.config('baseUrl') %>/es6/imsld_widget.js"></script>
