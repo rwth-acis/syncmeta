@@ -5,7 +5,6 @@ import { WebsocketProvider } from "y-websocket";
 import $ from "jquery";
 
 import "las2peer-frontend-statusbar/las2peer-frontend-statusbar.js";
-import "@polymer/iron-pages/iron-pages.js";
 import "@polymer/paper-button/paper-button.js";
 
 // // Syncmeta Widgets

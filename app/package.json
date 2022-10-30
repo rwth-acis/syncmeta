@@ -30,9 +30,6 @@
     "mocha": "^7.0.0",
     "rollup": "^3.2.3",
     "rollup-plugin-import-css": "^3.1.0",
-    "rollup-plugin-minify-html-literals": "^1.2.6",
-    "rollup-plugin-summary": "^1.3.0",
-    "rollup-plugin-terser": "^7.0.2",
     "tslib": "^2.4.0",
     "typescript": "^4.8.4",
     "wct-mocha": "^1.1.0"
