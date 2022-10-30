@@ -14,7 +14,11 @@ import css from "rollup-plugin-import-css";
 export default {
   plugins: [
     typescript(),
-    commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required
+    commonjs({
+      include: ["node_modules/**"],
+      transformMixedEsModules: true,
+      extensions: [".js", ".ts"],
+    }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required
     css(),
     // Entry point for application build; can specify a glob to build multiple
     // HTML files for non-SPA app
@@ -22,7 +26,7 @@ export default {
       input: "index.html",
     }),
     // Resolve bare module specifiers to relative paths
-    resolve(),
+    resolve({ browser: true }),
 
     // Minify HTML template literals
     // minifyHTML(),
