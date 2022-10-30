@@ -9,7 +9,7 @@ import "@polymer/iron-pages/iron-pages.js";
 import "@polymer/paper-button/paper-button.js";
 
 // // Syncmeta Widgets
-// import "../../widgets/src/widgets/partials/main_widget";
+// import "../../widgets/src/widgets/partials/main.widget";
 // import "../../widgets/src/widgets/partials/attribute.widget";
 // import "../../widgets/src/widgets/partials/debug.widget";
 // import "../../widgets/src/widgets/partials/palette.widget";
