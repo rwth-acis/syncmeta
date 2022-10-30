@@ -2,42 +2,42 @@
 import { rollupPluginHTML as html } from "@web/rollup-plugin-html";
 import { copy } from "@web/rollup-plugin-copy";
 import resolve from "@rollup/plugin-node-resolve";
-import { terser } from "rollup-plugin-terser";
+// import { terser } from "rollup-plugin-terser";
 // import minifyHTML from "rollup-plugin-minify-html-literals";
-// import summary from "rollup-plugin-summary";
 import typescript from "@rollup/plugin-typescript";
 import commonjs from "@rollup/plugin-commonjs";
 import css from "rollup-plugin-import-css";
 
-// const pkg = require("./package.json");
+const pkg = require("./package.json");
 
+/**
+ * @type {import('rollup').RollupOptions}
+ */
 export default {
   plugins: [
-    typescript(),
+    // Resolve bare module specifiers to relative paths
+    resolve({ browser: true }),
     commonjs({
       include: ["node_modules/**"],
       transformMixedEsModules: true,
       extensions: [".js", ".ts"],
     }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required
+    typescript({ compilerOptions: { module: "CommonJS" } }),
     css(),
     // Entry point for application build; can specify a glob to build multiple
     // HTML files for non-SPA app
     html({
       input: "index.html",
     }),
-    // Resolve bare module specifiers to relative paths
-    resolve({ browser: true }),
 
     // Minify HTML template literals
     // minifyHTML(),
     // Minify JS
-    terser({
-      ecma: 2020,
-      module: true,
-      warnings: true,
-    }),
-    // Print bundle summary
-    // summary(),
+    // terser({
+    //   ecma: 2020,
+    //   module: true,
+    //   warnings: true,
+    // }),
     // // Optional: copy any static assets to build directory
     // copy({
     //   patterns: ["images/**/*"],
@@ -46,7 +46,7 @@ export default {
   output: {
     dir: "build",
     sourcemap: true,
-    // format: "iife",
+    format: "esm",
     globals: {
       jquery: "$",
       lit: "lit",
@@ -54,6 +54,6 @@ export default {
       "y-websocket": "WebsocketProvider",
     },
   },
-  // external: Object.keys(pkg.dependencies),
+  external: Object.keys(pkg.dependencies),
   preserveEntrySignatures: "strict",
 };

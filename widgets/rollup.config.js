@@ -15,6 +15,7 @@ import { dependencies } from "./package.json";
  * @type {import('rollup').RollupOptions}
  */
 export default [
+  // activity widget
   {
     plugins: [
       typescript(),
@@ -42,6 +43,7 @@ export default [
     external: Object.keys(dependencies),
     preserveEntrySignatures: "strict",
   },
+  // attribute.widget
   {
     plugins: [
       typescript(),
@@ -69,6 +71,7 @@ export default [
     external: Object.keys(dependencies),
     preserveEntrySignatures: "strict",
   },
+  // debug.widget
   {
     plugins: [
       typescript(),
@@ -96,6 +99,7 @@ export default [
     external: Object.keys(dependencies),
     preserveEntrySignatures: "strict",
   },
+  // guidance.widget
   {
     plugins: [
       typescript(),
@@ -123,6 +127,7 @@ export default [
     external: Object.keys(dependencies),
     preserveEntrySignatures: "strict",
   },
+  // heatmap.widget
   {
     plugins: [
       typescript(),
@@ -150,6 +155,7 @@ export default [
     external: Object.keys(dependencies),
     preserveEntrySignatures: "strict",
   },
+  // imsld.export.widget
   {
     plugins: [
       typescript(),
@@ -162,9 +168,9 @@ export default [
         warnings: true,
       }),
     ],
-    input: "src/widgets/partials/imsld.widget.ts",
+    input: "src/widgets/partials/imsld.export.widget.ts",
     output: {
-      file: "build/widgets/partials/imsld.widget.ts",
+      file: "build/widgets/partials/imsld.export.widget.ts",
       sourcemap: true,
       format: "es",
       globals: {
@@ -177,6 +183,7 @@ export default [
     external: Object.keys(dependencies),
     preserveEntrySignatures: "strict",
   },
+  // json.export.widget
   {
     plugins: [
       typescript(),
@@ -189,9 +196,9 @@ export default [
         warnings: true,
       }),
     ],
-    input: "src/widgets/partials/json.widget.ts",
+    input: "src/widgets/partials/json.export.widget.ts",
     output: {
-      file: "build/widgets/partials/json.widget.ts",
+      file: "build/widgets/partials/json.export.widget.ts",
       sourcemap: true,
       format: "es",
       globals: {
@@ -204,6 +211,7 @@ export default [
     external: Object.keys(dependencies),
     preserveEntrySignatures: "strict",
   },
+  // main.widget
   {
     plugins: [
       typescript(),
@@ -231,6 +239,7 @@ export default [
     external: Object.keys(dependencies),
     preserveEntrySignatures: "strict",
   },
+  // palette.widget
   {
     plugins: [
       typescript(),
@@ -258,6 +267,7 @@ export default [
     external: Object.keys(dependencies),
     preserveEntrySignatures: "strict",
   },
+  // test.widget
   {
     plugins: [
       typescript(),
@@ -285,6 +295,7 @@ export default [
     external: Object.keys(dependencies),
     preserveEntrySignatures: "strict",
   },
+  // viewcontrol.widget
   {
     plugins: [
       typescript(),
