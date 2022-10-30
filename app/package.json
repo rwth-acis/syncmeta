@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "polymer serve --port 8082",
-    "build": "npx rollup -c",
+    "build": "npx rollup -c --bundleConfigAsCjs",
     "lint": "polymer lint",
     "test": "polymer test",
     "test:integration": "polymer build # test that psk builds without error with the CLI"
@@ -25,12 +25,12 @@
     "@rollup/plugin-typescript": "^9.0.2",
     "@web/rollup-plugin-copy": "^0.3.0",
     "@web/rollup-plugin-html": "^1.11.0",
-    "@webcomponents/webcomponentsjs": "^2.6.0",
+    "@webcomponents/webcomponentsjs": "^2.7.0",
     "chai": "^4.3.6",
     "mocha": "^7.0.0",
     "rollup": "^3.2.3",
-    "rollup-plugin-minify-html-literals": "^1.2.6",
     "rollup-plugin-import-css": "^3.1.0",
+    "rollup-plugin-minify-html-literals": "^1.2.6",
     "rollup-plugin-summary": "^1.3.0",
     "rollup-plugin-terser": "^7.0.2",
     "tslib": "^2.4.0",
