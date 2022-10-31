@@ -2,27 +2,29 @@ import { LitElement, html, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
-import $ from "jquery";
+import { router } from "./router";
 
 import "las2peer-frontend-statusbar/las2peer-frontend-statusbar.js";
 import "@polymer/paper-button/paper-button.js";
 
 // // Syncmeta Widgets
-// import "../../widgets/src/widgets/partials/main.widget";
-// import "../../widgets/src/widgets/partials/attribute.widget";
-// import "../../widgets/src/widgets/partials/debug.widget";
-// import "../../widgets/src/widgets/partials/palette.widget";
-// import "../../widgets/src/widgets/partials/activity.widget";
+import "../../widgets/src/widgets/partials/main.widget";
+import "../../widgets/src/widgets/partials/attribute.widget";
+import "../../widgets/src/widgets/partials/debug.widget";
+import "../../widgets/src/widgets/partials/palette.widget";
+import "../../widgets/src/widgets/partials/activity.widget";
 
 import { Common } from "./common";
 import Static from "./static";
-import IWC from "../../widgets/src/es6/lib/iwc.js";
+import { IWC } from "../../widgets/src/es6/lib/iwc.js";
 
 @customElement("static-app")
 class StaticApp extends LitElement {
   constructor() {
     super();
   }
+
+  @property({ type: Object }) location = router.location;
 
   private _page: string = "meta-modeling-space";
 
@@ -81,7 +83,7 @@ class StaticApp extends LitElement {
         <li><a href="/meta-modeling-space">Meta Modeling</a></li>
         <li><a href="/modeling-space">Modeling</a></li>
       </ul>
-      <p id="outlet">[[page]]</p>
+      <p id="outlet">${this.page}</p>
       <div class="maincontainer">
         <div class="innercontainer">
           <main-widget></main-widget>
@@ -165,10 +167,6 @@ class StaticApp extends LitElement {
       flex-flow: column;
     }
   `;
-
-  static observers() {
-    return ["_routerChanged(routeData.page)"];
-  }
 
   _routerChanged(page: string) {
     this.page = page || "meta-modeling-space";
@@ -326,11 +324,11 @@ class StaticApp extends LitElement {
   }
 
   changeVisibility(htmlQuery: string, show: boolean) {
-    var item = this.shadowRoot.querySelector(htmlQuery);
+    var item = this.shadowRoot.querySelector(htmlQuery) as HTMLElement;
     if (show) {
-      $(item).show();
+      item.style.display = "block";
     } else {
-      $(item).hide();
+      item.style.display = "none";
     }
   }
 }
