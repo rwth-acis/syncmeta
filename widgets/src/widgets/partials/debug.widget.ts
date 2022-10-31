@@ -5,13 +5,34 @@ import { WebsocketProvider } from "y-websocket";
 import { CONFIG } from "../../js/config";
 import init from "../../js/shared";
 import { SyncMetaWidget } from "../../widget";
-import "reflect-metadata";
-
 // widget body used by all syncmeta widgets
 @customElement("debug-widget")
 export class DebugWidget extends SyncMetaWidget(LitElement) {
   render() {
     return html`
+      <style>
+        textarea,
+        button {
+          width: 100px;
+        }
+        .seperating_box {
+          border: 1px solid;
+          border-radius: 7px;
+          margin: 18px 20px 7px 7px;
+          padding: 7px 20px 7px 7px;
+          position: relative;
+        }
+        .seperating_box > h5 {
+          font-weight: normal;
+          font-style: italic;
+          position: absolute;
+          top: -40px;
+          left: 4px;
+        }
+        .hint {
+          font-size: 10;
+        }
+      </style>
       <script src="/es6/debug_widget.js"></script>
       <div class="seperating_box">
         <h5>Select a JSON file</h5>
@@ -75,30 +96,6 @@ export class DebugWidget extends SyncMetaWidget(LitElement) {
       <p id="feedback"></p>
     `;
   }
-
-  static styles = css`
-    textarea,
-    button {
-      width: 100px;
-    }
-    .seperating_box {
-      border: 1px solid;
-      border-radius: 7px;
-      margin: 18px 20px 7px 7px;
-      padding: 7px 20px 7px 7px;
-      position: relative;
-    }
-    .seperating_box > h5 {
-      font-weight: normal;
-      font-style: italic;
-      position: absolute;
-      top: -40px;
-      left: 4px;
-    }
-    .hint {
-      font-size: 10;
-    }
-  `;
 
   connectedCallback() {
     super.connectedCallback();

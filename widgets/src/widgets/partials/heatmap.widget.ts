@@ -4,9 +4,7 @@ import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
 import { CONFIG } from "../../js/config";
 import init from "../../js/shared";
-import { SyncMetaWidget } from "../../widget";
-import "reflect-metadata"; // needed to prevent ts errors when bundling with rollup
-
+import { SyncMetaWidget } from "../../widget"; // needed to prevent ts errors when bundling with rollup
 // widget body used by all syncmeta widgets
 @customElement("heatmap-widget")
 export class HeatMapWidget extends SyncMetaWidget(LitElement) {

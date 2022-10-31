@@ -5,8 +5,6 @@ import { WebsocketProvider } from "y-websocket";
 import { CONFIG } from "../../js/config";
 import init from "../../js/shared";
 import { SyncMetaWidget } from "../../widget";
-import "reflect-metadata";
-
 // widget body used by all syncmeta widgets
 @customElement("imsld-export-widget")
 export class IMSLDExportWidget extends SyncMetaWidget(LitElement) {

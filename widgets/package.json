@@ -11,7 +11,7 @@
     "url": "git+https://github.com/rwth-acis/SyncMeta.git"
   },
   "scripts": {
-    "build": "npx rollup -c --bundleConfigAsCjs"
+    "bundle": "npx rollup -c --bundleConfigAsCjs"
   },
   "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
@@ -36,6 +36,8 @@
     "requirejs": "^2.3.6",
     "requirejs-promise": "github:jokeyrhyme/requirejs-promise",
     "requirejs-text": "^2.0.16",
+    "tslib": "^2.4.1",
+    "typescript": "^4.8.4",
     "utf-8-validate": "^5.0.9",
     "y-websocket": "^1.4.5",
     "y-websockets-client": "github:y-js/y-websockets-client#v9.0.0-4",
