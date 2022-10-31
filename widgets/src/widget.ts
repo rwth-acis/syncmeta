@@ -13,7 +13,7 @@ export const SyncMetaWidget = <T extends Constructor<LitElement>>(
 ) => {
   // cannot use arrow function here, see https://lit.dev/docs/composition/mixins/#applying-decorators-in-mixins
   class SyncMetaWidgetElement extends superClass {
-    @property({ type: String }) widgetName = "SyncMetaWidget";
+    // @property({ type: String }) widgetName = "SyncMetaWidget";
     static styles?: CSSResultGroup = css`
       .loading {
         position: absolute;

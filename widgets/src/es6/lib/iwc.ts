@@ -92,12 +92,14 @@ export namespace IWC {
       ) {
         var pairs = window.location.search.substring(1).split("&"),
           pair,
-          query: { url: string } = { url: "" };
+          query: any = {};
         if (!(pairs.length == 1 && pairs[0] === "")) {
           for (var p = 0; p < pairs.length; p++) {
             pair = pairs[p].split("=");
             if (pair.length == 2) {
-              query[pair[0]] = window.unescape(pair[1]);
+              const key = pair[0] as string;
+              const value = window.unescape(pair[1]) as string;
+              query[key] = value;
             }
           }
         }
@@ -161,11 +163,11 @@ export namespace IWC {
       }
     }
 
-    publishLocal(intent, origin) {
+    publishLocal(intent: any, origin: any) {
       //Find iframe and post message
       var caeFrames = parent.caeFrames;
       if (caeFrames) {
-        caeFrames.forEach(function (currVal, currIndex, listObj) {
+        caeFrames.forEach(function (currVal: any) {
           if (currVal.contentWindow.frameElement.id === intent.receiver) {
             currVal.contentWindow.postMessage(intent, origin);
           }
@@ -185,9 +187,9 @@ export namespace IWC {
       }
     }
 
-    publishGlobal(intent, y) {
+    publishGlobal(intent: any, y: any) {
       //y.share.intents.push(intent);
-      y.share.intents.set(intent.receiver, intent);
+      y.getMap("intents").set(intent.receiver, intent);
     }
 
     /**
@@ -195,7 +197,7 @@ export namespace IWC {
      * used for global messaging.
      * @param {Event} event - The event that activated the callback
      */
-    receiveMessage(event) {
+    receiveMessage(event: any) {
       // Local messaging events
       if (event.type === "message") {
         //Unpack message events
@@ -227,7 +229,7 @@ export namespace IWC {
     /**
      * Check intent for correctness.
      */
-    validateIntent(intent) {
+    validateIntent(intent: any) {
       if (typeof intent.sender != "string") {
         throw new Error(
           "Intent object must possess property 'component' of type 'String'"
@@ -247,7 +249,7 @@ export namespace IWC {
     }
   }
 }
-function validateIntent(intent) {
+function validateIntent(intent: any) {
   if (typeof intent.sender != "string") {
     throw new Error(
       "Intent object must possess property 'component' of type 'String'"

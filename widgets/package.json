@@ -32,6 +32,7 @@
     "jszip": "^3.10.1",
     "lit": "^2.4.0",
     "lodash": "^4.17.21",
+    "reflect-metadata": "^0.1.13",
     "requirejs": "^2.3.6",
     "requirejs-promise": "github:jokeyrhyme/requirejs-promise",
     "requirejs-text": "^2.0.16",

@@ -7,16 +7,16 @@ import { router } from "./router";
 import "las2peer-frontend-statusbar/las2peer-frontend-statusbar.js";
 import "@polymer/paper-button/paper-button.js";
 
-// // Syncmeta Widgets
-import "../../widgets/src/widgets/partials/main.widget";
-import "../../widgets/src/widgets/partials/attribute.widget";
-import "../../widgets/src/widgets/partials/debug.widget";
-import "../../widgets/src/widgets/partials/palette.widget";
-import "../../widgets/src/widgets/partials/activity.widget";
-
 import { Common } from "./common";
 import Static from "./static";
 import { IWC } from "../../widgets/src/es6/lib/iwc.js";
+
+// // Syncmeta Widgets
+import "../../widgets/build/widgets/partials/main.widget";
+import "../../widgets/build/widgets/partials/attribute.widget";
+import "../../widgets/build/widgets/partials/debug.widget";
+import "../../widgets/build/widgets/partials/palette.widget";
+import "../../widgets/build/widgets/partials/activity.widget";
 
 @customElement("static-app")
 class StaticApp extends LitElement {
