@@ -5,6 +5,7 @@ import { WebsocketProvider } from "y-websocket";
 import { CONFIG } from "../../js/config";
 import init from "../../js/shared";
 import { SyncMetaWidget } from "../../widget";
+import "reflect-metadata"; // needed to prevent ts errors when bundling with rollup
 
 // widget body used by all syncmeta widgets
 @customElement("heatmap-widget")

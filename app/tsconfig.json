@@ -13,7 +13,8 @@
     "useDefineForClassFields": false,
     "declarationMap": true,
     "allowJs": true,
-    "outDir": "build"
+    "outDir": "build",
+    "types": ["reflect-metadata"]
   },
   "include": ["src/**/*.ts", "rollup.config.js"],
   "exclude": ["node_modules", "**/*.spec.ts"]

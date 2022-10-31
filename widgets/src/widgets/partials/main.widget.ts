@@ -1,6 +1,7 @@
 import { LitElement, css, html } from "lit";
 import { customElement } from "lit/decorators.js";
 import { SyncMetaWidget } from "../../widget";
+import "reflect-metadata";
 
 // canvas widget
 @customElement("syncmeta-canvas")

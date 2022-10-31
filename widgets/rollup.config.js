@@ -1,10 +1,5 @@
 // Import rollup plugins
-import { rollupPluginHTML as html } from "@web/rollup-plugin-html";
-import { copy } from "@web/rollup-plugin-copy";
 import resolve from "@rollup/plugin-node-resolve";
-import { terser } from "rollup-plugin-terser";
-// import minifyHTML from "rollup-plugin-minify-html-literals";
-// import summary from "rollup-plugin-summary";
 import typescript from "@rollup/plugin-typescript";
 import commonjs from "@rollup/plugin-commonjs";
 import css from "rollup-plugin-import-css";
