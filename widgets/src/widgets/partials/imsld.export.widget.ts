@@ -11,7 +11,7 @@ import { SyncMetaWidget } from "../../widget";
 export class IMSLDExportWidget extends SyncMetaWidget(LitElement) {
   render() {
     return html`
-      <script src="<%= grunt.config('baseUrl') %>/es6/imsld_widget.js"></script>
+      <script src="/es6/imsld_widget.js"></script>
 
       <div class="seperating_box">
         <h5>Download IMSLD</h5>

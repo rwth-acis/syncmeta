@@ -11,7 +11,7 @@ import { SyncMetaWidget } from "../../widget";
 export class JSONExportWidget extends SyncMetaWidget(LitElement) {
   render() {
     return html`
-      <script src="<%= grunt.config('baseUrl') %>/es6/jsonexport_widget.js"></script>
+      <script src="/es6/jsonexport_widget.js"></script>
       <button id="json">Download JSON</button>
       <button id="png">Download PNG Image</button>
     `;

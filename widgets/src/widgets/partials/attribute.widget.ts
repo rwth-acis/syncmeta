@@ -5,7 +5,7 @@ import { WebsocketProvider } from "y-websocket";
 import { CONFIG } from "../../js/config";
 import init from "../../js/shared";
 import { SyncMetaWidget } from "../../widget";
-import "../../css/style.css";
+
 // widget body used by all syncmeta widgets
 @customElement("attribute-widget")
 export class AttributeWidget extends SyncMetaWidget(LitElement) {
@@ -14,9 +14,9 @@ export class AttributeWidget extends SyncMetaWidget(LitElement) {
       <link
         rel="stylesheet"
         type="text/css"
-        href="<%= grunt.config('baseUrl') %>/css/vendor/jquery-ui.css"
+        href="/node_modules/jquery-ui/themes/base/jquery-ui.css"
       />
-      <script src="<%= grunt.config('baseUrl') %>/es6/attribute_widget.js"></script>
+      <script src="/es6/attribute_widget.js"></script>
       <div id="loading" class="loading"></div>
       <div id="wrapper"><h1>Wait For Canvas Widget!</h1></div>
       <div id="q"></div>

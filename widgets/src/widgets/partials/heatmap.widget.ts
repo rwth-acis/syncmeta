@@ -5,7 +5,7 @@ import { WebsocketProvider } from "y-websocket";
 import { CONFIG } from "../../js/config";
 import init from "../../js/shared";
 import { SyncMetaWidget } from "../../widget";
-import "../../css/style.css";
+
 // widget body used by all syncmeta widgets
 @customElement("heatmap-widget")
 export class HeatMapWidget extends SyncMetaWidget(LitElement) {
@@ -14,7 +14,7 @@ export class HeatMapWidget extends SyncMetaWidget(LitElement) {
       <link
         rel="stylesheet"
         type="text/css"
-        href="<%= grunt.config('baseUrl') %>/css/vendor/jquery-ui.css"
+        href="/node_modules/jquery-ui/themes/base/jquery-ui.css"
       />
       <link
         rel="stylesheet"
@@ -26,7 +26,7 @@ export class HeatMapWidget extends SyncMetaWidget(LitElement) {
         rel="stylesheet"
         href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"
       />
-      <script src="<%= grunt.config('baseUrl') %>/es6/heatmap_widget.js"></script>
+      <script src="/es6/heatmap_widget.js"></script>
       <div
         id="heatmap"
         style="background-color: #f5f5f5; width: 100%;height: 100%;"

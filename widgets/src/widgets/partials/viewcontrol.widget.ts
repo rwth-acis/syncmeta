@@ -5,7 +5,7 @@ import { WebsocketProvider } from "y-websocket";
 import { CONFIG } from "../../js/config";
 import init from "../../js/shared";
 import { SyncMetaWidget } from "../../widget";
-import "../../css/style.css";
+
 // widget body used by all syncmeta widgets
 @customElement("viewcontrol-widget")
 export class ViewControlWidget extends SyncMetaWidget(LitElement) {
@@ -14,10 +14,10 @@ export class ViewControlWidget extends SyncMetaWidget(LitElement) {
       <link
         rel="stylesheet"
         type="text/css"
-        href="<%= grunt.config('baseUrl') %>/css/vendor/jquery-ui.css"
+        href="/node_modules/jquery-ui/themes/base/jquery-ui.css"
       />
 
-      <script src="<%= grunt.config('baseUrl') %>/es6/viewcontrol_widget.js"></script>
+      <script src="/es6/viewcontrol_widget.js"></script>
 
       <div id="viewcontrol">
         <div class="seperating_box" style="display:none" id="div1">

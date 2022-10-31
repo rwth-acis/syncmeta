@@ -10,12 +10,13 @@ import { SyncMetaWidget } from "../../widget";
 @customElement("activity-widget")
 export class ActivityWidget extends SyncMetaWidget(LitElement) {
   render() {
-    return html`<link
+    return html`
+      <link
         rel="stylesheet"
         type="text/css"
-        href="<%= grunt.config('baseUrl') %>/css/vendor/jquery-ui.css"
+        href="/node_modules/jquery-ui/themes/base/jquery-ui.css"
       />
-      <script src="<%= grunt.config('baseUrl') %>/es6/activity_widget.js"></script>
+      <script src="/es6/activity_widget.js"></script>
       <h2>Users online</h2>
       <div class="list_wrapper">
         <div id="user_list" class="list"></div>
@@ -24,7 +25,8 @@ export class ActivityWidget extends SyncMetaWidget(LitElement) {
       <div class="list_wrapper">
         <div id="activity_list" class="list"></div>
       </div>
-      <div id="q"></div> `;
+      <div id="q"></div>
+    `;
   }
 
   static styles = css`

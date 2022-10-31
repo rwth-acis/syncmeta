@@ -1,7 +1,7 @@
 import { LitElement, css, html } from "lit";
 import { customElement } from "lit/decorators.js";
 import { SyncMetaWidget } from "../../widget";
-import "../../css/style.css";
+
 // canvas widget
 @customElement("syncmeta-canvas")
 export class CanvasWidget extends SyncMetaWidget(LitElement) {
@@ -10,7 +10,7 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
       <link
         rel="stylesheet"
         type="text/css"
-        href="<%= grunt.config('baseUrl') %>/css/vendor/jquery-ui.css"
+        href="/node_modules/jquery-ui/themes/base/jquery-ui.css"
       />
       <link
         rel="stylesheet"
@@ -27,23 +27,15 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
         rel="stylesheet"
         href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"
       />
-      <script src="<%= grunt.config('baseUrl') %>/es6/main_widget.js"></script>
+      <script src="/es6/main_widget.js"></script>
       <div id="loading" class="loading"></div>
       <div class="button_bar left">
         <button id="save" title="Save the current state of the model">
-          <img
-            width="20px"
-            height="20px"
-            src="<%= grunt.config('baseUrl') %>/img/save.png"
-          />
+          <img width="20px" height="20px" src="/img/save.png" />
         </button>
         <!-- Uncommented the below line for Export as PNG! -->
         <button id="save_image">
-          <img
-            width="20px"
-            height="20px"
-            src="<%= grunt.config('baseUrl') %>/img/save_image.png"
-          />
+          <img width="20px" height="20px" src="/img/save_image.png" />
         </button>
         <!--<button id="generate" style="display: none"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/generate.png" /></button>-->
         <span id="feedback"></span>
@@ -76,76 +68,36 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
       </div>
       <div class="button_bar right">
         <button id="viewsHide" title="Close the View Panel">
-          <img
-            width="20px"
-            height="20px"
-            src="<%= grunt.config('baseUrl') %>/img/viewHide.png"
-          />
+          <img width="20px" height="20px" src="/img/viewHide.png" />
         </button>
         <button id="viewsShow" title="Show the View Panel">
-          <img
-            width="20px"
-            height="20px"
-            src="<%= grunt.config('baseUrl') %>/img/viewShow.png"
-          />
+          <img width="20px" height="20px" src="/img/viewShow.png" />
         </button>
         <button id="showtype" title="Show the types of nodes and edges">
-          <img
-            width="20px"
-            height="20px"
-            src="<%= grunt.config('baseUrl') %>/img/hidetype.png"
-          />
+          <img width="20px" height="20px" src="/img/hidetype.png" />
         </button>
         <button id="hidetype" title="Hide types of nodes and edges">
-          <img
-            width="20px"
-            height="20px"
-            src="<%= grunt.config('baseUrl') %>/img/showtype.png"
-          />
+          <img width="20px" height="20px" src="/img/showtype.png" />
         </button>
         <button id="applyLayout" title="Apply Layout">
-          <img
-            width="20px"
-            height="20px"
-            src="<%= grunt.config('baseUrl') %>/img/layout.png"
-          />
+          <img width="20px" height="20px" src="/img/layout.png" />
         </button>
         <button id="zoomin" title="Zoom in">
-          <img
-            width="20px"
-            height="20px"
-            src="<%= grunt.config('baseUrl') %>/img/zoomin.png"
-          />
+          <img width="20px" height="20px" src="/img/zoomin.png" />
         </button>
         <button id="zoomout" title="Zoom out">
-          <img
-            width="20px"
-            height="20px"
-            src="<%= grunt.config('baseUrl') %>/img/zoomout.png"
-          />
+          <img width="20px" height="20px" src="/img/zoomout.png" />
         </button>
         <button id="undo" title="Undo your latest changes">
-          <img
-            width="20px"
-            height="20px"
-            src="<%= grunt.config('baseUrl') %>/img/undo.png"
-          />
+          <img width="20px" height="20px" src="/img/undo.png" />
         </button>
         <button id="redo" title="Redo your latest changes">
-          <img
-            width="20px"
-            height="20px"
-            src="<%= grunt.config('baseUrl') %>/img/redo.png"
-          />
+          <img width="20px" height="20px" src="/img/redo.png" />
         </button>
       </div>
       <div id="ViewCtrlContainer" class="button_bar left">
         <button id="btnCreateViewpoint" title="Create a viewpoint">
-          <img
-            width="20px"
-            height="20px"
-            src="<%= grunt.config('baseUrl') %>/img/add196.png"
-          />
+          <img width="20px" height="20px" src="/img/add196.png" />
         </button>
         <input
           id="txtNameViewpoint"
@@ -159,22 +111,14 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
           title="Create an empty viewpoint"
           style="display: none;"
         >
-          <img
-            width="20px"
-            height="20px"
-            src="<%= grunt.config('baseUrl') %>/img/checked21.png"
-          />
+          <img width="20px" height="20px" src="/img/checked21.png" />
         </button>
         <button
           id="btnCancelCreateViewpoint"
           title="Cancel"
           style="display: none;"
         >
-          <img
-            width="20px"
-            height="20px"
-            src="<%= grunt.config('baseUrl') %>/img/times1.png"
-          />
+          <img width="20px" height="20px" src="/img/times1.png" />
         </button>
         <select id="ddmViewSelection"></select>
         <button
@@ -194,11 +138,7 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
           id="btnDelViewPoint"
           title="Delete current viewpoint in the list"
         >
-          <img
-            width="20px"
-            height="20px"
-            src="<%= grunt.config('baseUrl') %>/img/times1.png"
-          />
+          <img width="20px" height="20px" src="/img/times1.png" />
         </button>
       </div>
       <div

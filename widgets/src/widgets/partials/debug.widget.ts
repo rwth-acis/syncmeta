@@ -11,7 +11,7 @@ import { SyncMetaWidget } from "../../widget";
 export class DebugWidget extends SyncMetaWidget(LitElement) {
   render() {
     return html`
-      <script src="<%= grunt.config('baseUrl') %>/es6/debug_widget.js"></script>
+      <script src="/es6/debug_widget.js"></script>
       <div class="seperating_box">
         <h5>Select a JSON file</h5>
         <input type="file" id="file-object" value="Load a file" />
