@@ -6,15 +6,16 @@
       name="viewport"
       content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes"
     />
-
     <title>Syncmeta</title>
     <meta name="description" content="Syncmeta" />
-
     <!-- See https://goo.gl/OOhYW5 -->
     <link rel="manifest" href="/manifest.json" />
-
     <script src="/node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
-    <script type="module" src="/src/static-app.ts" crossorigin></script>
+    <script
+      type="module"
+      src="/build/app/src/static-app.js"
+      crossorigin
+    ></script>
   </head>
   <body>
     <static-app></static-app>

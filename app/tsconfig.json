@@ -12,8 +12,9 @@
     "declaration": true,
     "useDefineForClassFields": false,
     "declarationMap": true,
-    "outDir": "./build"
+    "allowJs": true,
+    "outDir": "build"
   },
-  "include": ["src/**/*", "rollup.config.js"],
+  "include": ["src/**/*.ts", "rollup.config.js"],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }
