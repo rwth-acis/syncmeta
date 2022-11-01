@@ -13,7 +13,7 @@ export class HeatMapWidget extends SyncMetaWidget(LitElement) {
       <link
         rel="stylesheet"
         type="text/css"
-        href="/node_modules/jquery-ui/themes/base/jquery-ui.css"
+        href="https://code.jquery.com/ui/1.13.1/themes/smoothness/jquery-ui.css"
       />
       <link
         rel="stylesheet"

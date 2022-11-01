@@ -54,7 +54,7 @@ export class PaletteWidget extends SyncMetaWidget(LitElement) {
       <link
         rel="stylesheet"
         type="text/css"
-        href="/node_modules/jquery-ui/themes/base/jquery-ui.css"
+        href="https://code.jquery.com/ui/1.13.1/themes/smoothness/jquery-ui.css"
       />
       <script src="/es6/palette_widget.js"></script>
       <div id="main">
