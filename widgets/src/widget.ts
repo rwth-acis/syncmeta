@@ -1,9 +1,6 @@
-import { LitElement, html, CSSResultGroup, css } from "lit";
-import { classMap } from "lit/directives/class-map.js";
-import { customElement, property } from "lit/decorators.js";
+import { LitElement, css } from "lit";
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
-import { CONFIG } from "./js/config";
 import init from "./js/shared";
 
 type Constructor<T = {}> = new (...args: any[]) => T;
