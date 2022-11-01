@@ -5,6 +5,8 @@ import { WebsocketProvider } from "y-websocket";
 import { CONFIG } from "../../js/config";
 import init from "../../js/shared";
 import { SyncMetaWidget } from "../../widget";
+
+import "../../es6/debug_widget.js";
 // widget body used by all syncmeta widgets
 @customElement("debug-widget")
 export class DebugWidget extends SyncMetaWidget(LitElement) {
@@ -33,7 +35,6 @@ export class DebugWidget extends SyncMetaWidget(LitElement) {
           font-size: 10;
         }
       </style>
-      <script src="/es6/debug_widget.js"></script>
       <div class="seperating_box">
         <h5>Select a JSON file</h5>
         <input type="file" id="file-object" value="Load a file" />

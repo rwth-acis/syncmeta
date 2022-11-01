@@ -5,6 +5,7 @@ import { WebsocketProvider } from "y-websocket";
 import { CONFIG } from "../../js/config";
 import init from "../../js/shared";
 import { SyncMetaWidget } from "../../widget"; // needed to prevent ts errors when bundling with rollup
+import "../../es6/heatmap_widget.js";
 // widget body used by all syncmeta widgets
 @customElement("heatmap-widget")
 export class HeatMapWidget extends SyncMetaWidget(LitElement) {
@@ -25,7 +26,6 @@ export class HeatMapWidget extends SyncMetaWidget(LitElement) {
         rel="stylesheet"
         href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"
       />
-      <script src="/es6/heatmap_widget.js"></script>
       <div
         id="heatmap"
         style="background-color: #f5f5f5; width: 100%;height: 100%;"

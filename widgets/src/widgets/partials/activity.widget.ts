@@ -5,6 +5,9 @@ import { WebsocketProvider } from "y-websocket";
 import { CONFIG } from "../../js/config";
 import init from "../../js/shared";
 import { SyncMetaWidget } from "../../widget";
+
+import "../../es6/activity_widget.js";
+
 // widget body used by all syncmeta widgets
 @customElement("activity-widget")
 export class ActivityWidget extends SyncMetaWidget(LitElement) {
@@ -105,7 +108,6 @@ export class ActivityWidget extends SyncMetaWidget(LitElement) {
         type="text/css"
         href="https://code.jquery.com/ui/1.13.1/themes/smoothness/jquery-ui.css"
       />
-      <script src="/es6/activity_widget.js"></script>
       <h2>Users online</h2>
       <div class="list_wrapper">
         <div id="user_list" class="list"></div>

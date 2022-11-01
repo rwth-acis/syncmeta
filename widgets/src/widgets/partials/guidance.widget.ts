@@ -5,6 +5,8 @@ import { WebsocketProvider } from "y-websocket";
 import { CONFIG } from "../../js/config";
 import init from "../../js/shared";
 import { SyncMetaWidget } from "../../widget";
+
+import "../../es6/guidance_widget.js";
 // widget body used by all syncmeta widgets
 @customElement("guidance-widget")
 export class GuidanceWidget extends SyncMetaWidget(LitElement) {
@@ -25,7 +27,6 @@ export class GuidanceWidget extends SyncMetaWidget(LitElement) {
         rel="stylesheet"
         href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"
       />
-      <script src="/es6/guidance_widget.js"></script>
       <div id="guidance">
         <div class="bs-btn-group">
           <div class="bs-form-group">

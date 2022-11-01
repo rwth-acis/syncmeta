@@ -1,6 +1,7 @@
 import { LitElement, css, html } from "lit";
 import { customElement } from "lit/decorators.js";
 import { SyncMetaWidget } from "../../widget";
+import "../../es6/main_widget.js";
 // canvas widget
 @customElement("syncmeta-canvas")
 export class CanvasWidget extends SyncMetaWidget(LitElement) {
@@ -461,7 +462,6 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
         rel="stylesheet"
         href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"
       />
-      <script src="/es6/main_widget.js"></script>
       <div id="loading" class="loading"></div>
       <div class="button_bar left">
         <button id="save" title="Save the current state of the model">

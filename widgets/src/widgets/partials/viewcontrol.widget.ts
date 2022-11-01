@@ -5,6 +5,7 @@ import { WebsocketProvider } from "y-websocket";
 import { CONFIG } from "../../js/config";
 import init from "../../js/shared";
 import { SyncMetaWidget } from "../../widget";
+import "../../es6/viewcontrol_widget.js";
 // widget body used by all syncmeta widgets
 @customElement("viewcontrol-widget")
 export class ViewControlWidget extends SyncMetaWidget(LitElement) {
@@ -15,8 +16,6 @@ export class ViewControlWidget extends SyncMetaWidget(LitElement) {
         type="text/css"
         href="https://code.jquery.com/ui/1.13.1/themes/smoothness/jquery-ui.css"
       />
-
-      <script src="/es6/viewcontrol_widget.js"></script>
 
       <div id="viewcontrol">
         <div class="seperating_box" style="display:none" id="div1">

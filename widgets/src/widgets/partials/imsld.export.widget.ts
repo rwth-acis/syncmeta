@@ -5,13 +5,12 @@ import { WebsocketProvider } from "y-websocket";
 import { CONFIG } from "../../js/config";
 import init from "../../js/shared";
 import { SyncMetaWidget } from "../../widget";
+import "../../es6/imsld_export_widget.js";
 // widget body used by all syncmeta widgets
 @customElement("imsld-export-widget")
 export class IMSLDExportWidget extends SyncMetaWidget(LitElement) {
   render() {
     return html`
-      <script src="/es6/imsld_widget.js"></script>
-
       <div class="seperating_box">
         <h5>Download IMSLD</h5>
         <button id="imsld">Download ZIP</button>

@@ -5,6 +5,7 @@ import { WebsocketProvider } from "y-websocket";
 import { CONFIG } from "../../js/config";
 import init from "../../js/shared";
 import { SyncMetaWidget } from "../../widget";
+import "../../es6/palette_widget.js";
 // widget body used by all syncmeta widgets
 @customElement("palette-widget")
 export class PaletteWidget extends SyncMetaWidget(LitElement) {
@@ -56,7 +57,6 @@ export class PaletteWidget extends SyncMetaWidget(LitElement) {
         type="text/css"
         href="https://code.jquery.com/ui/1.13.1/themes/smoothness/jquery-ui.css"
       />
-      <script src="/es6/palette_widget.js"></script>
       <div id="main">
         <div id="palette"></div>
         <p id="info"></p>

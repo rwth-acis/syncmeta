@@ -2,6 +2,8 @@ import { LitElement, html } from "lit";
 import { customElement } from "lit/decorators.js";
 import init from "../../js/shared";
 import { SyncMetaWidget } from "../../widget";
+
+import "../../es6/attribute_widget.js";
 // widget body used by all syncmeta widgets
 @customElement("attribute-widget")
 export class AttributeWidget extends SyncMetaWidget(LitElement) {
@@ -179,7 +181,7 @@ export class AttributeWidget extends SyncMetaWidget(LitElement) {
         type="text/css"
         href="https://code.jquery.com/ui/1.13.1/themes/smoothness/jquery-ui.css"
       />
-      <script src="/es6/attribute_widget.js"></script>
+
       <div class="main-wrapper">
         <div id="loading" class="loading"></div>
         <div id="wrapper"><h1>Wait For Canvas Widget!</h1></div>

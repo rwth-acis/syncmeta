@@ -5,12 +5,12 @@ import { WebsocketProvider } from "y-websocket";
 import { CONFIG } from "../../js/config";
 import init from "../../js/shared";
 import { SyncMetaWidget } from "../../widget";
+import "../../es6/json_export_widget.js";
 // widget body used by all syncmeta widgets
 @customElement("json-export-widget")
 export class JSONExportWidget extends SyncMetaWidget(LitElement) {
   render() {
     return html`
-      <script src="/es6/jsonexport_widget.js"></script>
       <button id="json">Download JSON</button>
       <button id="png">Download PNG Image</button>
     `;
