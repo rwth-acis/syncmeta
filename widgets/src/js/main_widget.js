@@ -8,197 +8,83 @@ import jsPlumb from "jsplumb";
 import Util from "../../util/Util";
 import IWCW from "../../util/IWCW";
 
-Promise.all([
-  import("iwcw"),
-  import("lib/yjs-sync"),
-  import("Util"),
-  import("operations/non_ot/NonOTOperation"),
-  import("operations/non_ot/ToolSelectOperation"),
-  import("operations/non_ot/ActivityOperation"),
-  import("operations/non_ot/ViewInitOperation"),
-  import("operations/non_ot/UpdateViewListOperation"),
-  import("operations/non_ot/DeleteViewOperation"),
-  import("operations/non_ot/SetViewTypesOperation"),
-  import("operations/non_ot/InitModelTypesOperation"),
-  import("operations/non_ot/SetModelAttributeNodeOperation"),
-  import("operations/non_ot/UpdateMetamodelOperation"),
-  import("canvas_widget/Canvas"),
-  import("canvas_widget/EntityManager"),
-  import("canvas_widget/NodeTool"),
-  import("canvas_widget/ObjectNodeTool"),
-  import("canvas_widget/AbstractClassNodeTool"),
-  import("canvas_widget/RelationshipNodeTool"),
-  import("canvas_widget/RelationshipGroupNodeTool"),
-  import("canvas_widget/EnumNodeTool"),
-  import("canvas_widget/NodeShapeNodeTool"),
-  import("canvas_widget/EdgeShapeNodeTool"),
-  import("canvas_widget/EdgeTool"),
-  import("canvas_widget/GeneralisationEdgeTool"),
-  import("canvas_widget/BiDirAssociationEdgeTool"),
-  import("canvas_widget/UniDirAssociationEdgeTool"),
-  import("canvas_widget/ObjectNode"),
-  import("canvas_widget/AbstractClassNode"),
-  import("canvas_widget/RelationshipNode"),
-  import("canvas_widget/RelationshipGroupNode"),
-  import("canvas_widget/EnumNode"),
-  import("canvas_widget/NodeShapeNode"),
-  import("canvas_widget/EdgeShapeNode"),
-  import("canvas_widget/GeneralisationEdge"),
-  import("canvas_widget/BiDirAssociationEdge"),
-  import("canvas_widget/UniDirAssociationEdge"),
-  import("canvas_widget/viewpoint/ViewObjectNode"),
-  import("canvas_widget/viewpoint/ViewObjectNodeTool"),
-  import("canvas_widget/viewpoint/ViewRelationshipNode"),
-  import("canvas_widget/viewpoint/ViewRelationshipNodeTool"),
-  import("canvas_widget/viewpoint/ViewManager"),
-  import("canvas_widget/view/ViewGenerator"),
-  import("canvas_widget/HistoryManager"),
-  import("canvas_widget/JSONtoGraph"),
-  import("canvas_widget/GenerateViewpointModel"),
-  import("promise!User"),
-  import("promise!Guidancemodel"),
-]).then(function ([
-  IWCW,
-  yjsSync,
-  Util,
-  NonOTOperation,
-  ToolSelectOperation,
-  ActivityOperation,
-  ViewInitOperation,
-  UpdateViewListOperation,
-  DeleteViewOperation,
-  SetViewTypesOperation,
-  InitModelTypesOperation,
-  SetModelAttributeNodeOperation,
-  UpdateMetamodelOperation,
-  Canvas,
-  EntityManager,
-  NodeTool,
-  ObjectNodeTool,
-  AbstractClassNodeTool,
-  RelationshipNodeTool,
-  RelationshipGroupNodeTool,
-  EnumNodeTool,
-  NodeShapeNodeTool,
-  EdgeShapeNodeTool,
-  EdgeTool,
-  GeneralisationEdgeTool,
-  BiDirAssociationEdgeTool,
-  UniDirAssociationEdgeTool,
-  ObjectNode,
-  AbstractClassNode,
-  RelationshipNode,
-  RelationshipGroupNode,
-  EnumNode,
-  NodeShapeNode,
-  EdgeShapeNode,
-  GeneralisationEdge,
-  BiDirAssociationEdge,
-  UniDirAssociationEdge,
-  ViewObjectNode,
-  ViewObjectNodeTool,
-  ViewRelationshipNode,
-  ViewRelationshipNodeTool,
-  ViewManager,
-  ViewGenerator,
-  HistoryManager,
-  JSONtoGraph,
-  GenerateViewpointModel,
-  user,
-  guidancemodel,
-]) {
-  var _iwcw;
-  _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
-  _iwcw.setSpace(user);
-
-  yjsSync()
-    .done(function (y, spaceTitle) {
-      console.info(
-        "CANVAS: Yjs Initialized successfully in room " +
-          spaceTitle +
-          " with y-user-id: " +
-          y.clientID
-      );
-      const userMap = y.getMap("users");
-      try {
-        if (_iwcw.getUser().globalId !== -1) {
-          userMap.set(y.clientID, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-      if (!userMap.get(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])) {
-        var userInfo = _iwcw.getUser();
-        userInfo.globalId = Util.getGlobalId(user, y);
-        userMap.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], userInfo);
-      }
-      var metamodel, model;
-      if (guidancemodel.isGuidanceEditor()) {
-        const dataMap = y.getMap("data");
-        //Set the model which is shown by the editor to the guidancemodel
-        model = dataMap.get("guidancemodel");
-        //Set the metamodel to the guidance metamodel
-        metamodel = dataMap.get("guidancemetamodel");
-      } else {
-        metamodel = y.getMap("data").get("metamodel");
-        model = y.getMap("data").get("model");
-      }
-      if (model)
+    yjsSync()
+      .done(function (ydoc, spaceTitle) {
         console.info(
-          "CANVAS: Found model in yjs room with " +
-            Object.keys(model.nodes).length +
-            " nodes and " +
-            Object.keys(model.edges).length +
-            " edges."
+          "CANVAS: Yjs Initialized successfully in room " +
+            spaceTitle +
+            " with y-user-id: " +
+            ydoc.clientID
         );
-      EntityManager.init(metamodel);
-      EntityManager.setGuidance(guidancemodel);
-      window.y = y;
-      InitMainWidget(metamodel, model);
-    })
-    .fail(function () {
-      console.info("yjs log: Yjs intialization failed!");
-      window.y = undefined;
-      InitMainWidget();
-    });
-  function InitMainWidget(metamodel, model) {
-    var userList = [];
-    var canvas = new Canvas($("#canvas"));
-    HistoryManager.init(canvas);
+        const userMap = ydoc.getMap("users");
+        try {
+          if (_iwcw.getUser().globalId !== -1) {
+            userMap.set(
+              ydoc.clientID,
+              _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]
+            );
+          }
+        } catch (error) {
+          console.error(error);
+        }
+        if (!userMap.get(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])) {
+          var userInfo = _iwcw.getUser();
+          userInfo.globalId = Util.getGlobalId(user, ydoc);
+          userMap.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], userInfo);
+        }
+        var metamodel, model;
+        if (guidancemodel.isGuidanceEditor()) {
+          const dataMap = ydoc.getMap("data");
+          //Set the model which is shown by the editor to the guidancemodel
+          model = dataMap.get("guidancemodel");
+          //Set the metamodel to the guidance metamodel
+          metamodel = dataMap.get("guidancemetamodel");
+        } else {
+          metamodel = ydoc.getMap("data").get("metamodel");
+          model = ydoc.getMap("data").get("model");
+        }
+        if (model)
+          console.info(
+            "CANVAS: Found model in yjs room with " +
+              Object.keys(model.nodes).length +
+              " nodes and " +
+              Object.keys(model.edges).length +
+              " edges."
+          );
+        EntityManager.init(metamodel);
+        EntityManager.setGuidance(guidancemodel);
+        window.ydoc = ydoc;
+        InitMainWidget(metamodel, model);
+      })
+      .fail(function () {
+        console.info("yjs log: Yjs intialization failed!");
+        window.ydoc = undefined;
+        InitMainWidget();
+      });
+    function InitMainWidget(metamodel, model) {
+      var userList = [];
+      var canvas = new Canvas($("#canvas"));
+      HistoryManager.init(canvas);
 
-    //not working pretty well
-    window.onbeforeunload = function (event) {
-      // const userList = y.getMap("userList");
-      // const userMap = y.getMap("users");
-      //userList.delete(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
-      //userMap.delete(y.clientID);
-      const activityMap = y.getMap("activity");
-      const leaveActivity = new ActivityOperation(
-        "UserLeftActivity",
-        null,
-        _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]
-      );
-      activityMap.set("UserLeftActivity", leaveActivity.toJSON());
-    };
-    const joinMap = y.getMap("join");
-    joinMap.observe(function (event) {
-      if (userList.indexOf(event.name) === -1) {
-        userList.push(event.name);
-      }
-
-      if (
-        !event.value &&
-        event.name !== _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]
-      ) {
-        //send to activity widget that a remote user has joined.
-        const joinMap = y.getMap("join");
-        joinMap.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], true);
-      } else if (
-        event.name === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] &&
-        !event.value
-      ) {
-        canvas.resetTool();
-        $("#loading").hide();
+      //not working pretty well
+      window.onbeforeunload = function (event) {
+        // const userList = y.getMap("userList");
+        // const userMap = y.getMap("users");
+        //userList.delete(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+        //userMap.delete(y.clientID);
+        const activityMap = y.getMap("activity");
+        const leaveActivity = new ActivityOperation(
+          "UserLeftActivity",
+          null,
+          _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]
+        );
+        activityMap.set("UserLeftActivity", leaveActivity.toJSON());
+      };
+      const joinMap = y.getMap("join");
+      joinMap.observe(function (event) {
+        if (userList.indexOf(event.name) === -1) {
+          userList.push(event.name);
+        }
 
         if (
           CONFIG.TEST.CANVAS &&
@@ -353,10 +239,9 @@ Promise.all([
             }
           }
         });
-      }
-    });
+      })
 
-    if (metamodel) {
+      if (metamodel) {
       if (metamodel.hasOwnProperty("nodes")) {
         var nodes = metamodel.nodes,
           node;
@@ -786,25 +671,21 @@ Promise.all([
       canvas.setZoom(canvas.getZoom() + 0.1);
     });
 
-    $("#zoomout").click(function () {
-      canvas.setZoom(canvas.getZoom() - 0.1);
-    });
-
-    $("#applyLayout").click(function () {
-      const userMap = window.y.getMap("users");
-      const canvasMap = window.y.getMap("canvas");
-      canvasMap.set("applyLayout", userMap.get(window.y.clientID));
-      const activityMap = window.y.getMap("activity");
-      activityMap.set(
-        "ApplyLayoutActivity",
-        new ActivityOperation(
+      $("#applyLayout").click(function () {
+        const userMap = window.ydoc.getMap("users");
+        const canvasMap = window.ydoc.getMap("canvas");
+        canvasMap.set("applyLayout", userMap.get(window.ydoc.clientID));
+        const activityMap = window.ydoc.getMap("activity");
+        activityMap.set(
           "ApplyLayoutActivity",
-          null,
-          userMap.get(window.y.clientID),
-          "..applied Layout"
-        )
-      );
-    });
+          new ActivityOperation(
+            "ApplyLayoutActivity",
+            null,
+            userMap.get(window.ydoc.clientID),
+            "..applied Layout"
+          )
+        );
+      });
 
     var $feedback = $("#feedback");
 
@@ -967,4 +848,6 @@ Promise.all([
     joinMap.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], false);
     ViewManager.GetViewpointList();
   }
-});
+    
+
+    
