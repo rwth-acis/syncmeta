@@ -2,7 +2,7 @@ import { LitElement, html, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
-import { router } from "./router";
+import { Router } from "@vaadin/router";
 
 import "las2peer-frontend-statusbar/las2peer-frontend-statusbar.js";
 import "@polymer/paper-button/paper-button.js";
@@ -11,20 +11,29 @@ import { Common } from "./common";
 import Static from "./static";
 import { IWC } from "../../widgets/src/es6/lib/iwc.js";
 
-// // Syncmeta Widgets
-import "../../widgets/build/widgets/partials/main.widget";
-import "../../widgets/build/widgets/partials/attribute.widget";
-import "../../widgets/build/widgets/partials/debug.widget";
-import "../../widgets/build/widgets/partials/palette.widget";
-import "../../widgets/build/widgets/partials/activity.widget";
+import "./widget-container"; // container for all widgets
 
+const routes = [
+  {
+    path: "/",
+    component: "widget-container",
+  },
+  {
+    path: "/meta-modeling-space",
+    component: "widget-container",
+  },
+  {
+    path: "/modeling-space",
+    component: "widget-container",
+  },
+];
 @customElement("static-app")
 class StaticApp extends LitElement {
   constructor() {
     super();
   }
 
-  @property({ type: Object }) location = router.location;
+  @property({ type: Object }) location = undefined;
 
   private _page: string = "meta-modeling-space";
 
@@ -83,22 +92,7 @@ class StaticApp extends LitElement {
         <li><a href="/meta-modeling-space">Meta Modeling</a></li>
         <li><a href="/modeling-space">Modeling</a></li>
       </ul>
-      <p id="outlet">${this.page}</p>
-      <div class="maincontainer">
-        <div class="innercontainer">
-          <main-widget></main-widget>
-        </div>
-        <div class="innercontainer">
-          <attribute-widget></attribute-widget>
-          <debug-widget></debug-widget>
-        </div>
-        <div class="innercontainer">
-          <palette-widget> </palette-widget>
-        </div>
-        <div class="innercontainer">
-          <activity-widget></activity-widget>
-        </div>
-      </div>
+      <div id="router-outlet"></div>
     `;
   }
   static styles = css`
@@ -205,6 +199,14 @@ class StaticApp extends LitElement {
     statusBar.addEventListener("signed-out", this.handleLogout);
     this.iwcClient = new IWC.Client(null, null, null);
     this.displayCurrentRoomName();
+    if (this.location === undefined) {
+      // this throws the warning "Element static-app scheduled an update (generally because a property was set) after an update completed, causing a new update to be scheduled."
+      // but it is necessary to set the location here, because the router-outlet is not yet initialized when the constructor is called
+      const outlet = this.shadowRoot.getElementById("router-outlet");
+      const router = new Router(outlet);
+      router.setRoutes(routes);
+      this.location = router.location;
+    }
   }
 
   _onChangeButtonClicked() {
