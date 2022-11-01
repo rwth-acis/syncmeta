@@ -4,7 +4,7 @@
  */
 
 import $ from "jquery-ui";
-import test from "./../test/ActivityWidgetTest";
+// import test from "./../test/ActivityWidgetTest";
 
 Promise.all([
   import("lib/yjs-sync"),

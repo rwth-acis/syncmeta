@@ -62,7 +62,7 @@ Promise.all([
   yjsSync,
   Util,
   NonOTOperation,
-  ToolSelectOperation,
+  ,
   ActivityOperation,
   ViewInitOperation,
   UpdateViewListOperation,
@@ -167,7 +167,7 @@ Promise.all([
     HistoryManager.init(canvas);
 
     //not working pretty well
-    window.onbeforeunload = function (event) {
+    window.onbeforeunload = function () {
       // const userList = y.getMap("userList");
       // const userMap = y.getMap("users");
       //userList.delete(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
@@ -221,11 +221,11 @@ Promise.all([
             var model = dataMap.get("model");
             var vls = GenerateViewpointModel(model);
             yjsSync(operation.getModelingRoomName())
-              .done(function (y, spaceTitle) {
+              .done(function (y) {
                 const dataMap = y.getMap("data");
                 dataMap.set("metamodel", vls);
                 yjsSync(operation.getMetaModelingRoomName())
-                  .done(function (y, spaceTitle) {
+                  .done(function (y) {
                     const metaModelStatus = y.getMap("metaModelStatus");
                     metaModelStatus.set("uploaded", true);
                   })

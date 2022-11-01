@@ -3,10 +3,8 @@
  * @namespace attribute_widget
  */
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
-import Util from "../../util/Util";
-import IWCW from "../../util/IWCW";
-import AttributeWidgetTest from "./../test/AttributeWidgetTest";
+import IWCW from "./lib/IWCWrapper";
+// import AttributeWidgetTest from "./../test/AttributeWidgetTest";
 
 Promise.all([
   import("lib/yjs-sync"),
