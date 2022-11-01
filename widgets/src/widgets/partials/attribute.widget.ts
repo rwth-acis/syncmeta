@@ -1,8 +1,5 @@
-import { LitElement, html, css } from "lit";
-import { customElement, property } from "lit/decorators.js";
-import * as Y from "yjs";
-import { WebsocketProvider } from "y-websocket";
-import { CONFIG } from "../../js/config";
+import { LitElement, html } from "lit";
+import { customElement } from "lit/decorators.js";
 import init from "../../js/shared";
 import { SyncMetaWidget } from "../../widget";
 // widget body used by all syncmeta widgets
@@ -173,6 +170,9 @@ export class AttributeWidget extends SyncMetaWidget(LitElement) {
           height: 200px;
           overflow-y: auto;
         }
+        .main-wrapper {
+          position: relative;
+        }
       </style>
       <link
         rel="stylesheet"
@@ -180,9 +180,11 @@ export class AttributeWidget extends SyncMetaWidget(LitElement) {
         href="/node_modules/jquery-ui/themes/base/jquery-ui.css"
       />
       <script src="/es6/attribute_widget.js"></script>
-      <div id="loading" class="loading"></div>
-      <div id="wrapper"><h1>Wait For Canvas Widget!</h1></div>
-      <div id="q"></div>
+      <div class="main-wrapper">
+        <div id="loading" class="loading"></div>
+        <div id="wrapper"><h1>Wait For Canvas Widget!</h1></div>
+        <div id="q"></div>
+      </div>
     `;
   }
 
