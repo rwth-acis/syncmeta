@@ -16,7 +16,7 @@ export default [
       typescript(),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required
       css(),
-      resolve(),
+      resolve({ browser: true }),
     ],
     input: "src/widgets/partials/activity.widget.ts",
     output: {
@@ -39,7 +39,7 @@ export default [
       typescript(),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required
       css(),
-      resolve(),
+      resolve({ browser: true }),
     ],
     input: "src/widgets/partials/attribute.widget.ts",
     output: {
@@ -62,7 +62,7 @@ export default [
       typescript(),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required
       css(),
-      resolve(),
+      resolve({ browser: true }),
     ],
     input: "src/widgets/partials/debug.widget.ts",
     output: {
@@ -85,7 +85,7 @@ export default [
       typescript(),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required
       css(),
-      resolve(),
+      resolve({ browser: true }),
     ],
     input: "src/widgets/partials/guidance.widget.ts",
     output: {
@@ -108,7 +108,7 @@ export default [
       typescript(),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required
       css(),
-      resolve(),
+      resolve({ browser: true }),
     ],
     input: "src/widgets/partials/heatmap.widget.ts",
     output: {
@@ -131,7 +131,7 @@ export default [
       typescript(),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required
       css(),
-      resolve(),
+      resolve({ browser: true }),
     ],
     input: "src/widgets/partials/imsld.export.widget.ts",
     output: {
@@ -154,7 +154,7 @@ export default [
       typescript(),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required
       css(),
-      resolve(),
+      resolve({ browser: true }),
     ],
     input: "src/widgets/partials/json.export.widget.ts",
     output: {
@@ -177,7 +177,7 @@ export default [
       typescript(),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required
       css(),
-      resolve(),
+      resolve({ browser: true }),
     ],
     input: "src/widgets/partials/main.widget.ts",
     output: {
@@ -200,7 +200,7 @@ export default [
       typescript(),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required
       css(),
-      resolve(),
+      resolve({ browser: true }),
     ],
     input: "src/widgets/partials/palette.widget.ts",
     output: {
@@ -223,7 +223,7 @@ export default [
       typescript(),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required
       css(),
-      resolve(),
+      resolve({ browser: true }),
     ],
     input: "src/widgets/partials/test.widget.ts",
     output: {
@@ -246,7 +246,7 @@ export default [
       typescript(),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required
       css(),
-      resolve(),
+      resolve({ browser: true }),
     ],
     input: "src/widgets/partials/viewcontrol.widget.ts",
     output: {
