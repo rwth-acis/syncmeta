@@ -22,6 +22,7 @@ export default [
     output: {
       file: "build/widgets/partials/activity.widget.ts",
       sourcemap: true,
+      inlineDynamicImports: true,
       format: "es",
       globals: {
         jquery: "$",
