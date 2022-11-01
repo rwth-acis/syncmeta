@@ -11,7 +11,8 @@
     "url": "git+https://github.com/rwth-acis/SyncMeta.git"
   },
   "scripts": {
-    "bundle": "npx rollup -c --bundleConfigAsCjs"
+    "bundle": "npx rollup -c --bundleConfigAsCjs",
+    "bundle:watch": "npx rollup -c --bundleConfigAsCjs --watch"
   },
   "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
