@@ -56,12 +56,11 @@ export class ActivityWidget extends SyncMetaWidget(LitElement) {
         }
 
         #activity_list {
-          width: auto;
           height: 90%;
           box-sizing: border-box;
           padding-bottom: 150%;
           margin-right: -20px;
-          overflow-y: scroll;
+          overflow-y: auto;
         }
 
         #activity_list .item {
@@ -106,7 +105,7 @@ export class ActivityWidget extends SyncMetaWidget(LitElement) {
         type="text/css"
         href="https://code.jquery.com/ui/1.13.1/themes/smoothness/jquery-ui.css"
       />
-      <script src="/es6/activity_widget.js"></script>
+      <script src="/es6/bundle.js"></script>
       <h2>Users online</h2>
       <div class="list_wrapper">
         <div id="user_list" class="list"></div>
