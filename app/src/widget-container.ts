@@ -1,6 +1,5 @@
 import { LitElement, html, css } from "lit";
-import { customElement, property } from "lit/decorators.js";
-import { IWC } from "../../widgets/src/es6/lib/iwc.js";
+import { customElement } from "lit/decorators.js";
 
 // // Syncmeta Widgets
 import "../../widgets/build/widgets/partials/main.widget";
@@ -40,13 +39,18 @@ class WidgetContainer extends LitElement {
     }
     .maincontainer {
       display: flex;
+
       height: 600px;
       flex-flow: row wrap;
     }
     .innercontainer {
+      border-radius: 5px;
       padding: 5px;
-      margin: 5px;
+      margin: 4px;
       flex: 1;
+      resize: horizontal;
+      -webkit-box-shadow: 0px 0px 30px 3px rgba(158, 158, 158, 0.89);
+      box-shadow: 0px 0px 30px 3px rgba(158, 158, 158, 0.59);
     }
     .innercontainer:nth-of-type(1) {
       flex: 4;
