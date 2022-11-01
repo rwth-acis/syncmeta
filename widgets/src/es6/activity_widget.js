@@ -7,11 +7,11 @@ import $ from "jquery-ui";
 import test from "./../test/ActivityWidgetTest";
 
 Promise.all([
-  "lib/yjs-sync",
-  "activity_widget/ActivityList",
-  "WaitForCanvas",
-  "Util",
-  "activity_widget/WidgetTracker",
+  import("lib/yjs-sync"),
+  import("activity_widget/ActivityList"),
+  import("WaitForCanvas"),
+  import("Util"),
+  import("activity_widget/WidgetTracker"),
 ]).then(function (yjsSync, ActivityList, WaitForCanvas, Util, WidgetTracker) {
   yjsSync().done(function (y, spaceTitle) {
     window.y = y;
