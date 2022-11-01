@@ -50,10 +50,11 @@ module.exports = function(grunt) {
               src: "<%= nodemodules %>/jquery-migrate/dist/jquery-migrate.js",
               dest: "<%= distdir %>/js/lib/vendor/jquery-migrate.js",
             },
-            {
-              src: "<%= nodemodules %>/jquery-ui/jquery-ui.js",
-              dest: "<%= distdir %>/js/lib/vendor/jquery-ui.js",
-            },
+            ,
+            // {
+            //   src: "<%= nodemodules %>/jquery-ui/jquery-ui.js",
+            //   dest: "<%= distdir %>/js/lib/vendor/jquery-ui.js",
+            // },
             {
               src: "<%= nodemodules %>/jquery-ui/themes/base/jquery-ui.css",
               dest: "<%= distdir %>/css/vendor/jquery-ui.css",
@@ -80,18 +81,18 @@ module.exports = function(grunt) {
               src: "<%= nodemodules %>/jquery-mousewheel/jquery.mousewheel.js",
               dest: "<%= distdir %>/js/lib/vendor/jquery.mousewheel.js",
             },
-            {
-              src: "<%= nodemodules %>/requirejs/require.js",
-              dest: "<%= distdir %>/js/lib/vendor/require.js",
-            },
-            {
-              src: "<%= nodemodules %>/requirejs-text/text.js",
-              dest: "<%= distdir %>/js/lib/vendor/requirejs-text.js",
-            },
-            {
-              src: "<%= nodemodules %>/requirejs-promise/requirejs-promise.js",
-              dest: "<%= distdir %>/js/lib/vendor/requirejs-promise.js",
-            },
+            // {
+            //   src: "<%= nodemodules %>/requirejs/require.js",
+            //   dest: "<%= distdir %>/js/lib/vendor/require.js",
+            // },
+            // {
+            //   src: "<%= nodemodules %>/requirejs-text/text.js",
+            //   dest: "<%= distdir %>/js/lib/vendor/requirejs-text.js",
+            // },
+            // {
+            //   src: "<%= nodemodules %>/requirejs-promise/requirejs-promise.js",
+            //   dest: "<%= distdir %>/js/lib/vendor/requirejs-promise.js",
+            // },
             {
               src: "<%= nodemodules %>/lodash/lodash.js",
               dest: "<%= distdir %>/js/lib/vendor/lodash.js",
@@ -110,40 +111,40 @@ module.exports = function(grunt) {
               src: ["*.*"],
               dest: "<%=distdir%>/js/lib/vendor/yjs",
             },
-            {
-              cwd: "<%= nodemodules %>/y-array/dist",
-              expand: true,
-              src: ["*.*"],
-              dest: "<%=distdir%>/js/lib/vendor/y-array",
-            },
-            {
-              cwd: "<%= nodemodules %>/y-map/dist",
-              expand: true,
-              src: ["*.*"],
-              dest: "<%=distdir%>/js/lib/vendor/y-map",
-            },
-            {
-              cwd: "<%= nodemodules %>/y-text/dist",
-              expand: true,
-              src: ["*.*"],
-              dest: "<%=distdir%>/js/lib/vendor/y-text",
-            },
-            {
-              cwd: "<%= nodemodules %>/y-websockets-client/dist",
-              expand: true,
-              src: ["*.*"],
-              dest: "<%=distdir%>/js/lib/vendor/y-websockets-client",
-            },
-            {
-              cwd: "<%= nodemodules %>/y-memory/dist",
-              expand: true,
-              src: ["*.*"],
-              dest: "<%=distdir%>/js/lib/vendor/y-memory",
-            },
-            {
-              src: "<%= nodemodules %>/dagre/dist/dagre.core.min.js",
-              dest: "<%= distdir %>/js/lib/vendor/dagre.min.js",
-            },
+            // {
+            //   cwd: "<%= nodemodules %>/y-array/dist",
+            //   expand: true,
+            //   src: ["*.*"],
+            //   dest: "<%=distdir%>/js/lib/vendor/y-array",
+            // },
+            // {
+            //   cwd: "<%= nodemodules %>/y-map/dist",
+            //   expand: true,
+            //   src: ["*.*"],
+            //   dest: "<%=distdir%>/js/lib/vendor/y-map",
+            // },
+            // {
+            //   cwd: "<%= nodemodules %>/y-text/dist",
+            //   expand: true,
+            //   src: ["*.*"],
+            //   dest: "<%=distdir%>/js/lib/vendor/y-text",
+            // },
+            // {
+            //   cwd: "<%= nodemodules %>/y-websockets-client/dist",
+            //   expand: true,
+            //   src: ["*.*"],
+            //   dest: "<%=distdir%>/js/lib/vendor/y-websockets-client",
+            // },
+            // {
+            //   cwd: "<%= nodemodules %>/y-memory/dist",
+            //   expand: true,
+            //   src: ["*.*"],
+            //   dest: "<%=distdir%>/js/lib/vendor/y-memory",
+            // },
+            // {
+            //   src: "<%= nodemodules %>/dagre/dist/dagre.core.min.js",
+            //   dest: "<%= distdir %>/js/lib/vendor/dagre.min.js",
+            // },
             {
               src: "<%= nodemodules %>/chai/chai.js",
               dest: "<%= distdir %>/js/lib/vendor/test/chai.js",
@@ -156,22 +157,22 @@ module.exports = function(grunt) {
               src: "<%= nodemodules %>/mocha/mocha.css",
               dest: "<%= distdir %>/js/lib/vendor/test/mocha.css",
             },
-            {
-              src: "<%= nodemodules %>/ace-builds/src-min-noconflict/ace.js",
-              dest: "<%= distdir %>/js/lib/vendor/ace/ace.js",
-            },
-            {
-              src: "<%= nodemodules %>/ace-builds/src-min-noconflict/mode-svg.js",
-              dest: "<%= distdir %>/js/lib/vendor/ace/mode-svg.js",
-            },
-            {
-              src: "<%= nodemodules %>/ace-builds/src-min-noconflict/theme-github.js",
-              dest: "<%= distdir %>/js/lib/vendor/ace/theme-github.js",
-            },
-            {
-              src: "<%= nodemodules %>/ace-builds/src-min-noconflict/worker-xml.js",
-              dest: "<%= distdir %>/js/lib/vendor/ace/worker-xml.js",
-            },
+            // {
+            //   src: "<%= nodemodules %>/ace-builds/src-min-noconflict/ace.js",
+            //   dest: "<%= distdir %>/js/lib/vendor/ace/ace.js",
+            // },
+            // {
+            //   src: "<%= nodemodules %>/ace-builds/src-min-noconflict/mode-svg.js",
+            //   dest: "<%= distdir %>/js/lib/vendor/ace/mode-svg.js",
+            // },
+            // {
+            //   src: "<%= nodemodules %>/ace-builds/src-min-noconflict/theme-github.js",
+            //   dest: "<%= distdir %>/js/lib/vendor/ace/theme-github.js",
+            // },
+            // {
+            //   src: "<%= nodemodules %>/ace-builds/src-min-noconflict/worker-xml.js",
+            //   dest: "<%= distdir %>/js/lib/vendor/ace/worker-xml.js",
+            // },
             {
               src: "<%= nodemodules %>/async/dist/async.min.js",
               dest: "<%= distdir %>/js/lib/vendor/async.js",
