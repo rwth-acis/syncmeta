@@ -1,8 +1,5 @@
-import $ from "jquery-ui";
 import _ from "lodash";
-import Activity from "activity_widget/Activity";
-import ValueChangeOperation from "operations/ot/ValueChangeOperation";
-import ActivityOperation from "operations/non_ot/ActivityOperation";
+import Activity from "./Activity";
 
 ValueChangeActivity.TYPE = "ValueChangeActivity";
 

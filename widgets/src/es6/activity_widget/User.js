@@ -1,7 +1,7 @@
 import $ from "jquery-ui";
 import _ from "lodash";
-import Util from "Util";
-import userBoxHtml from "text!templates/activity_widget/user_box.html";
+import Util from "../Util";
+import userBoxHtml from "../../templates/activity_widget/user_box.html";
 
 /**
  * A user working on the model

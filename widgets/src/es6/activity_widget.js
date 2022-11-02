@@ -4,14 +4,14 @@
  */
 
 import $ from "jquery-ui";
-import test from "./../test/ActivityWidgetTest";
+import test from "./../es6-test/ActivityWidgetTest";
 
 Promise.all([
   import("./lib/yjs-sync"),
   import("./activity_widget/ActivityList"),
   import("./WaitForCanvas"),
   import("./Util"),
-  import("activity_widget/WidgetTracker"),
+  import("./activity_widget/WidgetTracker"),
 ]).then(function (yjsSync, ActivityList, WaitForCanvas, Util, WidgetTracker) {
   yjsSync().done(function (y, spaceTitle) {
     window.y = y;

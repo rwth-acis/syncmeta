@@ -1,10 +1,5 @@
-import $ from "jquery-ui";
 import _ from "lodash";
-import IWCW from "iwcw";
-import Activity from "activity_widget/Activity";
-import ValueChangeActivity from "activity_widget/ValueChangeActivity";
-import NodeAddOperation from "operations/ot/NodeAddOperation";
-import ActivityOperation from "operations/non_ot/ActivityOperation";
+import Activity from "./Activity";
 
 NodeAddActivity.TYPE = "NodeAddActivity";
 

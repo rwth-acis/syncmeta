@@ -10,6 +10,8 @@ import $ from "jquery";
 import chai from "chai";
 import WebConsoleReporter from "WebConsoleReporter";
 import "mocha";
+ 
+export default function () {
   $("body").append($('<div id="mocha" style="display: none"></div>'));
 
   mocha.setup("bdd");
@@ -26,4 +28,4 @@ import "mocha";
     });
   });
   mocha.run();
-
+}

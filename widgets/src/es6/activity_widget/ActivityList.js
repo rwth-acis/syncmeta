@@ -1,20 +1,18 @@
-import $ from "jquery-ui";
 import _ from "lodash";
-import Activity from "activity_widget/Activity";
-import NodeAddActivity from "activity_widget/NodeAddActivity";
-import NodeDeleteActivity from "activity_widget/NodeDeleteActivity";
-import NodeMoveActivity from "activity_widget/NodeMoveActivity";
-import NodeResizeActivity from "activity_widget/NodeResizeActivity";
-import EdgeAddActivity from "activity_widget/EdgeAddActivity";
-import EdgeDeleteActivity from "activity_widget/EdgeDeleteActivity";
-import EditorGenerateActivity from "activity_widget/EditorGenerateActivity";
-import UserJoinActivity from "activity_widget/UserJoinActivity";
-import ValueChangeActivity from "activity_widget/ValueChangeActivity";
-import ViewApplyActivity from "activity_widget/ViewApplyActivity";
-import ReloadWidgetActivity from "activity_widget/ReloadWidgetActivity";
-import User from "activity_widget/User";
-import ActivityOperation from "operations/non_ot/ActivityOperation";
-import EntitySelectOperation from "operations/non_ot/EntitySelectOperation";
+import Activity from "./Activity";
+import NodeAddActivity from "./NodeAddActivity";
+import NodeDeleteActivity from "./NodeDeleteActivity";
+import NodeMoveActivity from "./NodeMoveActivity";
+import NodeResizeActivity from "./NodeResizeActivity";
+import EdgeAddActivity from "./EdgeAddActivity";
+import EdgeDeleteActivity from "./EdgeDeleteActivity";
+import EditorGenerateActivity from "./EditorGenerateActivity";
+import UserJoinActivity from "./UserJoinActivity";
+import ValueChangeActivity from "./ValueChangeActivity";
+import ViewApplyActivity from "./ViewApplyActivity";
+import ReloadWidgetActivity from "./ReloadWidgetActivity";
+import User from "./User";
+import ActivityOperation from "../operations/non_ot/ActivityOperation";
 
 /**
  * List of user activities

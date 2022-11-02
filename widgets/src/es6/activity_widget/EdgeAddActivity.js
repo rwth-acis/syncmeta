@@ -1,9 +1,5 @@
-import $ from "jquery-ui";
 import _ from "lodash";
-import Activity from "activity_widget/Activity";
-import ValueChangeActivity from "activity_widget/ValueChangeActivity";
-import EdgeAddOperation from "operations/ot/EdgeAddOperation";
-import ActivityOperation from "operations/non_ot/ActivityOperation";
+import Activity from "./Activity";
 
 EdgeAddActivity.TYPE = "EdgeAddActivity";
 

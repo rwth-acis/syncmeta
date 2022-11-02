@@ -1,9 +1,5 @@
-import $ from "jquery-ui";
 import _ from "lodash";
-import Activity from "activity_widget/Activity";
-import ValueChangeActivity from "activity_widget/ValueChangeActivity";
-import NodeResizeOperation from "operations/ot/NodeResizeOperation";
-import ActivityOperation from "operations/non_ot/ActivityOperation";
+import Activity from "./Activity";
 
 NodeResizeActivity.TYPE = "NodeResizeActivity";
 

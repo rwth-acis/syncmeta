@@ -5,6 +5,8 @@ import commonjs from "@rollup/plugin-commonjs";
 import css from "rollup-plugin-import-css";
 
 import { dependencies } from "./package.json";
+import json from "@rollup/plugin-json";
+import html from "rollup-plugin-html";
 
 /**
  * @type {import('rollup').RollupOptions}
@@ -16,6 +18,10 @@ export default [
       typescript(),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required
       css(),
+      json(),
+      html({
+        include: "**/*.html",
+      }),
       resolve({ browser: true }),
     ],
     watch: {
@@ -43,6 +49,10 @@ export default [
       typescript(),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required
       css(),
+      json(),
+      html({
+        include: "**/*.html",
+      }),
       resolve({ browser: true }),
     ],
     watch: {
@@ -52,6 +62,7 @@ export default [
     output: {
       file: "build/widgets/partials/attribute.widget.ts",
       sourcemap: true,
+      inlineDynamicImports: true,
       format: "es",
       globals: {
         jquery: "$",
@@ -69,6 +80,10 @@ export default [
       typescript(),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required
       css(),
+      json(),
+      html({
+        include: "**/*.html",
+      }),
       resolve({ browser: true }),
     ],
     watch: {
@@ -78,6 +93,7 @@ export default [
     output: {
       file: "build/widgets/partials/debug.widget.ts",
       sourcemap: true,
+      inlineDynamicImports: true,
       format: "es",
       globals: {
         jquery: "$",
@@ -95,6 +111,10 @@ export default [
       typescript(),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required
       css(),
+      json(),
+      html({
+        include: "**/*.html",
+      }),
       resolve({ browser: true }),
     ],
     watch: {
@@ -104,6 +124,7 @@ export default [
     output: {
       file: "build/widgets/partials/guidance.widget.ts",
       sourcemap: true,
+      inlineDynamicImports: true,
       format: "es",
       globals: {
         jquery: "$",
@@ -121,6 +142,10 @@ export default [
       typescript(),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required
       css(),
+      json(),
+      html({
+        include: "**/*.html",
+      }),
       resolve({ browser: true }),
     ],
     watch: {
@@ -130,6 +155,7 @@ export default [
     output: {
       file: "build/widgets/partials/heatmap.widget.ts",
       sourcemap: true,
+      inlineDynamicImports: true,
       format: "es",
       globals: {
         jquery: "$",
@@ -147,6 +173,10 @@ export default [
       typescript(),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required
       css(),
+      json(),
+      html({
+        include: "**/*.html",
+      }),
       resolve({ browser: true }),
     ],
     watch: {
@@ -156,6 +186,7 @@ export default [
     output: {
       file: "build/widgets/partials/imsld.export.widget.ts",
       sourcemap: true,
+      inlineDynamicImports: true,
       format: "es",
       globals: {
         jquery: "$",
@@ -173,6 +204,10 @@ export default [
       typescript(),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required
       css(),
+      json(),
+      html({
+        include: "**/*.html",
+      }),
       resolve({ browser: true }),
     ],
     watch: {
@@ -182,6 +217,7 @@ export default [
     output: {
       file: "build/widgets/partials/json.export.widget.ts",
       sourcemap: true,
+      inlineDynamicImports: true,
       format: "es",
       globals: {
         jquery: "$",
@@ -199,6 +235,10 @@ export default [
       typescript(),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required
       css(),
+      json(),
+      html({
+        include: "**/*.html",
+      }),
       resolve({ browser: true }),
     ],
     watch: {
@@ -208,6 +248,7 @@ export default [
     output: {
       file: "build/widgets/partials/main.widget.ts",
       sourcemap: true,
+      inlineDynamicImports: true,
       format: "es",
       globals: {
         jquery: "$",
@@ -225,6 +266,10 @@ export default [
       typescript(),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required
       css(),
+      json(),
+      html({
+        include: "**/*.html",
+      }),
       resolve({ browser: true }),
     ],
     watch: {
@@ -234,6 +279,7 @@ export default [
     output: {
       file: "build/widgets/partials/palette.widget.ts",
       sourcemap: true,
+      inlineDynamicImports: true,
       format: "es",
       globals: {
         jquery: "$",
@@ -251,6 +297,10 @@ export default [
       typescript(),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required
       css(),
+      json(),
+      html({
+        include: "**/*.html",
+      }),
       resolve({ browser: true }),
     ],
     watch: {
@@ -260,6 +310,7 @@ export default [
     output: {
       file: "build/widgets/partials/test.widget.ts",
       sourcemap: true,
+      inlineDynamicImports: true,
       format: "es",
       globals: {
         jquery: "$",
@@ -277,6 +328,10 @@ export default [
       typescript(),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required
       css(),
+      json(),
+      html({
+        include: "**/*.html",
+      }),
       resolve({ browser: true }),
     ],
     watch: {
@@ -286,6 +341,7 @@ export default [
     output: {
       file: "build/widgets/partials/viewcontrol.widget.ts",
       sourcemap: true,
+      inlineDynamicImports: true,
       format: "es",
       globals: {
         jquery: "$",

@@ -7,14 +7,14 @@ import IWCW from "./lib/IWCWrapper";
 // import AttributeWidgetTest from "./../test/AttributeWidgetTest";
 
 Promise.all([
-  import("lib/yjs-sync"),
-  import("WaitForCanvas"),
-  import("attribute_widget/AttributeWrapper"),
-  import("attribute_widget/EntityManager"),
-  import("attribute_widget/view/ViewGenerator"),
-  import("operations/non_ot/InitModelTypesOperation"),
-  import("operations/non_ot/ViewInitOperation"),
-  import("operations/non_ot/SetModelAttributeNodeOperation"),
+  import("./lib/yjs-sync"),
+  import("./WaitForCanvas"),
+  import("./attribute_widget/AttributeWrapper"),
+  import("./attribute_widget/EntityManager"),
+  import("./attribute_widget/view/ViewGenerator"),
+  import("./operations/non_ot/InitModelTypesOperation"),
+  import("./operations/non_ot/ViewInitOperation"),
+  import("./operations/non_ot/SetModelAttributeNodeOperation"),
   import("promise!Guidancemodel"),
 ]).then(function ([
   yjsSync,

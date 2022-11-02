@@ -3,7 +3,7 @@
  * @namespace operations.non_ot
  */
 
-import Operation from 'operations/Operation';
+import Operation from "../Operation";
 
     NonOTOperation.prototype = new Operation();
     NonOTOperation.prototype.constructor = NonOTOperation;

@@ -1,43 +1,20 @@
-import $ from 'jquery';
-import jQueryui from 'jquery-ui';
-import IWCW from '@rwth-acis/iwc'
-import _ from 'lodash'
-
+import $ from "jqueryui";
+import _ from "lodash";
+import IWCW from "../lib/IWCWrapper";
 import Util from "../Util";
-import MoveCanvasOperation from '../operations/non_ot/MoveCanvasOperation'
-
-
-Promise.all([
-  import("../Util"),
-  import("../operations/non_ot/MoveCanvasOperation"),
-]).then(([Util, MoveCanvasOperation]) => {
-  
-});
-define([
-  "jquery-ui",
-  "lodash",
-  "iwcw",
-  "Util",
-  "operations/non_ot/MoveCanvasOperation",
-  "text!templates/activity_widget/activity_box.html",
-], /** @lends Activity */ function (
-  $,
-  _,
-  IWCW,
-  Util,
-  MoveCanvasOperation,
-  activityBoxHtml
-) {
-  /**
-   * An abstract user activity issued by one of the users
-   * @class activity_widget.Activity
-   * @memberof activity_widget
-   * @constructor
-   * @param {string} entityId Entity id of the entity the activity works on
-   * @param {string} sender JabberId of the user who issued this activity
-   * @param {string} text Text of this activity which is displayed in the activity widget
-   */
-  function Activity(entityId, sender, text, timestamp) {
+import MoveCanvasOperation from "../operations/non_ot/MoveCanvasOperation";
+import activityBoxHtml from "../../templates/activity_widget/activity_box.html";
+/**
+ * An abstract user activity issued by one of the users
+ * @class activity_widget.Activity
+ * @memberof activity_widget
+ * @constructor
+ * @param {string} entityId Entity id of the entity the activity works on
+ * @param {string} sender JabberId of the user who issued this activity
+ * @param {string} text Text of this activity which is displayed in the activity widget
+ */
+class Activity {
+  constructor(entityId, sender, text, timestamp) {
     var that = this;
 
     var isTrackable = false;
@@ -285,9 +262,9 @@ define([
   /**
    * activity to JSON
    */
-  Activity.prototype.toJSON = function () {
+  toJSON() {
     return this._toJSON();
-  };
+  }
+}
 
-  return Activity;
-});
+export default Activity;
