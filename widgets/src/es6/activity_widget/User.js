@@ -1,7 +1,12 @@
 import $ from "jquery-ui";
 import _ from "lodash";
 import Util from "../Util";
-import userBoxHtml from "../../templates/activity_widget/user_box.html";
+import loadHtml from "../../../html/templates/html.template.loader";
+const userBoxHtml = await loadHtml(
+  "../../../html/templates/activity_widget/user_box.html",
+  import.meta.url
+);
+
 
 /**
  * A user working on the model
