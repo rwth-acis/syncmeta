@@ -1,13 +1,12 @@
-import $ from "jquery-ui";
 import jsPlumb from "jsplumb";
 import _ from "lodash";
-import AbstractNode from "canvas_widget/AbstractNode";
-import BooleanAttribute from "canvas_widget/BooleanAttribute";
-import IntegerAttribute from "canvas_widget/IntegerAttribute";
-import FileAttribute from "canvas_widget/FileAttribute";
-import QuizAttribute from "canvas_widget/QuizAttribute";
-import SingleSelectionAttribute from "canvas_widget/SingleSelectionAttribute";
-import SingleValueAttribute from "canvas_widget/SingleValueAttribute";
+import AbstractNode from "./AbstractNode";
+import BooleanAttribute from "./BooleanAttribute";
+import IntegerAttribute from "./IntegerAttribute";
+import FileAttribute from "./FileAttribute";
+import QuizAttribute from "./QuizAttribute";
+import SingleSelectionAttribute from "./SingleSelectionAttribute";
+import SingleValueAttribute from "./SingleValueAttribute";
 
 /**
  * Node

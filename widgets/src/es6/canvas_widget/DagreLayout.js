@@ -1,5 +1,5 @@
 import dagre from 'dagre';
-import EntityManager from 'canvas_widget/EntityManager';
+import EntityManager from "./EntityManager";
     
     function DagreLayout() {
         return {

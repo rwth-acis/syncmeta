@@ -1,7 +1,6 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
-import AbstractCanvasTool from "canvas_widget/AbstractCanvasTool";
-import EntityManager from "canvas_widget/EntityManager";
+import AbstractCanvasTool from "./AbstractCanvasTool";
+import EntityManager from "./EntityManager";
 
 NodeTool.prototype = new AbstractCanvasTool();
 NodeTool.prototype.constructor = NodeTool;

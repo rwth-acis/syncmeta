@@ -1,17 +1,20 @@
 import $ from "jquery-ui";
 import _ from "lodash";
-import AbstractNode from "canvas_widget/AbstractNode";
-import SingleSelectionAttribute from "canvas_widget/SingleSelectionAttribute";
-import RenamingListAttribute from "canvas_widget/viewpoint/RenamingListAttribute";
-import ConditionListAttribute from "canvas_widget/viewpoint/ConditionListAttribute";
-import ViewTypesUtil from "canvas_widget/viewpoint/ViewTypesUtil";
-import LogicalOperator from "canvas_widget/viewpoint/LogicalOperator";
-import LogicalConjunctions from "canvas_widget/viewpoint/LogicalConjunctions";
-import viewobjectNodeHtml from "text!templates/canvas_widget/viewobject_node.html";
-import $__canvas_widget_NodeShapeNode from "canvas_widget/NodeShapeNode";
-import $__canvas_widget_BiDirAssociationEdge from "canvas_widget/BiDirAssociationEdge";
-import $__canvas_widget_UniDirAssociationEdge from "canvas_widget/UniDirAssociationEdge";
+import AbstractNode from "../AbstractNode";
+import SingleSelectionAttribute from "../SingleSelectionAttribute";
+import RenamingListAttribute from "../viewpoint/RenamingListAttribute";
+import ConditionListAttribute from "../viewpoint/ConditionListAttribute";
+import ViewTypesUtil from "../viewpoint/ViewTypesUtil";
+import LogicalOperator from "../viewpoint/LogicalOperator";
+import LogicalConjunctions from "../viewpoint/LogicalConjunctions";
+import $__canvas_widget_NodeShapeNode from "../NodeShapeNode";
+import $__canvas_widget_BiDirAssociationEdge from "../BiDirAssociationEdge";
+import $__canvas_widget_UniDirAssociationEdge from "../UniDirAssociationEdge";
 
+const viewobjectNodeHtml = await loadHTML(
+  "../../../html/templates/canvas_widget/viewobject_node.html",
+  import.meta.url
+);
 ViewObjectNode.TYPE = "ViewObject";
 ViewObjectNode.DEFAULT_WIDTH = 150;
 ViewObjectNode.DEFAULT_HEIGHT = 100;

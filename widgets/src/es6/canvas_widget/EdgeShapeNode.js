@@ -1,14 +1,14 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import AbstractNode from "canvas_widget/AbstractNode";
-import SingleSelectionAttribute from "canvas_widget/SingleSelectionAttribute";
-import SingleValueAttribute from "canvas_widget/SingleValueAttribute";
-import SingleColorValueAttribute from "canvas_widget/SingleColorValueAttribute";
-import SingleMultiLineValueAttribute from "canvas_widget/SingleMultiLineValueAttribute";
-import BooleanAttribute from "canvas_widget/BooleanAttribute";
-import edgeShapeNodeHtml from "text!templates/canvas_widget/edge_shape_node.html";
-
+import AbstractNode from "./AbstractNode";
+import SingleSelectionAttribute from "./SingleSelectionAttribute";
+import SingleValueAttribute from "./SingleValueAttribute";
+import SingleColorValueAttribute from "./SingleColorValueAttribute";
+import BooleanAttribute from "./BooleanAttribute";
+const edgeShapeNodeHtml = await loadHTML(
+  "../../../html/templates/canvas_widget/edge_shape_node.html",
+  import.meta.url
+);
 EdgeShapeNode.TYPE = "Edge Shape";
 EdgeShapeNode.DEFAULT_WIDTH = 150;
 EdgeShapeNode.DEFAULT_HEIGHT = 150;

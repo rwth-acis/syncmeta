@@ -1,8 +1,10 @@
 import $ from "jquery-ui";
 import _ from "lodash";
-import AbstractNode from "canvas_widget/AbstractNode";
-import relationshipGroupNodeHtml from "text!templates/canvas_widget/relationship_group_node.html";
-
+import AbstractNode from "./AbstractNode";
+const relationshipGroupNodeHtml = await loadHTML(
+  "../../../html/templates/canvas_widget/relationship_group_node.html",
+  import.meta.url
+);
 RelationshipGroupNode.TYPE = "Relation";
 RelationshipGroupNode.DEFAULT_WIDTH = 150;
 RelationshipGroupNode.DEFAULT_HEIGHT = 100;

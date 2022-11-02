@@ -1,17 +1,13 @@
 import $ from "jquery-ui";
 import _ from "lodash";
 import IWCW from "../lib/IWCWrapper";
-
 import AbstractValue from "./AbstractValue";
-
 import AbstractAttribute from "./AbstractAttribute";
-
 import ViewTypesUtil from "./viewpoint/ViewTypesUtil";
-
 import QuizAttribute from "./QuizAttribute";
 import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
 import ActivityOperation from "../operations/non_ot/ActivityOperation";
-import loadHTML from "../../../html/templates/html.template.loader";
+import loadHTML from "../html.template.loader";
 const selectionValueHtml = await loadHTML(
   "../../../html/templates/canvas_widget/selection_value.html",
   import.meta.url

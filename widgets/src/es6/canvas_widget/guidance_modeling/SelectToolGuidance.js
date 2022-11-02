@@ -1,7 +1,10 @@
 import $ from "jquery-ui";
 import _ from "lodash";
-import EntityManager from "canvas_widget/EntityManager";
-import selectToolGuidanceHtml from "text!templates/guidance_modeling/select_tool_guidance.html";
+import EntityManager from "../EntityManager";
+const selectToolGuidanceHtml = await loadHTML(
+  "../../../html/templates/guidance_modeling/select_tool_guidance.html",
+  import.meta.url
+);
 function SelectToolGuidance(id, label, tool, canvas, icon) {
   //var _id = id;
   //var _label = label;

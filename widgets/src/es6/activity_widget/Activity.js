@@ -1,4 +1,4 @@
-import $ from "jqueryui";
+import $ from "jquery-ui";
 import _ from "lodash";
 import IWCW from "../lib/IWCWrapper";
 import Util from "../Util";

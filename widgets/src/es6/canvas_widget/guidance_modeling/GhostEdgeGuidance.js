@@ -1,9 +1,10 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import EntityManager from "canvas_widget/EntityManager";
-import GhostEdge from "canvas_widget/guidance_modeling/GhostEdge";
-import ghostEdgeHtml from "text!templates/guidance_modeling/ghost_edge.html";
+import GhostEdge from "./GhostEdge";
+const ghostEdgeHtml = await loadHTML(
+  "../../../html/templates/guidance_modeling/ghost_edge.html",
+  import.meta.url
+);
 import "bootstrap";
 function GhostEdgeGuidance(canvas, node1, node2) {
   var _button = $(ghostEdgeHtml);

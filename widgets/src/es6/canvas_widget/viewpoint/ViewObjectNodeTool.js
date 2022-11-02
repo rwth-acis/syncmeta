@@ -1,7 +1,5 @@
-import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
-import NodeTool from "canvas_widget/NodeTool";
-import ViewObjectNode from "canvas_widget/viewpoint/ViewObjectNode";
+import NodeTool from "../NodeTool";
+import ViewObjectNode from "./ViewObjectNode";
 
 ViewObjectNodeTool.prototype = new NodeTool();
 ViewObjectNodeTool.prototype.constructor = ViewObjectNodeTool;

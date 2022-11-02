@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import IWCW from 'iwcw';
+import IWCW from "./lib/IWCWrapper";
 import NonOTOperation from "./operations/non_ot/NonOTOperation";
     function WaitForCanvas(widgetName,attempts, frequency){
         var deferred = $.Deferred();

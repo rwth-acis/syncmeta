@@ -1,11 +1,12 @@
 import $ from "jquery-ui";
 import _ from "lodash";
-import Util from "Util";
-import AttributeDeleteOperation from "operations/ot/AttributeDeleteOperation";
-import AbstractAttribute from "canvas_widget/AbstractAttribute";
-import Value from "canvas_widget/Value";
-import SelectionValue from "canvas_widget/SelectionValue";
-import renamingAttrHTML from "text!templates/attribute_widget/renaming_attribute.html";
+import AbstractAttribute from "../AbstractAttribute";
+import Value from "../Value";
+import SelectionValue from "../SelectionValue";
+const renamingAttrHTML = await loadHTML(
+  "../../../html/templates/attribute_widget/renaming_attribute.html",
+  import.meta.url
+);
 
 RenamingAttribute.TYPE = "RenamingAttribute";
 

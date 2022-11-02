@@ -1,7 +1,5 @@
-import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
-import NodeTool from "canvas_widget/NodeTool";
-import AbstractClassNode from "canvas_widget/AbstractClassNode";
+import NodeTool from "./NodeTool";
+import AbstractClassNode from "./AbstractClassNode";
 
 AbstractClassNodeTool.prototype = new NodeTool();
 AbstractClassNodeTool.prototype.constructor = AbstractClassNodeTool;

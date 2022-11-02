@@ -1,16 +1,21 @@
 import $ from "jquery-ui";
 import _ from "lodash";
-import AbstractNode from "canvas_widget/AbstractNode";
-import SingleSelectionAttribute from "canvas_widget/SingleSelectionAttribute";
-import RenamingListAttribute from "canvas_widget/viewpoint/RenamingListAttribute";
-import ConditionListAttribute from "canvas_widget/viewpoint/ConditionListAttribute";
-import ViewTypesUtil from "canvas_widget/viewpoint/ViewTypesUtil";
-import LogicalOperator from "canvas_widget/viewpoint/LogicalOperator";
-import LogicalConjunctions from "canvas_widget/viewpoint/LogicalConjunctions";
-import viewrelationshipNodeHtml from "text!templates/canvas_widget/viewrelationship_node.html";
-import $__canvas_widget_EdgeShapeNode from "canvas_widget/EdgeShapeNode";
-import $__canvas_widget_BiDirAssociationEdge from "canvas_widget/BiDirAssociationEdge";
-import $__canvas_widget_UniDirAssociationEdge from "canvas_widget/UniDirAssociationEdge";
+import AbstractNode from "../AbstractNode";
+import SingleSelectionAttribute from "../SingleSelectionAttribute";
+import RenamingListAttribute from "./RenamingListAttribute";
+import ConditionListAttribute from "./ConditionListAttribute";
+import ViewTypesUtil from "./ViewTypesUtil";
+import LogicalOperator from "./LogicalOperator";
+import LogicalConjunctions from "./LogicalConjunctions";
+
+import $__canvas_widget_EdgeShapeNode from "../EdgeShapeNode";
+import $__canvas_widget_BiDirAssociationEdge from "../BiDirAssociationEdge";
+import $__canvas_widget_UniDirAssociationEdge from "../UniDirAssociationEdge";
+const viewrelationshipNodeHtml = await loadHTML(
+  "../../../html/templates/canvas_widget/viewrelationship_node.html",
+  import.meta.url
+);
+
 
 ViewRelationshipNode.TYPE = "ViewRelationship";
 ViewRelationshipNode.DEFAULT_WIDTH = 150;

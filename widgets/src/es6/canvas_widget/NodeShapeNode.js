@@ -1,15 +1,17 @@
 import $ from "jquery-ui";
 import jsPlumb from "jsplumb";
 import _ from "lodash";
-import AbstractNode from "canvas_widget/AbstractNode";
-import BooleanAttribute from "canvas_widget/BooleanAttribute";
-import SingleSelectionAttribute from "canvas_widget/SingleSelectionAttribute";
-import SingleValueAttribute from "canvas_widget/SingleValueAttribute";
-import IntegerAttribute from "canvas_widget/IntegerAttribute";
-import SingleColorValueAttribute from "canvas_widget/SingleColorValueAttribute";
-import SingleMultiLineValueAttribute from "canvas_widget/SingleMultiLineValueAttribute";
-import nodeShapeNodeHtml from "text!templates/canvas_widget/node_shape_node.html";
-
+import AbstractNode from "./AbstractNode";
+import BooleanAttribute from "./BooleanAttribute";
+import SingleSelectionAttribute from "./SingleSelectionAttribute";
+import SingleValueAttribute from "./SingleValueAttribute";
+import IntegerAttribute from "./IntegerAttribute";
+import SingleColorValueAttribute from "./SingleColorValueAttribute";
+import SingleMultiLineValueAttribute from "./SingleMultiLineValueAttribute";
+const nodeShapeNodeHtml = await loadHTML(
+  "../../../html/templates/canvas_widget/node_shape_node.html",
+  import.meta.url
+);
 NodeShapeNode.TYPE = "Node Shape";
 NodeShapeNode.DEFAULT_WIDTH = 150;
 NodeShapeNode.DEFAULT_HEIGHT = 150;

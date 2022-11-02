@@ -7,7 +7,7 @@ import HistoryManager from "./HistoryManager";
 import AbstractEntity from "./AbstractEntity";
 import SingleValueAttribute from "./SingleValueAttribute";
 import $__canvas_widget_EntityManager from "./EntityManager";
-import loadHTML from "../../../html/templates/html.template.loader";
+import loadHTML from "../html.template.loader";
 const abstractEdgeHtml = await loadHTML(
   "../../../html/templates/canvas_widget/abstract_edge.html",
   import.meta.url

@@ -19,7 +19,7 @@ import UniDirAssociationEdgeTool from "./palette_widget/UniDirAssociationEdgeToo
 import GeneralisationEdgeTool from "./palette_widget/GeneralisationEdgeTool";
 import ViewObjectNodeTool from "./palette_widget/ViewObjectNodeTool";
 import ViewRelationshipNodeTool from "./palette_widget/ViewRelationshipNodeTool";
-
+import { CONFIG } from "./config.js";
 import test from "./../es6-test/PaletteWidgetTest";
 
 WaitForCanvas(CONFIG.WIDGET.NAME.PALETTE, 10, 1500).done(function (metamodel) {

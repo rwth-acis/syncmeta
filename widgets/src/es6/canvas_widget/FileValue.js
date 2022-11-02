@@ -1,13 +1,18 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import IWCW from "iwcw";
-import AbstractValue from "canvas_widget/AbstractValue";
-import AbstractAttribute from "canvas_widget/AbstractAttribute";
-import ValueChangeOperation from "operations/ot/ValueChangeOperation";
-import ActivityOperation from "operations/non_ot/ActivityOperation";
-import fileValueHtml from "text!templates/canvas_widget/file_value.html";
-import attributeFileValueHtml from "text!templates/attribute_widget/file_value.html";
+import IWCW from "../lib/IWCWrapper";
+import AbstractValue from "./AbstractValue";
+import AbstractAttribute from "./AbstractAttribute";
+import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
+import ActivityOperation from "../operations/non_ot/ActivityOperation";
+const fileValueHtml = await loadHTML(
+  "../../../html/templates/canvas_widget/file_value.html",
+  import.meta.url
+);
+const attributeFileValueHtml = await loadHTML(
+  "../../../html/templates/attribute_widget/file_value.html",
+  import.meta.url
+);
 
 FileValue.prototype = new AbstractValue();
 FileValue.prototype.constructor = FileValue;

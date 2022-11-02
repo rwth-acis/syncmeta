@@ -1,7 +1,5 @@
-import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
-import NodeTool from "canvas_widget/NodeTool";
-import ObjectNode from "canvas_widget/ObjectNode";
+import NodeTool from "./NodeTool";
+import ObjectNode from "./ObjectNode";
 
 ObjectNodeTool.prototype = new NodeTool();
 ObjectNodeTool.prototype.constructor = ObjectNodeTool;

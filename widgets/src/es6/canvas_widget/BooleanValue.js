@@ -1,13 +1,19 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import IWCW from "iwcw";
-import AbstractValue from "canvas_widget/AbstractValue";
-import AbstractAttribute from "canvas_widget/AbstractAttribute";
-import ValueChangeOperation from "operations/ot/ValueChangeOperation";
-import ActivityOperation from "operations/non_ot/ActivityOperation";
-import booleanValueHtml from "text!templates/canvas_widget/boolean_value.html";
-import attributeBooleanValueHtml from "text!templates/attribute_widget/boolean_value.html";
+import IWCW from "../lib/IWCWrapper";
+import AbstractValue from "./AbstractValue";
+import AbstractAttribute from "./AbstractAttribute";
+import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
+import ActivityOperation from "../operations/non_ot/ActivityOperation";
+
+const booleanValueHtml = await loadHTML(
+  "../../../html/templates/canvas_widget/boolean_value.html",
+  import.meta.url
+);
+const attributeBooleanValueHtml = await loadHTML(
+  "../../../html/templates/attribute_widget/boolean_value.html",
+  import.meta.url
+);
 
 BooleanValue.prototype = new AbstractValue();
 BooleanValue.prototype.constructor = BooleanValue;

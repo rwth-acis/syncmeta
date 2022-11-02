@@ -1,8 +1,8 @@
 import $ from "jquery-ui";
 import _ from "lodash";
 import jsPlumb from "jsplumb";
-import AbstractCanvasTool from "canvas_widget/AbstractCanvasTool";
-import EntityManager from "canvas_widget/EntityManager";
+import AbstractCanvasTool from "./AbstractCanvasTool";
+import EntityManager from "./EntityManager";
 
 EdgeTool.prototype = new AbstractCanvasTool();
 EdgeTool.prototype.constructor = EdgeTool;

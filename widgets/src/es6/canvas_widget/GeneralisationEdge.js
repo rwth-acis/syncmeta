@@ -1,13 +1,13 @@
 import jsPlumb from "jsplumb";
 import _ from "lodash";
-import AbstractEdge from "canvas_widget/AbstractEdge";
-import AbstractClassNode from "canvas_widget/AbstractClassNode";
-import ObjectNode from "canvas_widget/ObjectNode";
-import RelationshipNode from "canvas_widget/RelationshipNode";
-import RelationshipGroupNode from "canvas_widget/RelationshipGroupNode";
-import EnumNode from "canvas_widget/EnumNode";
-import ViewRelationshipNode from "canvas_widget/viewpoint/ViewRelationshipNode";
-import $__canvas_widget_EntityManager from "canvas_widget/EntityManager";
+import AbstractEdge from "./AbstractEdge";
+import AbstractClassNode from "./AbstractClassNode";
+import ObjectNode from "./ObjectNode";
+import RelationshipNode from "./RelationshipNode";
+import RelationshipGroupNode from "./RelationshipGroupNode";
+import EnumNode from "./EnumNode";
+import ViewRelationshipNode from "./viewpoint/ViewRelationshipNode";
+import $__canvas_widget_EntityManager from "./EntityManager";
 
 GeneralisationEdge.TYPE = "Generalisation";
 GeneralisationEdge.RELATIONS = [

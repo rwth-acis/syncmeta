@@ -1,10 +1,7 @@
-import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
-import NodeTool from "canvas_widget/NodeTool";
-import RelationshipGroupNode from "canvas_widget/RelationshipGroupNode";
+import NodeTool from "./NodeTool";
+import RelationshipGroupNode from "./RelationshipGroupNode";
 
 RelationshipGroupNodeTool.prototype = new NodeTool();
-RelationshipGroupNodeTool.prototype.constructor = RelationshipGroupNodeTool;
 /**
  * RelationshipGroupNodeTool
  * @class canvas_widget.ClassNodeTool
@@ -12,16 +9,18 @@ RelationshipGroupNodeTool.prototype.constructor = RelationshipGroupNodeTool;
  * @memberof canvas_widget
  * @constructor
  */
-function RelationshipGroupNodeTool() {
-  NodeTool.call(
-    this,
-    RelationshipGroupNode.TYPE,
-    null,
-    null,
-    null,
-    RelationshipGroupNode.DEFAULT_WIDTH,
-    RelationshipGroupNode.DEFAULT_HEIGHT
-  );
+class RelationshipGroupNodeTool {
+  constructor() {
+    NodeTool.call(
+      this,
+      RelationshipGroupNode.TYPE,
+      null,
+      null,
+      null,
+      RelationshipGroupNode.DEFAULT_WIDTH,
+      RelationshipGroupNode.DEFAULT_HEIGHT
+    );
+  }
 }
 
 export default RelationshipGroupNodeTool;

@@ -1,14 +1,19 @@
 import $ from "jquery-ui";
 import _ from "lodash";
-import AbstractNode from "canvas_widget/AbstractNode";
-import KeySelectionValueSelectionValueListAttribute from "canvas_widget/KeySelectionValueSelectionValueListAttribute";
-import relationshipNodeHtml from "text!templates/canvas_widget/relationship_node.html";
-import $__canvas_widget_EdgeShapeNode from "canvas_widget/EdgeShapeNode";
-import $__canvas_widget_BiDirAssociationEdge from "canvas_widget/BiDirAssociationEdge";
-import $__canvas_widget_UniDirAssociationEdge from "canvas_widget/UniDirAssociationEdge";
-import $__canvas_widget_AbstractClassNode from "canvas_widget/AbstractClassNode";
-import $__canvas_widget_ObjectNode from "canvas_widget/ObjectNode";
-import $__canvas_widget_RelationshipGroupNode from "canvas_widget/RelationshipGroupNode";
+import AbstractNode from "./AbstractNode";
+import KeySelectionValueSelectionValueListAttribute from "./KeySelectionValueSelectionValueListAttribute";
+import $__canvas_widget_EdgeShapeNode from "./EdgeShapeNode";
+import $__canvas_widget_BiDirAssociationEdge from "./BiDirAssociationEdge";
+import $__canvas_widget_UniDirAssociationEdge from "./UniDirAssociationEdge";
+import $__canvas_widget_AbstractClassNode from "./AbstractClassNode";
+import $__canvas_widget_ObjectNode from "./ObjectNode";
+import $__canvas_widget_RelationshipGroupNode from "./RelationshipGroupNode";
+import loadHtml from "../html.template.loader";
+
+const relationshipNodeHtml = loadHtml(
+  "../../../html/templates/canvas_widget/relationship_node.html",
+  import.meta.url
+);
 
 RelationshipNode.TYPE = "Relationship";
 RelationshipNode.DEFAULT_WIDTH = 150;

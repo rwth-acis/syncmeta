@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import _ from 'lodash';
-import EntityManager from 'canvas_widget/EntityManager';
+import EntityManager from "./EntityManager";
     export default function (json, canvas) {
         if (!canvas)
             return new Error('No canvas object defined!');

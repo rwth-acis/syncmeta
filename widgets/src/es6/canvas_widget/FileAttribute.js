@@ -1,10 +1,11 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import Util from "Util";
-import AbstractAttribute from "canvas_widget/AbstractAttribute";
-import FileValue from "canvas_widget/FileValue";
-import fileAttributeHtml from "text!templates/canvas_widget/file_attribute.html";
+import AbstractAttribute from "./AbstractAttribute";
+import FileValue from "./FileValue";
+const fileAttributeHtml = await loadHTML(
+  "../../../html/templates/canvas_widget/file_attribute.html",
+  import.meta.url
+);
 
 FileAttribute.prototype = new AbstractAttribute();
 FileAttribute.prototype.constructor = FileAttribute;

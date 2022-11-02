@@ -1,9 +1,8 @@
 import $ from "jquery-ui";
 import jsPlumb from "jsplumb";
 import _ from "lodash";
-import ghostEdgeHtml from "text!templates/guidance_modeling/ghost_edge.html";
 import "bootstrap";
-import $__canvas_widget_EntityManager from "canvas_widget/EntityManager";
+import $__canvas_widget_EntityManager from "../EntityManager";
 function GhostEdge(canvas, edgeFunction, source, target) {
   var _jsPlumbConnection = null;
   var _label = edgeFunction.getType();

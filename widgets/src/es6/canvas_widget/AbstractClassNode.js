@@ -1,12 +1,14 @@
 import $ from "jquery-ui";
 import _ from "lodash";
-import AbstractNode from "canvas_widget/AbstractNode";
-import KeySelectionValueListAttribute from "canvas_widget/KeySelectionValueListAttribute";
-import abstractClassNodeHtml from "text!templates/canvas_widget/abstract_class_node.html";
-import $__canvas_widget_ObjectNode from "canvas_widget/ObjectNode";
-import $__canvas_widget_RelationshipNode from "canvas_widget/RelationshipNode";
-import $__canvas_widget_RelationshipGroupNode from "canvas_widget/RelationshipGroupNode";
-
+import AbstractNode from "./AbstractNode";
+import KeySelectionValueListAttribute from "./KeySelectionValueListAttribute";
+import $__canvas_widget_ObjectNode from "./ObjectNode";
+import $__canvas_widget_RelationshipNode from "./RelationshipNode";
+import $__canvas_widget_RelationshipGroupNode from "./RelationshipGroupNode";
+const abstractClassNodeHtml = await loadHTML(
+  "../../../html/templates/canvas_widget/abstract_class_node.html",
+  import.meta.url
+);
 AbstractClassNode.TYPE = "Abstract Class";
 AbstractClassNode.DEFAULT_WIDTH = 150;
 AbstractClassNode.DEFAULT_HEIGHT = 100;

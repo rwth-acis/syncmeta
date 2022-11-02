@@ -1,13 +1,14 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import IWCW from "iwcw";
-import Util from "Util";
-import AttributeAddOperation from "operations/ot/AttributeAddOperation";
-import AttributeDeleteOperation from "operations/ot/AttributeDeleteOperation";
-import AbstractAttribute from "canvas_widget/AbstractAttribute";
-import SingleValueAttribute from "canvas_widget/SingleValueAttribute";
-import singleValueListAttributeHtml from "text!templates/canvas_widget/list_attribute.html";
+import IWCW from "../lib/IWCWrapper";
+import AttributeAddOperation from "../operations/ot/AttributeAddOperation";
+import AttributeDeleteOperation from "../operations/ot/AttributeDeleteOperation";
+import AbstractAttribute from "./AbstractAttribute";
+import SingleValueAttribute from "./SingleValueAttribute";
+const singleValueListAttributeHtml = await loadHTML(
+  "../../../html/templates/canvas_widget/list_attribute.html",
+  import.meta.url
+);
 
 SingleValueListAttribute.TYPE = "SingleValueListAttribute";
 

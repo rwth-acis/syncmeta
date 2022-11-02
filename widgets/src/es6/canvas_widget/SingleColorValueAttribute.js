@@ -1,10 +1,11 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import Util from "Util";
-import AbstractAttribute from "canvas_widget/AbstractAttribute";
-import Value from "canvas_widget/Value";
-import singleColorValueAttributeHtml from "text!templates/canvas_widget/single_value_attribute.html";
+import AbstractAttribute from "./AbstractAttribute";
+import Value from "./Value";
+const singleColorValueAttributeHtml = await loadHTML(
+  "../../../html/templates/canvas_widget/single_value_attribute.html",
+  import.meta.url
+);
 
 SingleColorValueAttribute.prototype = new AbstractAttribute();
 SingleColorValueAttribute.prototype.constructor = SingleColorValueAttribute;

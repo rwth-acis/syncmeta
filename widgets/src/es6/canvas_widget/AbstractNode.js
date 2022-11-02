@@ -12,7 +12,7 @@ import ActivityOperation from "../operations/non_ot/ActivityOperation";
 import AbstractEntity from "./AbstractEntity";
 import SingleValueAttribute from "./SingleValueAttribute";
 import HistoryManager from "./HistoryManager";
-import loadHTML from "../../../html/templates/html.template.loader";
+import loadHTML from "../html.template.loader";
 const abstractNodeHtml = await loadHTML(
   "../../../html/templates/canvas_widget/abstract_node.html",
   import.meta.url

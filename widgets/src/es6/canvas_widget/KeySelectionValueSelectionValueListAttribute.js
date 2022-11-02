@@ -1,13 +1,14 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import IWCW from "iwcw";
-import Util from "Util";
-import AttributeAddOperation from "operations/ot/AttributeAddOperation";
-import AttributeDeleteOperation from "operations/ot/AttributeDeleteOperation";
-import AbstractAttribute from "canvas_widget/AbstractAttribute";
-import KeySelectionValueSelectionValueAttribute from "canvas_widget/KeySelectionValueSelectionValueAttribute";
-import keySelectionValueSelectionValueListAttributeHtml from "text!templates/canvas_widget/list_attribute.html";
+import IWCW from "../lib/IWCWrapper";
+import AttributeAddOperation from "../operations/ot/AttributeAddOperation";
+import AttributeDeleteOperation from "../operations/ot/AttributeDeleteOperation";
+import AbstractAttribute from "./AbstractAttribute";
+import KeySelectionValueSelectionValueAttribute from "./KeySelectionValueSelectionValueAttribute";
+const keySelectionValueSelectionValueListAttributeHtml = await loadHTML(
+  "../../../html/templates/canvas_widget/list_attribute.html",
+  import.meta.url
+);
 
 KeySelectionValueSelectionValueListAttribute.TYPE =
   "KeySelectionValueSelectionValueListAttribute";

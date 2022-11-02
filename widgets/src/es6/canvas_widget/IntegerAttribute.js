@@ -1,10 +1,11 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import Util from "Util";
-import AbstractAttribute from "canvas_widget/AbstractAttribute";
-import IntegerValue from "canvas_widget/IntegerValue";
-import integerAttributeHtml from "text!templates/canvas_widget/single_selection_attribute.html";
+import AbstractAttribute from "./AbstractAttribute";
+import IntegerValue from "./IntegerValue";
+const integerAttributeHtml = await loadHTML(
+  "../../../html/templates/canvas_widget/single_selection_attribute.html",
+  import.meta.url
+);
 
 IntegerAttribute.prototype = new AbstractAttribute();
 IntegerAttribute.prototype.constructor = IntegerAttribute;

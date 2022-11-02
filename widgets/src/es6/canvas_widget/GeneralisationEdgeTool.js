@@ -1,11 +1,5 @@
-import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
-import EdgeTool from "canvas_widget/EdgeTool";
-import AbstractClassNode from "canvas_widget/AbstractClassNode";
-import ObjectNode from "canvas_widget/ObjectNode";
-import RelationshipNode from "canvas_widget/RelationshipNode";
-import EnumNode from "canvas_widget/EnumNode";
-import GeneralisationEdge from "canvas_widget/GeneralisationEdge";
+import EdgeTool from "./EdgeTool";
+import GeneralisationEdge from "./GeneralisationEdge";
 
 GeneralisationEdgeTool.prototype = new EdgeTool();
 GeneralisationEdgeTool.prototype.constructor = GeneralisationEdgeTool;

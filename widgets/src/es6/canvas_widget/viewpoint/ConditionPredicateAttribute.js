@@ -1,11 +1,12 @@
 import $ from "jquery-ui";
 import _ from "lodash";
-import Util from "Util";
-import AttributeDeleteOperation from "operations/ot/AttributeDeleteOperation";
-import AbstractAttribute from "canvas_widget/AbstractAttribute";
-import Value from "canvas_widget/Value";
-import SelectionValue from "canvas_widget/SelectionValue";
-import condition_predicateHtml from "text!templates/canvas_widget/condition_predicate.html";
+import AbstractAttribute from "../AbstractAttribute";
+import Value from "../Value";
+import SelectionValue from "../SelectionValue";
+const condition_predicateHtml = await loadHTML(
+  "../../../html/templates/canvas_widget/condition_predicate.html",
+  import.meta.url
+);
 
 ConditionPredicateAttribute.TYPE = "ConditionPredicateAttribute";
 

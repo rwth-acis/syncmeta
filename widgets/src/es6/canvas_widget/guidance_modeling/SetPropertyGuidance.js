@@ -1,12 +1,14 @@
 import $ from "jquery-ui";
 import _ from "lodash";
-import SingleValueAttribute from "canvas_widget/SingleValueAttribute";
-import SingleSelectionAttribute from "canvas_widget/SingleSelectionAttribute";
-import IntegerAttribute from "canvas_widget/IntegerAttribute";
-import BooleanAttribute from "canvas_widget/BooleanAttribute";
-import FileAttribute from "canvas_widget/FileAttribute";
-import abstractNodeHtml from "text!templates/canvas_widget/abstract_node.html";
-import setPropertyGuidanceHtml from "text!templates/guidance_modeling/set_property_guidance.html";
+import SingleValueAttribute from "../SingleValueAttribute";
+import SingleSelectionAttribute from "../SingleSelectionAttribute";
+import IntegerAttribute from "../IntegerAttribute";
+import BooleanAttribute from "../BooleanAttribute";
+import FileAttribute from "../FileAttribute";
+const setPropertyGuidanceHtml = await loadHTML(
+  "../../../html/templates/guidance_modeling/set_property_guidance.html",
+  import.meta.url
+);
 import "bootstrap";
 function SetPropertyGuidance(id, label, entity, propertyName, canvas) {
   var _id = id;

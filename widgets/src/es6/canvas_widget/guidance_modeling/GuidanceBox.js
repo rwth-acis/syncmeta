@@ -1,7 +1,13 @@
 import $ from "jquery-ui";
 import _ from "lodash";
-import abstractNodeHtml from "text!templates/canvas_widget/abstract_node.html";
-import guidanceBoxNodeHtml from "text!templates/guidance_modeling/guidance_box_node.html";
+const abstractNodeHtml = await loadHTML(
+  "../../../html/templates/canvas_widget/abstract_node.html",
+  import.meta.url
+);
+const guidanceBoxNodeHtml = await loadHTML(
+  "../../../html/templates/guidance_modeling/guidance_box_node.html",
+  import.meta.url
+);
 function GuidanceBox(id, label, left, top) {
   var _$node = $(_.template(abstractNodeHtml)({ id: id })).append(
     guidanceBoxNodeHtml

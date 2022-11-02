@@ -1,10 +1,11 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import Util from "Util";
-import AbstractAttribute from "canvas_widget/AbstractAttribute";
-import BooleanValue from "canvas_widget/BooleanValue";
-import booleanAttributeHtml from "text!templates/canvas_widget/single_selection_attribute.html";
+import AbstractAttribute from "./AbstractAttribute";
+import BooleanValue from "./BooleanValue";
+const booleanAttributeHtml = await loadHTML(
+  "../../../html/templates/canvas_widget/single_selection_attribute.html",
+  import.meta.url
+);
 
 BooleanAttribute.prototype = new AbstractAttribute();
 BooleanAttribute.prototype.constructor = BooleanAttribute;

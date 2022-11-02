@@ -1,11 +1,12 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import Util from "Util";
-import AbstractAttribute from "canvas_widget/AbstractAttribute";
-import Value from "canvas_widget/Value";
-import SelectionValue from "canvas_widget/SelectionValue";
-import keySelectionValueSelectionValueAttributeHtml from "text!templates/canvas_widget/key_value_attribute.html";
+import AbstractAttribute from "./AbstractAttribute";
+import Value from "./Value";
+import SelectionValue from "./SelectionValue";
+const keySelectionValueSelectionValueAttributeHtml = await loadHTML(
+  "../../../html/templates/canvas_widget/key_value_attribute.html",
+  import.meta.url
+);
 
 KeySelectionValueSelectionValueAttribute.prototype = new AbstractAttribute();
 KeySelectionValueSelectionValueAttribute.prototype.constructor =

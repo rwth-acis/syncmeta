@@ -1,7 +1,5 @@
-import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
-import NodeTool from "canvas_widget/NodeTool";
-import RelationshipNode from "canvas_widget/RelationshipNode";
+import NodeTool from "./NodeTool";
+import RelationshipNode from "./RelationshipNode";
 
 RelationshipNodeTool.prototype = new NodeTool();
 RelationshipNodeTool.prototype.constructor = RelationshipNodeTool;

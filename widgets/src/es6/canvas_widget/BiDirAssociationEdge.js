@@ -1,16 +1,16 @@
 import jsPlumb from "jsplumb";
 import _ from "lodash";
-import AbstractEdge from "canvas_widget/AbstractEdge";
-import AbstractClassNode from "canvas_widget/AbstractClassNode";
-import ObjectNode from "canvas_widget/ObjectNode";
-import RelationshipNode from "canvas_widget/RelationshipNode";
-import RelationshipGroupNode from "canvas_widget/RelationshipGroupNode";
-import EnumNode from "canvas_widget/EnumNode";
-import NodeShapeNode from "canvas_widget/NodeShapeNode";
-import EdgeShapeNode from "canvas_widget/EdgeShapeNode";
-import ViewObjectNode from "canvas_widget/viewpoint/ViewObjectNode";
-import ViewRelationshipNode from "canvas_widget/viewpoint/ViewRelationshipNode";
-import $__canvas_widget_EntityManager from "canvas_widget/EntityManager";
+import AbstractEdge from "./AbstractEdge";
+import AbstractClassNode from "./AbstractClassNode";
+import ObjectNode from "./ObjectNode";
+import RelationshipNode from "./RelationshipNode";
+import RelationshipGroupNode from "./RelationshipGroupNode";
+import EnumNode from "./EnumNode";
+import NodeShapeNode from "./NodeShapeNode";
+import EdgeShapeNode from "./EdgeShapeNode";
+import ViewObjectNode from "./viewpoint/ViewObjectNode";
+import ViewRelationshipNode from "./viewpoint/ViewRelationshipNode";
+import $__canvas_widget_EntityManager from "./EntityManager";
 
 BiDirAssociationEdge.TYPE = "Bi-Dir-Association";
 BiDirAssociationEdge.RELATIONS = [

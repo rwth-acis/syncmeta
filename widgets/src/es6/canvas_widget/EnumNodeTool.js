@@ -1,8 +1,5 @@
-import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
-import NodeTool from "canvas_widget/NodeTool";
-import EntityManager from "canvas_widget/EntityManager";
-import EnumNode from "canvas_widget/EnumNode";
+import NodeTool from "./NodeTool";
+import EnumNode from "./EnumNode";
 
 EnumNodeTool.prototype = new NodeTool();
 EnumNodeTool.prototype.constructor = EnumNodeTool;

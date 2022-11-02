@@ -1,14 +1,16 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import AbstractNode from "canvas_widget/AbstractNode";
-import BooleanAttribute from "canvas_widget/BooleanAttribute";
-import IntegerAttribute from "canvas_widget/IntegerAttribute";
-import FileAttribute from "canvas_widget/FileAttribute";
-import SingleValueAttribute from "canvas_widget/SingleValueAttribute";
-import SingleSelectionAttribute from "canvas_widget/SingleSelectionAttribute";
-import SingleMultiLineValueAttribute from "canvas_widget/SingleMultiLineValueAttribute";
-import modelAttributesNodeHtml from "text!templates/canvas_widget/model_attributes_node.html";
+import AbstractNode from "./AbstractNode";
+import BooleanAttribute from "./BooleanAttribute";
+import IntegerAttribute from "./IntegerAttribute";
+import FileAttribute from "./FileAttribute";
+import SingleValueAttribute from "./SingleValueAttribute";
+import SingleSelectionAttribute from "./SingleSelectionAttribute";
+import SingleMultiLineValueAttribute from "./SingleMultiLineValueAttribute";
+const modelAttributesNodeHtml = await loadHTML(
+  "../../../html/templates/canvas_widget/model_attributes_node.html",
+  import.meta.url
+);
 
 ModelAttributesNode.TYPE = "ModelAttributesNode";
 

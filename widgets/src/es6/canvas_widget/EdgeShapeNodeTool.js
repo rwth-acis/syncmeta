@@ -1,7 +1,5 @@
-import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
-import NodeTool from "canvas_widget/NodeTool";
-import EdgeShapeNode from "canvas_widget/EdgeShapeNode";
+import NodeTool from "./NodeTool";
+import EdgeShapeNode from "./EdgeShapeNode";
 
 EdgeShapeNodeTool.prototype = new NodeTool();
 EdgeShapeNodeTool.prototype.constructor = EdgeShapeNodeTool;

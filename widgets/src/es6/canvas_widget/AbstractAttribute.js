@@ -1,7 +1,7 @@
 import $ from "jquery-ui";
 import _ from "lodash";
 import AbstractEntity from "./AbstractEntity";
-import loadHTML from "../../../html/templates/html.template.loader";
+import loadHTML from "../html.template.loader";
 const abstractAttributeHtml = await loadHTML(
   "../../../html/templates/canvas_widget/abstract_attribute.html",
   import.meta.url

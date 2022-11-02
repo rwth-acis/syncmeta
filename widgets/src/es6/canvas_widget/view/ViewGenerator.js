@@ -1,5 +1,5 @@
 import jsPlumb from 'jsplumb';
-import EntityManager from 'canvas_widget/EntityManager';
+import EntityManager from "../EntityManager";
 
     /**
      * Generates the Views
