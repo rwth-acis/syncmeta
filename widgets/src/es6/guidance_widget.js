@@ -5,23 +5,22 @@
 
 import $ from "jquery-ui";
 import _ from "lodash";
-import require from "require";
-import IWCW from "iwcw";
-import yjsSync from "lib/yjs-sync";
-import EntitySelectOperation from "operations/non_ot/EntitySelectOperation";
-import GuidanceStrategyOperation from "operations/non_ot/GuidanceStrategyOperation";
-import NodeAddOperation from "operations/ot/NodeAddOperation";
-import EdgeAddOperation from "operations/ot/EdgeAddOperation";
-import NodeDeleteOperation from "operations/ot/NodeDeleteOperation";
-import EdgeDeleteOperation from "operations/ot/EdgeDeleteOperation";
-import ValueChangeOperation from "operations/ot/ValueChangeOperation";
-import NodeMoveOperation from "operations/ot/NodeMoveOperation";
-import NodeMoveZOperation from "operations/ot/NodeMoveZOperation";
-import NodeResizeOperation from "operations/ot/NodeResizeOperation";
-import NoStrategy from "guidance_widget/NoStrategy";
-import AvoidConflictsStrategy from "guidance_widget/AvoidConflictsStrategy";
-import CollaborationStrategy from "guidance_widget/CollaborationStrategy";
-import Space from "promise!Space";
+import IWCW from "./lib/IWCWrapper";
+import yjsSync from "./lib/yjs-sync";
+import EntitySelectOperation from "./operations/non_ot/EntitySelectOperation";
+import GuidanceStrategyOperation from "./operations/non_ot/GuidanceStrategyOperation";
+import NodeAddOperation from "./operations/ot/NodeAddOperation";
+import EdgeAddOperation from "./operations/ot/EdgeAddOperation";
+import NodeDeleteOperation from "./operations/ot/NodeDeleteOperation";
+import EdgeDeleteOperation from "./operations/ot/EdgeDeleteOperation";
+import ValueChangeOperation from "./operations/ot/ValueChangeOperation";
+import NodeMoveOperation from "./operations/ot/NodeMoveOperation";
+import NodeMoveZOperation from "./operations/ot/NodeMoveZOperation";
+import NodeResizeOperation from "./operations/ot/NodeResizeOperation";
+import NoStrategy from "./guidance_widget/NoStrategy";
+import AvoidConflictsStrategy from "./guidance_widget/AvoidConflictsStrategy";
+import CollaborationStrategy from "./guidance_widget/CollaborationStrategy";
+import Space from "./Space"; // not sure how to transform !promise/Space
 import "bootstrap";
   yjsSync().done(function (y, spaceTitle) {
     window.y = y;

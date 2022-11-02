@@ -15,7 +15,7 @@ Promise.all([
   import("./operations/non_ot/InitModelTypesOperation"),
   import("./operations/non_ot/ViewInitOperation"),
   import("./operations/non_ot/SetModelAttributeNodeOperation"),
-  import("promise!Guidancemodel"),
+  import("./Guidancemodel"), //promise!Guidancemodel
 ]).then(function ([
   yjsSync,
   WaitForCanvas,

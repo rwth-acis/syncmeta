@@ -1,4 +1,4 @@
-import NonOTOperation from 'operations/non_ot/NonOTOperation';
+import NonOTOperation from './/NonOTOperation';
 
     ActivityOperation.TYPE = "ActivityOperation";
 

@@ -3,7 +3,7 @@
  * @namespace operations.ot
  */
 
-import Operation from 'operations/Operation';
+import Operation from "../Operation";
 
     OTOperation.prototype = new Operation();
     OTOperation.prototype.constructor = OTOperation;

@@ -1,9 +1,9 @@
 import $ from "jquery-ui";
 import _ from "lodash";
-import yjsSync from "lib/yjs-sync";
-import GenerateViewpointModel from "canvas_widget/GenerateViewpointModel";
-import EntityManager from "canvas_widget/EntityManager";
-import guidance from "promise!Guidancemodel";
+import yjsSync from "./lib/yjs-sync";
+import GenerateViewpointModel from "./canvas_widget/GenerateViewpointModel";
+import EntityManager from "./canvas_widget/EntityManager";
+import guidance from "./Guidancemodel"; //promise!Guidancemodel
 $(function () {
   yjsSync().done(function (y, spaceTitle) {
     const dataMap = y.getMap("data");

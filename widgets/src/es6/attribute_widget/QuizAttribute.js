@@ -2,9 +2,13 @@ import $ from "jquery-ui";
 import jsPlumb from "jsplumb";
 import _ from "lodash";
 import Util from "Util";
-import AbstractAttribute from "attribute_widget/AbstractAttribute";
-import Value from "attribute_widget/Value";
-import singleQuizAttributeHtml from "text!templates/attribute_widget/single_quiz_attribute.html";
+import AbstractAttribute from "./AbstractAttribute";
+import Value from "./Value";
+import loadHTML from "../../../html/templates/html.template.loader";
+const singleQuizAttributeHtml = await loadHTML(
+  "../../../html/templates/attribute_widget/single_quiz_attribute.html",
+  import.meta.url
+);
 
 QuizAttribute.prototype = new AbstractAttribute();
 QuizAttribute.prototype.constructor = QuizAttribute;

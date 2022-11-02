@@ -1,6 +1,6 @@
 import $ from "jquery-ui";
 import _ from "lodash";
-import abstractToolHtml from "text!templates/palette_widget/abstract_tool.html";
+import abstractToolHtml from "../../templates/palette_widget/abstract_tool.html";
 
 /**
  * AbstractTool

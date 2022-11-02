@@ -1,7 +1,6 @@
-import $ from "jquery-ui";
 import _ from "lodash";
-import AttributeAddOperation from "operations/ot/AttributeAddOperation";
-import Util from "Util";
+import AttributeAddOperation from "../../operations/ot/AttributeAddOperation";
+import Util from "../../Util";
 function ViewTypesUtil() {}
 
 ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList = function (nodes) {

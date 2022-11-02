@@ -1,12 +1,11 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import IWCW from "iwcw";
-import AbstractValue from "canvas_widget/AbstractValue";
-import AbstractAttribute from "canvas_widget/AbstractAttribute";
-import ActivityOperation from "operations/non_ot/ActivityOperation";
-import ValueChangeOperation from "operations/ot/ValueChangeOperation";
-import valueHtml from "text!templates/canvas_widget/value.html";
+import IWCW from "../lib/IWCWrapper";
+import AbstractValue from "./AbstractValue";
+import AbstractAttribute from "./AbstractAttribute";
+import ActivityOperation from "../operations/non_ot/ActivityOperation";
+import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
+import valueHtml from "../../templates/canvas_widget/value.html";
 Value.prototype = new AbstractValue();
 Value.prototype.constructor = Value;
 

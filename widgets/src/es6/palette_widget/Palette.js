@@ -1,16 +1,16 @@
 import _ from 'lodash';
-import IWCW from 'iwcw';
-import ToolSelectOperation from 'operations/non_ot/ToolSelectOperation';
-import SetViewTypesOperation from 'operations/non_ot/SetViewTypesOperation';
-import InitModelTypesOperation from 'operations/non_ot/InitModelTypesOperation';
-import MoveTool from 'palette_widget/MoveTool';
-import NodeTool from 'palette_widget/NodeTool';
-import EdgeTool from 'palette_widget/EdgeTool';
-import circleNodeHtml from 'text!templates/canvas_widget/circle_node.html';
-import diamondNodeHtml from 'text!templates/canvas_widget/diamond_node.html';
-import rectangleNodeHtml from 'text!templates/canvas_widget/rectangle_node.html';
-import roundedRectangleNodeHtml from 'text!templates/canvas_widget/rounded_rectangle_node.html';
-import triangleNodeHtml from 'text!templates/canvas_widget/triangle_node.html';
+import IWCW from "../lib/IWCWrapper";
+import ToolSelectOperation from "../operations/non_ot/ToolSelectOperation";
+import SetViewTypesOperation from "../operations/non_ot/SetViewTypesOperation";
+import InitModelTypesOperation from "../operations/non_ot/InitModelTypesOperation";
+import MoveTool from "./MoveTool";
+import NodeTool from "./NodeTool";
+import EdgeTool from "./EdgeTool";
+import circleNodeHtml from "../../templates/canvas_widget/circle_node.html";
+import diamondNodeHtml from "../../templates/canvas_widget/diamond_node.html";
+import rectangleNodeHtml from "../../templates/canvas_widget/rectangle_node.html";
+import roundedRectangleNodeHtml from "../../templates/canvas_widget/rounded_rectangle_node.html";
+import triangleNodeHtml from "../../templates/canvas_widget/triangle_node.html";
 
     /**
      * Palette

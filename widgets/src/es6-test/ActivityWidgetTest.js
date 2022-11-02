@@ -8,9 +8,8 @@ require.config({
 });
 import $ from "jquery";
 import chai from "chai";
-import WebConsoleReporter from "WebConsoleReporter";
+import WebConsoleReporter from "./WebConsole";
 import "mocha";
- 
 export default function () {
   $("body").append($('<div id="mocha" style="display: none"></div>'));
 

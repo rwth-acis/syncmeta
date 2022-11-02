@@ -4,23 +4,23 @@
  */
 
 import $ from "jquery-ui";
-import WaitForCanvas from "WaitForCanvas";
-import Palette from "palette_widget/Palette";
-import MoveTool from "palette_widget/MoveTool";
-import ObjectNodeTool from "palette_widget/ObjectNodeTool";
-import AbstractClassNodeTool from "palette_widget/AbstractClassNodeTool";
-import EnumNodeTool from "palette_widget/EnumNodeTool";
-import NodeShapeNodeTool from "palette_widget/NodeShapeNodeTool";
-import EdgeShapeNodeTool from "palette_widget/EdgeShapeNodeTool";
-import RelationshipNodeTool from "palette_widget/RelationshipNodeTool";
-import RelationshipGroupNodeTool from "palette_widget/RelationshipGroupNodeTool";
-import BiDirAssociationEdgeTool from "palette_widget/BiDirAssociationEdgeTool";
-import UniDirAssociationEdgeTool from "palette_widget/UniDirAssociationEdgeTool";
-import GeneralisationEdgeTool from "palette_widget/GeneralisationEdgeTool";
-import ViewObjectNodeTool from "palette_widget/ViewObjectNodeTool";
-import ViewRelationshipNodeTool from "palette_widget/ViewRelationshipNodeTool";
+import WaitForCanvas from "./WaitForCanvas";
+import Palette from "./palette_widget/Palette";
+import MoveTool from "./palette_widget/MoveTool";
+import ObjectNodeTool from "./palette_widget/ObjectNodeTool";
+import AbstractClassNodeTool from "./palette_widget/AbstractClassNodeTool";
+import EnumNodeTool from "./palette_widget/EnumNodeTool";
+import NodeShapeNodeTool from "./palette_widget/NodeShapeNodeTool";
+import EdgeShapeNodeTool from "./palette_widget/EdgeShapeNodeTool";
+import RelationshipNodeTool from "./palette_widget/RelationshipNodeTool";
+import RelationshipGroupNodeTool from "./palette_widget/RelationshipGroupNodeTool";
+import BiDirAssociationEdgeTool from "./palette_widget/BiDirAssociationEdgeTool";
+import UniDirAssociationEdgeTool from "./palette_widget/UniDirAssociationEdgeTool";
+import GeneralisationEdgeTool from "./palette_widget/GeneralisationEdgeTool";
+import ViewObjectNodeTool from "./palette_widget/ViewObjectNodeTool";
+import ViewRelationshipNodeTool from "./palette_widget/ViewRelationshipNodeTool";
 
-// import test from "./../test/PaletteWidgetTest";
+import test from "./../es6-test/PaletteWidgetTest";
 
 WaitForCanvas(CONFIG.WIDGET.NAME.PALETTE, 10, 1500).done(function (metamodel) {
   var palette = new Palette($("#palette"), $("#info"));

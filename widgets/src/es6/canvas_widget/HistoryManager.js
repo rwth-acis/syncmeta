@@ -1,12 +1,12 @@
 import $ from "jquery-ui";
-import NodeAddOperation from "operations/ot/NodeAddOperation";
-import EdgeAddOperation from "operations/ot/EdgeAddOperation";
-import NodeDeleteOperation from "operations/ot/NodeDeleteOperation";
-import EdgeDeleteOperation from "operations/ot/EdgeDeleteOperation";
-import NodeMoveOperation from "operations/ot/NodeMoveOperation";
-import NodeMoveZOperation from "operations/ot/NodeMoveZOperation";
-import NodeResizeOperation from "operations/ot/NodeResizeOperation";
-import $__canvas_widget_EntityManager from "canvas_widget/EntityManager";
+import NodeAddOperation from "../operations/ot/NodeAddOperation";
+import EdgeAddOperation from "../operations/ot/EdgeAddOperation";
+import NodeDeleteOperation from "../operations/ot/NodeDeleteOperation";
+import EdgeDeleteOperation from "../operations/ot/EdgeDeleteOperation";
+import NodeMoveOperation from "../operations/ot/NodeMoveOperation";
+import NodeMoveZOperation from "../operations/ot/NodeMoveZOperation";
+import NodeResizeOperation from "../operations/ot/NodeResizeOperation";
+import $__canvas_widget_EntityManager from "./EntityManager";
 function HistoryManager() {
   var bufferSize = 20;
 
