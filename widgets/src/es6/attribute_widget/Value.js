@@ -1,8 +1,11 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import AbstractValue from "attribute_widget/AbstractValue";
-import valueHtml from "text!templates/attribute_widget/value.html";
+import AbstractValue from "./AbstractValue";
+import loadHTML from "../html.template.loader";
+const valueHtml = await loadHTML(
+  "../../../html/templates/attribute_widget/value.html",
+  import.meta.url
+);
 
 Value.prototype = new AbstractValue();
 Value.prototype.constructor = Value;

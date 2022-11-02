@@ -1,10 +1,11 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import Util from "Util";
-import AbstractAttribute from "attribute_widget/AbstractAttribute";
-import BooleanValue from "attribute_widget/BooleanValue";
-import booleanAttributeHtml from "text!templates/attribute_widget/boolean_attribute.html";
+import AbstractAttribute from "./AbstractAttribute";
+import BooleanValue from "./BooleanValue";
+const booleanAttributeHtml = await loadHTML(
+  "../../../html/templates/attribute_widget/boolean_attribute.html",
+  import.meta.url
+);
 
 BooleanAttribute.prototype = new AbstractAttribute();
 BooleanAttribute.prototype.constructor = BooleanAttribute;

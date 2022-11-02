@@ -1,12 +1,14 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import IWCW from "iwcw";
-import Util from "Util";
-import AbstractValue from "attribute_widget/AbstractValue";
-import ValueChangeOperation from "operations/ot/ValueChangeOperation";
-import QuizAttribute from "attribute_widget/QuizAttribute";
-import selectionValueHtml from "text!templates/attribute_widget/selection_value.html";
+import IWCW from "../lib/IWCWrapper";
+import AbstractValue from "./AbstractValue";
+import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
+import QuizAttribute from "./QuizAttribute";
+import loadHTML from "../html.template.loader";
+const selectionValueHtml = await loadHTML(
+  "../../../html/templates/attribute_widget/selection_value.html",
+  import.meta.url
+);
 
 SelectionValue.prototype = new AbstractValue();
 SelectionValue.prototype.constructor = SelectionValue;

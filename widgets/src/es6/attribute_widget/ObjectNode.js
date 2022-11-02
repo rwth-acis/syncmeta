@@ -1,9 +1,12 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import AbstractNode from "attribute_widget/AbstractNode";
-import KeySelectionValueListAttribute from "attribute_widget/KeySelectionValueListAttribute";
-import objectNodeHtml from "text!templates/attribute_widget/object_node.html";
+import AbstractNode from "./AbstractNode";
+import KeySelectionValueListAttribute from "./KeySelectionValueListAttribute";
+import loadHTML from "../html.template.loader";
+const objectNodeHtml = await loadHTML(
+  "../../../html/templates/attribute_widget/object_node.html",
+  import.meta.url
+);
 
 ObjectNode.TYPE = "Object";
 

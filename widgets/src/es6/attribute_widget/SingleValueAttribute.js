@@ -1,10 +1,11 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import Util from "Util";
-import AbstractAttribute from "attribute_widget/AbstractAttribute";
-import Value from "attribute_widget/Value";
-import singleValueAttributeHtml from "text!templates/attribute_widget/single_value_attribute.html";
+import AbstractAttribute from "./AbstractAttribute";
+import Value from "./Value";
+const singleValueAttributeHtml = await loadHTML(
+  "../../../html/templates/attribute_widget/single_value_attribute.html",
+  import.meta.url
+);
 
 SingleValueAttribute.prototype = new AbstractAttribute();
 SingleValueAttribute.prototype.constructor = SingleValueAttribute;

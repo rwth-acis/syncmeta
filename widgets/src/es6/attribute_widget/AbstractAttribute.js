@@ -1,8 +1,10 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import AbstractEntity from "attribute_widget/AbstractEntity";
-import abstractAttributeHtml from "text!templates/attribute_widget/abstract_attribute.html";
+import AbstractEntity from "./AbstractEntity";
+const abstractAttributeHtml = await loadHTML(
+  "../../../html/templates/attribute_widget/abstract_attribute.html",
+  import.meta.url
+);
 
 AbstractAttribute.prototype = new AbstractEntity();
 AbstractAttribute.prototype.constructor = AbstractAttribute;

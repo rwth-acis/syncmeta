@@ -1,14 +1,16 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import IWCW from "iwcw";
+import IWCW from "../lib/IWCWrapper";
 import Util from "Util";
-import AttributeAddOperation from "operations/ot/AttributeAddOperation";
-import AttributeDeleteOperation from "operations/ot/AttributeDeleteOperation";
-import AbstractAttribute from "attribute_widget/AbstractAttribute";
-import KeySelectionValueAttribute from "attribute_widget/KeySelectionValueAttribute";
-import keySelectionValueListAttributeHtml from "text!templates/attribute_widget/list_attribute.html";
-
+import AttributeAddOperation from "../operations/ot/AttributeAddOperation";
+import AttributeDeleteOperation from "../operations/ot/AttributeDeleteOperation";
+import AbstractAttribute from "./AbstractAttribute";
+import KeySelectionValueAttribute from "./KeySelectionValueAttribute";
+import loadHTML from "../html.template.loader";
+const keySelectionValueListAttributeHtml = await loadHTML(
+  "../../../html/templates/attribute_widget/list_attribute.html",
+  import.meta.url
+);
 KeySelectionValueListAttribute.prototype = new AbstractAttribute();
 KeySelectionValueListAttribute.prototype.constructor =
   KeySelectionValueListAttribute;

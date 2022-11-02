@@ -1,10 +1,12 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import IWCW from "iwcw";
-import AbstractValue from "attribute_widget/AbstractValue";
-import ValueChangeOperation from "operations/ot/ValueChangeOperation";
-import integerValueHtml from "text!templates/attribute_widget/integer_value.html";
+import IWCW from "../lib/IWCWrapper";
+import AbstractValue from "./AbstractValue";
+import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
+const integerValueHtml = await loadHTML(
+  "../../../html/templates/attribute_widget/integer_value.html",
+  import.meta.url
+);
 
 IntegerValue.prototype = new AbstractValue();
 IntegerValue.prototype.constructor = IntegerValue;

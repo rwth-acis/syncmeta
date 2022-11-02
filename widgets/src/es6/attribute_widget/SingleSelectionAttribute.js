@@ -1,10 +1,11 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import Util from "Util";
-import AbstractAttribute from "attribute_widget/AbstractAttribute";
-import SelectionValue from "attribute_widget/SelectionValue";
-import singleSelectionAttributeHtml from "text!templates/attribute_widget/single_selection_attribute.html";
+import AbstractAttribute from "./AbstractAttribute";
+import SelectionValue from "./SelectionValue";
+const singleSelectionAttributeHtml = await loadHTML(
+  "../../../html/templates/attribute_widget/single_selection_attribute.html",
+  import.meta.url
+);
 
 SingleSelectionAttribute.prototype = new AbstractAttribute();
 SingleSelectionAttribute.prototype.constructor = SingleSelectionAttribute;

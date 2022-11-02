@@ -4,7 +4,7 @@ import _ from "lodash";
 import Util from "Util";
 import AbstractAttribute from "./AbstractAttribute";
 import Value from "./Value";
-import loadHTML from "../../../html/templates/html.template.loader";
+import loadHTML from "../html.template.loader";
 const singleQuizAttributeHtml = await loadHTML(
   "../../../html/templates/attribute_widget/single_quiz_attribute.html",
   import.meta.url

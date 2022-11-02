@@ -1,15 +1,17 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import AbstractNode from "attribute_widget/AbstractNode";
-import BooleanAttribute from "attribute_widget/BooleanAttribute";
-import IntegerAttribute from "attribute_widget/IntegerAttribute";
-import FileAttribute from "attribute_widget/FileAttribute";
-import QuizAttribute from "attribute_widget/QuizAttribute";
-import SingleSelectionAttribute from "attribute_widget/SingleSelectionAttribute";
-import SingleValueAttribute from "attribute_widget/SingleValueAttribute";
-import nodeHtml from "text!templates/attribute_widget/node.html";
-
+import AbstractNode from "./AbstractNode";
+import BooleanAttribute from "./BooleanAttribute";
+import IntegerAttribute from "./IntegerAttribute";
+import FileAttribute from "./FileAttribute";
+import QuizAttribute from "./QuizAttribute";
+import SingleSelectionAttribute from "./SingleSelectionAttribute";
+import SingleValueAttribute from "./SingleValueAttribute";
+import loadHTML from "../html.template.loader";
+const nodeHtml = await loadHTML(
+  "../../../html/templates/attribute_widget/node.html",
+  import.meta.url
+);
 //noinspection JSUnusedLocalSymbols
 /**
  * makeNode
