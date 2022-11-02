@@ -1,4 +1,4 @@
-import $ from "jqueryui";
+import $ from "jquery-ui";
 import _ from "lodash";
 import yjsSync from "lib/yjs-sync";
 import GenerateViewpointModel from "canvas_widget/GenerateViewpointModel";

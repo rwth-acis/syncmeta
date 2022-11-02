@@ -3,7 +3,7 @@
  * @namespace heatmap_widget
  */
 
-import $ from "jqueryui";
+import $ from "jquery-ui";
 import _ from "lodash";
 import require from "require";
 import IWCW from "iwcw";

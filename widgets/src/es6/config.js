@@ -5,7 +5,7 @@ var require = {
         iwc: {
             deps:["jquery"]
         },
-        jqueryui: {
+        jquery-ui: {
             exports: "$",
             deps: ["jquery","jquery.contextMenu","jquery.autoGrowInput","jquery.mousewheel"]
         },
@@ -13,7 +13,7 @@ var require = {
             deps: ["jquery"]
         },
         jsplumb: {
-            deps: ["jqueryui"],
+            deps: ["jquery-ui"],
             exports: "jsPlumb"
         },
         'jquery.contextMenu': {
@@ -23,7 +23,7 @@ var require = {
             deps: ["jquery"]
         },
         'jquery.transformable-PATCHED': {
-            deps: ["jquery", "jquery.transform", "jqueryui", "jquerymigrate"]
+            deps: ["jquery", "jquery.transform", "jquery-ui", "jquerymigrate"]
         },
         swfobject: {
             exports: "swfobject"
@@ -48,7 +48,7 @@ var require = {
     paths: {
         jquery: "lib/vendor/jquery",
         jquerymigrate: "lib/vendor/jquery-migrate",
-        jqueryui: "lib/vendor/jquery-ui",
+        jquery-ui: "lib/vendor/jquery-ui",
         lodash: "lib/vendor/lodash",
         jsplumb: "lib/vendor/jquery.jsPlumb",
         'jquery.contextMenu': "lib/vendor/jquery.contextMenu",

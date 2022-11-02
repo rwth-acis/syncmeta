@@ -1,6 +1,6 @@
 
 
-import $ from 'jqueryui';
+import $ from "jquery-ui";
 import _ from 'lodash';
 import IWCW from 'iwcw';
 import Util from 'Util';

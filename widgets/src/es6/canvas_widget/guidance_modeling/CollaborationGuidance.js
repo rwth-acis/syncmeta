@@ -1,5 +1,5 @@
 import IWCW from 'iwcw';
-import $ from 'jqueryui';
+import $ from "jquery-ui";
 import _ from 'lodash';
 import CollaborateInActivityOperation from 'operations/non_ot/CollaborateInActivityOperation';
 import selectToolGuidanceHtml from 'text!templates/guidance_modeling/collaboration_guidance.html';

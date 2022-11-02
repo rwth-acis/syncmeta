@@ -1,5 +1,5 @@
 import require from 'require';
-import $ from 'jqueryui';
+import $ from "jquery-ui";
 import _ from 'lodash';
 import AbstractNode from 'canvas_widget/AbstractNode';
 import SingleSelectionAttribute from 'canvas_widget/SingleSelectionAttribute';

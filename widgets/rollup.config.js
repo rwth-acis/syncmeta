@@ -18,6 +18,9 @@ export default [
       css(),
       resolve({ browser: true }),
     ],
+    watch: {
+      include: "src/**",
+    },
     input: "src/widgets/partials/activity.widget.ts",
     output: {
       file: "build/widgets/partials/activity.widget.ts",
@@ -42,6 +45,9 @@ export default [
       css(),
       resolve({ browser: true }),
     ],
+    watch: {
+      include: "src/**",
+    },
     input: "src/widgets/partials/attribute.widget.ts",
     output: {
       file: "build/widgets/partials/attribute.widget.ts",
@@ -65,6 +71,9 @@ export default [
       css(),
       resolve({ browser: true }),
     ],
+    watch: {
+      include: "src/**",
+    },
     input: "src/widgets/partials/debug.widget.ts",
     output: {
       file: "build/widgets/partials/debug.widget.ts",
@@ -88,6 +97,9 @@ export default [
       css(),
       resolve({ browser: true }),
     ],
+    watch: {
+      include: "src/**",
+    },
     input: "src/widgets/partials/guidance.widget.ts",
     output: {
       file: "build/widgets/partials/guidance.widget.ts",
@@ -111,6 +123,9 @@ export default [
       css(),
       resolve({ browser: true }),
     ],
+    watch: {
+      include: "src/**",
+    },
     input: "src/widgets/partials/heatmap.widget.ts",
     output: {
       file: "build/widgets/partials/heatmap.widget.ts",
@@ -134,6 +149,9 @@ export default [
       css(),
       resolve({ browser: true }),
     ],
+    watch: {
+      include: "src/**",
+    },
     input: "src/widgets/partials/imsld.export.widget.ts",
     output: {
       file: "build/widgets/partials/imsld.export.widget.ts",
@@ -157,6 +175,9 @@ export default [
       css(),
       resolve({ browser: true }),
     ],
+    watch: {
+      include: "src/**",
+    },
     input: "src/widgets/partials/json.export.widget.ts",
     output: {
       file: "build/widgets/partials/json.export.widget.ts",
@@ -180,6 +201,9 @@ export default [
       css(),
       resolve({ browser: true }),
     ],
+    watch: {
+      include: "src/**",
+    },
     input: "src/widgets/partials/main.widget.ts",
     output: {
       file: "build/widgets/partials/main.widget.ts",
@@ -203,6 +227,9 @@ export default [
       css(),
       resolve({ browser: true }),
     ],
+    watch: {
+      include: "src/**",
+    },
     input: "src/widgets/partials/palette.widget.ts",
     output: {
       file: "build/widgets/partials/palette.widget.ts",
@@ -226,6 +253,9 @@ export default [
       css(),
       resolve({ browser: true }),
     ],
+    watch: {
+      include: "src/**",
+    },
     input: "src/widgets/partials/test.widget.ts",
     output: {
       file: "build/widgets/partials/test.widget.ts",
@@ -249,6 +279,9 @@ export default [
       css(),
       resolve({ browser: true }),
     ],
+    watch: {
+      include: "src/**",
+    },
     input: "src/widgets/partials/viewcontrol.widget.ts",
     output: {
       file: "build/widgets/partials/viewcontrol.widget.ts",

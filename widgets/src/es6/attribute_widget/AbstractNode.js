@@ -1,5 +1,5 @@
 import require from 'require';
-import $ from 'jqueryui';
+import $ from "jquery-ui";
 import jsPlumb from 'jsplumb';
 import _ from 'lodash';
 import Util from 'Util';
