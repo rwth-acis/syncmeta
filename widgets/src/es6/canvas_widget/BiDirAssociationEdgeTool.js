@@ -2,7 +2,7 @@ import EdgeTool from "./EdgeTool";
 import BiDirAssociationEdge from "./BiDirAssociationEdge";
 
 BiDirAssociationEdgeTool.prototype = new EdgeTool();
-BiDirAssociationEdgeTool.prototype.constructor = BiDirAssociationEdgeTool;
+;
 /**
  * BiDirAssociationEdgeTool
  * @class canvas_widget.BiDirAssociationEdgeTool
@@ -10,12 +10,14 @@ BiDirAssociationEdgeTool.prototype.constructor = BiDirAssociationEdgeTool;
  * @memberof canvas_widget
  * @constructor
  */
-function BiDirAssociationEdgeTool() {
-  EdgeTool.call(
-    this,
-    BiDirAssociationEdge.TYPE,
-    BiDirAssociationEdge.RELATIONS
-  );
+class BiDirAssociationEdgeTool {
+  constructor() {
+    EdgeTool.call(
+      this,
+      BiDirAssociationEdge.TYPE,
+      BiDirAssociationEdge.RELATIONS
+    );
+  }
 }
 
 export default BiDirAssociationEdgeTool;

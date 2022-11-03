@@ -9,7 +9,12 @@ NodeShapeNodeTool.prototype.constructor = NodeShapeNodeTool;
  * @extends palette_widget.AbstractTool
  * @constructor
  */
-function NodeShapeNodeTool(toolName, toolLabel, toolDescription, toolIcon) {
+function NodeShapeNodeTool(
+  toolName = null,
+  toolLabel = null,
+  toolDescription = null,
+  toolIcon = null
+) {
   AbstractTool.call(
     this,
     toolName || "Node Shape",

@@ -9,7 +9,12 @@ MoveTool.prototype.constructor = MoveTool;
  * @extends palette_widget.AbstractTool
  * @constructor
  */
-function MoveTool(toolName, toolLabel, toolDescription, toolIcon) {
+function MoveTool(
+  toolName = null,
+  toolLabel = null,
+  toolDescription = null,
+  toolIcon = null
+) {
   AbstractTool.call(
     this,
     toolName || "MoveTool",

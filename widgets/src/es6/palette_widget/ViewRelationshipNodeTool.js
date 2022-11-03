@@ -1,7 +1,7 @@
 import AbstractTool from "./AbstractTool";
 
 ViewRelationshipNodeTool.prototype = new AbstractTool();
-ViewRelationshipNodeTool.prototype.constructor = ViewRelationshipNodeTool;
+;
 /**
  * ViewRelationshipNodeTool
  * @class palette_widget.ViewRelationshipNodeTool
@@ -9,19 +9,19 @@ ViewRelationshipNodeTool.prototype.constructor = ViewRelationshipNodeTool;
  * @extends palette_widget.AbstractTool
  * @constructor
  */
-function ViewRelationshipNodeTool(
-  toolName,
-  toolLabel,
-  toolDescription,
-  toolIcon
-) {
-  AbstractTool.call(
-    this,
-    toolName || "ViewRelationship",
-    toolLabel || "ViewRelationship",
-    toolDescription ||
+class ViewRelationshipNodeTool extends AbstractTool {
+  constructor(toolName = null,
+    toolLabel = null,
+    toolDescription = null,
+    toolIcon = null) {
+    AbstractTool.call(
+      this,
+      toolName || "ViewRelationship",
+      toolLabel || "ViewRelationship",
+      toolDescription ||
       "Click on an empty part of the canvas to add a view type",
-    toolIcon || "class.png"
-  );
+      toolIcon || "class.png"
+    );
+  }
 }
 export default ViewRelationshipNodeTool;

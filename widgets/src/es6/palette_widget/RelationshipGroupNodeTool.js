@@ -10,10 +10,10 @@ RelationshipGroupNodeTool.prototype.constructor = RelationshipGroupNodeTool;
  * @constructor
  */
 function RelationshipGroupNodeTool(
-  toolName,
-  toolLabel,
-  toolDescription,
-  toolIcon
+  toolName = null,
+  toolLabel = null,
+  toolDescription = null,
+  toolIcon = null
 ) {
   AbstractTool.call(
     this,

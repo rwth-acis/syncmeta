@@ -9,7 +9,12 @@ RelationshipNodeTool.prototype.constructor = RelationshipNodeTool;
  * @extends palette_widget.AbstractTool
  * @constructor
  */
-function RelationshipNodeTool(toolName, toolLabel, toolDescription, toolIcon) {
+function RelationshipNodeTool(
+  toolName = null,
+  toolLabel = null,
+  toolDescription = null,
+  toolIcon = null
+) {
   AbstractTool.call(
     this,
     toolName || "Relationship",

@@ -1,11 +1,3 @@
-require.config({
-  baseUrl: "<%= grunt.config('baseUrl') %>/js",
-  paths: {
-    chai: "lib/vendor/test/chai",
-    mocha: "lib/vendor/test/mocha",
-    WebConsoleReporter: "./../test/WebConsole",
-  },
-});
 import $ from "jquery";
 import chai from "chai";
 import WebConsoleReporter from "../es6-test/WebConsole";

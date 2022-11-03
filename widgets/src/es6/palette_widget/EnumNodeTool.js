@@ -9,7 +9,12 @@ EnumNodeTool.prototype.constructor = EnumNodeTool;
  * @extends palette_widget.AbstractTool
  * @constructor
  */
-function EnumNodeTool(toolName, toolLabel, toolDescription, toolIcon) {
+function EnumNodeTool(
+  toolName = null,
+  toolLabel = null,
+  toolDescription = null,
+  toolIcon = null
+) {
   AbstractTool.call(
     this,
     toolName || "Enumeration",

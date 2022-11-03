@@ -9,7 +9,12 @@ AbstractClassNodeTool.prototype.constructor = AbstractClassNodeTool;
  * @extends palette_widget.AbstractTool
  * @constructor
  */
-function AbstractClassNodeTool(toolName, toolLabel, toolDescription, toolIcon) {
+function AbstractClassNodeTool(
+  toolName = null,
+  toolLabel = null,
+  toolDescription = null,
+  toolIcon = null
+) {
   AbstractTool.call(
     this,
     toolName || "Abstract Class",

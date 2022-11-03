@@ -9,7 +9,12 @@ ViewObjectNodeTool.prototype.constructor = ViewObjectNodeTool;
  * @extends palette_widget.AbstractTool
  * @constructor
  */
-function ViewObjectNodeTool(toolName, toolLabel, toolDescription, toolIcon) {
+function ViewObjectNodeTool(
+  toolName = null,
+  toolLabel = null,
+  toolDescription = null,
+  toolIcon = null
+) {
   AbstractTool.call(
     this,
     toolName || "ViewObject",

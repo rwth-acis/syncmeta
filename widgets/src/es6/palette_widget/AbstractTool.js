@@ -17,174 +17,191 @@ const abstractToolHtml = await loadHTML(
  * @param {$|string} toolIcon Path to icon of tool
  * @param {string} [toolColor] Background color of tool icon
  */
-function AbstractTool(
-  toolName,
-  toolLabel,
-  toolDescription,
-  toolIcon,
-  toolColor
-) {
-  /**
-   * Name of tool
-   * @type {string}
-   * @private
-   */
-  var _name = toolName;
+class AbstractTool {
+  _name;
+  _label;
+  _description;
+  _icon;
+  _color;
+  _$node;
 
-  /**
-   * Label of tool
-   * @type {string}
-   * @private
-   */
-  var _label = toolLabel;
+  get$node;
+  setName;
+  getName;
+  setLabel;
+  getLabel;
+  setDescription;
+  getDescription;
+  setIcon;
+  getIcon;
+  setColor;
+  getColor;
+  select;
+  unselect;
 
-  /**
-   * Description of tool
-   * @type {string}
-   * @private
-   */
-  var _description = toolDescription;
+  constructor(toolName, toolLabel, toolDescription, toolIcon, toolColor) {
+    /**
+     * Name of tool
+     * @type {string}
+     * @private
+     */
+    var _name = toolName;
 
-  /**
-   * Path to icon of tool
-   * @type {$|string}
-   * @private
-   */
-  var _icon = toolIcon;
+    /**
+     * Label of tool
+     * @type {string}
+     * @private
+     */
+    var _label = toolLabel;
 
-  /**
-   * Background color of tool icon
-   * @type {string}
-   * @private
-   */
-  var _color = toolColor || "#000000";
+    /**
+     * Description of tool
+     * @type {string}
+     * @private
+     */
+    var _description = toolDescription;
 
-  /**
-   * jQuery object of DOM node representing the tool
-   * @type {jQuery}
-   * @private
-   */
-  var _$node = $(
-    _.template(abstractToolHtml)({
-      icon:
-        toolIcon instanceof $ || !toolIcon
-          ? ""
-          : "<%= grunt.config('baseUrl') %>/img/" + _icon,
-      label: _label,
-      color: _color,
-    })
-  );
+    /**
+     * Path to icon of tool
+     * @type {$|string}
+     * @private
+     */
+    var _icon = toolIcon;
 
-  /**
-   * Get jQuery object of DOM node representing the tool
-   * @returns {jQuery}
-   */
-  this.get$node = function () {
-    return _$node;
-  };
+    /**
+     * Background color of tool icon
+     * @type {string}
+     * @private
+     */
+    var _color = toolColor || "#000000";
 
-  //noinspection JSUnusedGlobalSymbols
-  /**
-   * Set name of tool
-   * @param {string} name
-   */
-  this.setName = function (name) {
-    _name = name;
-  };
+    /**
+     * jQuery object of DOM node representing the tool
+     * @type {jQuery}
+     * @private
+     */
+    var _$node = $(
+      _.template(abstractToolHtml)({
+        icon:
+          toolIcon instanceof $ || !toolIcon
+            ? ""
+            : "<%= grunt.config('baseUrl') %>/img/" + _icon,
+        label: _label,
+        color: _color,
+      })
+    );
 
-  /**
-   * Get name of tool
-   * @returns {string}
-   */
-  this.getName = function () {
-    return _name;
-  };
+    /**
+     * Get jQuery object of DOM node representing the tool
+     * @returns {jQuery}
+     */
+    this.get$node = function () {
+      return _$node;
+    };
 
-  /**
-   * Set label of tool
-   * @param {string} label
-   */
-  this.setLabel = function (label) {
-    _label = label;
-  };
+    //noinspection JSUnusedGlobalSymbols
+    /**
+     * Set name of tool
+     * @param {string} name
+     */
+    this.setName = function (name) {
+      _name = name;
+    };
 
-  /**
-   * Get label of tool
-   * @returns {string}
-   */
-  this.getLabel = function () {
-    return _label;
-  };
+    /**
+     * Get name of tool
+     * @returns {string}
+     */
+    this.getName = function () {
+      return _name;
+    };
 
-  //noinspection JSUnusedGlobalSymbols
-  /**
-   * Set description of tool
-   * @param {string} description
-   */
-  this.setDescription = function (description) {
-    _description = description;
-  };
+    /**
+     * Set label of tool
+     * @param {string} label
+     */
+    this.setLabel = function (label) {
+      _label = label;
+    };
 
-  /**
-   * Get description of tool
-   * @returns {string}
-   */
-  this.getDescription = function () {
-    return _description;
-  };
+    /**
+     * Get label of tool
+     * @returns {string}
+     */
+    this.getLabel = function () {
+      return _label;
+    };
 
-  //noinspection JSUnusedGlobalSymbols
-  /**
-   * Set path to icon of tool
-   * @param {$|string} icon
-   */
-  this.setIcon = function (icon) {
-    _icon = icon;
-  };
+    //noinspection JSUnusedGlobalSymbols
+    /**
+     * Set description of tool
+     * @param {string} description
+     */
+    this.setDescription = function (description) {
+      _description = description;
+    };
 
-  //noinspection JSUnusedGlobalSymbols
-  /**
-   * Get path to icon of tool
-   * @returns {$|string}
-   */
-  this.getIcon = function () {
-    return _icon;
-  };
+    /**
+     * Get description of tool
+     * @returns {string}
+     */
+    this.getDescription = function () {
+      return _description;
+    };
 
-  //noinspection JSUnusedGlobalSymbols
-  /**
-   * Set background color of tool icon
-   * @param {string} color
-   */
-  this.setColor = function (color) {
-    _color = color;
-  };
+    //noinspection JSUnusedGlobalSymbols
+    /**
+     * Set path to icon of tool
+     * @param {$|string} icon
+     */
+    this.setIcon = function (icon) {
+      _icon = icon;
+    };
 
-  //noinspection JSUnusedGlobalSymbols
-  /**
-   * Get background color of tool icon
-   * @returns {string}
-   */
-  this.getColor = function () {
-    return _color;
-  };
+    //noinspection JSUnusedGlobalSymbols
+    /**
+     * Get path to icon of tool
+     * @returns {$|string}
+     */
+    this.getIcon = function () {
+      return _icon;
+    };
 
-  /**
-   * Select tool
-   */
-  this.select = function () {
-    _$node.addClass("selected");
-  };
+    //noinspection JSUnusedGlobalSymbols
+    /**
+     * Set background color of tool icon
+     * @param {string} color
+     */
+    this.setColor = function (color) {
+      _color = color;
+    };
 
-  /**
-   * Unselect tool
-   */
-  this.unselect = function () {
-    _$node.removeClass("selected");
-  };
+    //noinspection JSUnusedGlobalSymbols
+    /**
+     * Get background color of tool icon
+     * @returns {string}
+     */
+    this.getColor = function () {
+      return _color;
+    };
 
-  if (_icon instanceof $) {
-    _$node.find(".icon").empty().append(_icon);
+    /**
+     * Select tool
+     */
+    this.select = function () {
+      _$node.addClass("selected");
+    };
+
+    /**
+     * Unselect tool
+     */
+    this.unselect = function () {
+      _$node.removeClass("selected");
+    };
+
+    if (_icon instanceof $) {
+      _$node.find(".icon").empty().append(_icon);
+    }
   }
 }
 

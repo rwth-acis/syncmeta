@@ -1,7 +1,7 @@
 import AbstractTool from "./AbstractTool";
 
 GeneralisationEdgeTool.prototype = new AbstractTool();
-GeneralisationEdgeTool.prototype.constructor = GeneralisationEdgeTool;
+;
 /**
  * GeneralisationEdgeTool
  * @class palette_widget.GeneralisationEdgeTool
@@ -9,20 +9,17 @@ GeneralisationEdgeTool.prototype.constructor = GeneralisationEdgeTool;
  * @extends palette_widget.AbstractTool
  * @constructor
  */
-function GeneralisationEdgeTool(
-  toolName,
-  toolLabel,
-  toolDescription,
-  toolIcon
-) {
-  AbstractTool.call(
-    this,
-    toolName || "Generalisation",
-    toolLabel || "Generalisation",
-    toolDescription ||
+class GeneralisationEdgeTool {
+  constructor(toolName=null, toolLabel=null, toolDescription=null, toolIcon=null) {
+    AbstractTool.call(
+      this,
+      toolName || "Generalisation",
+      toolLabel || "Generalisation",
+      toolDescription ||
       "Click and hold on one Node and release on another node to add an edge between these two nodes.",
-    toolIcon || "generalisation.png"
-  );
+      toolIcon || "generalisation.png"
+    );
+  }
 }
 
 export default GeneralisationEdgeTool;
