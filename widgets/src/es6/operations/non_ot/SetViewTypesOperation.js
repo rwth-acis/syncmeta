@@ -9,26 +9,12 @@ SetViewTypesOperation.TYPE = "SetViewTypesOperation";
  * @constructor
  * @param {boolean} flag enable (true)/disable(false) the view types of the vml in the palette widget
  */
-function SetViewTypesOperation(flag) {
-  /**
-   * Enable or disable the view types of the vml
-   * @type {boolean}
-   * @private
-   */
-  var _flag = flag;
-
-  /**
-   * Corresponding NonOtOperation
-   * @type {operations.non_ot.NonOTOperation}
-   * @private
-   */
-  var nonOTOperation = null;
-
+class SetViewTypesOperation {
   /**
    * Get name of selected tool
    * @returns {string}
    */
-  this.getFlag = function () {
+  getFlag = function () {
     return _flag;
   };
 
@@ -36,7 +22,7 @@ function SetViewTypesOperation(flag) {
    * Convert operation to NonOTOperation
    * @returns {operations.non_ot.NonOTOperation}
    */
-  this.toNonOTOperation = function () {
+  toNonOTOperation = function () {
     if (nonOTOperation === null) {
       nonOTOperation = new NonOTOperation(
         SetViewTypesOperation.TYPE,
@@ -45,6 +31,22 @@ function SetViewTypesOperation(flag) {
     }
     return nonOTOperation;
   };
+
+  constructor(flag) {
+    /**
+     * Enable or disable the view types of the vml
+     * @type {boolean}
+     * @private
+     */
+    this._flag = flag;
+
+    /**
+     * Corresponding NonOtOperation
+     * @type {operations.non_ot.NonOTOperation}
+     * @private
+     */
+    this.nonOTOperation = null;
+  }
 }
 
 export default SetViewTypesOperation;

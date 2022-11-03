@@ -216,7 +216,7 @@ export namespace IWC {
 
   //======================= IWC.util ==============================
 
-  class util {
+  export class util {
     /**
      * Used to determine whether global or local messaging should be used.
      * Local messaging uses HTML5 messaging, global messaging uses yjs.
@@ -229,7 +229,7 @@ export namespace IWC {
     /**
      * Check intent for correctness.
      */
-    validateIntent(intent: any) {
+    public validateIntent(intent: any) {
       if (typeof intent.sender != "string") {
         throw new Error(
           "Intent object must possess property 'component' of type 'String'"
@@ -249,7 +249,7 @@ export namespace IWC {
     }
   }
 }
-function validateIntent(intent: any) {
+export function validateIntent(intent: any) {
   if (typeof intent.sender != "string") {
     throw new Error(
       "Intent object must possess property 'component' of type 'String'"
@@ -271,7 +271,7 @@ function validateIntent(intent: any) {
  * Used to determine whether global or local messaging should be used.
  * Local messaging uses HTML5 messaging, global messaging uses yjs.
  */
-const FLAGS = {
+export const FLAGS = {
   PUBLISH_LOCAL: "PUBLISH_LOCAL",
   PUBLISH_GLOBAL: "PUBLISH_GLOBAL",
 };

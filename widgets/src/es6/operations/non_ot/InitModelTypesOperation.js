@@ -10,47 +10,51 @@ InitModelTypesOperation.TYPE = "InitModelTypesOperation";
  * @param {string} vls the visual language specification
  * @param {bool} startViewGeneration
  */
-function InitModelTypesOperation(vls, startViewGeneration) {
-  /**
-   * Name of selected tool
-   * @type {string}
-   */
-  var _vls = vls;
-
-  var _startViewGeneration = startViewGeneration;
-
+class InitModelTypesOperation {
   /**
    * Corresponding NonOtOperation
    * @type {operations.non_ot.NonOTOperation}
    * @private
    */
-  var nonOTOperation = null;
+  nonOTOperation = null;
+  _vls;
+  _startViewGeneration;
+  getVLS = function () {
+    return this._vls;
+  };
 
   /**
    * Get name of selected tool
    * @returns {string}
    */
-  this.getVLS = function () {
-    return vls;
+  getViewGenerationFlag = function () {
+    return this._startViewGeneration;
   };
-
-  this.getViewGenerationFlag = function () {
-    return _startViewGeneration;
-  };
-
   /**
    * Convert operation to NonOTOperation
    * @returns {operations.non_ot.NonOTOperation}
    */
-  this.toNonOTOperation = function () {
-    if (nonOTOperation === null) {
-      nonOTOperation = new NonOTOperation(
+  toNonOTOperation = function () {
+    if (this.nonOTOperation === null) {
+      this.nonOTOperation = new NonOTOperation(
         InitModelTypesOperation.TYPE,
-        JSON.stringify({ vls: _vls, startViewGeneration: _startViewGeneration })
+        JSON.stringify({
+          vls: _vls,
+          startViewGeneration: _startViewGeneration,
+        })
       );
     }
-    return nonOTOperation;
+    return this.nonOTOperation;
   };
+  constructor(vls, startViewGeneration) {
+    /**
+     * Name of selected tool
+     * @type {string}
+     */
+    this._vls = vls;
+
+    this._startViewGeneration = startViewGeneration;
+  }
 }
 
 export default InitModelTypesOperation;

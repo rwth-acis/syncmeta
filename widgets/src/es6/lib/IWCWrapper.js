@@ -3,38 +3,34 @@ import OTOperation from "../operations/ot/OTOperation";
 import NonOTOperation from "../operations/non_ot/NonOTOperation";
 import OperationFactory from "../operations/OperationFactory";
 import Util from "../Util";
-import "./iwc";
+
+import { IWC, validateIntent } from "./iwc";
 var PAYLOAD_DATA_TYPE = {
   OT_OPERATION: "OTOperation",
   NON_OT_OPERATION: "NonOTOperation",
 };
 
-/**
- * Inter widget communication and OT client module
- * @exports IWCW
- */
-var IWCW = {};
+class IWCWrapper {
+  /**
+   * Inter-widget communication wrapper
+   * @class IWCWrapper
+   * @constructor
+   * @param componentName Name of component (widget) using the wrapper
+   */
 
-/**
- * Inter-widget communication wrapper
- * @class IWCWrapper
- * @constructor
- * @param componentName Name of component (widget) using the wrapper
- */
-function IWCWrapper(componentName) {
   /**
    * Set if local messages should be buffered
    * @type {boolean}
    */
-  var BUFFER_ENABLED = false;
+  BUFFER_ENABLED = false;
 
   /**
    * Interval for sending buffered local messages
    * @type {number}
    */
-  var INTERVAL_SEND = 25;
+  INTERVAL_SEND = 25;
 
-  var Space = null;
+  Space = null;
 
   //noinspection JSMismatchedCollectionQueryUpdate
   /**
@@ -42,7 +38,7 @@ function IWCWrapper(componentName) {
    * @type {Array}
    * @private
    */
-  var _messageBuffer = [];
+  _messageBuffer = [];
 
   //noinspection JSMismatchedCollectionQueryUpdate
   /**
@@ -50,24 +46,46 @@ function IWCWrapper(componentName) {
    * @type {Array}
    * @private
    */
-  var _onDataReceivedCallbacks = [];
+  _onDataReceivedCallbacks = [];
 
-  var _onDataReceivedCallers = [];
+  _onDataReceivedCallers = [];
 
   /**
    * Stores (for each user) the times an inocming messages has been received to drop duplicate (same time) messages
    * @type {object}
    * @private
    */
-  var _times = {};
+  _times = {};
 
   /**
    * Inter widget communication client
    * @type {iwc.Client}
    * @private
    */
-  var _iwc = new IWC.Client(componentName, "*");
-  window._iwc_instance_ = _iwc;
+
+  /**
+   * Disconnect the iwc client
+   * @memberof IWCWrapper#
+   */
+  disconnect;
+  /**
+   * Connect the iwc client
+   * @memberof IWCWrapper#
+   */
+  connect;
+  _iwc;
+  sendLocalMessage;
+  sendLocalOTOperation;
+  sendLocalNonOTOperation;
+  getUserColor;
+  registerOnDataReceivedCallback;
+  unregisterOnDataReceivedCallback;
+  getUser;
+  getMembers;
+  getSpaceTitle;
+  setSpace;
+  componentName;
+  _times = {};
 
   /**
    * Encapsulates the passed message information into the Android Intent-like format required by the iwc client
@@ -77,7 +95,7 @@ function IWCWrapper(componentName) {
    * @param {object} payload Message Payload
    * @returns {Object}
    */
-  var encapsulateMessage = function (receiver, flags, action, payload) {
+  encapsulateMessage(receiver, flags, action, payload) {
     var i, numOfFlags, flag;
     var validatedFlags = [];
 
@@ -110,7 +128,7 @@ function IWCWrapper(componentName) {
 
     return {
       receiver: receiver,
-      sender: componentName,
+      sender: this.componentName,
       data: "",
       dataType: "",
       action: action,
@@ -120,59 +138,59 @@ function IWCWrapper(componentName) {
         time: new Date().getTime(),
       },
     };
-  };
+  }
 
   /**
    * Send all buffered local messages encapsulated in one message
    */
-  var sendBufferedMessages = function () {
+  sendBufferedMessages() {
     var intent;
     var data = null;
 
-    for (var receiver in _messageBuffer) {
-      if (_messageBuffer.hasOwnProperty(receiver)) {
-        data = _messageBuffer[receiver].splice(
+    for (var receiver in this._messageBuffer) {
+      if (this._messageBuffer.hasOwnProperty(receiver)) {
+        data = this._messageBuffer[receiver].splice(
           0,
-          _messageBuffer[receiver].length
+          this._messageBuffer[receiver].length
         );
         //sendBufferTimer.pause();
         if (data.length == 1) {
-          intent = encapsulateMessage(
+          intent = this.encapsulateMessage(
             receiver,
             CONFIG.IWC.FLAG.PUBLISH_LOCAL,
             CONFIG.IWC.ACTION.DATA,
             data[0]
           );
-          if (IWC.util.validateIntent(intent)) {
+          if (validateIntent(intent)) {
             //console.log("=== " + intent.flags.toString().replace(/PUBLISH_/g, "") + " INTENT TRANSMITTED AT COMPONENT " + componentName + " ===");
             //console.log(intent);
 
-            _iwc.publish(intent);
+            this._iwc.publish(intent);
           }
         } else if (data.length > 1) {
-          intent = encapsulateMessage(
+          intent = this.encapsulateMessage(
             receiver,
             CONFIG.IWC.FLAG.PUBLISH_LOCAL,
             CONFIG.IWC.ACTION.DATA_ARRAY,
             data
           );
-          if (IWC.util.validateIntent(intent)) {
+          if (validateIntent(intent)) {
             //console.log("=== " + intent.flags.toString().replace(/PUBLISH_/g, "") + " INTENT TRANSMITTED AT COMPONENT " + componentName + " ===");
             //console.log(intent);
 
-            _iwc.publish(intent);
+            this._iwc.publish(intent);
           }
         }
       }
     }
     //sendBufferTimer.resume();
-  };
+  }
 
   /**
    * Callback for received local messages
    * @param {object} intent Message content in Android Intent-like format required by the iwc client
    */
-  var onIntentReceivedCallback = function (intent) {
+  onIntentReceivedCallback(intent) {
     //some CAE widgets still use the old iwc.js library
     //then it happens that intent are not parsed and processes correctly by the new iwc and then
     //the complete message as string is returned
@@ -198,7 +216,7 @@ function IWCWrapper(componentName) {
 
     var payload = intent.extras.payload,
       senderTime = intent.extras.time,
-      senderTimes = _times[intent.extras.sender];
+      senderTimes = this._times[intent.extras.sender];
 
     var i, numOfSenderTimes, numOfMessages;
 
@@ -228,13 +246,13 @@ function IWCWrapper(componentName) {
             OperationFactory.createOperationFromOTOperation(operation);
           //adjustHistory(remoteOp);
           for (
-            i = 0, numOfCallbacks = _onDataReceivedCallbacks.length;
+            i = 0, numOfCallbacks = this._onDataReceivedCallbacks.length;
             i < numOfCallbacks;
             i++
           ) {
-            if (typeof _onDataReceivedCallbacks[i] === "function") {
-              var caller = _onDataReceivedCallers[i] || this;
-              _onDataReceivedCallbacks[i].call(caller, resOperation);
+            if (typeof this._onDataReceivedCallbacks[i] === "function") {
+              var caller = this._onDataReceivedCallers[i] || this;
+              this._onDataReceivedCallbacks[i].call(caller, resOperation);
             }
           }
           break;
@@ -245,13 +263,13 @@ function IWCWrapper(componentName) {
             OperationFactory.createOperationFromNonOTOperation(operation);
           //adjustHistory(remoteOp);
           for (
-            i = 0, numOfCallbacks = _onDataReceivedCallbacks.length;
+            i = 0, numOfCallbacks = this._onDataReceivedCallbacks.length;
             i < numOfCallbacks;
             i++
           ) {
-            if (typeof _onDataReceivedCallbacks[i] === "function") {
-              var caller = _onDataReceivedCallers[i] || this;
-              _onDataReceivedCallbacks[i].call(caller, resOperation);
+            if (typeof this._onDataReceivedCallbacks[i] === "function") {
+              var caller = this._onDataReceivedCallers[i] || this;
+              this._onDataReceivedCallbacks[i].call(caller, resOperation);
             }
           }
           break;
@@ -261,7 +279,7 @@ function IWCWrapper(componentName) {
     if (intent.flags.indexOf(CONFIG.IWC.FLAG.PUBLISH_GLOBAL) !== -1) return;
 
     if (typeof senderTimes === "undefined") {
-      senderTimes = _times[intent.extras.sender] = [];
+      senderTimes = this._times[intent.extras.sender] = [];
     } else {
       for (
         i = 0, numOfSenderTimes = senderTimes.length;
@@ -289,49 +307,42 @@ function IWCWrapper(componentName) {
         }
         break;
     }
-  };
+  }
 
-  //var sendBufferTimer;
-  //if(BUFFER_ENABLED) sendBufferTimer = new IWCWrapper.PausableInterval(sendBufferedMessages, INTERVAL_SEND);
-  if (BUFFER_ENABLED) setInterval(sendBufferedMessages, INTERVAL_SEND);
+  constructor(componentName) {
+    this.componentName = componentName;
+    this._iwc = new IWC.Client(componentName, "*", null);
+    window._iwc_instance_ = this._iwc;
 
-  return {
-    _iwc: _iwc,
-    /**
-     * Connect the iwc client
-     * @memberof IWCWrapper#
-     */
-    connect: function () {
-      _iwc.connect(onIntentReceivedCallback);
-    },
-    /**
-     * Disconnect the iwc client
-     * @memberof IWCWrapper#
-     */
-    disconnect: function () {
-      _iwc.disconnect();
-    },
+    //var sendBufferTimer;
+    //if(BUFFER_ENABLED) sendBufferTimer = new IWCWrapper.PausableInterval(sendBufferedMessages, INTERVAL_SEND);
+    if (this.BUFFER_ENABLED)
+      setInterval(this.sendBufferedMessages, this.INTERVAL_SEND);
+
+    this.connect = () => this._iwc.connect(this.onIntentReceivedCallback);
+    this.disconnect = () => this._iwc.disconnect;
+
     /**
      * Send data locally to an other component
      * @memberof IWCWrapper#
      * @param {string} receiver Component name of receiving component, empty string for broadcast
      * @param {object} data Data to send
      */
-    sendLocalMessage: function (receiver, data) {
+    (this.sendLocalMessage = function (receiver, data) {
       var intent;
 
       if (!receiver || receiver === "") return;
 
-      if (BUFFER_ENABLED) {
+      if (this.BUFFER_ENABLED) {
         //sendBufferTimer.pause();
-        if (_messageBuffer.hasOwnProperty(receiver)) {
-          _messageBuffer[receiver].push(data);
+        if (this._messageBuffer.hasOwnProperty(receiver)) {
+          this._messageBuffer[receiver].push(data);
         } else {
-          _messageBuffer[receiver] = [data];
+          this._messageBuffer[receiver] = [data];
         }
         //sendBufferTimer.resume();
       } else {
-        intent = encapsulateMessage(
+        intent = this.encapsulateMessage(
           receiver,
           CONFIG.IWC.FLAG.PUBLISH_LOCAL,
           CONFIG.IWC.ACTION.DATA,
@@ -341,112 +352,121 @@ function IWCWrapper(componentName) {
           //console.log("=== " + intent.flags.toString().replace(/PUBLISH_/g,"") + " INTENT TRANSMITTED AT COMPONENT " + componentName + " ===");
           //console.log(intent);
 
-          _iwc.publish(intent);
+          this._iwc.publish(intent);
         }
       }
-    },
-    /**
-     * Send OTOperation locally to an other component
-     * @memberof IWCWrapper#
-     * @param {string} receiver Component name of receiving component, empty string for broadcast
-     * @param {operations.ot.OTOperation} operation Operation to send
-     */
-    sendLocalOTOperation: function (receiver, operation) {
-      this.sendLocalMessage(receiver, {
-        type: PAYLOAD_DATA_TYPE.OT_OPERATION,
-        data: operation.getOperationObject(),
-        sender: operation.getSender(),
-      });
-    },
-    /**
-     * Send NonOTOperation locally to an other component
-     * @memberof IWCWrapper#
-     * @param {string} receiver Component name of receiving component, empty string for broadcast
-     * @param {operations.non_ot.NonOTOperation} operation Operation to send
-     */
-    sendLocalNonOTOperation: function (receiver, operation) {
-      this.sendLocalMessage(receiver, {
-        type: PAYLOAD_DATA_TYPE.NON_OT_OPERATION,
-        data: operation.getOperationObject(),
-        sender: operation.getSender(),
-      });
-    },
-    getUserColor: function (jabberId) {
-      return Util.getColor(Space.members[jabberId].globalId);
-    },
-    /**
-     * Register callback for local data receive events
-     * @memberof IWCWrapper#
-     * @param {function} callback
-     */
-    registerOnDataReceivedCallback: function (callback, caller) {
-      if (typeof callback === "function") {
-        this.unregisterOnDataReceivedCallback(callback);
-        _onDataReceivedCallbacks.push(callback);
-        _onDataReceivedCallers.push(caller);
-      }
-    },
-    /**
-     * Unregister callback for local data receive events
-     * @memberof IWCWrapper#
-     * @param {function} callback
-     */
-    unregisterOnDataReceivedCallback: function (callback) {
-      var i, numOfCallbacks;
+    }),
+      /**
+       * Send OTOperation locally to an other component
+       * @memberof IWCWrapper#
+       * @param {string} receiver Component name of receiving component, empty string for broadcast
+       * @param {operations.ot.OTOperation} operation Operation to send
+       */
+      (this.sendLocalOTOperation = function (receiver, operation) {
+        this.sendLocalMessage(receiver, {
+          type: PAYLOAD_DATA_TYPE.OT_OPERATION,
+          data: operation.getOperationObject(),
+          sender: operation.getSender(),
+        });
+      }),
+      /**
+       * Send NonOTOperation locally to an other component
+       * @memberof IWCWrapper#
+       * @param {string} receiver Component name of receiving component, empty string for broadcast
+       * @param {operations.non_ot.NonOTOperation} operation Operation to send
+       */
+      (this.sendLocalNonOTOperation = function (receiver, operation) {
+        this.sendLocalMessage(receiver, {
+          type: PAYLOAD_DATA_TYPE.NON_OT_OPERATION,
+          data: operation.getOperationObject(),
+          sender: operation.getSender(),
+        });
+      }),
+      (this.getUserColor = function (jabberId) {
+        return Util.getColor(this.Space.members[jabberId].globalId);
+      }),
+      /**
+       * Register callback for local data receive events
+       * @memberof IWCWrapper#
+       * @param {function} callback
+       */
+      (this.registerOnDataReceivedCallback = function (callback, caller) {
+        if (typeof callback === "function") {
+          this.unregisterOnDataReceivedCallback(callback);
+          this._onDataReceivedCallbacks.push(callback);
+          this._onDataReceivedCallers.push(caller);
+        }
+      }),
+      /**
+       * Unregister callback for local data receive events
+       * @memberof IWCWrapper#
+       * @param {function} callback
+       */
+      (this.unregisterOnDataReceivedCallback = function (callback) {
+        var i, numOfCallbacks;
 
-      if (typeof callback === "function") {
-        for (
-          i = 0, numOfCallbacks = _onDataReceivedCallbacks.length;
-          i < numOfCallbacks;
-          i++
-        ) {
-          if (callback === _onDataReceivedCallbacks[i]) {
-            _onDataReceivedCallbacks.splice(i, 1);
-            _onDataReceivedCallers.splice(i, 1);
+        if (typeof callback === "function") {
+          for (
+            i = 0, numOfCallbacks = this._onDataReceivedCallbacks.length;
+            i < numOfCallbacks;
+            i++
+          ) {
+            if (callback === this._onDataReceivedCallbacks[i]) {
+              this._onDataReceivedCallbacks.splice(i, 1);
+              this._onDataReceivedCallers.splice(i, 1);
+            }
           }
         }
-      }
-    },
-    getUser: function () {
-      return Space.user;
-    },
-    getMembers: function () {
-      return Space.members;
-    },
-    getSpaceTitle: function () {
-      return Space.title;
-    },
-    setSpace: function (s) {
-      Space = s;
-    },
-  };
+      }),
+      (this.getUser = function () {
+        return this.Space.user;
+      }),
+      (this.getMembers = function () {
+        return this.Space.members;
+      }),
+      (this.getSpaceTitle = function () {
+        return this.Space.title;
+      }),
+      (this.setSpace = function (s) {
+        this.Space = s;
+      });
+
+    return this;
+  }
 }
 
 /**
- * Instance of IWCWrapper
- * @type {IWCWrapper}
+ * Inter widget communication and OT client module
+ * @exports IWCW
  */
-var instance = null;
+export default class IWCW {
+  instance;
+  constructor() {
+    this.instance = null;
+  }
+  /**
+   * Instance of IWCWrapper
+   * @type {IWCWrapper}
+   */
 
-IWCW.hasInstance = function () {
-  if (instance === null) {
-    return false;
-  } else {
-    return instance;
+  hasInstance() {
+    if (this.instance === null) {
+      return false;
+    } else {
+      return this.instance;
+    }
+  }
+
+  /**
+   * Get instance of IWCOTWrapper
+   * @param {string} componentName Name of component (widget) using the wrapper
+   * @returns {IWCWrapper}
+   */
+  getInstance(componentName) {
+    if (this.instance === null) {
+      this.instance = new IWCWrapper(componentName);
+      this.instance.connect();
+    }
+    return this.instance;
   }
 };
-
-/**
- * Get instance of IWCOTWrapper
- * @param {string} componentName Name of component (widget) using the wrapper
- * @returns {IWCWrapper}
- */
-IWCW.getInstance = function (componentName) {
-  if (instance === null) {
-    instance = new IWCWrapper(componentName);
-    instance.connect();
-  }
-  return instance;
-};
-
-export default IWCW;

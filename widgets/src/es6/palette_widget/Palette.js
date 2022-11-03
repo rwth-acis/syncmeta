@@ -1,6 +1,7 @@
 import { CONFIG } from "../config";
 import _ from "lodash";
 import IWCW from "../lib/IWCWrapper";
+import $ from "jquery";
 import ToolSelectOperation from "../operations/non_ot/ToolSelectOperation";
 import SetViewTypesOperation from "../operations/non_ot/SetViewTypesOperation";
 import InitModelTypesOperation from "../operations/non_ot/InitModelTypesOperation";
