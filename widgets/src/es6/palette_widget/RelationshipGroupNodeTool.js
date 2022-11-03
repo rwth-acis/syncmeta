@@ -1,7 +1,5 @@
 import AbstractTool from "./AbstractTool";
 
-RelationshipGroupNodeTool.prototype = new AbstractTool();
-RelationshipGroupNodeTool.prototype.constructor = RelationshipGroupNodeTool;
 /**
  * RelationshipGroupNodeTool
  * @class palette_widget.RelationshipGroupNodeTool
@@ -9,19 +7,21 @@ RelationshipGroupNodeTool.prototype.constructor = RelationshipGroupNodeTool;
  * @extends palette_widget.AbstractTool
  * @constructor
  */
-function RelationshipGroupNodeTool(
-  toolName = null,
-  toolLabel = null,
-  toolDescription = null,
-  toolIcon = null
-) {
-  AbstractTool.call(
-    this,
-    toolName || "Relation",
-    toolLabel || "Relation",
-    toolDescription || "Click on an empty part of the canvas to add a node",
-    toolIcon || "class.png"
-  );
+class RelationshipGroupNodeTool extends AbstractTool {
+  constructor(
+    toolName = null,
+    toolLabel = null,
+    toolDescription = null,
+    toolIcon = null
+  ) {
+    super(
+      toolName || "Relation",
+      toolLabel || "Relation",
+      toolDescription || "Click on an empty part of the canvas to add a node",
+      toolIcon || "class.png",
+      null
+    );
+  }
 }
 
 export default RelationshipGroupNodeTool;

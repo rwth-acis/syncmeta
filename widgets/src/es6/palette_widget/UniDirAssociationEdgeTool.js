@@ -1,7 +1,6 @@
 import AbstractTool from "./AbstractTool";
 
-UniDirAssociationEdgeTool.prototype = new AbstractTool();
-;
+// UniDirAssociationEdgeTool.prototype = new AbstractTool();
 /**
  * UniDirAssociationEdgeTool
  * @class palette_widget.palette_widget.UniDirAssociationEdgeTool
@@ -9,18 +8,20 @@ UniDirAssociationEdgeTool.prototype = new AbstractTool();
  * @extends palette_widget.AbstractTool
  * @constructor
  */
-class UniDirAssociationEdgeTool {
-  constructor(toolName = null,
+class UniDirAssociationEdgeTool extends AbstractTool {
+  constructor(
+    toolName = null,
     toolLabel = null,
     toolDescription = null,
-    toolIcon = null) {
-    AbstractTool.call(
-      this,
+    toolIcon = null
+  ) {
+    super(
       toolName || "Uni-Dir-Association",
       toolLabel || "Uni-Dir-Assoc",
       toolDescription ||
-      "Click and hold on one Node and release on another node to add an edge between these two nodes.",
-      toolIcon || "unidirassociation.png"
+        "Click and hold on one Node and release on another node to add an edge between these two nodes.",
+      toolIcon || "unidirassociation.png",
+      null
     );
   }
 }

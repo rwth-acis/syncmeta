@@ -1,4 +1,4 @@
-import NonOTOperation from ".//NonOTOperation";
+import NonOTOperation from "./NonOTOperation";
 
 ToolSelectOperation.TYPE = "ToolSelectOperation";
 
@@ -11,69 +11,118 @@ ToolSelectOperation.TYPE = "ToolSelectOperation";
  * @param label
  * @param {map} defaultAttributeValues Map containing default values for the attributes of a node.
  */
-function ToolSelectOperation(toolName, label, defaultAttributeValues = {}) {
+class ToolSelectOperation {
   /**
    * Name of selected tool
    * @type {string}
    */
-  var selectedToolName = toolName;
+  selectedToolName;
 
   /**
    * Corresponding NonOtOperation
    * @type {operations.non_ot.NonOTOperation}
    * @private
    */
-  var nonOTOperation = null;
+  nonOTOperation;
 
   /**
    * Default label of selected tool
    * @type {string}
    */
-  var defaultLabel = label;
+  defaultLabel;
 
   /**
    * May be used to set default values for node attributes.
    * @type {map}
    */
-  var defaultAttributeValues = defaultAttributeValues;
+  defaultAttributeValues;
 
   /**
    * Get name of selected tool
    * @returns {string}
    */
-  this.getSelectedToolName = function () {
-    return selectedToolName;
-  };
+  getSelectedToolName;
 
   /**
    * Get default label of selected tool
    * @returns {string}
    */
-  this.getDefaultLabel = function () {
-    return defaultLabel;
-  };
+  getDefaultLabel;
 
   /**
    * Get default values for node attributes.
    * @returns {map}
    */
-  this.getDefaultAttributeValues = function () {
-    return defaultAttributeValues;
-  };
-
+  getDefaultAttributeValues;
   /**
    * Convert operation to NonOTOperation
    * @returns {operations.non_ot.NonOTOperation}
    */
-  this.toNonOTOperation = function () {
-    if (nonOTOperation === null) {
-      nonOTOperation = new NonOTOperation(
-        ToolSelectOperation.TYPE,
-        JSON.stringify({ selectedToolName: selectedToolName })
-      );
-    }
-    return nonOTOperation;
-  };
+  toNonOTOperation;
+  constructor(toolName, label, defaultAttributeValues = {}) {
+    /**
+     * Name of selected tool
+     * @type {string}
+     */
+    var selectedToolName = toolName;
+
+    /**
+     * Corresponding NonOtOperation
+     * @type {operations.non_ot.NonOTOperation}
+     * @private
+     */
+    var nonOTOperation = null;
+
+    /**
+     * Default label of selected tool
+     * @type {string}
+     */
+    var defaultLabel = label;
+
+    /**
+     * May be used to set default values for node attributes.
+     * @type {map}
+     */
+    var defaultAttributeValues = defaultAttributeValues;
+
+    /**
+     * Get name of selected tool
+     * @returns {string}
+     */
+    this.getSelectedToolName = function () {
+      return selectedToolName;
+    };
+
+    /**
+     * Get default label of selected tool
+     * @returns {string}
+     */
+    this.getDefaultLabel = function () {
+      return defaultLabel;
+    };
+
+    /**
+     * Get default values for node attributes.
+     * @returns {map}
+     */
+    this.getDefaultAttributeValues = function () {
+      return defaultAttributeValues;
+    };
+
+    /**
+     * Convert operation to NonOTOperation
+     * @returns {operations.non_ot.NonOTOperation}
+     */
+    this.toNonOTOperation = function () {
+      if (nonOTOperation === null) {
+        nonOTOperation = new NonOTOperation(
+          ToolSelectOperation.TYPE,
+          JSON.stringify({ selectedToolName: selectedToolName })
+        );
+      }
+      return nonOTOperation;
+    };
+  }
 }
 
 export default ToolSelectOperation;

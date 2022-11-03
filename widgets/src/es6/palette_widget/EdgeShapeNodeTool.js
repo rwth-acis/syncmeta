@@ -1,7 +1,6 @@
 import AbstractTool from "./AbstractTool";
 
-EdgeShapeNodeTool.prototype = new AbstractTool();
-;
+// EdgeShapeNodeTool.prototype = new AbstractTool();
 /**
  * EdgeShapeNodeTool
  * @class palette_widget.EdgeShapeNodeTool
@@ -9,14 +8,19 @@ EdgeShapeNodeTool.prototype = new AbstractTool();
  * @extends palette_widget.AbstractTool
  * @constructor
  */
-class EdgeShapeNodeTool {
-  constructor(toolName=null, toolLabel=null, toolDescription=null, toolIcon=null) {
-    AbstractTool.call(
-      this,
+class EdgeShapeNodeTool extends AbstractTool {
+  constructor(
+    toolName = null,
+    toolLabel = null,
+    toolDescription = null,
+    toolIcon = null
+  ) {
+    super(
       toolName || "Edge Shape",
       toolLabel || "Edge Shape",
       toolDescription || "Click on an empty part of the canvas to add a node",
-      toolIcon || "class.png"
+      toolIcon || "class.png",
+      null
     );
   }
 }

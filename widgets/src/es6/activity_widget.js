@@ -4,7 +4,7 @@
  */
 
 import $ from "jquery-ui";
-import test from "./../es6-test/ActivityWidgetTest";
+// import test from "./../es6-test/ActivityWidgetTest";
 import { CONFIG } from "./config";
 Promise.all([
   import("./lib/yjs-sync"),
@@ -51,6 +51,6 @@ Promise.all([
       activtyList.init();
     });
 
-    if (CONFIG.TEST.ACTIVITY) test;
+    // if (CONFIG.TEST.ACTIVITY) test;
   });
 });

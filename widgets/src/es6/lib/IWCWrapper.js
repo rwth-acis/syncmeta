@@ -117,7 +117,7 @@ function IWCWrapper(componentName) {
       flags: validatedFlags,
       extras: {
         payload: payload,
-        time: parseInt(new Date().getTime(), 10),
+        time: new Date().getTime(),
       },
     };
   };

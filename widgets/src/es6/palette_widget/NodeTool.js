@@ -1,7 +1,7 @@
 import AbstractTool from "./AbstractTool";
 
-NodeTool.prototype = new AbstractTool();
-NodeTool.prototype.constructor = NodeTool;
+// NodeTool.prototype = new AbstractTool();
+;
 /**
  * NodeTool
  * @class palette_widget.NodeTool
@@ -9,14 +9,15 @@ NodeTool.prototype.constructor = NodeTool;
  * @extends palette_widget.AbstractTool
  * @constructor
  */
-function NodeTool(toolName, toolLabel, toolDescription, toolIcon) {
-  AbstractTool.call(
-    this,
-    toolName,
-    toolLabel,
-    toolDescription || "Click on an empty part of the canvas to add a node",
-    toolIcon || "class.png"
-  );
+class NodeTool extends AbstractTool{
+  constructor(toolName, toolLabel, toolDescription, toolIcon) {
+    super(
+            toolName,
+      toolLabel,
+      toolDescription || "Click on an empty part of the canvas to add a node",
+      toolIcon || "class.png", null
+    );
+  }
 }
 
 export default NodeTool;

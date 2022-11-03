@@ -160,12 +160,12 @@ Promise.all([
           operation.toNonOTOperation()
         );
 
-        if (
-          CONFIG.TEST.ATTRIBUTE &&
-          (iwc.getUser()[CONFIG.NS.PERSON.TITLE] === CONFIG.TEST.USER ||
-            iwc.getUser()[CONFIG.NS.PERSON.MBOX] === CONFIG.TEST.EMAIL)
-        )
-          AttributeWidgetTest();
+        // if (
+        //   CONFIG.TEST.ATTRIBUTE &&
+        //   (iwc.getUser()[CONFIG.NS.PERSON.TITLE] === CONFIG.TEST.USER ||
+        //     iwc.getUser()[CONFIG.NS.PERSON.MBOX] === CONFIG.TEST.EMAIL)
+        // )
+        //   AttributeWidgetTest();
         const canvas = y.getMap("canvas");
         canvas.observe(function (event) {
           switch (event.name) {

@@ -6,7 +6,7 @@
 import $ from "jquery-ui";
 import Util from "./Util";
 import IWCW from "./lib/IWCWrapper";
-import CanvasWidgetTest from "./../test/CanvasWidgetTest";
+// import CanvasWidgetTest from "./../test/CanvasWidgetTest";
 import { CONFIG } from "./config";
 Promise.all([
   import("./lib/yjs-sync"),
@@ -196,12 +196,12 @@ Promise.all([
         canvas.resetTool();
         $("#loading").hide();
 
-        if (
-          CONFIG.TEST.CANVAS &&
-          (_iwcw.getUser()[CONFIG.NS.PERSON.TITLE] === CONFIG.TEST.USER ||
-            _iwcw.getUser()[CONFIG.NS.PERSON.MBOX] === CONFIG.TEST.EMAIL)
-        )
-          CanvasWidgetTest(canvas);
+        // if (
+        //   CONFIG.TEST.CANVAS &&
+        //   (_iwcw.getUser()[CONFIG.NS.PERSON.TITLE] === CONFIG.TEST.USER ||
+        //     _iwcw.getUser()[CONFIG.NS.PERSON.MBOX] === CONFIG.TEST.EMAIL)
+        // )
+        //   CanvasWidgetTest(canvas);
 
         _iwcw.registerOnDataReceivedCallback(function (operation) {
           const canvasMap = y.getMap("canvas");

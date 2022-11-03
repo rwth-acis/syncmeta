@@ -1,4 +1,4 @@
-import NonOTOperation from ".//NonOTOperation";
+import NonOTOperation from "./NonOTOperation";
 
 ViewInitOperation.TYPE = "ViewInitOperation";
 

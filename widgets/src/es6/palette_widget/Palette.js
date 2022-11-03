@@ -161,7 +161,7 @@ function Palette($palette, $info) {
   this.selectTool = function (name) {
     if (_tools.hasOwnProperty(name)) {
       processToolSelection(name);
-      var operation = new ToolSelectOperation(name);
+      var operation = new ToolSelectOperation(name, null);
       _iwc.sendLocalNonOTOperation(
         CONFIG.WIDGET.NAME.MAIN,
         operation.toNonOTOperation()

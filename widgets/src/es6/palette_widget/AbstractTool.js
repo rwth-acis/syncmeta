@@ -39,7 +39,13 @@ class AbstractTool {
   select;
   unselect;
 
-  constructor(toolName, toolLabel, toolDescription, toolIcon, toolColor) {
+  constructor(
+    toolName,
+    toolLabel,
+    toolDescription,
+    toolIcon,
+    toolColor = null
+  ) {
     /**
      * Name of tool
      * @type {string}

@@ -1,7 +1,7 @@
 import AbstractTool from "./AbstractTool";
 
-MoveTool.prototype = new AbstractTool();
-MoveTool.prototype.constructor = MoveTool;
+// MoveTool.prototype = new AbstractTool();
+;
 /**
  * MoveTool
  * @class palette_widget.MoveTool
@@ -9,21 +9,21 @@ MoveTool.prototype.constructor = MoveTool;
  * @extends palette_widget.AbstractTool
  * @constructor
  */
-function MoveTool(
-  toolName = null,
-  toolLabel = null,
-  toolDescription = null,
-  toolIcon = null
-) {
-  AbstractTool.call(
-    this,
-    toolName || "MoveTool",
-    toolLabel || "Move",
-    toolDescription ||
+class MoveTool extends AbstractTool {
+  constructor(toolName = null,
+    toolLabel = null,
+    toolDescription = null,
+    toolIcon = null) {
+    super(
+      
+      toolName || "MoveTool",
+      toolLabel || "Move",
+      toolDescription ||
       "Move a node by dragging and dropping it. Resize a node by dragging and dropping its bottom right corner. Remove a node or edge by clicking on it with the right mouse button and selecting 'Delete'.",
-    toolIcon || "arrow.png",
-    "#FFFFFF"
-  );
+      toolIcon || "arrow.png",
+      "#FFFFFF"
+    );
+  }
 }
 
 export default MoveTool;

@@ -1,7 +1,7 @@
 import AbstractTool from "./AbstractTool";
 
-RelationshipNodeTool.prototype = new AbstractTool();
-RelationshipNodeTool.prototype.constructor = RelationshipNodeTool;
+// RelationshipNodeTool.prototype = new AbstractTool();
+
 /**
  * RelationshipNodeTool
  * @class palette_widget.RelationshipNodeTool
@@ -9,19 +9,21 @@ RelationshipNodeTool.prototype.constructor = RelationshipNodeTool;
  * @extends palette_widget.AbstractTool
  * @constructor
  */
-function RelationshipNodeTool(
-  toolName = null,
-  toolLabel = null,
-  toolDescription = null,
-  toolIcon = null
-) {
-  AbstractTool.call(
-    this,
-    toolName || "Relationship",
-    toolLabel || "Relationship",
-    toolDescription || "Click on an empty part of the canvas to add a node",
-    toolIcon || "class.png"
-  );
+class RelationshipNodeTool extends AbstractTool {
+  constructor(
+    toolName = null,
+    toolLabel = null,
+    toolDescription = null,
+    toolIcon = null
+  ) {
+    super(
+      toolName || "Relationship",
+      toolLabel || "Relationship",
+      toolDescription || "Click on an empty part of the canvas to add a node",
+      toolIcon || "class.png",
+      null
+    );
+  }
 }
 
 export default RelationshipNodeTool;

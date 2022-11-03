@@ -20,7 +20,7 @@ import GeneralisationEdgeTool from "./palette_widget/GeneralisationEdgeTool";
 import ViewObjectNodeTool from "./palette_widget/ViewObjectNodeTool";
 import ViewRelationshipNodeTool from "./palette_widget/ViewRelationshipNodeTool";
 import { CONFIG } from "./config.js";
-import test from "./../es6-test/PaletteWidgetTest";
+// import test from "./../es6-test/PaletteWidgetTest";
 
 WaitForCanvas(CONFIG.WIDGET.NAME.PALETTE, 10, 1500).done(function (metamodel) {
   var palette = new Palette($("#palette"), $("#info"));
@@ -59,5 +59,5 @@ WaitForCanvas(CONFIG.WIDGET.NAME.PALETTE, 10, 1500).done(function (metamodel) {
     palette.addTool(new GeneralisationEdgeTool());
   }
 
-  if (CONFIG.TEST.PALETTE) test();
+  // if (CONFIG.TEST.PALETTE) test();
 });
