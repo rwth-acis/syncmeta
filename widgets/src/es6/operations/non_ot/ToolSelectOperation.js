@@ -1,6 +1,5 @@
 import NonOTOperation from "./NonOTOperation";
 
-ToolSelectOperation.TYPE = "ToolSelectOperation";
 
 /**
  * ToolSelectOperation
@@ -12,6 +11,7 @@ ToolSelectOperation.TYPE = "ToolSelectOperation";
  * @param {map} defaultAttributeValues Map containing default values for the attributes of a node.
  */
 class ToolSelectOperation {
+  static TYPE = "ToolSelectOperation";
   /**
    * Name of selected tool
    * @type {string}

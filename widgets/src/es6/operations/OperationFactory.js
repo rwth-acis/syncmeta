@@ -48,7 +48,7 @@ function OperationFactory() {
     createOperationFromNonOTOperation: function (operation) {
       var type = operation.getType(),
         data,
-        resOperation = null;
+        resOperation;
 
       try {
         data = JSON.parse(operation.getData());
@@ -180,7 +180,7 @@ function OperationFactory() {
       var entityId;
       var components = operation.getName().split(":");
 
-      var resOperation = null;
+      var resOperation;
 
       if (components.length === 2) {
         entityType = components[0];
@@ -313,7 +313,8 @@ function OperationFactory() {
               entityId,
               operation.getValue(),
               operation.getType(),
-              operation.getPosition()
+              operation.getPosition(),
+              null
             );
             break;
         }
@@ -326,4 +327,4 @@ function OperationFactory() {
   };
 }
 
-export default new OperationFactory();
+export default OperationFactory();

@@ -3,9 +3,7 @@ import EntityOperation from "./EntityOperation";
 import OTOperation from "./OTOperation";
 import $__operations_ot_EdgeAddOperation from "./EdgeAddOperation";
 
-EdgeDeleteOperation.TYPE = "EdgeDeleteOperation";
-EdgeDeleteOperation.prototype = new EntityOperation();
-;
+
 /**
  * EdgeDeleteOperation
  * @class operations.ot.EdgeDeleteOperation
@@ -18,16 +16,19 @@ EdgeDeleteOperation.prototype = new EntityOperation();
  * @param {object} json JSON representation of edge
  * @constructor
  */
-class EdgeDeleteOperation {
-  constructor(entityId, type, source, target, json) {
-    var that = this;
-
-    EntityOperation.call(
-      this,
+class EdgeDeleteOperation extends EntityOperation {
+  static TYPE = "EdgeDeleteOperation";
+  getType;
+  getSource;
+  getTarget;
+  getJSON;
+  constructor(entityId, type, source, target, json = null) {
+    super(
       EntityOperation.TYPES.EdgeDeleteOperation,
       entityId,
       CONFIG.ENTITY.EDGE
     );
+    var that = this;
 
     /**
      * Type of edge to delte
@@ -168,9 +169,7 @@ class EdgeDeleteOperation {
       );
     };
   }
-  static getOperationDescription(edgeType,
-    edgeLabel,
-    viewId) {
+  static getOperationDescription(edgeType, edgeLabel, viewId) {
     if (!edgeLabel && !viewId) {
       return "..deleted " + edgeType;
     } else if (!viewId) {
@@ -179,7 +178,7 @@ class EdgeDeleteOperation {
       return "..deleted " + edgeType + " " + edgeLabel + "in View " + viewId;
     }
   }
-  toJSON() {
+  toJSON = function () {
     return {
       id: this.getEntityId(),
       type: this.getType(),
@@ -187,7 +186,7 @@ class EdgeDeleteOperation {
       target: this.getTarget(),
       json: this.getJSON(),
     };
-  }
+  };
 }
 
 

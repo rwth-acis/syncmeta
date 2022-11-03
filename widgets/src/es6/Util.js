@@ -1,5 +1,6 @@
-import $ from "jquery-ui";
+import jQuery from "jquery";
 import { CONFIG } from "./config";
+import openapp from "./lib/openapp";
 /**
  * Util
  * @class Util
@@ -33,7 +34,7 @@ export default {
    * @returns {promise}
    */
   delay: function (delay) {
-    var deferred = $.Deferred();
+    var deferred = jQuery.Deferred();
     setTimeout(function () {
       deferred.resolve();
     }, delay);
@@ -87,7 +88,7 @@ export default {
     return function () {
       //noinspection JSAccessibilityCheck
       var args = Array.prototype.slice.call(arguments);
-      var deferred = $.Deferred();
+      var deferred = jQuery.Deferred();
       args.push(function () {
         deferred.resolve.apply(this, arguments);
       });
@@ -113,7 +114,7 @@ export default {
    * @returns {string}
    */
   getColor: function (id) {
-    return COLORS[id % COLORS.length];
+    return this.COLORS[id % this.COLORS.length];
   },
 
   /*function hashCode(s){
@@ -144,7 +145,7 @@ export default {
    */
   GetCurrentBaseModel: function () {
     var resourceSpace = new openapp.oo.Resource(openapp.param.space());
-    var deferred = $.Deferred();
+    var deferred = jQuery.Deferred();
     resourceSpace.getSubResources({
       relation: openapp.ns.role + "data",
       type: CONFIG.NS.MY.MODEL,

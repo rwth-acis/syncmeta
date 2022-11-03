@@ -3,6 +3,7 @@ import $ from "jquery-ui";
 import jsPlumb from "jsplumb";
 import Util from "../Util";
 import IWCW from "../lib/IWCWrapper";
+import "../lib/jquery.transformable-PATCHED";
 
 Promise.all([
   import("../Util"),
@@ -33,7 +34,6 @@ Promise.all([
   import("../canvas_widget/guidance_modeling/GhostEdgeGuidance"),
   import("../canvas_widget/guidance_modeling/CollaborationGuidance"),
   import("../canvas_widget/DagreLayout"),
-  //   import("jquery.transformable-PATCHED"),
 ]).then(function ([
   NodeAddOperation,
   NodeDeleteOperation,

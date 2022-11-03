@@ -1,17 +1,6 @@
 
 
-    EntityOperation.TYPES = {
-        AttributeAddOperation: "AttributeAddOperation",
-        AttributeDeleteOperation: "AttributeDeleteOperation",
-        EdgeAddOperation: "EdgeAddOperation",
-        EdgeDeleteOperation: "EdgeDeleteOperation",
-        NodeAddOperation: "NodeAddOperation",
-        NodeDeleteOperation: "NodeDeleteOperation",
-        NodeMoveOperation: "NodeMoveOperation",
-        NodeMoveZOperation: "NodeMoveZOperation",
-        NodeResizeOperation: "NodeResizeOperation",
-        ValueChangeOperation: "ValueChangeOperation"
-    };
+    
 
     /**
      * EntityOperation
@@ -22,7 +11,28 @@
      * @param {string} entityType Type of the entity this activity works on
      * @constructor
      */
-    function EntityOperation(operationType,entityId,entityType){
+    class EntityOperation {
+      static TYPES = {
+        AttributeAddOperation: "AttributeAddOperation",
+        AttributeDeleteOperation: "AttributeDeleteOperation",
+        EdgeAddOperation: "EdgeAddOperation",
+        EdgeDeleteOperation: "EdgeDeleteOperation",
+        NodeAddOperation: "NodeAddOperation",
+        NodeDeleteOperation: "NodeDeleteOperation",
+        NodeMoveOperation: "NodeMoveOperation",
+        NodeMoveZOperation: "NodeMoveZOperation",
+        NodeResizeOperation: "NodeResizeOperation",
+        ValueChangeOperation: "ValueChangeOperation",
+      };
+      getOperationType
+      setOTOperation
+      _getOTOperation
+      getEntityId
+      getEntityType
+      adjust
+      inverse
+      toJSON
+      constructor(operationType, entityId, entityType) {
         /**
          * Type of operation
          * @type {string}
@@ -55,16 +65,16 @@
          * Get type of operation
          * @returns {string}
          */
-        this.getOperationType = function(){
-            return _operationType;
+        this.getOperationType = function () {
+          return _operationType;
         };
 
         /**
          * Set corresponding ot operation
          * @param {operations.ot.OTOperation} otOperation
          */
-        this.setOTOperation = function(otOperation){
-            _otOperation = otOperation;
+        this.setOTOperation = function (otOperation) {
+          _otOperation = otOperation;
         };
 
         /**
@@ -72,16 +82,16 @@
          * @returns {operations.ot.OTOperation}
          * @private
          */
-        this._getOTOperation = function(){
-            return _otOperation;
+        this._getOTOperation = function () {
+          return _otOperation;
         };
 
         /**
          * Get entity id of the entity this activity works onf
          * @returns {string}
          */
-        this.getEntityId = function(){
-            return _entityId;
+        this.getEntityId = function () {
+          return _entityId;
         };
 
         //noinspection JSUnusedGlobalSymbols
@@ -89,8 +99,8 @@
          * Get type of the entity this activity works on
          * @returns {string}
          */
-        this.getEntityType = function(){
-            return _entityType;
+        this.getEntityType = function () {
+          return _entityType;
         };
 
         /**
@@ -101,27 +111,30 @@
          * @param {EntityOperation} operation Remote operation
          * @returns {EntityOperation}
          */
-        this.adjust = function(EntityManager,operation){
-            return operation;
+        this.adjust = function (EntityManager, operation) {
+          return operation;
         };
 
         /**
          * Compute the inverse of the operation
          * @returns {operations.ot.EntityOperation}
          */
-        this.inverse = function(){
-            return this;
+        this.inverse = function () {
+          return this;
         };
+      }
+      //noinspection JSAccessibilityCheck
+      /**
+       * Get corresponding ot operation
+       * @returns {operations.ot.OTOperation}
+       */
+      getOTOperation() {
+        return this._getOTOperation();
+      }
     }
 
-    //noinspection JSAccessibilityCheck
-    /**
-     * Get corresponding ot operation
-     * @returns {operations.ot.OTOperation}
-     */
-    EntityOperation.prototype.getOTOperation = function(){
-        return this._getOTOperation();
-    };
+
+
 
     export default EntityOperation;
 

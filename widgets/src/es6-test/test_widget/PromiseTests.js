@@ -1,3 +1,4 @@
+import openapp from "../../es6/lib/openapp";
 import { CONFIG } from "../config";
 import $ from "jquery-ui";
 function PromiseTest() {

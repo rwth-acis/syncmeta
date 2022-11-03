@@ -4,7 +4,7 @@ import NonOTOperation from "../operations/non_ot/NonOTOperation";
 import OperationFactory from "../operations/OperationFactory";
 import Util from "../Util";
 
-import { IWC, validateIntent } from "./iwc";
+import IWC from "./iwc";
 var PAYLOAD_DATA_TYPE = {
   OT_OPERATION: "OTOperation",
   NON_OT_OPERATION: "NonOTOperation",
@@ -62,7 +62,7 @@ class IWCWrapper {
    * @type {iwc.Client}
    * @private
    */
-
+  _iwc;
   /**
    * Disconnect the iwc client
    * @memberof IWCWrapper#
@@ -73,7 +73,6 @@ class IWCWrapper {
    * @memberof IWCWrapper#
    */
   connect;
-  _iwc;
   sendLocalMessage;
   sendLocalOTOperation;
   sendLocalNonOTOperation;
@@ -160,7 +159,7 @@ class IWCWrapper {
             CONFIG.IWC.ACTION.DATA,
             data[0]
           );
-          if (validateIntent(intent)) {
+          if (IWC.util.validateIntent(intent)) {
             //console.log("=== " + intent.flags.toString().replace(/PUBLISH_/g, "") + " INTENT TRANSMITTED AT COMPONENT " + componentName + " ===");
             //console.log(intent);
 
@@ -173,7 +172,7 @@ class IWCWrapper {
             CONFIG.IWC.ACTION.DATA_ARRAY,
             data
           );
-          if (validateIntent(intent)) {
+          if (IWC.util.validateIntent(intent)) {
             //console.log("=== " + intent.flags.toString().replace(/PUBLISH_/g, "") + " INTENT TRANSMITTED AT COMPONENT " + componentName + " ===");
             //console.log(intent);
 

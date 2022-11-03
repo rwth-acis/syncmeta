@@ -1,6 +1,7 @@
 import $ from "jquery-ui";
 import _ from "lodash";
 import GhostEdge from "./GhostEdge";
+import loadHTML from "../../html.template.loader";
 const ghostEdgeHtml = await loadHTML(
   "../../../html/templates/guidance_modeling/ghost_edge.html",
   import.meta.url

@@ -1,14 +1,17 @@
 import { CONFIG } from "../config";
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import IWCW from "iwcw";
-import Util from "Util";
-import AttributeAddOperation from "operations/ot/AttributeAddOperation";
-import AttributeDeleteOperation from "operations/ot/AttributeDeleteOperation";
-import AbstractAttribute from "attribute_widget/AbstractAttribute";
-import KeyValueAttribute from "attribute_widget/KeyValueAttribute";
-import keyValueListAttributeHtml from "text!templates/attribute_widget/list_attribute.html";
+import IWCW from "../lib/IWCWrapper";
+import Util from "../Util";
+import AttributeAddOperation from "../operations/ot/AttributeAddOperation";
+import AbstractAttribute from "./AbstractAttribute";
+import KeyValueAttribute from "./KeyValueAttribute";
+import loadHTML from "../html.template.loader";
+const keyValueListAttributeHtml = await loadHTML(
+  "../../../html/templates/attribute_widget/list_attribute.html",
+  import.meta.url
+);
+
 
 KeyValueListAttribute.prototype = new AbstractAttribute();
 KeyValueListAttribute.prototype.constructor = KeyValueListAttribute;

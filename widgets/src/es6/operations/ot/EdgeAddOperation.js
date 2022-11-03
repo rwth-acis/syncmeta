@@ -3,9 +3,6 @@ import EntityOperation from "./EntityOperation";
 import OTOperation from "./OTOperation";
 import $__operations_ot_EdgeDeleteOperation from "./EdgeDeleteOperation";
 
-EdgeAddOperation.TYPE = "EdgeAddOperation";
-EdgeAddOperation.prototype = new EntityOperation();
-EdgeAddOperation.prototype.constructor = EdgeAddOperation;
 /**
  * EdgeAddOperation
  * @class operations.ot.EdgeAddOperation
@@ -21,247 +18,251 @@ EdgeAddOperation.prototype.constructor = EdgeAddOperation;
  * @param {string} jabberId the jabberId of the user
  * @constructor
  */
-function EdgeAddOperation(
-  entityId,
-  type,
-  source,
-  target,
-  json,
-  viewId,
-  oType,
-  jabberId
-) {
-  var that = this;
-
-  var _oType = oType;
-
-  var _jabberId = jabberId;
-
-  this.getOriginType = function () {
-    return _oType;
-  };
-
-  EntityOperation.call(
-    this,
-    EntityOperation.TYPES.EdgeAddOperation,
+class EdgeAddOperation extends EntityOperation {
+  static TYPE = "EdgeAddOperation";
+  getOriginType
+  getType
+  getSource
+  getTarget
+  getViewId
+  getJabberId
+  getJSON
+  constructor(
     entityId,
-    CONFIG.ENTITY.EDGE
-  );
+    type,
+    source,
+    target,
+    json = null,
+    viewId = null,
+    oType = null,
+    jabberId = null
+  ) {
+    super(EntityOperation.TYPES.EdgeAddOperation, entityId, CONFIG.ENTITY.EDGE);
+    var that = this;
 
-  /**
-   * the identifier of the view
-   * @type {string}
-   * @private
-   */
-  var _viewId = viewId;
+    var _oType = oType;
 
-  /**
-   * Type of edge to add
-   * @type {String}
-   * @private
-   */
-  var _type = type;
+    var _jabberId = jabberId;
 
-  /**
-   * Entity id of source node
-   * @type {String}
-   * @private
-   */
-  var _source = source;
+    this.getOriginType = function () {
+      return _oType;
+    };
 
-  /**
-   * Entity id of target node
-   * @type {String}
-   * @private
-   */
-  var _target = target;
+    /**
+     * the identifier of the view
+     * @type {string}
+     * @private
+     */
+    var _viewId = viewId;
 
-  /**
-   * JSON representation of edge
-   * @type {Object}
-   * @private
-   */
-  var _json = json;
+    /**
+     * Type of edge to add
+     * @type {String}
+     * @private
+     */
+    var _type = type;
 
-  /**
-   * Create OTOperation for operation
-   * @returns {operations.ot.OTOperation}
-   */
-  var createOTOperation = function () {
-    return new OTOperation(
-      CONFIG.ENTITY.EDGE + ":" + that.getEntityId(),
-      JSON.stringify({
-        type: _type,
-        source: _source,
-        target: _target,
-        json: _json,
-        viewId: _viewId,
-        oType: _oType,
-        jabberId: _jabberId,
-      }),
-      CONFIG.OPERATION.TYPE.INSERT,
-      CONFIG.IWC.POSITION.EDGE.ADD
-    );
-  };
+    /**
+     * Entity id of source node
+     * @type {String}
+     * @private
+     */
+    var _source = source;
 
-  /**
-   * Get type of edge to add
-   * @returns {String}
-   */
-  this.getType = function () {
-    return _type;
-  };
+    /**
+     * Entity id of target node
+     * @type {String}
+     * @private
+     */
+    var _target = target;
 
-  /**
-   * Get entity id of source node
-   * @returns {String}
-   */
-  this.getSource = function () {
-    return _source;
-  };
+    /**
+     * JSON representation of edge
+     * @type {Object}
+     * @private
+     */
+    var _json = json;
 
-  /**
-   * Get entity id of target node
-   * @returns {String}
-   */
-  this.getTarget = function () {
-    return _target;
-  };
+    /**
+     * Create OTOperation for operation
+     * @returns {operations.ot.OTOperation}
+     */
+    var createOTOperation = function () {
+      return new OTOperation(
+        CONFIG.ENTITY.EDGE + ":" + that.getEntityId(),
+        JSON.stringify({
+          type: _type,
+          source: _source,
+          target: _target,
+          json: _json,
+          viewId: _viewId,
+          oType: _oType,
+          jabberId: _jabberId,
+        }),
+        CONFIG.OPERATION.TYPE.INSERT,
+        CONFIG.IWC.POSITION.EDGE.ADD
+      );
+    };
 
-  /**
-   * get the identifier of the view
-   * @returns {string}
-   */
-  this.getViewId = function () {
-    return _viewId;
-  };
+    /**
+     * Get type of edge to add
+     * @returns {String}
+     */
+    this.getType = function () {
+      return _type;
+    };
 
-  /**
-   * Get the jabber id
-   * @returns {string}
-   */
-  this.getJabberId = function () {
-    return _jabberId;
-  };
+    /**
+     * Get entity id of source node
+     * @returns {String}
+     */
+    this.getSource = function () {
+      return _source;
+    };
 
-  /**
-   * Get JSON representation of edge
-   * @return {Object}
-   */
-  this.getJSON = function () {
-    return _json;
-  };
+    /**
+     * Get entity id of target node
+     * @returns {String}
+     */
+    this.getTarget = function () {
+      return _target;
+    };
 
-  /**
-   * Get corresponding ot operation
-   * @returns {operations.ot.OTOperation}
-   * @private
-   */
-  this.getOTOperation = function () {
-    var otOperation = EntityOperation.prototype.getOTOperation.call(this);
-    if (otOperation === null) {
-      otOperation = createOTOperation();
-      this.setOTOperation(otOperation);
+    /**
+     * get the identifier of the view
+     * @returns {string}
+     */
+    this.getViewId = function () {
+      return _viewId;
+    };
+
+    /**
+     * Get the jabber id
+     * @returns {string}
+     */
+    this.getJabberId = function () {
+      return _jabberId;
+    };
+
+    /**
+     * Get JSON representation of edge
+     * @return {Object}
+     */
+    this.getJSON = function () {
+      return _json;
+    };
+
+    /**
+     * Get corresponding ot operation
+     * @returns {operations.ot.OTOperation}
+     * @private
+     */
+    this.getOTOperation = function () {
+      var otOperation = EntityOperation.prototype.getOTOperation.call(this);
+      if (otOperation === null) {
+        otOperation = createOTOperation();
+        this.setOTOperation(otOperation);
+      }
+      return otOperation;
+    };
+
+    /**
+     * Adjust the passed operation in the history of operation
+     * when this operation is applied remotely after the passed operation
+     * on an graph instance stored in the passed EntityManager
+     * @param {canvas_widget.EntityManager} EntityManager
+     * @param {EntityOperation} operation Remote operation
+     * @returns {EntityOperation}
+     */
+    this.adjust = function (EntityManager, operation) {
+      return operation;
+    };
+
+    /**
+     * Compute the inverse of the operation
+     * @returns {EdgeDeleteOperation}
+     */
+    this.inverse = function () {
+      var EdgeDeleteOperation = $__operations_ot_EdgeDeleteOperation;
+
+      return new EdgeDeleteOperation(
+        this.getEntityId(),
+        this.getType(),
+        this.getSource(),
+        this.getTarget()
+      );
+    };
+  }
+  static getOperationDescription(
+    edgeType,
+    edgeLabel,
+    sourceNodeType,
+    sourceNodeLabel,
+    targetNodeType,
+    targetNodeLabel,
+    viewId
+  ) {
+    if (!edgeLabel && !viewId) {
+      return (
+        "..created a new " +
+        edgeType +
+        " between " +
+        sourceNodeType +
+        " " +
+        sourceNodeLabel +
+        " and " +
+        targetNodeType +
+        " " +
+        targetNodeLabel
+      );
+    } else if (!viewId) {
+      return (
+        "..created " +
+        edgeType +
+        " " +
+        edgeLabel +
+        " between " +
+        sourceNodeType +
+        " " +
+        sourceNodeLabel +
+        " and " +
+        targetNodeType +
+        " " +
+        targetNodeLabel
+      );
+    } else {
+      return (
+        "..created " +
+        edgeType +
+        " " +
+        edgeLabel +
+        " between " +
+        sourceNodeType +
+        " " +
+        sourceNodeLabel +
+        " and " +
+        targetNodeType +
+        " " +
+        targetNodeLabel +
+        " in View " +
+        viewId
+      );
     }
-    return otOperation;
-  };
-
-  /**
-   * Adjust the passed operation in the history of operation
-   * when this operation is applied remotely after the passed operation
-   * on an graph instance stored in the passed EntityManager
-   * @param {canvas_widget.EntityManager} EntityManager
-   * @param {EntityOperation} operation Remote operation
-   * @returns {EntityOperation}
-   */
-  this.adjust = function (EntityManager, operation) {
-    return operation;
-  };
-
-  /**
-   * Compute the inverse of the operation
-   * @returns {EdgeDeleteOperation}
-   */
-  this.inverse = function () {
-    var EdgeDeleteOperation = $__operations_ot_EdgeDeleteOperation;
-
-    return new EdgeDeleteOperation(
-      this.getEntityId(),
-      this.getType(),
-      this.getSource(),
-      this.getTarget()
-    );
+  }
+  toJSON = function () {
+    return {
+      id: this.getEntityId(),
+      type: this.getType(),
+      source: this.getSource(),
+      target: this.getTarget(),
+      json: this.getJSON(),
+      viewId: this.getViewId(),
+      oType: this.getOriginType(),
+      jabberId: this.getJabberId(),
+    };
   };
 }
 
-EdgeAddOperation.prototype.toJSON = function () {
-  return {
-    id: this.getEntityId(),
-    type: this.getType(),
-    source: this.getSource(),
-    target: this.getTarget(),
-    json: this.getJSON(),
-    viewId: this.getViewId(),
-    oType: this.getOriginType(),
-    jabberId: this.getJabberId(),
-  };
-};
 
-EdgeAddOperation.getOperationDescription = function (
-  edgeType,
-  edgeLabel,
-  sourceNodeType,
-  sourceNodeLabel,
-  targetNodeType,
-  targetNodeLabel,
-  viewId
-) {
-  if (!edgeLabel && !viewId) {
-    return (
-      "..created a new " +
-      edgeType +
-      " between " +
-      sourceNodeType +
-      " " +
-      sourceNodeLabel +
-      " and " +
-      targetNodeType +
-      " " +
-      targetNodeLabel
-    );
-  } else if (!viewId) {
-    return (
-      "..created " +
-      edgeType +
-      " " +
-      edgeLabel +
-      " between " +
-      sourceNodeType +
-      " " +
-      sourceNodeLabel +
-      " and " +
-      targetNodeType +
-      " " +
-      targetNodeLabel
-    );
-  } else {
-    return (
-      "..created " +
-      edgeType +
-      " " +
-      edgeLabel +
-      " between " +
-      sourceNodeType +
-      " " +
-      sourceNodeLabel +
-      " and " +
-      targetNodeType +
-      " " +
-      targetNodeLabel +
-      " in View " +
-      viewId
-    );
-  }
-};
 
 export default EdgeAddOperation;

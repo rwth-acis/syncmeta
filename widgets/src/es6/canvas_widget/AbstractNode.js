@@ -22,7 +22,7 @@ const awarenessTraceHtml = await loadHTML(
   "../../../html/templates/canvas_widget/awareness_trace.html",
   import.meta.url
 );
-//   "jquery.transformable-PATCHED";
+import "../lib/jquery.transformable-PATCHED";
 
 AbstractNode.prototype = new AbstractEntity();
 AbstractNode.prototype.constructor = AbstractNode;

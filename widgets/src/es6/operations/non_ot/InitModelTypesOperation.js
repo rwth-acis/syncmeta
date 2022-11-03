@@ -1,6 +1,5 @@
 import NonOTOperation from "./NonOTOperation";
 
-InitModelTypesOperation.TYPE = "InitModelTypesOperation";
 
 /**
  * InitModelTypesOperation
@@ -11,6 +10,7 @@ InitModelTypesOperation.TYPE = "InitModelTypesOperation";
  * @param {bool} startViewGeneration
  */
 class InitModelTypesOperation {
+  static TYPE = "InitModelTypesOperation";
   /**
    * Corresponding NonOtOperation
    * @type {operations.non_ot.NonOTOperation}
@@ -39,8 +39,8 @@ class InitModelTypesOperation {
       this.nonOTOperation = new NonOTOperation(
         InitModelTypesOperation.TYPE,
         JSON.stringify({
-          vls: _vls,
-          startViewGeneration: _startViewGeneration,
+          vls: this._vls,
+          startViewGeneration: this._startViewGeneration,
         })
       );
     }
