@@ -1,11 +1,12 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import AbstractNode from "attribute_widget/AbstractNode";
-import KeySelectionValueListAttribute from "attribute_widget/KeySelectionValueListAttribute";
-import BooleanAttribute from "attribute_widget/BooleanAttribute";
-import SingleMultiLineValueAttribute from "attribute_widget/SingleMultiLineValueAttribute";
-import abstractClassNodeHtml from "text!templates/attribute_widget/abstract_class_node.html";
+import AbstractNode from "./AbstractNode";
+import KeySelectionValueListAttribute from "./KeySelectionValueListAttribute";
+import loadHTML from "../html.template.loader";
+const abstractClassNodeHtml = await loadHTML(
+  "../../../html/templates/attribute_widget/abstract_class_node.html",
+  import.meta.url
+);
 
 AbstractClassNode.TYPE = "Abstract Class";
 

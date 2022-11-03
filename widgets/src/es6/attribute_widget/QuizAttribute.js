@@ -1,7 +1,5 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import Util from "Util";
 import AbstractAttribute from "./AbstractAttribute";
 import Value from "./Value";
 import loadHTML from "../html.template.loader";

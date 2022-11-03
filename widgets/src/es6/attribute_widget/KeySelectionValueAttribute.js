@@ -1,13 +1,15 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import IWCW from "iwcw";
-import Util from "Util";
-import AttributeDeleteOperation from "operations/ot/AttributeDeleteOperation";
-import AbstractAttribute from "attribute_widget/AbstractAttribute";
-import Value from "attribute_widget/Value";
-import SelectionValue from "attribute_widget/SelectionValue";
-import keySelectionValueAttributeHtml from "text!templates/attribute_widget/key_value_attribute.html";
+import IWCW from "../lib/IWCWrapper";
+import AttributeDeleteOperation from "../operations/ot/AttributeDeleteOperation";
+import AbstractAttribute from "./AbstractAttribute";
+import Value from "./Value";
+import SelectionValue from "./SelectionValue";
+import loadHTML from "../html.template.loader";
+const keySelectionValueAttributeHtml = await loadHTML(
+  "../../../html/templates/attribute_widget/key_value_attribute.html",
+  import.meta.url
+);
 
 KeySelectionValueAttribute.TYPE = "KeySelectionValueAttribute";
 

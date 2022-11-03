@@ -1,10 +1,12 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import Util from "Util";
-import AbstractAttribute from "attribute_widget/AbstractAttribute";
-import CodeEditorValue from "attribute_widget/CodeEditorValue";
-import SingleCodeEditorValueAttributeHtml from "text!templates/attribute_widget/single_value_attribute.html";
+import AbstractAttribute from "./AbstractAttribute";
+import CodeEditorValue from "./CodeEditorValue";
+import loadHTML from "../html.template.loader";
+const SingleCodeEditorValueAttributeHtml = await loadHTML(
+  "../../../html/templates/attribute_widget/single_value_attribute.html",
+  import.meta.url
+);
 
 SingleCodeEditorValueAttribute.prototype = new AbstractAttribute();
 SingleCodeEditorValueAttribute.prototype.constructor =

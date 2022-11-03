@@ -1,16 +1,14 @@
-import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import AbstractEdge from "attribute_widget/AbstractEdge";
-import AbstractClassNode from "attribute_widget/AbstractClassNode";
-import ObjectNode from "attribute_widget/ObjectNode";
-import RelationshipNode from "attribute_widget/RelationshipNode";
-import RelationshipGroupNode from "attribute_widget/RelationshipGroupNode";
-import EnumNode from "attribute_widget/EnumNode";
-import NodeShapeNode from "attribute_widget/NodeShapeNode";
-import EdgeShapeNode from "attribute_widget/EdgeShapeNode";
-import ViewObjectNode from "attribute_widget/viewpoint/ViewObjectNode";
-import ViewRelationshipNode from "attribute_widget/viewpoint/ViewRelationshipNode";
+import AbstractEdge from "./AbstractEdge";
+import AbstractClassNode from "./AbstractClassNode";
+import ObjectNode from "./ObjectNode";
+import RelationshipNode from "./RelationshipNode";
+import RelationshipGroupNode from "./RelationshipGroupNode";
+import EnumNode from "./EnumNode";
+import NodeShapeNode from "./NodeShapeNode";
+import EdgeShapeNode from "./EdgeShapeNode";
+import ViewObjectNode from "./viewpoint/ViewObjectNode";
+import ViewRelationshipNode from "./viewpoint/ViewRelationshipNode";
 
 UniDirAssociationEdge.TYPE = "Uni-Dir-Association";
 UniDirAssociationEdge.RELATIONS = [

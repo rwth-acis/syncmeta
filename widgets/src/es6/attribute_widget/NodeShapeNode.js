@@ -1,14 +1,17 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import AbstractNode from "attribute_widget/AbstractNode";
-import BooleanAttribute from "attribute_widget/BooleanAttribute";
-import SingleSelectionAttribute from "attribute_widget/SingleSelectionAttribute";
-import SingleValueAttribute from "attribute_widget/SingleValueAttribute";
-import IntegerAttribute from "attribute_widget/IntegerAttribute";
-import SingleColorValueAttribute from "attribute_widget/SingleColorValueAttribute";
-import SingleCodeEditorValueAttribute from "attribute_widget/SingleCodeEditorValueAttribute";
-import nodeShapeNodeHtml from "text!templates/attribute_widget/node_shape_node.html";
+import AbstractNode from "./AbstractNode";
+import BooleanAttribute from "./BooleanAttribute";
+import SingleSelectionAttribute from "./SingleSelectionAttribute";
+import SingleValueAttribute from "./SingleValueAttribute";
+import IntegerAttribute from "./IntegerAttribute";
+import SingleColorValueAttribute from "./SingleColorValueAttribute";
+import SingleCodeEditorValueAttribute from "./SingleCodeEditorValueAttribute";
+import loadHTML from "../html.template.loader";
+const nodeShapeNodeHtml = await loadHTML(
+  "../../../html/templates/attribute_widget/node_shape_node.html",
+  import.meta.url
+);
 
 NodeShapeNode.TYPE = "Node Shape";
 

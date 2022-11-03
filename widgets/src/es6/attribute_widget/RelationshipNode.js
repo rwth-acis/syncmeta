@@ -1,10 +1,12 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import AbstractNode from "attribute_widget/AbstractNode";
-import SingleSelectionAttribute from "attribute_widget/SingleSelectionAttribute";
-import KeySelectionValueSelectionValueListAttribute from "attribute_widget/KeySelectionValueSelectionValueListAttribute";
-import relationshipNodeHtml from "text!templates/attribute_widget/relationship_node.html";
+import AbstractNode from "./AbstractNode";
+import KeySelectionValueSelectionValueListAttribute from "./KeySelectionValueSelectionValueListAttribute";
+import loadHTML from "../html.template.loader";
+const relationshipNodeHtml = await loadHTML(
+  "../../../html/templates/attribute_widget/relationship_node.html",
+  import.meta.url
+);
 
 RelationshipNode.TYPE = "Relationship";
 

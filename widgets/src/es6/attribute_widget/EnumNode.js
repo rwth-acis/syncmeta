@@ -1,11 +1,12 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import AbstractNode from "attribute_widget/AbstractNode";
-import SingleValueListAttribute from "attribute_widget/SingleValueListAttribute";
-import BooleanAttribute from "attribute_widget/BooleanAttribute";
-import SingleMultiLineValueAttribute from "attribute_widget/SingleMultiLineValueAttribute";
-import enumNodeHtml from "text!templates/attribute_widget/enum_node.html";
+import AbstractNode from "./AbstractNode";
+import SingleValueListAttribute from "./SingleValueListAttribute";
+import loadHTML from "../html.template.loader";
+const enumNodeHtml = await loadHTML(
+  "../../../html/templates/attribute_widget/enum_node.html",
+  import.meta.url
+);
 
 EnumNode.TYPE = "Enumeration";
 

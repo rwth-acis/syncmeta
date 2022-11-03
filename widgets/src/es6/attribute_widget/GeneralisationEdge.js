@@ -1,14 +1,10 @@
-import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import AbstractEdge from "attribute_widget/AbstractEdge";
-import AbstractClassNode from "attribute_widget/AbstractClassNode";
-import ObjectNode from "attribute_widget/ObjectNode";
-import RelationshipNode from "attribute_widget/RelationshipNode";
-import RelationshipGroupNode from "attribute_widget/RelationshipGroupNode";
-import EnumNode from "attribute_widget/EnumNode";
-import ViewObjectNode from "attribute_widget/viewpoint/ViewObjectNode";
-import ViewRelationshipNode from "attribute_widget/viewpoint/ViewRelationshipNode";
+import AbstractEdge from "./AbstractEdge";
+import AbstractClassNode from "./AbstractClassNode";
+import ObjectNode from "./ObjectNode";
+import RelationshipNode from "./RelationshipNode";
+import RelationshipGroupNode from "./RelationshipGroupNode";
+import EnumNode from "./EnumNode";
 
 GeneralisationEdge.TYPE = "Generalisation";
 GeneralisationEdge.RELATIONS = [

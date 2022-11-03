@@ -1,12 +1,10 @@
-import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import BooleanAttribute from "attribute_widget/BooleanAttribute";
-import IntegerAttribute from "attribute_widget/IntegerAttribute";
-import FileAttribute from "attribute_widget/FileAttribute";
-import SingleSelectionAttribute from "attribute_widget/SingleSelectionAttribute";
-import SingleValueAttribute from "attribute_widget/SingleValueAttribute";
-import AbstractEdge from "attribute_widget/AbstractEdge";
+import BooleanAttribute from "./BooleanAttribute";
+import IntegerAttribute from "./IntegerAttribute";
+import FileAttribute from "./FileAttribute";
+import SingleSelectionAttribute from "./SingleSelectionAttribute";
+import SingleValueAttribute from "./SingleValueAttribute";
+import AbstractEdge from "./AbstractEdge";
 
 //noinspection JSUnusedLocalSymbols
 /**

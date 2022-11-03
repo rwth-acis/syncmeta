@@ -1,12 +1,15 @@
 import $ from "jquery-ui";
 import _ from "lodash";
-import IWCW from "iwcw";
-import Util from "Util";
-import AttributeAddOperation from "operations/ot/AttributeAddOperation";
-import AttributeDeleteOperation from "operations/ot/AttributeDeleteOperation";
-import AbstractAttribute from "attribute_widget/AbstractAttribute";
-import RenamingAttribute from "attribute_widget/viewpoint/RenamingAttribute";
-import listAttributeHtml from "text!templates/attribute_widget/list_attribute.html";
+import IWCW from "../../lib/IWCWrapper";
+import AttributeAddOperation from "../../operations/ot/AttributeAddOperation";
+import AttributeDeleteOperation from "../../operations/ot/AttributeDeleteOperation";
+import AbstractAttribute from "../AbstractAttribute";
+import RenamingAttribute from "./RenamingAttribute";
+import loadHTML from "../../html.template.loader";
+const listAttributeHtml = await loadHTML(
+  "../../../html/templates/attribute_widget/list_attribute.html",
+  import.meta.url
+);
 
 RenamingListAttribute.prototype = new AbstractAttribute();
 RenamingListAttribute.prototype.constructor = RenamingListAttribute;

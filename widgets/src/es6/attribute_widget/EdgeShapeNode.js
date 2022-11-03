@@ -1,13 +1,15 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import AbstractNode from "attribute_widget/AbstractNode";
-import SingleSelectionAttribute from "attribute_widget/SingleSelectionAttribute";
-import SingleValueAttribute from "attribute_widget/SingleValueAttribute";
-import SingleColorValueAttribute from "attribute_widget/SingleColorValueAttribute";
-import SingleMultiLineValueAttribute from "attribute_widget/SingleMultiLineValueAttribute";
-import BooleanAttribute from "attribute_widget/BooleanAttribute";
-import edgeShapeNodeHtml from "text!templates/attribute_widget/edge_shape_node.html";
+import AbstractNode from "./AbstractNode";
+import SingleSelectionAttribute from "./SingleSelectionAttribute";
+import SingleValueAttribute from "./SingleValueAttribute";
+import SingleColorValueAttribute from "./SingleColorValueAttribute";
+import BooleanAttribute from "./BooleanAttribute";
+import loadHTML from "../html.template.loader";
+const edgeShapeNodeHtml = await loadHTML(
+  "../../../html/templates/attribute_widget/edge_shape_node.html",
+  import.meta.url
+);
 EdgeShapeNode.TYPE = "Edge Shape";
 
 EdgeShapeNode.prototype = new AbstractNode();

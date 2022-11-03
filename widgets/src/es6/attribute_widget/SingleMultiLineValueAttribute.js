@@ -1,10 +1,12 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import Util from "Util";
-import AbstractAttribute from "attribute_widget/AbstractAttribute";
-import MultiLineValue from "attribute_widget/MultiLineValue";
-import singleMultiLineValueAttributeHtml from "text!templates/attribute_widget/single_value_attribute.html";
+import AbstractAttribute from "./AbstractAttribute";
+import MultiLineValue from "./MultiLineValue";
+import loadHTML from "../html.template.loader";
+const singleMultiLineValueAttributeHtml = await loadHTML(
+  "../../../html/templates/attribute_widget/single_value_attribute.html",
+  import.meta.url
+);
 
 SingleMultiLineValueAttribute.prototype = new AbstractAttribute();
 SingleMultiLineValueAttribute.prototype.constructor =

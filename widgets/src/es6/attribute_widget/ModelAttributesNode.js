@@ -1,14 +1,17 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import AbstractNode from "attribute_widget/AbstractNode";
-import BooleanAttribute from "attribute_widget/BooleanAttribute";
-import IntegerAttribute from "attribute_widget/IntegerAttribute";
-import FileAttribute from "attribute_widget/FileAttribute";
-import SingleValueAttribute from "attribute_widget/SingleValueAttribute";
-import SingleSelectionAttribute from "attribute_widget/SingleSelectionAttribute";
-import SingleMultiLineValueAttribute from "attribute_widget/SingleMultiLineValueAttribute";
-import modelAttributesNodeHtml from "text!templates/attribute_widget/model_attributes_node.html";
+import AbstractNode from "./AbstractNode";
+import BooleanAttribute from "./BooleanAttribute";
+import IntegerAttribute from "./IntegerAttribute";
+import FileAttribute from "./FileAttribute";
+import SingleValueAttribute from "./SingleValueAttribute";
+import SingleSelectionAttribute from "./SingleSelectionAttribute";
+import SingleMultiLineValueAttribute from "./SingleMultiLineValueAttribute";
+import loadHTML from "../html.template.loader";
+const modelAttributesNodeHtml = await loadHTML(
+  "../../../html/templates/attribute_widget/model_attributes_node.html",
+  import.meta.url
+);
 
 ModelAttributesNode.TYPE = "ModelAttributesNode";
 

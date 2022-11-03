@@ -1,14 +1,17 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import AbstractNode from "attribute_widget/AbstractNode";
-import RenamingListAttribute from "attribute_widget/viewpoint/RenamingListAttribute";
-import SingleSelectionAttribute from "attribute_widget/SingleSelectionAttribute";
-import ConditionListAttribute from "attribute_widget/viewpoint/ConditionListAttribute";
-import ViewTypesUtil from "canvas_widget/viewpoint/ViewTypesUtil";
-import LogicalOperator from "canvas_widget/viewpoint/LogicalOperator";
-import LogicalConjunctions from "canvas_widget/viewpoint/LogicalConjunctions";
-import objectNodeHtml from "text!templates/attribute_widget/object_node.html";
+import AbstractNode from "../AbstractNode";
+import RenamingListAttribute from "./RenamingListAttribute";
+import SingleSelectionAttribute from "../SingleSelectionAttribute";
+import ConditionListAttribute from "./ConditionListAttribute";
+import ViewTypesUtil from "../../canvas_widget/viewpoint/ViewTypesUtil";
+import LogicalOperator from "../../canvas_widget/viewpoint/LogicalOperator";
+import LogicalConjunctions from "../../canvas_widget/viewpoint/LogicalConjunctions";
+import loadHTML from "../../html.template.loader";
+const objectNodeHtml = await loadHTML(
+  "../../../html/templates/attribute_widget/object_node.html",
+  import.meta.url
+);
 
 ViewObjectNode.TYPE = "ViewObject";
 

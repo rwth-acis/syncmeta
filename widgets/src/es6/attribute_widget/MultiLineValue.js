@@ -1,10 +1,13 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import IWCW from "iwcw";
-import AbstractValue from "attribute_widget/AbstractValue";
-import ValueChangeOperation from "operations/ot/ValueChangeOperation";
-import multiLineValueHtml from "text!templates/attribute_widget/multi_line_value.html";
+import IWCW from "../lib/IWCWrapper";
+import AbstractValue from "./AbstractValue";
+import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
+import loadHTML from "../html.template.loader";
+const multiLineValueHtml = await loadHTML(
+  "../../../html/templates/attribute_widget/multi_line_value.html",
+  import.meta.url
+);
 
 MultiLineValue.prototype = new AbstractValue();
 MultiLineValue.prototype.constructor = MultiLineValue;

@@ -1,13 +1,16 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import IWCW from "iwcw";
+import IWCW from "../lib/IWCWrapper";
 import Util from "Util";
-import AttributeAddOperation from "operations/ot/AttributeAddOperation";
-import AttributeDeleteOperation from "operations/ot/AttributeDeleteOperation";
-import AbstractAttribute from "attribute_widget/AbstractAttribute";
-import SingleValueAttribute from "attribute_widget/ListSingleValueAttribute";
-import singleValueListAttributeHtml from "text!templates/attribute_widget/list_attribute.html";
+import AttributeAddOperation from "../operations/ot/AttributeAddOperation";
+import AttributeDeleteOperation from "../operations/ot/AttributeDeleteOperation";
+import AbstractAttribute from "./AbstractAttribute";
+import SingleValueAttribute from "./ListSingleValueAttribute";
+import loadHTML from "../html.template.loader";
+const singleValueListAttributeHtml = await loadHTML(
+  "../../../html/templates/attribute_widget/list_attribute.html",
+  import.meta.url
+);
 
 SingleValueListAttribute.prototype = new AbstractAttribute();
 SingleValueListAttribute.prototype.constructor = SingleValueListAttribute;
