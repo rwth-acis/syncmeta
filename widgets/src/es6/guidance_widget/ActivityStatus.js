@@ -1,6 +1,6 @@
 import Util from "../Util";
 import ConcurrentRegion from "./ConcurrentRegion";
-import "classjs";
+import "../lib/Class";
 import "graphlib";
 
 var ActivityStatus = Class.extend({

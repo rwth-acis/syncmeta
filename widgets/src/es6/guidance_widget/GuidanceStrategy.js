@@ -1,7 +1,7 @@
 import IWCW from "../lib/IWCWrapper";
 import ShowGuidanceBoxOperation from "../operations/non_ot/ShowGuidanceBoxOperation";
 import graphlib from "graphlib";
-import "classjs";
+import "../lib/Class";
 
 var GuidanceStrategy = Class.extend({
   init: function (logicalGuidanceRepresentation, space) {

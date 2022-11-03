@@ -3,7 +3,7 @@ const heatspotHtml = await loadHTML(
   "../../../html/templates/heatmap_widget/heatspot.html",
   import.meta.url
 );
-import "classjs";
+import "../lib/Class";
 
 export default Class.extend({
   init: function (id, x, y, width, height, scaleFactor, color) {

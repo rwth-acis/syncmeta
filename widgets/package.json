@@ -17,7 +17,7 @@
   "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
     "@rwth-acis/iwc": "^1.0.0",
-    "ace-builds": "^1.11.2",
+    "ace-builds": "^1.12.5",
     "async": "^3.2.4",
     "bootstrap": "^3.3.7",
     "bufferutil": "^4.0.6",

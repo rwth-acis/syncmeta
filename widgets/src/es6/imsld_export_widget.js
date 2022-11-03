@@ -1,9 +1,9 @@
 import $ from "jquery-ui";
 import _ from "lodash";
 import Util from "Util";
-import MFExport from "mfexport";
+import MFExport from "./lib/MFExport";
 import JSZip from "jszip";
-import ILDE from "ildeApi";
+import ILDE from "./lib/ildeApi";
 var XML_PREFIX = "imsld:";
 
 function formatXML(xml) {

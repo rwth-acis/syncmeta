@@ -1,5 +1,5 @@
 import $ from "jquery-ui";
-import MFExport from "mfexport";
+import MFExport from "./lib/mfexport";
 $("#json").click(function () {
   var $this = $(this).addClass("loading_button");
   MFExport.getJSON(function (data, title) {

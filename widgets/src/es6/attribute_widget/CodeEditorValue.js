@@ -8,7 +8,7 @@ const codeEditorValueHtml = await loadHTML(
   "../../../html/templates/attribute_widget/code_edtior_value.html",
   import.meta.url
 );
-import "ace";
+import "ace-builds/src-min/ace";
 
 CodeEditorValue.prototype = new AbstractValue();
 CodeEditorValue.prototype.constructor = CodeEditorValue;
