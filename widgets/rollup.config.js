@@ -12,6 +12,37 @@ import html from "rollup-plugin-html";
  * @type {import('rollup').RollupOptions}
  */
 export default [
+  // palette.widget
+  {
+    plugins: [
+      typescript(),
+      commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required
+      css(),
+      json(),
+      html({
+        include: "**/*.html",
+      }),
+      resolve({ browser: true }),
+    ],
+    watch: {
+      include: "src/**",
+    },
+    input: "src/widgets/partials/palette.widget.ts",
+    output: {
+      file: "build/widgets/partials/palette.widget.ts",
+      sourcemap: true,
+      inlineDynamicImports: true,
+      format: "es",
+      globals: {
+        jquery: "$",
+        lit: "lit",
+        yjs: "Y",
+        "y-websocket": "WebsocketProvider",
+      },
+    },
+    external: Object.keys(dependencies),
+    preserveEntrySignatures: "strict",
+  },
   // activity widget
   {
     plugins: [
@@ -71,6 +102,7 @@ export default [
         yjs: "Y",
         "y-websocket": "WebsocketProvider",
         jsplumb: "jsplumb",
+        ace: "ace",
       },
     },
     external: Object.keys(dependencies),
@@ -133,6 +165,8 @@ export default [
         lit: "lit",
         yjs: "Y",
         "y-websocket": "WebsocketProvider",
+        classjs: "classjs",
+        graphlib: "graphlib",
       },
     },
     external: Object.keys(dependencies),
@@ -164,6 +198,7 @@ export default [
         lit: "lit",
         yjs: "Y",
         "y-websocket": "WebsocketProvider",
+        lodash: "lodash",
       },
     },
     external: Object.keys(dependencies),
@@ -195,6 +230,8 @@ export default [
         lit: "lit",
         yjs: "Y",
         "y-websocket": "WebsocketProvider",
+        ildeApi: "ildeApi",
+        mfexport: "mfexport",
       },
     },
     external: Object.keys(dependencies),
@@ -226,6 +263,7 @@ export default [
         lit: "lit",
         yjs: "Y",
         "y-websocket": "WebsocketProvider",
+        mfexport: "mfexport",
       },
     },
     external: Object.keys(dependencies),
@@ -262,37 +300,7 @@ export default [
     external: Object.keys(dependencies),
     preserveEntrySignatures: "strict",
   },
-  // palette.widget
-  {
-    plugins: [
-      typescript(),
-      commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required
-      css(),
-      json(),
-      html({
-        include: "**/*.html",
-      }),
-      resolve({ browser: true }),
-    ],
-    watch: {
-      include: "src/**",
-    },
-    input: "src/widgets/partials/palette.widget.ts",
-    output: {
-      file: "build/widgets/partials/palette.widget.ts",
-      sourcemap: true,
-      inlineDynamicImports: true,
-      format: "es",
-      globals: {
-        jquery: "$",
-        lit: "lit",
-        yjs: "Y",
-        "y-websocket": "WebsocketProvider",
-      },
-    },
-    external: Object.keys(dependencies),
-    preserveEntrySignatures: "strict",
-  },
+
   // test.widget
   {
     plugins: [

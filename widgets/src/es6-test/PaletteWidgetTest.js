@@ -8,7 +8,7 @@ require.config({
 });
 import $ from "jquery";
 import chai from "chai";
-import WebConsoleReporter from "WebConsoleReporter";
+import WebConsoleReporter from "../es6-test/WebConsole";
 import "mocha";
 
 export default function () {

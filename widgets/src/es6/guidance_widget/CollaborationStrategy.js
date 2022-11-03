@@ -1,11 +1,15 @@
 import Util from 'Util';
-import IWCW from 'iwcw';
-import GuidanceStrategy from 'guidance_widget/GuidanceStrategy';
-import ActivityStatus from 'guidance_widget/ActivityStatus';
-import RevokeSharedActivityOperation from 'operations/non_ot/RevokeSharedActivityOperation';
-import CollaborateInActivityOperation from 'operations/non_ot/CollaborateInActivityOperation';
-import MoveCanvasOperation from 'operations/non_ot/MoveCanvasOperation';
-import guidanceStrategyUiHtml from 'text!templates/guidance_modeling/guidance_strategy_ui.html';
+import IWCW from "../lib/IWCWrapper";
+import GuidanceStrategy from "./GuidanceStrategy";
+import ActivityStatus from "./ActivityStatus";
+import RevokeSharedActivityOperation from "../operations/non_ot/RevokeSharedActivityOperation";
+import CollaborateInActivityOperation from "../operations/non_ot/CollaborateInActivityOperation";
+import MoveCanvasOperation from "../operations/non_ot/MoveCanvasOperation";
+import loadHTML from "../html.template.loader";
+const guidanceStrategyUiHtml = await loadHTML(
+  "../../../html/templates/guidance_modeling/guidance_strategy_ui.html",
+  import.meta.url
+);
 
     var CollaborationStrategy = GuidanceStrategy.extend({
         init: function(logicalGuidanceRepresentation, space){

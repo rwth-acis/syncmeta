@@ -1,10 +1,9 @@
 import $ from "jquery-ui";
 import _ from "lodash";
-import IWC from "iwcw";
-import yjsSync from "lib/yjs-sync";
-import Util from "Util";
-import UpdateViewListOperation from "operations/non_ot/UpdateViewListOperation";
-import GenerateViewpointModel from "canvas_widget/GenerateViewpointModel";
+import IWC from "./lib/IWCWrapper";
+import yjsSync from "./lib/yjs-sync";
+import UpdateViewListOperation from "./operations/non_ot/UpdateViewListOperation";
+import GenerateViewpointModel from "./canvas_widget/GenerateViewpointModel";
 yjsSync().done(function (y, spaceTitle) {
   console.info(
     "VIEWCONTROL: Yjs successfully initialized in room " +

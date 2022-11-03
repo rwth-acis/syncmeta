@@ -1,8 +1,5 @@
 import { LitElement, html, css } from "lit";
-import { customElement, property } from "lit/decorators.js";
-import * as Y from "yjs";
-import { WebsocketProvider } from "y-websocket";
-import { CONFIG } from "../../js/config";
+import { customElement } from "lit/decorators.js";
 import init from "../../js/shared";
 import { SyncMetaWidget } from "../../widget";
 import "../../es6/imsld_export_widget.js";

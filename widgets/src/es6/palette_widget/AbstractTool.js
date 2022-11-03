@@ -1,6 +1,10 @@
 import $ from "jquery-ui";
 import _ from "lodash";
-import abstractToolHtml from "../../templates/palette_widget/abstract_tool.html";
+import loadHTML from "../html.template.loader";
+const abstractToolHtml = await loadHTML(
+  "../../../html/templates/palette_widget/abstract_tool.html",
+  import.meta.url
+);
 
 /**
  * AbstractTool

@@ -4,18 +4,16 @@
  */
 
 import $ from "jquery-ui";
-import _ from "lodash";
-import require from "require";
-import IWCW from "iwcw";
-import yjsSync from "lib/yjs-sync";
-import Util from "Util";
-import NodePreview from "heatmap_widget/NodePreview";
-import NodeAddOperation from "operations/ot/NodeAddOperation";
-import NodeMoveOperation from "operations/ot/NodeMoveOperation";
-import NodeResizeOperation from "operations/ot/NodeResizeOperation";
-import NodeDeleteOperation from "operations/ot/NodeDeleteOperation";
-import CanvasViewChangeOperation from "operations/non_ot/CanvasViewChangeOperation";
-import WaitForCanvas from "WaitForCanvas";
+import IWCW from "./lib/IWCWrapper";
+import yjsSync from "./lib/yjs-sync";
+import Util from "./Util";
+import NodePreview from "./heatmap_widget/NodePreview";
+import NodeAddOperation from "./operations/ot/NodeAddOperation";
+import NodeMoveOperation from "./operations/ot/NodeMoveOperation";
+import NodeResizeOperation from "./operations/ot/NodeResizeOperation";
+import NodeDeleteOperation from "./operations/ot/NodeDeleteOperation";
+import CanvasViewChangeOperation from "./operations/non_ot/CanvasViewChangeOperation";
+import WaitForCanvas from "./WaitForCanvas";
   yjsSync().done(function (y, spaceTitle) {
     console.info(
       "HEATMAP: Yjs successfully initialized in room " +

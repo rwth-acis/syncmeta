@@ -1,12 +1,17 @@
 import $ from "jquery-ui";
 import _ from "lodash";
-import IWCW from "iwcw";
-import Util from "Util";
-import AttributeAddOperation from "operations/ot/AttributeAddOperation";
-import AttributeDeleteOperation from "operations/ot/AttributeDeleteOperation";
-import AbstractAttribute from "attribute_widget/AbstractAttribute";
-import ConditionPredicateAttribute from "attribute_widget/viewpoint/ConditionPredicateAttribute";
-import listAttributeHtml from "text!templates/attribute_widget/list_attribute.html";
+import IWCW from "../../lib/IWCWrapper";
+import Util from "../../Util";
+import AttributeAddOperation from "../../operations/ot/AttributeAddOperation";
+import AttributeDeleteOperation from "../../operations/ot/AttributeDeleteOperation";
+import AbstractAttribute from "../AbstractAttribute";
+import ConditionPredicateAttribute from "./ConditionPredicateAttribute";
+import loadHTML from "../../html.template.loader";
+const listAttributeHtml = await loadHTML(
+  "../../../html/templates/attribute_widget/list_attribute.html",
+  import.meta.url
+);
+
 ConditionListAttribute.prototype = new AbstractAttribute();
 ConditionListAttribute.prototype.constructor = ConditionListAttribute;
 /**
