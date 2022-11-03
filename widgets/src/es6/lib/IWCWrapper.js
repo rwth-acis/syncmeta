@@ -85,7 +85,6 @@ class IWCWrapper {
   getSpaceTitle;
   setSpace;
   componentName;
-  _times = {};
 
   /**
    * Encapsulates the passed message information into the Android Intent-like format required by the iwc client
@@ -440,20 +439,18 @@ class IWCWrapper {
  * @exports IWCW
  */
 export default class IWCW {
-  instance;
-  constructor() {
-    this.instance = null;
-  }
+  static instance;
+  constructor() {}
   /**
    * Instance of IWCWrapper
    * @type {IWCWrapper}
    */
 
-  hasInstance() {
-    if (this.instance === null) {
+  static hasInstance() {
+    if (IWCW.instance === null) {
       return false;
     } else {
-      return this.instance;
+      return IWCW.instance;
     }
   }
 
@@ -462,11 +459,11 @@ export default class IWCW {
    * @param {string} componentName Name of component (widget) using the wrapper
    * @returns {IWCWrapper}
    */
-  getInstance(componentName) {
-    if (this.instance === null) {
-      this.instance = new IWCWrapper(componentName);
-      this.instance.connect();
+  static getInstance(componentName) {
+    if (IWCW.instance === null) {
+      IWCW.instance = new IWCWrapper(componentName);
+      IWCW.instance.connect();
     }
-    return this.instance;
+    return IWCW.instance;
   }
 };
