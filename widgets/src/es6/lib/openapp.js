@@ -1,5 +1,4 @@
-// imported from https://github.com/rwth-acis/Social-Bot-Framework/blob/eb1718a98483e8e41a19c29ee9a2baa1f29167c9/widgets/src/js/lib/openapp.js
-function openapp() {
+(function () {
   var openapp = {};
   this.openapp = openapp;
   openapp.event = {};
@@ -1045,5 +1044,4 @@ function openapp() {
   openapp.param.user = function () {
     return openapp.param.get("http://purl.org/role/terms/user");
   };
-}
-export default new openapp();
+})();

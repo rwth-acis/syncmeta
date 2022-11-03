@@ -1,4 +1,4 @@
-import openapp from "../lib/openapp";
+import "../lib/openapp";
 import { CONFIG } from "../config";
 import $ from "jquery-ui";
 import _ from "lodash";

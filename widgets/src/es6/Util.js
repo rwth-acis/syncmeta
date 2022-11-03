@@ -1,6 +1,6 @@
 import jQuery from "jquery";
 import { CONFIG } from "./config";
-import openapp from "./lib/openapp";
+import "./lib/openapp";
 /**
  * Util
  * @class Util

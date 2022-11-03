@@ -12,7 +12,7 @@ import NodeShapeNode from "./NodeShapeNode";
 import EdgeShapeNode from "./EdgeShapeNode";
 import ModelAttributesNode from "./ModelAttributesNode";
 import Edge from "./Edge";
-import openapp from "../lib/openapp";
+import "../lib/openapp";
 import GeneralisationEdge from "./GeneralisationEdge";
 import BiDirAssociationEdge from "./BiDirAssociationEdge";
 import UniDirAssociationEdge from "./UniDirAssociationEdge";

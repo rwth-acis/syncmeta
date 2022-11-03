@@ -1,7 +1,7 @@
 import $ from "jquery-ui";
 import _ from "lodash";
 import IWCW from "../lib/IWCWrapper";
-import openapp from "../lib/openapp";
+import "../lib/openapp";
 import { CONFIG } from "../config";
 import AbstractValue from "./AbstractValue";
 import ValueChangeOperation from "../operations/ot/ValueChangeOperation";

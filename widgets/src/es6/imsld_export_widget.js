@@ -5,7 +5,7 @@ import MFExport from "./lib/MFExport";
 import JSZip from "jszip";
 import ILDE from "./lib/ildeApi";
 import { CONFIG } from "./config";
-import openapp from "./lib/openapp";
+import "./lib/openapp";
 var XML_PREFIX = "imsld:";
 
 function formatXML(xml) {
