@@ -1,6 +1,7 @@
 import IWCW from "../lib/IWCWrapper";
 import RevokeSharedActivityOperation from "../operations/non_ot/RevokeSharedActivityOperation";
 import "../lib/Class";
+import { CONFIG } from "../config";
 import "graphlib";
 
 var ConcurrentRegion = Class.extend({

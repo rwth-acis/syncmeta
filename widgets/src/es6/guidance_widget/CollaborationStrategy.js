@@ -6,6 +6,7 @@ import RevokeSharedActivityOperation from "../operations/non_ot/RevokeSharedActi
 import CollaborateInActivityOperation from "../operations/non_ot/CollaborateInActivityOperation";
 import MoveCanvasOperation from "../operations/non_ot/MoveCanvasOperation";
 import loadHTML from "../html.template.loader";
+import { CONFIG } from "../config";
 const guidanceStrategyUiHtml = await loadHTML(
   "../../../html/templates/guidance_modeling/guidance_strategy_ui.html",
   import.meta.url

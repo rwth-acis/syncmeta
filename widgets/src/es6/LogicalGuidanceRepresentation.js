@@ -1,5 +1,5 @@
 import $ from "jquery-ui";
-
+import { CONFIG } from "./config";
 var resourceSpace = new openapp.oo.Resource(openapp.param.space());
 
 /**

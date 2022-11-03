@@ -1,3 +1,4 @@
+import { CONFIG } from "../../config";
 import IWCW from "../../lib/IWCWrapper";
 import $ from "jquery-ui";
 import _ from "lodash";

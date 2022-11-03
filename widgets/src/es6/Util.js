@@ -1,4 +1,5 @@
 import $ from "jquery-ui";
+import { CONFIG } from "./config";
 /**
  * Util
  * @class Util

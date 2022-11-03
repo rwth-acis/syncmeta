@@ -1,5 +1,6 @@
 import $ from "jquery-ui";
 import Util from "Util";
+import { CONFIG } from "./config";
 var deferred = $.Deferred();
 var url = localStorage.userinfo_endpoint;
 $.ajax({

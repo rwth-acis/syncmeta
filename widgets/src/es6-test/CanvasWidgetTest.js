@@ -7,6 +7,7 @@ require.config({
     async: "lib/vendor/async",
   },
 });
+import { CONFIG } from "../config";
 import $ from "jquery";
 import chai from "chai";
 import WebConsoleReporter from "WebConsoleReporter";

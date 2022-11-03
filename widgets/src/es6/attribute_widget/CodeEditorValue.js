@@ -1,6 +1,7 @@
 import $ from "jquery-ui";
 import _ from "lodash";
 import IWCW from "../lib/IWCWrapper";
+import { CONFIG } from "../config";
 import AbstractValue from "./AbstractValue";
 import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
 import loadHTML from "../html.template.loader";
@@ -8,7 +9,7 @@ const codeEditorValueHtml = await loadHTML(
   "../../../html/templates/attribute_widget/code_edtior_value.html",
   import.meta.url
 );
-import "ace-builds/src-min/ace";
+// import "ace-builds/src-min/ace";
 
 CodeEditorValue.prototype = new AbstractValue();
 CodeEditorValue.prototype.constructor = CodeEditorValue;

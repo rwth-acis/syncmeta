@@ -7,6 +7,7 @@ import $ from "jquery-ui";
 import Util from "./Util";
 import IWCW from "./lib/IWCWrapper";
 import CanvasWidgetTest from "./../test/CanvasWidgetTest";
+import { CONFIG } from "./config";
 Promise.all([
   import("./lib/yjs-sync"),
   import("./operations/non_ot/NonOTOperation"),

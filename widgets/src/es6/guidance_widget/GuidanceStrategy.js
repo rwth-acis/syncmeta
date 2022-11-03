@@ -1,3 +1,4 @@
+import { CONFIG } from "../config";
 import IWCW from "../lib/IWCWrapper";
 import ShowGuidanceBoxOperation from "../operations/non_ot/ShowGuidanceBoxOperation";
 import graphlib from "graphlib";

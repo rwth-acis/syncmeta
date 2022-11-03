@@ -16,6 +16,7 @@ import ViewObjectNode from "./viewpoint/ViewObjectNode";
 import ViewRelationshipNode from "./viewpoint/ViewRelationshipNode";
 import ViewNode from "./view/ViewNode";
 import ViewEdge from "./view/ViewEdge";
+import { CONFIG } from "../config";
 
 
 	/**

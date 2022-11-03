@@ -4,6 +4,7 @@ import IWCW from "../lib/IWCWrapper";
 import AbstractValue from "./AbstractValue";
 import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
 import loadHTML from "../html.template.loader";
+import { CONFIG } from "../config";
 const colorValueHtml = await loadHTML(
   "../../../html/templates/attribute_widget/color_value.html",
   import.meta.url

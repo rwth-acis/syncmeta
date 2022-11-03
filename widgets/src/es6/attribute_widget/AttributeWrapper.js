@@ -3,6 +3,7 @@ import NodeAddOperation from "../operations/ot/NodeAddOperation";
 import EdgeAddOperation from "../operations/ot/EdgeAddOperation";
 import EntitySelectOperation from "../operations/non_ot/EntitySelectOperation";
 import EntityManager from "./EntityManager";
+import { CONFIG } from "../config";
 /**
  * AttributeWrapper
  * @class attribute_widget.AttributeWrapper

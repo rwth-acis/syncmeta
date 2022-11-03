@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import IWCW from "./lib/IWCWrapper";
 import NonOTOperation from "./operations/non_ot/NonOTOperation";
+import { CONFIG } from "./config";
     function WaitForCanvas(widgetName,attempts, frequency){
         var deferred = $.Deferred();
         var iwc = IWCW.getInstance(widgetName);

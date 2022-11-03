@@ -14,6 +14,7 @@ import NodeResizeOperation from "./operations/ot/NodeResizeOperation";
 import NodeDeleteOperation from "./operations/ot/NodeDeleteOperation";
 import CanvasViewChangeOperation from "./operations/non_ot/CanvasViewChangeOperation";
 import WaitForCanvas from "./WaitForCanvas";
+import { CONFIG } from "./config";
   yjsSync().done(function (y, spaceTitle) {
     console.info(
       "HEATMAP: Yjs successfully initialized in room " +

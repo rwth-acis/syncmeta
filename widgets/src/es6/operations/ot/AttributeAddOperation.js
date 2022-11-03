@@ -1,3 +1,4 @@
+import { CONFIG } from "../../config";
 import EntityOperation from "./EntityOperation";
 import OTOperation from "./OTOperation";
 import $__operations_ot_AttributeDeleteOperation from "./AttributeDeleteOperation";

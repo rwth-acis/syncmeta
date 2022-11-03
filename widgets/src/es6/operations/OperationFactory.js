@@ -1,3 +1,4 @@
+import { CONFIG } from "../config";
 import EntityOperation from "./ot/EntityOperation";
 import NodeAddOperation from "./ot/NodeAddOperation";
 import NodeDeleteOperation from "./ot/NodeDeleteOperation";

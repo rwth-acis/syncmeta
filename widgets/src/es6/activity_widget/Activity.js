@@ -4,6 +4,7 @@ import IWCW from "../lib/IWCWrapper";
 import Util from "../Util";
 import MoveCanvasOperation from "../operations/non_ot/MoveCanvasOperation";
 import activityBoxHtml from "../../templates/activity_widget/activity_box.html";
+import { CONFIG } from "../config";
 /**
  * An abstract user activity issued by one of the users
  * @class activity_widget.Activity

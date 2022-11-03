@@ -6,6 +6,7 @@ import EdgeDeleteOperation from "../operations/ot/EdgeDeleteOperation";
 import SingleValueAttribute from "./SingleValueAttribute";
 import AbstractEntity from "./AbstractEntity";
 import loadHTML from "../html.template.loader";
+import { CONFIG } from "../config";
 const abstractEdgeHtml = await loadHTML(
   "../../../html/templates/attribute_widget/abstract_edge.html",
   import.meta.url

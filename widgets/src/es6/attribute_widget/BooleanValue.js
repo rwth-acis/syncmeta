@@ -7,6 +7,7 @@ const booleanValueHtml = await loadHTML(
   "../../../html/templates/attribute_widget/boolean_value.html",
   import.meta.url
 );
+import { CONFIG } from "../config";
 
 BooleanValue.prototype = new AbstractValue();
 BooleanValue.prototype.constructor = BooleanValue;

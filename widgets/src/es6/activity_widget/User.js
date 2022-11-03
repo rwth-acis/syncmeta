@@ -2,6 +2,7 @@ import $ from "jquery-ui";
 import _ from "lodash";
 import Util from "../Util";
 import loadHtml from "../html.template.loader";
+import { CONFIG } from "../config";
 const userBoxHtml = await loadHtml(
   "../../../html/templates/activity_widget/user_box.html",
   import.meta.url

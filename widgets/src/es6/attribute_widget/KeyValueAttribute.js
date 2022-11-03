@@ -1,8 +1,7 @@
+import { CONFIG } from "../config";
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
 import IWCW from "iwcw";
-import Util from "Util";
 import AttributeDeleteOperation from "operations/ot/AttributeDeleteOperation";
 import AbstractAttribute from "attribute_widget/AbstractAttribute";
 import Value from "attribute_widget/Value";

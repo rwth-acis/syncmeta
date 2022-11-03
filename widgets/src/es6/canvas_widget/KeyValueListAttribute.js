@@ -1,3 +1,4 @@
+import { CONFIG } from "../config";
 import $ from "jquery-ui";
 import jsPlumb from "jsplumb";
 import _ from "lodash";

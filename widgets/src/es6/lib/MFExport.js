@@ -1,3 +1,4 @@
+import { CONFIG } from "../config";
 import IWCW from "./IWCWrapper";
 import Util from "../Util";
 // import ExportDataOperation from "../operations/non_ot/ExportDataOperation"; // this file does not exist

@@ -6,6 +6,7 @@ import AbstractAttribute from "./AbstractAttribute";
 import Value from "./Value";
 import SelectionValue from "./SelectionValue";
 import loadHTML from "../html.template.loader";
+import { CONFIG } from "../config";
 const keySelectionValueAttributeHtml = await loadHTML(
   "../../../html/templates/attribute_widget/key_value_attribute.html",
   import.meta.url

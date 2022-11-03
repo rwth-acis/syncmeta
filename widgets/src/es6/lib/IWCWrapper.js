@@ -1,3 +1,4 @@
+import { CONFIG } from "../config";
 import OTOperation from "../operations/ot/OTOperation";
 import NonOTOperation from "../operations/non_ot/NonOTOperation";
 import OperationFactory from "../operations/OperationFactory";

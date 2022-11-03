@@ -4,6 +4,7 @@
  */
 import $ from "jquery-ui";
 import IWCW from "./lib/IWCWrapper";
+import { CONFIG } from "./config";
 // import AttributeWidgetTest from "./../test/AttributeWidgetTest";
 
 Promise.all([

@@ -1,5 +1,6 @@
 import $ from "jquery-ui";
 import Util from "Util";
+import { CONFIG } from "./config";
 
 var resourceSpace = new openapp.oo.Resource(openapp.param.space());
 var resourceGetPromise = Util.toPromise(openapp.resource.get);

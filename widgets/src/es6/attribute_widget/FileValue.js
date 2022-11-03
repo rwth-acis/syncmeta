@@ -1,6 +1,7 @@
 import $ from "jquery-ui";
 import _ from "lodash";
 import IWCW from "../lib/IWCWrapper";
+import { CONFIG } from "../config";
 import AbstractValue from "./AbstractValue";
 import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
 const fileValueHtml = await loadHTML(

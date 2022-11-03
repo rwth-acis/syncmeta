@@ -4,6 +4,7 @@ import IWC from "./lib/IWCWrapper";
 import yjsSync from "./lib/yjs-sync";
 import UpdateViewListOperation from "./operations/non_ot/UpdateViewListOperation";
 import GenerateViewpointModel from "./canvas_widget/GenerateViewpointModel";
+import { CONFIG } from "./config";
 yjsSync().done(function (y, spaceTitle) {
   console.info(
     "VIEWCONTROL: Yjs successfully initialized in room " +

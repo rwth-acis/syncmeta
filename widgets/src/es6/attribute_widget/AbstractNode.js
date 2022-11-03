@@ -6,6 +6,7 @@ import EntitySelectOperation from "../operations/non_ot/EntitySelectOperation";
 import NodeDeleteOperation from "../operations/ot/NodeDeleteOperation";
 import AbstractEntity from "./AbstractEntity";
 import SingleValueAttribute from "./SingleValueAttribute";
+import { CONFIG } from "../config";
 import $__attribute_widget_EntityManager from "./EntityManager";
 
 const abstractNodeHtml = await loadHTML(
