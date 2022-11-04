@@ -42,4 +42,4 @@ import EntityManager from "./EntityManager";
             }
         }
     }
-    export default new DagreLayout();
+    export default  DagreLayout();

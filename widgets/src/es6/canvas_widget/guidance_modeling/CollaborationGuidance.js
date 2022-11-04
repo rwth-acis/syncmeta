@@ -3,6 +3,7 @@ import IWCW from "../../lib/IWCWrapper";
 import $ from "jquery-ui";
 import _ from "lodash";
 import CollaborateInActivityOperation from "../../operations/non_ot/CollaborateInActivityOperation";
+import loadHTML from "../../html.template.loader";
 const selectToolGuidanceHtml = await loadHTML(
   "../../../html/templates/guidance_modeling/collaboration_guidance.html",
   import.meta.url
