@@ -1,5 +1,4 @@
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
 import AbstractNode from "./AbstractNode";
 import BooleanAttribute from "./BooleanAttribute";

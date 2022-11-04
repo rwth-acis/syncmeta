@@ -1,4 +1,4 @@
-import dagre from 'dagre';
+import dagre from 'dagre/dist/dagre.core.min.js';
 import EntityManager from "./EntityManager";
     
     function DagreLayout() {

@@ -22,7 +22,7 @@ import AvoidConflictsStrategy from "./guidance_widget/AvoidConflictsStrategy";
 import CollaborationStrategy from "./guidance_widget/CollaborationStrategy";
 import Space from "./Space"; // not sure how to transform !promise/Space
 import { CONFIG } from "./config";
-import "bootstrap";
+// import "bootstrap";
   yjsSync().done(function (y, spaceTitle) {
     window.y = y;
     console.info(

@@ -6,7 +6,7 @@ const ghostEdgeHtml = await loadHTML(
   "../../../html/templates/guidance_modeling/ghost_edge.html",
   import.meta.url
 );
-import "bootstrap";
+// import "bootstrap";
 function GhostEdgeGuidance(canvas, node1, node2) {
   var _button = $(ghostEdgeHtml);
   var _dropdown = _button.find(".bs-dropdown-toggle");

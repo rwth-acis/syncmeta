@@ -1,6 +1,6 @@
 import { CONFIG } from "../config";
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
+import jsPlumb from "jsPlumb/dist/js/jquery.jsPlumb-1.5.5-min.js";
 import Util from "../Util";
 import IWCW from "../lib/IWCWrapper";
 import "../lib/jquery.transformable-PATCHED";

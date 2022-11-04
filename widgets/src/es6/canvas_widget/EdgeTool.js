@@ -1,7 +1,7 @@
 import { CONFIG } from "../config";
 import $ from "jquery-ui";
 import _ from "lodash";
-import jsPlumb from "jsplumb";
+import jsPlumb from "jsPlumb/dist/js/jquery.jsPlumb-1.5.5-min.js";
 import AbstractCanvasTool from "./AbstractCanvasTool";
 import EntityManager from "./EntityManager";
 

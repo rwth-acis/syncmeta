@@ -1,9 +1,7 @@
 import { CONFIG } from "../config";
 import $ from "jquery-ui";
-import jsPlumb from "jsplumb";
 import _ from "lodash";
-import IWCW from "iwcw";
-import Util from "Util";
+import IWCW from "../lib/IWCWrapper";
 import AttributeAddOperation from "operations/ot/AttributeAddOperation";
 import AttributeDeleteOperation from "operations/ot/AttributeDeleteOperation";
 import AbstractAttribute from "canvas_widget/AbstractAttribute";

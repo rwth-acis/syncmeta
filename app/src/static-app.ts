@@ -9,7 +9,7 @@ import "@polymer/paper-button/paper-button.js";
 
 import { Common } from "./common";
 import Static from "./static";
-import { IWC } from "../../widgets/src/es6/lib/iwc.js";
+import * as IWC from "../../widgets/src/es6/lib/iwc";
 
 import "./widget-container"; // container for all widgets
 

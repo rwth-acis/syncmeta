@@ -32,7 +32,7 @@ import startActivityNodeHtml from "../../templates/canvas_widget/start_activity_
 import actionNodeHtml from "../../templates/canvas_widget/action_node.html";
 import entityNodeHtml from "../../templates/guidance_modeling/entity_node.html";
 import callActivityNodeHtml from "../../templates/guidance_modeling/call_activity_node.html";
-import graphlib from "graphlib";
+import graphlib from "graphlib/dist/graphlib.core.min.js";;
 
 /**
  * Predefined node shapes, first is default

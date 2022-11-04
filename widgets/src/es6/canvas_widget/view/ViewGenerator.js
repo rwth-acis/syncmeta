@@ -1,4 +1,4 @@
-import jsPlumb from 'jsplumb';
+import jsPlumb from 'jsPlumb/dist/js/jquery.jsPlumb-1.5.5-min.js';
 import EntityManager from "../EntityManager";
 
     /**

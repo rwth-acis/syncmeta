@@ -16,7 +16,6 @@
   },
   "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
-    "@rwth-acis/iwc": "^1.0.0",
     "@types/jquery": "^3.5.14",
     "ace-builds": "^1.12.5",
     "async": "^3.2.4",

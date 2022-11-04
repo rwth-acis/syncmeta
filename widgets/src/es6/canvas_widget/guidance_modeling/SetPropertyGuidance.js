@@ -10,7 +10,7 @@ const setPropertyGuidanceHtml = await loadHTML(
   "../../../html/templates/guidance_modeling/set_property_guidance.html",
   import.meta.url
 );
-import "bootstrap";
+// import "bootstrap";
 function SetPropertyGuidance(id, label, entity, propertyName, canvas) {
   var _id = id;
   var _label = label;
