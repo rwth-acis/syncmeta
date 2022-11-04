@@ -3,8 +3,8 @@ import OTOperation from "../operations/ot/OTOperation";
 import NonOTOperation from "../operations/non_ot/NonOTOperation";
 import OperationFactory from "../operations/OperationFactory";
 import Util from "../Util";
+import * as IWC from "./iwc";
 
-import IWC from "./iwc";
 var PAYLOAD_DATA_TYPE = {
   OT_OPERATION: "OTOperation",
   NON_OT_OPERATION: "NonOTOperation",
