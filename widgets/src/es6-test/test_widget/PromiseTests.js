@@ -1,4 +1,5 @@
-import "../../es6/lib/openapp";
+import { OpenAppProvider } from "../../es6/lib/openapp";
+const openapp = new OpenAppProvider().openapp;
 import { CONFIG } from "../config";
 import $ from "jquery-ui";
 function PromiseTest() {

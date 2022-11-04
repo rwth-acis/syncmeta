@@ -4,6 +4,7 @@ import NonOTOperation from "../operations/non_ot/NonOTOperation";
 import OperationFactory from "../operations/OperationFactory";
 import Util from "../Util";
 import * as IWC from "./iwc";
+import "./openapp";
 
 var PAYLOAD_DATA_TYPE = {
   OT_OPERATION: "OTOperation",

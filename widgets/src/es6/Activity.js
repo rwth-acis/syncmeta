@@ -1,5 +1,7 @@
 import $ from "jquery";
+import { OpenAppProvider } from "./lib/openapp";
 var deferred = $.Deferred();
+const openapp = new OpenAppProvider.openapp();
 //Check whether this is the guidance modeling editor based on the activity name
 var act = openapp.param.get("http://purl.org/role/terms/activity");
 openapp.resource.get(act, function (resource) {

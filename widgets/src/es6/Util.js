@@ -1,6 +1,7 @@
 import jQuery from "jquery";
 import { CONFIG } from "./config";
-import "./lib/openapp";
+import { OpenAppProvider } from "./lib/openapp";
+const openapp = new OpenAppProvider().openapp;
 /**
  * Util
  * @class Util
