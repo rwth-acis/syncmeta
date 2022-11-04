@@ -96,6 +96,7 @@ class IWCWrapper {
    */
   encapsulateMessage(receiver, flags, action, payload) {
     var i, numOfFlags, flag;
+    // @ts-ignore
     var validatedFlags = [];
 
     if (flags instanceof Array) {
@@ -105,6 +106,7 @@ class IWCWrapper {
           flag === CONFIG.IWC.FLAG.PUBLISH_LOCAL ||
           flag === CONFIG.IWC.FLAG.PUBLISH_GLOBAL
         ) {
+          // @ts-ignore
           validatedFlags.push(flag);
         }
       }
@@ -113,6 +115,7 @@ class IWCWrapper {
         flags === CONFIG.IWC.FLAG.PUBLISH_LOCAL ||
         flags === CONFIG.IWC.FLAG.PUBLISH_GLOBAL
       ) {
+        // @ts-ignore
         validatedFlags.push(flags);
       }
     } else {

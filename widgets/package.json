@@ -31,7 +31,6 @@
     "jquery-mousewheel": "^3.1.13",
     "jquery-ui": "~1.10.3",
     "jsPlumb": "github:jsplumb/jsplumb#1.5.5",
-    "jsplumb": "^2.15.6",
     "jszip": "^3.10.1",
     "lit": "^2.4.0",
     "lodash": "^4.17.21",

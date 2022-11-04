@@ -1,8 +1,6 @@
 import { CONFIG } from "../config";
 import $ from "jquery-ui";
-
 import _ from "lodash";
-
 import Util from "../Util";
 import IWCW from "../lib/IWCWrapper";
 import NodeDeleteOperation from "../operations/ot/NodeDeleteOperation";

@@ -1,5 +1,6 @@
 import $ from "jquery-ui";
 import _ from "lodash";
+import loadHTML from "../../html.template.loader";
 const abstractNodeHtml = await loadHTML(
   "../../../html/templates/canvas_widget/abstract_node.html",
   import.meta.url

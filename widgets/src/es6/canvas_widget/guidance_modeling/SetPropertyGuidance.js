@@ -5,6 +5,7 @@ import SingleSelectionAttribute from "../SingleSelectionAttribute";
 import IntegerAttribute from "../IntegerAttribute";
 import BooleanAttribute from "../BooleanAttribute";
 import FileAttribute from "../FileAttribute";
+import loadHTML from "../../html.template.loader";
 const setPropertyGuidanceHtml = await loadHTML(
   "../../../html/templates/guidance_modeling/set_property_guidance.html",
   import.meta.url
@@ -39,7 +40,9 @@ function SetPropertyGuidance(id, label, entity, propertyName, canvas) {
       propertyName,
       entity
     );
+    // @ts-ignore
     _propertyInput.getValue().setValue(_entityAttribute.getValue().getValue());
+    // @ts-ignore
 
     if (_entityAttribute.getRootSubjectEntity().constructor.name === "Edge") {
       const edgeMap = y.getMap("edges");
@@ -58,7 +61,9 @@ function SetPropertyGuidance(id, label, entity, propertyName, canvas) {
     }
 
     /* _entityAttribute.get$node().find(".val").bind("input", function(){
-                 _propertyInput.getValue().setValue(_entityAttribute.getValue().getValue());
+                 // @ts-ignore
+_propertyInput.getValue().setValue(_entityAttribute.getValue().getValue());
+// @ts-ignore
              });
  
              _propertyInput.get$node().find(".val").bind("input", function(){
@@ -69,6 +74,7 @@ function SetPropertyGuidance(id, label, entity, propertyName, canvas) {
       .find(".property-input")
       .append(_propertyInput.get$node().find(".val").prop("disabled", false));
   } else if (_entityAttribute instanceof SingleSelectionAttribute) {
+    // @ts-ignore
     var options = _entityAttribute.getOptions();
     _propertyInput = new SingleSelectionAttribute(
       entity.getEntityId() + "[" + propertyName.toLowerCase() + "]",
@@ -77,7 +83,9 @@ function SetPropertyGuidance(id, label, entity, propertyName, canvas) {
       options,
       true
     );
+    // @ts-ignore
     _propertyInput.getValue().setValue(_entityAttribute.getValue().getValue());
+    // @ts-ignore
     _propertyInput
       .getValue()
       .get$node()
@@ -98,9 +106,12 @@ function SetPropertyGuidance(id, label, entity, propertyName, canvas) {
       entity,
       true
     );
+    // @ts-ignore
     _propertyInput.getValue().setValue(_entityAttribute.getValue().getValue());
+    // @ts-ignore
 
     _entityAttribute
+      // @ts-ignore
       .get$node()
       .find(".val")
       .bind("change", function () {
@@ -131,9 +142,12 @@ function SetPropertyGuidance(id, label, entity, propertyName, canvas) {
       entity,
       true
     );
+    // @ts-ignore
     _propertyInput.getValue().setValue(_entityAttribute.getValue().getValue());
+    // @ts-ignore
 
     _entityAttribute
+      // @ts-ignore
       .get$node()
       .find(".val")
       .bind("change", function () {
@@ -164,10 +178,14 @@ function SetPropertyGuidance(id, label, entity, propertyName, canvas) {
       entity,
       true
     );
-    //_propertyInput.getValue().setValue(_entityAttribute.getValue().getValue());
+    //@ts-ignore
+    _propertyInput.getValue().setValue(_entityAttribute.getValue().getValue());
+    // @ts-ignore
 
     // _entityAttribute.get$node().find(".val").bind("change", function(){
-    //     _propertyInput.getValue().setValue(_entityAttribute.getValue().getValue());
+    //     // @ts-ignore
+    _propertyInput.getValue().setValue(_entityAttribute.getValue().getValue());
+    // @ts-ignore
     // });
 
     // _propertyInput.get$node().find(".val").bind("change", function(ev){

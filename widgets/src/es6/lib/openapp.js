@@ -321,6 +321,7 @@ export class OpenAppProvider {
                 (document.getElementById(
                   "oauthPersonalizeMessage"
                 ).textContent = f);
+            // @ts-ignore
             document.getElementById("oauthPersonalize").style.display = "block";
           } else {
             c.oauthError
