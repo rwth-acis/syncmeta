@@ -1,5 +1,5 @@
 import $ from "jquery-ui";
-import _ from "lodash";
+import _ from "lodash-es";
 import AbstractNode from "./AbstractNode";
 import KeySelectionValueListAttribute from "./KeySelectionValueListAttribute";
 import objectNodeHtml from "../../templates/canvas_widget/object_node.html";

@@ -1,5 +1,5 @@
 import $ from "jquery-ui";
-import _ from "lodash";
+import _ from "lodash-es";
 import IWCW from "../lib/IWCWrapper";
 import EntitySelectOperation from "../operations/non_ot/EntitySelectOperation";
 import EdgeDeleteOperation from "../operations/ot/EdgeDeleteOperation";

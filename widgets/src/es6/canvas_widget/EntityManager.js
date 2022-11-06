@@ -1,5 +1,5 @@
 import { CONFIG } from "../config";
-import _ from "lodash";
+import _ from "lodash-es";
 import Util from "Util";
 import AbstractEntity from "./AbstractEntity";
 import Node from "./Node";

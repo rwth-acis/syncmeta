@@ -1,5 +1,5 @@
 import $ from "jquery-ui";
-import _ from "lodash";
+import _ from "lodash-es";
 import yjsSync from "./lib/yjs-sync";
 import GenerateViewpointModel from "./canvas_widget/GenerateViewpointModel";
 import EntityManager from "./canvas_widget/EntityManager";

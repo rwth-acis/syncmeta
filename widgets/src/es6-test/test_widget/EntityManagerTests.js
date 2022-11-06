@@ -1,5 +1,5 @@
 import { CONFIG } from "../config";
-import _ from "lodash";
+import _ from "lodash-es";
 import chai from "lib/vendor/test/chai";
 import EntityManager from "canvas_widget/EntityManager";
 function EntityManagerTests() {

@@ -1,5 +1,5 @@
 import $ from "jquery-ui";
-import _ from "lodash";
+import _ from "lodash-es";
 import AbstractAttribute from "./AbstractAttribute";
 import MultiLineValue from "./MultiLineValue";
 import loadHTML from "../html.template.loader";

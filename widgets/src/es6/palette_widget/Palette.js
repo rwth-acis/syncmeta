@@ -1,5 +1,5 @@
 import { CONFIG } from "../config";
-import _ from "lodash";
+import _ from "lodash-es";
 import IWCW from "../lib/IWCWrapper";
 import $ from "jquery";
 import ToolSelectOperation from "../operations/non_ot/ToolSelectOperation";

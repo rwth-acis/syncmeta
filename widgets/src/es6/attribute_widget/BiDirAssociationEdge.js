@@ -1,4 +1,4 @@
-import _ from "lodash";
+import _ from "lodash-es";
 import AbstractEdge from "./AbstractEdge";
 import AbstractClassNode from "./AbstractClassNode";
 import ObjectNode from "./ObjectNode";

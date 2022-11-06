@@ -1,5 +1,5 @@
 import $ from "jquery-ui";
-import _ from "lodash";
+import _ from "lodash-es";
 import IWC from "./lib/IWCWrapper";
 import yjsSync from "./lib/yjs-sync";
 import UpdateViewListOperation from "./operations/non_ot/UpdateViewListOperation";

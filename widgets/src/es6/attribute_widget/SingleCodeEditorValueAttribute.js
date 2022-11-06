@@ -1,5 +1,5 @@
 import $ from "jquery-ui";
-import _ from "lodash";
+import _ from "lodash-es";
 import AbstractAttribute from "./AbstractAttribute";
 import CodeEditorValue from "./CodeEditorValue";
 import loadHTML from "../html.template.loader";

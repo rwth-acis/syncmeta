@@ -1,5 +1,5 @@
 import $ from "jquery-ui";
-import _ from "lodash";
+import _ from "lodash-es";
 import AbstractNode from "./AbstractNode";
 import BooleanAttribute from "./BooleanAttribute";
 import SingleSelectionAttribute from "./SingleSelectionAttribute";

@@ -1,4 +1,4 @@
-import _ from "lodash";
+import _ from "lodash-es";
 import Activity from "./Activity";
 import NodeAddActivity from "./NodeAddActivity";
 import NodeDeleteActivity from "./NodeDeleteActivity";

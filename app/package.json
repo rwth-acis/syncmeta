@@ -15,11 +15,12 @@
     "@vaadin/router": "^1.7.4",
     "@web/dev-server-legacy": "^1.0.1",
     "jquery": "^3.6.1",
-    "jquery-ui": "^1.13.2",
+    "jquery-ui": "^1.10.5",
     "jsPlumb": "github:jsplumb/jsplumb#1.5.5",
     "las2peer-frontend-statusbar": "github:rwth-acis/las2peer-frontend-statusbar#0.3.6",
     "las2peer-frontend-user-widget": "github:rwth-acis/las2peer-frontend-user-widget#0.3.3",
     "lit": "^2.4.0",
+    "lodash-es": "^4.17.21",
     "reflect-metadata": "^0.1.13",
     "y-websocket": "^1.4.5",
     "yjs": "^13.5.41"

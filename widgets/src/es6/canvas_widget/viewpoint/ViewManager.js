@@ -1,5 +1,5 @@
 import $ from "jquery-ui";
-import _ from "lodash";
+import _ from "lodash-es";
 import EntityManager from "../EntityManager";
 const optionHtml = await loadHTML(
   "../../../html/templates/canvas_widget/select_option.html",

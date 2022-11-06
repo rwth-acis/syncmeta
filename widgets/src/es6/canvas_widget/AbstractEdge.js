@@ -1,6 +1,6 @@
 import { CONFIG } from "../config";
 import $ from "jquery-ui";
-import _ from "lodash";
+import _ from "lodash-es";
 import IWCW from "../lib/IWCWrapper";
 import EdgeDeleteOperation from "../operations/ot/EdgeDeleteOperation";
 import ActivityOperation from "../operations/non_ot/ActivityOperation";

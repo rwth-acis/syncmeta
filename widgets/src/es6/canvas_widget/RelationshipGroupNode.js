@@ -1,5 +1,5 @@
 import $ from "jquery-ui";
-import _ from "lodash";
+import _ from "lodash-es";
 import AbstractNode from "./AbstractNode";
 const relationshipGroupNodeHtml = await loadHTML(
   "../../../html/templates/canvas_widget/relationship_group_node.html",

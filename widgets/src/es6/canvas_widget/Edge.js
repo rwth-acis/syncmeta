@@ -1,6 +1,6 @@
 import $ from "jquery-ui";
 import jsPlumb from "jsPlumb/dist/js/jquery.jsPlumb-1.5.5-min.js";
-import _ from "lodash";
+import _ from "lodash-es";
 import BooleanAttribute from "./BooleanAttribute";
 import IntegerAttribute from "./IntegerAttribute";
 import FileAttribute from "./FileAttribute";

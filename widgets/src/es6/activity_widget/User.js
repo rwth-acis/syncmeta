@@ -1,5 +1,5 @@
 import $ from "jquery-ui";
-import _ from "lodash";
+import _ from "lodash-es";
 import Util from "../Util";
 import loadHtml from "../html.template.loader";
 import { CONFIG } from "../config";

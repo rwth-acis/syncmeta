@@ -1,5 +1,5 @@
 import $ from "jquery-ui";
-import _ from "lodash";
+import _ from "lodash-es";
 import AbstractEntity from "./AbstractEntity";
 const abstractAttributeHtml = await loadHTML(
   "../../../html/templates/attribute_widget/abstract_attribute.html",

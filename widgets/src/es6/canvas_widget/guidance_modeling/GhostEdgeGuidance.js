@@ -1,5 +1,5 @@
 import $ from "jquery-ui";
-import _ from "lodash";
+import _ from "lodash-es";
 import GhostEdge from "./GhostEdge";
 import loadHTML from "../../html.template.loader";
 const ghostEdgeHtml = await loadHTML(

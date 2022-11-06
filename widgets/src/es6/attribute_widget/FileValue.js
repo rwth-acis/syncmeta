@@ -1,5 +1,5 @@
 import $ from "jquery-ui";
-import _ from "lodash";
+import _ from "lodash-es";
 import IWCW from "../lib/IWCWrapper";
 import { OpenAppProvider } from "../lib/openapp";
 const openapp = new OpenAppProvider().openapp;

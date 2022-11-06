@@ -1,4 +1,4 @@
-import _ from "lodash";
+import _ from "lodash-es";
 import BooleanAttribute from "./BooleanAttribute";
 import IntegerAttribute from "./IntegerAttribute";
 import FileAttribute from "./FileAttribute";
