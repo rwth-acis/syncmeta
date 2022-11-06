@@ -1,4 +1,4 @@
-import jQuery from "jquery";
+import "jquery";
 import { CONFIG } from "./config";
 import { OpenAppProvider } from "./lib/openapp";
 const openapp = new OpenAppProvider().openapp;

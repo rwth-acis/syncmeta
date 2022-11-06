@@ -1,5 +1,5 @@
 import { CONFIG } from "../../config";
-import $ from "jquery-ui";
+import "jquery-ui";
 import _ from "lodash-es";
 import EntityManager from "../EntityManager";
 import loadHTML from "../../html.template.loader";

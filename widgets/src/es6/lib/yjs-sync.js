@@ -1,4 +1,4 @@
-import { $ } from "jquery";
+import "jquery";
 import Util from "Util";
 export default function (spaceTitle) {
   var deferred = $.Deferred();

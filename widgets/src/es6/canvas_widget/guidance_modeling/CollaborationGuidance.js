@@ -1,6 +1,6 @@
 import { CONFIG } from "../../config";
 import IWCW from "../../lib/IWCWrapper";
-import $ from "jquery-ui";
+import "jquery-ui";
 import _ from "lodash-es";
 import CollaborateInActivityOperation from "../../operations/non_ot/CollaborateInActivityOperation";
 import loadHTML from "../../html.template.loader";

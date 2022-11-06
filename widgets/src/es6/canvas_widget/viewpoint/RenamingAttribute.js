@@ -1,4 +1,4 @@
-import $ from "jquery-ui";
+import "jquery-ui";
 import _ from "lodash-es";
 import AbstractAttribute from "../AbstractAttribute";
 import Value from "../Value";

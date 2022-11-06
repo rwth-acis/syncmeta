@@ -1,4 +1,4 @@
-import $ from "jquery-ui";
+import "jquery-ui";
 import _ from "lodash-es";
 import IWC from "./lib/IWCWrapper";
 import yjsSync from "./lib/yjs-sync";

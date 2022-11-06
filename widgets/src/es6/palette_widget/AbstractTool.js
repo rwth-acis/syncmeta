@@ -1,4 +1,4 @@
-import $ from "jquery-ui";
+import "jquery-ui";
 import _ from "lodash-es";
 import loadHTML from "../html.template.loader";
 const abstractToolHtml = await loadHTML(

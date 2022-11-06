@@ -1,4 +1,4 @@
-import $ from "jquery-ui";
+import "jquery-ui";
 import _ from "lodash-es";
 import AbstractValue from "./AbstractValue";
 import loadHTML from "../html.template.loader";

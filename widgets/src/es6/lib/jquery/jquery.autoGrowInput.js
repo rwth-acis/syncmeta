@@ -1,4 +1,4 @@
-import $ from "jquery";
+import "jquery";
 
 $.fn.autoGrowInput = function (o) {
   o = $.extend(

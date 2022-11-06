@@ -3,7 +3,7 @@
  * @namespace activity_widget
  */
 
-import $ from "jquery-ui";
+import "jquery-ui";
 // import test from "./../es6-test/ActivityWidgetTest";
 import { CONFIG } from "./config";
 Promise.all([

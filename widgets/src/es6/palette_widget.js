@@ -3,7 +3,7 @@
  * @namespace palette_widget
  */
 
-import $ from "jquery-ui";
+import "jquery-ui";
 import WaitForCanvas from "./WaitForCanvas";
 import Palette from "./palette_widget/Palette";
 import MoveTool from "./palette_widget/MoveTool";

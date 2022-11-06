@@ -1,4 +1,4 @@
-import $ from "jquery-ui";
+import "jquery-ui";
 import Util from "Util";
 import { CONFIG } from "./config";
 var deferred = $.Deferred();

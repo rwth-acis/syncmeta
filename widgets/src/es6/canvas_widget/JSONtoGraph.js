@@ -1,4 +1,4 @@
-import { $ } from "jquery";
+import "jquery";
 import _ from "lodash-es";
 import EntityManager from "./EntityManager";
 export default function (json, canvas) {

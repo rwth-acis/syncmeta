@@ -1,4 +1,4 @@
-import $ from "jquery-ui";
+import "jquery-ui";
 import _ from "lodash-es";
 import IWCW from "../lib/IWCWrapper";
 import EntitySelectOperation from "../operations/non_ot/EntitySelectOperation";
@@ -10,7 +10,7 @@ import { CONFIG } from "../config";
 const abstractEdgeHtml = await loadHTML(
   "../../../html/templates/attribute_widget/abstract_edge.html",
   import.meta.url
-)
+);
 import $__attribute_widget_EntityManager from "./EntityManager";
 
 AbstractEdge.prototype = new AbstractEntity();

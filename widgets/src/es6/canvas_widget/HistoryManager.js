@@ -1,4 +1,4 @@
-import $ from "jquery-ui";
+import "jquery-ui";
 import NodeAddOperation from "../operations/ot/NodeAddOperation";
 import EdgeAddOperation from "../operations/ot/EdgeAddOperation";
 import NodeDeleteOperation from "../operations/ot/NodeDeleteOperation";

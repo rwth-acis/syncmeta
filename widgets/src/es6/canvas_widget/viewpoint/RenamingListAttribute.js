@@ -1,5 +1,5 @@
 import { CONFIG } from "../../config";
-import $ from "jquery-ui";
+import "jquery-ui";
 import _ from "lodash-es";
 import IWCW from "../../lib/IWCWrapper";
 import AttributeAddOperation from "../../operations/ot/AttributeAddOperation";

@@ -1,4 +1,4 @@
-import $ from "jquery-ui";
+import "jquery-ui";
 import _ from "lodash-es";
 import SingleValueAttribute from "../SingleValueAttribute";
 import SingleSelectionAttribute from "../SingleSelectionAttribute";

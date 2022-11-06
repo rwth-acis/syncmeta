@@ -1,4 +1,4 @@
-import { $ } from "jquery";
+import "jquery";
 import _ from "lodash-es";
 import chai from "chai";
 import EntityManager from "canvas_widget/EntityManager";

@@ -1,4 +1,4 @@
-import $ from "jquery";
+import "jquery";
 import { OpenAppProvider } from "./lib/openapp";
 var deferred = $.Deferred();
 const openapp = new OpenAppProvider.openapp();

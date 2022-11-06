@@ -1,4 +1,4 @@
-import $ from "jquery-ui";
+import "jquery-ui";
 import _ from "lodash-es";
 import AbstractNode from "../AbstractNode";
 import SingleSelectionAttribute from "../SingleSelectionAttribute";
@@ -15,7 +15,6 @@ const viewrelationshipNodeHtml = await loadHTML(
   "../../../html/templates/canvas_widget/viewrelationship_node.html",
   import.meta.url
 );
-
 
 ViewRelationshipNode.TYPE = "ViewRelationship";
 ViewRelationshipNode.DEFAULT_WIDTH = 150;

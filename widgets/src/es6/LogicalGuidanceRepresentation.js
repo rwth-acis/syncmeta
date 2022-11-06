@@ -1,4 +1,4 @@
-import $ from "jquery-ui";
+import "jquery-ui";
 import { CONFIG } from "./config";
 import { OpenAppProvider } from "./lib/openapp";
 

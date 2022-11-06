@@ -1,5 +1,5 @@
 import { CONFIG } from "../config";
-import $ from "jquery";
+import "jquery";
 import chai from "chai";
 import WebConsoleReporter from "WebConsoleReporter";
 import EntityManager from "canvas_widget/EntityManager";

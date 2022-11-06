@@ -1,4 +1,4 @@
-import $ from "jquery-ui";
+import "jquery-ui";
 import { OpenAppProvider } from "./lib/openapp";
 const openapp = new OpenAppProvider().openapp;
 var resourceSpace = new openapp.oo.Resource(openapp.param.space());

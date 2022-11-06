@@ -1,4 +1,4 @@
-import { $ } from "jquery";
+import "jquery";
 import IWCW from "./lib/IWCWrapper";
 import NonOTOperation from "./operations/non_ot/NonOTOperation";
 import { CONFIG } from "./config";

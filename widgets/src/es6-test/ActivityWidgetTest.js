@@ -1,4 +1,4 @@
-import $ from "jquery";
+import "jquery";
 import chai from "chai";
 import WebConsoleReporter from "./WebConsole";
 import "mocha";
