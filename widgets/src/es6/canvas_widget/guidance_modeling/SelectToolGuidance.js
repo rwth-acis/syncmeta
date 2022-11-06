@@ -1,4 +1,5 @@
 import { CONFIG } from "../../config";
+import "jquery";
 import "jquery-ui";
 import _ from "lodash-es";
 import EntityManager from "../EntityManager";

@@ -1,3 +1,4 @@
+import "jquery";
 import "jquery-ui";
 import NodeAddOperation from "../operations/ot/NodeAddOperation";
 import EdgeAddOperation from "../operations/ot/EdgeAddOperation";

@@ -1,3 +1,4 @@
+import "jquery";
 import "jquery-ui";
 import _ from "lodash-es";
 import loadHTML from "../../html.template.loader";

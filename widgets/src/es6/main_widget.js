@@ -3,6 +3,7 @@
  * @namespace canvas_widget
  */
 
+import "jquery";
 import "jquery-ui";
 import Util from "./Util";
 import IWCW from "./lib/IWCWrapper";

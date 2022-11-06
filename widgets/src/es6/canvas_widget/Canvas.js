@@ -1,4 +1,5 @@
 import { CONFIG } from "../config";
+import "jquery";
 import "jquery-ui";
 import jsPlumb from "jsPlumb/dist/js/jquery.jsPlumb-1.5.5-min.js";
 import Util from "../Util";

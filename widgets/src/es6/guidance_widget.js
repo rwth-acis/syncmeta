@@ -3,6 +3,7 @@
  * @namespace activity_widget
  */
 
+import "jquery";
 import "jquery-ui";
 import _ from "lodash-es";
 import IWCW from "./lib/IWCWrapper";

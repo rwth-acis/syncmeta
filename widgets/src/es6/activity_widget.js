@@ -3,6 +3,7 @@
  * @namespace activity_widget
  */
 
+import "jquery";
 import "jquery-ui";
 // import test from "./../es6-test/ActivityWidgetTest";
 import { CONFIG } from "./config";

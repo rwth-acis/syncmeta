@@ -2,6 +2,7 @@
  * Namespace for attribute widget.
  * @namespace attribute_widget
  */
+import "jquery";
 import "jquery-ui";
 import IWCW from "./lib/IWCWrapper";
 import { CONFIG } from "./config";

@@ -1,3 +1,4 @@
+import "jquery";
 import "jquery-ui";
 import MFExport from "./lib/mfexport";
 $("#json").click(function () {

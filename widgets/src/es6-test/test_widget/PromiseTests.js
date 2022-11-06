@@ -1,6 +1,7 @@
 import { OpenAppProvider } from "../../es6/lib/openapp";
 const openapp = new OpenAppProvider().openapp;
 import { CONFIG } from "../config";
+import "jquery";
 import "jquery-ui";
 function PromiseTest() {
   var resourceSpace = new openapp.oo.Resource(openapp.param.space());

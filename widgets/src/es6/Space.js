@@ -1,3 +1,4 @@
+import "jquery";
 import "jquery-ui";
 import Util from "Util";
 import { CONFIG } from "./config";

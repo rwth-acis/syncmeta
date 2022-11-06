@@ -1,3 +1,4 @@
+import "jquery";
 import "jquery-ui";
 import chai from "lib/vendor/test/chai";
 import Util from "Util";

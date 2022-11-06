@@ -1,4 +1,5 @@
 import { CONFIG } from "../config";
+import "jquery";
 import "jquery-ui";
 import AbstractCanvasTool from "./AbstractCanvasTool";
 import EntityManager from "./EntityManager";

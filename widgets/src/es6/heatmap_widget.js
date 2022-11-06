@@ -3,6 +3,7 @@
  * @namespace heatmap_widget
  */
 
+import "jquery";
 import "jquery-ui";
 import IWCW from "./lib/IWCWrapper";
 import yjsSync from "./lib/yjs-sync";
