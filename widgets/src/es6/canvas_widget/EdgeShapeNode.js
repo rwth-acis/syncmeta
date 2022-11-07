@@ -6,16 +6,12 @@ import SingleSelectionAttribute from "./SingleSelectionAttribute";
 import SingleValueAttribute from "./SingleValueAttribute";
 import SingleColorValueAttribute from "./SingleColorValueAttribute";
 import BooleanAttribute from "./BooleanAttribute";
+import loadHTML from "../html.template.loader";
+
 const edgeShapeNodeHtml = await loadHTML(
   "../../../html/templates/canvas_widget/edge_shape_node.html",
   import.meta.url
 );
-EdgeShapeNode.TYPE = "Edge Shape";
-EdgeShapeNode.DEFAULT_WIDTH = 150;
-EdgeShapeNode.DEFAULT_HEIGHT = 150;
-
-EdgeShapeNode.prototype = new AbstractNode();
-EdgeShapeNode.prototype.constructor = EdgeShapeNode;
 /**
  * Abstract Class Node
  * @class canvas_widget.EdgeShapeNode
@@ -29,124 +25,120 @@ EdgeShapeNode.prototype.constructor = EdgeShapeNode;
  * @param {number} height Height of node
  * @param {number} zIndex Position of node on z-axis
  */
-function EdgeShapeNode(id, left, top, width, height, zIndex, json) {
-  var that = this;
+class EdgeShapeNode extends AbstractNode {
+  static TYPE = "Edge Shape";
+  static DEFAULT_WIDTH = 150;
+  static DEFAULT_HEIGHT = 150;
 
-  AbstractNode.call(
-    this,
-    id,
-    EdgeShapeNode.TYPE,
-    left,
-    top,
-    width,
-    height,
-    zIndex,
-    json
-  );
+  constructor(id, left, top, width, height, zIndex, json) {
+    super(id, EdgeShapeNode.TYPE, left, top, width, height, zIndex, json);
+    var that = this;
 
-  /**
-   * jQuery object of node template
-   * @type {jQuery}
-   * @private
-   */
-  var _$template = $(_.template(edgeShapeNodeHtml)({ type: that.getType() }));
 
-  /**
-   * jQuery object of DOM node representing the node
-   * @type {jQuery}
-   * @private
-   */
-  var _$node = AbstractNode.prototype.get$node
-    .call(this)
-    .append(_$template)
-    .addClass("class");
+    /**
+     * jQuery object of node template
+     * @type {jQuery}
+     * @private
+     */
+    var _$template = $(_.template(edgeShapeNodeHtml)({ type: that.getType() }));
 
-  /**
-   * jQuery object of DOM node representing the attributes
-   * @type {jQuery}
-   * @private
-   */
-  var _$attributeNode = _$node.find(".attributes");
+    /**
+     * jQuery object of DOM node representing the node
+     * @type {jQuery}
+     * @private
+     */
+    var _$node = AbstractNode.prototype.get$node
+      .call(this)
+      .append(_$template)
+      .addClass("class");
 
-  /**
-   * Attributes of node
-   * @type {Object}
-   * @private
-   */
-  var _attributes = this.getAttributes();
+    /**
+     * jQuery object of DOM node representing the attributes
+     * @type {jQuery}
+     * @private
+     */
+    var _$attributeNode = _$node.find(".attributes");
 
-  /**
-   * Get JSON representation of the node
-   * @returns {Object}
-   */
-  this.toJSON = function () {
-    var json = AbstractNode.prototype.toJSON.call(this);
-    json.type = EdgeShapeNode.TYPE;
-    return json;
-  };
+    /**
+     * Attributes of node
+     * @type {Object}
+     * @private
+     */
+    var _attributes = this.getAttributes();
 
-  var attrArrow = new SingleSelectionAttribute(
-    this.getEntityId() + "[arrow]",
-    "Arrow",
-    this,
-    {
-      bidirassociation: "---",
-      unidirassociation: "-->",
-      generalisation: "--▷",
-      diamond: "-◁▷",
-    }
-  );
-  var attrShape = new SingleSelectionAttribute(
-    this.getEntityId() + "[shape]",
-    "Shape",
-    this,
-    { straight: "Straight", curved: "Curved", segmented: "Segmented" }
-  );
-  var attrColor = new SingleColorValueAttribute(
-    this.getEntityId() + "[color]",
-    "Color",
-    this
-  );
-  var attrOverlay = new SingleValueAttribute(
-    this.getEntityId() + "[overlay]",
-    "Overlay Text",
-    this
-  );
-  var attrOverlayPos = new SingleSelectionAttribute(
-    this.getEntityId() + "[overlayPosition]",
-    "Overlay Position",
-    this,
-    { hidden: "Hide", top: "Top", center: "Center", bottom: "Bottom" }
-  );
-  var attrOverlayRotate = new BooleanAttribute(
-    this.getEntityId() + "[overlayRotate]",
-    "Autoflip Overlay",
-    this
-  );
+    /**
+     * Get JSON representation of the node
+     * @returns {Object}
+     */
+    this.toJSON = function () {
+      var json = AbstractNode.prototype.toJSON.call(this);
+      json.type = EdgeShapeNode.TYPE;
+      return json;
+    };
 
-  this.addAttribute(attrArrow);
-  this.addAttribute(attrShape);
-  this.addAttribute(attrColor);
-  this.addAttribute(attrOverlay);
-  this.addAttribute(attrOverlayPos);
-  this.addAttribute(attrOverlayRotate);
+    var attrArrow = new SingleSelectionAttribute(
+      this.getEntityId() + "[arrow]",
+      "Arrow",
+      this,
+      {
+        bidirassociation: "---",
+        unidirassociation: "-->",
+        generalisation: "--▷",
+        diamond: "-◁▷",
+      }
+    );
+    var attrShape = new SingleSelectionAttribute(
+      this.getEntityId() + "[shape]",
+      "Shape",
+      this,
+      { straight: "Straight", curved: "Curved", segmented: "Segmented" }
+    );
+    var attrColor = new SingleColorValueAttribute(
+      this.getEntityId() + "[color]",
+      "Color",
+      this
+    );
+    var attrOverlay = new SingleValueAttribute(
+      this.getEntityId() + "[overlay]",
+      "Overlay Text",
+      this
+    );
+    var attrOverlayPos = new SingleSelectionAttribute(
+      this.getEntityId() + "[overlayPosition]",
+      "Overlay Position",
+      this,
+      { hidden: "Hide", top: "Top", center: "Center", bottom: "Bottom" }
+    );
+    var attrOverlayRotate = new BooleanAttribute(
+      this.getEntityId() + "[overlayRotate]",
+      "Autoflip Overlay",
+      this
+    );
 
-  this.registerYMap = function (map, disableYText) {
-    AbstractNode.prototype.registerYMap.call(this, map);
-    attrArrow.getValue().registerYType();
-    attrShape.getValue().registerYType();
-    attrOverlayPos.getValue().registerYType();
-    attrOverlayRotate.getValue().registerYType();
-    that.getLabel().getValue().registerYType();
-    attrColor.getValue().registerYType();
-    attrOverlay.getValue().registerYType();
-  };
+    this.addAttribute(attrArrow);
+    this.addAttribute(attrShape);
+    this.addAttribute(attrColor);
+    this.addAttribute(attrOverlay);
+    this.addAttribute(attrOverlayPos);
+    this.addAttribute(attrOverlayRotate);
 
-  _$node.find(".label").append(this.getLabel().get$node());
+    this.registerYMap = function (map, disableYText) {
+      AbstractNode.prototype.registerYMap.call(this, map);
+      attrArrow.getValue().registerYType();
+      attrShape.getValue().registerYType();
+      attrOverlayPos.getValue().registerYType();
+      attrOverlayRotate.getValue().registerYType();
+      that.getLabel().getValue().registerYType();
+      attrColor.getValue().registerYType();
+      attrOverlay.getValue().registerYType();
+    };
 
-  for (var attributeKey in _attributes) {
-    if (_attributes.hasOwnProperty(attributeKey)) {
-      _$attributeNode.append(_attributes[attributeKey].get$node());
+    _$node.find(".label").append(this.getLabel().get$node());
+
+    for (var attributeKey in _attributes) {
+      if (_attributes.hasOwnProperty(attributeKey)) {
+        _$attributeNode.append(_attributes[attributeKey].get$node());
+      }
     }
   }
 }
