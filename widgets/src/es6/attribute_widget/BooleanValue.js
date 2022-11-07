@@ -4,6 +4,8 @@ import _ from "lodash-es";
 import IWCW from "../lib/IWCWrapper";
 import AbstractValue from "./AbstractValue";
 import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
+import loadHTML from "../html.template.loader";
+
 const booleanValueHtml = await loadHTML(
   "../../../html/templates/attribute_widget/boolean_value.html",
   import.meta.url

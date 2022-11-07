@@ -3,6 +3,8 @@ import "jquery-ui";
 import _ from "lodash-es";
 import AbstractAttribute from "./AbstractAttribute";
 import MultiLineValue from "./MultiLineValue";
+import loadHTML from "../html.template.loader";
+
 const singleMultiLineValueAttributeHtml = await loadHTML(
   "../../../html/templates/canvas_widget/single_multi_line_value_attribute.html",
   import.meta.url

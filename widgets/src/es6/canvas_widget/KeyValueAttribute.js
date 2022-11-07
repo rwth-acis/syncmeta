@@ -2,10 +2,15 @@ import "jquery";
 import "jquery-ui";
 import "jsplumb/dist/js/jsPlumb-1.7.9.js";;
 import _ from "lodash-es";
-import Util from "Util";
+import loadHTML from "../html.template.loader";
+
 import AbstractAttribute from "canvas_widget/AbstractAttribute";
 import Value from "canvas_widget/Value";
-import keyValueAttributeHtml from "text!templates/canvas_widget/key_value_attribute.html";
+
+const keyValueAttributeHtml = loadHTML(
+  "text!templates/canvas_widget/key_value_attribute.html",
+  import.meta.url
+);
 
 KeyValueAttribute.prototype = new AbstractAttribute();
 KeyValueAttribute.prototype.constructor = KeyValueAttribute;

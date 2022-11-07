@@ -25,7 +25,7 @@ import $__operations_ot_NodeDeleteOperation from "./NodeDeleteOperation";
  * @param defaultAttributeValues May be used to set default attribute values for nodes.
  * @constructor
  */
-class NodeAddOperation extends EntityOperation {
+export class NodeAddOperation extends EntityOperation {
   static TYPE = "NodeAddOperation";
   getType;
   getOriginType;

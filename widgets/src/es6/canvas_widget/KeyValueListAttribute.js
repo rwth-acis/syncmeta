@@ -7,7 +7,11 @@ import AttributeAddOperation from "operations/ot/AttributeAddOperation";
 import AttributeDeleteOperation from "operations/ot/AttributeDeleteOperation";
 import AbstractAttribute from "canvas_widget/AbstractAttribute";
 import KeyValueAttribute from "canvas_widget/KeyValueAttribute";
-import keyValueListAttributeHtml from "text!templates/canvas_widget/list_attribute.html";
+import loadHTML from "../html.template.loader";
+const keyValueListAttributeHtml = loadHTML(
+  "../../../html/templates/canvas_widget/list_attribute.html",
+  import.meta.url
+);
 
 KeyValueListAttribute.TYPE = "KeyValueListAttribute";
 

@@ -7,7 +7,12 @@ import AttributeAddOperation from "../operations/ot/AttributeAddOperation";
 import AttributeDeleteOperation from "../operations/ot/AttributeDeleteOperation";
 import AbstractAttribute from "./AbstractAttribute";
 import KeySelectionValueAttribute from "./KeySelectionValueAttribute";
-import keySelectionValueListAttributeHtml from "../../templates/canvas_widget/list_attribute.html";
+import loadHTML from "../html.template.loader";
+
+const keySelectionValueListAttributeHtml = loadHTML(
+  "../../templates/canvas_widget/list_attribute.html",
+  import.meta.url
+);
 
 KeySelectionValueListAttribute.TYPE = "KeySelectionValueListAttribute";
 

@@ -3,6 +3,8 @@ import "jquery-ui";
 import _ from "lodash-es";
 import AbstractAttribute from "./AbstractAttribute";
 import SelectionValue from "./SelectionValue";
+import loadHTML from "../html.template.loader";
+
 const singleSelectionAttributeHtml = await loadHTML(
   "../../../html/templates/attribute_widget/single_selection_attribute.html",
   import.meta.url

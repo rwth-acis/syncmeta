@@ -4,6 +4,8 @@ import _ from "lodash-es";
 import AbstractAttribute from "./AbstractAttribute";
 import Value from "./Value";
 import SelectionValue from "./SelectionValue";
+import loadHTML from "../html.template.loader";
+
 const keySelectionValueSelectionValueAttributeHtml = await loadHTML(
   "../../../html/templates/canvas_widget/key_value_attribute.html",
   import.meta.url

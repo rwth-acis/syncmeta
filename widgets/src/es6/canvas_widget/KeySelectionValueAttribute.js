@@ -4,7 +4,12 @@ import _ from "lodash-es";
 import AbstractAttribute from "./AbstractAttribute";
 import Value from "./Value";
 import SelectionValue from "./SelectionValue";
-import keySelectionValueAttributeHtml from "../../templates/canvas_widget/key_value_attribute.html";
+import loadHTML from "../html.template.loader";
+const keySelectionValueAttributeHtml = loadHTML(
+  "../../templates/canvas_widget/key_value_attribute.html",
+  import.meta.url
+);
+
 
 KeySelectionValueAttribute.prototype = new AbstractAttribute();
 KeySelectionValueAttribute.prototype.constructor = KeySelectionValueAttribute;

@@ -7,6 +7,8 @@ import AttributeAddOperation from "../../operations/ot/AttributeAddOperation";
 import AttributeDeleteOperation from "../../operations/ot/AttributeDeleteOperation";
 import AbstractAttribute from "../AbstractAttribute";
 import ConditionPredicateAttribute from "./ConditionPredicateAttribute";
+import loadHTML from "../html.template.loader";
+
 const listHtml = await loadHTML(
   "../../../html/templates/canvas_widget/list_attribute.html",
   import.meta.url

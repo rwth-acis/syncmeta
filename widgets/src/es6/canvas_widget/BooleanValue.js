@@ -7,6 +7,7 @@ import AbstractValue from "./AbstractValue";
 import AbstractAttribute from "./AbstractAttribute";
 import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
 import ActivityOperation from "../operations/non_ot/ActivityOperation";
+import loadHTML from "../html.template.loader";
 
 const booleanValueHtml = await loadHTML(
   "../../../html/templates/canvas_widget/boolean_value.html",

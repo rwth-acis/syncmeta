@@ -3,6 +3,9 @@ import "jquery-ui";
 import _ from "lodash-es";
 import AbstractAttribute from "./AbstractAttribute";
 import FileValue from "./FileValue";
+
+import loadHTML from "../html.template.loader";
+
 const fileAttributeHtml = await loadHTML(
   "../../../html/templates/attribute_widget/file_attribute.html",
   import.meta.url

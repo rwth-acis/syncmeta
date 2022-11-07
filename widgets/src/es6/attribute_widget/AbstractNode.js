@@ -9,6 +9,7 @@ import AbstractEntity from "./AbstractEntity";
 import SingleValueAttribute from "./SingleValueAttribute";
 import { CONFIG } from "../config";
 import $__attribute_widget_EntityManager from "./EntityManager";
+import loadHTML from "../html.template.loader";
 
 const abstractNodeHtml = await loadHTML(
   "../../../html/templates/attribute_widget/abstract_node.html",

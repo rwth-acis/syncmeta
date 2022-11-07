@@ -3,6 +3,8 @@ import "jquery-ui";
 import _ from "lodash-es";
 import AbstractAttribute from "./AbstractAttribute";
 import BooleanValue from "./BooleanValue";
+import loadHTML from "../html.template.loader";
+
 const booleanAttributeHtml = await loadHTML(
   "../../../html/templates/canvas_widget/single_selection_attribute.html",
   import.meta.url
