@@ -57,7 +57,7 @@ Promise.all([
   import("./User"), // promise!User
   import("./Guidancemodel"), // promise!Guidancemodel
 ]).then(function ([
-  yjsSync,
+  yjsSyncLoader,
   NonOTOperation,
   ,
   ActivityOperation,
@@ -103,11 +103,11 @@ Promise.all([
   GenerateViewpointModel,
   user,
   guidancemodel,
-]) {
+]) { 
   var _iwcw;
   _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
   _iwcw.setSpace(user);
-
+  const yjsSync = yjsSyncLoader.default
   yjsSync()
     .done(function (y, spaceTitle) {
       console.info(
@@ -217,11 +217,11 @@ Promise.all([
             const dataMap = y.getMap("data");
             var model = dataMap.get("model");
             var vls = GenerateViewpointModel(model);
-            yjsSync(operation.getModelingRoomName())
+            yjsSyncLoader(operation.getModelingRoomName())
               .done(function (y) {
                 const dataMap = y.getMap("data");
                 dataMap.set("metamodel", vls);
-                yjsSync(operation.getMetaModelingRoomName())
+                yjsSyncLoader(operation.getMetaModelingRoomName())
                   .done(function (y) {
                     const metaModelStatus = y.getMap("metaModelStatus");
                     metaModelStatus.set("uploaded", true);

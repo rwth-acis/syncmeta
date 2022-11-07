@@ -1,5 +1,7 @@
 import "jquery";
-import Util from "Util";
+import Util from "../Util";
+import * as Y from "yjs";
+import { WebsocketProvider } from "y-websocket";
 export default function (spaceTitle) {
   var deferred = $.Deferred();
   //if space is not provided by the parameter, get it yourself from frameElement
@@ -9,15 +11,18 @@ export default function (spaceTitle) {
     } else if (parent.syncmetaRoom) {
       spaceTitle = parent.syncmetaRoom;
     } else {
-      spaceTitle = Util.getSpaceTitle(frameElement.baseURI);
+      const pathName = parent.location.pathname;
+      spaceTitle = Util.getSpaceTitle(pathName);
     }
   }
 
   var waitForYjs = function () {
     setTimeout(function () {
       console.log("waiting for yjs to be bound to the window object");
-      if (!window.Y) waitForYjs();
-      else {
+      if (!window.Y) {
+        window.Y = Y;
+        waitForYjs();
+      } else {
         console.log("Yjs is available, using spaceTitle: ", spaceTitle);
         const doc = new Y.Doc();
 

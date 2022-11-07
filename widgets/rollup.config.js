@@ -297,7 +297,7 @@ export default [
         jquery: "$",
         lit: "lit",
         yjs: "Y",
-        "y-websocket": "WebsocketProvider",
+        "y-websocket": "y-websocket",
         jsPlumb: "jsPlumb",
         "jquery-ui": "jquery-ui",
       },

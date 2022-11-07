@@ -450,11 +450,7 @@ export default class IWCW {
    */
 
   static hasInstance() {
-    if (IWCW.instance === null) {
-      return false;
-    } else {
-      return IWCW.instance;
-    }
+    return !!IWCW.instance
   }
 
   /**
@@ -463,7 +459,7 @@ export default class IWCW {
    * @returns {IWCWrapper}
    */
   static getInstance(componentName) {
-    if (IWCW.instance === null) {
+    if (!IWCW.instance) {
       IWCW.instance = new IWCWrapper(componentName);
       IWCW.instance.connect();
     }

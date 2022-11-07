@@ -9,11 +9,22 @@ import "jquery-ui";
 import { CONFIG } from "./config";
 Promise.all([
   import("./lib/yjs-sync"),
-  import("./activity_widget/ActivityList"),
   import("./WaitForCanvas"),
   import("./Util"),
   import("./activity_widget/WidgetTracker"),
-]).then(function (yjsSync, ActivityList, WaitForCanvas, Util, WidgetTracker) {
+  import("./activity_widget/ActivityList"),
+]).then(function ([
+  yjsSyncLoader,
+  WaitForCanvasLoader,
+  UtilLoader,
+  WidgetTrackerLoader,
+  ActivityListLoader,
+]) {
+  const yjsSync = yjsSyncLoader.default;
+  const WaitForCanvas = WaitForCanvasLoader.default;
+  const Util = UtilLoader.default;
+  const WidgetTracker = WidgetTrackerLoader.default;
+  const ActivityList = ActivityListLoader.default;
   yjsSync().done(function (y, spaceTitle) {
     window.y = y;
 

@@ -19,8 +19,8 @@ Promise.all([
   import("./operations/non_ot/SetModelAttributeNodeOperation"),
   import("./Guidancemodel"), //promise!Guidancemodel
 ]).then(function ([
-  yjsSync,
-  WaitForCanvas,
+  yjsSyncLoader,
+  WaitForCanvasLoader,
   AttributeWrapper,
   EntityManager,
   ViewGenerator,
@@ -29,6 +29,8 @@ Promise.all([
   SetModelAttributeNodeOperation,
   guidancemodel,
 ]) {
+  const WaitForCanvas = WaitForCanvasLoader.default
+  const yjsSync = yjsSyncLoader.default
   WaitForCanvas(CONFIG.WIDGET.NAME.ATTRIBUTE, 10, 1500)
     .done(function (user) {
       $("#wrapper")
