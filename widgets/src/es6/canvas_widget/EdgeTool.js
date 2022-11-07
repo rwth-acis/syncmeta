@@ -2,7 +2,7 @@ import { CONFIG } from "../config";
 import "jquery";
 import "jquery-ui";
 import _ from "lodash-es";
-import jsPlumb from "jsPlumb/dist/js/jquery.jsPlumb-1.5.5-min.js";
+import "jsplumb/dist/js/jsPlumb-1.7.9.js";;
 import AbstractCanvasTool from "./AbstractCanvasTool";
 import EntityManager from "./EntityManager";
 

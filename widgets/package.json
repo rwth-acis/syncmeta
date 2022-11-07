@@ -29,7 +29,7 @@
     "jquery-migrate": "^1.4.1",
     "jquery-mousewheel": "^3.1.13",
     "jquery-ui": "^1.13.2",
-    "jsPlumb": "github:jsplumb/jsplumb#1.5.5",
+    "jsplumb": "^1.7.9",
     "jszip": "^3.10.1",
     "lit": "^2.4.0",
     "lodash": "^4.17.21",

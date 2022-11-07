@@ -1,6 +1,6 @@
 import "jquery";
 import "jquery-ui";
-import jsPlumb from "jsPlumb/dist/js/jquery.jsPlumb-1.5.5-min.js";
+import "jsplumb/dist/js/jsPlumb-1.7.9.js";;
 import _ from "lodash-es";
 import Util from "Util";
 import AbstractAttribute from "canvas_widget/AbstractAttribute";

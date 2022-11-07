@@ -1,4 +1,4 @@
-import jsPlumb from "jsPlumb/dist/js/jquery.jsPlumb-1.5.5-min.js";
+import "jsplumb/dist/js/jsPlumb-1.7.9.js";
 import _ from "lodash-es";
 import AbstractEdge from "./AbstractEdge";
 import AbstractClassNode from "./AbstractClassNode";

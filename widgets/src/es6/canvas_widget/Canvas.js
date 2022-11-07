@@ -1,7 +1,7 @@
 import { CONFIG } from "../config";
 import "jquery";
 import "jquery-ui";
-import jsPlumb from "jsPlumb/dist/js/jquery.jsPlumb-1.5.5-min.js";
+import "jsplumb/dist/js/jsPlumb-1.7.9.js";
 import Util from "../Util";
 import IWCW from "../lib/IWCWrapper";
 import "../lib/jquery.transformable-PATCHED";
@@ -64,7 +64,6 @@ Promise.all([
   CollaborationGuidance,
   DagreLayout,
 ]) {
-  Canvas.prototype = new AbstractCanvas();
   /**
    * Canvas
    * @class canvas_widget.Canvas
@@ -73,11 +72,10 @@ Promise.all([
    * @constructor
    * @param {jQuery} $node jquery Selector of canvas node
    */
-  class Canvas {
+  class Canvas extends AbstractCanvas {
     constructor($node) {
+      super($node);
       var that = this;
-
-      AbstractCanvas.call(this, $node);
 
       /**
        * jQuery object of DOM node representing the canvas

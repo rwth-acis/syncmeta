@@ -1,11 +1,6 @@
 
 
-    AbstractEntity.MAX_Z_INDEX = 32000;
-    AbstractEntity.MIN_Z_INDEX = 1;
-    AbstractEntity.CONTEXT_MENU_Z_INDEX = AbstractEntity.MAX_Z_INDEX + 1;
-
-    AbstractEntity.maxZIndex = 16000;
-    AbstractEntity.minZIndex = 16000;
+    
     /**
      * AbstractEntity
      * @class canvas_widget.AbstractEntity
@@ -14,6 +9,12 @@
      * @param {string} id Identifier of this entity
      */
     class AbstractEntity {
+      static MAX_Z_INDEX = 32000;
+      static MIN_Z_INDEX = 1;
+      static CONTEXT_MENU_Z_INDEX = AbstractEntity.MAX_Z_INDEX + 1;
+
+      static maxZIndex = 16000;
+      static minZIndex = 16000;
       constructor(id) {
         /**
          * Entity identifier
