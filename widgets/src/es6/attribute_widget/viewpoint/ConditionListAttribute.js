@@ -4,11 +4,14 @@ import "jquery-ui";
 import _ from "lodash-es";
 import IWCW from "../../lib/IWCWrapper";
 import Util from "../../Util";
-import AttributeAddOperation from "../../operations/ot/AttributeAddOperation";
-import AttributeDeleteOperation from "../../operations/ot/AttributeDeleteOperation";
+
 import AbstractAttribute from "../AbstractAttribute";
 import ConditionPredicateAttribute from "./ConditionPredicateAttribute";
 import loadHTML from "../../html.template.loader";
+import {
+  AttributeAddOperation,
+  AttributeDeleteOperation,
+} from "../../operations/ot/EntityOperation";
 const listAttributeHtml = await loadHTML(
   "../../../html/templates/attribute_widget/list_attribute.html",
   import.meta.url

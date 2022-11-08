@@ -16,7 +16,7 @@ $.ajax({
     space.user[CONFIG.NS.PERSON.JABBERID] = data.sub;
     space.user[CONFIG.NS.PERSON.MBOX] = data.email;
     space.user.globalId = -1;
-    console.info("User promise by " + frameElement.name, space);
+    console.info("User promise by " + undefined, space);
     deferred.resolve(space);
   },
   error: function (error) {
@@ -29,7 +29,7 @@ $.ajax({
     $(".widget-title-bar", frameElement.offsetParent)
       .find("span")
       .text("Canvas[NOT LOGGED IN]");
-    console.info("User promise by " + frameElement.name, space);
+    console.info("User promise by " + undefined, space);
     deferred.resolve(space);
   },
 });

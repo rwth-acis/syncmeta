@@ -5,8 +5,6 @@
 
 import Operation from "../Operation";
 
-    OTOperation.prototype = new Operation();
-    OTOperation.prototype.constructor = OTOperation;
     /**
      * OTOperation
      * @class operations.ot.OTOperation
@@ -17,7 +15,8 @@ import Operation from "../Operation";
      * @param {string} type Type of operation
      * @param {number} position Position of operation
      */
-    function OTOperation(name,value,type,position){
+    class OTOperation extends Operation {
+    constructor(name, value, type, position) {
         /**
          * JabberId of the user who issued this activity
          * @type {string}
@@ -42,14 +41,14 @@ import Operation from "../Operation";
          * Set JabberId of the user who issued this activity
          * @param sender
          */
-        this.setSender = function(sender){
+        this.setSender = function (sender) {
             _sender = sender;
         };
 
         /**
          * Get JabberId of the user who issued this activity
          */
-        this.getSender = function(){
+        this.getSender = function () {
             return _sender;
         };
 
@@ -57,7 +56,7 @@ import Operation from "../Operation";
          * Get name of operation
          * @returns {string}
          */
-        this.getName = function(){
+        this.getName = function () {
             return _operation.name;
         };
 
@@ -65,7 +64,7 @@ import Operation from "../Operation";
          * Get value of operation
          * @returns {string}
          */
-        this.getValue = function(){
+        this.getValue = function () {
             return _operation.value;
         };
 
@@ -73,7 +72,7 @@ import Operation from "../Operation";
          * Get type of operation
          * @returns {string}
          */
-        this.getType = function(){
+        this.getType = function () {
             return _operation.type;
         };
 
@@ -81,7 +80,7 @@ import Operation from "../Operation";
          * Get position of operation
          * @returns {number}
          */
-        this.getPosition = function(){
+        this.getPosition = function () {
             return _operation.position;
         };
 
@@ -89,10 +88,11 @@ import Operation from "../Operation";
          * Get JSON Representation of operation
          * @returns {{type: string, data: string}}
          */
-        this.getOperationObject = function(){
+        this.getOperationObject = function () {
             return _operation;
         };
     }
+}
 
     export default OTOperation;
 

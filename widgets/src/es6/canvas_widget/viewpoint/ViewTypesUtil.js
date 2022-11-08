@@ -1,5 +1,6 @@
 import _ from "lodash-es";
-import AttributeAddOperation from "../../operations/ot/AttributeAddOperation";
+import { AttributeAddOperation } from "../../operations/ot/EntityOperation";
+
 import Util from "../../Util";
 function ViewTypesUtil() {}
 

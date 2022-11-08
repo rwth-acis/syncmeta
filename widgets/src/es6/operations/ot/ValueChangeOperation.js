@@ -1,7 +1,6 @@
 import { CONFIG } from "../../config";
 import EntityOperation from "./EntityOperation";
 import OTOperation from "./OTOperation";
-import $__operations_ot_ValueChangeOperation from "./ValueChangeOperation";
 
 /**
  * ValueChangeOperation
@@ -29,7 +28,14 @@ class ValueChangeOperation extends EntityOperation {
   setEntityIdChain;
   getEntityIdChain;
   getRootSubjectEntityId;
-  constructor(entityId, value, type, position, jabberId=null, fromView = null) {
+  constructor(
+    entityId,
+    value,
+    type,
+    position,
+    jabberId = null,
+    fromView = null
+  ) {
     super(
       EntityOperation.TYPES.ValueChangeOperation,
       entityId,
@@ -236,7 +242,7 @@ class ValueChangeOperation extends EntityOperation {
      */
     this.inverse = function () {
       var newType,
-        ValueChangeOperation = $__operations_ot_ValueChangeOperation;
+        ValueChangeOperation = ValueChangeOperation;
 
       switch (this.getType()) {
         case CONFIG.OPERATION.TYPE.INSERT:
@@ -267,7 +273,6 @@ class ValueChangeOperation extends EntityOperation {
     };
   }
 
-  
   static getOperationDescription(valueKey, entityType, entityName, viewId) {
     if (!viewId)
       return (
@@ -290,7 +295,6 @@ class ValueChangeOperation extends EntityOperation {
         viewId
       );
   }
-  
 }
 
 export default ValueChangeOperation;

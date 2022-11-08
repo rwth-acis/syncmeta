@@ -421,6 +421,10 @@ class IWCWrapper {
         }
       }),
       (this.getUser = function () {
+        if (!this.Space) {
+          console.error("Space is null");
+          return null;
+        }
         return this.Space.user;
       }),
       (this.getMembers = function () {

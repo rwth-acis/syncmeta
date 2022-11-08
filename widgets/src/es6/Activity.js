@@ -6,7 +6,7 @@ const openapp = new OpenAppProvider.openapp();
 var act = openapp.param.get("http://purl.org/role/terms/activity");
 openapp.resource.get(act, function (resource) {
   var activityName;
-  console.info("Activity promise by " + frameElement.name);
+  console.info("Activity promise by " + undefined);
   console.info(resource);
   try {
     if (resource.data)

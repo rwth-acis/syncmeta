@@ -4,10 +4,11 @@ import "jquery-ui";
 import _ from "lodash-es";
 import IWCW from "../lib/IWCWrapper";
 import Util from "../Util";
-import AttributeAddOperation from "../operations/ot/AttributeAddOperation";
+
 import AbstractAttribute from "./AbstractAttribute";
 import KeyValueAttribute from "./KeyValueAttribute";
 import loadHTML from "../html.template.loader";
+import { AttributeAddOperation } from "../operations/ot/EntityOperation";
 const keyValueListAttributeHtml = await loadHTML(
   "../../../html/templates/attribute_widget/list_attribute.html",
   import.meta.url

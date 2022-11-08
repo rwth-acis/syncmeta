@@ -15,7 +15,7 @@ function Guidancemodel() {
     .text();
 
   console.info(
-    "Guidance promise by " + frameElement.name + " Activity:" + activityName
+    "Guidance promise by " + undefined + " Activity:" + activityName
   );
   guidancemodeling.INITIAL_NODE_LABEL = "Initial node";
   guidancemodeling.MERGE_NODE_LABEL = "Decision node";

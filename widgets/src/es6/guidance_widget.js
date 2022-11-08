@@ -10,10 +10,13 @@ import IWCW from "./lib/IWCWrapper";
 import yjsSync from "./lib/yjs-sync";
 import EntitySelectOperation from "./operations/non_ot/EntitySelectOperation";
 import GuidanceStrategyOperation from "./operations/non_ot/GuidanceStrategyOperation";
-import NodeAddOperation from "./operations/ot/NodeAddOperation";
-import EdgeAddOperation from "./operations/ot/EdgeAddOperation";
-import NodeDeleteOperation from "./operations/ot/NodeDeleteOperation";
-import EdgeDeleteOperation from "./operations/ot/EdgeDeleteOperation";
+import {
+  NodeAddOperation,
+  EdgeAddOperation,
+  NodeDeleteOperation,
+  EdgeDeleteOperation,
+} from "./operations/ot/EntityOperation";
+
 import ValueChangeOperation from "./operations/ot/ValueChangeOperation";
 import NodeMoveOperation from "./operations/ot/NodeMoveOperation";
 import NodeMoveZOperation from "./operations/ot/NodeMoveZOperation";

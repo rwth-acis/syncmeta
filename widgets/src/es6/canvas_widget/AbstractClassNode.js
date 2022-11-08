@@ -6,6 +6,8 @@ import KeySelectionValueListAttribute from "./KeySelectionValueListAttribute";
 import $__canvas_widget_ObjectNode from "./ObjectNode";
 import $__canvas_widget_RelationshipNode from "./RelationshipNode";
 import $__canvas_widget_RelationshipGroupNode from "./RelationshipGroupNode";
+import loadHTML from "../html.template.loader";
+
 const abstractClassNodeHtml = await loadHTML(
   "../../../html/templates/canvas_widget/abstract_class_node.html",
   import.meta.url

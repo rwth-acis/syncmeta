@@ -3,11 +3,12 @@ import "jquery";
 import "jquery-ui";
 import _ from "lodash-es";
 import IWCW from "../../lib/IWCWrapper";
-import AttributeDeleteOperation from "../../operations/ot/AttributeDeleteOperation";
+
 import AbstractAttribute from "../AbstractAttribute";
 import Value from "../Value";
 import SelectionValue from "../SelectionValue";
 import loadHTML from "../../html.template.loader";
+import { AttributeDeleteOperation } from "../../operations/ot/EntityOperation";
 const renamingAttrHTML = await loadHTML(
   "../../../html/templates/attribute_widget/renaming_attribute.html",
   import.meta.url

@@ -1,7 +1,7 @@
 import { CONFIG } from "../../config";
 import EntityOperation from "./EntityOperation";
 import OTOperation from "./OTOperation";
-import $__operations_ot_NodeMoveZOperation from "./NodeMoveZOperation";
+
 
 /**
  * NodeMoveZOperation
@@ -103,7 +103,7 @@ class NodeMoveZOperation extends EntityOperation {
      * @returns {NodeMoveZOperation}
      */
     this.inverse = function () {
-      var NodeMoveZOperation = $__operations_ot_NodeMoveZOperation;
+      var NodeMoveZOperation = NodeMoveZOperation;
 
       return new NodeMoveZOperation(
         this.getEntityId(),

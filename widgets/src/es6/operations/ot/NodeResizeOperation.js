@@ -1,7 +1,7 @@
 import { CONFIG } from "../../config";
 import EntityOperation from "./EntityOperation";
 import OTOperation from "./OTOperation";
-import $__operations_ot_NodeResizeOperation from "./NodeResizeOperation";
+
 
 /**
  * NodeResizeOperation
@@ -116,7 +116,7 @@ class NodeResizeOperation extends EntityOperation {
      * @returns {NodeResizeOperation}
      */
     this.inverse = function () {
-      var NodeResizeOperation = $__operations_ot_NodeResizeOperation;
+      var NodeResizeOperation = NodeResizeOperation;
 
       return new NodeResizeOperation(
         this.getEntityId(),

@@ -3,12 +3,15 @@ import "jquery";
 import "jquery-ui";
 import _ from "lodash-es";
 import IWCW from "../lib/IWCWrapper";
-import AttributeAddOperation from "../operations/ot/AttributeAddOperation";
-import AttributeDeleteOperation from "../operations/ot/AttributeDeleteOperation";
+
 import AbstractAttribute from "./AbstractAttribute";
 import KeySelectionValueSelectionValueAttribute from "./KeySelectionValueSelectionValueAttribute";
 
 import loadHTML from "../html.template.loader";
+import {
+  AttributeAddOperation,
+  AttributeDeleteOperation,
+} from "../operations/ot/EntityOperation";
 
 const keySelectionValueSelectionValueListAttributeHtml = await loadHTML(
   "../../../html/templates/canvas_widget/list_attribute.html",

@@ -2,12 +2,13 @@ import "jquery";
 import "jquery-ui";
 import _ from "lodash-es";
 import IWCW from "../lib/IWCWrapper";
-import AttributeDeleteOperation from "../operations/ot/AttributeDeleteOperation";
+
 import AbstractAttribute from "./AbstractAttribute";
 import Value from "./Value";
 import SelectionValue from "./SelectionValue";
 import loadHTML from "../html.template.loader";
 import { CONFIG } from "../config";
+import { AttributeDeleteOperation } from "../operations/ot/EntityOperation";
 const keySelectionValueAttributeHtml = await loadHTML(
   "../../../html/templates/attribute_widget/key_value_attribute.html",
   import.meta.url

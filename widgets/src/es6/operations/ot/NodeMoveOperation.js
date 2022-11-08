@@ -1,7 +1,6 @@
 import { CONFIG } from "../../config";
 import EntityOperation from "./EntityOperation";
 import OTOperation from "./OTOperation";
-import $__operations_ot_NodeMoveOperation from "./NodeMoveOperation";
 
 /**
  * NodeMoveOperation
@@ -16,10 +15,10 @@ import $__operations_ot_NodeMoveOperation from "./NodeMoveOperation";
  */
 class NodeMoveOperation extends EntityOperation {
   static TYPE = "NodeMoveOperation";
-  getOffsetX
-  getOffsetY
-  getJabberId
-  setJabberId
+  getOffsetX;
+  getOffsetY;
+  getJabberId;
+  setJabberId;
   constructor(entityId, offsetX, offsetY, jabberId) {
     super(
       EntityOperation.TYPES.NodeMoveOperation,
@@ -128,7 +127,7 @@ class NodeMoveOperation extends EntityOperation {
      * @returns {NodeMoveOperation}
      */
     this.inverse = function () {
-      var NodeMoveOperation = $__operations_ot_NodeMoveOperation;
+      var NodeMoveOperation = NodeMoveOperation;
 
       return new NodeMoveOperation(
         this.getEntityId(),
@@ -147,14 +146,14 @@ class NodeMoveOperation extends EntityOperation {
       return "..moved " + nodeType + " " + nodeLabel + " in View " + viewId;
     }
   }
-  toJSON=function() {
+  toJSON = function () {
     return {
       id: this.getEntityId(),
       offsetX: this.getOffsetX(),
       offsetY: this.getOffsetY(),
       jabberId: this.getJabberId(),
     };
-  }
+  };
 }
 
 export default NodeMoveOperation;

@@ -1,9 +1,9 @@
 import "jquery";
 import "jquery-ui";
-import NodeAddOperation from "../operations/ot/NodeAddOperation";
-import EdgeAddOperation from "../operations/ot/EdgeAddOperation";
-import NodeDeleteOperation from "../operations/ot/NodeDeleteOperation";
-import EdgeDeleteOperation from "../operations/ot/EdgeDeleteOperation";
+import { NodeAddOperation } from "../operations/ot/EntityOperation";
+import { EdgeAddOperation } from "../operations/ot/EntityOperation";
+import { NodeDeleteOperation } from "../operations/ot/EntityOperation";
+import { EdgeDeleteOperation } from "../operations/ot/EntityOperation";
 import NodeMoveOperation from "../operations/ot/NodeMoveOperation";
 import NodeMoveZOperation from "../operations/ot/NodeMoveZOperation";
 import NodeResizeOperation from "../operations/ot/NodeResizeOperation";

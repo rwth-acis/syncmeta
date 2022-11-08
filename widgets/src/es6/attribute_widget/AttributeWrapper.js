@@ -1,9 +1,11 @@
 import IWCW from "../lib/IWCWrapper";
-import NodeAddOperation from "../operations/ot/NodeAddOperation";
-import EdgeAddOperation from "../operations/ot/EdgeAddOperation";
 import EntitySelectOperation from "../operations/non_ot/EntitySelectOperation";
 import EntityManager from "./EntityManager";
 import { CONFIG } from "../config";
+import {
+  EdgeAddOperation,
+  EdgeDeleteOperation,
+} from "../operations/ot/EntityOperation";
 /**
  * AttributeWrapper
  * @class attribute_widget.AttributeWrapper

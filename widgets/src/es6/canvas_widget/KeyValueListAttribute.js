@@ -3,11 +3,14 @@ import "jquery";
 import "jquery-ui";
 import _ from "lodash-es";
 import IWCW from "../lib/IWCWrapper";
-import AttributeAddOperation from "operations/ot/AttributeAddOperation";
-import AttributeDeleteOperation from "operations/ot/AttributeDeleteOperation";
+
 import AbstractAttribute from "canvas_widget/AbstractAttribute";
 import KeyValueAttribute from "canvas_widget/KeyValueAttribute";
 import loadHTML from "../html.template.loader";
+import {
+  AttributeAddOperation,
+  AttributeDeleteOperation,
+} from "../operations/ot/EntityOperation";
 const keyValueListAttributeHtml = loadHTML(
   "../../../html/templates/canvas_widget/list_attribute.html",
   import.meta.url

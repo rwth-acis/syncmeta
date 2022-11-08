@@ -1,10 +1,10 @@
 import "jquery";
 import "jquery-ui";
-
+import "jquery-contextmenu";
 import SingleSelectionAttribute from "./SingleSelectionAttribute";
 import SingleColorValueAttribute from "./SingleColorValueAttribute";
 import BooleanAttribute from "./BooleanAttribute";
-
+import loadHTML from "../html.template.loader";
 const edgeShapeNodeHtml = await loadHTML(
   "../../../html/templates/canvas_widget/edge_shape_node.html",
   import.meta.url
@@ -16,7 +16,7 @@ import "jquery-ui";
 import _ from "lodash-es";
 import Util from "../Util";
 import IWCW from "../lib/IWCWrapper";
-import NodeDeleteOperation from "../operations/ot/NodeDeleteOperation";
+import { NodeDeleteOperation } from "../operations/ot/EntityOperation";
 import NodeMoveOperation from "../operations/ot/NodeMoveOperation";
 import NodeMoveZOperation from "../operations/ot/NodeMoveZOperation";
 import NodeResizeOperation from "../operations/ot/NodeResizeOperation";
@@ -24,7 +24,7 @@ import ActivityOperation from "../operations/non_ot/ActivityOperation";
 import AbstractEntity from "./AbstractEntity";
 import SingleValueAttribute from "./SingleValueAttribute";
 import HistoryManager from "./HistoryManager";
-import loadHTML from "../html.template.loader";
+
 const abstractNodeHtml = await loadHTML(
   "../../../html/templates/canvas_widget/abstract_node.html",
   import.meta.url
@@ -553,7 +553,7 @@ class AbstractNode extends AbstractEntity {
 
     this.init = function () {
       //Define Node Rightclick Menu
-      $.contextmenu({
+      $.contextMenu({
         selector: "#" + id,
         zIndex: AbstractEntity.CONTEXT_MENU_Z_INDEX,
         build: function ($trigger, e) {
@@ -751,7 +751,7 @@ class AbstractNode extends AbstractEntity {
     this.removeFromCanvas = function () {
       _$node.remove();
       //destroy the context menu
-      $.contextmenu("destroy", "#" + that.getEntityId());
+      $.contextMenu("destroy", "#" + that.getEntityId());
       _canvas = null;
       _$awarenessTrace.remove();
       if (this.hasOwnProperty("unregisterCallbacks"))

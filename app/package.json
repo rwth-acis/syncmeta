@@ -15,6 +15,7 @@
     "@vaadin/router": "^1.7.4",
     "@web/dev-server-legacy": "^1.0.1",
     "jquery": "^3.6.1",
+    "jquery-contextmenu": "^2.9.2",
     "jquery-ui": "^1.13.2",
     "jsplumb": "^1.7.9",
     "las2peer-frontend-statusbar": "github:rwth-acis/las2peer-frontend-statusbar#0.3.6",

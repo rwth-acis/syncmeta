@@ -1,10 +1,11 @@
 import { CONFIG } from "../config";
 import "jquery";
 import "jquery-ui";
+import "jquery-contextmenu";
 import _ from "lodash-es";
 import Util from "../Util";
 import IWCW from "../lib/IWCWrapper";
-import NodeDeleteOperation from "../operations/ot/NodeDeleteOperation";
+import { NodeDeleteOperation } from "../operations/ot/EntityOperation";
 import NodeMoveOperation from "../operations/ot/NodeMoveOperation";
 import NodeMoveZOperation from "../operations/ot/NodeMoveZOperation";
 import NodeResizeOperation from "../operations/ot/NodeResizeOperation";
@@ -541,7 +542,7 @@ class AbstractNode extends AbstractEntity {
 
     this.init = function () {
       //Define Node Rightclick Menu
-      $.contextmenu({
+      $.contextMenu({
         selector: "#" + id,
         zIndex: AbstractEntity.CONTEXT_MENU_Z_INDEX,
         build: function ($trigger, e) {
@@ -739,7 +740,7 @@ class AbstractNode extends AbstractEntity {
     this.removeFromCanvas = function () {
       _$node.remove();
       //destroy the context menu
-      $.contextmenu("destroy", "#" + that.getEntityId());
+      $.contextMenu("destroy", "#" + that.getEntityId());
       _canvas = null;
       _$awarenessTrace.remove();
       if (this.hasOwnProperty("unregisterCallbacks"))

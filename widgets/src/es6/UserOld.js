@@ -46,7 +46,7 @@ function Space() {
       space.user[CONFIG.NS.PERSON.MBOX] =
         person[CONFIG.NS.PERSON.MBOX][0].value;
       space.user.globalId = -1;
-      console.info("User promise by " + frameElement.name, space);
+      console.info("User promise by " + undefined, space);
       deferred.resolve(space);
     } catch (e) {
       console.info("Space promise failed!");

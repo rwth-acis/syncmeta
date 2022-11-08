@@ -3,10 +3,11 @@ import "jquery";
 import "jquery-ui";
 import _ from "lodash-es";
 import IWCW from "../lib/IWCWrapper";
-import AttributeDeleteOperation from "../operations/ot/AttributeDeleteOperation";
+
 import AbstractAttribute from "./AbstractAttribute";
 import Value from "./Value";
 import loadHTML from "../html.template.loader";
+import { AttributeDeleteOperation } from "../operations/ot/EntityOperation";
 const listSingleValueAttributeHtml = await loadHTML(
   "../../../html/templates/attribute_widget/list_single_value_attribute.html",
   import.meta.url

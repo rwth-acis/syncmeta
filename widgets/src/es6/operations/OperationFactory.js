@@ -1,14 +1,15 @@
 import { CONFIG } from "../config";
-import EntityOperation from "./ot/EntityOperation";
-import NodeAddOperation from "./ot/NodeAddOperation";
-import NodeDeleteOperation from "./ot/NodeDeleteOperation";
+import EntityOperation, {
+  AttributeAddOperation,
+  AttributeDeleteOperation,
+  EdgeDeleteOperation,
+  EdgeAddOperation,
+} from "./ot/EntityOperation";
+import { NodeAddOperation } from "./ot/EntityOperation";
+import { NodeDeleteOperation } from "./ot/EntityOperation";
 import NodeMoveOperation from "./ot/NodeMoveOperation";
 import NodeMoveZOperation from "./ot/NodeMoveZOperation";
 import NodeResizeOperation from "./ot/NodeResizeOperation";
-import EdgeAddOperation from "./ot/EdgeAddOperation";
-import EdgeDeleteOperation from "./ot/EdgeDeleteOperation";
-import AttributeAddOperation from "./ot/AttributeAddOperation";
-import AttributeDeleteOperation from "./ot/AttributeDeleteOperation";
 import ValueChangeOperation from "./ot/ValueChangeOperation";
 import NonOTOperation from "./non_ot/NonOTOperation";
 import EntitySelectOperation from "./non_ot/EntitySelectOperation";
