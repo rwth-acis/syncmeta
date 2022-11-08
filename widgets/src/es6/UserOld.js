@@ -1,6 +1,6 @@
 import "jquery";
 import "jquery-ui";
-import Util from "Util";
+import Util from "./Util";
 import { CONFIG } from "./config";
 import { OpenAppProvider } from "./lib/openapp";
 const openapp = new OpenAppProvider().openapp;

@@ -8,6 +8,8 @@ import SingleValueAttribute from "./SingleValueAttribute";
 import IntegerAttribute from "./IntegerAttribute";
 import SingleColorValueAttribute from "./SingleColorValueAttribute";
 import SingleMultiLineValueAttribute from "./SingleMultiLineValueAttribute";
+import loadHTML from "../html.template.loader";
+
 const nodeShapeNodeHtml = await loadHTML(
   "../../../html/templates/canvas_widget/node_shape_node.html",
   import.meta.url

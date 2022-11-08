@@ -869,7 +869,7 @@ import AbstractCanvas from "./AbstractCanvas";
           //Define Node Rightclick Menu
           if (viewOnly) {
             // view only mode is activated, no context menu should be shown
-            $.contextMenu({
+            $.contextmenu({
               selector: "#" + _$node.attr("id"),
               build: function ($trigger, e) {
                 return false;
@@ -878,7 +878,7 @@ import AbstractCanvas from "./AbstractCanvas";
             return;
           }
           // otherwise show normal context menu
-          $.contextMenu({
+          $.contextmenu({
             selector: "#" + _$node.attr("id"),
             zIndex: AbstractEntity.CONTEXT_MENU_Z_INDEX,
             build: function ($trigger, e) {

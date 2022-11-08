@@ -1,7 +1,7 @@
 import "jquery";
 import "jquery-ui";
 import _ from "lodash-es";
-import Util from "Util";
+import Util from "../Util";
 import IWCW from "../lib/IWCWrapper";
 import EntitySelectOperation from "../operations/non_ot/EntitySelectOperation";
 import NodeDeleteOperation from "../operations/ot/NodeDeleteOperation";

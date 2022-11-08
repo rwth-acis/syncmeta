@@ -1,7 +1,7 @@
 import "jquery";
 import "jquery-ui";
 import _ from "lodash-es";
-import Util from "Util";
+import Util from "./Util";
 import MFExport from "./lib/MFExport";
 import JSZip from "jszip";
 import ILDE from "./lib/ildeApi";

@@ -541,7 +541,7 @@ class AbstractNode extends AbstractEntity {
 
     this.init = function () {
       //Define Node Rightclick Menu
-      $.contextMenu({
+      $.contextmenu({
         selector: "#" + id,
         zIndex: AbstractEntity.CONTEXT_MENU_Z_INDEX,
         build: function ($trigger, e) {
@@ -739,7 +739,7 @@ class AbstractNode extends AbstractEntity {
     this.removeFromCanvas = function () {
       _$node.remove();
       //destroy the context menu
-      $.contextMenu("destroy", "#" + that.getEntityId());
+      $.contextmenu("destroy", "#" + that.getEntityId());
       _canvas = null;
       _$awarenessTrace.remove();
       if (this.hasOwnProperty("unregisterCallbacks"))

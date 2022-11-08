@@ -1,4 +1,4 @@
-import Util from "Util";
+import Util from "../Util";
 import ObjectNode from "./ObjectNode";
 import AbstractClassNode from "./AbstractClassNode";
 import RelationshipNode from "./RelationshipNode";

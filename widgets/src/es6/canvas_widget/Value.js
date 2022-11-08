@@ -7,6 +7,7 @@ import AbstractValue from "./AbstractValue";
 import AbstractAttribute from "./AbstractAttribute";
 import ActivityOperation from "../operations/non_ot/ActivityOperation";
 import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
+import "../lib/jquery/jquery.autoGrowInput";
 import valueHtml from "../../templates/canvas_widget/value.html";
 Value.prototype = new AbstractValue();
 Value.prototype.constructor = Value;

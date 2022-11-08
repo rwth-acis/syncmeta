@@ -3,7 +3,7 @@ import "jquery";
 import "jquery-ui";
 import _ from "lodash-es";
 import IWCW from "../lib/IWCWrapper";
-import Util from "Util";
+import Util from "../Util";
 import AttributeAddOperation from "../operations/ot/AttributeAddOperation";
 import AttributeDeleteOperation from "../operations/ot/AttributeDeleteOperation";
 import AbstractAttribute from "./AbstractAttribute";

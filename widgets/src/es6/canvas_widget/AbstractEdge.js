@@ -306,7 +306,7 @@ function AbstractEdge(id, type, source, target, overlayRotate) {
    */
   this.removeFromCanvas = function () {
     _canvas = null;
-    $.contextMenu("destroy", "." + that.getEntityId());
+    $.contextmenu("destroy", "." + that.getEntityId());
     jsPlumb.detach(_jsPlumbConnection, { fireEvent: false });
     _jsPlumbConnection = null;
   };
@@ -696,7 +696,7 @@ function AbstractEdge(id, type, source, target, overlayRotate) {
     }
 
     //Define Edge Rightclick Menu
-    $.contextMenu({
+    $.contextmenu({
       selector: "." + id,
       zIndex: AbstractEntity.CONTEXT_MENU_Z_INDEX,
       build: function () {
