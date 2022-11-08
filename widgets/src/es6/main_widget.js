@@ -9,8 +9,10 @@ import Util from "./Util";
 import IWCW from "./lib/IWCWrapper";
 // import CanvasWidgetTest from "./../test/CanvasWidgetTest";
 import { CONFIG } from "./config";
+import yjsSync from "./lib/yjs-sync";
+import Canvas from "./canvas_widget/Canvas";
+
 Promise.all([
-  import("./lib/yjs-sync"),
   import("./operations/non_ot/NonOTOperation"),
   import("./operations/non_ot/ToolSelectOperation"),
   import("./operations/non_ot/ActivityOperation"),
@@ -21,7 +23,7 @@ Promise.all([
   import("./operations/non_ot/InitModelTypesOperation"),
   import("./operations/non_ot/SetModelAttributeNodeOperation"),
   import("./operations/non_ot/UpdateMetamodelOperation"),
-  import("./canvas_widget/Canvas"),
+
   import("./canvas_widget/EntityManager"),
   import("./canvas_widget/NodeTool"),
   import("./canvas_widget/ObjectNodeTool"),
@@ -54,10 +56,9 @@ Promise.all([
   import("./canvas_widget/HistoryManager"),
   import("./canvas_widget/JSONtoGraph"),
   import("./canvas_widget/GenerateViewpointModel"),
-  import("./User"), // promise!User
-  import("./Guidancemodel"), // promise!Guidancemodel
+  await import("./User"), // promise!User
+  await import("./Guidancemodel"), // promise!Guidancemodel
 ]).then(function ([
-  yjsSyncLoader,
   NonOTOperation,
   ,
   ActivityOperation,
@@ -68,7 +69,7 @@ Promise.all([
   InitModelTypesOperation,
   SetModelAttributeNodeOperation,
   UpdateMetamodelOperation,
-  Canvas,
+
   EntityManager,
   NodeTool,
   ObjectNodeTool,
@@ -103,11 +104,11 @@ Promise.all([
   GenerateViewpointModel,
   user,
   guidancemodel,
-]) { 
+]) {
   var _iwcw;
   _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
   _iwcw.setSpace(user);
-  const yjsSync = yjsSyncLoader.default
+
   yjsSync()
     .done(function (y, spaceTitle) {
       console.info(
@@ -118,7 +119,11 @@ Promise.all([
       );
       const userMap = y.getMap("users");
       try {
-        if (_iwcw.getUser().globalId !== -1) {
+        const user = _iwcw.getUser();
+        if (!user) {
+          throw new Error("User not set");
+        }
+        if (user.globalId !== -1) {
           userMap.set(y.clientID, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
         }
       } catch (error) {
