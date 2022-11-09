@@ -10,7 +10,7 @@ import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
 import loadHTML from "../html.template.loader";
 
 const fileValueHtml = await loadHTML(
-  "../../../html/templates/attribute_widget/file_value.html",
+  "../../templates/attribute_widget/file_value.html",
   import.meta.url
 );
 

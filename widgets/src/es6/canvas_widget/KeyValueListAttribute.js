@@ -11,8 +11,8 @@ import {
   AttributeAddOperation,
   AttributeDeleteOperation,
 } from "../operations/ot/EntityOperation";
-const keyValueListAttributeHtml = loadHTML(
-  "../../../html/templates/canvas_widget/list_attribute.html",
+const keyValueListAttributeHtml = await loadHTML(
+  "../../templates/canvas_widget/list_attribute.html",
   import.meta.url
 );
 

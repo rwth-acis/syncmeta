@@ -12,11 +12,11 @@ import ActivityOperation from "../operations/non_ot/ActivityOperation";
 import loadHTML from "../html.template.loader";
 
 const fileValueHtml = await loadHTML(
-  "../../../html/templates/canvas_widget/file_value.html",
+  "../../templates/canvas_widget/file_value.html",
   import.meta.url
 );
 const attributeFileValueHtml = await loadHTML(
-  "../../../html/templates/attribute_widget/file_value.html",
+  "../../templates/attribute_widget/file_value.html",
   import.meta.url
 );
 

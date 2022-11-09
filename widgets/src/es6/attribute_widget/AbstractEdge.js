@@ -9,7 +9,7 @@ import AbstractEntity from "./AbstractEntity";
 import loadHTML from "../html.template.loader";
 import { CONFIG } from "../config";
 const abstractEdgeHtml = await loadHTML(
-  "../../../html/templates/attribute_widget/abstract_edge.html",
+  "../../templates/attribute_widget/abstract_edge.html",
   import.meta.url
 );
 import $__attribute_widget_EntityManager from "./EntityManager";

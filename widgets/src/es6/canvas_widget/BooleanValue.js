@@ -10,11 +10,11 @@ import ActivityOperation from "../operations/non_ot/ActivityOperation";
 import loadHTML from "../html.template.loader";
 
 const booleanValueHtml = await loadHTML(
-  "../../../html/templates/canvas_widget/boolean_value.html",
+  "../../templates/canvas_widget/boolean_value.html",
   import.meta.url
 );
 const attributeBooleanValueHtml = await loadHTML(
-  "../../../html/templates/attribute_widget/boolean_value.html",
+  "../../templates/attribute_widget/boolean_value.html",
   import.meta.url
 );
 

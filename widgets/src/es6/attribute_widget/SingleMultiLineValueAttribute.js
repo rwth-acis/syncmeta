@@ -5,7 +5,7 @@ import AbstractAttribute from "./AbstractAttribute";
 import MultiLineValue from "./MultiLineValue";
 import loadHTML from "../html.template.loader";
 const singleMultiLineValueAttributeHtml = await loadHTML(
-  "../../../html/templates/attribute_widget/single_value_attribute.html",
+  "../../templates/attribute_widget/single_value_attribute.html",
   import.meta.url
 );
 

@@ -1,6 +1,6 @@
 import loadHTML from "../html.template.loader";
 const heatspotHtml = await loadHTML(
-  "../../../html/templates/heatmap_widget/heatspot.html",
+  "../../templates/heatmap_widget/heatspot.html",
   import.meta.url
 );
 import "../lib/Class";

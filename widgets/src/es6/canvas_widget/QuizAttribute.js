@@ -5,7 +5,7 @@ import AbstractAttribute from "./AbstractAttribute";
 import Value from "./Value";
 import loadHTML from "../html.template.loader";
 const singleQuizAttributeHtml = await loadHTML(
-  "../../../html/templates/canvas_widget/single_quiz_attribute.html",
+  "../../templates/canvas_widget/single_quiz_attribute.html",
   import.meta.url
 );
 QuizAttribute.prototype = new AbstractAttribute();

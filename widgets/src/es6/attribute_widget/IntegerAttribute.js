@@ -6,7 +6,7 @@ import IntegerValue from "./IntegerValue";
 import loadHTML from "../html.template.loader";
 
 const integerAttributeHtml = await loadHTML(
-  "../../../html/templates/attribute_widget/integer_attribute.html",
+  "../../templates/attribute_widget/integer_attribute.html",
   import.meta.url
 );
 

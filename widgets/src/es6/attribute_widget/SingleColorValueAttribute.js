@@ -5,7 +5,7 @@ import AbstractAttribute from "./AbstractAttribute";
 import ColorValue from "./ColorValue";
 import loadHTML from "../html.template.loader";
 const singleColorValueAttributeHtml = await loadHTML(
-  "../../../html/templates/attribute_widget/single_value_attribute.html",
+  "../../templates/attribute_widget/single_value_attribute.html",
   import.meta.url
 );
 

@@ -7,7 +7,7 @@ import AbstractValue from "./AbstractValue";
 import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
 import loadHTML from "../html.template.loader";
 const multiLineValueHtml = await loadHTML(
-  "../../../html/templates/attribute_widget/multi_line_value.html",
+  "../../templates/attribute_widget/multi_line_value.html",
   import.meta.url
 );
 

@@ -8,7 +8,7 @@ import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
 import QuizAttribute from "./QuizAttribute";
 import loadHTML from "../html.template.loader";
 const selectionValueHtml = await loadHTML(
-  "../../../html/templates/attribute_widget/selection_value.html",
+  "../../templates/attribute_widget/selection_value.html",
   import.meta.url
 );
 

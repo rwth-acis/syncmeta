@@ -8,7 +8,7 @@ import BooleanAttribute from "../BooleanAttribute";
 import FileAttribute from "../FileAttribute";
 import loadHTML from "../../html.template.loader";
 const setPropertyGuidanceHtml = await loadHTML(
-  "../../../html/templates/guidance_modeling/set_property_guidance.html",
+  "../../../templates/guidance_modeling/set_property_guidance.html",
   import.meta.url
 );
 // import "bootstrap";

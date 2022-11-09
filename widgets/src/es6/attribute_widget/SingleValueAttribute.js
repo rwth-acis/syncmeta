@@ -6,7 +6,7 @@ import Value from "./Value";
 import loadHTML from "../html.template.loader";
 
 const singleValueAttributeHtml = await loadHTML(
-  "../../../html/templates/attribute_widget/single_value_attribute.html",
+  "../../templates/attribute_widget/single_value_attribute.html",
   import.meta.url
 );
 

@@ -4,7 +4,7 @@ import _ from "lodash-es";
 import AbstractNode from "./AbstractNode";
 import loadHTML from "../html.template.loader";
 const relationshipGroupNodeHtml = await loadHTML(
-  "../../../html/templates/attribute_widget/relationship_group_node.html",
+  "../../templates/attribute_widget/relationship_group_node.html",
   import.meta.url
 );
 

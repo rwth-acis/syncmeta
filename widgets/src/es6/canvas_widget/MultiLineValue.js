@@ -10,7 +10,7 @@ import ActivityOperation from "../operations/non_ot/ActivityOperation";
 import loadHTML from "../html.template.loader";
 
 const multiLineValueHtml = await loadHTML(
-  "../../../html/templates/canvas_widget/multi_line_value.html",
+  "../../templates/canvas_widget/multi_line_value.html",
   import.meta.url
 );
 

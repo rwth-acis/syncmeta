@@ -12,7 +12,7 @@ import {
   AttributeDeleteOperation,
 } from "../operations/ot/EntityOperation";
 const singleValueListAttributeHtml = await loadHTML(
-  "../../../html/templates/canvas_widget/list_attribute.html",
+  "../../templates/canvas_widget/list_attribute.html",
   import.meta.url
 );
 

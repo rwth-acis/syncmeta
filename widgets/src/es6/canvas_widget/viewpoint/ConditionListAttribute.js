@@ -13,7 +13,7 @@ import {
 } from "../../operations/ot/EntityOperation";
 
 const listHtml = await loadHTML(
-  "../../../html/templates/canvas_widget/list_attribute.html",
+  "../../../templates/canvas_widget/list_attribute.html",
   import.meta.url
 );
 

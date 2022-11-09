@@ -13,7 +13,7 @@ import {
   AttributeDeleteOperation,
 } from "../../operations/ot/EntityOperation";
 const listAttributeHtml = await loadHTML(
-  "../../../html/templates/attribute_widget/list_attribute.html",
+  "../../../templates/attribute_widget/list_attribute.html",
   import.meta.url
 );
 

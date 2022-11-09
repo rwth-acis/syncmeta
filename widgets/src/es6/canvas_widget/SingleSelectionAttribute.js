@@ -6,7 +6,7 @@ import SelectionValue from "./SelectionValue";
 import loadHTML from "../html.template.loader";
 
 const singleSelectionAttributeHtml = await loadHTML(
-  "../../../html/templates/canvas_widget/single_selection_attribute.html",
+  "../../templates/canvas_widget/single_selection_attribute.html",
   import.meta.url
 );
 

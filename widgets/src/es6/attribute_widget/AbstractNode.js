@@ -12,7 +12,7 @@ import loadHTML from "../html.template.loader";
 import { NodeDeleteOperation } from "../operations/ot/EntityOperation";
 
 const abstractNodeHtml = await loadHTML(
-  "../../../html/templates/attribute_widget/abstract_node.html",
+  "../../templates/attribute_widget/abstract_node.html",
   import.meta.url
 );
 

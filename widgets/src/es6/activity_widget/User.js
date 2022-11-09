@@ -2,10 +2,10 @@ import "jquery";
 import "jquery-ui";
 import _ from "lodash-es";
 import Util from "../Util";
-import loadHtml from "../html.template.loader";
+import loadHTML from "../html.template.loader";
 import { CONFIG } from "../config";
-const userBoxHtml = await loadHtml(
-  "../../../html/templates/activity_widget/user_box.html",
+const userBoxHtml = await loadHTML(
+  "../../templates/activity_widget/user_box.html",
   import.meta.url
 );
 

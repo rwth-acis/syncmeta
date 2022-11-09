@@ -6,7 +6,7 @@ import _ from "lodash-es";
 import CollaborateInActivityOperation from "../../operations/non_ot/CollaborateInActivityOperation";
 import loadHTML from "../../html.template.loader";
 const selectToolGuidanceHtml = await loadHTML(
-  "../../../html/templates/guidance_modeling/collaboration_guidance.html",
+  "../../../templates/guidance_modeling/collaboration_guidance.html",
   import.meta.url
 );
 function CollaborationGuidance(id, label, activityId, objectId, canvas) {

@@ -12,7 +12,7 @@ import SingleValueAttribute from "./SingleValueAttribute";
 import $__canvas_widget_EntityManager from "./EntityManager";
 import loadHTML from "../html.template.loader";
 const abstractEdgeHtml = await loadHTML(
-  "../../../html/templates/canvas_widget/abstract_edge.html",
+  "../../templates/canvas_widget/abstract_edge.html",
   import.meta.url
 );
 

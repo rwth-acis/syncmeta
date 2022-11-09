@@ -8,7 +8,7 @@ import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
 import loadHTML from "../html.template.loader";
 
 const integerValueHtml = await loadHTML(
-  "../../../html/templates/attribute_widget/integer_value.html",
+  "../../templates/attribute_widget/integer_value.html",
   import.meta.url
 );
 

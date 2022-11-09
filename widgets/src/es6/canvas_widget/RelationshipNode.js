@@ -9,10 +9,10 @@ import $__canvas_widget_UniDirAssociationEdge from "./UniDirAssociationEdge";
 import $__canvas_widget_AbstractClassNode from "./AbstractClassNode";
 import $__canvas_widget_ObjectNode from "./ObjectNode";
 import $__canvas_widget_RelationshipGroupNode from "./RelationshipGroupNode";
-import loadHtml from "../html.template.loader";
+import loadHTML from "../html.template.loader";
 
-const relationshipNodeHtml = loadHtml(
-  "../../../html/templates/canvas_widget/relationship_node.html",
+const relationshipNodeHtml = await loadHTML(
+  "../../templates/canvas_widget/relationship_node.html",
   import.meta.url
 );
 

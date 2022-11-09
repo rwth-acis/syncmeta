@@ -9,7 +9,7 @@ import Value from "./Value";
 import loadHTML from "../html.template.loader";
 import { AttributeDeleteOperation } from "../operations/ot/EntityOperation";
 const keyValueAttributeHtml = await loadHTML(
-  "../../../html/templates/attribute_widget/key_value_attribute.html",
+  "../../templates/attribute_widget/key_value_attribute.html",
   import.meta.url
 );
 

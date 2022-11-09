@@ -6,7 +6,7 @@ import BooleanValue from "./BooleanValue";
 import loadHTML from "../html.template.loader";
 
 const booleanAttributeHtml = await loadHTML(
-  "../../../html/templates/attribute_widget/boolean_attribute.html",
+  "../../templates/attribute_widget/boolean_attribute.html",
   import.meta.url
 );
 

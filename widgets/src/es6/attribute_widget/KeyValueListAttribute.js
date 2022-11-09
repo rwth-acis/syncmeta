@@ -10,7 +10,7 @@ import KeyValueAttribute from "./KeyValueAttribute";
 import loadHTML from "../html.template.loader";
 import { AttributeAddOperation } from "../operations/ot/EntityOperation";
 const keyValueListAttributeHtml = await loadHTML(
-  "../../../html/templates/attribute_widget/list_attribute.html",
+  "../../templates/attribute_widget/list_attribute.html",
   import.meta.url
 );
 

@@ -4,7 +4,7 @@ import _ from "lodash-es";
 import AbstractEntity from "./AbstractEntity";
 import loadHTML from "../html.template.loader";
 const abstractAttributeHtml = await loadHTML(
-  "../../../html/templates/canvas_widget/abstract_attribute.html",
+  "../../templates/canvas_widget/abstract_attribute.html",
   import.meta.url
 );
 

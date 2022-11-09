@@ -3,11 +3,11 @@ import "jquery-ui";
 import _ from "lodash-es";
 import loadHTML from "../../html.template.loader";
 const abstractNodeHtml = await loadHTML(
-  "../../../html/templates/canvas_widget/abstract_node.html",
+  "../../../templates/canvas_widget/abstract_node.html",
   import.meta.url
 );
 const guidanceBoxNodeHtml = await loadHTML(
-  "../../../html/templates/guidance_modeling/guidance_box_node.html",
+  "../../../templates/guidance_modeling/guidance_box_node.html",
   import.meta.url
 );
 function GuidanceBox(id, label, left, top) {

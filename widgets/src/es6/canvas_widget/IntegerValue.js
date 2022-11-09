@@ -10,11 +10,11 @@ import ActivityOperation from "../operations/non_ot/ActivityOperation";
 import loadHTML from "../html.template.loader";
 
 const integerValueHtml = await loadHTML(
-  "../../../html/templates/canvas_widget/integer_value.html",
+  "../../templates/canvas_widget/integer_value.html",
   import.meta.url
 );
 const attributeIntegerValueHtml = await loadHTML(
-  "../../../html/templates/attribute_widget/integer_value.html",
+  "../../templates/attribute_widget/integer_value.html",
   import.meta.url
 );
 

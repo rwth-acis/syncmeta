@@ -10,7 +10,7 @@ import LogicalOperator from "../../canvas_widget/viewpoint/LogicalOperator";
 import LogicalConjunctions from "../../canvas_widget/viewpoint/LogicalConjunctions";
 import loadHTML from "../../html.template.loader";
 const objectNodeHtml = await loadHTML(
-  "../../../html/templates/attribute_widget/object_node.html",
+  "../../../templates/attribute_widget/object_node.html",
   import.meta.url
 );
 

@@ -12,7 +12,7 @@ import {
   AttributeDeleteOperation,
 } from "../operations/ot/EntityOperation";
 
-const keySelectionValueListAttributeHtml = loadHTML(
+const keySelectionValueListAttributeHtml = await loadHTML(
   "../../templates/canvas_widget/list_attribute.html",
   import.meta.url
 );

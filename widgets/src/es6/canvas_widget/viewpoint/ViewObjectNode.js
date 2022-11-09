@@ -13,7 +13,7 @@ import $__canvas_widget_BiDirAssociationEdge from "../BiDirAssociationEdge";
 import $__canvas_widget_UniDirAssociationEdge from "../UniDirAssociationEdge";
 import loadHTML from "../../html.template.loader";
 const viewobjectNodeHtml = await loadHTML(
-  "../../../html/templates/canvas_widget/viewobject_node.html",
+  "../../../templates/canvas_widget/viewobject_node.html",
   import.meta.url
 );
 

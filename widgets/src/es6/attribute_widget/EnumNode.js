@@ -5,7 +5,7 @@ import AbstractNode from "./AbstractNode";
 import SingleValueListAttribute from "./SingleValueListAttribute";
 import loadHTML from "../html.template.loader";
 const enumNodeHtml = await loadHTML(
-  "../../../html/templates/attribute_widget/enum_node.html",
+  "../../templates/attribute_widget/enum_node.html",
   import.meta.url
 );
 

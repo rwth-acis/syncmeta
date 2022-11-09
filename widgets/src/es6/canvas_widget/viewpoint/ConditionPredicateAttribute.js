@@ -6,7 +6,7 @@ import Value from "../Value";
 import SelectionValue from "../SelectionValue";
 import loadHTML from "../../html.template.loader";
 const condition_predicateHtml = await loadHTML(
-  "../../../html/templates/canvas_widget/condition_predicate.html",
+  "../../../templates/canvas_widget/condition_predicate.html",
   import.meta.url
 );
 

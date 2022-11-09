@@ -5,7 +5,7 @@ import AbstractNode from "./AbstractNode";
 import KeySelectionValueListAttribute from "./KeySelectionValueListAttribute";
 import loadHTML from "../html.template.loader";
 const objectNodeHtml = await loadHTML(
-  "../../../html/templates/attribute_widget/object_node.html",
+  "../../templates/attribute_widget/object_node.html",
   import.meta.url
 );
 

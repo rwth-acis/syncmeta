@@ -9,7 +9,7 @@ import SelectionValue from "../SelectionValue";
 import loadHTML from "../../html.template.loader";
 import { AttributeDeleteOperation } from "../../operations/ot/EntityOperation";
 const condition_predicateHtml = await loadHTML(
-  "../../../html/templates/attribute_widget/condition_predicate.html",
+  "../../../templates/attribute_widget/condition_predicate.html",
   import.meta.url
 );
 

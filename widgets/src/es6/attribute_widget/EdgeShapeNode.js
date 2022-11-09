@@ -8,7 +8,7 @@ import SingleColorValueAttribute from "./SingleColorValueAttribute";
 import BooleanAttribute from "./BooleanAttribute";
 import loadHTML from "../html.template.loader";
 const edgeShapeNodeHtml = await loadHTML(
-  "../../../html/templates/attribute_widget/edge_shape_node.html",
+  "../../templates/attribute_widget/edge_shape_node.html",
   import.meta.url
 );
 

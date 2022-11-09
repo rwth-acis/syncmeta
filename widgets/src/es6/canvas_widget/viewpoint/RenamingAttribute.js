@@ -7,7 +7,7 @@ import SelectionValue from "../SelectionValue";
 import loadHTML from "../../html.template.loader";
 
 const renamingAttrHTML = await loadHTML(
-  "../../../html/templates/attribute_widget/renaming_attribute.html",
+  "../../../templates/attribute_widget/renaming_attribute.html",
   import.meta.url
 );
 

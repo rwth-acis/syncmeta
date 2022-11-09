@@ -7,7 +7,7 @@ import FileValue from "./FileValue";
 import loadHTML from "../html.template.loader";
 
 const fileAttributeHtml = await loadHTML(
-  "../../../html/templates/canvas_widget/file_attribute.html",
+  "../../templates/canvas_widget/file_attribute.html",
   import.meta.url
 );
 

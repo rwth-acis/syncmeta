@@ -10,7 +10,7 @@ import SelectionValue from "../SelectionValue";
 import loadHTML from "../../html.template.loader";
 import { AttributeDeleteOperation } from "../../operations/ot/EntityOperation";
 const renamingAttrHTML = await loadHTML(
-  "../../../html/templates/attribute_widget/renaming_attribute.html",
+  "../../../templates/attribute_widget/renaming_attribute.html",
   import.meta.url
 );
 

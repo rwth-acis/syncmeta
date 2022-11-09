@@ -10,7 +10,7 @@ import SingleSelectionAttribute from "./SingleSelectionAttribute";
 import SingleValueAttribute from "./SingleValueAttribute";
 import loadHTML from "../html.template.loader";
 const nodeHtml = await loadHTML(
-  "../../../html/templates/attribute_widget/node.html",
+  "../../templates/attribute_widget/node.html",
   import.meta.url
 );
 //noinspection JSUnusedLocalSymbols

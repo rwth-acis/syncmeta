@@ -16,11 +16,11 @@ import SingleValueAttribute from "./SingleValueAttribute";
 import HistoryManager from "./HistoryManager";
 
 const abstractNodeHtml = await loadHTML(
-  "../../../html/templates/canvas_widget/abstract_node.html",
+  "../../templates/canvas_widget/abstract_node.html",
   import.meta.url
 );
 const awarenessTraceHtml = await loadHTML(
-  "../../../html/templates/canvas_widget/awareness_trace.html",
+  "../../templates/canvas_widget/awareness_trace.html",
   import.meta.url
 );
 
@@ -1594,7 +1594,7 @@ class AbstractNode extends AbstractEntity {
 }
 
 const relationshipGroupNodeHtml = await loadHTML(
-  "../../../html/templates/canvas_widget/relationship_group_node.html",
+  "../../templates/canvas_widget/relationship_group_node.html",
   import.meta.url
 );
 

@@ -10,7 +10,7 @@ import SingleColorValueAttribute from "./SingleColorValueAttribute";
 import SingleCodeEditorValueAttribute from "./SingleCodeEditorValueAttribute";
 import loadHTML from "../html.template.loader";
 const nodeShapeNodeHtml = await loadHTML(
-  "../../../html/templates/attribute_widget/node_shape_node.html",
+  "../../templates/attribute_widget/node_shape_node.html",
   import.meta.url
 );
 

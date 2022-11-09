@@ -11,11 +11,11 @@ import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
 import ActivityOperation from "../operations/non_ot/ActivityOperation";
 import loadHTML from "../html.template.loader";
 const selectionValueHtml = await loadHTML(
-  "../../../html/templates/canvas_widget/selection_value.html",
+  "../../templates/canvas_widget/selection_value.html",
   import.meta.url
 );
 const attributeSelectionValueHtml = await loadHTML(
-  "../../../html/templates/attribute_widget/selection_value.html",
+  "../../templates/attribute_widget/selection_value.html",
   import.meta.url
 );
 

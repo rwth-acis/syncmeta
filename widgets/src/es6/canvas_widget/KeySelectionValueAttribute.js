@@ -5,7 +5,7 @@ import AbstractAttribute from "./AbstractAttribute";
 import Value from "./Value";
 import SelectionValue from "./SelectionValue";
 import loadHTML from "../html.template.loader";
-const keySelectionValueAttributeHtml = loadHTML(
+const keySelectionValueAttributeHtml = await loadHTML(
   "../../templates/canvas_widget/key_value_attribute.html",
   import.meta.url
 );

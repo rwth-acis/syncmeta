@@ -4,7 +4,7 @@ import _ from "lodash-es";
 import GhostEdge from "./GhostEdge";
 import loadHTML from "../../html.template.loader";
 const ghostEdgeHtml = await loadHTML(
-  "../../../html/templates/guidance_modeling/ghost_edge.html",
+  "../../../templates/guidance_modeling/ghost_edge.html",
   import.meta.url
 );
 // import "bootstrap";

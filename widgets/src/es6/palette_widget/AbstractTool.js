@@ -3,7 +3,7 @@ import "jquery-ui";
 import _ from "lodash-es";
 import loadHTML from "../html.template.loader";
 const abstractToolHtml = await loadHTML(
-  "../../../html/templates/palette_widget/abstract_tool.html",
+  "../../templates/palette_widget/abstract_tool.html",
   import.meta.url
 );
 

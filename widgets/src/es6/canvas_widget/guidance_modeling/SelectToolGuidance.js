@@ -5,7 +5,7 @@ import _ from "lodash-es";
 import EntityManager from "../EntityManager";
 import loadHTML from "../../html.template.loader";
 const selectToolGuidanceHtml = await loadHTML(
-  "../../../html/templates/guidance_modeling/select_tool_guidance.html",
+  "../../../templates/guidance_modeling/select_tool_guidance.html",
   import.meta.url
 );
 function SelectToolGuidance(id, label, tool, canvas, icon) {

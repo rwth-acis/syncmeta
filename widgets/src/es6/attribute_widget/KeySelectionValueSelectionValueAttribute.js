@@ -10,7 +10,7 @@ import SelectionValue from "./SelectionValue";
 import loadHTML from "../html.template.loader";
 import { AttributeDeleteOperation } from "../operations/ot/EntityOperation";
 const keySelectionValueSelectionValueAttributeHtml = await loadHTML(
-  "../../../html/templates/attribute_widget/key_value_value_attribute.html",
+  "../../templates/attribute_widget/key_value_value_attribute.html",
   import.meta.url
 );
 

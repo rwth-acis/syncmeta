@@ -6,7 +6,7 @@ import MultiLineValue from "./MultiLineValue";
 import loadHTML from "../html.template.loader";
 
 const singleMultiLineValueAttributeHtml = await loadHTML(
-  "../../../html/templates/canvas_widget/single_multi_line_value_attribute.html",
+  "../../templates/canvas_widget/single_multi_line_value_attribute.html",
   import.meta.url
 );
 

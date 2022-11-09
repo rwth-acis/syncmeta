@@ -7,7 +7,7 @@ import AbstractValue from "./AbstractValue";
 import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
 import loadHTML from "../html.template.loader";
 const codeEditorValueHtml = await loadHTML(
-  "../../../html/templates/attribute_widget/code_edtior_value.html",
+  "../../templates/attribute_widget/code_edtior_value.html",
   import.meta.url
 );
 // import "ace-builds/src-min/ace";

@@ -10,7 +10,7 @@ import SingleSelectionAttribute from "./SingleSelectionAttribute";
 import SingleMultiLineValueAttribute from "./SingleMultiLineValueAttribute";
 import loadHTML from "../html.template.loader";
 const modelAttributesNodeHtml = await loadHTML(
-  "../../../html/templates/attribute_widget/model_attributes_node.html",
+  "../../templates/attribute_widget/model_attributes_node.html",
   import.meta.url
 );
 

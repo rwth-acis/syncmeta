@@ -4,7 +4,7 @@ import _ from "lodash-es";
 import EntityManager from "../EntityManager";
 import loadHTML from "../../html.template.loader";
 const optionHtml = await loadHTML(
-  "../../../html/templates/canvas_widget/select_option.html",
+  "../../../templates/canvas_widget/select_option.html",
   import.meta.url
 );
 

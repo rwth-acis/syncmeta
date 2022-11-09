@@ -14,7 +14,7 @@ import $__canvas_widget_BiDirAssociationEdge from "../BiDirAssociationEdge";
 import $__canvas_widget_UniDirAssociationEdge from "../UniDirAssociationEdge";
 import loadHTML from "../../html.template.loader";
 const viewrelationshipNodeHtml = await loadHTML(
-  "../../../html/templates/canvas_widget/viewrelationship_node.html",
+  "../../../templates/canvas_widget/viewrelationship_node.html",
   import.meta.url
 );
 

@@ -7,7 +7,7 @@ import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
 import loadHTML from "../html.template.loader";
 
 const booleanValueHtml = await loadHTML(
-  "../../../html/templates/attribute_widget/boolean_value.html",
+  "../../templates/attribute_widget/boolean_value.html",
   import.meta.url
 );
 import { CONFIG } from "../config";
