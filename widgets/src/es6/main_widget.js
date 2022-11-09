@@ -10,6 +10,13 @@ import IWCW from "./lib/IWCWrapper";
 // import CanvasWidgetTest from "./../test/CanvasWidgetTest";
 import { CONFIG } from "./config";
 import yjsSync from "./lib/yjs-sync";
+import {
+  HistoryManagerInstance as HistoryManager,
+  EntityManagerInstance as EntityManager,
+  ObjectNode,
+} from "./canvas_widget/Manager";
+import { RelationshipNode } from "./canvas_widget/Manager";
+import { AbstractClassNode, EdgeShapeNode } from "./canvas_widget/Manager";
 import Canvas from "./canvas_widget/Canvas";
 
 Promise.all([
@@ -23,8 +30,6 @@ Promise.all([
   import("./operations/non_ot/InitModelTypesOperation"),
   import("./operations/non_ot/SetModelAttributeNodeOperation"),
   import("./operations/non_ot/UpdateMetamodelOperation"),
-
-  import("./canvas_widget/EntityManager"),
   import("./canvas_widget/NodeTool"),
   import("./canvas_widget/ObjectNodeTool"),
   import("./canvas_widget/AbstractClassNodeTool"),
@@ -37,13 +42,11 @@ Promise.all([
   import("./canvas_widget/GeneralisationEdgeTool"),
   import("./canvas_widget/BiDirAssociationEdgeTool"),
   import("./canvas_widget/UniDirAssociationEdgeTool"),
-  import("./canvas_widget/ObjectNode"),
-  import("./canvas_widget/AbstractClassNode"),
-  import("./canvas_widget/RelationshipNode"),
+
   import("./canvas_widget/RelationshipGroupNode"),
   import("./canvas_widget/EnumNode"),
   import("./canvas_widget/NodeShapeNode"),
-  import("./canvas_widget/EdgeShapeNode"),
+
   import("./canvas_widget/GeneralisationEdge"),
   import("./canvas_widget/BiDirAssociationEdge"),
   import("./canvas_widget/UniDirAssociationEdge"),
@@ -53,7 +56,7 @@ Promise.all([
   import("./canvas_widget/viewpoint/ViewRelationshipNodeTool"),
   import("./canvas_widget/viewpoint/ViewManager"),
   import("./canvas_widget/view/ViewGenerator"),
-  import("./canvas_widget/HistoryManager"),
+
   import("./canvas_widget/JSONtoGraph"),
   import("./canvas_widget/GenerateViewpointModel"),
   await import("./User"), // promise!User
@@ -70,9 +73,9 @@ Promise.all([
   SetModelAttributeNodeOperation,
   UpdateMetamodelOperation,
 
-  EntityManager,
   NodeTool,
   ObjectNodeTool,
+
   AbstractClassNodeTool,
   RelationshipNodeTool,
   RelationshipGroupNodeTool,
@@ -83,13 +86,10 @@ Promise.all([
   GeneralisationEdgeTool,
   BiDirAssociationEdgeTool,
   UniDirAssociationEdgeTool,
-  ObjectNode,
-  AbstractClassNode,
-  RelationshipNode,
   RelationshipGroupNode,
   EnumNode,
   NodeShapeNode,
-  EdgeShapeNode,
+
   GeneralisationEdge,
   BiDirAssociationEdge,
   UniDirAssociationEdge,
@@ -99,7 +99,7 @@ Promise.all([
   ViewRelationshipNodeTool,
   ViewManager,
   ViewGenerator,
-  HistoryManager,
+
   JSONtoGraph,
   GenerateViewpointModel,
   user,

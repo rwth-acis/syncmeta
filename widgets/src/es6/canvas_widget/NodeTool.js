@@ -1,8 +1,9 @@
 import { CONFIG } from "../config";
 import "jquery";
 import "jquery-ui";
+import { EntityManagerInstance as EntityManager } from "./Manager";
 import AbstractCanvasTool from "./AbstractCanvasTool";
-import EntityManager from "./EntityManager";
+
 
 NodeTool.prototype = new AbstractCanvasTool();
 NodeTool.prototype.constructor = NodeTool;

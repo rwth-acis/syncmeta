@@ -1,38 +1,36 @@
-import { CONFIG } from "../config";
 import "jquery";
-import "jquery-ui";
 import "jquery-contextmenu";
+import "jquery-ui";
 import "jsplumb/dist/js/jsPlumb-1.7.9.js";
-import Util from "../Util";
-import IWCW from "../lib/IWCWrapper";
-import {
-  EdgeDeleteOperation,
-  NodeAddOperation,
-  NodeDeleteOperation,
-  EdgeAddOperation,
-} from "../operations/ot/EntityOperation";
-import AbstractCanvas from "./AbstractCanvas";
-import ToolSelectOperation from "../operations/non_ot/ToolSelectOperation";
-import EntitySelectOperation from "../operations/non_ot/EntitySelectOperation";
-import ActivityOperation from "../operations/non_ot/ActivityOperation";
-import ExportMetaModelOperation from "../operations/non_ot/ExportMetaModelOperation";
-import ExportLogicalGuidanceRepresentationOperation from "../operations/non_ot/ExportLogicalGuidanceRepresentationOperation";
-import ExportImageOperation from "../operations/non_ot/ExportImageOperation";
-import ShowGuidanceBoxOperation from "../operations/non_ot/ShowGuidanceBoxOperation";
-import CanvasViewChangeOperation from "../operations/non_ot/CanvasViewChangeOperation";
-import RevokeSharedActivityOperation from "../operations/non_ot/RevokeSharedActivityOperation";
-import MoveCanvasOperation from "../operations/non_ot/MoveCanvasOperation";
-import GuidanceStrategyOperation from "../operations/non_ot/GuidanceStrategyOperation";
 import AbstractEntity from "../canvas_widget/AbstractEntity";
-import EntityManager from "../canvas_widget/EntityManager";
-import HistoryManager from "../canvas_widget/HistoryManager";
-import MoveTool from "../canvas_widget/MoveTool";
+import DagreLayout from "../canvas_widget/DagreLayout";
+import CollaborationGuidance from "../canvas_widget/guidance_modeling/CollaborationGuidance";
+import GhostEdgeGuidance from "../canvas_widget/guidance_modeling/GhostEdgeGuidance";
 import GuidanceBox from "../canvas_widget/guidance_modeling/GuidanceBox";
 import SelectToolGuidance from "../canvas_widget/guidance_modeling/SelectToolGuidance";
 import SetPropertyGuidance from "../canvas_widget/guidance_modeling/SetPropertyGuidance";
-import GhostEdgeGuidance from "../canvas_widget/guidance_modeling/GhostEdgeGuidance";
-import CollaborationGuidance from "../canvas_widget/guidance_modeling/CollaborationGuidance";
-import DagreLayout from "../canvas_widget/DagreLayout";
+import MoveTool from "../canvas_widget/MoveTool";
+import { CONFIG } from "../config";
+import IWCW from "../lib/IWCWrapper";
+import ActivityOperation from "../operations/non_ot/ActivityOperation";
+import CanvasViewChangeOperation from "../operations/non_ot/CanvasViewChangeOperation";
+import EntitySelectOperation from "../operations/non_ot/EntitySelectOperation";
+import ExportImageOperation from "../operations/non_ot/ExportImageOperation";
+import ExportLogicalGuidanceRepresentationOperation from "../operations/non_ot/ExportLogicalGuidanceRepresentationOperation";
+import ExportMetaModelOperation from "../operations/non_ot/ExportMetaModelOperation";
+import GuidanceStrategyOperation from "../operations/non_ot/GuidanceStrategyOperation";
+import MoveCanvasOperation from "../operations/non_ot/MoveCanvasOperation";
+import RevokeSharedActivityOperation from "../operations/non_ot/RevokeSharedActivityOperation";
+import ShowGuidanceBoxOperation from "../operations/non_ot/ShowGuidanceBoxOperation";
+import ToolSelectOperation from "../operations/non_ot/ToolSelectOperation";
+import {
+  EdgeAddOperation, EdgeDeleteOperation,
+  NodeAddOperation,
+  NodeDeleteOperation
+} from "../operations/ot/EntityOperation";
+import Util from "../Util";
+import AbstractCanvas from "./AbstractCanvas";
+import { EntityManagerInstance as EntityManager, HistoryManagerInstance as HistoryManager } from "./Manager";
 
 /**
  * Canvas

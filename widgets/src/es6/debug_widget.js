@@ -3,7 +3,7 @@ import "jquery-ui";
 import _ from "lodash-es";
 import yjsSync from "./lib/yjs-sync";
 import GenerateViewpointModel from "./canvas_widget/GenerateViewpointModel";
-import EntityManager from "./canvas_widget/EntityManager";
+import { EntityManagerInstance as EntityManager } from "./canvas_widget/Manager";
 import guidance from "./Guidancemodel"; //promise!Guidancemodel
 $(function () {
   yjsSync().done(function (y, spaceTitle) {

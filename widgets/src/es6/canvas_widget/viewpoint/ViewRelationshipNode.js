@@ -1,18 +1,17 @@
 import "jquery";
 import "jquery-ui";
 import _ from "lodash-es";
-import AbstractNode from "../AbstractNode";
 import SingleSelectionAttribute from "../SingleSelectionAttribute";
 import RenamingListAttribute from "./RenamingListAttribute";
 import ConditionListAttribute from "./ConditionListAttribute";
 import ViewTypesUtil from "./ViewTypesUtil";
 import LogicalOperator from "./LogicalOperator";
 import LogicalConjunctions from "./LogicalConjunctions";
-
-import $__canvas_widget_EdgeShapeNode from "../EdgeShapeNode";
+import { EdgeShapeNode as __canvas_widget_EdgeShapeNode } from "../Manager";
 import $__canvas_widget_BiDirAssociationEdge from "../BiDirAssociationEdge";
 import $__canvas_widget_UniDirAssociationEdge from "../UniDirAssociationEdge";
 import loadHTML from "../../html.template.loader";
+import { AbstractNode } from "../Manager";
 const viewrelationshipNodeHtml = await loadHTML(
   "../../../templates/canvas_widget/viewrelationship_node.html",
   import.meta.url
@@ -33,24 +32,13 @@ const viewrelationshipNodeHtml = await loadHTML(
          * @param {object} json indicates if the ViewObjectNode is created from a json
     
          */
-class ViewRelationshipNode {
+class ViewRelationshipNode extends AbstractNode {
   static TYPE = "ViewRelationship";
   static DEFAULT_WIDTH = 150;
   static DEFAULT_HEIGHT = 100;
   constructor(id, left, top, width, height, zIndex, json) {
+    super(id, "ViewRelationship", left, top, width, height, zIndex, json);
     var that = this;
-
-    AbstractNode.call(
-      this,
-      id,
-      "ViewRelationship",
-      left,
-      top,
-      width,
-      height,
-      zIndex,
-      json
-    );
 
     /**
      * jQuery object of node template

@@ -1,5 +1,5 @@
+import { EdgeShapeNode } from "./Manager";
 import NodeTool from "./NodeTool";
-import EdgeShapeNode from "./EdgeShapeNode";
 
 EdgeShapeNodeTool.prototype = new NodeTool();
 EdgeShapeNodeTool.prototype.constructor = EdgeShapeNodeTool;

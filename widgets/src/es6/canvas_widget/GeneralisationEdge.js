@@ -1,13 +1,12 @@
 import "jsplumb/dist/js/jsPlumb-1.7.9.js";
 import _ from "lodash-es";
 import AbstractEdge from "./AbstractEdge";
-import AbstractClassNode from "./AbstractClassNode";
-import ObjectNode from "./ObjectNode";
-import RelationshipNode from "./RelationshipNode";
+import { AbstractClassNode } from "./Manager";
+import { RelationshipNode } from "./Manager";
 import RelationshipGroupNode from "./RelationshipGroupNode";
 import EnumNode from "./EnumNode";
 import ViewRelationshipNode from "./viewpoint/ViewRelationshipNode";
-import $__canvas_widget_EntityManager from "./EntityManager";
+import { EntityManagerInstance, ObjectNode } from "./Manager";
 
 GeneralisationEdge.TYPE = "Generalisation";
 GeneralisationEdge.RELATIONS = [
@@ -104,7 +103,7 @@ function GeneralisationEdge(id, source, target) {
 
     this.setJsPlumbConnection(jsPlumb.connect(connectOptions));
     this.repaintOverlays();
-    _.each($__canvas_widget_EntityManager.getEdges(), function (e) {
+    _.each(EntityManagerInstance.getEdges(), function (e) {
       e.setZIndex();
     });
   };

@@ -14,7 +14,7 @@ import NodeResizeOperation from "../operations/ot/NodeResizeOperation";
 import ActivityOperation from "../operations/non_ot/ActivityOperation";
 import AbstractEntity from "./AbstractEntity";
 import SingleValueAttribute from "./SingleValueAttribute";
-import HistoryManager from "./HistoryManager";
+import { HistoryManagerInstance as HistoryManager } from "./Manager";
 
 const abstractNodeHtml = await loadHTML(
   "../../templates/canvas_widget/abstract_node.html",
@@ -1595,6 +1595,7 @@ class AbstractNode extends AbstractEntity {
 }
 import SingleValueListAttribute from "./SingleValueListAttribute";
 import { NodeDeleteOperation } from "../operations/ot/EntityOperation";
+import { HistoryManagerInstance } from "./Manager";
 
 const enumNodeHtml = await loadHTML(
   "../../templates/canvas_widget/enum_node.html",

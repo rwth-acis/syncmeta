@@ -3,8 +3,9 @@ import "jquery";
 import "jquery-ui";
 import _ from "lodash-es";
 import "jsplumb/dist/js/jsPlumb-1.7.9.js";;
+import { EntityManagerInstance as EntityManager } from "./Manager";
 import AbstractCanvasTool from "./AbstractCanvasTool";
-import EntityManager from "./EntityManager";
+
 
 EdgeTool.prototype = new AbstractCanvasTool();
 EdgeTool.prototype.constructor = EdgeTool;

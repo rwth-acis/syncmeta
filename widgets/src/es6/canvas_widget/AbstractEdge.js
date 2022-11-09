@@ -6,10 +6,11 @@ import "jquery-contextmenu";
 import IWCW from "../lib/IWCWrapper";
 import { EdgeDeleteOperation } from "../operations/ot/EntityOperation";
 import ActivityOperation from "../operations/non_ot/ActivityOperation";
-import HistoryManager from "./HistoryManager";
+import { HistoryManagerInstance as HistoryManager } from "./Manager";
 import AbstractEntity from "./AbstractEntity";
 import SingleValueAttribute from "./SingleValueAttribute";
-import $__canvas_widget_EntityManager from "./EntityManager";
+import { EntityManagerInstance as __canvas_widget_EntityManager } from "./Manager";
+
 import loadHTML from "../html.template.loader";
 const abstractEdgeHtml = await loadHTML(
   "../../templates/canvas_widget/abstract_edge.html",

@@ -1,5 +1,5 @@
+import { ObjectNode } from "./Manager";
 import NodeTool from "./NodeTool";
-import ObjectNode from "./ObjectNode";
 
 ObjectNodeTool.prototype = new NodeTool();
 ObjectNodeTool.prototype.constructor = ObjectNodeTool;

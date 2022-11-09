@@ -3,7 +3,8 @@ import "jquery-ui";
 import "jsplumb/dist/js/jsPlumb-1.7.9.js";;
 import _ from "lodash-es";
 // import "bootstrap";
-import $__canvas_widget_EntityManager from "../EntityManager";
+import { EntityManagerInstance as __canvas_widget_EntityManager } from "../Manager";
+
 function GhostEdge(canvas, edgeFunction, source, target) {
   var _jsPlumbConnection = null;
   var _label = edgeFunction.getType();

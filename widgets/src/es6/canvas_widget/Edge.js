@@ -9,7 +9,7 @@ import SingleValueAttribute from "./SingleValueAttribute";
 import SingleSelectionAttribute from "./SingleSelectionAttribute";
 import AbstractEdge from "./AbstractEdge";
 import Arrows from "./Arrows";
-import $__canvas_widget_EntityManager from "./EntityManager";
+import { EntityManagerInstance } from "./Manager";
 
 var shapes = {
   straight: ["Straight", { gap: 0 }],
@@ -298,7 +298,7 @@ function makeEdge(
 
       this.setJsPlumbConnection(jsPlumb.connect(connectOptions));
       this.repaintOverlays();
-      _.each($__canvas_widget_EntityManager.getEdges(), function (e) {
+      _.each(EntityManagerInstance.getEdges(), function (e) {
         e.setZIndex();
       });
     };

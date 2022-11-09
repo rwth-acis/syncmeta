@@ -1,5 +1,5 @@
+import { AbstractClassNode } from "./Manager";
 import NodeTool from "./NodeTool";
-import AbstractClassNode from "./AbstractClassNode";
 
 AbstractClassNodeTool.prototype = new NodeTool();
 AbstractClassNodeTool.prototype.constructor = AbstractClassNodeTool;

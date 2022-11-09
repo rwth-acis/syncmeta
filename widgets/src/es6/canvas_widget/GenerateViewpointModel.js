@@ -1,17 +1,17 @@
 import Util from "../Util";
-import ObjectNode from "./ObjectNode";
-import AbstractClassNode from "./AbstractClassNode";
-import RelationshipNode from "./RelationshipNode";
+import { AbstractClassNode } from "./Manager";
+import { RelationshipNode } from "./Manager";
 import RelationshipGroupNode from "./RelationshipGroupNode";
 import EnumNode from "./EnumNode";
 import NodeShapeNode from "./NodeShapeNode";
-import EdgeShapeNode from "./EdgeShapeNode";
+import { EdgeShapeNode } from "./Manager";
 import GeneralisationEdge from "./GeneralisationEdge";
 import BiDirAssociationEdge from "./BiDirAssociationEdge";
 import UniDirAssociationEdge from "./UniDirAssociationEdge";
 import ViewObjectNode from "./viewpoint/ViewObjectNode";
 import ViewRelationshipNode from "./viewpoint/ViewRelationshipNode";
-import EntityManager from "./EntityManager";
+import { EntityManagerInstance as EntityManager } from "./Manager";
+import { ObjectNode } from "./Manager";
 function GenerateViewpointModel(viewpointModel) {
   EntityManager.init();
 

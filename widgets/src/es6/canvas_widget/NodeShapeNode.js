@@ -1,32 +1,29 @@
-import BooleanAttribute from "./BooleanAttribute";
-import SingleSelectionAttribute from "./SingleSelectionAttribute";
+import "jquery";
+import "jquery-contextmenu";
+import "jquery-ui";
+import _ from "lodash-es";
+import { CONFIG } from "../config";
 import loadHTML from "../html.template.loader";
+import IWCW from "../lib/IWCWrapper";
+import ActivityOperation from "../operations/non_ot/ActivityOperation";
+import { NodeDeleteOperation } from "../operations/ot/EntityOperation";
+import NodeMoveOperation from "../operations/ot/NodeMoveOperation";
+import NodeMoveZOperation from "../operations/ot/NodeMoveZOperation";
+import NodeResizeOperation from "../operations/ot/NodeResizeOperation";
+import Util from "../Util";
+import AbstractEntity from "./AbstractEntity";
+import BooleanAttribute from "./BooleanAttribute";
 import IntegerAttribute from "./IntegerAttribute";
+import { HistoryManagerInstance as HistoryManager } from "./Manager";
 import SingleColorValueAttribute from "./SingleColorValueAttribute";
 import SingleMultiLineValueAttribute from "./SingleMultiLineValueAttribute";
+import SingleSelectionAttribute from "./SingleSelectionAttribute";
+import SingleValueAttribute from "./SingleValueAttribute";
 
 const nodeShapeNodeHtml = await loadHTML(
   "../../templates/canvas_widget/node_shape_node.html",
   import.meta.url
 );
-
-import { CONFIG } from "../config";
-import "jquery";
-import "jquery-ui";
-import "jquery-contextmenu";
-import _ from "lodash-es";
-import Util from "../Util";
-import IWCW from "../lib/IWCWrapper";
-
-import NodeMoveOperation from "../operations/ot/NodeMoveOperation";
-import NodeMoveZOperation from "../operations/ot/NodeMoveZOperation";
-import NodeResizeOperation from "../operations/ot/NodeResizeOperation";
-import ActivityOperation from "../operations/non_ot/ActivityOperation";
-import AbstractEntity from "./AbstractEntity";
-import SingleValueAttribute from "./SingleValueAttribute";
-import HistoryManager from "./HistoryManager";
-import { NodeDeleteOperation } from "../operations/ot/EntityOperation";
-
 const abstractNodeHtml = await loadHTML(
   "../../templates/canvas_widget/abstract_node.html",
   import.meta.url
@@ -235,7 +232,7 @@ class AbstractNode extends AbstractEntity {
     this.propagateNodeMoveOperation = function (operation) {
       operation.setJabberId(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
       processNodeMoveOperation(operation);
-      HistoryManager.add(operation);
+      HistoryManagerInstance.add(operation);
       $("#save").click();
 
       hideTraceAwareness();

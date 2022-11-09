@@ -7,12 +7,12 @@ import "jquery-ui";
 import IWCW from "./lib/IWCWrapper";
 import { CONFIG } from "./config";
 // import AttributeWidgetTest from "./../test/AttributeWidgetTest";
-
+import { EntityManagerInstance as EntityManager } from "./canvas_widget/Manager";
 Promise.all([
   import("./lib/yjs-sync"),
   import("./WaitForCanvas"),
   import("./attribute_widget/AttributeWrapper"),
-  import("./attribute_widget/EntityManager"),
+
   import("./attribute_widget/view/ViewGenerator"),
   import("./operations/non_ot/InitModelTypesOperation"),
   import("./operations/non_ot/ViewInitOperation"),
@@ -22,15 +22,15 @@ Promise.all([
   yjsSyncLoader,
   WaitForCanvasLoader,
   AttributeWrapper,
-  EntityManager,
+
   ViewGenerator,
   InitModelTypesOperation,
   ViewInitOperation,
   SetModelAttributeNodeOperation,
   guidancemodel,
 ]) {
-  const WaitForCanvas = WaitForCanvasLoader.default
-  const yjsSync = yjsSyncLoader.default
+  const WaitForCanvas = WaitForCanvasLoader.default;
+  const yjsSync = yjsSyncLoader.default;
   WaitForCanvas(CONFIG.WIDGET.NAME.ATTRIBUTE, 10, 1500)
     .done(function (user) {
       $("#wrapper")

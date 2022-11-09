@@ -1,7 +1,7 @@
 import "jquery";
 import "jquery-ui";
 import _ from "lodash-es";
-import AbstractNode from "./AbstractNode";
+
 import BooleanAttribute from "./BooleanAttribute";
 import IntegerAttribute from "./IntegerAttribute";
 import FileAttribute from "./FileAttribute";
@@ -10,6 +10,7 @@ import SingleSelectionAttribute from "./SingleSelectionAttribute";
 import SingleMultiLineValueAttribute from "./SingleMultiLineValueAttribute";
 
 import loadHTML from "../html.template.loader";
+import { AbstractNode } from "./Manager";
 
 const modelAttributesNodeHtml = await loadHTML(
   "../../templates/canvas_widget/model_attributes_node.html",

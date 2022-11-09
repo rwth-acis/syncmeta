@@ -1,7 +1,6 @@
 import "jquery";
 import "jquery-ui";
 import _ from "lodash-es";
-import AbstractNode from "../AbstractNode";
 import SingleSelectionAttribute from "../SingleSelectionAttribute";
 import RenamingListAttribute from "../viewpoint/RenamingListAttribute";
 import ConditionListAttribute from "../viewpoint/ConditionListAttribute";
@@ -12,12 +11,12 @@ import $__canvas_widget_NodeShapeNode from "../NodeShapeNode";
 import $__canvas_widget_BiDirAssociationEdge from "../BiDirAssociationEdge";
 import $__canvas_widget_UniDirAssociationEdge from "../UniDirAssociationEdge";
 import loadHTML from "../../html.template.loader";
+import { AbstractNode } from "../Manager";
+
 const viewobjectNodeHtml = await loadHTML(
   "../../../templates/canvas_widget/viewobject_node.html",
   import.meta.url
 );
-
-
 
 /**
  * ViewObjectNode

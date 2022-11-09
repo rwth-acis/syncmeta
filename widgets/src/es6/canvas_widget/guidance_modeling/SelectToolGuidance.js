@@ -2,7 +2,7 @@ import { CONFIG } from "../../config";
 import "jquery";
 import "jquery-ui";
 import _ from "lodash-es";
-import EntityManager from "../EntityManager";
+import { EntityManagerInstance as EntityManager } from "../Manager";
 import loadHTML from "../../html.template.loader";
 const selectToolGuidanceHtml = await loadHTML(
   "../../../templates/guidance_modeling/select_tool_guidance.html",

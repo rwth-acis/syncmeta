@@ -1,5 +1,5 @@
+import { RelationshipNode } from "./Manager";
 import NodeTool from "./NodeTool";
-import RelationshipNode from "./RelationshipNode";
 
 RelationshipNodeTool.prototype = new NodeTool();
 RelationshipNodeTool.prototype.constructor = RelationshipNodeTool;
