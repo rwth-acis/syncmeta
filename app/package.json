@@ -7,7 +7,7 @@
     "build": "tsc",
     "build:watch": "tsc --watch",
     "start": "web-dev-server --open --node-resolve",
-    "start:watch": "web-dev-server --open  --node-resolve --watch"
+    "start:watch": "web-dev-server  --node-resolve --watch"
   },
   "dependencies": {
     "@open-wc/testing": "^3.1.6",

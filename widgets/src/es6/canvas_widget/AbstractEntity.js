@@ -11,7 +11,7 @@
     class AbstractEntity {
       static MAX_Z_INDEX = 32000;
       static MIN_Z_INDEX = 1;
-      static CONTEXT_MENU_Z_INDEX = AbstractEntity.MAX_Z_INDEX + 1;
+      static CONTEXT_MENU_Z_INDEX = 32000 + 1;
 
       static maxZIndex = 16000;
       static minZIndex = 16000;

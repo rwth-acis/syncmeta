@@ -1,7 +1,7 @@
 import Util from "../Util";
 import ConcurrentRegion from "./ConcurrentRegion";
 import "../lib/Class";
-import "graphlib";
+import "graphlib/dist/graphlib.min.js";
 
 var ActivityStatus = Class.extend({
   init: function (logicalGuidanceRepresentation, initialNode, strategy) {

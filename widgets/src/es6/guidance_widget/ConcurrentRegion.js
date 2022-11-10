@@ -2,7 +2,7 @@ import IWCW from "../lib/IWCWrapper";
 import RevokeSharedActivityOperation from "../operations/non_ot/RevokeSharedActivityOperation";
 import "../lib/Class";
 import { CONFIG } from "../config";
-import "graphlib";
+import "graphlib/dist/graphlib.min.js";
 
 var ConcurrentRegion = Class.extend({
   init: function (activity, logicalGuidanceRepresentation, initialNode) {

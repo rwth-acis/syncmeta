@@ -1,5 +1,5 @@
 import _ from "lodash";
-import graphlib from "graphlib";
+import "graphlib/dist/graphlib.min.js";
 import EntityManager from "canvas_widget/EntityManager";
 /**
  * The closed-view-generation(CVG) algorithm

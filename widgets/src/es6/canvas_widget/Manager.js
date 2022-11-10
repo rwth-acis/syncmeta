@@ -1,9 +1,9 @@
-import graphlib from "graphlib/dist/graphlib.core.min.js";
+import { default as _ } from "lodash-es";
+import "graphlib/dist/graphlib.min.js";
 import "jquery";
 import "jquery-contextmenu";
 import "jquery-ui";
 import "jsplumb/dist/js/jsPlumb-1.7.9.js";
-import { default as _ } from "lodash-es";
 import { CONFIG } from "../config";
 import { default as loadHTML } from "../html.template.loader";
 import { default as IWCW } from "../lib/IWCWrapper";
