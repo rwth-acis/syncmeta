@@ -8,15 +8,15 @@ import { CONFIG } from "../config";
 import { default as loadHTML } from "../html.template.loader";
 import { default as IWCW } from "../lib/IWCWrapper";
 import { OpenAppProvider } from "../lib/openapp";
-import ActivityOperation from "../operations/non_ot/ActivityOperation";
+import { default as ActivityOperation } from "../operations/non_ot/ActivityOperation";
 import {
   EdgeAddOperation,
   EdgeDeleteOperation,
   NodeAddOperation,
   NodeDeleteOperation,
 } from "../operations/ot/EntityOperation";
-import NodeMoveOperation from "../operations/ot/NodeMoveOperation";
-import NodeMoveZOperation from "../operations/ot/NodeMoveZOperation";
+import { default as NodeMoveOperation } from "../operations/ot/NodeMoveOperation";
+import { default as NodeMoveZOperation } from "../operations/ot/NodeMoveZOperation";
 import { default as NodeResizeOperation } from "../operations/ot/NodeResizeOperation";
 import { default as Util } from "../Util";
 import { default as AbstractEntity } from "./AbstractEntity";
@@ -29,7 +29,6 @@ import KeySelectionValueSelectionValueListAttribute from "./KeySelectionValueSel
 import ModelAttributesNode from "./ModelAttributesNode";
 import { default as NodeShapeNode } from "./NodeShapeNode";
 import QuizAttribute from "./QuizAttribute";
-import { default as RelationshipGroupNode } from "./RelationshipGroupNode";
 import SingleColorValueAttribute from "./SingleColorValueAttribute";
 import { default as SingleSelectionAttribute } from "./SingleSelectionAttribute";
 import { default as SingleValueAttribute } from "./SingleValueAttribute";
@@ -39,6 +38,11 @@ import ViewEdge from "./view/ViewEdge";
 import ViewNode from "./view/ViewNode";
 import { default as ViewObjectNode } from "./viewpoint/ViewObjectNode";
 import { default as ViewRelationshipNode } from "./viewpoint/ViewRelationshipNode";
+
+const relationshipGroupNodeHtml = await loadHTML(
+  "../../templates/canvas_widget/relationship_group_node.html",
+  import.meta.url
+);
 
 const enumNodeHtml = await loadHTML(
   "../../templates/canvas_widget/enum_node.html",
@@ -7335,5 +7339,100 @@ export class GeneralisationEdge extends AbstractEdge {
     };
 
     this.get$overlay().find(".type").addClass("segmented");
+  }
+}
+
+/**
+ * AbstractNode
+ * @class canvas_widget.AbstractNode
+ * @extends canvas_widget.AbstractEntity
+ * @memberof canvas_widget
+ * @constructor
+ * @param {string} id Entity identifier of node
+ * @param {string} type Type of node
+ * @param {number} left x-coordinate of node position
+ * @param {number} top y-coordinate of node position
+ * @param {number} width Width of node
+ * @param {number} height Height of node
+ * @param {boolean} containment containment
+ * @param {number} zIndex Position of node on z-axis
+ */
+
+/**
+ * Abstract Class Node
+ * @class canvas_widget.RelationshipGroupNode
+ * @extends canvas_widget.AbstractNode
+ * @memberof canvas_widget
+ * @constructor
+ * @param {string} id Entity identifier of node
+ * @param {number} left x-coordinate of node position
+ * @param {number} top y-coordinate of node position
+ * @param {number} width Width of node
+ * @param {number} height Height of node
+ * @param {number} zIndex Position of node on z-axis
+ */
+export class RelationshipGroupNode extends AbstractNode {
+  static TYPE = "Relation";
+  static DEFAULT_WIDTH = 150;
+  static DEFAULT_HEIGHT = 100;
+  constructor(id, left, top, width, height, zIndex) {
+    super(id, RelationshipGroupNode.TYPE, left, top, width, height, zIndex);
+    var that = this;
+
+    /**
+     * jQuery object of node template
+     * @type {jQuery}
+     * @private
+     */
+    var _$template = $(
+      _.template(relationshipGroupNodeHtml)({ type: that.getType() })
+    );
+
+    /**
+     * jQuery object of DOM node representing the node
+     * @type {jQuery}
+     * @private
+     */
+    var _$node = AbstractNode.prototype.get$node
+      .call(this)
+      .append(_$template)
+      .addClass("class");
+
+    /**
+     * jQuery object of DOM node representing the attributes
+     * @type {jQuery}
+     * @private
+     */
+    var _$attributeNode = _$node.find(".attributes");
+
+    /**
+     * Attributes of node
+     * @type {Object}
+     * @private
+     */
+    var _attributes = this.getAttributes();
+
+    /**
+     * Get JSON representation of the node
+     * @returns {Object}
+     */
+    this.toJSON = function () {
+      var json = AbstractNode.prototype.toJSON.call(this);
+      json.type = RelationshipGroupNode.TYPE;
+      return json;
+    };
+
+    this.registerYMap = function () {
+      AbstractNode.prototype.registerYMap.call(this);
+      that.getLabel().getValue().registerYType();
+    };
+
+    _$node.find(".label").append(this.getLabel().get$node());
+
+    for (var attributeKey in _attributes) {
+      if (_attributes.hasOwnProperty(attributeKey)) {
+        _$attributeNode.append(_attributes[attributeKey].get$node());
+      }
+    }
   }
 }

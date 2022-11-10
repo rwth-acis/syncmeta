@@ -1,7 +1,7 @@
 import Util from "../Util";
 import { AbstractClassNode } from "./Manager";
 import { RelationshipNode } from "./Manager";
-import RelationshipGroupNode from "./RelationshipGroupNode";
+import { RelationshipGroupNode } from "./Manager";
 import { EnumNode } from "./Manager";
 import NodeShapeNode from "./NodeShapeNode";
 import { EdgeShapeNode } from "./Manager";

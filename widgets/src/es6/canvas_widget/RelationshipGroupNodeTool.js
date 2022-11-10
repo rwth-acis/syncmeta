@@ -1,5 +1,5 @@
+import { RelationshipGroupNode } from "./Manager";
 import NodeTool from "./NodeTool";
-import RelationshipGroupNode from "./RelationshipGroupNode";
 
 RelationshipGroupNodeTool.prototype = new NodeTool();
 /**
