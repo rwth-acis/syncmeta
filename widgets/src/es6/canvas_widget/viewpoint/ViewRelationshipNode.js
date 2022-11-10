@@ -8,8 +8,10 @@ import ViewTypesUtil from "./ViewTypesUtil";
 import LogicalOperator from "./LogicalOperator";
 import LogicalConjunctions from "./LogicalConjunctions";
 import { EdgeShapeNode as __canvas_widget_EdgeShapeNode } from "../Manager";
-import { BiDirAssociationEdge as $__canvas_widget_BiDirAssociationEdge } from "../Manager";
-import $__canvas_widget_UniDirAssociationEdge from "../UniDirAssociationEdge";
+import {
+  BiDirAssociationEdge as $__canvas_widget_BiDirAssociationEdge,
+  UniDirAssociationEdge as $__canvas_widget_UniDirAssociationEdge,
+} from "../Manager";
 import loadHTML from "../../html.template.loader";
 import { AbstractNode } from "../Manager";
 const viewrelationshipNodeHtml = await loadHTML(

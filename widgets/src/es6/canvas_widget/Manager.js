@@ -26,18 +26,22 @@ import { default as FileAttribute } from "./FileAttribute";
 import { default as IntegerAttribute } from "./IntegerAttribute";
 import { default as KeySelectionValueListAttribute } from "./KeySelectionValueListAttribute";
 import KeySelectionValueSelectionValueListAttribute from "./KeySelectionValueSelectionValueListAttribute";
-import ModelAttributesNode from "./ModelAttributesNode";
 import { default as NodeShapeNode } from "./NodeShapeNode";
 import QuizAttribute from "./QuizAttribute";
 import SingleColorValueAttribute from "./SingleColorValueAttribute";
+import SingleMultiLineValueAttribute from "./SingleMultiLineValueAttribute";
 import { default as SingleSelectionAttribute } from "./SingleSelectionAttribute";
 import { default as SingleValueAttribute } from "./SingleValueAttribute";
 import SingleValueListAttribute from "./SingleValueListAttribute";
-import { default as UniDirAssociationEdge } from "./UniDirAssociationEdge";
 import ViewEdge from "./view/ViewEdge";
 import ViewNode from "./view/ViewNode";
 import { default as ViewObjectNode } from "./viewpoint/ViewObjectNode";
 import { default as ViewRelationshipNode } from "./viewpoint/ViewRelationshipNode";
+
+const modelAttributesNodeHtml = await loadHTML(
+  "../../templates/canvas_widget/model_attributes_node.html",
+  import.meta.url
+);
 
 const relationshipGroupNodeHtml = await loadHTML(
   "../../templates/canvas_widget/relationship_group_node.html",
@@ -7434,5 +7438,330 @@ export class RelationshipGroupNode extends AbstractNode {
         _$attributeNode.append(_attributes[attributeKey].get$node());
       }
     }
+  }
+}
+
+/**
+ * UniDirAssociationEdge
+ * @class canvas_widget.UniDirAssociationEdge
+ * @extends canvas_widget.AbstractEdge
+ * @memberof canvas_widget
+ * @constructor
+ * @param {string} id Entity identifier of edge
+ * @param {canvas_widget.AbstractNode} source Source node
+ * @param {canvas_widget.AbstractNode} target Target node
+ */
+export class UniDirAssociationEdge extends AbstractEdge {
+  static TYPE = "Uni-Dir-Association";
+  static RELATIONS = [
+    {
+      sourceTypes: [ObjectNode.TYPE],
+      targetTypes: [
+        EnumNode.TYPE,
+        NodeShapeNode.TYPE,
+        RelationshipNode.TYPE,
+        RelationshipGroupNode.TYPE,
+        ViewRelationshipNode.TYPE,
+      ],
+    },
+    {
+      sourceTypes: [RelationshipNode.TYPE],
+      targetTypes: [
+        EnumNode.TYPE,
+        EdgeShapeNode.TYPE,
+        ObjectNode.TYPE,
+        AbstractClassNode.TYPE,
+        ViewObjectNode.TYPE,
+      ],
+    },
+    {
+      sourceTypes: [RelationshipGroupNode.TYPE],
+      targetTypes: [ObjectNode.TYPE, AbstractClassNode.TYPE],
+    },
+    {
+      sourceTypes: [AbstractClassNode.TYPE],
+      targetTypes: [
+        EnumNode.TYPE,
+        RelationshipNode.TYPE,
+        RelationshipGroupNode.TYPE,
+      ],
+    },
+    {
+      sourceTypes: [ViewObjectNode.TYPE],
+      targetTypes: [
+        EnumNode.TYPE,
+        NodeShapeNode.TYPE,
+        RelationshipNode.TYPE,
+        RelationshipGroupNode.TYPE,
+        ViewRelationshipNode.TYPE,
+      ],
+    },
+    {
+      sourceTypes: [ViewRelationshipNode.TYPE],
+      targetTypes: [
+        EnumNode.TYPE,
+        EdgeShapeNode.TYPE,
+        ObjectNode.TYPE,
+        AbstractClassNode.TYPE,
+        ViewObjectNode.TYPE,
+      ],
+    },
+  ];
+
+  constructor(id, source, target) {
+    super(this, id, UniDirAssociationEdge.TYPE, source, target);
+    var that = this;
+
+    /**
+     * Connect source and target node and draw the edge on canvas
+     */
+    this.connect = function () {
+      var source = this.getSource();
+      var target = this.getTarget();
+      var connectOptions = {
+        source: source.get$node(),
+        target: target.get$node(),
+        paintStyle: {
+          strokeStyle: "#aaaaaa",
+          lineWidth: 2,
+        },
+        endpoint: "Blank",
+        anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
+        connector: ["Straight", { gap: 0 }],
+        overlays: [
+          [
+            "Arrow",
+            {
+              width: 20,
+              length: 30,
+              location: 1,
+              foldback: 0.5,
+              paintStyle: {
+                fillStyle: "#ffffff",
+                outlineWidth: 2,
+                outlineColor: "#aaaaaa",
+              },
+            },
+          ],
+          [
+            "Custom",
+            {
+              create: function () {
+                return that.get$overlay();
+              },
+              location: 0.5,
+              id: "label",
+            },
+          ],
+        ],
+        cssClass: this.getEntityId(),
+      };
+
+      if (source === target) {
+        connectOptions.anchors = ["TopCenter", "LeftMiddle"];
+      }
+
+      source.addOutgoingEdge(this);
+      target.addIngoingEdge(this);
+
+      this.setJsPlumbConnection(jsPlumb.connect(connectOptions));
+      this.repaintOverlays();
+      _.each(EntityManagerInstance.getEdges(), function (e) {
+        e.setZIndex();
+      });
+    };
+
+    this.get$overlay().find(".type").addClass("segmented");
+
+    /*this.setContextMenuItems({
+              sep0: "---------",
+              convertToBiDirAssociationEdge: {
+                  name: "Convert to Bi-Dir. Assoc. Edge",
+                  callback: function(){
+                      var canvas = that.getCanvas();
+  
+                      //noinspection JSAccessibilityCheck
+                      canvas.createEdge(require('canvas_widget/BiDirAssociationEdge').TYPE,that.getSource().getEntityId(),that.getTarget().getEntityId(),that.toJSON());
+  
+                      that.triggerDeletion();
+  
+                  }
+              }
+          });*/
+  }
+}
+
+/**
+ * Abstract Class Node
+ * @class canvas_widget.ModelAttributesNode
+ * @extends canvas_widget.AbstractNode
+ * @memberof canvas_widget
+ * @constructor
+ * @param {string} id Entity identifier of node
+ * @param {object} [attr] model attributes
+ */
+export class ModelAttributesNode extends AbstractNode {
+  static TYPE = "ModelAttributesNode";
+
+  constructor(id, attr) {
+    var that = this;
+    super(id, ModelAttributesNode.TYPE, 0, 0, 0, 0, 0);
+
+    /**
+     * jQuery object of node template
+     * @type {jQuery}
+     * @private
+     */
+    var _$template = $(_.template(modelAttributesNodeHtml)());
+
+    /**
+     * jQuery object of DOM node representing the node
+     * @type {jQuery}
+     * @private
+     */
+    var _$node = AbstractNode.prototype.get$node
+      .call(this)
+      .append(_$template)
+      .addClass("class");
+
+    /**
+     * jQuery object of DOM node representing the attributes
+     * @type {jQuery}
+     * @private
+     */
+    var _$attributeNode = _$node.find(".attributes");
+
+    /**
+     * Attributes of node
+     * @type {Object}
+     * @private
+     */
+    var _attributes = this.getAttributes();
+
+    /**
+     * Get JSON representation of the node
+     * @returns {Object}
+     */
+    this.toJSON = function () {
+      var json = AbstractNode.prototype.toJSON.call(this);
+      json.type = ModelAttributesNode.TYPE;
+      return json;
+    };
+
+    if (attr) {
+      for (var attrKey in attr) {
+        if (attr.hasOwnProperty(attrKey)) {
+          switch (attr[attrKey].value) {
+            case "boolean":
+              this.addAttribute(
+                new BooleanAttribute(
+                  this.getEntityId() +
+                    "[" +
+                    attr[attrKey].key.toLowerCase() +
+                    "]",
+                  attr[attrKey].key,
+                  this
+                )
+              );
+              break;
+            case "string":
+              this.addAttribute(
+                new SingleValueAttribute(
+                  this.getEntityId() +
+                    "[" +
+                    attr[attrKey].key.toLowerCase() +
+                    "]",
+                  attr[attrKey].key,
+                  this
+                )
+              );
+              break;
+            case "integer":
+              this.addAttribute(
+                new IntegerAttribute(
+                  this.getEntityId() +
+                    "[" +
+                    attr[attrKey].key.toLowerCase() +
+                    "]",
+                  attr[attrKey].key,
+                  this
+                )
+              );
+              break;
+            case "file":
+              this.addAttribute(
+                new FileAttribute(
+                  this.getEntityId() +
+                    "[" +
+                    attr[attrKey].key.toLowerCase() +
+                    "]",
+                  attr[attrKey].key,
+                  this
+                )
+              );
+              break;
+            default:
+              if (attr[attrKey].options) {
+                this.addAttribute(
+                  new SingleSelectionAttribute(
+                    this.getEntityId() +
+                      "[" +
+                      attr[attrKey].key.toLowerCase() +
+                      "]",
+                    attr[attrKey].key,
+                    this,
+                    attr[attrKey].options
+                  )
+                );
+              }
+              break;
+          }
+        }
+      }
+    } else {
+      this.addAttribute(
+        new SingleValueAttribute(this.getEntityId() + "[name]", "Name", this)
+      );
+      this.addAttribute(
+        new SingleMultiLineValueAttribute(
+          this.getEntityId() + "[description]",
+          "Description",
+          this
+        )
+      );
+    }
+
+    this.getLabel().getValue().setValue("Model Attributes");
+
+    _$node.find(".label").text("Model Attributes");
+    _$node.hide();
+
+    for (var attributeKey in _attributes) {
+      if (_attributes.hasOwnProperty(attributeKey)) {
+        _$attributeNode.append(_attributes[attributeKey].get$node());
+      }
+    }
+
+    this.registerYMap = function () {
+      AbstractNode.prototype.registerYMap.call(this);
+      var attrs = this.getAttributes();
+      for (var key in attrs) {
+        if (attrs.hasOwnProperty(key)) {
+          var attr = attrs[key];
+          if (
+            attr instanceof SingleValueAttribute ||
+            attr instanceof SingleMultiLineValueAttribute
+          ) {
+            attr.getValue().registerYType();
+          } else if (
+            !(attr instanceof FileAttribute) &&
+            !(attr instanceof SingleValueAttribute) &&
+            !(attr instanceof SingleMultiLineValueAttribute)
+          ) {
+            attr.getValue().registerYType();
+          }
+        }
+      }
+    };
   }
 }

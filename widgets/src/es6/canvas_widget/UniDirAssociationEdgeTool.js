@@ -1,5 +1,5 @@
+import { UniDirAssociationEdge } from "./Manager";
 import EdgeTool from "./EdgeTool";
-import UniDirAssociationEdge from "./UniDirAssociationEdge";
 
 UniDirAssociationEdgeTool.prototype = new EdgeTool();
 UniDirAssociationEdgeTool.prototype.constructor = UniDirAssociationEdgeTool;
