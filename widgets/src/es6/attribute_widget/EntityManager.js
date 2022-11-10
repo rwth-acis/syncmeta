@@ -7,7 +7,6 @@ import IWCW from "../lib/IWCWrapper";
 import EntitySelectOperation from "../operations/non_ot/EntitySelectOperation";
 import { NodeDeleteOperation } from "../operations/ot/EntityOperation";
 import Util from "../Util";
-import AbstractClassNode from "./AbstractClassNode";
 import AbstractEntity from "./AbstractEntity";
 import BiDirAssociationEdge from "./BiDirAssociationEdge";
 import BooleanAttribute from "./BooleanAttribute";
@@ -17,6 +16,7 @@ import EnumNode from "./EnumNode";
 import FileAttribute from "./FileAttribute";
 import GeneralisationEdge from "./GeneralisationEdge";
 import IntegerAttribute from "./IntegerAttribute";
+import KeySelectionValueListAttribute from "./KeySelectionValueListAttribute";
 import ModelAttributesNode from "./ModelAttributesNode";
 import NodeShapeNode from "./NodeShapeNode";
 import ObjectNode from "./ObjectNode";
@@ -30,6 +30,11 @@ import ViewEdge from "./view/ViewEdge";
 import ViewNode from "./view/ViewNode";
 import ViewObjectNode from "./viewpoint/ViewObjectNode";
 import ViewRelationshipNode from "./viewpoint/ViewRelationshipNode";
+
+const abstractClassNodeHtml = await loadHTML(
+  "../../templates/attribute_widget/abstract_class_node.html",
+  import.meta.url
+);
 
 const abstractNodeHtml = await loadHTML(
   "../../templates/attribute_widget/abstract_node.html",
@@ -1447,5 +1452,85 @@ export class AbstractNode extends AbstractEntity {
   }
   remove() {
     this._remove();
+  }
+}
+
+/**
+ * Abstract Class Node
+ * @class attribute_widget.AbstractClassNode
+ * @memberof attribute_widget
+ * @extends attribute_widget.AbstractNode
+ * @constructor
+ * @param {string} id Entity identifier of node
+ * @param {number} left x-coordinate of node position
+ * @param {number} top y-coordinate of node position
+ * @param {number} width Width of node
+ * @param {number} height Height of node
+ */
+export class AbstractClassNode extends AbstractNode {
+  static TYPE = "Abstract Class";
+
+  constructor(id, left, top, width, height) {
+    super(id, AbstractClassNode.TYPE, left, top, width, height);
+    var that = this;
+    /**
+     * jQuery object of node template
+     * @type {jQuery}
+     * @private
+     */
+    var _$template = $(_.template(abstractClassNodeHtml)());
+
+    /**
+     * jQuery object of DOM node representing the node
+     * @type {jQuery}
+     * @private
+     */
+    var _$node = AbstractNode.prototype.get$node.call(this).append(_$template);
+
+    /**
+     * jQuery object of DOM node representing the attributes
+     * @type {jQuery}
+     * @private
+     */
+    var _$attributeNode = _$node.find(".attributes");
+
+    /**
+     * Attributes of node
+     * @type {Object}
+     * @private
+     */
+    var _attributes = this.getAttributes();
+
+    this.addAttribute(
+      new KeySelectionValueListAttribute("[attributes]", "Attributes", this, {
+        string: "String",
+        boolean: "Boolean",
+        integer: "Integer",
+        file: "File",
+        quiz: "Questions",
+      })
+    );
+
+    _$node.find(".label").append(this.getLabel().get$node());
+
+    this.registerYType = function () {
+      AbstractNode.prototype.registerYType.call(this);
+      const nodesMap = y.getMap("nodes");
+      var ymap = nodesMap.get(that.getEntityId());
+      var attrs = _attributes["[attributes]"].getAttributes();
+      for (var attributeKey in attrs) {
+        if (attrs.hasOwnProperty(attributeKey)) {
+          var keyVal = attrs[attributeKey].getKey();
+          var ytext = ymap.get(keyVal.getEntityId());
+          keyVal.registerYType(ytext);
+        }
+      }
+    };
+
+    for (var attributeKey in _attributes) {
+      if (_attributes.hasOwnProperty(attributeKey)) {
+        _$attributeNode.append(_attributes[attributeKey].get$node());
+      }
+    }
   }
 }

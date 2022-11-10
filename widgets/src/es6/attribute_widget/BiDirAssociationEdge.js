@@ -1,6 +1,6 @@
 import _ from "lodash-es";
 import AbstractEdge from "./AbstractEdge";
-import AbstractClassNode from "./AbstractClassNode";
+import { AbstractClassNode } from "./EntityManager";
 import ObjectNode from "./ObjectNode";
 import RelationshipNode from "./RelationshipNode";
 import RelationshipGroupNode from "./RelationshipGroupNode";
