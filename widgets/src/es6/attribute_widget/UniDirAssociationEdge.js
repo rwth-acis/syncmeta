@@ -4,7 +4,7 @@ import { AbstractClassNode } from "./EntityManager";
 import ObjectNode from "./ObjectNode";
 import RelationshipNode from "./RelationshipNode";
 import RelationshipGroupNode from "./RelationshipGroupNode";
-import EnumNode from "./EnumNode";
+import { EnumNode } from "./EntityManager";
 import NodeShapeNode from "./NodeShapeNode";
 import { EdgeShapeNode } from "./EntityManager";
 import ViewObjectNode from "./viewpoint/ViewObjectNode";

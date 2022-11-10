@@ -12,25 +12,33 @@ import {
 import Util from "../Util";
 import { default as AbstractEntity } from "./AbstractEntity";
 import { default as BooleanAttribute } from "./BooleanAttribute";
-import { default as EnumNode } from "./EnumNode";
 import { default as FileAttribute } from "./FileAttribute";
-import GeneralisationEdge from "./GeneralisationEdge";
 import { default as IntegerAttribute } from "./IntegerAttribute";
 import KeySelectionValueListAttribute from "./KeySelectionValueListAttribute";
-import ModelAttributesNode from "./ModelAttributesNode";
 import { default as NodeShapeNode } from "./NodeShapeNode";
 import { default as ObjectNode } from "./ObjectNode";
 import QuizAttribute from "./QuizAttribute";
 import { default as RelationshipGroupNode } from "./RelationshipGroupNode";
 import { default as RelationshipNode } from "./RelationshipNode";
 import SingleColorValueAttribute from "./SingleColorValueAttribute";
+import SingleMultiLineValueAttribute from "./SingleMultiLineValueAttribute";
 import { default as SingleSelectionAttribute } from "./SingleSelectionAttribute";
 import { default as SingleValueAttribute } from "./SingleValueAttribute";
+import SingleValueListAttribute from "./SingleValueListAttribute";
 import UniDirAssociationEdge from "./UniDirAssociationEdge";
 import ViewEdge from "./view/ViewEdge";
 import ViewNode from "./view/ViewNode";
 import { default as ViewObjectNode } from "./viewpoint/ViewObjectNode";
 import { default as ViewRelationshipNode } from "./viewpoint/ViewRelationshipNode";
+const modelAttributesNodeHtml = await loadHTML(
+  "../../templates/attribute_widget/model_attributes_node.html",
+  import.meta.url
+);
+
+const enumNodeHtml = await loadHTML(
+  "../../templates/attribute_widget/enum_node.html",
+  import.meta.url
+);
 
 const edgeShapeNodeHtml = await loadHTML(
   "../../templates/attribute_widget/edge_shape_node.html",
@@ -2258,6 +2266,276 @@ export class EdgeShapeNode extends AbstractNode {
     for (var attributeKey in attributes) {
       if (attributes.hasOwnProperty(attributeKey)) {
         $attributeNode.append(attributes[attributeKey].get$node());
+      }
+    }
+  }
+}
+
+/**
+ * Abstract Class Node
+ * @class attribute_widget.EnumNode
+ * @memberof attribute_widget
+ * @extends attribute_widget.AbstractNode
+ * @constructor
+ * @param {string} id Entity identifier of node
+ * @param {number} left x-coordinate of node position
+ * @param {number} top y-coordinate of node position
+ * @param {number} width Width of node
+ * @param {number} height Height of node
+ */
+export class EnumNode extends AbstractNode {
+  static TYPE = "Enumeration";
+  constructor(id, left, top, width, height) {
+    super(id, EnumNode.TYPE, left, top, width, height);
+    var that = this;
+    /**
+     * jQuery object of node template
+     * @type {jQuery}
+     * @private
+     */
+    var _$template = $(_.template(enumNodeHtml)());
+
+    /**
+     * jQuery object of DOM node representing the node
+     * @type {jQuery}
+     * @private
+     */
+    var _$node = AbstractNode.prototype.get$node.call(this).append(_$template);
+
+    /**
+     * jQuery object of DOM node representing the attributes
+     * @type {jQuery}
+     * @private
+     */
+    var $attributeNode = _$node.find(".attributes");
+
+    /**
+     * Attributes of node
+     * @type {Object}
+     * @private
+     */
+    var _attributes = this.getAttributes();
+
+    this.addAttribute(
+      new SingleValueListAttribute("[attributes]", "Attributes", this)
+    );
+
+    _$node.find(".label").append(this.getLabel().get$node());
+
+    this.registerYMap = function () {
+      AbstractNode.prototype.registerYType.call(this);
+      const nodesMap = y.getMap("nodes");
+      var ymap = nodesMap.get(that.getEntityId());
+      var attrs = _attributes["[attributes]"].getAttributes();
+      for (var attributeKey in attrs) {
+        if (attrs.hasOwnProperty(attributeKey)) {
+          var val = attrs[attributeKey].getValue();
+          var ytext = ymap.get(val.getEntityId());
+          val.registerYType(ytext);
+        }
+      }
+    };
+
+    for (var attributeKey in _attributes) {
+      if (_attributes.hasOwnProperty(attributeKey)) {
+        $attributeNode.append(_attributes[attributeKey].get$node());
+      }
+    }
+  }
+}
+
+/**
+ * GeneralisationEdge
+ * @class attribute_widget.GeneralisationEdge
+ * @memberof attribute_widget
+ * @extends attribute_widget.AbstractEdge
+ * @param {string} id Entity identifier of edge
+ * @param {attribute_widget.AbstractNode} source Source node
+ * @param {attribute_widget.AbstractNode} target Target node
+ * @constructor
+ */
+class GeneralisationEdge extends AbstractEdge {
+  static TYPE = "Generalisation";
+  static RELATIONS = [
+    {
+      sourceTypes: [ObjectNode.TYPE],
+      targetTypes: [ObjectNode.TYPE, AbstractClassNode.TYPE],
+    },
+    {
+      sourceTypes: [RelationshipNode.TYPE],
+      targetTypes: [RelationshipNode.TYPE, AbstractClassNode.TYPE],
+    },
+    {
+      sourceTypes: [RelationshipGroupNode.TYPE],
+      targetTypes: [RelationshipNode.TYPE],
+    },
+    {
+      sourceTypes: [AbstractClassNode.TYPE],
+      targetTypes: [AbstractClassNode.TYPE],
+    },
+    {
+      sourceTypes: [EnumNode.TYPE],
+      targetTypes: [EnumNode.TYPE],
+    },
+  ];
+
+  constructor(id, source, target) {
+    AbstractEdge.call(this, "Generalisation", id, source, target);
+  }
+}
+
+/**
+ * Abstract Class Node
+ * @class attribute_widget.ModelAttributesNode
+ * @memberof attribute_widget
+ * @extends attribute_widget.AbstractNode
+ * @constructor
+ * @param {string} id Entity identifier of node
+ * @param {object} [attr] model attributes
+ */
+export class ModelAttributesNode extends AbstractNode {
+  static TYPE = "ModelAttributesNode";
+
+  constructor(id, attr) {
+    super(id, ModelAttributesNode.TYPE, 0, 0, 0, 0);
+
+    /**
+     * jQuery object of node template
+     * @type {jQuery}
+     * @private
+     */
+    var _$template = $(_.template(modelAttributesNodeHtml)());
+
+    /**
+     * jQuery object of DOM node representing the node
+     * @type {jQuery}
+     * @private
+     */
+    var _$node = AbstractNode.prototype.get$node.call(this).append(_$template);
+
+    /**
+     * jQuery object of DOM node representing the attributes
+     * @type {jQuery}
+     * @private
+     */
+    var _$attributeNode = _$node.find(".attributes");
+
+    /**
+     * Attributes of node
+     * @type {Object}
+     * @private
+     */
+    var attributes = this.getAttributes();
+
+    if (attr) {
+      if (_.size(attr) === 0) {
+        _$node.children().hide();
+      }
+      for (var attrKey in attr) {
+        if (attr.hasOwnProperty(attrKey)) {
+          switch (attr[attrKey].value) {
+            case "boolean":
+              this.addAttribute(
+                new BooleanAttribute(
+                  this.getEntityId() +
+                    "[" +
+                    attr[attrKey].key.toLowerCase() +
+                    "]",
+                  attr[attrKey].key,
+                  this
+                )
+              );
+              break;
+            case "string":
+              this.addAttribute(
+                new SingleValueAttribute(
+                  this.getEntityId() +
+                    "[" +
+                    attr[attrKey].key.toLowerCase() +
+                    "]",
+                  attr[attrKey].key,
+                  this
+                )
+              );
+              break;
+            case "integer":
+              this.addAttribute(
+                new IntegerAttribute(
+                  this.getEntityId() +
+                    "[" +
+                    attr[attrKey].key.toLowerCase() +
+                    "]",
+                  attr[attrKey].key,
+                  this
+                )
+              );
+              break;
+            case "file":
+              this.addAttribute(
+                new FileAttribute(
+                  this.getEntityId() +
+                    "[" +
+                    attr[attrKey].key.toLowerCase() +
+                    "]",
+                  attr[attrKey].key,
+                  this
+                )
+              );
+              break;
+            default:
+              if (attr[attrKey].options) {
+                this.addAttribute(
+                  new SingleSelectionAttribute(
+                    this.getEntityId() +
+                      "[" +
+                      attr[attrKey].key.toLowerCase() +
+                      "]",
+                    attr[attrKey].key,
+                    this,
+                    attr[attrKey].options
+                  )
+                );
+              }
+              break;
+          }
+        }
+      }
+    } else {
+      this.addAttribute(
+        new SingleValueAttribute(this.getEntityId() + "[name]", "Name", this)
+      );
+      this.addAttribute(
+        new SingleMultiLineValueAttribute(
+          this.getEntityId() + "[description]",
+          "Description",
+          this
+        )
+      );
+    }
+
+    this.registerYType = function () {
+      var attrs = this.getAttributes();
+      for (var key in attrs) {
+        if (attrs.hasOwnProperty(key)) {
+          var val = attrs[key].getValue();
+          if (
+            val.constructor.name === "Value" ||
+            val.constructor.name === "MultiLineValue"
+          ) {
+            const nodesMap = y.getMap("nodes");
+            var ymap = nodesMap.get(this.getEntityId());
+            var ytext = ymap.get(val.getEntityId());
+            val.registerYType(ytext);
+          }
+        }
+      }
+    };
+
+    _$node.find(".label").hide();
+
+    for (var attributeKey in attributes) {
+      if (attributes.hasOwnProperty(attributeKey)) {
+        _$attributeNode.append(attributes[attributeKey].get$node());
       }
     }
   }
