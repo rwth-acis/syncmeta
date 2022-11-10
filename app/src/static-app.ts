@@ -3,7 +3,7 @@ import { customElement, property } from "lit/decorators.js";
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
 import { Router } from "@vaadin/router";
-
+import "@polymer/paper-input/paper-input.js";
 import "las2peer-frontend-statusbar/las2peer-frontend-statusbar.js";
 import "@polymer/paper-button/paper-button.js";
 
@@ -74,14 +74,16 @@ class StaticApp extends LitElement {
           label="Space"
           id="roomNameInput"
         ></paper-input>
-        <paper-button on-click="_onChangeButtonClicked">Enter</paper-button>
+        <paper-button @click="${this._onChangeButtonClicked}"
+          >Enter</paper-button
+        >
         <div class="loader" id="roomEnterLoader"></div>
       </div>
 
       <div id="generateModelContainer">
         <paper-button
           id="generateModelButton"
-          on-click="_onGenerateMetamodelClicked"
+          @click="${this._onGenerateMetamodelClicked}"
           >Generate Metamodel</paper-button
         >
         <div class="loader" id="generateModelLoader"></div>
@@ -210,10 +212,15 @@ class StaticApp extends LitElement {
   }
 
   _onChangeButtonClicked() {
-    var roomName = this.shadowRoot.getElementById("roomNameInput").nodeValue;
+    var roomName = (this.shadowRoot.getElementById("roomNameInput") as any)
+      .value;
     Common.setYjsRoomName(roomName);
     this.changeVisibility("#roomEnterLoader", true);
-    location.reload();
+    this.reloadFrames();
+    setTimeout(() => {
+      this.changeVisibility("#roomEnterLoader", false);
+      this.displayCurrentRoomName();
+    }, 1000);
   }
 
   _onGenerateMetamodelClicked() {
@@ -317,8 +324,10 @@ class StaticApp extends LitElement {
 
   displayCurrentRoomName() {
     var spaceHTML = "";
-    if (Common.getYjsRoomName()) {
-      spaceHTML = `<span style="font-weight: bold;">Current Space:</span> ${Common.getYjsRoomName()}`;
+    let yjsRoomName = Common.getYjsRoomName();
+
+    if (yjsRoomName && yjsRoomName !== "null") {
+      spaceHTML = `<span style="font-weight: bold;">Current Space:</span> ${yjsRoomName}`;
     } else {
       spaceHTML = "Please enter a space!";
     }
