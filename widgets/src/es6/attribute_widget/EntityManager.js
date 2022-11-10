@@ -7,29 +7,29 @@ import IWCW from "../lib/IWCWrapper";
 import EntitySelectOperation from "../operations/non_ot/EntitySelectOperation";
 import { NodeDeleteOperation } from "../operations/ot/EntityOperation";
 import Util from "../Util";
+import AbstractEdge from "./AbstractEdge";
 import AbstractEntity from "./AbstractEntity";
-import BiDirAssociationEdge from "./BiDirAssociationEdge";
 import BooleanAttribute from "./BooleanAttribute";
 import Edge from "./Edge";
-import EdgeShapeNode from "./EdgeShapeNode";
-import EnumNode from "./EnumNode";
+import { default as EdgeShapeNode } from "./EdgeShapeNode";
+import { default as EnumNode } from "./EnumNode";
 import FileAttribute from "./FileAttribute";
 import GeneralisationEdge from "./GeneralisationEdge";
 import IntegerAttribute from "./IntegerAttribute";
 import KeySelectionValueListAttribute from "./KeySelectionValueListAttribute";
 import ModelAttributesNode from "./ModelAttributesNode";
-import NodeShapeNode from "./NodeShapeNode";
-import ObjectNode from "./ObjectNode";
+import { default as NodeShapeNode } from "./NodeShapeNode";
+import { default as ObjectNode } from "./ObjectNode";
 import QuizAttribute from "./QuizAttribute";
-import RelationshipGroupNode from "./RelationshipGroupNode";
-import RelationshipNode from "./RelationshipNode";
+import { default as RelationshipGroupNode } from "./RelationshipGroupNode";
+import { default as RelationshipNode } from "./RelationshipNode";
 import SingleSelectionAttribute from "./SingleSelectionAttribute";
 import { default as SingleValueAttribute } from "./SingleValueAttribute";
 import UniDirAssociationEdge from "./UniDirAssociationEdge";
 import ViewEdge from "./view/ViewEdge";
 import ViewNode from "./view/ViewNode";
-import ViewObjectNode from "./viewpoint/ViewObjectNode";
-import ViewRelationshipNode from "./viewpoint/ViewRelationshipNode";
+import { default as ViewObjectNode } from "./viewpoint/ViewObjectNode";
+import { default as ViewRelationshipNode } from "./viewpoint/ViewRelationshipNode";
 
 const abstractClassNodeHtml = await loadHTML(
   "../../templates/attribute_widget/abstract_class_node.html",
@@ -1532,5 +1532,92 @@ export class AbstractClassNode extends AbstractNode {
         _$attributeNode.append(_attributes[attributeKey].get$node());
       }
     }
+  }
+}
+
+/**
+ * BiDirAssociationEdge
+ * @class attribute_widget.BiDirAssociationEdge
+ * @memberof attribute_widget
+ * @extends attribute_widget.AbstractEdge
+ * @constructor
+ * @param {string} id
+ * @param {attribute_widget.AbstractNode} source
+ * @param {attribute_widget.AbstractNode} target
+ */
+class BiDirAssociationEdge extends AbstractEdge {
+  static TYPE = "Bi-Dir-Association";
+  static RELATIONS = [
+    {
+      sourceTypes: [ObjectNode.TYPE],
+      targetTypes: [
+        EnumNode.TYPE,
+        NodeShapeNode.TYPE,
+        RelationshipNode.TYPE,
+        RelationshipGroupNode.TYPE,
+        ViewRelationshipNode.TYPE,
+      ],
+    },
+    {
+      sourceTypes: [RelationshipNode.TYPE],
+      targetTypes: [
+        EnumNode.TYPE,
+        EdgeShapeNode.TYPE,
+        ObjectNode.TYPE,
+        AbstractClassNode.TYPE,
+        ViewObjectNode.TYPE,
+      ],
+    },
+    {
+      sourceTypes: [RelationshipGroupNode.TYPE],
+      targetTypes: [ObjectNode.TYPE, AbstractClassNode.TYPE],
+    },
+    {
+      sourceTypes: [AbstractClassNode.TYPE],
+      targetTypes: [
+        EnumNode.TYPE,
+        RelationshipNode.TYPE,
+        RelationshipGroupNode.TYPE,
+      ],
+    },
+    {
+      sourceTypes: [EnumNode.TYPE],
+      targetTypes: [
+        ObjectNode.TYPE,
+        RelationshipNode.TYPE,
+        AbstractClassNode.TYPE,
+      ],
+    },
+    {
+      sourceTypes: [NodeShapeNode.TYPE],
+      targetTypes: [ObjectNode.TYPE],
+    },
+    {
+      sourceTypes: [EdgeShapeNode.TYPE],
+      targetTypes: [RelationshipNode.TYPE],
+    },
+    {
+      sourceTypes: [ViewObjectNode.TYPE],
+      targetTypes: [
+        EnumNode.TYPE,
+        NodeShapeNode.TYPE,
+        RelationshipNode.TYPE,
+        RelationshipGroupNode.TYPE,
+        ViewRelationshipNode.TYPE,
+      ],
+    },
+    {
+      sourceTypes: [ViewRelationshipNode.TYPE],
+      targetTypes: [
+        EnumNode.TYPE,
+        EdgeShapeNode.TYPE,
+        ObjectNode.TYPE,
+        AbstractClassNode.TYPE,
+        ViewObjectNode.TYPE,
+      ],
+    },
+  ];
+  constructor(id, source, target) {
+    super(BiDirAssociationEdge.TYPE, id, source, target);
   }
 }
