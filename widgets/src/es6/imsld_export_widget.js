@@ -75,13 +75,13 @@ function XXML(tagName, innerText, prefix) {
 
   return this;
 }
-XXML.doc = document.implementation.createDocument(null, null, null);
 
-IMSLDXML.prototype = new XXML();
-IMSLDXML.prototype.constructor = IMSLDXML;
-function IMSLDXML(tagName, innerText) {
-  XXML.call(this, tagName, innerText, XML_PREFIX);
-  return this;
+class IMSLDXML extends XXML {
+  static doc = document.implementation.createDocument(null, null, null);
+  constructor(tagName, innerText) {
+    super(tagName, innerText, XML_PREFIX);
+    return this;
+  }
 }
 
 function getKey(node, key) {

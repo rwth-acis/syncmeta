@@ -1,7 +1,7 @@
 import { CONFIG } from "../config";
 import IWCW from "../lib/IWCWrapper";
 import ShowGuidanceBoxOperation from "../operations/non_ot/ShowGuidanceBoxOperation";
-import "graphlib/dist/graphlib.min.js";
+import "https://cdnjs.cloudflare.com/ajax/libs/graphlib/2.1.8/graphlib.min.js";
 import "../lib/Class";
 
 var GuidanceStrategy = Class.extend({

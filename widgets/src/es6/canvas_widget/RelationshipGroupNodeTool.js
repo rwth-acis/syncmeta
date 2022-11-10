@@ -1,7 +1,6 @@
 import { RelationshipGroupNode } from "./Manager";
 import NodeTool from "./NodeTool";
 
-RelationshipGroupNodeTool.prototype = new NodeTool();
 /**
  * RelationshipGroupNodeTool
  * @class canvas_widget.ClassNodeTool
@@ -9,10 +8,9 @@ RelationshipGroupNodeTool.prototype = new NodeTool();
  * @memberof canvas_widget
  * @constructor
  */
-class RelationshipGroupNodeTool {
+class RelationshipGroupNodeTool extends NodeTool {
   constructor() {
-    NodeTool.call(
-      this,
+    super(
       RelationshipGroupNode.TYPE,
       null,
       null,

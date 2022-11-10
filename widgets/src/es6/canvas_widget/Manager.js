@@ -1,5 +1,5 @@
 import { default as _ } from "lodash-es";
-import "graphlib/dist/graphlib.min.js";
+import "https://cdnjs.cloudflare.com/ajax/libs/graphlib/2.1.8/graphlib.min.js";
 import "jquery";
 import "jquery-contextmenu";
 import "jquery-ui";

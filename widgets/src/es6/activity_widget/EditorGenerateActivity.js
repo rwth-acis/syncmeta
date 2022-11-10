@@ -1,8 +1,5 @@
 import Activity from "./Activity";
-EditorGenerateActivity.TYPE = "EditorGenerateActivity";
 
-EditorGenerateActivity.prototype = new Activity();
-EditorGenerateActivity.prototype.constructor = EditorGenerateActivity;
 /**
  * Activity representing the deletion of an edge
  * @class activity_widget.EditorGenerateActivity
@@ -13,14 +10,18 @@ EditorGenerateActivity.prototype.constructor = EditorGenerateActivity;
  * @param {string} text Text of this activity which is displayed in the activity widget
  * @constructor
  */
-function EditorGenerateActivity(entityId, sender, text, timestamp) {
-  Activity.call(this, entityId, sender, text, timestamp);
+class EditorGenerateActivity extends Activity {
+  static TYPE = "EditorGenerateActivity";
 
-  this.toJSON = function () {
-    var json = Activity.prototype.toJSON.call(this);
-    json.type = EditorGenerateActivity.TYPE;
-    return json;
-  };
+  constructor(entityId, sender, text, timestamp) {
+    super(entityId, sender, text, timestamp);
+
+    this.toJSON = function () {
+      var json = Activity.prototype.toJSON.call(this);
+      json.type = EditorGenerateActivity.TYPE;
+      return json;
+    };
+  }
 }
 
 export default EditorGenerateActivity;

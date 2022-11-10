@@ -1,5 +1,5 @@
 import { EntityManagerInstance as EntityManager } from "./Manager";
-import dagre from "dagre/dist/dagre.core.min.js";
+import "https://cdnjs.cloudflare.com/ajax/libs/dagre/0.8.5/dagre.min.js";
 
 function DagreLayout() {
   return {
