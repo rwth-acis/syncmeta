@@ -1,6 +1,6 @@
 import IWCW from "../lib/IWCWrapper";
 import EntitySelectOperation from "../operations/non_ot/EntitySelectOperation";
-import EntityManager from "./EntityManager";
+import { EntityManagerInstance as EntityManager } from "./EntityManager";
 import { CONFIG } from "../config";
 import {
   EdgeAddOperation,

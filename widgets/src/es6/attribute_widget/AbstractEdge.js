@@ -4,16 +4,16 @@ import _ from "lodash-es";
 import IWCW from "../lib/IWCWrapper";
 import EntitySelectOperation from "../operations/non_ot/EntitySelectOperation";
 import {EdgeDeleteOperation} from "../operations/ot/EntityOperation";
+import { EntityManagerInstance } from "./EntityManager";
 import SingleValueAttribute from "./SingleValueAttribute";
 import AbstractEntity from "./AbstractEntity";
 import loadHTML from "../html.template.loader";
 import { CONFIG } from "../config";
+
 const abstractEdgeHtml = await loadHTML(
   "../../templates/attribute_widget/abstract_edge.html",
   import.meta.url
 );
-import $__attribute_widget_EntityManager from "./EntityManager";
-
 
 /**
  * AbstractEdge
@@ -29,7 +29,7 @@ import $__attribute_widget_EntityManager from "./EntityManager";
  */
 class AbstractEdge extends AbstractEntity {
   constructor(type, id, source, target, viewId) {
-    super(id)
+    super(id);
     var that = this;
 
     /**
@@ -106,11 +106,12 @@ class AbstractEdge extends AbstractEntity {
      * @param {operations.non_ot.EntitySelectOperation} operation
      */
     var entitySelectCallback = function (operation) {
-      if (operation instanceof EntitySelectOperation &&
-        operation.getSelectedEntityId() === that.getEntityId()) {
+      if (
+        operation instanceof EntitySelectOperation &&
+        operation.getSelectedEntityId() === that.getEntityId()
+      ) {
         $(".ace-container").hide();
-        if (_wrapper.get$node().is(":hidden"))
-          _wrapper.get$node().show();
+        if (_wrapper.get$node().is(":hidden")) _wrapper.get$node().show();
         _wrapper.select(that);
       }
     };
@@ -120,8 +121,10 @@ class AbstractEdge extends AbstractEntity {
      * @param {operations.ot.EdgeDeleteOperation} operation
      */
     var edgeDeleteCallback = function (operation) {
-      if (operation instanceof EdgeDeleteOperation &&
-        operation.getEntityId() === that.getEntityId()) {
+      if (
+        operation instanceof EdgeDeleteOperation &&
+        operation.getEntityId() === that.getEntityId()
+      ) {
         processEdgeDeleteOperation(operation);
       }
     };
@@ -294,7 +297,7 @@ class AbstractEdge extends AbstractEntity {
       target.deleteIngoingEdge(this);
       this.removeFromWrapper();
       this.unregisterCallbacks();
-      var EntityManager = $__attribute_widget_EntityManager;
+      var EntityManager = EntityManagerInstance;
       EntityManager.deleteEdge(this.getEntityId());
     };
 

@@ -7,7 +7,7 @@ import EntitySelectOperation from "../operations/non_ot/EntitySelectOperation";
 import AbstractEntity from "./AbstractEntity";
 import SingleValueAttribute from "./SingleValueAttribute";
 import { CONFIG } from "../config";
-import $__attribute_widget_EntityManager from "./EntityManager";
+import { EntityManagerInstance } from "./EntityManager";
 import loadHTML from "../html.template.loader";
 import { NodeDeleteOperation } from "../operations/ot/EntityOperation";
 
@@ -15,7 +15,6 @@ const abstractNodeHtml = await loadHTML(
   "../../templates/attribute_widget/abstract_node.html",
   import.meta.url
 );
-
 
 /**
  * AbstractNode
@@ -36,8 +35,6 @@ class AbstractNode extends AbstractEntity {
   constructor(id, type, left, top, width, height, containment, viewId) {
     super(id);
     var that = this;
-
-    
 
     /**
      * identifier of view the node belongs to
@@ -141,7 +138,9 @@ class AbstractNode extends AbstractEntity {
      * @param {operations.ot.NodeDeleteOperation} operation
      */
     var processNodeDeleteOperation = function (operation) {
-      var edges = that.getEdges(), edgeId, edge;
+      var edges = that.getEdges(),
+        edgeId,
+        edge;
 
       for (edgeId in edges) {
         if (edges.hasOwnProperty(edgeId)) {
@@ -157,11 +156,12 @@ class AbstractNode extends AbstractEntity {
      * @param {EntitySelectOperation} operation
      */
     var entitySelectCallback = function (operation) {
-      if (operation instanceof EntitySelectOperation &&
-        operation.getSelectedEntityId() === that.getEntityId()) {
+      if (
+        operation instanceof EntitySelectOperation &&
+        operation.getSelectedEntityId() === that.getEntityId()
+      ) {
         $(".ace-container").hide();
-        if (_wrapper.get$node().is(":hidden"))
-          _wrapper.get$node().show();
+        if (_wrapper.get$node().is(":hidden")) _wrapper.get$node().show();
         _wrapper.select(that);
       }
     };
@@ -171,8 +171,10 @@ class AbstractNode extends AbstractEntity {
      * @param {operations.ot.NodeDeleteOperation} operation
      */
     var nodeDeleteCallback = function (operation) {
-      if (operation instanceof NodeDeleteOperation &&
-        operation.getEntityId() === that.getEntityId()) {
+      if (
+        operation instanceof NodeDeleteOperation &&
+        operation.getEntityId() === that.getEntityId()
+      ) {
         processNodeDeleteOperation(operation);
       }
     };
@@ -181,7 +183,8 @@ class AbstractNode extends AbstractEntity {
       _$node
         .find(".show_hint a")
         .click(function (e) {
-          var $this = $(this), $hint = _$node.find(".hint");
+          var $this = $(this),
+            $hint = _$node.find(".hint");
 
           e.preventDefault();
           if ($hint.is(":visible")) {
@@ -359,8 +362,10 @@ class AbstractNode extends AbstractEntity {
       if (_ingoingEdges.hasOwnProperty(id)) {
         delete _ingoingEdges[id];
         for (var edgeId in _ingoingEdges) {
-          if (_ingoingEdges.hasOwnProperty(edgeId) &&
-            _ingoingEdges[edgeId].getSource().getEntityId() === sourceEntityId) {
+          if (
+            _ingoingEdges.hasOwnProperty(edgeId) &&
+            _ingoingEdges[edgeId].getSource().getEntityId() === sourceEntityId
+          ) {
             isMultiEdge = true;
           }
         }
@@ -382,8 +387,10 @@ class AbstractNode extends AbstractEntity {
       if (_outgoingEdges.hasOwnProperty(id)) {
         delete _outgoingEdges[id];
         for (var edgeId in _outgoingEdges) {
-          if (_outgoingEdges.hasOwnProperty(edgeId) &&
-            _outgoingEdges[edgeId].getTarget().getEntityId() === targetEntityId) {
+          if (
+            _outgoingEdges.hasOwnProperty(edgeId) &&
+            _outgoingEdges[edgeId].getTarget().getEntityId() === targetEntityId
+          ) {
             isMultiEdge = true;
           }
         }
@@ -449,7 +456,7 @@ class AbstractNode extends AbstractEntity {
      * Select the node
      */
     this.select = function () {
-      var connectToText = $__attribute_widget_EntityManager.generateConnectToText(this);
+      var connectToText = EntityManagerInstance.generateConnectToText(this);
       _$node.find(".hint").html(connectToText).hide();
       _$node.find(".show_hint").toggle(connectToText !== "");
       this.show();
@@ -482,7 +489,7 @@ class AbstractNode extends AbstractEntity {
     this._remove = function () {
       this.removeFromWrapper();
       this.unregisterCallbacks();
-      var EntityManager = $__attribute_widget_EntityManager;
+      var EntityManager = EntityManagerInstance;
       EntityManager.deleteNode(this.getEntityId());
       this.unregisterCallbacks();
     };

@@ -1,4 +1,4 @@
-import EntityManager from "../EntityManager";
+import { EntityManagerInstance as EntityManager } from "../EntityManager";
 
 /**
  * Generates the Views
