@@ -8,7 +8,7 @@ import { EdgeShapeNode } from "./Manager";
 import { GeneralisationEdge } from "./Manager";
 import { BiDirAssociationEdge } from "./Manager";
 import { UniDirAssociationEdge } from "./Manager";
-import ViewObjectNode from "./viewpoint/ViewObjectNode";
+import { ViewObjectNode } from "./Manager";
 import ViewRelationshipNode from "./viewpoint/ViewRelationshipNode";
 import { EntityManagerInstance as EntityManager } from "./Manager";
 import { ObjectNode } from "./Manager";

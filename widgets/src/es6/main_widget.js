@@ -24,6 +24,7 @@ import {
   AbstractClassNode,
   EdgeShapeNode,
   NodeShapeNode,
+  ViewObjectNode,
 } from "./canvas_widget/Manager";
 import { RelationshipGroupNode } from "./canvas_widget/Manager";
 
@@ -53,7 +54,6 @@ Promise.all([
   import("./canvas_widget/BiDirAssociationEdgeTool"),
   import("./canvas_widget/UniDirAssociationEdgeTool"),
 
-  import("./canvas_widget/viewpoint/ViewObjectNode"),
   import("./canvas_widget/viewpoint/ViewObjectNodeTool"),
   import("./canvas_widget/viewpoint/ViewRelationshipNode"),
   import("./canvas_widget/viewpoint/ViewRelationshipNodeTool"),
@@ -90,7 +90,6 @@ Promise.all([
   BiDirAssociationEdgeTool,
   UniDirAssociationEdgeTool,
 
-  ViewObjectNode,
   ViewObjectNodeTool,
   ViewRelationshipNode,
   ViewRelationshipNodeTool,

@@ -1,5 +1,5 @@
+import { ViewObjectNode } from "../Manager";
 import NodeTool from "../NodeTool";
-import ViewObjectNode from "./ViewObjectNode";
 
 ViewObjectNodeTool.prototype = new NodeTool();
 ViewObjectNodeTool.prototype.constructor = ViewObjectNodeTool;
