@@ -1,5 +1,5 @@
+import { NodeShapeNode } from "./Manager";
 import NodeTool from "./NodeTool";
-import NodeShapeNode from "./NodeShapeNode";
 
 NodeShapeNodeTool.prototype = new NodeTool();
 NodeShapeNodeTool.prototype.constructor = NodeShapeNodeTool;

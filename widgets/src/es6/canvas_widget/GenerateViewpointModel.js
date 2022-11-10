@@ -3,7 +3,7 @@ import { AbstractClassNode } from "./Manager";
 import { RelationshipNode } from "./Manager";
 import { RelationshipGroupNode } from "./Manager";
 import { EnumNode } from "./Manager";
-import NodeShapeNode from "./NodeShapeNode";
+import { NodeShapeNode } from "./Manager";
 import { EdgeShapeNode } from "./Manager";
 import { GeneralisationEdge } from "./Manager";
 import { BiDirAssociationEdge } from "./Manager";
