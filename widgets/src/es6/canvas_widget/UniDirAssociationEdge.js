@@ -1,6 +1,6 @@
 import "jsplumb/dist/js/jsPlumb-1.7.9.js";
 import _ from "lodash-es";
-import AbstractEdge from "./AbstractEdge";
+import { AbstractEdge } from "./Manager";
 import { AbstractClassNode } from "./Manager";
 import { RelationshipNode } from "./Manager";
 import RelationshipGroupNode from "./RelationshipGroupNode";

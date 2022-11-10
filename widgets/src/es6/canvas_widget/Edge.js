@@ -7,7 +7,7 @@ import IntegerAttribute from "./IntegerAttribute";
 import FileAttribute from "./FileAttribute";
 import SingleValueAttribute from "./SingleValueAttribute";
 import SingleSelectionAttribute from "./SingleSelectionAttribute";
-import AbstractEdge from "./AbstractEdge";
+import { AbstractEdge } from "./Manager";
 import Arrows from "./Arrows";
 import { EntityManagerInstance } from "./Manager";
 
