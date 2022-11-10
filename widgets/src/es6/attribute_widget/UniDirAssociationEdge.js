@@ -6,7 +6,7 @@ import RelationshipNode from "./RelationshipNode";
 import RelationshipGroupNode from "./RelationshipGroupNode";
 import EnumNode from "./EnumNode";
 import NodeShapeNode from "./NodeShapeNode";
-import EdgeShapeNode from "./EdgeShapeNode";
+import { EdgeShapeNode } from "./EntityManager";
 import ViewObjectNode from "./viewpoint/ViewObjectNode";
 import ViewRelationshipNode from "./viewpoint/ViewRelationshipNode";
 
