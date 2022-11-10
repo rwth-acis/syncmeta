@@ -11,13 +11,12 @@ import {
 } from "../operations/ot/EntityOperation";
 import Util from "../Util";
 import { default as AbstractEntity } from "./AbstractEntity";
-import BooleanAttribute from "./BooleanAttribute";
-import Edge from "./Edge";
+import { default as BooleanAttribute } from "./BooleanAttribute";
 import { default as EdgeShapeNode } from "./EdgeShapeNode";
 import { default as EnumNode } from "./EnumNode";
-import FileAttribute from "./FileAttribute";
+import { default as FileAttribute } from "./FileAttribute";
 import GeneralisationEdge from "./GeneralisationEdge";
-import IntegerAttribute from "./IntegerAttribute";
+import { default as IntegerAttribute } from "./IntegerAttribute";
 import KeySelectionValueListAttribute from "./KeySelectionValueListAttribute";
 import ModelAttributesNode from "./ModelAttributesNode";
 import { default as NodeShapeNode } from "./NodeShapeNode";
@@ -25,7 +24,7 @@ import { default as ObjectNode } from "./ObjectNode";
 import QuizAttribute from "./QuizAttribute";
 import { default as RelationshipGroupNode } from "./RelationshipGroupNode";
 import { default as RelationshipNode } from "./RelationshipNode";
-import SingleSelectionAttribute from "./SingleSelectionAttribute";
+import { default as SingleSelectionAttribute } from "./SingleSelectionAttribute";
 import { default as SingleValueAttribute } from "./SingleValueAttribute";
 import UniDirAssociationEdge from "./UniDirAssociationEdge";
 import ViewEdge from "./view/ViewEdge";
@@ -1968,4 +1967,168 @@ export class AbstractEdge extends AbstractEntity {
   registerYType() {
     this._registerYType();
   }
+}
+
+//noinspection JSUnusedLocalSymbols
+/**
+ * makeEdge
+ * @class attribute_widget.makeEdge
+ * @memberof attribute_widget
+ * @constructor
+ * @param {string} type Type of edge
+ * @param arrowType
+ * @param shapeType
+ * @param color
+ * @param overlay
+ * @param overlayPosition
+ * @param overlayRotate
+ * @param attributes
+ * @returns {Edge}
+ */
+export function makeEdge(
+  type,
+  arrowType,
+  shapeType,
+  color,
+  overlay,
+  overlayPosition,
+  overlayRotate,
+  attributes
+) {
+  Edge.prototype = new AbstractEdge();
+  Edge.prototype.constructor = Edge;
+  /**
+   * Edge
+   * @class attribute_widget.Edge
+   * @extends attribute_widget.AbstractEdge
+   * @param {string} id Entity identifier of edge
+   * @param {attribute_widget.AbstractNode} source Source node
+   * @param {attribute_widget.AbstractNode} target Target node
+   * @constructor
+   */
+  function Edge(id, source, target) {
+    var that = this;
+
+    AbstractEdge.call(this, type, id, source, target);
+
+    /**
+     * jQuery object of DOM node representing the node
+     * @type {jQuery}
+     * @private
+     */
+    var _$node = AbstractEdge.prototype.get$node.call(this);
+
+    var init = function () {
+      var attribute,
+        attributeId,
+        attrObj = {};
+      for (attributeId in attributes) {
+        if (attributes.hasOwnProperty(attributeId)) {
+          attribute = attributes[attributeId];
+          if (
+            attribute.hasOwnProperty("position") &&
+            attribute.position === "hide"
+          )
+            continue;
+          switch (attribute.value) {
+            case "boolean":
+              attrObj[attributeId] = new BooleanAttribute(
+                id + "[" + attribute.key.toLowerCase() + "]",
+                attribute.key,
+                that
+              );
+              break;
+            case "string":
+              attrObj[attributeId] = new SingleValueAttribute(
+                id + "[" + attribute.key.toLowerCase() + "]",
+                attribute.key,
+                that
+              );
+              break;
+            case "integer":
+              attrObj[attributeId] = new IntegerAttribute(
+                id + "[" + attribute.key.toLowerCase() + "]",
+                attribute.key,
+                that
+              );
+              break;
+            case "file":
+              attrObj[attributeId] = new FileAttribute(
+                id + "[" + attribute.key.toLowerCase() + "]",
+                attribute.key,
+                that
+              );
+              break;
+            default:
+              if (attribute.options) {
+                attrObj[attributeId] = new SingleSelectionAttribute(
+                  id + "[" + attribute.key.toLowerCase() + "]",
+                  attribute.key,
+                  that,
+                  attribute.options
+                );
+              }
+          }
+        }
+      }
+      that.setAttributes(attrObj);
+
+      var $attributeNode = _$node.find(".attributes");
+      for (var attributeKey in attrObj) {
+        if (attrObj.hasOwnProperty(attributeKey)) {
+          $attributeNode.append(attrObj[attributeKey].get$node());
+        }
+      }
+    };
+
+    this.registerYType = function () {
+      AbstractEdge.prototype.registerYType.call(this);
+      const edgeMap = y.getMap("edges");
+      var ymap = edgeMap.get(that.getEntityId());
+      var attr = that.getAttributes();
+      for (var key in attr) {
+        if (attr.hasOwnProperty(key)) {
+          var val = attr[key].getValue();
+          if (val.hasOwnProperty("registerYType")) {
+            var ytext = ymap.get(val.getEntityId());
+            val.registerYType(ytext);
+          }
+        }
+      }
+    };
+
+    init();
+  }
+
+  Edge.prototype.applyAttributeRenaming = function (renamingAttributes) {
+    var renAttr,
+      $attr,
+      attributes = this.getAttributes();
+    for (var attrKey in attributes) {
+      if (attributes.hasOwnProperty(attrKey)) {
+        renAttr = renamingAttributes[attrKey];
+        $attr = attributes[attrKey].get$node();
+        if (renAttr) {
+          if (renAttr.position === "hide") {
+            $attr.hide();
+          } else {
+            $attr.find(".name").text(renAttr.key);
+            if ($attr.is(":hidden")) {
+              $attr.show();
+            }
+          }
+        } else {
+          $attr.hide();
+        }
+      }
+    }
+  };
+
+  Edge.getType = function () {
+    return type;
+  };
+  Edge.getAttributes = function () {
+    return attributes;
+  };
+  return Edge;
 }
