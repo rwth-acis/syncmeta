@@ -1,7 +1,7 @@
 import "jquery";
 import "jquery-ui";
 import _ from "lodash-es";
-import AbstractNode from "./AbstractNode";
+import { AbstractNode } from "./EntityManager";
 import KeySelectionValueSelectionValueListAttribute from "./KeySelectionValueSelectionValueListAttribute";
 import loadHTML from "../html.template.loader";
 const relationshipNodeHtml = await loadHTML(

@@ -1,7 +1,7 @@
 import "jquery";
 import "jquery-ui";
 import _ from "lodash-es";
-import AbstractNode from "./AbstractNode";
+import { AbstractNode } from "./EntityManager";
 import SingleValueListAttribute from "./SingleValueListAttribute";
 import loadHTML from "../html.template.loader";
 const enumNodeHtml = await loadHTML(

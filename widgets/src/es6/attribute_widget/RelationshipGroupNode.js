@@ -1,7 +1,7 @@
 import "jquery";
 import "jquery-ui";
 import _ from "lodash-es";
-import AbstractNode from "./AbstractNode";
+import { AbstractNode } from "./EntityManager";
 import loadHTML from "../html.template.loader";
 const relationshipGroupNodeHtml = await loadHTML(
   "../../templates/attribute_widget/relationship_group_node.html",

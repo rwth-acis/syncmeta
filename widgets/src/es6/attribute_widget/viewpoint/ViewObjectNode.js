@@ -1,7 +1,7 @@
 import "jquery";
 import "jquery-ui";
 import _ from "lodash-es";
-import AbstractNode from "../AbstractNode";
+import { AbstractNode } from "../EntityManager";
 import RenamingListAttribute from "./RenamingListAttribute";
 import SingleSelectionAttribute from "../SingleSelectionAttribute";
 import ConditionListAttribute from "./ConditionListAttribute";

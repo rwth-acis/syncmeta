@@ -1,7 +1,7 @@
 import "jquery";
 import "jquery-ui";
 import _ from "lodash-es";
-import AbstractNode from "./AbstractNode";
+import { AbstractNode } from "./EntityManager";
 import BooleanAttribute from "./BooleanAttribute";
 import IntegerAttribute from "./IntegerAttribute";
 import FileAttribute from "./FileAttribute";
