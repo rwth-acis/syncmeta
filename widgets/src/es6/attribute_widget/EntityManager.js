@@ -1493,172 +1493,6 @@ export class AbstractNode extends AbstractEntity {
   }
 }
 
-/**
- * Abstract Class Node
- * @class attribute_widget.AbstractClassNode
- * @memberof attribute_widget
- * @extends attribute_widget.AbstractNode
- * @constructor
- * @param {string} id Entity identifier of node
- * @param {number} left x-coordinate of node position
- * @param {number} top y-coordinate of node position
- * @param {number} width Width of node
- * @param {number} height Height of node
- */
-export class AbstractClassNode extends AbstractNode {
-  static TYPE = "Abstract Class";
-
-  constructor(id, left, top, width, height) {
-    super(id, AbstractClassNode.TYPE, left, top, width, height);
-    var that = this;
-    /**
-     * jQuery object of node template
-     * @type {jQuery}
-     * @private
-     */
-    var _$template = $(_.template(abstractClassNodeHtml)());
-
-    /**
-     * jQuery object of DOM node representing the node
-     * @type {jQuery}
-     * @private
-     */
-    var _$node = AbstractNode.prototype.get$node.call(this).append(_$template);
-
-    /**
-     * jQuery object of DOM node representing the attributes
-     * @type {jQuery}
-     * @private
-     */
-    var _$attributeNode = _$node.find(".attributes");
-
-    /**
-     * Attributes of node
-     * @type {Object}
-     * @private
-     */
-    var _attributes = this.getAttributes();
-
-    this.addAttribute(
-      new KeySelectionValueListAttribute("[attributes]", "Attributes", this, {
-        string: "String",
-        boolean: "Boolean",
-        integer: "Integer",
-        file: "File",
-        quiz: "Questions",
-      })
-    );
-
-    _$node.find(".label").append(this.getLabel().get$node());
-
-    this.registerYType = function () {
-      AbstractNode.prototype.registerYType.call(this);
-      const nodesMap = y.getMap("nodes");
-      var ymap = nodesMap.get(that.getEntityId());
-      var attrs = _attributes["[attributes]"].getAttributes();
-      for (var attributeKey in attrs) {
-        if (attrs.hasOwnProperty(attributeKey)) {
-          var keyVal = attrs[attributeKey].getKey();
-          var ytext = ymap.get(keyVal.getEntityId());
-          keyVal.registerYType(ytext);
-        }
-      }
-    };
-
-    for (var attributeKey in _attributes) {
-      if (_attributes.hasOwnProperty(attributeKey)) {
-        _$attributeNode.append(_attributes[attributeKey].get$node());
-      }
-    }
-  }
-}
-
-/**
- * BiDirAssociationEdge
- * @class attribute_widget.BiDirAssociationEdge
- * @memberof attribute_widget
- * @extends attribute_widget.AbstractEdge
- * @constructor
- * @param {string} id
- * @param {attribute_widget.AbstractNode} source
- * @param {attribute_widget.AbstractNode} target
- */
-class BiDirAssociationEdge extends AbstractEdge {
-  static TYPE = "Bi-Dir-Association";
-  static RELATIONS = [
-    {
-      sourceTypes: [ObjectNode.TYPE],
-      targetTypes: [
-        EnumNode.TYPE,
-        NodeShapeNode.TYPE,
-        RelationshipNode.TYPE,
-        RelationshipGroupNode.TYPE,
-        ViewRelationshipNode.TYPE,
-      ],
-    },
-    {
-      sourceTypes: [RelationshipNode.TYPE],
-      targetTypes: [
-        EnumNode.TYPE,
-        EdgeShapeNode.TYPE,
-        ObjectNode.TYPE,
-        AbstractClassNode.TYPE,
-        ViewObjectNode.TYPE,
-      ],
-    },
-    {
-      sourceTypes: [RelationshipGroupNode.TYPE],
-      targetTypes: [ObjectNode.TYPE, AbstractClassNode.TYPE],
-    },
-    {
-      sourceTypes: [AbstractClassNode.TYPE],
-      targetTypes: [
-        EnumNode.TYPE,
-        RelationshipNode.TYPE,
-        RelationshipGroupNode.TYPE,
-      ],
-    },
-    {
-      sourceTypes: [EnumNode.TYPE],
-      targetTypes: [
-        ObjectNode.TYPE,
-        RelationshipNode.TYPE,
-        AbstractClassNode.TYPE,
-      ],
-    },
-    {
-      sourceTypes: [NodeShapeNode.TYPE],
-      targetTypes: [ObjectNode.TYPE],
-    },
-    {
-      sourceTypes: [EdgeShapeNode.TYPE],
-      targetTypes: [RelationshipNode.TYPE],
-    },
-    {
-      sourceTypes: [ViewObjectNode.TYPE],
-      targetTypes: [
-        EnumNode.TYPE,
-        NodeShapeNode.TYPE,
-        RelationshipNode.TYPE,
-        RelationshipGroupNode.TYPE,
-        ViewRelationshipNode.TYPE,
-      ],
-    },
-    {
-      sourceTypes: [ViewRelationshipNode.TYPE],
-      targetTypes: [
-        EnumNode.TYPE,
-        EdgeShapeNode.TYPE,
-        ObjectNode.TYPE,
-        AbstractClassNode.TYPE,
-        ViewObjectNode.TYPE,
-      ],
-    },
-  ];
-  constructor(id, source, target) {
-    super(BiDirAssociationEdge.TYPE, id, source, target);
-  }
-}
 
 /**
  * AbstractEdge
@@ -2000,6 +1834,87 @@ export class AbstractEdge extends AbstractEntity {
     this._registerYType();
   }
 }
+
+/**
+ * Abstract Class Node
+ * @class attribute_widget.AbstractClassNode
+ * @memberof attribute_widget
+ * @extends attribute_widget.AbstractNode
+ * @constructor
+ * @param {string} id Entity identifier of node
+ * @param {number} left x-coordinate of node position
+ * @param {number} top y-coordinate of node position
+ * @param {number} width Width of node
+ * @param {number} height Height of node
+ */
+export class AbstractClassNode extends AbstractNode {
+  static TYPE = "Abstract Class";
+
+  constructor(id, left, top, width, height) {
+    super(id, AbstractClassNode.TYPE, left, top, width, height);
+    var that = this;
+    /**
+     * jQuery object of node template
+     * @type {jQuery}
+     * @private
+     */
+    var _$template = $(_.template(abstractClassNodeHtml)());
+
+    /**
+     * jQuery object of DOM node representing the node
+     * @type {jQuery}
+     * @private
+     */
+    var _$node = AbstractNode.prototype.get$node.call(this).append(_$template);
+
+    /**
+     * jQuery object of DOM node representing the attributes
+     * @type {jQuery}
+     * @private
+     */
+    var _$attributeNode = _$node.find(".attributes");
+
+    /**
+     * Attributes of node
+     * @type {Object}
+     * @private
+     */
+    var _attributes = this.getAttributes();
+
+    this.addAttribute(
+      new KeySelectionValueListAttribute("[attributes]", "Attributes", this, {
+        string: "String",
+        boolean: "Boolean",
+        integer: "Integer",
+        file: "File",
+        quiz: "Questions",
+      })
+    );
+
+    _$node.find(".label").append(this.getLabel().get$node());
+
+    this.registerYType = function () {
+      AbstractNode.prototype.registerYType.call(this);
+      const nodesMap = y.getMap("nodes");
+      var ymap = nodesMap.get(that.getEntityId());
+      var attrs = _attributes["[attributes]"].getAttributes();
+      for (var attributeKey in attrs) {
+        if (attrs.hasOwnProperty(attributeKey)) {
+          var keyVal = attrs[attributeKey].getKey();
+          var ytext = ymap.get(keyVal.getEntityId());
+          keyVal.registerYType(ytext);
+        }
+      }
+    };
+
+    for (var attributeKey in _attributes) {
+      if (_attributes.hasOwnProperty(attributeKey)) {
+        _$attributeNode.append(_attributes[attributeKey].get$node());
+      }
+    }
+  }
+}
+
 
 //noinspection JSUnusedLocalSymbols
 /**
@@ -2364,45 +2279,7 @@ export class EnumNode extends AbstractNode {
   }
 }
 
-/**
- * GeneralisationEdge
- * @class attribute_widget.GeneralisationEdge
- * @memberof attribute_widget
- * @extends attribute_widget.AbstractEdge
- * @param {string} id Entity identifier of edge
- * @param {attribute_widget.AbstractNode} source Source node
- * @param {attribute_widget.AbstractNode} target Target node
- * @constructor
- */
-class GeneralisationEdge extends AbstractEdge {
-  static TYPE = "Generalisation";
-  static RELATIONS = [
-    {
-      sourceTypes: [ObjectNode.TYPE],
-      targetTypes: [ObjectNode.TYPE, AbstractClassNode.TYPE],
-    },
-    {
-      sourceTypes: [RelationshipNode.TYPE],
-      targetTypes: [RelationshipNode.TYPE, AbstractClassNode.TYPE],
-    },
-    {
-      sourceTypes: [RelationshipGroupNode.TYPE],
-      targetTypes: [RelationshipNode.TYPE],
-    },
-    {
-      sourceTypes: [AbstractClassNode.TYPE],
-      targetTypes: [AbstractClassNode.TYPE],
-    },
-    {
-      sourceTypes: [EnumNode.TYPE],
-      targetTypes: [EnumNode.TYPE],
-    },
-  ];
 
-  constructor(id, source, target) {
-    AbstractEdge.call(this, "Generalisation", id, source, target);
-  }
-}
 
 /**
  * Abstract Class Node
@@ -2961,77 +2838,7 @@ export class RelationshipNode extends AbstractNode {
   }
 }
 
-/**
- * UniDirAssociationEdge
- * @class attribute_widget.UniDirAssociationEdge
- * @memberof attribute_widget
- * @extends attribute_widget.AbstractEdge
- * @constructor
- * @param {string} id
- * @param {attribute_widget.AbstractNode} source
- * @param {attribute_widget.AbstractNode} target
- */
-export class UniDirAssociationEdge extends AbstractEdge {
-  static TYPE = "Uni-Dir-Association";
-  static RELATIONS = [
-    {
-      sourceTypes: [ObjectNode.TYPE],
-      targetTypes: [
-        EnumNode.TYPE,
-        NodeShapeNode.TYPE,
-        RelationshipNode.TYPE,
-        RelationshipGroupNode.TYPE,
-        ViewRelationshipNode.TYPE,
-      ],
-    },
-    {
-      sourceTypes: [RelationshipNode.TYPE],
-      targetTypes: [
-        EnumNode.TYPE,
-        EdgeShapeNode.TYPE,
-        ObjectNode.TYPE,
-        AbstractClassNode.TYPE,
-        ViewObjectNode.TYPE,
-      ],
-    },
-    {
-      sourceTypes: [RelationshipGroupNode.TYPE],
-      targetTypes: [ObjectNode.TYPE, AbstractClassNode.TYPE],
-    },
-    {
-      sourceTypes: [AbstractClassNode.TYPE],
-      targetTypes: [
-        EnumNode.TYPE,
-        RelationshipNode.TYPE,
-        RelationshipGroupNode.TYPE,
-      ],
-    },
-    {
-      sourceTypes: [ViewObjectNode.TYPE],
-      targetTypes: [
-        EnumNode.TYPE,
-        NodeShapeNode.TYPE,
-        RelationshipNode.TYPE,
-        RelationshipGroupNode.TYPE,
-        ViewRelationshipNode.TYPE,
-      ],
-    },
-    {
-      sourceTypes: [ViewRelationshipNode.TYPE],
-      targetTypes: [
-        EnumNode.TYPE,
-        EdgeShapeNode.TYPE,
-        ObjectNode.TYPE,
-        AbstractClassNode.TYPE,
-        ViewObjectNode.TYPE,
-      ],
-    },
-  ];
 
-  constructor(id, source, target) {
-    super(UniDirAssociationEdge.TYPE, id, source, target);
-  }
-}
 
 /**
  * ViewObjectNode
@@ -3367,5 +3174,204 @@ export class ViewRelationshipNode extends AbstractNode {
         }
       }
     };
+  }
+}
+
+/**
+ * UniDirAssociationEdge
+ * @class attribute_widget.UniDirAssociationEdge
+ * @memberof attribute_widget
+ * @extends attribute_widget.AbstractEdge
+ * @constructor
+ * @param {string} id
+ * @param {attribute_widget.AbstractNode} source
+ * @param {attribute_widget.AbstractNode} target
+ */
+export class UniDirAssociationEdge extends AbstractEdge {
+  static TYPE = "Uni-Dir-Association";
+  static RELATIONS = [
+    {
+      sourceTypes: [ObjectNode.TYPE],
+      targetTypes: [
+        EnumNode.TYPE,
+        NodeShapeNode.TYPE,
+        RelationshipNode.TYPE,
+        RelationshipGroupNode.TYPE,
+        ViewRelationshipNode.TYPE,
+      ],
+    },
+    {
+      sourceTypes: [RelationshipNode.TYPE],
+      targetTypes: [
+        EnumNode.TYPE,
+        EdgeShapeNode.TYPE,
+        ObjectNode.TYPE,
+        AbstractClassNode.TYPE,
+        ViewObjectNode.TYPE,
+      ],
+    },
+    {
+      sourceTypes: [RelationshipGroupNode.TYPE],
+      targetTypes: [ObjectNode.TYPE, AbstractClassNode.TYPE],
+    },
+    {
+      sourceTypes: [AbstractClassNode.TYPE],
+      targetTypes: [
+        EnumNode.TYPE,
+        RelationshipNode.TYPE,
+        RelationshipGroupNode.TYPE,
+      ],
+    },
+    {
+      sourceTypes: [ViewObjectNode.TYPE],
+      targetTypes: [
+        EnumNode.TYPE,
+        NodeShapeNode.TYPE,
+        RelationshipNode.TYPE,
+        RelationshipGroupNode.TYPE,
+        ViewRelationshipNode.TYPE,
+      ],
+    },
+    {
+      sourceTypes: [ViewRelationshipNode.TYPE],
+      targetTypes: [
+        EnumNode.TYPE,
+        EdgeShapeNode.TYPE,
+        ObjectNode.TYPE,
+        AbstractClassNode.TYPE,
+        ViewObjectNode.TYPE,
+      ],
+    },
+  ];
+
+  constructor(id, source, target) {
+    super(UniDirAssociationEdge.TYPE, id, source, target);
+  }
+}
+
+/**
+ * BiDirAssociationEdge
+ * @class attribute_widget.BiDirAssociationEdge
+ * @memberof attribute_widget
+ * @extends attribute_widget.AbstractEdge
+ * @constructor
+ * @param {string} id
+ * @param {attribute_widget.AbstractNode} source
+ * @param {attribute_widget.AbstractNode} target
+ */
+class BiDirAssociationEdge extends AbstractEdge {
+  static TYPE = "Bi-Dir-Association";
+  static RELATIONS = [
+    {
+      sourceTypes: [ObjectNode.TYPE],
+      targetTypes: [
+        EnumNode.TYPE,
+        NodeShapeNode.TYPE,
+        RelationshipNode.TYPE,
+        RelationshipGroupNode.TYPE,
+        ViewRelationshipNode.TYPE,
+      ],
+    },
+    {
+      sourceTypes: [RelationshipNode.TYPE],
+      targetTypes: [
+        EnumNode.TYPE,
+        EdgeShapeNode.TYPE,
+        ObjectNode.TYPE,
+        AbstractClassNode.TYPE,
+        ViewObjectNode.TYPE,
+      ],
+    },
+    {
+      sourceTypes: [RelationshipGroupNode.TYPE],
+      targetTypes: [ObjectNode.TYPE, AbstractClassNode.TYPE],
+    },
+    {
+      sourceTypes: [AbstractClassNode.TYPE],
+      targetTypes: [
+        EnumNode.TYPE,
+        RelationshipNode.TYPE,
+        RelationshipGroupNode.TYPE,
+      ],
+    },
+    {
+      sourceTypes: [EnumNode.TYPE],
+      targetTypes: [
+        ObjectNode.TYPE,
+        RelationshipNode.TYPE,
+        AbstractClassNode.TYPE,
+      ],
+    },
+    {
+      sourceTypes: [NodeShapeNode.TYPE],
+      targetTypes: [ObjectNode.TYPE],
+    },
+    {
+      sourceTypes: [EdgeShapeNode.TYPE],
+      targetTypes: [RelationshipNode.TYPE],
+    },
+    {
+      sourceTypes: [ViewObjectNode.TYPE],
+      targetTypes: [
+        EnumNode.TYPE,
+        NodeShapeNode.TYPE,
+        RelationshipNode.TYPE,
+        RelationshipGroupNode.TYPE,
+        ViewRelationshipNode.TYPE,
+      ],
+    },
+    {
+      sourceTypes: [ViewRelationshipNode.TYPE],
+      targetTypes: [
+        EnumNode.TYPE,
+        EdgeShapeNode.TYPE,
+        ObjectNode.TYPE,
+        AbstractClassNode.TYPE,
+        ViewObjectNode.TYPE,
+      ],
+    },
+  ];
+  constructor(id, source, target) {
+    super(BiDirAssociationEdge.TYPE, id, source, target);
+  }
+}
+
+/**
+ * GeneralisationEdge
+ * @class attribute_widget.GeneralisationEdge
+ * @memberof attribute_widget
+ * @extends attribute_widget.AbstractEdge
+ * @param {string} id Entity identifier of edge
+ * @param {attribute_widget.AbstractNode} source Source node
+ * @param {attribute_widget.AbstractNode} target Target node
+ * @constructor
+ */
+class GeneralisationEdge extends AbstractEdge {
+  static TYPE = "Generalisation";
+  static RELATIONS = [
+    {
+      sourceTypes: [ObjectNode.TYPE],
+      targetTypes: [ObjectNode.TYPE, AbstractClassNode.TYPE],
+    },
+    {
+      sourceTypes: [RelationshipNode.TYPE],
+      targetTypes: [RelationshipNode.TYPE, AbstractClassNode.TYPE],
+    },
+    {
+      sourceTypes: [RelationshipGroupNode.TYPE],
+      targetTypes: [RelationshipNode.TYPE],
+    },
+    {
+      sourceTypes: [AbstractClassNode.TYPE],
+      targetTypes: [AbstractClassNode.TYPE],
+    },
+    {
+      sourceTypes: [EnumNode.TYPE],
+      targetTypes: [EnumNode.TYPE],
+    },
+  ];
+
+  constructor(id, source, target) {
+    AbstractEdge.call(this, "Generalisation", id, source, target);
   }
 }
