@@ -14,6 +14,8 @@ import {
   HistoryManagerInstance as HistoryManager,
   EntityManagerInstance as EntityManager,
   ObjectNode,
+  EnumNode,
+  GeneralisationEdge,
 } from "./canvas_widget/Manager";
 import { BiDirAssociationEdge } from "./canvas_widget/Manager";
 import { RelationshipNode } from "./canvas_widget/Manager";
@@ -45,10 +47,8 @@ Promise.all([
   import("./canvas_widget/UniDirAssociationEdgeTool"),
 
   import("./canvas_widget/RelationshipGroupNode"),
-  import("./canvas_widget/EnumNode"),
-  import("./canvas_widget/NodeShapeNode"),
 
-  import("./canvas_widget/GeneralisationEdge"),
+  import("./canvas_widget/NodeShapeNode"),
 
   import("./canvas_widget/UniDirAssociationEdge"),
   import("./canvas_widget/viewpoint/ViewObjectNode"),
@@ -88,10 +88,8 @@ Promise.all([
   BiDirAssociationEdgeTool,
   UniDirAssociationEdgeTool,
   RelationshipGroupNode,
-  EnumNode,
-  NodeShapeNode,
 
-  GeneralisationEdge,
+  NodeShapeNode,
 
   UniDirAssociationEdge,
   ViewObjectNode,

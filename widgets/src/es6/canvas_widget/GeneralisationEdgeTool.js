@@ -1,5 +1,5 @@
+import { GeneralisationEdge } from "./Manager";
 import EdgeTool from "./EdgeTool";
-import GeneralisationEdge from "./GeneralisationEdge";
 
 GeneralisationEdgeTool.prototype = new EdgeTool();
 GeneralisationEdgeTool.prototype.constructor = GeneralisationEdgeTool;
