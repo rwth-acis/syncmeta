@@ -26,13 +26,15 @@ import {
   NodeShapeNode,
   ViewObjectNode,
 } from "./canvas_widget/Manager";
+import NodeTool from "./canvas_widget/NodeTool";
+import ToolSelectOperation from "./operations/non_ot/ToolSelectOperation";
 import { RelationshipGroupNode } from "./canvas_widget/Manager";
-
+import {getUserInfo} from "./User";
 import Canvas from "./canvas_widget/Canvas";
 
 Promise.all([
   import("./operations/non_ot/NonOTOperation"),
-  import("./operations/non_ot/ToolSelectOperation"),
+  
   import("./operations/non_ot/ActivityOperation"),
   import("./operations/non_ot/ViewInitOperation"),
   import("./operations/non_ot/UpdateViewListOperation"),
@@ -41,7 +43,7 @@ Promise.all([
   import("./operations/non_ot/InitModelTypesOperation"),
   import("./operations/non_ot/SetModelAttributeNodeOperation"),
   import("./operations/non_ot/UpdateMetamodelOperation"),
-  import("./canvas_widget/NodeTool"),
+
   import("./canvas_widget/ObjectNodeTool"),
   import("./canvas_widget/AbstractClassNodeTool"),
   import("./canvas_widget/RelationshipNodeTool"),
@@ -62,11 +64,10 @@ Promise.all([
 
   import("./canvas_widget/JSONtoGraph"),
   import("./canvas_widget/GenerateViewpointModel"),
-  await import("./User"), // promise!User
-  await import("./Guidancemodel"), // promise!Guidancemodel
-]).then(function ([
+  // promise!User
+  import("./Guidancemodel"), // promise!Guidancemodel
+]).then(async function ([
   NonOTOperation,
-  ,
   ActivityOperation,
   ViewInitOperation,
   UpdateViewListOperation,
@@ -76,9 +77,7 @@ Promise.all([
   SetModelAttributeNodeOperation,
   UpdateMetamodelOperation,
 
-  NodeTool,
   ObjectNodeTool,
-
   AbstractClassNodeTool,
   RelationshipNodeTool,
   RelationshipGroupNodeTool,
@@ -89,18 +88,18 @@ Promise.all([
   GeneralisationEdgeTool,
   BiDirAssociationEdgeTool,
   UniDirAssociationEdgeTool,
-
   ViewObjectNodeTool,
   ViewRelationshipNode,
   ViewRelationshipNodeTool,
   ViewManager,
   ViewGenerator,
-
   JSONtoGraph,
   GenerateViewpointModel,
-  user,
+  
   guidancemodel,
 ]) {
+  const user = await getUserInfo();
+  console.log(user)
   var _iwcw;
   _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
   _iwcw.setSpace(user);
