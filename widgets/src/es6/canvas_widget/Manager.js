@@ -20,36 +20,29 @@ import { default as NodeMoveZOperation } from "../operations/ot/NodeMoveZOperati
 import { default as NodeResizeOperation } from "../operations/ot/NodeResizeOperation";
 import { default as Util } from "../Util";
 import { default as AbstractEntity } from "./AbstractEntity";
-import $__canvas_widget_BiDirAssociationEdge, {
-  default as BiDirAssociationEdge,
-} from "./BiDirAssociationEdge";
 import { default as BooleanAttribute } from "./BooleanAttribute";
 import Edge from "./Edge";
-
-import EnumNode from "./EnumNode";
+import "jsplumb/dist/js/jsPlumb-1.7.9.js";
+import AbstractEdge from "./AbstractEdge";
+import { default as EnumNode } from "./EnumNode";
 import FileAttribute from "./FileAttribute";
 import GeneralisationEdge from "./GeneralisationEdge";
 import IntegerAttribute from "./IntegerAttribute";
 import { default as KeySelectionValueListAttribute } from "./KeySelectionValueListAttribute";
 import KeySelectionValueSelectionValueListAttribute from "./KeySelectionValueSelectionValueListAttribute";
 import ModelAttributesNode from "./ModelAttributesNode";
-import {
-  default as $__canvas_widget_NodeShapeNode,
-  default as NodeShapeNode,
-} from "./NodeShapeNode";
+import { default as NodeShapeNode } from "./NodeShapeNode";
 import QuizAttribute from "./QuizAttribute";
 import { default as RelationshipGroupNode } from "./RelationshipGroupNode";
 import SingleColorValueAttribute from "./SingleColorValueAttribute";
 import SingleSelectionAttribute from "./SingleSelectionAttribute";
 import { default as SingleValueAttribute } from "./SingleValueAttribute";
-import {
-  default as $__canvas_widget_UniDirAssociationEdge,
-  default as UniDirAssociationEdge,
-} from "./UniDirAssociationEdge";
+import { default as UniDirAssociationEdge } from "./UniDirAssociationEdge";
 import ViewEdge from "./view/ViewEdge";
 import ViewNode from "./view/ViewNode";
-import ViewObjectNode from "./viewpoint/ViewObjectNode";
-import ViewRelationshipNode from "./viewpoint/ViewRelationshipNode";
+import { default as ViewObjectNode } from "./viewpoint/ViewObjectNode";
+import { default as ViewRelationshipNode } from "./viewpoint/ViewRelationshipNode";
+
 const edgeShapeNodeHtml = await loadHTML(
   "../../templates/canvas_widget/edge_shape_node.html",
   import.meta.url
@@ -4763,9 +4756,9 @@ export class ObjectNode extends AbstractNode {
     };
 
     this.setContextMenuItemCallback(function () {
-      var NodeShapeNode = $__canvas_widget_NodeShapeNode,
-        BiDirAssociationEdge = $__canvas_widget_BiDirAssociationEdge,
-        UniDirAssociationEdge = $__canvas_widget_UniDirAssociationEdge;
+      var NodeShapeNode = NodeShapeNode,
+        BiDirAssociationEdge = BiDirAssociationEdge,
+        UniDirAssociationEdge = UniDirAssociationEdge;
       return {
         addShape: {
           name: "Add Node Shape",
@@ -5346,8 +5339,8 @@ export class RelationshipNode extends AbstractNode {
 
     this.setContextMenuItemCallback(function () {
       var EdgeShapeNode = EdgeShapeNode,
-        BiDirAssociationEdge = $__canvas_widget_BiDirAssociationEdge,
-        UniDirAssociationEdge = $__canvas_widget_UniDirAssociationEdge;
+        BiDirAssociationEdge = BiDirAssociationEdge,
+        UniDirAssociationEdge = UniDirAssociationEdge;
       return {
         addShape: {
           name: "Add Edge Shape",
@@ -5692,5 +5685,150 @@ export class EdgeShapeNode extends AbstractNode {
         _$attributeNode.append(_attributes[attributeKey].get$node());
       }
     }
+  }
+}
+
+/**
+ * BiDirAssociationEdge
+ * @class canvas_widget.BiDirAssociationEdge
+ * @extends canvas_widget.AbstractEdge
+ * @memberof canvas_widget
+ * @constructor
+ * @param {string} id Entity identifier of edge
+ * @param {canvas_widget.AbstractNode} source Source node
+ * @param {canvas_widget.AbstractNode} target Target node
+ */
+/**
+ * BiDirAssociationEdge
+ * @class canvas_widget.BiDirAssociationEdge
+ * @extends canvas_widget.AbstractEdge
+ * @memberof canvas_widget
+ * @constructor
+ * @param {string} id Entity identifier of edge
+ * @param {canvas_widget.AbstractNode} source Source node
+ * @param {canvas_widget.AbstractNode} target Target node
+ */
+export class BiDirAssociationEdge extends AbstractEdge {
+  static TYPE = "Bi-Dir-Association";
+  static RELATIONS = [
+    {
+      sourceTypes: [ObjectNode.TYPE],
+      targetTypes: [
+        EnumNode.TYPE,
+        NodeShapeNode.TYPE,
+        RelationshipNode.TYPE,
+        RelationshipGroupNode.TYPE,
+        ViewRelationshipNode.TYPE,
+      ],
+    },
+    {
+      sourceTypes: [RelationshipNode.TYPE],
+      targetTypes: [
+        EnumNode.TYPE,
+        EdgeShapeNode.TYPE,
+        ObjectNode.TYPE,
+        AbstractClassNode.TYPE,
+        ViewObjectNode.TYPE,
+      ],
+    },
+    {
+      sourceTypes: [RelationshipGroupNode.TYPE],
+      targetTypes: [ObjectNode.TYPE, AbstractClassNode.TYPE],
+    },
+    {
+      sourceTypes: [AbstractClassNode.TYPE],
+      targetTypes: [
+        EnumNode.TYPE,
+        RelationshipNode.TYPE,
+        RelationshipGroupNode.TYPE,
+      ],
+    },
+    {
+      sourceTypes: [EnumNode.TYPE],
+      targetTypes: [
+        ObjectNode.TYPE,
+        RelationshipNode.TYPE,
+        AbstractClassNode.TYPE,
+      ],
+    },
+    {
+      sourceTypes: [NodeShapeNode.TYPE],
+      targetTypes: [ObjectNode.TYPE],
+    },
+    {
+      sourceTypes: [EdgeShapeNode.TYPE],
+      targetTypes: [RelationshipNode.TYPE],
+    },
+    {
+      sourceTypes: [ViewObjectNode.TYPE],
+      targetTypes: [
+        EnumNode.TYPE,
+        NodeShapeNode.TYPE,
+        RelationshipNode.TYPE,
+        RelationshipGroupNode.TYPE,
+        ViewRelationshipNode.TYPE,
+      ],
+    },
+    {
+      sourceTypes: [ViewRelationshipNode.TYPE],
+      targetTypes: [
+        EnumNode.TYPE,
+        EdgeShapeNode.TYPE,
+        ObjectNode.TYPE,
+        AbstractClassNode.TYPE,
+        ViewObjectNode.TYPE,
+      ],
+    },
+  ];
+  constructor(id, source, target) {
+    super(id, BiDirAssociationEdge.TYPE, source, target);
+    var that = this;
+
+    /**
+     * Connect source and target node and draw the edge on canvas
+     */
+    this.connect = function () {
+      var source = this.getSource();
+      var target = this.getTarget();
+      var connectOptions = {
+        source: source.get$node(),
+        target: target.get$node(),
+        paintStyle: {
+          strokeStyle: "#aaaaaa",
+          lineWidth: 2,
+        },
+        endpoint: "Blank",
+        anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
+        connector: ["Straight", { gap: 0 }],
+        overlays: [
+          [
+            "Custom",
+            {
+              create: function () {
+                return that.get$overlay();
+              },
+              location: 0.5,
+              id: "label",
+            },
+          ],
+        ],
+        cssClass: this.getEntityId(),
+      };
+
+      if (source === target) {
+        connectOptions.anchors = ["TopCenter", "LeftMiddle"];
+      }
+
+      source.addOutgoingEdge(this);
+      target.addIngoingEdge(this);
+
+      this.setJsPlumbConnection(jsPlumb.connect(connectOptions));
+      this.repaintOverlays();
+      _.each(EntityManagerInstance.getEdges(), function (e) {
+        e.setZIndex();
+      });
+    };
+
+    this.get$overlay().find(".type").addClass("segmented");
   }
 }

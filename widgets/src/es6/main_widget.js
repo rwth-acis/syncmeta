@@ -15,6 +15,7 @@ import {
   EntityManagerInstance as EntityManager,
   ObjectNode,
 } from "./canvas_widget/Manager";
+import { BiDirAssociationEdge } from "./canvas_widget/Manager";
 import { RelationshipNode } from "./canvas_widget/Manager";
 import { AbstractClassNode, EdgeShapeNode } from "./canvas_widget/Manager";
 import Canvas from "./canvas_widget/Canvas";
@@ -48,7 +49,7 @@ Promise.all([
   import("./canvas_widget/NodeShapeNode"),
 
   import("./canvas_widget/GeneralisationEdge"),
-  import("./canvas_widget/BiDirAssociationEdge"),
+
   import("./canvas_widget/UniDirAssociationEdge"),
   import("./canvas_widget/viewpoint/ViewObjectNode"),
   import("./canvas_widget/viewpoint/ViewObjectNodeTool"),
@@ -91,7 +92,7 @@ Promise.all([
   NodeShapeNode,
 
   GeneralisationEdge,
-  BiDirAssociationEdge,
+
   UniDirAssociationEdge,
   ViewObjectNode,
   ViewObjectNodeTool,

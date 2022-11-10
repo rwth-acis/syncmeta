@@ -1,8 +1,7 @@
+import { BiDirAssociationEdge } from "./Manager";
 import EdgeTool from "./EdgeTool";
-import BiDirAssociationEdge from "./BiDirAssociationEdge";
 
 BiDirAssociationEdgeTool.prototype = new EdgeTool();
-;
 /**
  * BiDirAssociationEdgeTool
  * @class canvas_widget.BiDirAssociationEdgeTool

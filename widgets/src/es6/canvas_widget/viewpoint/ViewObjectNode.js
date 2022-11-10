@@ -8,7 +8,7 @@ import ViewTypesUtil from "../viewpoint/ViewTypesUtil";
 import LogicalOperator from "../viewpoint/LogicalOperator";
 import LogicalConjunctions from "../viewpoint/LogicalConjunctions";
 import $__canvas_widget_NodeShapeNode from "../NodeShapeNode";
-import $__canvas_widget_BiDirAssociationEdge from "../BiDirAssociationEdge";
+import { BiDirAssociationEdge as $__canvas_widget_BiDirAssociationEdge } from "../Manager";
 import $__canvas_widget_UniDirAssociationEdge from "../UniDirAssociationEdge";
 import loadHTML from "../../html.template.loader";
 import { AbstractNode } from "../Manager";

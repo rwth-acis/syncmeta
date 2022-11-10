@@ -6,7 +6,7 @@ import EnumNode from "./EnumNode";
 import NodeShapeNode from "./NodeShapeNode";
 import { EdgeShapeNode } from "./Manager";
 import GeneralisationEdge from "./GeneralisationEdge";
-import BiDirAssociationEdge from "./BiDirAssociationEdge";
+import { BiDirAssociationEdge } from "./Manager";
 import UniDirAssociationEdge from "./UniDirAssociationEdge";
 import ViewObjectNode from "./viewpoint/ViewObjectNode";
 import ViewRelationshipNode from "./viewpoint/ViewRelationshipNode";
