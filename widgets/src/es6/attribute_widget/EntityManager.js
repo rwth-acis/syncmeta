@@ -1,6 +1,9 @@
 import "jquery";
 import "jquery-ui";
 import { default as _ } from "lodash-es";
+import LogicalConjunctions from "../canvas_widget/viewpoint/LogicalConjunctions";
+import LogicalOperator from "../canvas_widget/viewpoint/LogicalOperator";
+import ViewTypesUtil from "../canvas_widget/viewpoint/ViewTypesUtil";
 import { CONFIG } from "../config";
 import { default as loadHTML } from "../html.template.loader";
 import { default as IWCW } from "../lib/IWCWrapper";
@@ -15,21 +18,38 @@ import { default as BooleanAttribute } from "./BooleanAttribute";
 import { default as FileAttribute } from "./FileAttribute";
 import { default as IntegerAttribute } from "./IntegerAttribute";
 import KeySelectionValueListAttribute from "./KeySelectionValueListAttribute";
-import { default as NodeShapeNode } from "./NodeShapeNode";
-import { default as ObjectNode } from "./ObjectNode";
+import KeySelectionValueSelectionValueListAttribute from "./KeySelectionValueSelectionValueListAttribute";
 import QuizAttribute from "./QuizAttribute";
-import { default as RelationshipGroupNode } from "./RelationshipGroupNode";
-import { default as RelationshipNode } from "./RelationshipNode";
+import SingleCodeEditorValueAttribute from "./SingleCodeEditorValueAttribute";
 import SingleColorValueAttribute from "./SingleColorValueAttribute";
 import SingleMultiLineValueAttribute from "./SingleMultiLineValueAttribute";
 import { default as SingleSelectionAttribute } from "./SingleSelectionAttribute";
 import { default as SingleValueAttribute } from "./SingleValueAttribute";
 import SingleValueListAttribute from "./SingleValueListAttribute";
-import UniDirAssociationEdge from "./UniDirAssociationEdge";
 import ViewEdge from "./view/ViewEdge";
 import ViewNode from "./view/ViewNode";
-import { default as ViewObjectNode } from "./viewpoint/ViewObjectNode";
-import { default as ViewRelationshipNode } from "./viewpoint/ViewRelationshipNode";
+import ConditionListAttribute from "./viewpoint/ConditionListAttribute";
+import RenamingListAttribute from "./viewpoint/RenamingListAttribute";
+
+const relationshipNodeHtml = await loadHTML(
+  "../../templates/attribute_widget/relationship_node.html",
+  import.meta.url
+);
+
+const relationshipGroupNodeHtml = await loadHTML(
+  "../../templates/attribute_widget/relationship_group_node.html",
+  import.meta.url
+);
+const objectNodeHtml = await loadHTML(
+  "../../templates/attribute_widget/object_node.html",
+  import.meta.url
+);
+
+const nodeShapeNodeHtml = await loadHTML(
+  "../../templates/attribute_widget/node_shape_node.html",
+  import.meta.url
+);
+
 const modelAttributesNodeHtml = await loadHTML(
   "../../templates/attribute_widget/model_attributes_node.html",
   import.meta.url
@@ -2538,5 +2558,814 @@ export class ModelAttributesNode extends AbstractNode {
         _$attributeNode.append(attributes[attributeKey].get$node());
       }
     }
+  }
+}
+
+/**
+ * Abstract Class Node
+ * @class attribute_widget.NodeShapeNode
+ * @memberof attribute_widget
+ * @extends attribute_widget.AbstractNode
+ * @constructor
+ * @param {string} id Entity identifier of node
+ * @param {number} left x-coordinate of node position
+ * @param {number} top y-coordinate of node position
+ * @param {number} width Width of node
+ * @param {number} height Height of node
+ * @param {boolean} containment Height of node
+ */
+/**
+ * Abstract Class Node
+ * @class attribute_widget.NodeShapeNode
+ * @memberof attribute_widget
+ * @extends attribute_widget.AbstractNode
+ * @constructor
+ * @param {string} id Entity identifier of node
+ * @param {number} left x-coordinate of node position
+ * @param {number} top y-coordinate of node position
+ * @param {number} width Width of node
+ * @param {number} height Height of node
+ * @param {boolean} containment Height of node
+ */
+export class NodeShapeNode extends AbstractNode {
+  static TYPE = "Node Shape";
+
+  constructor(id, left, top, width, height, containment) {
+    super(id, NodeShapeNode.TYPE, left, top, width, height, containment);
+
+    var that = this;
+
+    /**
+     * jQuery object of node template
+     * @type {jQuery}
+     * @private
+     */
+    var _$template = $(_.template(nodeShapeNodeHtml)());
+
+    /**
+     * jQuery object of DOM node representing the node
+     * @type {jQuery}
+     * @private
+     */
+    var _$node = AbstractNode.prototype.get$node.call(this).append(_$template);
+
+    /**
+     * jQuery object of DOM node representing the attributes
+     * @type {jQuery}
+     * @private
+     */
+    var $attributeNode = _$node.find(".attributes");
+
+    /**
+     * Attributes of node
+     * @type {Object}
+     * @private
+     */
+    var attributes = this.getAttributes();
+
+    this.addAttribute(
+      new SingleSelectionAttribute(
+        this.getEntityId() + "[shape]",
+        "Shape",
+        this,
+        {
+          circle: "Circle",
+          diamond: "Diamond",
+          rectangle: "Rectangle",
+          rounded_rectangle: "Rounded Rectangle",
+          triangle: "Triangle",
+        }
+      )
+    );
+    this.addAttribute(
+      new SingleColorValueAttribute(
+        this.getEntityId() + "[color]",
+        "Color",
+        this
+      )
+    );
+    this.addAttribute(
+      new IntegerAttribute(
+        this.getEntityId() + "[defaultWidth]",
+        "Default Width",
+        this
+      )
+    );
+    this.addAttribute(
+      new IntegerAttribute(
+        this.getEntityId() + "[defaultHeight]",
+        "Default Height",
+        this
+      )
+    );
+    this.addAttribute(
+      new BooleanAttribute(
+        this.getEntityId() + "[containment]",
+        "Containment",
+        this
+      )
+    );
+    this.addAttribute(
+      new SingleCodeEditorValueAttribute(
+        this.getEntityId() + "[customShape]",
+        "Custom Shape",
+        this
+      )
+    );
+    this.addAttribute(
+      new SingleValueAttribute(
+        this.getEntityId() + "[customAnchors]",
+        "Custom Anchors",
+        this
+      )
+    );
+
+    _$node.find(".label").append(this.getLabel().get$node());
+
+    this.registerYType = function () {
+      AbstractNode.prototype.registerYType.call(this);
+      const nodesMap = y.getMap("nodes");
+      var ymap = nodesMap.get(that.getEntityId());
+
+      var colorVal = that
+        .getAttribute(that.getEntityId() + "[color]")
+        .getValue();
+      var ytextColor = ymap.get(colorVal.getEntityId());
+      colorVal.registerYType(ytextColor);
+
+      var customAnchorVal = that
+        .getAttribute(that.getEntityId() + "[customAnchors]")
+        .getValue();
+      var ytextCustomAnchor = ymap.get(customAnchorVal.getEntityId());
+      customAnchorVal.registerYType(ytextCustomAnchor);
+    };
+
+    for (var attributeKey in attributes) {
+      if (attributes.hasOwnProperty(attributeKey)) {
+        $attributeNode.append(attributes[attributeKey].get$node());
+      }
+    }
+  }
+}
+
+/**
+ * ObjectNode
+ * @class attribute_widget.ObjectNode
+ * @memberof attribute_widget
+ * @extends attribute_widget.AbstractNode
+ * @constructor
+ * @param {string} id Entity identifier of node
+ * @param {number} left x-coordinate of node position
+ * @param {number} top y-coordinate of node position
+ * @param {number} width Width of node
+ * @param {number} height Height of node
+ */
+export class ObjectNode extends AbstractNode {
+  static TYPE = "Object";
+
+  constructor(id, left, top, width, height) {
+    super(id, ObjectNode.TYPE, left, top, width, height);
+    var that = this;
+    /**
+     * jQuery object of node template
+     * @type {jQuery}
+     * @private
+     */
+    var _$template = $(_.template(objectNodeHtml)({ type: "Object" }));
+
+    /**
+     * jQuery object of DOM node representing the node
+     * @type {jQuery}
+     * @private
+     */
+    var _$node = AbstractNode.prototype.get$node.call(this).append(_$template);
+
+    /**
+     * jQuery object of DOM node representing the attributes
+     * @type {jQuery}
+     * @private
+     */
+    var _$attributeNode = _$node.find(".attributes");
+
+    /**
+     * Attributes of node
+     * @type {Object}
+     * @private
+     */
+    var _attributes = this.getAttributes();
+
+    this.registerYType = function () {
+      AbstractNode.prototype.registerYType.call(this);
+      const nodesMap = y.getMap("nodes");
+      var ymap = nodesMap.get(that.getEntityId());
+      var attrs = _attributes["[attributes]"].getAttributes();
+      for (var attributeKey in attrs) {
+        if (attrs.hasOwnProperty(attributeKey)) {
+          var keyVal = attrs[attributeKey].getKey();
+          var ytext = ymap.get(keyVal.getEntityId());
+          keyVal.registerYType(ytext);
+        }
+      }
+    };
+
+    this.remove = function () {
+      AbstractNode.prototype.remove.call(this);
+      this.getAttribute("[attributes]").unregisterCallbacks();
+    };
+
+    this.addAttribute(
+      new KeySelectionValueListAttribute("[attributes]", "Attributes", this, {
+        string: "String",
+        boolean: "Boolean",
+        integer: "Integer",
+        file: "File",
+        quiz: "Questions",
+      })
+    );
+
+    _$node.find(".label").append(this.getLabel().get$node());
+
+    for (var attributeKey in _attributes) {
+      if (_attributes.hasOwnProperty(attributeKey)) {
+        _$attributeNode.append(_attributes[attributeKey].get$node());
+      }
+    }
+  }
+}
+
+/**
+ * Abstract Class Node
+ * @class attribute_widget.RelationshipGroupNode
+ * @memberof attribute_widget
+ * @extends attribute_widget.AbstractNode
+ * @constructor
+ * @param {string} id Entity identifier of node
+ * @param {number} left x-coordinate of node position
+ * @param {number} top y-coordinate of node position
+ * @param {number} width Width of node
+ * @param {number} height Height of node
+ */
+/**
+ * Abstract Class Node
+ * @class attribute_widget.RelationshipGroupNode
+ * @memberof attribute_widget
+ * @extends attribute_widget.AbstractNode
+ * @constructor
+ * @param {string} id Entity identifier of node
+ * @param {number} left x-coordinate of node position
+ * @param {number} top y-coordinate of node position
+ * @param {number} width Width of node
+ * @param {number} height Height of node
+ */
+export class RelationshipGroupNode extends AbstractNode {
+  static TYPE = "Relation";
+
+  constructor(id, left, top, width, height) {
+    super(id, RelationshipGroupNode.TYPE, left, top, width, height);
+
+    /**
+     * jQuery object of node template
+     * @type {jQuery}
+     * @private
+     */
+    var _$template = $(_.template(relationshipGroupNodeHtml)());
+
+    /**
+     * jQuery object of DOM node representing the node
+     * @type {jQuery}
+     * @private
+     */
+    var _$node = AbstractNode.prototype.get$node.call(this).append(_$template);
+
+    /**
+     * jQuery object of DOM node representing the attributes
+     * @type {jQuery}
+     * @private
+     */
+    var _$attributeNode = _$node.find(".attributes");
+
+    /**
+     * Attributes of node
+     * @type {Object}
+     * @private
+     */
+    var attributes = this.getAttributes();
+
+    //this.addAttribute(new KeySelectionValueListAttribute("[attributes]","Attributes",this,{"string":"String","boolean":"Boolean","integer":"Integer","file":"File"}));
+    _$node.find(".label").append(this.getLabel().get$node());
+
+    for (var attributeKey in attributes) {
+      if (attributes.hasOwnProperty(attributeKey)) {
+        _$attributeNode.append(attributes[attributeKey].get$node());
+      }
+    }
+  }
+}
+
+/**
+ * RelationshipNode
+ * @class attribute_widget.RelationshipNode
+ * @memberof attribute_widget
+ * @extends attribute_widget.AbstractNode
+ * @param {string} id Entity identifier of node
+ * @param {number} left x-coordinate of node position
+ * @param {number} top y-coordinate of node position
+ * @param {number} width Width of node
+ * @param {number} height Height of node
+ * @constructor
+ */
+/**
+ * RelationshipNode
+ * @class attribute_widget.RelationshipNode
+ * @memberof attribute_widget
+ * @extends attribute_widget.AbstractNode
+ * @param {string} id Entity identifier of node
+ * @param {number} left x-coordinate of node position
+ * @param {number} top y-coordinate of node position
+ * @param {number} width Width of node
+ * @param {number} height Height of node
+ * @constructor
+ */
+export class RelationshipNode extends AbstractNode {
+  static TYPE = "Relationship";
+
+  constructor(id, left, top, width, height) {
+    super(id, RelationshipNode.TYPE, left, top, width, height);
+    var that = this;
+    /**
+     * jQuery object of node template
+     * @type {jQuery}
+     * @private
+     */
+    var $template = $(
+      _.template(relationshipNodeHtml)({ type: "Relationship" })
+    );
+
+    /**
+     * jQuery object of DOM node representing the node
+     * @type {jQuery}
+     * @private
+     */
+    var _$node = AbstractNode.prototype.get$node.call(this).append($template);
+
+    /**
+     * jQuery object of DOM node representing the attributes
+     * @type {jQuery}
+     * @private
+     */
+    var _$attributeNode = _$node.find(".attributes");
+
+    /**
+     * Attributes of node
+     * @type {Object}
+     * @private
+     */
+    var _attributes = this.getAttributes();
+
+    this.addAttribute(
+      new KeySelectionValueSelectionValueListAttribute(
+        "[attributes]",
+        "Attributes",
+        this,
+        {
+          string: "String",
+          boolean: "Boolean",
+          integer: "Integer",
+          file: "File",
+        },
+        { hidden: "Hide", top: "Top", center: "Center", bottom: "Bottom" }
+      )
+    );
+
+    this.registerYType = function () {
+      AbstractNode.prototype.registerYType.call(this);
+      const nodesMap = y.getMap("nodes");
+      var ymap = nodesMap.get(that.getEntityId());
+      var attrs = _attributes["[attributes]"].getAttributes();
+      for (var attributeKey in attrs) {
+        if (attrs.hasOwnProperty(attributeKey)) {
+          var keyVal = attrs[attributeKey].getKey();
+          var ytext = ymap.get(keyVal.getEntityId());
+          keyVal.registerYType(ytext);
+        }
+      }
+    };
+
+    _$node.find(".label").append(this.getLabel().get$node());
+
+    for (var attributeKey in _attributes) {
+      if (_attributes.hasOwnProperty(attributeKey)) {
+        _$attributeNode.append(_attributes[attributeKey].get$node());
+      }
+    }
+  }
+}
+
+/**
+ * UniDirAssociationEdge
+ * @class attribute_widget.UniDirAssociationEdge
+ * @memberof attribute_widget
+ * @extends attribute_widget.AbstractEdge
+ * @constructor
+ * @param {string} id
+ * @param {attribute_widget.AbstractNode} source
+ * @param {attribute_widget.AbstractNode} target
+ */
+export class UniDirAssociationEdge extends AbstractEdge {
+  static TYPE = "Uni-Dir-Association";
+  static RELATIONS = [
+    {
+      sourceTypes: [ObjectNode.TYPE],
+      targetTypes: [
+        EnumNode.TYPE,
+        NodeShapeNode.TYPE,
+        RelationshipNode.TYPE,
+        RelationshipGroupNode.TYPE,
+        ViewRelationshipNode.TYPE,
+      ],
+    },
+    {
+      sourceTypes: [RelationshipNode.TYPE],
+      targetTypes: [
+        EnumNode.TYPE,
+        EdgeShapeNode.TYPE,
+        ObjectNode.TYPE,
+        AbstractClassNode.TYPE,
+        ViewObjectNode.TYPE,
+      ],
+    },
+    {
+      sourceTypes: [RelationshipGroupNode.TYPE],
+      targetTypes: [ObjectNode.TYPE, AbstractClassNode.TYPE],
+    },
+    {
+      sourceTypes: [AbstractClassNode.TYPE],
+      targetTypes: [
+        EnumNode.TYPE,
+        RelationshipNode.TYPE,
+        RelationshipGroupNode.TYPE,
+      ],
+    },
+    {
+      sourceTypes: [ViewObjectNode.TYPE],
+      targetTypes: [
+        EnumNode.TYPE,
+        NodeShapeNode.TYPE,
+        RelationshipNode.TYPE,
+        RelationshipGroupNode.TYPE,
+        ViewRelationshipNode.TYPE,
+      ],
+    },
+    {
+      sourceTypes: [ViewRelationshipNode.TYPE],
+      targetTypes: [
+        EnumNode.TYPE,
+        EdgeShapeNode.TYPE,
+        ObjectNode.TYPE,
+        AbstractClassNode.TYPE,
+        ViewObjectNode.TYPE,
+      ],
+    },
+  ];
+
+  constructor(id, source, target) {
+    super(UniDirAssociationEdge.TYPE, id, source, target);
+  }
+}
+
+/**
+ * ViewObjectNode
+ * @class attribute_widget.ViewObjectNode
+ * @memberof attribute_widget
+ * @extends attribute_widget.AbstractNode
+ * @constructor
+ * @param {string} id Entity identifier of node
+ * @param {number} left x-coordinate of node position
+ * @param {number} top y-coordinate of node position
+ * @param {number} width Width of node
+ * @param {number} height Height of node
+ * @param {object} json the json representation
+ */
+export class ViewObjectNode extends AbstractNode {
+  static TYPE = "ViewObject";
+  constructor(id, left, top, width, height, json) {
+    super(id, "ViewObject", left, top, width, height, json);
+
+    var that = this;
+
+    /**
+     * jQuery object of node template
+     * @type {jQuery}
+     * @private
+     */
+    var _$template = $(_.template(objectNodeHtml)({ type: "ViewObject" }));
+
+    /**
+     * jQuery object of DOM node representing the node
+     * @type {jQuery}
+     * @private
+     */
+    var _$node = AbstractNode.prototype.get$node.call(this).append(_$template);
+
+    /**
+     * jQuery object of DOM node representing the attributes
+     * @type {jQuery}
+     * @private
+     */
+    var _$attributeNode = _$node.find(".attributes");
+
+    /**
+     * Attributes of node
+     * @type {Object}
+     * @private
+     */
+    var _attributes = this.getAttributes();
+
+    var targetAttribute, renamingList, conjSelection, cla;
+
+    this.showAttributes = function () {
+      if (renamingList.get$node().is(":hidden")) renamingList.get$node().show();
+      if (conjSelection.get$node().is(":hidden"))
+        conjSelection.get$node().show();
+      if (cla.get$node().is(":hidden")) cla.get$node().show();
+      if (!targetAttribute.get$node().is(":hidden"))
+        targetAttribute.get$node().hide();
+    };
+
+    this.createConditionListAttribute = function (refAttrs) {
+      var targetAttrList = {};
+      if (refAttrs && refAttrs.constructor.name === "RenamingListAttribute") {
+        var attrs = refAttrs.getAttributes();
+        for (var key in attrs) {
+          if (attrs.hasOwnProperty(key)) {
+            targetAttrList[key] = attrs[key].getKey().getValue();
+          }
+        }
+      } else {
+        for (var key in refAttrs) {
+          if (refAttrs.hasOwnProperty(key)) {
+            targetAttrList[key] = refAttrs[key].val.value;
+          }
+        }
+      }
+      var conditionListAttr = new ConditionListAttribute(
+        "[condition]",
+        "Conditions",
+        that,
+        targetAttrList,
+        LogicalOperator
+      );
+      that.addAttribute(conditionListAttr);
+      _$attributeNode.append(conditionListAttr.get$node());
+      conditionListAttr.get$node().hide();
+      return conditionListAttr;
+    };
+
+    _$node.find(".label").append(this.getLabel().get$node());
+    const dataMap = y.getMap("data");
+    var model = dataMap.get("model");
+    if (model) {
+      var selectionValues =
+        ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes, [
+          "Object",
+        ]);
+      targetAttribute = new SingleSelectionAttribute(
+        id + "[target]",
+        "Target",
+        that,
+        selectionValues
+      );
+      that.addAttribute(targetAttribute);
+      _$attributeNode.prepend(targetAttribute.get$node());
+
+      renamingList = new RenamingListAttribute(
+        "[attributes]",
+        "Attributes",
+        that,
+        { show: "Visible", hide: "Hidden" }
+      );
+      that.addAttribute(renamingList);
+      _$attributeNode.append(renamingList.get$node());
+      renamingList.get$node().hide();
+
+      conjSelection = new SingleSelectionAttribute(
+        id + "[conjunction]",
+        "Conjunction",
+        that,
+        LogicalConjunctions
+      );
+      that.addAttribute(conjSelection);
+      _$attributeNode.append(conjSelection.get$node());
+      conjSelection.get$node().hide();
+
+      if (json) {
+        cla = that.createConditionListAttribute(
+          json.attributes["[attributes]"].list
+        );
+        that.showAttributes();
+        targetAttribute.get$node().hide();
+      } else cla = that.createConditionListAttribute();
+    }
+
+    /**
+     * register the y-object to enable NRT collaboration
+     */
+    this.registerYType = function () {
+      AbstractNode.prototype.registerYType.call(this);
+      const nodesMap = y.getMap("nodes");
+      var ymap = nodesMap.get(that.getEntityId());
+      var attrs = _attributes["[attributes]"].getAttributes();
+      for (var attributeKey in attrs) {
+        if (attrs.hasOwnProperty(attributeKey)) {
+          var keyVal = attrs[attributeKey].getKey();
+          var ytext = ymap.get(keyVal.getEntityId());
+          keyVal.registerYType(ytext);
+        }
+      }
+
+      if (_attributes["[condition]"]) {
+        var conditions = _attributes["[condition]"].getAttributes();
+        for (var attrKey4 in conditions) {
+          if (conditions.hasOwnProperty(attrKey4)) {
+            var keyVal = attrs[attributeKey].getKey();
+            var ytext = ymap.get(keyVal.getEntityId());
+            keyVal.registerYType(ytext);
+          }
+        }
+      }
+    };
+  }
+}
+
+/**
+ * ViewRelationshipNode
+ * @class attribute_widget.ViewRelationshipNode
+ * @memberof attribute_widget
+ * @extends attribute_widget.AbstractNode
+ * @param {string} id Entity identifier of node
+ * @param {number} left x-coordinate of node position
+ * @param {number} top y-coordinate of node position
+ * @param {number} width Width of node
+ * @param {number} height Height of node
+ * @param {object} json the json representation form the role resource
+ * @constructor
+ */
+export class ViewRelationshipNode extends AbstractNode {
+  static TYPE = "ViewRelationship";
+  constructor(id, left, top, width, height, json) {
+    super(id, ViewRelationshipNode.TYPE, left, top, width, height, json);
+    var that = this;
+
+    /**
+     * jQuery object of node template
+     * @type {jQuery}
+     * @private
+     */
+    var $template = $(
+      _.template(relationshipNodeHtml)({ type: "ViewRelationship" })
+    );
+
+    /**
+     * jQuery object of DOM node representing the node
+     * @type {jQuery}
+     * @private
+     */
+    var _$node = AbstractNode.prototype.get$node.call(this).append($template);
+
+    /**
+     * jQuery object of DOM node representing the attributes
+     * @type {jQuery}
+     * @private
+     */
+    var _$attributeNode = _$node.find(".attributes");
+
+    /**
+     * Attributes of node
+     * @type {Object}
+     * @private
+     */
+    var _attributes = this.getAttributes();
+
+    /**
+     * shows attributes and hides the reference attribute
+     */
+    this.showAttributes = function () {
+      if (renamingList.get$node().is(":hidden")) renamingList.get$node().show();
+      if (conjSelection.get$node().is(":hidden"))
+        conjSelection.get$node().show();
+      if (cla.get$node().is(":hidden")) cla.get$node().show();
+      if (!targetAttribute.get$node().is(":hidden"))
+        targetAttribute.get$node().hide();
+    };
+
+    this.createConditionListAttribute = function (refAttrs) {
+      var targetAttrList = {};
+      if (refAttrs && refAttrs.constructor.name === "RenamingListAttribute") {
+        var attrs = refAttrs.getAttributes();
+        for (var key in attrs) {
+          if (attrs.hasOwnProperty(key)) {
+            targetAttrList[key] = attrs[key].getKey().getValue();
+          }
+        }
+      } else {
+        for (var key in refAttrs) {
+          if (refAttrs.hasOwnProperty(key)) {
+            targetAttrList[key] = refAttrs[key].val.value;
+          }
+        }
+      }
+      var conditionListAttr = new ConditionListAttribute(
+        "[condition]",
+        "Conditions",
+        that,
+        targetAttrList,
+        LogicalOperator
+      );
+      that.addAttribute(conditionListAttr);
+      _$attributeNode.append(conditionListAttr.get$node());
+      conditionListAttr.get$node().hide();
+      return conditionListAttr;
+    };
+
+    var targetAttribute, renamingList, conjSelection, cla;
+    _$node.find(".label").append(this.getLabel().get$node());
+    const dataMap = y.getMap("data");
+    var model = dataMap.get("model");
+    if (model) {
+      var selectionValues =
+        ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes, [
+          "Relationship",
+        ]);
+      targetAttribute = new SingleSelectionAttribute(
+        id + "[target]",
+        "Reference",
+        that,
+        selectionValues
+      );
+      that.addAttribute(targetAttribute);
+      _$attributeNode.prepend(targetAttribute.get$node());
+
+      renamingList = new RenamingListAttribute(
+        "[attributes]",
+        "Attributes",
+        that,
+        {
+          hidden: "Show",
+          top: "Show Top",
+          center: "Show Center",
+          bottom: "Show Bottom",
+          hide: "Hide",
+        }
+      );
+      that.addAttribute(renamingList);
+      _$attributeNode.append(renamingList.get$node());
+      renamingList.get$node().hide();
+
+      conjSelection = new SingleSelectionAttribute(
+        id + "[conjunction]",
+        "Conjunction",
+        that,
+        LogicalConjunctions
+      );
+      that.addAttribute(conjSelection);
+      _$attributeNode.append(conjSelection.get$node());
+      conjSelection.get$node().hide();
+
+      if (json) {
+        cla = that.createConditionListAttribute(
+          json.attributes["[attributes]"].list
+        );
+        that.showAttributes();
+        targetAttribute.get$node().hide();
+      } else cla = that.createConditionListAttribute();
+    }
+
+    /**
+     * register the y-object to enable NRT collaboration
+     */
+    this.registerYType = function () {
+      AbstractNode.prototype.registerYType.call(this);
+      const nodesMap = y.getMap("nodes");
+      var ymap = nodesMap.get(that.getEntityId());
+      var attrs = _attributes["[attributes]"].getAttributes();
+      for (var attributeKey in attrs) {
+        if (attrs.hasOwnProperty(attributeKey)) {
+          var keyVal = attrs[attributeKey].getKey();
+          var ytext = ymap.get(keyVal.getEntityId());
+          keyVal.registerYType(ytext);
+        }
+      }
+
+      if (_attributes["[condition]"]) {
+        var conditions = _attributes["[condition]"].getAttributes();
+        for (var attrKey4 in conditions) {
+          if (conditions.hasOwnProperty(attrKey4)) {
+            var keyVal = attrs[attributeKey].getKey();
+            var ytext = ymap.get(keyVal.getEntityId());
+            keyVal.registerYType(ytext);
+          }
+        }
+      }
+    };
   }
 }
