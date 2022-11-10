@@ -3,8 +3,9 @@ import BooleanAttribute from "./BooleanAttribute";
 import IntegerAttribute from "./IntegerAttribute";
 import FileAttribute from "./FileAttribute";
 import SingleSelectionAttribute from "./SingleSelectionAttribute";
+import { AbstractEdge } from "./EntityManager";
 import SingleValueAttribute from "./SingleValueAttribute";
-import AbstractEdge from "./AbstractEdge";
+
 
 //noinspection JSUnusedLocalSymbols
 /**

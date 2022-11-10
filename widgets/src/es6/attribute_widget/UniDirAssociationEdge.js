@@ -1,5 +1,5 @@
 import _ from "lodash-es";
-import AbstractEdge from "./AbstractEdge";
+import { AbstractEdge } from "./EntityManager";
 import { AbstractClassNode } from "./EntityManager";
 import ObjectNode from "./ObjectNode";
 import RelationshipNode from "./RelationshipNode";
