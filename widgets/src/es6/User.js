@@ -4,6 +4,22 @@ import Util from "./Util";
 import { CONFIG } from "./config";
 var deferred = $.Deferred();
 var url = localStorage.userinfo_endpoint;
+
+
+export async function getUserInfo() {
+  const response = await fetch(url, {
+    headers: { Authorization: "Bearer " + localStorage.access_token },
+  });
+  const data = await response.json();
+  var space = { user: {} };
+  space.user[CONFIG.NS.PERSON.TITLE] = data.name;
+  space.user[CONFIG.NS.PERSON.JABBERID] = data.sub;
+  space.user[CONFIG.NS.PERSON.MBOX] = data.email;
+  space.user.globalId = -1;
+  console.info("User promise by " + undefined, space);
+  return space;
+}
+
 $.ajax({
   type: "GET",
   headers: {
