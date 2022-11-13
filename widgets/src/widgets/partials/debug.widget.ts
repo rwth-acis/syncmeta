@@ -10,10 +10,6 @@ export class DebugWidget extends SyncMetaWidget(LitElement) {
   render() {
     return html`
       <style>
-        textarea,
-        button {
-          width: 100px;
-        }
         .seperating_box {
           border: 1px solid;
           border-radius: 7px;

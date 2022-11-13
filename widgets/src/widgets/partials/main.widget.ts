@@ -1,9 +1,9 @@
-import { LitElement, css, html } from "lit";
+import { LitElement, html } from "lit";
 import { customElement } from "lit/decorators.js";
 import { SyncMetaWidget } from "../../widget";
-import "../../es6/main_widget.js";
+import initMainWidget from "../../es6/main_widget.js";
 // canvas widget
-@customElement("syncmeta-canvas")
+@customElement("main-widget")
 export class CanvasWidget extends SyncMetaWidget(LitElement) {
   render() {
     return html`
@@ -11,6 +11,11 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
         .button_bar {
           width: 50%;
           float: left;
+          display: flex;
+          flex-wrap: wrap;
+        }
+        .main-container {
+          position: relative;
         }
         .button_bar.left {
           text-align: left;
@@ -441,7 +446,14 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
         .abstractclass {
           background-color: #ffffff;
         }
+        .main-container {
+          position: relative;
+        }
       </style>
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.1/font/bootstrap-icons.css"
+      />
       <link
         rel="stylesheet"
         type="text/css"
@@ -452,145 +464,204 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
         type="text/css"
         href="<%= grunt.config('baseUrl') %>/css/vendor/jquery.contextMenu.css"
       />
-      <link
+      <!-- <link
         rel="stylesheet"
         type="text/css"
         href="<%= grunt.config('baseUrl') %>/css/vendor/bootstrap.min.prefixed.css"
       />
+     -->
       <!-- <link rel="stylesheet" type="text/css" href="<%= grunt.config('baseUrl') %>/css/vendor/font-awesome/css/font-awesome.min.css"> -->
+      <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+        crossorigin="anonymous"
+      />
       <link
         rel="stylesheet"
         href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"
       />
-      <div id="loading" class="loading"></div>
-      <div class="button_bar left">
-        <button id="save" title="Save the current state of the model">
-          <img width="20px" height="20px" src="/img/save.png" />
-        </button>
-        <!-- Uncommented the below line for Export as PNG! -->
-        <button id="save_image">
-          <img width="20px" height="20px" src="/img/save_image.png" />
-        </button>
-        <!--<button id="generate" style="display: none"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/generate.png" /></button>-->
-        <span id="feedback"></span>
-        <strong id="lblCurrentView"
-          >View:<span id="lblCurrentViewId"></span
-        ></strong>
-      </div>
-      <div id="dialog" style="display:none" title="Generate editor">
-        <p>
-          <strong>Editor space url:</strong>
-          <br />
-          <span id="space_link_input"
-            ><%= grunt.config('roleSandboxUrl') %>/<input
-              size="16"
-              type="text"
-              id="space_label"
-          /></span>
-          <span id="space_link_text" style="display: none"
-            ><a id="space_link" target="_blank" href="#"></a
-          ></span>
-          <br />
-          <span id="space_link_comment" style="color: #FF3333; display: none"
-            >Space already exists, will be overwritten!</span
+      <div class="main-container container">
+        <div id="loading" class="loading"></div>
+        <div class="row">
+          <div class="col">
+            <button
+              id="save"
+              class="btn btn-light"
+              title="Save the current state of the model"
+            >
+              <i class="bi bi-save"></i>
+            </button>
+            <!-- Uncommented the below line for Export as PNG! -->
+            <button id="save_image" class="btn btn-light">
+              <i class="bi bi-camera"></i>
+            </button>
+            <!--<button id="generate" style="display: none"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/generate.png" /></button>-->
+            <span id="feedback"></span>
+            <strong id="lblCurrentView"
+              >View:<span id="lblCurrentViewId"></span
+            ></strong>
+            <div id="ViewCtrlContainer" class="button_bar left">
+              <button
+                id="btnCreateViewpoint"
+                class="btn btn-light"
+                title="Create a viewpoint"
+              >
+                <img width="20px" height="20px" src="/img/add196.png" />
+              </button>
+              <input
+                id="txtNameViewpoint"
+                type="text"
+                placeholder="name"
+                style="display: none;"
+              />
+              <select
+                id="ddmViewpointSelection"
+                style="display: none;"
+              ></select>
+              <button
+                class="btn btn-light"
+                id="btnAddViewpoint"
+                title="Create an empty viewpoint"
+                style="display: none;"
+              >
+                <img width="20px" height="20px" src="/img/checked21.png" />
+              </button>
+              <button
+                class="btn btn-light"
+                id="btnCancelCreateViewpoint"
+                title="Cancel"
+                style="display: none;"
+              >
+                <img width="20px" height="20px" src="/img/times1.png" />
+              </button>
+              <select id="ddmViewSelection"></select>
+              <button
+                id="btnShowView"
+                class="btn btn-light"
+                title="Apply a viewpoint to the current model or visualize the viewpoint"
+              >
+                Show
+              </button>
+              <button
+                class="btn btn-light"
+                id="btnRefreshView"
+                title="Refresh viewpoint list"
+                style="display: none;"
+              >
+                Refresh
+              </button>
+              <button
+                class="btn btn-light"
+                id="btnDelViewPoint"
+                title="Delete current viewpoint in the list"
+              >
+                <img width="20px" height="20px" src="/img/times1.png" />
+              </button>
+            </div>
+          </div>
+
+          <div class="col">
+            <button
+              id="viewsHide"
+              class="btn btn-light"
+              title="Close the View Panel"
+            >
+              <i class="bi bi-caret-up"></i>
+            </button>
+            <button
+              id="viewsShow"
+              class="btn btn-light"
+              title="Show the View Panel"
+            >
+              <i class="bi bi-caret-down"></i>
+            </button>
+            <button
+              id="showtype"
+              class="btn btn-light"
+              title="Show the types of nodes and edges"
+            >
+              <i class="bi bi-tag"></i>
+            </button>
+            <button
+              id="hidetype"
+              class="btn btn-light"
+              title="Hide types of nodes and edges"
+            >
+              <i class="bi bi-tag-fill"></i>
+            </button>
+            <button id="applyLayout" class="btn btn-light" title="Apply Layout">
+              <i class="bi bi-layout-wtf"></i>
+            </button>
+            <button id="zoomin" class="btn btn-light" title="Zoom in">
+              <i class="bi bi-zoom-in"></i>
+            </button>
+            <button id="zoomout" class="btn btn-light" title="Zoom out">
+              <i class="bi bi-zoom-out"></i>
+            </button>
+            <button
+              id="undo"
+              class="btn btn-light"
+              title="Undo your latest changes"
+            >
+              <i class="bi bi-arrow-counterclockwise"></i>
+            </button>
+            <button
+              id="redo"
+              class="btn btn-light"
+              title="Redo your latest changes"
+            >
+              <i class="bi bi-arrow-clockwise"></i>
+            </button>
+          </div>
+          <div
+            class="col"
+            id="dialog"
+            style="display:none"
+            title="Generate editor"
           >
-        </p>
-        <p>
-          <strong>Editor space title:</strong
-          ><input size="32" type="text" id="space_title" />
-        </p>
-      </div>
-      <div class="button_bar right">
-        <button id="viewsHide" title="Close the View Panel">
-          <img width="20px" height="20px" src="/img/viewHide.png" />
-        </button>
-        <button id="viewsShow" title="Show the View Panel">
-          <img width="20px" height="20px" src="/img/viewShow.png" />
-        </button>
-        <button id="showtype" title="Show the types of nodes and edges">
-          <img width="20px" height="20px" src="/img/hidetype.png" />
-        </button>
-        <button id="hidetype" title="Hide types of nodes and edges">
-          <img width="20px" height="20px" src="/img/showtype.png" />
-        </button>
-        <button id="applyLayout" title="Apply Layout">
-          <img width="20px" height="20px" src="/img/layout.png" />
-        </button>
-        <button id="zoomin" title="Zoom in">
-          <img width="20px" height="20px" src="/img/zoomin.png" />
-        </button>
-        <button id="zoomout" title="Zoom out">
-          <img width="20px" height="20px" src="/img/zoomout.png" />
-        </button>
-        <button id="undo" title="Undo your latest changes">
-          <img width="20px" height="20px" src="/img/undo.png" />
-        </button>
-        <button id="redo" title="Redo your latest changes">
-          <img width="20px" height="20px" src="/img/redo.png" />
-        </button>
-      </div>
-      <div id="ViewCtrlContainer" class="button_bar left">
-        <button id="btnCreateViewpoint" title="Create a viewpoint">
-          <img width="20px" height="20px" src="/img/add196.png" />
-        </button>
-        <input
-          id="txtNameViewpoint"
-          type="text"
-          placeholder="name"
-          style="display: none;"
-        />
-        <select id="ddmViewpointSelection" style="display: none;"></select>
-        <button
-          id="btnAddViewpoint"
-          title="Create an empty viewpoint"
-          style="display: none;"
+            <p>
+              <strong>Editor space url:</strong>
+              <br />
+              <span id="space_link_input"
+                ><%= grunt.config('roleSandboxUrl') %>/<input
+                  size="16"
+                  type="text"
+                  id="space_label"
+              /></span>
+              <span id="space_link_text" style="display: none"
+                ><a id="space_link" target="_blank" href="#"></a
+              ></span>
+              <br />
+              <span
+                id="space_link_comment"
+                style="color: #FF3333; display: none"
+                >Space already exists, will be overwritten!</span
+              >
+            </p>
+            <p>
+              <strong>Editor space title:</strong
+              ><input size="32" type="text" id="space_title" />
+            </p>
+          </div>
+        </div>
+        <div
+          class="ui-state-error ui-corner-all"
+          style="margin-top: 20px; padding: 0 .7em; display:none"
         >
-          <img width="20px" height="20px" src="/img/checked21.png" />
-        </button>
-        <button
-          id="btnCancelCreateViewpoint"
-          title="Cancel"
-          style="display: none;"
-        >
-          <img width="20px" height="20px" src="/img/times1.png" />
-        </button>
-        <select id="ddmViewSelection"></select>
-        <button
-          id="btnShowView"
-          title="Apply a viewpoint to the current model or visualize the viewpoint"
-        >
-          Show
-        </button>
-        <button
-          id="btnRefreshView"
-          title="Refresh viewpoint list"
-          style="display: none;"
-        >
-          Refresh
-        </button>
-        <button
-          id="btnDelViewPoint"
-          title="Delete current viewpoint in the list"
-        >
-          <img width="20px" height="20px" src="/img/times1.png" />
-        </button>
+          <p id="errorMsg">
+            <span
+              class="ui-icon ui-icon-alert"
+              style="float: left; margin-right: .3em;"
+            ></span>
+            <strong>SYNCMETA!</strong>
+          </p>
+        </div>
+        <div id="canvas-frame">
+          <div id="canvas"></div>
+        </div>
+        <div id="q"></div>
       </div>
-      <div
-        class="ui-state-error ui-corner-all"
-        style="margin-top: 20px; padding: 0 .7em; display:none"
-      >
-        <p id="errorMsg">
-          <span
-            class="ui-icon ui-icon-alert"
-            style="float: left; margin-right: .3em;"
-          ></span>
-          <strong>SYNCMETA!</strong>
-        </p>
-      </div>
-      <div id="canvas-frame">
-        <div id="canvas"></div>
-      </div>
-      <div id="q"></div>
     `;
   }
 
@@ -600,5 +671,10 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
 
   disconnectedCallback() {
     super.disconnectedCallback();
+  }
+
+  firstUpdated(e: any) {
+    super.firstUpdated(e);
+    initMainWidget();
   }
 }

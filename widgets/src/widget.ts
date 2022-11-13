@@ -10,6 +10,9 @@ export const SyncMetaWidget = <T extends Constructor<LitElement>>(
 ) => {
   // cannot use arrow function here, see https://lit.dev/docs/composition/mixins/#applying-decorators-in-mixins
   class SyncMetaWidgetElement extends superClass {
+    createRenderRoot() {
+      return this;
+    }
     // @property({ type: String }) widgetName = "SyncMetaWidget";
     static styles = css`
       .loading {

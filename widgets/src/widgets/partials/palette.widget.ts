@@ -6,6 +6,9 @@ import "../../es6/palette_widget.js";
 // widget body used by all syncmeta widgets
 @customElement("palette-widget")
 export class PaletteWidget extends SyncMetaWidget(LitElement) {
+  createRenderRoot() {
+    return this;
+  }
   render() {
     return html`
       <style>
@@ -13,12 +16,6 @@ export class PaletteWidget extends SyncMetaWidget(LitElement) {
           max-height: 400px;
         }
 
-        button {
-          border: 1px dotted #cccccc;
-          background: none;
-          text-align: left;
-          width: 100%;
-        }
         button.selected {
           border: 1px solid #999999;
           background-color: #eeeeee;
