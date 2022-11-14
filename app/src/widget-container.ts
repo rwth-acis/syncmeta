@@ -51,7 +51,7 @@ class WidgetContainer extends LitElement {
       </style>
       <div class="maincontainer">
         <div class="innercontainer">
-          <main-widget></main-widget>
+          <main-widget style="height:100%"></main-widget>
         </div>
         <div class="innercontainer">
           <attribute-widget></attribute-widget>

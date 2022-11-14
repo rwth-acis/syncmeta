@@ -1,7 +1,10 @@
 import { LitElement, html } from "lit";
 import { customElement } from "lit/decorators.js";
 import { SyncMetaWidget } from "../../widget";
-import initMainWidget from "../../es6/main_widget.js";
+import "jquery-contextmenu/dist/jquery.contextMenu.css";
+//@ts-ignore
+import initMain from "../../es6/main_widget.js";
+
 // canvas widget
 @customElement("main-widget")
 export class CanvasWidget extends SyncMetaWidget(LitElement) {
@@ -103,12 +106,7 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
           overflow: hidden;
           border: 1px solid #aaa;
           box-sizing: border-box;
-          position: absolute;
-          top: 0;
-          margin-top: 32px;
-          bottom: 0;
-          left: 0;
-          right: 0;
+          position: relative;
         }
         #canvas {
           width: 100%;
@@ -459,55 +457,52 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
         type="text/css"
         href="https://code.jquery.com/ui/1.13.1/themes/smoothness/jquery-ui.css"
       />
-      <link
-        rel="stylesheet"
-        type="text/css"
-        href="<%= grunt.config('baseUrl') %>/css/vendor/jquery.contextMenu.css"
-      />
       <!-- <link
         rel="stylesheet"
         type="text/css"
         href="<%= grunt.config('baseUrl') %>/css/vendor/bootstrap.min.prefixed.css"
       />
      -->
-      <!-- <link rel="stylesheet" type="text/css" href="<%= grunt.config('baseUrl') %>/css/vendor/font-awesome/css/font-awesome.min.css"> -->
       <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
         rel="stylesheet"
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
         crossorigin="anonymous"
       />
-      <link
-        rel="stylesheet"
-        href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"
-      />
-      <div class="main-container container">
+
+      <div class="main-container container d-flex flex-column h-100">
         <div id="loading" class="loading"></div>
         <div class="row">
           <div class="col">
-            <button
-              id="save"
-              class="btn btn-light"
-              title="Save the current state of the model"
-            >
-              <i class="bi bi-save"></i>
-            </button>
-            <!-- Uncommented the below line for Export as PNG! -->
-            <button id="save_image" class="btn btn-light">
-              <i class="bi bi-camera"></i>
-            </button>
-            <!--<button id="generate" style="display: none"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/generate.png" /></button>-->
-            <span id="feedback"></span>
-            <strong id="lblCurrentView"
-              >View:<span id="lblCurrentViewId"></span
-            ></strong>
-            <div id="ViewCtrlContainer" class="button_bar left">
+            <div class="flex">
+              <button
+                id="save"
+                class="btn btn-light"
+                title="Save the current state of the model"
+              >
+                <i class="bi bi-save"></i>
+              </button>
+              <!-- Uncommented the below line for Export as PNG! -->
+              <button
+                id="save_image"
+                @click="${this.onSaveImage}"
+                class="btn btn-light"
+              >
+                <i class="bi bi-camera"></i>
+              </button>
+              <!--<button id="generate" style="display: none"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/generate.png" /></button>-->
+              <span id="feedback"></span>
+              <strong id="lblCurrentView"
+                >View:<span id="lblCurrentViewId"></span
+              ></strong>
+            </div>
+            <div id="ViewCtrlContainer" class="flex">
               <button
                 id="btnCreateViewpoint"
                 class="btn btn-light"
                 title="Create a viewpoint"
               >
-                <img width="20px" height="20px" src="/img/add196.png" />
+                <i class="bi bi-plus-circle"></i>
               </button>
               <input
                 id="txtNameViewpoint"
@@ -556,7 +551,7 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
                 id="btnDelViewPoint"
                 title="Delete current viewpoint in the list"
               >
-                <img width="20px" height="20px" src="/img/times1.png" />
+                <i class="bi bi-trash"></i>
               </button>
             </div>
           </div>
@@ -657,7 +652,7 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
             <strong>SYNCMETA!</strong>
           </p>
         </div>
-        <div id="canvas-frame">
+        <div class="row flex-fill" id="canvas-frame">
           <div id="canvas"></div>
         </div>
         <div id="q"></div>
@@ -675,6 +670,15 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
 
   firstUpdated(e: any) {
     super.firstUpdated(e);
-    initMainWidget();
+    initMain();
+  }
+
+  onSaveImage() {
+    // canvas.toPNG().then(function (uri) {
+    //   var link = document.createElement("a");
+    //   link.download = "export.png";
+    //   link.href = uri;
+    //   link.click();
+    // });
   }
 }

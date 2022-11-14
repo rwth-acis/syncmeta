@@ -9,10 +9,9 @@ import NodeTool from "./NodeTool";
  * @memberof canvas_widget
  * @constructor
  */
-class ObjectNodeTool extends NodeTool {
+export class ObjectNodeTool extends NodeTool {
   constructor() {
-   super(
-      
+    super(
       ObjectNode.TYPE,
       null,
       null,
@@ -23,4 +22,3 @@ class ObjectNodeTool extends NodeTool {
   }
 }
 
-export default ObjectNodeTool;

@@ -205,7 +205,8 @@ class IWCWrapper {
           if (intent.hasOwnProperty("message")) intent = intent.message;
         }
       } catch (e) {
-        console.error(e);
+        console.warn("Exception caught: ", e);
+        return;
       }
     }
 

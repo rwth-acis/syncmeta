@@ -1,6 +1,7 @@
 import "jquery";
 import "jquery-contextmenu";
-import "jquery-ui";
+import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js";
+import "https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js";
 import "jsplumb/dist/js/jsPlumb-1.7.9.js";
 import AbstractEntity from "../canvas_widget/AbstractEntity";
 import DagreLayout from "../canvas_widget/DagreLayout";

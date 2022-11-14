@@ -8,7 +8,7 @@ var url = localStorage.userinfo_endpoint;
 export async function getUserInfo() {
   url =
     localStorage.getItem("userinfo_endpoint") ||
-    "https://auth.las2peer.org/auth/realms/main/userinfo";
+    "https://auth.las2peer.org/auth/realms/main/protocol/openid-connect/userinfo";
   const response = await fetch(url, {
     headers: { Authorization: "Bearer " + localStorage.access_token },
   }).catch((error) => {

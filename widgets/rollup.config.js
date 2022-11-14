@@ -2,7 +2,7 @@
 import resolve from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
 import commonjs from "@rollup/plugin-commonjs";
-
+import css from "rollup-plugin-import-css";
 import { dependencies } from "./package.json";
 import json from "@rollup/plugin-json";
 import html from "rollup-plugin-html";
@@ -285,7 +285,7 @@ export default [
         include: [/node_modules/, "./src/main.widget.ts"],
         extensions: [".js", ".ts"],
       }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
-      json(),
+      css(),
       html({
         include: "**/*.html",
       }),
