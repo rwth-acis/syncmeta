@@ -190,7 +190,7 @@ export class AttributeWidget extends SyncMetaWidget(LitElement) {
 
       <div class="main-wrapper">
         <div id="loading" class="loading"></div>
-        <div id="wrapper"><h5>Wait For Canvas Widget!</h5></div>
+        <div id="wrapper"><h3>Wait For Canvas Widget!</h3></div>
         <div id="q"></div>
       </div>
     `;
