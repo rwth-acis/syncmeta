@@ -1,8 +1,7 @@
 import NodeTool from "../NodeTool";
 import ViewRelationshipNode from "./ViewRelationshipNode";
 
-ViewRelationshipNodeTool.prototype = new NodeTool();
-ViewRelationshipNodeTool.prototype.constructor = ViewRelationshipNodeTool;
+
 /**
  * ViewRelationshipNodeTool
  * @class canvas_widget.ViewRelationshipNodeTool
@@ -10,16 +9,17 @@ ViewRelationshipNodeTool.prototype.constructor = ViewRelationshipNodeTool;
  * @memberof canvas_widget
  * @constructor
  */
-function ViewRelationshipNodeTool() {
-  NodeTool.call(
-    this,
-    ViewRelationshipNode.TYPE,
-    null,
-    null,
-    null,
-    ViewRelationshipNode.DEFAULT_WIDTH,
-    ViewRelationshipNode.DEFAULT_HEIGHT
-  );
+class ViewRelationshipNodeTool extends NodeTool {
+  constructor() {
+    super(
+      ViewRelationshipNode.TYPE,
+      null,
+      null,
+      null,
+      ViewRelationshipNode.DEFAULT_WIDTH,
+      ViewRelationshipNode.DEFAULT_HEIGHT
+    );
+  }
 }
 
 export default ViewRelationshipNodeTool;

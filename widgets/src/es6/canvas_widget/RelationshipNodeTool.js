@@ -1,8 +1,7 @@
 import { RelationshipNode } from "./Manager";
 import NodeTool from "./NodeTool";
 
-RelationshipNodeTool.prototype = new NodeTool();
-RelationshipNodeTool.prototype.constructor = RelationshipNodeTool;
+
 /**
  * RelationshipNodeTool
  * @class canvas_widget.RelationshipNodeTool
@@ -10,16 +9,17 @@ RelationshipNodeTool.prototype.constructor = RelationshipNodeTool;
  * @memberof canvas_widget
  * @constructor
  */
-function RelationshipNodeTool() {
-  NodeTool.call(
-    this,
-    RelationshipNode.TYPE,
-    null,
-    null,
-    null,
-    RelationshipNode.DEFAULT_WIDTH,
-    RelationshipNode.DEFAULT_HEIGHT
-  );
+class RelationshipNodeTool extends NodeTool {
+  constructor() {
+    super(
+      RelationshipNode.TYPE,
+      null,
+      null,
+      null,
+      RelationshipNode.DEFAULT_WIDTH,
+      RelationshipNode.DEFAULT_HEIGHT
+    );
+  }
 }
 
 export default RelationshipNodeTool;

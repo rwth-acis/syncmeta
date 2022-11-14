@@ -1,8 +1,7 @@
 import { UniDirAssociationEdge } from "./Manager";
 import EdgeTool from "./EdgeTool";
 
-UniDirAssociationEdgeTool.prototype = new EdgeTool();
-UniDirAssociationEdgeTool.prototype.constructor = UniDirAssociationEdgeTool;
+
 /**
  * BiDirAssociationEdgeTool
  * @class canvas_widget.UniDirAssociationEdgeTool
@@ -10,12 +9,10 @@ UniDirAssociationEdgeTool.prototype.constructor = UniDirAssociationEdgeTool;
  * @memberof canvas_widget
  * @constructor
  */
-function UniDirAssociationEdgeTool() {
-  EdgeTool.call(
-    this,
-    UniDirAssociationEdge.TYPE,
-    UniDirAssociationEdge.RELATIONS
-  );
+class UniDirAssociationEdgeTool extends EdgeTool {
+  constructor() {
+    super(UniDirAssociationEdge.TYPE, UniDirAssociationEdge.RELATIONS);
+  }
 }
 
 export default UniDirAssociationEdgeTool;
