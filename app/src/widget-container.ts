@@ -34,6 +34,7 @@ class WidgetContainer extends LitElement {
           padding: 5px;
           margin: 4px;
           flex: 1;
+
           resize: horizontal;
           -webkit-box-shadow: 0px 0px 30px 3px rgba(158, 158, 158, 0.89);
           box-shadow: 0px 0px 30px 3px rgba(158, 158, 158, 0.59);
@@ -44,18 +45,27 @@ class WidgetContainer extends LitElement {
           flex-flow: column;
         }
         .innercontainer:nth-of-type(2) {
-          flex: 2;
           display: flex;
           flex-flow: column;
+        }
+        .middle-container {
+          flex: 2;
+          display: flex;
+          justify-content: space-between;
+          flex-direction: column;
         }
       </style>
       <div class="maincontainer">
         <div class="innercontainer">
           <main-widget style="height:100%"></main-widget>
         </div>
-        <div class="innercontainer">
-          <attribute-widget></attribute-widget>
-          <debug-widget></debug-widget>
+        <div class="middle-container">
+          <div class="innercontainer">
+            <attribute-widget></attribute-widget>
+          </div>
+          <div class="innercontainer">
+            <debug-widget></debug-widget>
+          </div>
         </div>
         <div class="innercontainer">
           <palette-widget> </palette-widget>

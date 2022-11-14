@@ -181,10 +181,16 @@ export class AttributeWidget extends SyncMetaWidget(LitElement) {
         type="text/css"
         href="https://code.jquery.com/ui/1.13.1/themes/smoothness/jquery-ui.css"
       />
+      <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
+        crossorigin="anonymous"
+      />
 
       <div class="main-wrapper">
         <div id="loading" class="loading"></div>
-        <div id="wrapper"><h1>Wait For Canvas Widget!</h1></div>
+        <div id="wrapper"><h5>Wait For Canvas Widget!</h5></div>
         <div id="q"></div>
       </div>
     `;

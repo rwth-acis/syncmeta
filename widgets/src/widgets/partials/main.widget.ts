@@ -567,7 +567,7 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
             </div>
           </div>
 
-          <div class="col">
+          <div class="col d-flex justify-content-end align-items-start">
             <button
               id="showtype"
               class="btn btn-light"

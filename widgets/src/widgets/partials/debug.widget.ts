@@ -9,80 +9,97 @@ import "../../es6/debug_widget.js";
 export class DebugWidget extends SyncMetaWidget(LitElement) {
   render() {
     return html`
-      <style>
-        .seperating_box {
-          border: 1px solid;
-          border-radius: 7px;
-          margin: 18px 20px 7px 7px;
-          padding: 7px 20px 7px 7px;
-          position: relative;
-        }
-        .seperating_box > h5 {
-          font-weight: normal;
-          font-style: italic;
-          position: absolute;
-          top: -40px;
-          left: 4px;
-        }
-        .hint {
-          font-size: 10;
-        }
-      </style>
+      <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
+        crossorigin="anonymous"
+      />
+
       <div class="seperating_box">
-        <h5>Select a JSON file</h5>
+        <h6>Select a JSON file</h6>
         <input type="file" id="file-object" value="Load a file" />
       </div>
 
+      <hr />
       <div id="modelDiv" class="seperating_box">
-        <h5>
+        <h6>
           Import/Export/Delete a <strong>(Meta- or Guidance-)Model</strong>
-        </h5>
-        <button id="import-model" title="Import a model to the canvas">
+        </h6>
+        <button
+          id="import-model"
+          class="btn btn-secondary"
+          title="Import a model to the canvas"
+        >
           Import
         </button>
-        <button id="export-model" title="export the model as JSON">
+        <button
+          id="export-model"
+          class="btn btn-secondary"
+          title="export the model as JSON"
+        >
           Export
         </button>
-        <button id="delete-model" title="delete the model">Delete</button>
-      </div>
-
-      <div id="vlsDiv" class="seperating_box">
-        <h5>
-          Import/Export/Delete a <strong>Metamodel</strong> (Model Editor only)
-        </h5>
         <button
+          id="delete-model"
+          title="delete the model"
+          class="btn btn-danger"
+        >
+          Delete
+        </button>
+      </div>
+      <hr />
+      <div id="vlsDiv" class="seperating_box">
+        <h6>
+          Import/Export/Delete a <strong>Metamodel</strong> (Model Editor only)
+        </h6>
+        <button
+          class="btn btn-secondary"
           id="import-meta-model"
           title="Refresh the role space to apply the new VLS."
         >
           Import
         </button>
-        <button id="export-meta-model" title="Download the VLS as JSON">
+        <button
+          id="export-meta-model"
+          title="Download the VLS as JSON"
+          class="btn btn-secondary"
+        >
           Export
         </button>
         <button
           id="delete-meta-model"
           title="Refresh the role space and delete the current modeling language"
+          class="btn btn-danger"
         >
           Delete
         </button>
       </div>
-
+      <hr />
       <div id="guidanceDiv" class="seperating_box">
-        <h5>
+        <h6>
           Import/Export/Delete a <strong>Logical Guidancemodel</strong> (Model
           Editor only)
-        </h5>
-        <button id="import-guidance-model">Import</button>
-        <button id="export-guidance-model">Export</button>
-        <button id="delete-guidance-model">Delete</button>
+        </h6>
+        <button id="import-guidance-model" class="btn btn-secondary">
+          Import
+        </button>
+        <button id="export-guidance-model" class="btn btn-secondary">
+          Export
+        </button>
+        <button id="delete-guidance-model" class="btn btn-danger">
+          Delete
+        </button>
       </div>
-
+      <hr />
       <div id="activityDiv" class="seperating_box">
-        <h5>Export/Delete a <strong>Activity list</strong></h5>
-        <button id="export-activity-list">Export</button>
-        <button id="delete-activity-list">Delete</button>
+        <h6>Export/Delete a <strong>Activity list</strong></h6>
+        <button id="export-activity-list" class="btn btn-secondary">
+          Export
+        </button>
+        <button id="delete-activity-list" class="btn btn-danger">Delete</button>
       </div>
-
+      <hr />
       <p class="hint">
         After import or delete refresh the canvas widget to apply the new model.
         After deleting and importing a new VLS refresh the whole role space.
