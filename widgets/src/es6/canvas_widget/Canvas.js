@@ -969,8 +969,11 @@ export default class Canvas extends AbstractCanvas {
       //     _$node.css(p[i] + "transform", s);
       //Used by jquery.transformable to make dragging of the canvas
       //work correctly
-      _$node.setTransform("scalex", zoom);
-      _$node.setTransform("scaley", zoom);
+      _$node.animate({
+        transform: `scaleX(${zoom}) scaleY(${zoom})`,
+      });
+      // _$node.setTransform("scalex", zoom);
+      // _$node.setTransform("scaley", zoom);
 
       jsPlumb.setZoom(zoom);
       sendViewChangeOperation();
@@ -1663,13 +1666,15 @@ export default class Canvas extends AbstractCanvas {
     if (y) {
       const canvasMap = y.getMap("canvas");
       canvasMap.observe(function (event) {
-        var yUserId = event.object.map[event.name][0];
-
-        if (yUserId !== y.clientID || event.value.historyFlag) {
+        var yUserId = event.currentTarget.doc.clientID;
+        const latestKeyChange = Array.from(event.keysChanged)[0];
+        const data = event.target.get(latestKeyChange);
+        if (yUserId !== y.clientID || data.historyFlagSet) {
+          // this code here needs to be fixed event.value is no longer supported by yjs13
           const userMap = y.getMap("users");
           var jabberId = userMap.get(yUserId);
           var operation;
-          var data = event.value;
+
           switch (event.name) {
             case NodeAddOperation.TYPE: {
               operation = new NodeAddOperation(
