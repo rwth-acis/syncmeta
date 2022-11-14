@@ -1,4 +1,4 @@
-import { LitElement, html, css } from "lit";
+import { LitElement, html } from "lit";
 import { customElement } from "lit/decorators.js";
 
 // // Syncmeta Widgets
@@ -66,5 +66,4 @@ class WidgetContainer extends LitElement {
       </div>
     `;
   }
-  static styles = css``;
 }
