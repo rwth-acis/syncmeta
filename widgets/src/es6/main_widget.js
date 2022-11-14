@@ -545,8 +545,8 @@ export default async function () {
       $("#btnDelViewPoint").click(function () {
         const viewsMap = y.getMap("views");
         var viewId = ViewManager.getViewIdOfSelected();
-        if (viewId !== $("#lblCurrentViewId").text()) {
-          viewsMap.set(viewId, null);
+        if (viewId && viewId !== $("#lblCurrentViewId").text()) {
+          viewsMap.delete(viewId);
           _iwcw.sendLocalNonOTOperation(
             CONFIG.WIDGET.NAME.ATTRIBUTE,
             new DeleteViewOperation(viewId).toNonOTOperation()
