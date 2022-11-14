@@ -1,7 +1,7 @@
 import { LitElement, css } from "lit";
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
-import init from "./js/shared";
+import createReloadHandler from "./js/shared";
 
 type Constructor<T = {}> = new (...args: any[]) => T;
 
@@ -14,6 +14,8 @@ export const SyncMetaWidget = <T extends Constructor<LitElement>>(
       return this;
     }
     // @property({ type: String }) widgetName = "SyncMetaWidget";
+
+    // this is actually not working if we render into the light dom, see https://lit.dev/docs/components/shadow-dom/#implementing-createrenderroot
     static styles = css`
       .loading {
         position: absolute;
@@ -46,7 +48,7 @@ export const SyncMetaWidget = <T extends Constructor<LitElement>>(
 
     connectedCallback() {
       super.connectedCallback();
-      init();
+      createReloadHandler();
       window.Y = Y;
       window.WebsocketProvider = WebsocketProvider;
     }
