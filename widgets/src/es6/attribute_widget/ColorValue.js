@@ -385,7 +385,7 @@ function ColorValue(id, name, subjectEntity, rootSubjectEntity) {
 
   this.registerYType = function (ytext) {
     _ytext = ytext;
-    _ytext.bind(_$node[0]);
+    // _ytext.bind(_$node[0]);
     initData(ytext);
   };
   //init();
