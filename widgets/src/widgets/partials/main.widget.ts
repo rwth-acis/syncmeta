@@ -476,6 +476,20 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
           <div class="col">
             <div class="flex">
               <button
+                id="viewsHide"
+                class="btn btn-light"
+                title="Close the View Panel"
+              >
+                <i class="bi bi-caret-up"></i>
+              </button>
+              <button
+                id="viewsShow"
+                class="btn btn-light"
+                title="Show the View Panel"
+              >
+                <i class="bi bi-caret-down"></i>
+              </button>
+              <button
                 id="save"
                 class="btn btn-light"
                 title="Save the current state of the model"
@@ -483,11 +497,7 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
                 <i class="bi bi-save"></i>
               </button>
               <!-- Uncommented the below line for Export as PNG! -->
-              <button
-                id="save_image"
-                @click="${this.onSaveImage}"
-                class="btn btn-light"
-              >
+              <button id="save_image" class="btn btn-light">
                 <i class="bi bi-camera"></i>
               </button>
               <!--<button id="generate" style="display: none"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/generate.png" /></button>-->
@@ -496,13 +506,21 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
                 >View:<span id="lblCurrentViewId"></span
               ></strong>
             </div>
-            <div id="ViewCtrlContainer" class="flex">
+            <div id="ViewCtrlContainer" class="flex" style="display:none">
               <button
                 id="btnCreateViewpoint"
                 class="btn btn-light"
                 title="Create a viewpoint"
               >
                 <i class="bi bi-plus-circle"></i>
+              </button>
+              <button
+                class="btn btn-light"
+                id="btnCancelCreateViewpoint"
+                title="Cancel"
+                style="display: none;"
+              >
+                <i class="bi bi-x-circle"></i>
               </button>
               <input
                 id="txtNameViewpoint"
@@ -520,16 +538,9 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
                 title="Create an empty viewpoint"
                 style="display: none;"
               >
-                <img width="20px" height="20px" src="/img/checked21.png" />
+                <i class="bi bi-check"></i>
               </button>
-              <button
-                class="btn btn-light"
-                id="btnCancelCreateViewpoint"
-                title="Cancel"
-                style="display: none;"
-              >
-                <img width="20px" height="20px" src="/img/times1.png" />
-              </button>
+
               <select id="ddmViewSelection"></select>
               <button
                 id="btnShowView"
@@ -557,20 +568,6 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
           </div>
 
           <div class="col">
-            <button
-              id="viewsHide"
-              class="btn btn-light"
-              title="Close the View Panel"
-            >
-              <i class="bi bi-caret-up"></i>
-            </button>
-            <button
-              id="viewsShow"
-              class="btn btn-light"
-              title="Show the View Panel"
-            >
-              <i class="bi bi-caret-down"></i>
-            </button>
             <button
               id="showtype"
               class="btn btn-light"
