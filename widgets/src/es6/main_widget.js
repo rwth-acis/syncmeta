@@ -445,7 +445,7 @@ export default async function () {
         $(this).hide();
         $("#viewsShow").show();
         $("#ViewCtrlContainer").hide();
-        $("#canvas-frame").css("margin-top", "32px");
+
         var $lblCurrentViewId = $("#lblCurrentViewId");
         var viewpointId = $lblCurrentViewId.text();
         if (viewpointId.length > 0) {
@@ -576,7 +576,7 @@ export default async function () {
         $(this).hide();
         $("#viewsShow").show();
         $("#ViewCtrlContainer").hide();
-        $("#canvas-frame").css("margin-top", "32px");
+
         var $lblCurrentViewId = $("#lblCurrentViewId");
         const dataMap = y.getMap("data");
         if ($lblCurrentViewId.text().length > 0) {
@@ -740,7 +740,6 @@ export default async function () {
       $(this).hide();
       $("#viewsHide").show();
       $("#ViewCtrlContainer").show();
-      $("#canvas-frame").css("margin-top", "64px");
     });
 
     $("#zoomin").click(function () {
@@ -763,7 +762,7 @@ export default async function () {
           null,
           userMap.get(window.y.clientID),
           "..applied Layout"
-        )
+        ).toJSON()
       );
     });
 
