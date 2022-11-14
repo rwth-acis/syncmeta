@@ -215,7 +215,7 @@ class MultiLineValue extends AbstractValue {
     };
 
     this.registerYType = function () {
-      _ytext.bind(_$node[0]);
+      // _ytext.bind(_$node[0]);
 
       if (that.getValue() !== _ytext.toString()) {
         if (_ytext.toString().length > 0)

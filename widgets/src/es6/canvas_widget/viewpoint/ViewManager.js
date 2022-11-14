@@ -55,7 +55,7 @@ function ViewManager() {
      */
     existsView: function (viewId) {
       const viewsMap = y.getMap("views");
-      return viewsMap.keys().indexOf(viewId) != -1;
+      return viewsMap.has(viewId);
     },
     /**
      * returns the view identifier of  currently selected html selection element
@@ -77,7 +77,7 @@ function ViewManager() {
      */
     addView: function (viewId) {
       const viewsMap = y.getMap("views");
-      if (viewsMap.keys().indexOf(viewId) == -1) {
+      if (viewsMap.has(viewId)) {
         viewsMap.set(viewId, {
           viewId: viewId,
           attributes: {},
