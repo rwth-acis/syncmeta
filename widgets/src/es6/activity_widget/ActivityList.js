@@ -23,81 +23,81 @@ import ActivityOperation from "../operations/non_ot/ActivityOperation";
  * @param {jQuery} $activityListNode jquery object of DOM node representing the activity list
  */
 class ActivityList {
-  that
+  that;
 
-    /**
-     * jQuery object of DOM node representing the user list
-     * @type {jQuery}
-     * @private
-     */
-    _$userListNode
+  /**
+   * jQuery object of DOM node representing the user list
+   * @type {jQuery}
+   * @private
+   */
+  _$userListNode;
 
-    /**
-     * jQuery object of DOM node representing the activity list
-     * @type {jQuery}
-     * @private
-     */
-     _$activityListNode ;
+  /**
+   * jQuery object of DOM node representing the activity list
+   * @type {jQuery}
+   * @private
+   */
+  _$activityListNode;
 
-    /**
-     * List of user
-     * @type {object}
-     */
-     userList = {};
+  /**
+   * List of user
+   * @type {object}
+   */
+  userList = {};
 
-    /**
-     * List of activities
-     * @type {Array}
-     */
-     activityList = [];
+  /**
+   * List of activities
+   * @type {Array}
+   */
+  activityList = [];
 
-    /**
-     * Add an user to the user list
-     * @param {string} jabberId
-     */
-    addUser 
+  /**
+   * Add an user to the user list
+   * @param {string} jabberId
+   */
+  addUser;
 
-    /**
-     * Get user by jabber Id
-     * @param {string} jabberId
-     * @returns {activity_widget.User}
-     */
-    getUser
+  /**
+   * Get user by jabber Id
+   * @param {string} jabberId
+   * @returns {activity_widget.User}
+   */
+  getUser;
 
-    //noinspection JSUnusedGlobalSymbols
-    /**
-     * Remove User by jabber Id
-     * @param {string} jabberId
-     */
-    removeUser 
+  //noinspection JSUnusedGlobalSymbols
+  /**
+   * Remove User by jabber Id
+   * @param {string} jabberId
+   */
+  removeUser;
 
-    /**
-     * Add an activity to the activity list
-     * @param {activity_widget/Activity} activity
-     */
-    addActivity 
+  /**
+   * Add an activity to the activity list
+   * @param {activity_widget/Activity} activity
+   */
+  addActivity;
 
-    addActivityToLog 
-    /**
-     * Get first activity from the list
-     * @returns {Activity}
-     */
-    getFirst
+  addActivityToLog;
+  /**
+   * Get first activity from the list
+   * @returns {Activity}
+   */
+  getFirst;
 
-    /**
-     * Activity List to JSON
-     */
-    toJSON 
-    /**
-     * Callback for received Operations
-     * @param {operations.non_ot.ActivityOperation|operations.non_ot.EntitySelectOperation} operation
-     */
-    operationCallback 
+  /**
+   * Activity List to JSON
+   */
+  toJSON;
+  /**
+   * Callback for received Operations
+   * @param {operations.non_ot.ActivityOperation|operations.non_ot.EntitySelectOperation} operation
+   */
+  operationCallback;
 
-    findUntrackableActivities 
+  findUntrackableActivities;
 
-    findTrackableActivities 
-    init 
+  findTrackableActivities;
+  init;
   constructor($userListNode, $activityListNode) {
     var that = this;
 
@@ -183,8 +183,7 @@ class ActivityList {
       //add activity to yjs log, also start the log if not already
       const activityMap = y.getMap("activity");
       var jsonActivityList = activityMap.get("log");
-      if (!jsonActivityList)
-        activityMap.set("log", that.toJSON());
+      if (!jsonActivityList) activityMap.set("log", that.toJSON());
       else {
         /*if (activity instanceof ValueChangeActivity && jsonActivityList.length > 0) {
                       var first = jsonActivityList[0];
@@ -193,8 +192,7 @@ class ActivityList {
                   }
                   else{*/
         var json = activity.toJSON();
-        if (data)
-          json.data = data;
+        if (data) json.data = data;
         jsonActivityList.unshift(json);
         //}
         activityMap.set("log", jsonActivityList);
@@ -322,10 +320,12 @@ class ActivityList {
               data.rootSubjectEntityId
             );
             firstActivity = that.getFirst();
-            if (firstActivity &&
+            if (
+              firstActivity &&
               firstActivity instanceof ValueChangeActivity &&
               firstActivity.getEntityId() === activity.getEntityId() &&
-              firstActivity.getSender() === activity.getSender()) {
+              firstActivity.getSender() === activity.getSender()
+            ) {
               firstActivity.setText(activity.getText());
             } else {
               that.addActivity(activity);
@@ -426,10 +426,12 @@ class ActivityList {
     this.findUntrackableActivities = function (activity) {
       for (var i = 0; i < activityList.length; i++) {
         var a = activityList[i];
-        if (a.isTrackable &&
+        if (
+          a.isTrackable &&
           (activity.getEntityId() === a.getEntityId() ||
             a instanceof NodeDeleteActivity ||
-            a instanceof EdgeAddActivity)) {
+            a instanceof EdgeAddActivity)
+        ) {
           a.untrackable();
         }
       }
@@ -438,9 +440,11 @@ class ActivityList {
     this.findTrackableActivities = function (activity) {
       for (var i = 0; i < activityList.length; i++) {
         var a = activityList[i];
-        if (!a.isTrackable() &&
+        if (
+          !a.isTrackable() &&
           activity.getEntityId() === a.getEntityId() &&
-          !(a instanceof NodeDeleteActivity || a instanceof EdgeDeleteActivity)) {
+          !(a instanceof NodeDeleteActivity || a instanceof EdgeDeleteActivity)
+        ) {
           a.trackable();
         }
       }
@@ -454,11 +458,12 @@ class ActivityList {
       var checkEntity = function (entityId) {
         const nodesMap = y.getMap("nodes");
         const edgesMap = y.getMap("edges");
-        if (nodesMap.keys().indexOf(entityId) != -1 ||
-          edgesMap.keys().indexOf(entityId) != -1)
+        if (
+          nodesMap.keys().indexOf(entityId) != -1 ||
+          edgesMap.keys().indexOf(entityId) != -1
+        )
           return true;
-        else
-          return false;
+        else return false;
       };
       if (list) {
         _.forEachRight(list, function (a) {
@@ -532,8 +537,7 @@ class ActivityList {
               );
               that.addActivity(activity);
               const nodesMap = y.getMap("nodes");
-              if (nodesMap.keys().indexOf())
-                break;
+              if (nodesMap.keys().indexOf()) break;
             }
             case ValueChangeActivity.TYPE: {
               activity = new ValueChangeActivity(
@@ -560,23 +564,26 @@ class ActivityList {
               break;
             }
             default: {
-              activity = new Activity(a.entityId, a.sender, a.text, a.timestamp);
+              activity = new Activity(
+                a.entityId,
+                a.sender,
+                a.text,
+                a.timestamp
+              );
               that.addActivity(activity);
               break;
             }
           }
-          if (checkEntity(activity.getEntityId()))
-            activity.trackable();
-          else
-            activity.untrackable();
+          if (checkEntity(activity.getEntityId())) activity.trackable();
+          else activity.untrackable();
         });
       }
     };
     if (y) {
       const activityMap = y.getMap("activity");
       activityMap.observe(function (event) {
-        if (event.name === "log" || event.value.sender == null)
-          return;
+        const activity = event.currentTarget.get([...event.keysChanged][0]);
+        event.value = activity;
         operationCallback(
           new ActivityOperation(
             event.value.type,
