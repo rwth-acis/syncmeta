@@ -34,7 +34,7 @@ export default function (spaceTitle) {
         );
 
         websocketProvider.on("status", (event) => {
-          console.log(event.status); // logs "connected" or "disconnected"
+          // console.log(event.status); // logs "connected" or "disconnected"
 
           if (event.status == "connected") {
             deferred.resolve(doc, spaceTitle);

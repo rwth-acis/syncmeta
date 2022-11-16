@@ -24,10 +24,11 @@ export default function () {
       $("#wrapper")
         .find("h1")
         .text("Got Response from Canvas! Connecting to Yjs....");
-      var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE);
-      iwc.setSpace(user);
+      
 
       yjsSync().done(function (y, spaceTitle) {
+        var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE, y);
+        iwc.setSpace(user);
         window.y = y;
         window.syncmetaLog = {
           widget: "Attribute",

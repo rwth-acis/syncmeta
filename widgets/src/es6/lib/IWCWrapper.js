@@ -205,7 +205,6 @@ class IWCWrapper {
           if (intent.hasOwnProperty("message")) intent = intent.message;
         }
       } catch (e) {
-        console.warn("Exception caught: ", e);
         return;
       }
     }
@@ -312,9 +311,9 @@ class IWCWrapper {
     }
   }
 
-  constructor(componentName) {
+  constructor(componentName, y = null) {
     this.componentName = componentName;
-    this._iwc = new IWC.Client(componentName, "*", null);
+    this._iwc = new IWC.Client(componentName, "*", y);
     window._iwc_instance_ = this._iwc;
 
     //var sendBufferTimer;
@@ -455,7 +454,7 @@ export default class IWCW {
    */
 
   static hasInstance() {
-    return !!IWCW.instance
+    return !!IWCW.instance;
   }
 
   /**
@@ -463,9 +462,9 @@ export default class IWCW {
    * @param {string} componentName Name of component (widget) using the wrapper
    * @returns {IWCWrapper}
    */
-  static getInstance(componentName) {
+  static getInstance(componentName, y) {
     if (!IWCW.instance) {
-      IWCW.instance = new IWCWrapper(componentName);
+      IWCW.instance = new IWCWrapper(componentName, y);
       IWCW.instance.connect();
     }
     return IWCW.instance;

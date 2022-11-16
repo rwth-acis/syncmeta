@@ -35,11 +35,11 @@ import { CONFIG } from "./config";
         " with y-user-id: " +
         y.clientID
     );
-    initGuidanceWidget();
+    initGuidanceWidget(y);
   });
 
-  function initGuidanceWidget() {
-    var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.GUIDANCE);
+  function initGuidanceWidget(y) {
+    var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.GUIDANCE, y);
     var strategies = [
       NoStrategy,
       AvoidConflictsStrategy,

@@ -100,6 +100,8 @@ export class Client {
       }
     }
 
+    if (!this._componentName) this._componentName = categories;
+
     this._categories = categories;
     // Needed for HTML5 messaging
     this._origin = origin;

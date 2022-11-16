@@ -64,8 +64,6 @@ export default async function () {
   if (!user) {
     console.error("user is undefined");
   }
-  const _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
-  _iwcw.setSpace(user);
 
   yjsSync()
     .done(function (y, spaceTitle) {
@@ -75,6 +73,8 @@ export default async function () {
           " with y-user-id: " +
           y.clientID
       );
+      const _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN, y);
+      _iwcw.setSpace(user);
       const userMap = y.getMap("users");
       try {
         const user = _iwcw.getUser();
@@ -115,15 +115,15 @@ export default async function () {
       EntityManager.init(metamodel);
       EntityManager.setGuidance(guidancemodel);
       window.y = y;
-      InitMainWidget(metamodel, model);
+      InitMainWidget(metamodel, model, _iwcw);
     })
     .fail(function () {
       console.info("yjs log: Yjs intialization failed!");
       window.y = undefined;
-      InitMainWidget(undefined, undefined);
+      InitMainWidget(undefined, undefined, _iwcw);
     });
 
-  function InitMainWidget(metamodel, model) {
+  function InitMainWidget(metamodel, model, _iwcw) {
     var userList = [];
     const canvasElement = $("#canvas");
     var canvas = new Canvas(canvasElement);
@@ -145,21 +145,18 @@ export default async function () {
     };
     const joinMap = y.getMap("join");
     joinMap.observe(function (event) {
-      if (userList.indexOf(event.name) === -1) {
-        userList.push(event.name);
+      const userId = [...event.keysChanged][0];
+
+      if (userList.indexOf(userId) === -1) {
+        userList.push(userId);
       }
 
-      if (
-        !event.value &&
-        event.name !== _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]
-      ) {
+      if (userId !== _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]) {
         //send to activity widget that a remote user has joined.
         const joinMap = y.getMap("join");
-        joinMap.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], true);
-      } else if (
-        event.name === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] &&
-        !event.value
-      ) {
+        if (!joinMap.has(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]))
+          joinMap.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], true);
+      } else {
         canvas.resetTool();
         $("#loading").hide();
 
@@ -924,7 +921,9 @@ export default async function () {
       }
     }
     //local user joins
-    joinMap.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], false);
+    const userId = _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID];
+    if (!joinMap.has(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]))
+      joinMap.set(userId.toString(), false);
     ViewManager.GetViewpointList();
   }
 }

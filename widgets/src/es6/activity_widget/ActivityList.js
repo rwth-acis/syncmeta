@@ -132,6 +132,10 @@ class ActivityList {
      * @param {string} jabberId
      */
     this.addUser = function (jabberId) {
+      if (!jabberId) {
+        console.error("jabberid not valid", jabberId, "aborting");
+        return;
+      }
       var user;
       if (!userList.hasOwnProperty(jabberId)) {
         user = new User(jabberId, new Date());

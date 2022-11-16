@@ -24,7 +24,7 @@ import { CONFIG } from "./config";
         y.clientID
     );
     var model = y.getMap("data").get("model");
-    var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.HEATMAP);
+    var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.HEATMAP, y);
     WaitForCanvas(CONFIG.WIDGET.NAME.HEATMAP, 7).done(function (user) {
       iwc.setSpace(user);
     });
