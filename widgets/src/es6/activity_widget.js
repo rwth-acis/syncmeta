@@ -27,8 +27,10 @@ yjsSync().done(function (y, spaceTitle) {
   joinMap.observe(function (event) {
     // the username "invisible_user" is a special one, which can be used to join without
     // appearing in the activity list
-    if (event.name != "invisible_user") {
-      activtyList.addUser(event.name);
+    const key = [...event.keysChanged][0];
+    const value = event.currentTarget.get(key);
+    if (key != "invisible_user") {
+      activtyList.addUser(value);
     }
   });
 
