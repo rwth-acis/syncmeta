@@ -8,29 +8,17 @@ import IWCW from "./lib/IWCWrapper";
 import { CONFIG } from "./config";
 // import AttributeWidgetTest from "./../test/AttributeWidgetTest";
 import { EntityManagerInstance as EntityManager } from "./canvas_widget/Manager";
-export default Promise.all([
-  import("./lib/yjs-sync"),
-  import("./WaitForCanvas"),
-  import("./attribute_widget/AttributeWrapper"),
 
-  import("./attribute_widget/view/ViewGenerator"),
-  import("./operations/non_ot/InitModelTypesOperation"),
-  import("./operations/non_ot/ViewInitOperation"),
-  import("./operations/non_ot/SetModelAttributeNodeOperation"),
-  import("./Guidancemodel"), //promise!Guidancemodel
-]).then(function ([
-  yjsSyncLoader,
-  WaitForCanvasLoader,
-  AttributeWrapper,
+import yjsSync from "./lib/yjs-sync";
+import WaitForCanvas from "./WaitForCanvas";
+import AttributeWrapper from "./attribute_widget/AttributeWrapper";
+import ViewGenerator from "./attribute_widget/view/ViewGenerator";
+import InitModelTypesOperation from "./operations/non_ot/InitModelTypesOperation";
+import SetModelAttributeNodeOperation from "./operations/non_ot/SetModelAttributeNodeOperation";
+import { getGuidanceModeling } from "./Guidancemodel"; //promise!Guidancemod
 
-  ViewGenerator,
-  InitModelTypesOperation,
-  ViewInitOperation,
-  SetModelAttributeNodeOperation,
-  guidancemodel,
-]) {
-  const WaitForCanvas = WaitForCanvasLoader.default;
-  const yjsSync = yjsSyncLoader.default;
+export default function () {
+  const guidancemodel = getGuidanceModeling();
   WaitForCanvas(CONFIG.WIDGET.NAME.ATTRIBUTE, 10, 1500)
     .done(function (user) {
       $("#wrapper")
@@ -187,64 +175,4 @@ export default Promise.all([
         .text("Add Canvas Widget to Space and refresh the widget.");
       $("#loading").hide();
     });
-});
-
-// function InitAttributeWidget(model) {
-//   if (guidancemodel.isGuidanceEditor()) {
-//     const dataMap = y.getMap("data");
-//     EntityManager.init(dataMap.get("guidancemetamodel"));
-//     model = dataMap.get("guidancemodel");
-//   } else {
-//     EntityManager.init(dataMap.get("metamodel"));
-//   }
-//   var wrapper = new AttributeWrapper($("#wrapper"));
-
-//   if (model) JSONtoGraph(model);
-//   console.info(
-//     "ATTRIBUTE: Initialization of model completed",
-//     window.syncmetaLog
-//   );
-// }
-
-// function JSONtoGraph(json) {
-//   var modelAttributesNode;
-//   var nodeId, edgeId;
-//   if (json.attributes && !_.isEmpty(json.attributes)) {
-//     modelAttributesNode = EntityManager.createModelAttributesNodeFromJSON(
-//       json.attributes
-//     );
-//     wrapper.setModelAttributesNode(modelAttributesNode);
-//     modelAttributesNode.registerYType();
-//     modelAttributesNode.addToWrapper(wrapper);
-//     wrapper.select(modelAttributesNode);
-//   }
-//   for (nodeId in json.nodes) {
-//     if (json.nodes.hasOwnProperty(nodeId)) {
-//       var node = EntityManager.createNodeFromJSON(
-//         json.nodes[nodeId].type,
-//         nodeId,
-//         json.nodes[nodeId].left,
-//         json.nodes[nodeId].top,
-//         json.nodes[nodeId].width,
-//         json.nodes[nodeId].height,
-//         json.nodes[nodeId].zIndex,
-//         json.nodes[nodeId]
-//       );
-//       node.registerYType();
-//       node.addToWrapper(wrapper);
-//     }
-//   }
-//   for (edgeId in json.edges) {
-//     if (json.edges.hasOwnProperty(edgeId)) {
-//       var edge = EntityManager.createEdgeFromJSON(
-//         json.edges[edgeId].type,
-//         edgeId,
-//         json.edges[edgeId].source,
-//         json.edges[edgeId].target,
-//         json.edges[edgeId]
-//       );
-//       edge.registerYType();
-//       edge.addToWrapper(wrapper);
-//     }
-//   }
-// }
+}
