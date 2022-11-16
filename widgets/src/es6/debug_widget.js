@@ -4,8 +4,9 @@ import _ from "lodash-es";
 import yjsSync from "./lib/yjs-sync";
 import GenerateViewpointModel from "./canvas_widget/GenerateViewpointModel";
 import { EntityManagerInstance as EntityManager } from "./canvas_widget/Manager";
-import guidance from "./Guidancemodel"; //promise!Guidancemodel
+import { getGuidanceModeling } from "./Guidancemodel";
 $(function () {
+  const guidance = getGuidanceModeling();
   yjsSync().done(function (y, spaceTitle) {
     const dataMap = y.getMap("data");
     console.info(

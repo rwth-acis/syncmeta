@@ -8,7 +8,7 @@ import IWCW from "./lib/IWCWrapper";
 import { CONFIG } from "./config";
 // import AttributeWidgetTest from "./../test/AttributeWidgetTest";
 import { EntityManagerInstance as EntityManager } from "./canvas_widget/Manager";
-Promise.all([
+export default Promise.all([
   import("./lib/yjs-sync"),
   import("./WaitForCanvas"),
   import("./attribute_widget/AttributeWrapper"),

@@ -101,7 +101,9 @@ class MultiLineValue extends AbstractValue {
             rootSubjectEntityType: that.getRootSubjectEntity().getType(),
             rootSubjectEntityId: that.getRootSubjectEntity().getEntityId(),
           }
-        ).toNonOTOperation()
+        )
+          .toNonOTOperation()
+          .toJSON()
       );
 
       /*if(that.getRootSubjectEntity().getYMap()){

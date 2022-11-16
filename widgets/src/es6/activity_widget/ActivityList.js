@@ -346,9 +346,10 @@ class ActivityList {
             that.addUser(operation.getSender());
             break;
           case "UserLeftActivity": {
+            const sender = operation.getSender() || "Anonymous";
             activity = new Activity(
               null,
-              operation.getSender(),
+              sender,
               ".. left the space",
               Date.now()
             );

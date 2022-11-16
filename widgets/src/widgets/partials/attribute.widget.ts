@@ -2,9 +2,8 @@ import { LitElement, html } from "lit";
 import { customElement } from "lit/decorators.js";
 import init from "../../js/shared";
 import { SyncMetaWidget } from "../../widget";
-
-import "../../es6/attribute_widget.js";
-// widget body used by all syncmeta widgets
+//@ts-ignore
+import initAttributeWidget from "../../es6/attribute_widget.js";
 @customElement("attribute-widget")
 export class AttributeWidget extends SyncMetaWidget(LitElement) {
   render() {
@@ -194,6 +193,11 @@ export class AttributeWidget extends SyncMetaWidget(LitElement) {
         <div id="q"></div>
       </div>
     `;
+  }
+
+  firstUpdated(e: any) {
+    super.firstUpdated(e);
+    initAttributeWidget();
   }
 
   connectedCallback() {

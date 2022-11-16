@@ -239,4 +239,4 @@ function Guidancemodel() {
   return deferred.promise();
 }
 
-export default Guidancemodel();
+
