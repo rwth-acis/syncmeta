@@ -139,8 +139,9 @@ function Palette($palette, $info) {
    * Add separator to palette
    */
   this.addSeparator = function () {
-    $palette.append($("<hr />"));
+    $palette.append($(`<hr style="margin-top: 8px; margin-bottom: 8px;" />`));
   };
+
 
   //noinspection JSUnusedGlobalSymbols
   /**
