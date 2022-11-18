@@ -21,6 +21,10 @@ export const CONFIG = {
       HEATMAP: "Heatmap",
       METADATA: "METADATA",
       OPENAPI: "Metadata Widget",
+      DEBUG: "Debug",
+      IMSLD_EXPORT: "IMSLD Export",
+      JSON_EXPORT: "JSON Export",
+      VIEWCONTROL: "View Control",
     },
   },
   ENTITY: {
@@ -130,3 +134,10 @@ export const CONFIG = {
     },
   },
 };
+
+export function getWidgetTagName(name: string) {
+  //@ts-ignore
+  let widgetName = name;
+  widgetName = widgetName.replace(/\s+/g, "-");
+  return `${widgetName}-widget`.toLowerCase();
+}

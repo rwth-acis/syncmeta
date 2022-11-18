@@ -1,8 +1,5 @@
 import Activity from "./Activity";
-NodeDeleteActivity.TYPE = "NodeDeleteActivity";
 
-NodeDeleteActivity.prototype = new Activity();
-NodeDeleteActivity.prototype.constructor = NodeDeleteActivity;
 /**
  * Activity representing the deletion of a node
  * @class activity_widget.NodeDeleteActivity
@@ -13,14 +10,17 @@ NodeDeleteActivity.prototype.constructor = NodeDeleteActivity;
  * @param {string} text Text of this activity which is displayed in the activity widget
  * @constructor
  */
-function NodeDeleteActivity(entityId, sender, text, timestamp) {
-  Activity.call(this, entityId, sender, text, timestamp);
+class NodeDeleteActivity extends Activity {
+  static TYPE = "NodeDeleteActivity";
+  constructor(entityId, sender, text, timestamp) {
+    super(entityId, sender, text, timestamp);
 
-  this.toJSON = function () {
-    var json = Activity.prototype.toJSON.call(this);
-    json.type = NodeDeleteActivity.TYPE;
-    return json;
-  };
+    this.toJSON = function () {
+      var json = Activity.prototype.toJSON.call(this);
+      json.type = NodeDeleteActivity.TYPE;
+      return json;
+    };
+  }
 }
 
 export default NodeDeleteActivity;

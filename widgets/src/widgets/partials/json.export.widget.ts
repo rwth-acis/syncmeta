@@ -3,8 +3,9 @@ import { customElement } from "lit/decorators.js";
 import init from "../../js/shared";
 import { SyncMetaWidget } from "../../widget";
 import "../../es6/json_export_widget.js";
+import { CONFIG, getWidgetTagName } from "../../es6/config";
 // widget body used by all syncmeta widgets
-@customElement("json-export-widget")
+@customElement(getWidgetTagName(CONFIG.WIDGET.NAME.JSON_EXPORT))
 export class JSONExportWidget extends SyncMetaWidget(LitElement) {
   render() {
     return html`

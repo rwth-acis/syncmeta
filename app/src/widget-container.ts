@@ -57,7 +57,7 @@ class WidgetContainer extends LitElement {
       </style>
       <div class="maincontainer">
         <div class="innercontainer">
-          <main-widget style="height:100%"></main-widget>
+          <canvas-widget style="height:100%"></canvas-widget>
         </div>
         <div class="middle-container">
           <div class="innercontainer">
@@ -71,7 +71,7 @@ class WidgetContainer extends LitElement {
           <palette-widget> </palette-widget>
         </div>
         <div class="innercontainer">
-          <activity-widget></activity-widget>
+          <user-activity-widget></user-activity-widget>
         </div>
       </div>
     `;

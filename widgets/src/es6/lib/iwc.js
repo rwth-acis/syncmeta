@@ -1,3 +1,4 @@
+import { getWidgetTagName } from "../config";
 /**
  * @class
  *
@@ -73,35 +74,11 @@ export class Client {
   // Needed for HTML5 messaging
   _origin;
 
-  constructor(categories, origin, y) {
+  constructor(componentName, categories, origin, y) {
     //console.log(y);
     this._y = y;
 
-    if (
-      typeof window.location !== "undefined" &&
-      typeof window.location.search === "string" &&
-      typeof window.unescape === "function"
-    ) {
-      var pairs = window.location.search.substring(1).split("&"),
-        pair,
-        query = {};
-      if (!(pairs.length == 1 && pairs[0] === "")) {
-        for (var p = 0; p < pairs.length; p++) {
-          pair = pairs[p].split("=");
-          if (pair.length == 2) {
-            const key = pair[0];
-            const value = window.unescape(pair[1]);
-            query[key] = value;
-          }
-        }
-      }
-      if (typeof query["url"] === "string") {
-        this._componentName = query["url"];
-      }
-    }
-
-    if (!this._componentName) this._componentName = categories;
-
+    this._componentName = componentName;
     this._categories = categories;
     // Needed for HTML5 messaging
     this._origin = origin;
@@ -116,12 +93,16 @@ export class Client {
   connect(callback) {
     this._callback = callback;
     var handler = this.receiveMessage.bind(this);
-    window.addEventListener("message", handler, false);
+    //Todo
+    const widgetTageName = getWidgetTagName(this._componentName);
+    document
+      .querySelector(widgetTageName)
+      .addEventListener("syncmeta-message", handler);
 
-    if (!(this._y === null || this._y === undefined)) {
+    if (this._y) {
       // If yjs is available also connect a global listener
-      if (this._y.share.intents !== undefined)
-        this._y.share.intents.observe(handler);
+      const intents = this._y.getMap("intents");
+      if (intents) intents.observe(handler);
     }
   }
 
@@ -131,11 +112,11 @@ export class Client {
    * only local messaging will be available.
    */
   disconnect() {
-    window.removeEventListener("message", this.receiveMessage, false);
+    //THISELEMENT.removeEventListener("syncmeta-message", this.receiveMessage, false);
     this._callback = null;
 
     if (!(this._y === null || this._y === undefined)) {
-      this._y.share.intents.unobserve(this.receiveMessage);
+      this._y.getMap("intents").unobserve(this.receiveMessage);
     }
   }
 
@@ -155,24 +136,25 @@ export class Client {
 
   publishLocal(intent, origin) {
     //Find iframe and post message
-    var caeFrames = parent.caeFrames;
-    if (caeFrames) {
-      caeFrames.forEach(function (currVal) {
-        if (currVal.contentWindow.frameElement.id === intent.receiver) {
-          currVal.contentWindow.postMessage(intent, origin);
-        }
-      });
-    } else {
-      var frames = Array.from(parent.document.getElementsByClassName("iframe"));
-      frames.forEach(function (currVal, currIndex, listObj) {
-        const span = this.offsetParent
-          .querySelector(".widget-title-bar")
-          .querySelector("span");
-        if (span.innerText === intent.receiver) {
-          this.contentWindow.postMessage(intent, origin);
-        }
-      });
+    const widgets = [];
+    for (const el of document.querySelectorAll("*")) {
+      if (el.tagName.match(/-widget$/i)) {
+        widgets.push(el);
+      }
     }
+
+    widgets.forEach(function (widget) {
+      const receiverTagName = getWidgetTagName(intent.receiver.toLowerCase());
+      if (widget.tagName.toLowerCase() === receiverTagName.toLowerCase()) {
+        const event = new CustomEvent("syncmeta-message", {
+          detail: {
+            intent,
+            origin,
+          },
+        });
+        widget.dispatchEvent(event);
+      }
+    });
   }
 
   publishGlobal(intent, y) {
@@ -187,10 +169,10 @@ export class Client {
    */
   receiveMessage(event) {
     // Local messaging events
-    if (event.type === "message") {
+    if (event.type === "syncmeta-message") {
       //Unpack message events
-      if (event instanceof MessageEvent) {
-        this._callback(event.data);
+      if (event instanceof CustomEvent) {
+        this._callback(event.detail.intent);
       }
     } else if (event.type === "add" || event.type == "update") {
       //Unpack yjs event and remove from map

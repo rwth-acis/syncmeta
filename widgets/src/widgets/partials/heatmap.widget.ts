@@ -6,8 +6,9 @@ import { CONFIG } from "../../js/config";
 import init from "../../js/shared";
 import { SyncMetaWidget } from "../../widget"; // needed to prevent ts errors when bundling with rollup
 import "../../es6/heatmap_widget.js";
+import { getWidgetTagName } from "../../es6/config";
 // widget body used by all syncmeta widgets
-@customElement("heatmap-widget")
+@customElement(getWidgetTagName(CONFIG.WIDGET.NAME.HEATMAP))
 export class HeatMapWidget extends SyncMetaWidget(LitElement) {
   render() {
     return html`

@@ -2,12 +2,13 @@ import { LitElement, html, CSSResultGroup, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
-import { CONFIG } from "../../js/config";
+import { CONFIG } from "../../es6/config";
 import init from "../../js/shared";
 import { SyncMetaWidget } from "../../widget";
 import "../../es6/viewcontrol_widget.js";
+import { getWidgetTagName } from "../../es6/config";
 // widget body used by all syncmeta widgets
-@customElement("viewcontrol-widget")
+@customElement(getWidgetTagName(CONFIG.WIDGET.NAME.VIEWCONTROL))
 export class ViewControlWidget extends SyncMetaWidget(LitElement) {
   render() {
     return html`

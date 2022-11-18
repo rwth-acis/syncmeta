@@ -1,10 +1,6 @@
 import _ from "lodash-es";
 import Activity from "./Activity";
 
-ValueChangeActivity.TYPE = "ValueChangeActivity";
-
-ValueChangeActivity.prototype = new Activity();
-ValueChangeActivity.prototype.constructor = ValueChangeActivity;
 /**
  * Activity representing the modification of an attribute value
  * @class activity_widget.ValueChangeActivity
@@ -19,93 +15,97 @@ ValueChangeActivity.prototype.constructor = ValueChangeActivity;
  * @param {string} rootSubjectEntityId Entity id of topmost entity in the chain of entities the attribute is assigned to
  * @constructor
  */
-function ValueChangeActivity(
-  entityId,
-  sender,
-  text,
-  timestamp,
-  value,
-  subjectEntityName,
-  rootSubjectEntityType,
-  rootSubjectEntityId
-) {
-  var that = this;
+class ValueChangeActivity extends Activity {
+  static TYPE = "ValueChangeActivity";
 
-  Activity.call(this, entityId, sender, text, timestamp);
+  constructor(
+    entityId,
+    sender,
+    text,
+    timestamp,
+    value,
+    subjectEntityName,
+    rootSubjectEntityType,
+    rootSubjectEntityId
+  ) {
+    super(entityId, sender, text, timestamp);
 
-  /**
-   * Value of the attribute
-   * @type {string}
-   * @private
-   */
-  var _value = value;
+    var that = this;
 
-  /**
-   * Name of the entity the changed Value object is assigned to
-   * @type {string}
-   * @private
-   */
-  var _subjectEntityName = subjectEntityName;
+    /**
+     * Value of the attribute
+     * @type {string}
+     * @private
+     */
+    var _value = value;
 
-  /**
-   * Type of topmost entity in the chain of entities the value is assigned to
-   * @type {string}
-   * @private
-   */
-  var _rootSubjectEntityType = rootSubjectEntityType;
+    /**
+     * Name of the entity the changed Value object is assigned to
+     * @type {string}
+     * @private
+     */
+    var _subjectEntityName = subjectEntityName;
 
-  /**
-   * Entity id of topmost entity in the chain of entities the attribute is assigned to
-   * @type {string}
-   * @private
-   */
-  var _rootSubjectEntityId = rootSubjectEntityId;
+    /**
+     * Type of topmost entity in the chain of entities the value is assigned to
+     * @type {string}
+     * @private
+     */
+    var _rootSubjectEntityType = rootSubjectEntityType;
 
-  /**
-   * Get value of attribute
-   * @returns {string}
-   */
-  this.getValue = function () {
-    return _value;
-  };
+    /**
+     * Entity id of topmost entity in the chain of entities the attribute is assigned to
+     * @type {string}
+     * @private
+     */
+    var _rootSubjectEntityId = rootSubjectEntityId;
 
-  //noinspection JSUnusedGlobalSymbols
-  /**
-   * Get name of the entity the changed Value object is assigned to
-   * @returns {string}
-   */
-  this.getSubjectEntityName = function () {
-    return _subjectEntityName;
-  };
+    /**
+     * Get value of attribute
+     * @returns {string}
+     */
+    this.getValue = function () {
+      return _value;
+    };
 
-  //noinspection JSUnusedGlobalSymbols
-  /**
-   * Get type of topmost entity in the chain of entities the value is assigned to
-   * @returns {string}
-   */
-  this.getRootSubjectEntityType = function () {
-    return _rootSubjectEntityType;
-  };
+    //noinspection JSUnusedGlobalSymbols
+    /**
+     * Get name of the entity the changed Value object is assigned to
+     * @returns {string}
+     */
+    this.getSubjectEntityName = function () {
+      return _subjectEntityName;
+    };
 
-  /**
-   * Get entity id of topmost entity in the chain of entities the value is assigned to
-   * @returns {string}
-   */
-  this.getRootSubjectEntityId = function () {
-    return _rootSubjectEntityId;
-  };
+    //noinspection JSUnusedGlobalSymbols
+    /**
+     * Get type of topmost entity in the chain of entities the value is assigned to
+     * @returns {string}
+     */
+    this.getRootSubjectEntityType = function () {
+      return _rootSubjectEntityType;
+    };
 
-  /**
-   * activity to json
-   */
-  this.toJSON = function () {
-    var json = Activity.prototype.toJSON.call(this);
-    json.value = _value;
-    json.type = ValueChangeActivity.TYPE;
-    json.subjectEntityName = _subjectEntityName;
-    json.rootSubjectEntityId = _rootSubjectEntityId;
-    json.rootSubjectEntityType = _rootSubjectEntityType;
-    return json;
-  };
+    /**
+     * Get entity id of topmost entity in the chain of entities the value is assigned to
+     * @returns {string}
+     */
+    this.getRootSubjectEntityId = function () {
+      return _rootSubjectEntityId;
+    };
+
+    /**
+     * activity to json
+     */
+    this.toJSON = function () {
+      var json = Activity.prototype.toJSON.call(this);
+      json.value = _value;
+      json.type = ValueChangeActivity.TYPE;
+      json.subjectEntityName = _subjectEntityName;
+      json.rootSubjectEntityId = _rootSubjectEntityId;
+      json.rootSubjectEntityType = _rootSubjectEntityType;
+      return json;
+    };
+  }
 }
 export default ValueChangeActivity;

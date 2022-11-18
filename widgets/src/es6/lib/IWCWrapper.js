@@ -192,7 +192,7 @@ class IWCWrapper {
    * Callback for received local messages
    * @param {object} intent Message content in Android Intent-like format required by the iwc client
    */
-  onIntentReceivedCallback(intent) {
+  onIntentReceivedCallback(_self, intent) {
     //some CAE widgets still use the old iwc.js library
     //then it happens that intent are not parsed and processes correctly by the new iwc and then
     //the complete message as string is returned
@@ -218,7 +218,7 @@ class IWCWrapper {
 
     var payload = intent.extras.payload,
       senderTime = intent.extras.time,
-      senderTimes = this._times[intent.extras.sender];
+      senderTimes = _self._times[intent.sender];
 
     var i, numOfSenderTimes, numOfMessages;
 
@@ -248,13 +248,13 @@ class IWCWrapper {
             OperationFactory.createOperationFromOTOperation(operation);
           //adjustHistory(remoteOp);
           for (
-            i = 0, numOfCallbacks = this._onDataReceivedCallbacks.length;
+            i = 0, numOfCallbacks = _self._onDataReceivedCallbacks.length;
             i < numOfCallbacks;
             i++
           ) {
-            if (typeof this._onDataReceivedCallbacks[i] === "function") {
-              var caller = this._onDataReceivedCallers[i] || this;
-              this._onDataReceivedCallbacks[i].call(caller, resOperation);
+            if (typeof _self._onDataReceivedCallbacks[i] === "function") {
+              var caller = _self._onDataReceivedCallers[i] || _self;
+              _self._onDataReceivedCallbacks[i].call(caller, resOperation);
             }
           }
           break;
@@ -265,13 +265,13 @@ class IWCWrapper {
             OperationFactory.createOperationFromNonOTOperation(operation);
           //adjustHistory(remoteOp);
           for (
-            i = 0, numOfCallbacks = this._onDataReceivedCallbacks.length;
+            i = 0, numOfCallbacks = _self._onDataReceivedCallbacks.length;
             i < numOfCallbacks;
             i++
           ) {
-            if (typeof this._onDataReceivedCallbacks[i] === "function") {
-              var caller = this._onDataReceivedCallers[i] || this;
-              this._onDataReceivedCallbacks[i].call(caller, resOperation);
+            if (typeof _self._onDataReceivedCallbacks[i] === "function") {
+              var caller = _self._onDataReceivedCallers[i] || _self;
+              _self._onDataReceivedCallbacks[i].call(caller, resOperation);
             }
           }
           break;
@@ -281,7 +281,7 @@ class IWCWrapper {
     if (intent.flags.indexOf(CONFIG.IWC.FLAG.PUBLISH_GLOBAL) !== -1) return;
 
     if (typeof senderTimes === "undefined") {
-      senderTimes = this._times[intent.extras.sender] = [];
+      senderTimes = _self._times[intent.sender] = [];
     } else {
       for (
         i = 0, numOfSenderTimes = senderTimes.length;
@@ -311,9 +311,9 @@ class IWCWrapper {
     }
   }
 
-  constructor(componentName, y = null) {
+  constructor(componentName, y) {
     this.componentName = componentName;
-    this._iwc = new IWC.Client(componentName, "*", y);
+    this._iwc = new IWC.Client(componentName, "*", null, y);
     window._iwc_instance_ = this._iwc;
 
     //var sendBufferTimer;
@@ -321,7 +321,10 @@ class IWCWrapper {
     if (this.BUFFER_ENABLED)
       setInterval(this.sendBufferedMessages, this.INTERVAL_SEND);
 
-    this.connect = () => this._iwc.connect(this.onIntentReceivedCallback);
+    this.connect = () =>
+      this._iwc.connect((intent) =>
+        this.onIntentReceivedCallback(this, intent)
+      );
     this.disconnect = () => this._iwc.disconnect;
 
     /**
@@ -464,9 +467,17 @@ export default class IWCW {
    */
   static getInstance(componentName, y) {
     if (!IWCW.instance) {
+      if (!y) {
+        y = window.y;
+        if (!y) {
+          console.error(
+            "y is null, y is the shared y document that should be passed along when calling getInstance, proceed with caution"
+          );
+        }
+      }
       IWCW.instance = new IWCWrapper(componentName, y);
       IWCW.instance.connect();
     }
     return IWCW.instance;
   }
-};
+}

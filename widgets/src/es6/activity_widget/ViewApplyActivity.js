@@ -1,10 +1,5 @@
 import Activity from "./Activity";
 
-ViewApplyActivity.TYPE = "ViewApplyActivity";
-
-ViewApplyActivity.prototype = new Activity();
-ViewApplyActivity.prototype.constructor = ViewApplyActivity;
-
 /**
  * Activity representing the application of a view
  * @class activity_widget.ViewApplyActivity
@@ -14,17 +9,20 @@ ViewApplyActivity.prototype.constructor = ViewApplyActivity;
  * @param {string} sender JabberId of the user who issued this activity
  * @constructor
  */
-function ViewApplyActivity(viewId, sender, timestamp) {
-  var _viewId = viewId;
+class ViewApplyActivity extends Activity {
+  static TYPE = "ViewApplyActivity";
+  constructor(viewId, sender, timestamp) {
+    super(null, sender, timestamp);
+    var _viewId = viewId;
 
-  /**
-   * get the identifier of a view
-   * @returns {string}
-   */
-  this.getViewId = function () {
-    return _viewId;
-  };
-  Activity.call(this, null, sender, timestamp);
+    /**
+     * get the identifier of a view
+     * @returns {string}
+     */
+    this.getViewId = function () {
+      return _viewId;
+    };
+  }
 }
 
 export default ViewApplyActivity;

@@ -2,13 +2,13 @@ import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
-import { CONFIG } from "../../js/config";
+import { CONFIG, getWidgetTagName } from "../../es6/config";
 import init from "../../js/shared";
 import { SyncMetaWidget } from "../../widget";
 
 import "../../es6/guidance_widget.js";
 // widget body used by all syncmeta widgets
-@customElement("guidance-widget")
+@customElement(getWidgetTagName(CONFIG.WIDGET.NAME.GUIDANCE))
 export class GuidanceWidget extends SyncMetaWidget(LitElement) {
   render() {
     return html`

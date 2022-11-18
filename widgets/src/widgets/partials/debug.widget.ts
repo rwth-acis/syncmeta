@@ -4,8 +4,9 @@ import init from "../../js/shared";
 import { SyncMetaWidget } from "../../widget";
 
 import "../../es6/debug_widget.js";
+import { CONFIG, getWidgetTagName } from "../../es6/config";
 // widget body used by all syncmeta widgets
-@customElement("debug-widget")
+@customElement(getWidgetTagName(CONFIG.WIDGET.NAME.DEBUG))
 export class DebugWidget extends SyncMetaWidget(LitElement) {
   render() {
     return html`

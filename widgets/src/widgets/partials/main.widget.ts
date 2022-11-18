@@ -4,9 +4,10 @@ import { SyncMetaWidget } from "../../widget";
 import "jquery-contextmenu/dist/jquery.contextMenu.css";
 //@ts-ignore
 import initMain from "../../es6/main_widget.js";
+import { CONFIG, getWidgetTagName } from "../../es6/config";
 
 // canvas widget
-@customElement("main-widget")
+@customElement(getWidgetTagName(CONFIG.WIDGET.NAME.MAIN))
 export class CanvasWidget extends SyncMetaWidget(LitElement) {
   render() {
     return html`

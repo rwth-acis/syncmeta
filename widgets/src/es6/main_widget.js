@@ -9,7 +9,7 @@ import Util from "./Util";
 import IWCW from "./lib/IWCWrapper";
 // import CanvasWidgetTest from "./../test/CanvasWidgetTest";
 import { CONFIG } from "./config";
-import yjsSync from "./lib/yjs-sync";
+import { yjsSync } from "./lib/yjs-sync";
 import {
   HistoryManagerInstance as HistoryManager,
   EntityManagerInstance as EntityManager,
@@ -65,63 +65,59 @@ export default async function () {
     console.error("user is undefined");
   }
 
-  yjsSync()
-    .done(function (y, spaceTitle) {
-      console.info(
-        "CANVAS: Yjs Initialized successfully in room " +
-          spaceTitle +
-          " with y-user-id: " +
-          y.clientID
-      );
-      const _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN, y);
-      _iwcw.setSpace(user);
-      const userMap = y.getMap("users");
-      try {
-        const user = _iwcw.getUser();
-        if (!user) {
-          throw new Error("User not set");
-        }
-        if (user.globalId !== -1) {
-          userMap.set(y.clientID, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-      if (!userMap.get(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])) {
-        var userInfo = _iwcw.getUser();
-        userInfo.globalId = Util.getGlobalId(user, y);
-        userMap.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], userInfo);
-      }
-      var metamodel, model;
-      const guidancemodel = getGuidanceModeling();
-      if (guidancemodel.isGuidanceEditor()) {
-        const dataMap = y.getMap("data");
-        //Set the model which is shown by the editor to the guidancemodel
-        model = dataMap.get("guidancemodel");
-        //Set the metamodel to the guidance metamodel
-        metamodel = dataMap.get("guidancemetamodel");
-      } else {
-        metamodel = y.getMap("data").get("metamodel");
-        model = y.getMap("data").get("model");
-      }
-      if (model)
-        console.info(
-          "CANVAS: Found model in yjs room with " +
-            Object.keys(model.nodes).length +
-            " nodes and " +
-            Object.keys(model.edges).length +
-            " edges."
-        );
-      EntityManager.init(metamodel);
-      EntityManager.setGuidance(guidancemodel);
-      window.y = y;
-      InitMainWidget(metamodel, model, _iwcw);
-    })
-    .fail(function () {
-      console.info("yjs log: Yjs intialization failed!");
-      window.y = undefined;
-      InitMainWidget(undefined, undefined, _iwcw);
-    });
+  const y = await yjsSync().catch(function () {
+    console.warn("yjs log: Yjs intialization failed!");
+  });
+
+  console.info(
+    "CANVAS: Yjs Initialized successfully in room " +
+      window.spaceTitle +
+      " with y-user-id: " +
+      y.clientID
+  );
+  const _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN, y);
+  _iwcw.setSpace(user);
+  const userMap = y.getMap("users");
+  try {
+    const user = _iwcw.getUser();
+    if (!user) {
+      throw new Error("User not set");
+    }
+    if (user.globalId !== -1) {
+      userMap.set(y.clientID, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+  if (!userMap.get(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])) {
+    var userInfo = _iwcw.getUser();
+    userInfo.globalId = Util.getGlobalId(user, y);
+    userMap.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], userInfo);
+  }
+  var metamodel, model;
+  const guidancemodel = getGuidanceModeling();
+  if (guidancemodel.isGuidanceEditor()) {
+    const dataMap = y.getMap("data");
+    //Set the model which is shown by the editor to the guidancemodel
+    model = dataMap.get("guidancemodel");
+    //Set the metamodel to the guidance metamodel
+    metamodel = dataMap.get("guidancemetamodel");
+  } else {
+    metamodel = y.getMap("data").get("metamodel");
+    model = y.getMap("data").get("model");
+  }
+  if (model)
+    console.info(
+      "CANVAS: Found model in yjs room with " +
+        Object.keys(model.nodes).length +
+        " nodes and " +
+        Object.keys(model.edges).length +
+        " edges."
+    );
+  EntityManager.init(metamodel);
+  EntityManager.setGuidance(guidancemodel);
+  window.y = y;
+  InitMainWidget(metamodel, model, _iwcw);
 
   function InitMainWidget(metamodel, model, _iwcw) {
     var userList = [];

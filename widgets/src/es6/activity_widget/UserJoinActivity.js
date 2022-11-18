@@ -1,9 +1,5 @@
 import Activity from "./Activity";
 
-UserJoinActivity.TYPE = "UserJoinActivity";
-
-UserJoinActivity.prototype = new Activity();
-UserJoinActivity.prototype.constructor = UserJoinActivity;
 /**
  * Activity representing the deletion of an edge
  * @class activity_widget.UserJoinActivity
@@ -14,8 +10,11 @@ UserJoinActivity.prototype.constructor = UserJoinActivity;
  * @param {string} text Text of this activity which is displayed in the activity widget
  * @constructor
  */
-function UserJoinActivity(entityId, sender, text, timestamp) {
-  Activity.call(this, entityId, sender, text, timestamp);
+class UserJoinActivity extends Activity {
+  static TYPE = "UserJoinActivity";
+  constructor(entityId, sender, text, timestamp) {
+    super(entityId, sender, text, timestamp);
+  }
 }
 
 export default UserJoinActivity;

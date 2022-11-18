@@ -3,8 +3,9 @@ import { customElement } from "lit/decorators.js";
 import init from "../../js/shared";
 import { SyncMetaWidget } from "../../widget";
 //@ts-ignore
-import initAttributeWidget from "../../es6/attribute_widget.js";
-@customElement("attribute-widget")
+import "../../es6/attribute_widget.js";
+import { CONFIG, getWidgetTagName } from "../../es6/config";
+@customElement(getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE))
 export class AttributeWidget extends SyncMetaWidget(LitElement) {
   render() {
     return html`
@@ -197,7 +198,6 @@ export class AttributeWidget extends SyncMetaWidget(LitElement) {
 
   firstUpdated(e: any) {
     super.firstUpdated(e);
-    initAttributeWidget();
   }
 
   connectedCallback() {

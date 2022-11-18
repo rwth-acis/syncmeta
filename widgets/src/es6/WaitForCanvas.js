@@ -2,53 +2,61 @@ import "jquery";
 import IWCW from "./lib/IWCWrapper";
 import NonOTOperation from "./operations/non_ot/NonOTOperation";
 import { CONFIG } from "./config";
-function WaitForCanvas(widgetName, attempts, frequency) {
-  var deferred = $.Deferred();
-  var iwc = IWCW.getInstance(widgetName);
-  var counter = 0,
-    _frequency = 3000;
 
-  if (frequency) _frequency = frequency;
-
+export async function WaitForCanvas(
+  widgetName,
+  doc,
+  maxAttempts = 10,
+  interval = 3000
+) {
+  const iwc = IWCW.getInstance(widgetName, doc);
   var gotResponseFromCanvas = false;
+  var canvasResponse = null;
 
-  var operation = new NonOTOperation(
-    "WaitForCanvasOperation",
-    JSON.stringify({ widget: widgetName })
-  );
-  iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN, operation);
-
-  iwc.registerOnDataReceivedCallback(function (operation) {
+  iwc.registerOnDataReceivedCallback((operation) => {
+    // wait for canvas to respond
     if (operation.hasOwnProperty("getType")) {
       if (operation.getType() === "WaitForCanvasOperation") {
         gotResponseFromCanvas = true;
-        deferred.resolve(operation.getData());
+        canvasResponse = operation.getData();
       }
     }
   });
-
-  var waitForIt = function () {
-    setTimeout(function () {
-      if (gotResponseFromCanvas) {
-        console.info(widgetName + ":Got message from canvas");
-      } else if (counter < attempts) {
-        console.info(
-          widgetName + ":No response from canvas. Send message again."
-        );
-        var operation = new NonOTOperation(
+  try {
+    await poll({
+      interval,
+      maxAttempts,
+      validate: () => gotResponseFromCanvas, // we are done when we get a response from canvas
+      action: () => {
+        // send a message to canvas
+        const operation = new NonOTOperation(
           "WaitForCanvasOperation",
           JSON.stringify({ widget: widgetName })
         );
         iwc.sendLocalNonOTOperation(CONFIG.WIDGET.NAME.MAIN, operation);
-        counter++;
-        waitForIt();
-      } else if (counter == attempts) {
-        console.info(widgetName + ":Attempts execceded");
-        deferred.reject();
-      }
-    }, _frequency);
-  };
-  waitForIt();
-  return deferred.promise();
+      },
+    });
+
+    return canvasResponse;
+  } catch (error) {
+    throw error;
+  }
 }
-export default WaitForCanvas;
+
+async function poll({ action, validate, interval, maxAttempts }) {
+  let attempts = 0;
+
+  const executePoll = async (resolve, reject) => {
+    const result = await action();
+    attempts++;
+    if (validate(result)) {
+      return resolve(result);
+    } else if (maxAttempts && attempts === maxAttempts) {
+      return reject(new Error("Exceeded max attempts"));
+    } else {
+      setTimeout(executePoll, interval, resolve, reject);
+    }
+  };
+
+  return new Promise(executePoll);
+}

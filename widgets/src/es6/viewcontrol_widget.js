@@ -2,14 +2,16 @@ import "jquery";
 import "jquery-ui";
 import _ from "lodash-es";
 import IWC from "./lib/IWCWrapper";
-import yjsSync from "./lib/yjs-sync";
+import { yjsSync } from "./lib/yjs-sync";
 import UpdateViewListOperation from "./operations/non_ot/UpdateViewListOperation";
 import GenerateViewpointModel from "./canvas_widget/GenerateViewpointModel";
 import { CONFIG } from "./config";
-yjsSync().done(function (y, spaceTitle) {
+
+$(async function () {
+  const y = await yjsSync();
   console.info(
     "VIEWCONTROL: Yjs successfully initialized in room " +
-      spaceTitle +
+      window.spaceTitle +
       " with y-user-id: " +
       y.clientID
   );
@@ -127,10 +129,10 @@ yjsSync().done(function (y, spaceTitle) {
       operation.toNonOTOperation()
     );
   });
-
-  function addMetamodelToYjs(roomName, metamodel) {
-    yjsSync(roomName).done(function (yInstance) {
-      yInstance.share.data.set("metamodel", metamodel);
-    });
-  }
 });
+
+function addMetamodelToYjs(roomName, metamodel) {
+  yjsSync(roomName).then(function (yInstance) {
+    yInstance.getMap("data").set("metamodel", metamodel);
+  });
+}

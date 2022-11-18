@@ -3,8 +3,9 @@ import { customElement } from "lit/decorators.js";
 import init from "../../js/shared";
 import { SyncMetaWidget } from "../../widget";
 import "../../es6/palette_widget.js";
+import { CONFIG, getWidgetTagName } from "../../es6/config";
 // widget body used by all syncmeta widgets
-@customElement("palette-widget")
+@customElement(getWidgetTagName(CONFIG.WIDGET.NAME.PALETTE))
 export class PaletteWidget extends SyncMetaWidget(LitElement) {
   createRenderRoot() {
     return this;

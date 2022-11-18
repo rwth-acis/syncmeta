@@ -1,9 +1,5 @@
 import Activity from "./Activity";
 
-ReloadWidgetActivity.TYPE = "ReloadWidgetActivity";
-
-ReloadWidgetActivity.prototype = new Activity();
-ReloadWidgetActivity.prototype.constructor = ReloadWidgetActivity;
 /**
  * Activity representing the deletion of an edge
  * @class activity_widget.UserJoinActivity
@@ -14,8 +10,11 @@ ReloadWidgetActivity.prototype.constructor = ReloadWidgetActivity;
  * @param {string} text Text of this activity which is displayed in the activity widget
  * @constructor
  */
-function ReloadWidgetActivity(entityId, sender, text, timestamp) {
-  Activity.call(this, entityId, sender, text, timestamp);
+class ReloadWidgetActivity extends Activity {
+  static TYPE = "ReloadWidgetActivity";
+  constructor(entityId, sender, text, timestamp) {
+    super(entityId, sender, text, timestamp);
+  }
 }
 
 export default ReloadWidgetActivity;

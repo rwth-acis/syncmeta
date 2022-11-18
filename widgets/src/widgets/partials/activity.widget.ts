@@ -2,11 +2,11 @@ import { LitElement, html } from "lit";
 import { customElement } from "lit/decorators.js";
 import init from "../../es6/shared";
 import { SyncMetaWidget } from "../../widget";
-
+import { CONFIG, getWidgetTagName } from "../../es6/config";
 import "../../es6/activity_widget.js";
 
 // widget body used by all syncmeta widgets
-@customElement("activity-widget")
+@customElement(getWidgetTagName(CONFIG.WIDGET.NAME.ACTIVITY))
 export class ActivityWidget extends SyncMetaWidget(LitElement) {
   render() {
     return html`

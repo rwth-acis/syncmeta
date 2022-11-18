@@ -1,10 +1,6 @@
 import _ from "lodash-es";
 import Activity from "./Activity";
 
-NodeMoveActivity.TYPE = "NodeMoveActivity";
-
-NodeMoveActivity.prototype = new Activity();
-NodeMoveActivity.prototype.constructor = NodeMoveActivity;
 /**
  * Activity representing the movement of a node
  * @class activity_widget.NodeMoveActivity
@@ -16,15 +12,18 @@ NodeMoveActivity.prototype.constructor = NodeMoveActivity;
  * @param {string} nodeType Type of the created node
  * @constructor
  */
-function NodeMoveActivity(entityId, sender, text, timestamp, nodeType) {
-  Activity.call(this, entityId, sender, text, timestamp);
+class NodeMoveActivity extends Activity {
+  static TYPE = "NodeMoveActivity";
+  constructor(entityId, sender, text, timestamp, nodeType) {
+    super(entityId, sender, text, timestamp);
 
-  this.toJSON = function () {
-    var json = Activity.prototype.toJSON.call(this);
-    json.type = NodeMoveActivity.TYPE;
-    json.nodeType = nodeType;
-    return json;
-  };
+    this.toJSON = function () {
+      var json = Activity.prototype.toJSON.call(this);
+      json.type = NodeMoveActivity.TYPE;
+      json.nodeType = nodeType;
+      return json;
+    };
+  }
 }
 
 export default NodeMoveActivity;

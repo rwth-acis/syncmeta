@@ -1,10 +1,6 @@
 import _ from "lodash-es";
 import Activity from "./Activity";
 
-NodeResizeActivity.TYPE = "NodeResizeActivity";
-
-NodeResizeActivity.prototype = new Activity();
-NodeResizeActivity.prototype.constructor = NodeResizeActivity;
 /**
  * Activity representing the resizing of a node
  * @class activity_widget.NodeResizeActivity
@@ -16,15 +12,19 @@ NodeResizeActivity.prototype.constructor = NodeResizeActivity;
  * @param {string} nodeType Type of the created node
  * @constructor
  */
-function NodeResizeActivity(entityId, sender, text, timestamp, nodeType) {
-  Activity.call(this, entityId, sender, text, timestamp);
+class NodeResizeActivity extends Activity {
+  static TYPE = "NodeResizeActivity";
 
-  this.toJSON = function () {
-    var json = Activity.prototype.toJSON.call(this);
-    json.type = NodeResizeActivity.TYPE;
-    json.nodeType = nodeType;
-    return json;
-  };
+  constructor(entityId, sender, text, timestamp, nodeType) {
+    super(entityId, sender, text, timestamp);
+
+    this.toJSON = function () {
+      var json = Activity.prototype.toJSON.call(this);
+      json.type = NodeResizeActivity.TYPE;
+      json.nodeType = nodeType;
+      return json;
+    };
+  }
 }
 
 export default NodeResizeActivity;
