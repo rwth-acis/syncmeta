@@ -1,3 +1,10 @@
-<div class="item" style="background-color: <%= color %>;">
-    <h3><%= heading %></h3><span class="text"><%= text %></span><h3 class="lblViewId"><%=view%></h3>
+<div
+  class="item card card-body rounded mb-2"
+  style="background-color: <%= color %>"
+>
+  <div class="d-flex">
+    <h3 class="m-0"><%= heading %></h3>
+    <span class="text align-self-top ml-auto fs-sm m-1"><%= text %> ago</span>
+  </div>
+  <h3 class="lblViewId"><%=view%></h3>
 </div>

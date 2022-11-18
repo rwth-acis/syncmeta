@@ -1,5 +1,17 @@
-<div class="item">
-    <h3 style="background-color: <%= color %>;"><%= heading %></h3>
-    <p class="text"><%= text %></p>
-    <p class="timestamp"><%= timestamp %></p>
+<div
+  class="toast w-100 d-block me-2 mb-3"
+  role="alert"
+  aria-live="assertive"
+  aria-atomic="true"
+  style="border: 3px; border-style: solid; border-color: <%= color %>"
+>
+  <div class="toast-header">
+    <div
+      class="rounded d-inline me-1"
+      style="background-color: <%= color %>; width: 20px; height: 20px"
+    ></div>
+    <strong class="me-auto"><%= heading %></strong>
+    <small><%= timestamp %></small>
+  </div>
+  <div class="toast-body"><%= text %></div>
 </div>

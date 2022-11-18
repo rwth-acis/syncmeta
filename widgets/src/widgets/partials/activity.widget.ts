@@ -22,23 +22,25 @@ export class ActivityWidget extends SyncMetaWidget(LitElement) {
         .list {
           width: 100%;
           height: auto;
-          font-size: 60%;
           overflow: hidden;
         }
-
+        .fs-sm {
+          font-size: 50%;
+        }
+        .toast {
+          display: block;
+        }
         #user_list .item {
           background-color: rgb(138, 255, 200);
           display: block;
           border-radius: 2px;
           border: 1px solid #ccc;
-          margin: 0 0.5em 0.5em 0;
           font-size: 100%;
           box-shadow: 2px 2px 2px #e3e3e3;
           position: relative;
         }
 
         #user_list .item h3 {
-          margin: 1px 25px 1px 1px;
           white-space: nowrap;
           text-overflow: ellipsis;
           overflow: hidden;
@@ -49,17 +51,15 @@ export class ActivityWidget extends SyncMetaWidget(LitElement) {
           right: 0;
           top: 0;
           display: block;
-          width: 25px;
           font-weight: bold;
           font-size: 1.2em;
           text-align: right;
         }
 
         #activity_list {
-          height: 90%;
+          width: auto;
           box-sizing: border-box;
           padding-bottom: 150%;
-          margin-right: -20px;
           overflow-y: auto;
         }
 
@@ -105,11 +105,17 @@ export class ActivityWidget extends SyncMetaWidget(LitElement) {
         type="text/css"
         href="https://code.jquery.com/ui/1.13.1/themes/smoothness/jquery-ui.css"
       />
-      <h2>Users online</h2>
+      <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+        crossorigin="anonymous"
+      />
+      <h4>Users online</h4>
       <div class="list_wrapper">
         <div id="user_list" class="list"></div>
       </div>
-      <h2>Activities</h2>
+      <h4>Activities</h4>
       <div class="list_wrapper">
         <div id="activity_list" class="list"></div>
       </div>
