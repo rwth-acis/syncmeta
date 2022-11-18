@@ -45,7 +45,8 @@ class AbstractTool {
     toolLabel,
     toolDescription,
     toolIcon,
-    toolColor = null
+    toolColor = null,
+    type = "img"
   ) {
     /**
      * Name of tool
@@ -87,16 +88,27 @@ class AbstractTool {
      * @type {jQuery}
      * @private
      */
-    var _$node = $(
-      _.template(abstractToolHtml)({
-        icon:
-          toolIcon instanceof $ || !toolIcon
-            ? ""
-            : "<%= grunt.config('baseUrl') %>/img/" + _icon,
-        label: _label,
-        color: _color,
-      })
-    );
+    var _$node;
+
+    if (type == "svg") {
+      _$node = $(
+        _.template(abstractToolHtml)({
+          icon: toolIcon,
+          label: _label,
+          color: _color,
+          type,
+        })
+      );
+    } else {
+      _$node = $(
+        _.template(abstractToolHtml)({
+          icon: toolIcon instanceof $ || !toolIcon ? "" : "/img/" + _icon,
+          label: _label,
+          color: _color,
+          type,
+        })
+      );
+    }
 
     /**
      * Get jQuery object of DOM node representing the tool

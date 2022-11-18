@@ -16,6 +16,7 @@ import EdgeShapeNodeTool from "./palette_widget/EdgeShapeNodeTool";
 import RelationshipNodeTool from "./palette_widget/RelationshipNodeTool";
 import RelationshipGroupNodeTool from "./palette_widget/RelationshipGroupNodeTool";
 import BiDirAssociationEdgeTool from "./palette_widget/BiDirAssociationEdgeTool";
+import UniDirAssociationEdgeTool from "./palette_widget/UniDirAssociationEdgeTool";
 import GeneralisationEdgeTool from "./palette_widget/GeneralisationEdgeTool";
 import ViewObjectNodeTool from "./palette_widget/ViewObjectNodeTool";
 import ViewRelationshipNodeTool from "./palette_widget/ViewRelationshipNodeTool";
