@@ -33,11 +33,12 @@ export class ActivityWidget extends SyncMetaWidget(LitElement) {
         #user_list .item {
           background-color: rgb(138, 255, 200);
           display: block;
-          border-radius: 2px;
-          border: 1px solid #ccc;
-          font-size: 100%;
+          border-radius: 3px;
+          border: 2px solid #ccc;
           box-shadow: 2px 2px 2px #e3e3e3;
           position: relative;
+          margin-top: 5px;
+          margin-bottom: 5px;
         }
 
         #user_list .item h3 {
