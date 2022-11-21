@@ -227,17 +227,19 @@ function Palette($palette, $info) {
     for (var nodeId in nodes) {
       if (nodes.hasOwnProperty(nodeId)) {
         node = nodes[nodeId];
-        if (node.shape.customShape) {
+
+        if (node.shape?.customShape) {
           shape = node.shape.customShape;
         } else {
-          shape = nodeShapeTypes.hasOwnProperty(node.shape.shape)
-            ? nodeShapeTypes[node.shape.shape]
-            : _.keys(nodeShapeTypes)[0];
+          shape =
+            node.shape && nodeShapeTypes.hasOwnProperty(node.shape.shape)
+              ? nodeShapeTypes[node.shape.shape]
+              : _.keys(nodeShapeTypes)[0];
         }
-        if (node.shape.customAnchors) {
+        if (node.shape?.customAnchors) {
           anchors = node.shape.customAnchors;
         } else {
-          switch (node.shape.shape) {
+          switch (node.shape?.shape) {
             case "circle":
               anchors = ["Perimeter", { shape: "Circle", anchorCount: 10 }];
               break;
@@ -253,7 +255,7 @@ function Palette($palette, $info) {
               break;
           }
         }
-        color = node.shape.color
+        color = node.shape?.color
           ? $colorTestElement
               .css("color", "#FFFFFF")
               .css("color", node.shape.color)
@@ -262,8 +264,8 @@ function Palette($palette, $info) {
         $shape = $("<div>")
           .css("display", "table-cell")
           .css("verticalAlign", "middle")
-          .css("width", node.shape.defaultWidth || 100)
-          .css("height", node.shape.defaultHeight || 50)
+          .css("width", node.shape?.defaultWidth || 100)
+          .css("height", node.shape?.defaultHeight || 50)
           .append(
             $(
               _.template(shape)({
@@ -289,8 +291,8 @@ function Palette($palette, $info) {
             edge.label,
             edge.label,
             null,
-            edge.shape.arrow + ".png",
-            edge.shape.color
+            edge.shape ? edge.shape.arrow + ".png" : null,
+            edge.shape?.color
           )
         );
       }

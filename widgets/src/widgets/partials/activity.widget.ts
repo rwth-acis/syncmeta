@@ -100,6 +100,25 @@ export class ActivityWidget extends SyncMetaWidget(LitElement) {
           border-width: 0.5px;
           text-align: center;
         }
+        /* custom scrollbar */
+        ::-webkit-scrollbar {
+          width: 20px;
+        }
+
+        ::-webkit-scrollbar-track {
+          background-color: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+          background-color: #d6dee1;
+          border-radius: 20px;
+          border: 6px solid transparent;
+          background-clip: content-box;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+          background-color: #a8bbbf;
+        }
       </style>
       <link
         rel="stylesheet"
@@ -112,15 +131,17 @@ export class ActivityWidget extends SyncMetaWidget(LitElement) {
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
         crossorigin="anonymous"
       />
-      <h4>Users online</h4>
-      <div class="list_wrapper">
-        <div id="user_list" class="list"></div>
+      <div class="h-100" style="overflow-y:auto">
+        <h4>Users online</h4>
+        <div class="list_wrapper">
+          <div id="user_list" class="list"></div>
+        </div>
+        <h4>Activities</h4>
+        <div class="list_wrapper">
+          <div id="activity_list" class="list"></div>
+        </div>
+        <div id="q"></div>
       </div>
-      <h4>Activities</h4>
-      <div class="list_wrapper">
-        <div id="activity_list" class="list"></div>
-      </div>
-      <div id="q"></div>
     `;
   }
 

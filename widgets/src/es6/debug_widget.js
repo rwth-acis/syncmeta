@@ -58,8 +58,15 @@ $(async function () {
       }
       deferred.resolve(data);
     };
-    fileReader.readAsText(file);
-    return deferred.promise();
+    try {
+      fileReader.readAsText(file);
+      return deferred.promise();
+    } catch (error) {
+      alert("Incorrect file type. Please make sure that your file is in JSON format")
+      return deferred.promise();
+    }
+    
+    
   };
 
   $deleteModel.click(function () {

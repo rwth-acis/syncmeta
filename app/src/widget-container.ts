@@ -26,7 +26,7 @@ class WidgetContainer extends LitElement {
         .maincontainer {
           display: flex;
 
-          height: 600px;
+          height: 100vh;
           flex-flow: row wrap;
         }
         .innercontainer {
@@ -34,6 +34,7 @@ class WidgetContainer extends LitElement {
           padding: 5px;
           margin: 4px;
           flex: 1;
+          max-height: 100%;
 
           resize: horizontal;
           -webkit-box-shadow: 0px 0px 30px 3px rgba(158, 158, 158, 0.89);
