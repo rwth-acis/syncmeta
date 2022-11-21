@@ -58,11 +58,11 @@ function User(jabberId, lastActivityDate) {
     _userBoxTemplate({
       heading: userList.get(jabberId)
         ? userList.get(jabberId)[CONFIG.NS.PERSON.TITLE]
-        : "",
+        : "Unknown",
       text: "",
       color: userList.get(jabberId)
         ? Util.getColor(userList.get(jabberId).globalId)
-        : "#000000",
+        : "#C0C5CE",
       view: "",
     })
   ).hide();
