@@ -2317,7 +2317,7 @@ export class AbstractNode extends AbstractEntity {
     this.addOutgoingEdge = function (edge) {
       var id = edge.getEntityId();
       var target = edge.getTarget();
-      var targetEntityId = target.getEntityId();
+      var targetEntityId = target?.getEntityId();
       if (!_outgoingEdges.hasOwnProperty(id)) {
         _outgoingEdges[id] = edge;
         if (!_outgoingNeighbors.hasOwnProperty(targetEntityId)) {
@@ -2358,7 +2358,7 @@ export class AbstractNode extends AbstractEntity {
     this.deleteOutgoingEdge = function (edge) {
       var id = edge.getEntityId();
       var target = edge.getTarget();
-      var targetEntityId = target.getEntityId();
+      var targetEntityId = target?.getEntityId();
       var isMultiEdge = false;
       if (_outgoingEdges.hasOwnProperty(id)) {
         delete _outgoingEdges[id];
@@ -2975,7 +2975,6 @@ export class AbstractNode extends AbstractEntity {
   }
 }
 
-
 /**
  * Abstract Class Node
  * @class canvas_widget.EnumNode
@@ -3063,7 +3062,6 @@ export class EnumNode extends AbstractNode {
     }
   }
 }
-
 
 /**
  * Abstract Class Node
@@ -3409,7 +3407,7 @@ function EntityManager() {
         return undefined;
       }
       source.addOutgoingEdge(edge);
-      target.addIngoingEdge(edge);
+      target?.addIngoingEdge(edge);
       _edges[id] = edge;
       return edge;
     },
@@ -3574,11 +3572,13 @@ function EntityManager() {
      * @returns {canvas_widget.AbstractEdge}
      */
     createEdgeFromJSON: function (type, id, source, target, json) {
+      const sourceNode = this.findNode(source);
+      const targetNode = this.findNode(target);
       var edge = this.createEdge(
         type,
         id,
-        this.findNode(source),
-        this.findNode(target)
+        sourceNode,
+        targetNode
       );
       if (edge) {
         edge.getLabel().getValue().setValue(json.label.value.value);
@@ -6290,7 +6290,7 @@ export class RelationshipNode extends AbstractNode {
   static DEFAULT_HEIGHT = 100;
 
   constructor(id, left, top, width, height, zIndex, json) {
-    super(this, id, "Relationship", left, top, width, height, zIndex, json);
+    super(id, "Relationship", left, top, width, height, zIndex, json);
     var that = this;
 
     /**
@@ -7264,9 +7264,6 @@ export function makeEdge(
   return Edge;
 }
 
-
-
-
 /**
  * AbstractNode
  * @class canvas_widget.AbstractNode
@@ -7361,8 +7358,6 @@ export class RelationshipGroupNode extends AbstractNode {
     }
   }
 }
-
-
 
 /**
  * Abstract Class Node
@@ -8002,7 +7997,6 @@ export class ViewRelationshipNode extends AbstractNode {
   }
 }
 
-
 /**
  * BiDirAssociationEdge
  * @class canvas_widget.BiDirAssociationEdge
@@ -8184,7 +8178,7 @@ export class UniDirAssociationEdge extends AbstractEdge {
   ];
 
   constructor(id, source, target) {
-    super(this, id, UniDirAssociationEdge.TYPE, source, target);
+    super(id, UniDirAssociationEdge.TYPE, source, target);
     var that = this;
 
     /**

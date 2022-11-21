@@ -9,8 +9,6 @@ const singleColorValueAttributeHtml = await loadHTML(
   import.meta.url
 );
 
-SingleColorValueAttribute.prototype = new AbstractAttribute();
-SingleColorValueAttribute.prototype.constructor = SingleColorValueAttribute;
 /**
  * SingleColorValueAttribute
  * @class attribute_widget.SingleColorValueAttribute
@@ -21,58 +19,60 @@ SingleColorValueAttribute.prototype.constructor = SingleColorValueAttribute;
  * @param {string} name Name of attribute
  * @param {attribute_widget.AbstractEntity} subjectEntity Entity the attribute is assigned to
  */
-function SingleColorValueAttribute(id, name, subjectEntity) {
-  AbstractAttribute.call(this, id, name, subjectEntity);
+class SingleColorValueAttribute extends AbstractAttribute {
+  constructor(id, name, subjectEntity) {
+    super(id, name, subjectEntity);
 
-  /***
-   * Value object of value
-   * @type {attribute_widget.ColorValue}
-   * @private
-   */
-  var _value = new ColorValue(id, name, this, this.getRootSubjectEntity());
+    /***
+     * Value object of value
+     * @type {attribute_widget.ColorValue}
+     * @private
+     */
+    var _value = new ColorValue(id, name, this, this.getRootSubjectEntity());
 
-  /**
-   * jQuery object of DOM node representing the node
-   * @type {jQuery}
-   * @private
-   */
-  var _$node = $(_.template(singleColorValueAttributeHtml)({ id: id }));
+    /**
+     * jQuery object of DOM node representing the node
+     * @type {jQuery}
+     * @private
+     */
+    var _$node = $(_.template(singleColorValueAttributeHtml)({ id: id }));
 
-  /**
-   * Set Value object of value
-   * @param {attribute_widget.ColorValue} value
-   */
-  this.setValue = function (value) {
-    _value = value;
-  };
+    /**
+     * Set Value object of value
+     * @param {attribute_widget.ColorValue} value
+     */
+    this.setValue = function (value) {
+      _value = value;
+    };
 
-  /**
-   * Get Value object of value
-   * @returns {attribute_widget.ColorValue}
-   */
-  this.getValue = function () {
-    return _value;
-  };
+    /**
+     * Get Value object of value
+     * @returns {attribute_widget.ColorValue}
+     */
+    this.getValue = function () {
+      return _value;
+    };
 
-  /**
-   * jQuery object of DOM node representing the attribute
-   * @type {jQuery}
-   * @private
-   */
-  this.get$node = function () {
-    return _$node;
-  };
+    /**
+     * jQuery object of DOM node representing the attribute
+     * @type {jQuery}
+     * @private
+     */
+    this.get$node = function () {
+      return _$node;
+    };
 
-  /**
-   * Set attribute value by its JSON representation
-   * @param json
-   */
-  this.setValueFromJSON = function (json) {
-    _value.setValueFromJSON(json.value);
-  };
+    /**
+     * Set attribute value by its JSON representation
+     * @param json
+     */
+    this.setValueFromJSON = function (json) {
+      _value.setValueFromJSON(json.value);
+    };
 
-  _$node.find(".name").text(this.getName());
-  _$node.find(".value").append(_value.get$node());
+    _$node.find(".name").text(this.getName());
+    _$node.find(".value").append(_value.get$node());
+  }
 }
 
 export default SingleColorValueAttribute;

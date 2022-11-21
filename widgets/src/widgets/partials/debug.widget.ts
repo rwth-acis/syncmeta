@@ -19,7 +19,12 @@ export class DebugWidget extends SyncMetaWidget(LitElement) {
 
       <div class="seperating_box">
         <h6>Select a JSON file</h6>
-        <input type="file" id="file-object" value="Load a file" />
+        <input
+          type="file"
+          id="file-object"
+          accept=".json"
+          value="Load a file"
+        />
       </div>
 
       <hr />

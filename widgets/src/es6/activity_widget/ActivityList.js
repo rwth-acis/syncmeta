@@ -463,11 +463,7 @@ class ActivityList {
       var checkEntity = function (entityId) {
         const nodesMap = y.getMap("nodes");
         const edgesMap = y.getMap("edges");
-        if (
-          nodesMap.keys().indexOf(entityId) != -1 ||
-          edgesMap.keys().indexOf(entityId) != -1
-        )
-          return true;
+        if (nodesMap.has(entityId) || edgesMap.has(entityId)) return true;
         else return false;
       };
       if (list) {

@@ -28,6 +28,7 @@ $(async function () {
   const y = await yjsSync();
   await WaitForCanvas(CONFIG.WIDGET.NAME.PALETTE, y)
     .then((metamodel) => {
+      window.scrollTo(0, document.body.scrollHeight);
       var palette = new Palette($("#palette"), $("#info"));
 
       palette.addTool(new MoveTool());

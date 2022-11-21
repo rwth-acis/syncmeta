@@ -351,7 +351,7 @@ function EntityManager() {
         edge = new edgeTypes[type](id, source, target);
       }
       source.addOutgoingEdge(edge);
-      target.addIngoingEdge(edge);
+      target?.addIngoingEdge(edge);
       _edges[id] = edge;
 
       return edge;
@@ -476,13 +476,9 @@ function EntityManager() {
      * @returns {attribute_widget.AbstractEdge}
      */
     createEdgeFromJSON: function (type, id, sourceId, targetId, json) {
-      var edge = this.createEdge(
-        type,
-        id,
-        this.findNode(sourceId),
-        this.findNode(targetId),
-        viewId
-      );
+      const sourceNode = this.findNode(sourceId);
+      const targetNode = this.findNode(targetId);
+      var edge = this.createEdge(type, id, sourceNode, targetNode, viewId);
       if (edge) {
         edge.getLabel().getValue().setValue(json.label.value.value);
         for (var attrId in json.attributes) {
@@ -1284,7 +1280,7 @@ export class AbstractNode extends AbstractEntity {
     this.addOutgoingEdge = function (edge) {
       var id = edge.getEntityId();
       var target = edge.getTarget();
-      var targetEntityId = target.getEntityId();
+      var targetEntityId = target?.getEntityId();
       if (!_outgoingEdges.hasOwnProperty(id)) {
         _outgoingEdges[id] = edge;
         if (!_outgoingNeighbors.hasOwnProperty(targetEntityId)) {
@@ -1325,7 +1321,7 @@ export class AbstractNode extends AbstractEntity {
     this.deleteOutgoingEdge = function (edge) {
       var id = edge.getEntityId();
       var target = edge.getTarget();
-      var targetEntityId = target.getEntityId();
+      var targetEntityId = target?.getEntityId();
       var isMultiEdge = false;
       if (_outgoingEdges.hasOwnProperty(id)) {
         delete _outgoingEdges[id];
@@ -1492,7 +1488,6 @@ export class AbstractNode extends AbstractEntity {
     this._remove();
   }
 }
-
 
 /**
  * AbstractEdge
@@ -1915,7 +1910,6 @@ export class AbstractClassNode extends AbstractNode {
   }
 }
 
-
 //noinspection JSUnusedLocalSymbols
 /**
  * makeEdge
@@ -2278,8 +2272,6 @@ export class EnumNode extends AbstractNode {
     }
   }
 }
-
-
 
 /**
  * Abstract Class Node
@@ -2838,8 +2830,6 @@ export class RelationshipNode extends AbstractNode {
   }
 }
 
-
-
 /**
  * ViewObjectNode
  * @class attribute_widget.ViewObjectNode
@@ -3245,7 +3235,7 @@ export class UniDirAssociationEdge extends AbstractEdge {
   ];
 
   constructor(id, source, target) {
-    super(UniDirAssociationEdge.TYPE, id, source, target);
+    super("Uni-Dir-Association", id, source, target);
   }
 }
 
