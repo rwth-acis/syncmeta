@@ -116,11 +116,11 @@ class Activity {
         _activityBoxTemplate({
           heading: userList.get(_sender)
             ? userList.get(_sender)[CONFIG.NS.PERSON.TITLE]
-            : "",
+            : "Unknown",
           text: _text,
           color: userList.get(_sender)
             ? Util.getColor(userList.get(_sender).globalId)
-            : "#000000",
+            : "#C0C5CE",
           timestamp: getDateTimeAsString(),
         })
       ).hide();
