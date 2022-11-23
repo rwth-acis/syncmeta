@@ -105,7 +105,7 @@ export class DebugWidget extends SyncMetaWidget(LitElement) {
         </button>
         <button id="delete-activity-list" class="btn btn-danger">Delete</button>
       </div>
-      <hr />
+      <br />
     `;
   }
 
