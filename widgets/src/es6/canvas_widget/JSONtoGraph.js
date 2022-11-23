@@ -104,7 +104,7 @@ export default function (json, canvas) {
   }
 
   function createEdges(edges) {
-    for (edgeId in edges) {
+    for (const edgeId in edges) {
       if (edges.hasOwnProperty(edgeId)) {
         //create edge
         var edge = EntityManager.createEdgeFromJSON(

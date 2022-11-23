@@ -532,7 +532,7 @@ var _initNodeTypes = function (vls) {
         );
         nodeTypes[node.targetName].VIEWTYPE = node.label;
       } else {
-        _nodeTypes[node.label] = Node(
+        _nodeTypes[node.label] = makeNode(
           node.label,
           $shape,
           anchors,
@@ -596,7 +596,7 @@ var _initEdgeTypes = function (vls) {
         );
         edgeTypes[edge.targetName].VIEWTYPE = edge.label;
       } else {
-        _edgeTypes[edge.label] = Edge(
+        _edgeTypes[edge.label] = makeEdge(
           edge.label,
           edge.shape.arrow,
           edge.shape.shape,
@@ -1404,7 +1404,6 @@ export class AbstractEdge extends AbstractEntity {
     this._registerYMap();
   }
 }
-
 
 /**
  * AbstractNode
@@ -3574,12 +3573,7 @@ function EntityManager() {
     createEdgeFromJSON: function (type, id, source, target, json) {
       const sourceNode = this.findNode(source);
       const targetNode = this.findNode(target);
-      var edge = this.createEdge(
-        type,
-        id,
-        sourceNode,
-        targetNode
-      );
+      var edge = this.createEdge(type, id, sourceNode, targetNode);
       if (edge) {
         edge.getLabel().getValue().setValue(json.label.value.value);
         for (var attrId in json.attributes) {
@@ -6019,6 +6013,10 @@ export class ObjectNode extends AbstractNode {
  * @param {number} zIndex Position of node on z-axis
  */
 export class AbstractClassNode extends AbstractNode {
+  static TYPE = "Abstract Class";
+  static DEFAULT_WIDTH = 150;
+  static DEFAULT_HEIGHT = 100;
+
   constructor(id, left, top, width, height, zIndex, json) {
     super(id, AbstractClassNode.TYPE, left, top, width, height, zIndex, json);
 

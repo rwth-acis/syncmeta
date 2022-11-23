@@ -13,10 +13,6 @@ export class PaletteWidget extends SyncMetaWidget(LitElement) {
   render() {
     return html`
       <style>
-        #main {
-          max-height: 400px;
-        }
-
         button.selected {
           border: 1px solid #999999;
           background-color: #eeeeee;
@@ -48,11 +44,17 @@ export class PaletteWidget extends SyncMetaWidget(LitElement) {
         }
       </style>
       <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+        crossorigin="anonymous"
+      />
+      <link
         rel="stylesheet"
         type="text/css"
         href="https://code.jquery.com/ui/1.13.1/themes/smoothness/jquery-ui.css"
       />
-      <div id="main">
+      <div class="h-100" style="overflow-y:auto">
         <div id="palette"></div>
         <p id="info"></p>
         <div id="q"></div>
