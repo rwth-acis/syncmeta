@@ -12,6 +12,9 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
   render() {
     return html`
       <style>
+        ${getWidgetTagName(CONFIG.WIDGET.NAME.MAIN)} {
+          height: 100%;
+        }
         .button_bar {
           width: 50%;
           float: left;

@@ -17,15 +17,10 @@ export class PaletteWidget extends SyncMetaWidget(LitElement) {
           border: 1px solid #999999;
           background-color: #eeeeee;
         }
-
-        button .icon > div {
-          /*
-    zoom: 0.1;
-    -moz-transform: scale(0.2,0.2);
-    -moz-transform-origin: left center;*/
-          width: 15px !important;
-          height: 9px !important;
+        ${getWidgetTagName(CONFIG.WIDGET.NAME.PALETTE)} {
+          max-height: 100%;
         }
+
         button .icon div.fill_parent {
           display: none;
         }

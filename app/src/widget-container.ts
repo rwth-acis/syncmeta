@@ -19,23 +19,21 @@ class WidgetContainer extends LitElement {
 
   render() {
     return html`
+      <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+        crossorigin="anonymous"
+      />
       <style>
         :host {
           display: block;
         }
-        .maincontainer {
-          display: flex;
 
-          height: 100vh;
-          flex-flow: row wrap;
-        }
         .innercontainer {
           border-radius: 5px;
-          padding: 5px;
-          margin: 4px;
           flex: 1;
-          max-height: 100%;
-
+          height: 100%;
           resize: horizontal;
           -webkit-box-shadow: 0px 0px 30px 3px rgba(158, 158, 158, 0.89);
           box-shadow: 0px 0px 30px 3px rgba(158, 158, 158, 0.59);
@@ -45,7 +43,7 @@ class WidgetContainer extends LitElement {
           display: flex;
           flex-flow: column;
         }
-        .innercontainer:nth-of-type(2) {
+        .innercontainer:nth-of-type(3) {
           display: flex;
           flex-flow: column;
         }
@@ -56,11 +54,18 @@ class WidgetContainer extends LitElement {
           flex-direction: column;
         }
       </style>
-      <div class="maincontainer">
-        <div class="innercontainer">
-          <canvas-widget style="height:100%"></canvas-widget>
+      <div class="container-fluid row w-100" style="height:98vh">
+        <div class="col-7 innercontainer">
+          <div class="row h-100">
+            <div class="col-9 px-1 border-end h-100">
+              <canvas-widget></canvas-widget>
+            </div>
+            <div class="col-3  h-100">
+              <palette-widget> </palette-widget>
+            </div>
+          </div>
         </div>
-        <div class="middle-container">
+        <div class="col-3 middle-container ">
           <div class="innercontainer">
             <attribute-widget></attribute-widget>
           </div>
@@ -68,10 +73,7 @@ class WidgetContainer extends LitElement {
             <debug-widget></debug-widget>
           </div>
         </div>
-        <div class="innercontainer">
-          <palette-widget> </palette-widget>
-        </div>
-        <div class="innercontainer">
+        <div class="col-2 innercontainer">
           <user-activity-widget></user-activity-widget>
         </div>
       </div>
