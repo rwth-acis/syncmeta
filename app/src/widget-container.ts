@@ -54,7 +54,7 @@ class WidgetContainer extends LitElement {
           flex-direction: column;
         }
       </style>
-      <div class="container-fluid row w-100" style="height:98vh">
+      <div class="container-fluid row w-100 px-0 mx-0" style="height:98vh">
         <div class="col-7 innercontainer">
           <div class="row h-100">
             <div class="col-9 px-1 border-end h-100">
