@@ -402,9 +402,7 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
         #viewsHide {
           display: none;
         }
-        #viewCtrlContainer {
-          display: none;
-        }
+
         #lblCurrentView {
           display: none;
         }
@@ -510,7 +508,7 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
                 >View:<span id="lblCurrentViewId"></span
               ></strong>
             </div>
-            <div id="ViewCtrlContainer" class="flex" style="display:none">
+            <div id="ViewCtrlContainer" class="flex my-2" style="display:none">
               <button
                 id="btnCreateViewpoint"
                 class="btn btn-light"
