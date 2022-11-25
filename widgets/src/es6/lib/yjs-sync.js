@@ -8,9 +8,6 @@ export async function yjsSync(spaceTitle = window.spaceTitle) {
   }
 
   const doc = new Y.Doc();
-  if (!window.y) {
-    window.y = doc; // bind the yjs document to the window object as a workaround for legacy code
-  }
 
   // Sync clients with the y-websocket provider
   const websocketProvider = new WebsocketProvider(
@@ -27,6 +24,9 @@ export async function yjsSync(spaceTitle = window.spaceTitle) {
         resolve(spaceTitle);
       }
     });
+    setTimeout(() => {
+      reject("YJS connection timed out");
+    }, 5000);
   });
   return doc;
 }
