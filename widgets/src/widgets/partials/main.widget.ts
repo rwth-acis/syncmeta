@@ -110,15 +110,15 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
           overflow: hidden;
           width: 100%;
           height: 100%;
-          border: 1px solid #aaa;
-          border-radius: 6px;
           position: relative;
         }
         #canvas {
           width: 100%;
           height: 100%;
+          max-width: none !important;
+          max-height: none !important;
           border-radius: 6px;
-          background-color: green;
+          background-color: #e2e2e2;
           position: absolute;
           background-image: none !important;
           opacity: 1 !important;
@@ -654,7 +654,10 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
             <strong>SYNCMETA!</strong>
           </p>
         </div>
-        <div class="row mx-auto" id="canvas-frame">
+        <div
+          class="row mx-auto border border-dark border-2 rounded"
+          id="canvas-frame"
+        >
           <div id="canvas"></div>
         </div>
         <div id="q"></div>

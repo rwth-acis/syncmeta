@@ -25,13 +25,17 @@ import RevokeSharedActivityOperation from "../operations/non_ot/RevokeSharedActi
 import ShowGuidanceBoxOperation from "../operations/non_ot/ShowGuidanceBoxOperation";
 import ToolSelectOperation from "../operations/non_ot/ToolSelectOperation";
 import {
-  EdgeAddOperation, EdgeDeleteOperation,
+  EdgeAddOperation,
+  EdgeDeleteOperation,
   NodeAddOperation,
-  NodeDeleteOperation
+  NodeDeleteOperation,
 } from "../operations/ot/EntityOperation";
 import Util from "../Util";
 import AbstractCanvas from "./AbstractCanvas";
-import { EntityManagerInstance as EntityManager, HistoryManagerInstance as HistoryManager } from "./Manager";
+import {
+  EntityManagerInstance as EntityManager,
+  HistoryManagerInstance as HistoryManager,
+} from "./Manager";
 
 /**
  * Canvas
@@ -72,14 +76,14 @@ export default class Canvas extends AbstractCanvas {
      * @type {number}
      * @private
      */
-    var _canvasWidth = 9000;
+    var _canvasWidth = 6000;
 
     /**
      * Default canvas height
      * @type {number}
      * @private
      */
-    var _canvasHeight = 9000;
+    var _canvasHeight = 6000;
 
     /**
      * Model attributes
@@ -617,24 +621,6 @@ export default class Canvas extends AbstractCanvas {
       });
 
       _$node.draggable({
-        start: function () {
-          _$node.draggable("option", "containment", [
-            -_canvasWidth + $canvasFrame.width(),
-            -_canvasHeight + $canvasFrame.height(),
-            0,
-            0,
-          ]);
-          _$node.draggable("option", "containment", [
-            -_canvasWidth + $canvasFrame.width(),
-            -_canvasHeight + $canvasFrame.height(),
-            0,
-            0,
-          ]);
-        },
-        drag: function (event, ui) {
-          //ui.position.left = Math.round(ui.position.left  / _zoom);
-          //ui.position.top = Math.round(ui.position.top / _zoom);
-        },
         stop: function () {
           sendViewChangeOperation();
         },
@@ -969,12 +955,11 @@ export default class Canvas extends AbstractCanvas {
       //     _$node.css(p[i] + "transform", s);
       //Used by jquery.transformable to make dragging of the canvas
       //work correctly
+      _$node.css("transform", `scaleX(${zoom}) scaleY(${zoom})`);
       _$node.animate({
         transform: `scaleX(${zoom}) scaleY(${zoom})`,
       });
-      // _$node.setTransform("scalex", zoom);
-      // _$node.setTransform("scaley", zoom);
-
+     
       jsPlumb.setZoom(zoom);
       sendViewChangeOperation();
     };
