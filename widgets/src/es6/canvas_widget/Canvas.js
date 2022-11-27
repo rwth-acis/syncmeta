@@ -1,8 +1,8 @@
 import "jquery";
-import "jquery-contextmenu";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js";
 import "jsplumb/dist/js/jsPlumb-1.7.9.js";
+import "https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.9.2/jquery.contextMenu.js";
 import AbstractEntity from "../canvas_widget/AbstractEntity";
 import DagreLayout from "../canvas_widget/DagreLayout";
 import CollaborationGuidance from "../canvas_widget/guidance_modeling/CollaborationGuidance";
@@ -164,8 +164,6 @@ export default class Canvas extends AbstractCanvas {
           operation.getContainment()
         );
       }
-
-      console.log(node.getContainment());
 
       if (operation.getDefaultLabel()) {
         node.getLabel().getValue().setValue(operation.getDefaultLabel());
@@ -949,17 +947,12 @@ export default class Canvas extends AbstractCanvas {
         return;
       }
       _zoom = zoom;
-      // var p = [ "-webkit-", "-moz-", "-ms-", "-o-", "" ],
-      //     s = "scale(" + zoom + ")";
-      // for (var i = 0; i < p.length; i++)
-      //     _$node.css(p[i] + "transform", s);
-      //Used by jquery.transformable to make dragging of the canvas
-      //work correctly
+
       _$node.css("transform", `scaleX(${zoom}) scaleY(${zoom})`);
       _$node.animate({
         transform: `scaleX(${zoom}) scaleY(${zoom})`,
       });
-     
+
       jsPlumb.setZoom(zoom);
       sendViewChangeOperation();
     };
@@ -1863,4 +1856,3 @@ export default class Canvas extends AbstractCanvas {
     }
   }
 }
-
