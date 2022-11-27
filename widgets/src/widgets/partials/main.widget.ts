@@ -11,6 +11,10 @@ import { CONFIG, getWidgetTagName } from "../../es6/config";
 export class CanvasWidget extends SyncMetaWidget(LitElement) {
   render() {
     return html`
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.9.2/jquery.contextMenu.min.css"
+      />
       <style>
         ${getWidgetTagName(CONFIG.WIDGET.NAME.MAIN)} {
           height: 100%;
