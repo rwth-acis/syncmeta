@@ -10,9 +10,10 @@ import "../../es6/activity_widget.js";
 export class ActivityWidget extends SyncMetaWidget(LitElement) {
   render() {
     return html`
-      <!-- had to use inline script to get this to work. static styles was not
-      working after bundling -->
       <style>
+        ${getWidgetTagName(CONFIG.WIDGET.NAME.ACTIVITY)} {
+          height: 100%;
+        }
         h2 {
           font-size: 0.8em;
           margin: 1px 1px 3px;
