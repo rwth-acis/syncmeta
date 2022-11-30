@@ -1,9 +1,11 @@
 import { default as _ } from "lodash-es";
 import "https://cdnjs.cloudflare.com/ajax/libs/graphlib/2.1.8/graphlib.min.js";
-import "jquery";
-import "jquery-contextmenu";
-import "jquery-ui";
+import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
+import "https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.9.2/jquery.contextMenu.js";
+import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
+import "../lib/jquery.transformable-PATCHED";
 import "jsplumb/dist/js/jsPlumb-1.7.9.js";
+
 import { CONFIG } from "../config";
 import { default as loadHTML } from "../html.template.loader";
 import { default as IWCW } from "../lib/IWCWrapper";

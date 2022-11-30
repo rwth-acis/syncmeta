@@ -4,7 +4,7 @@
  */
 
 import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
-import "jquery-ui";
+import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 // import test from "./../es6-test/ActivityWidgetTest";
 import { CONFIG, getWidgetTagName } from "./config";
 import ActivityList from "./activity_widget/ActivityList";

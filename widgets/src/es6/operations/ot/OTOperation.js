@@ -17,6 +17,7 @@ import Operation from "../Operation";
      */
     class OTOperation extends Operation {
     constructor(name, value, type, position) {
+        super();
         /**
          * JabberId of the user who issued this activity
          * @type {string}

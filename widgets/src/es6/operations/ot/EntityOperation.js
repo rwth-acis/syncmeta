@@ -1,5 +1,5 @@
 import { CONFIG } from "../../config";
-
+import OTOperation from "./OTOperation";
 /**
  * EntityOperation
  * @class operations.ot.EntityOperation
@@ -713,8 +713,6 @@ export class NodeAddOperation extends EntityOperation {
      * @returns {NodeDeleteOperation}
      */
     this.inverse = function () {
-      var NodeDeleteOperation = $__operations_ot_NodeDeleteOperation;
-
       return new NodeDeleteOperation(
         this.getEntityId(),
         this.getType(),

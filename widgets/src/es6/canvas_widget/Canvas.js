@@ -220,7 +220,7 @@ export default class Canvas extends AbstractCanvas {
           {
             nodeType: operation.getType(),
           }
-        )
+        ).toJSON()
       );
     };
 

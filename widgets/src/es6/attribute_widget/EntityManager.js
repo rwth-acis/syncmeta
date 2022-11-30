@@ -1,5 +1,5 @@
 import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
-import "jquery-ui";
+import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import { default as _ } from "lodash-es";
 import LogicalConjunctions from "../canvas_widget/viewpoint/LogicalConjunctions";
 import LogicalOperator from "../canvas_widget/viewpoint/LogicalOperator";

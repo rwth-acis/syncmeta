@@ -3,7 +3,7 @@
  * @namespace attribute_widget
  */
 import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
-import "jquery-ui";
+import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import IWCW from "./lib/IWCWrapper";
 import { CONFIG } from "./config";
 // import AttributeWidgetTest from "./../test/AttributeWidgetTest";
