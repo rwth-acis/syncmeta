@@ -1,4 +1,4 @@
-import "jquery";
+import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import IWCW from "./lib/IWCWrapper";
 import NonOTOperation from "./operations/non_ot/NonOTOperation";
 import { CONFIG } from "./config";

@@ -1,4 +1,4 @@
-import "jquery";
+import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import { EntityManagerInstance as EntityManager } from "./Manager";
 import _ from "lodash-es";
 

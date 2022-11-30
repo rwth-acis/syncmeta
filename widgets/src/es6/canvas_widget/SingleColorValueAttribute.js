@@ -1,5 +1,5 @@
-import "jquery";
-import "jquery-ui";
+import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
+import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import _ from "lodash-es";
 import AbstractAttribute from "./AbstractAttribute";
 import Value from "./Value";
@@ -8,7 +8,6 @@ const singleColorValueAttributeHtml = await loadHTML(
   "../../templates/canvas_widget/single_value_attribute.html",
   import.meta.url
 );
-
 
 /**
  * SingleColorValueAttribute
@@ -22,7 +21,7 @@ const singleColorValueAttributeHtml = await loadHTML(
  */
 class SingleColorValueAttribute extends AbstractAttribute {
   constructor(id, name, subjectEntity) {
-    super( id, name, subjectEntity);
+    super(id, name, subjectEntity);
 
     /***
      * Value object of value

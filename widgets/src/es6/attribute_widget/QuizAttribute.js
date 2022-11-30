@@ -1,5 +1,5 @@
-import "jquery";
-import "jquery-ui";
+import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
+import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import _ from "lodash-es";
 import AbstractAttribute from "./AbstractAttribute";
 import Value from "./Value";
@@ -8,7 +8,6 @@ const singleQuizAttributeHtml = await loadHTML(
   "../../templates/attribute_widget/single_quiz_attribute.html",
   import.meta.url
 );
-
 
 /**
  * SingleValueAttribute
@@ -22,9 +21,7 @@ const singleQuizAttributeHtml = await loadHTML(
  */
 class QuizAttribute extends AbstractAttribute {
   constructor(id, name, subjectEntity) {
-    
-
-    super( id, name, subjectEntity);
+    super(id, name, subjectEntity);
     var that = this;
 
     /***
@@ -139,8 +136,10 @@ class QuizAttribute extends AbstractAttribute {
       var row = table.rows.length;
       var currID = "";
       for (var i = 2; i < row; i++) {
-        if (_$node.find("#" + i.toString() + "1")[0].value == "" ||
-          _$node.find("#" + i.toString() + "2")[0].value == "") {
+        if (
+          _$node.find("#" + i.toString() + "1")[0].value == "" ||
+          _$node.find("#" + i.toString() + "2")[0].value == ""
+        ) {
           continue;
         }
         Sequence.push(_$node.find("#" + i.toString() + "0")[0].value);
@@ -148,8 +147,7 @@ class QuizAttribute extends AbstractAttribute {
         Intents.push(_$node.find("#" + i.toString() + "2")[0].value);
         if (_$node.find("#" + i.toString() + "3")[0].value == "") {
           Hints.push("No Hint Available for this Question");
-        } else
-          Hints.push(_$node.find("#" + i.toString() + "3")[0].value);
+        } else Hints.push(_$node.find("#" + i.toString() + "3")[0].value);
       }
       Json["Questions"] = Questions;
       Json["Sequence"] = Sequence;
@@ -181,8 +179,10 @@ class QuizAttribute extends AbstractAttribute {
         if (_$node.find("#" + i.toString() + "0")[0].value == null) {
           break;
         }
-        _$node.find("#" + i.toString() + "0")[0].value = content.Sequence[i - 2];
-        _$node.find("#" + i.toString() + "1")[0].value = content.Questions[i - 2];
+        _$node.find("#" + i.toString() + "0")[0].value =
+          content.Sequence[i - 2];
+        _$node.find("#" + i.toString() + "1")[0].value =
+          content.Questions[i - 2];
         _$node.find("#" + i.toString() + "2")[0].value = content.Intents[i - 2];
         _$node.find("#" + i.toString() + "3")[0].value = content.Hints[i - 2];
       }

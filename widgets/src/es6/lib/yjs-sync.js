@@ -1,4 +1,4 @@
-import "jquery";
+import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
 
@@ -25,9 +25,8 @@ export async function yjsSync(spaceTitle = window.spaceTitle) {
       }
     });
     setTimeout(() => {
-      reject("YJS connection timed out");
+      reject("YJS connection timed out. This means syncmeta widgets wont work");
     }, 5000);
   });
   return doc;
 }
-

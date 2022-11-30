@@ -3,8 +3,8 @@
  * @namespace palette_widget
  */
 
-import "jquery";
-import "jquery-ui";
+import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
+import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import { WaitForCanvas } from "./WaitForCanvas";
 import Palette from "./palette_widget/Palette";
 import MoveTool from "./palette_widget/MoveTool";

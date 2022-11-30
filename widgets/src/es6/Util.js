@@ -1,4 +1,4 @@
-import "jquery";
+import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import { CONFIG } from "./config";
 import { OpenAppProvider } from "./lib/openapp";
 const openapp = new OpenAppProvider().openapp;

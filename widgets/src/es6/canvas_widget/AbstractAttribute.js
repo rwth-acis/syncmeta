@@ -1,5 +1,5 @@
-import "jquery";
-import "jquery-ui";
+import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
+import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import _ from "lodash-es";
 import AbstractEntity from "./AbstractEntity";
 import loadHTML from "../html.template.loader";
@@ -7,8 +7,6 @@ const abstractAttributeHtml = await loadHTML(
   "../../templates/canvas_widget/abstract_attribute.html",
   import.meta.url
 );
-
-
 
 /**
  * AbstractAttribute
@@ -20,10 +18,9 @@ const abstractAttributeHtml = await loadHTML(
  * @param {string} name Name of attribute
  * @param {AbstractEntity} subjectEntity Entity the attribute is assigned to
  */
-class AbstractAttribute extends AbstractEntity{
+class AbstractAttribute extends AbstractEntity {
   constructor(id, name, subjectEntity) {
-    super(id)
-
+    super(id);
 
     /**
      * Entity id
@@ -141,8 +138,5 @@ class AbstractAttribute extends AbstractEntity{
     return deferred.promise();
   }
 }
-
-
-
 
 export default AbstractAttribute;

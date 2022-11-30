@@ -1,5 +1,5 @@
-import "jquery";
-import "jquery-ui";
+import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
+import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import _ from "lodash-es";
 import AbstractAttribute from "./AbstractAttribute";
 import SelectionValue from "./SelectionValue";
@@ -9,7 +9,6 @@ const singleSelectionAttributeHtml = await loadHTML(
   "../../templates/canvas_widget/single_selection_attribute.html",
   import.meta.url
 );
-
 
 /**
  * SingleSelectionAttribute
@@ -24,16 +23,11 @@ const singleSelectionAttributeHtml = await loadHTML(
  */
 
 class SingleSelectionAttribute extends AbstractAttribute {
-  constructor(id,
-    name,
-    subjectEntity,
-    options,
-    useAttributeHtml) {
-    
-    super( id, name, subjectEntity);
+  constructor(id, name, subjectEntity, options, useAttributeHtml) {
+    super(id, name, subjectEntity);
     useAttributeHtml =
       typeof useAttributeHtml !== "undefinded" ? useAttributeHtml : false;
-      var that = this;
+    var that = this;
     /***
      * Value object of value
      * @type {canvas_widget.SelectionValue}
