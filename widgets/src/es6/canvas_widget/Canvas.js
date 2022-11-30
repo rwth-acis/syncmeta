@@ -1,7 +1,7 @@
 import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js";
-import "jsplumb/dist/js/jsPlumb-1.7.9.js";
+import "jsplumb/dist/js/jsPlumb-1.7.9.js"; // note that the version from the CDN  does not come with bezier connectors
 import "https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.9.2/jquery.contextMenu.js";
 import AbstractEntity from "../canvas_widget/AbstractEntity";
 import DagreLayout from "../canvas_widget/DagreLayout";

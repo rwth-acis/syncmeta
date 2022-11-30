@@ -25,47 +25,47 @@ import { yjsSync } from "./lib/yjs-sync";
 // import test from "./../es6-test/PaletteWidgetTest";
 
 $(async function () {
-  const y = await yjsSync();
-  await WaitForCanvas(CONFIG.WIDGET.NAME.PALETTE, y)
-    .then((metamodel) => {
-      window.scrollTo(0, document.body.scrollHeight);
-      var palette = new Palette($("#palette"), $("#info"));
+  try {
+    const y = await yjsSync();
+    const metamodel = await WaitForCanvas(CONFIG.WIDGET.NAME.PALETTE, y);
 
-      palette.addTool(new MoveTool());
-      palette.addSeparator();
+    window.scrollTo(0, document.body.scrollHeight);
+    var palette = new Palette($("#palette"), $("#info"));
 
-      if (!$.isEmptyObject(metamodel)) {
-        if (metamodel.hasOwnProperty("nodes")) {
-          palette.initNodePalette(metamodel);
-        }
-        if (metamodel.hasOwnProperty("edges")) {
-          palette.iniEdgePalette(metamodel);
-        }
-      } else {
-        //Create node tools for metamodeling
-        palette.addTool(new AbstractClassNodeTool());
-        palette.addTool(new ObjectNodeTool());
-        palette.addTool(new RelationshipNodeTool());
-        palette.addTool(new RelationshipGroupNodeTool());
-        palette.addTool(new EnumNodeTool());
-        palette.addTool(new NodeShapeNodeTool());
-        palette.addTool(new EdgeShapeNodeTool());
+    palette.addTool(new MoveTool());
+    palette.addSeparator();
 
-        var viewObjectTool = new ViewObjectNodeTool();
-        palette.addTool(viewObjectTool);
-        viewObjectTool.get$node().hide();
-
-        var viewRelNodeTool = new ViewRelationshipNodeTool();
-        palette.addTool(viewRelNodeTool);
-        viewRelNodeTool.get$node().hide();
-
-        palette.addSeparator();
-        palette.addTool(new BiDirAssociationEdgeTool());
-        palette.addTool(new UniDirAssociationEdgeTool());
-        palette.addTool(new GeneralisationEdgeTool());
+    if (!$.isEmptyObject(metamodel)) {
+      if (metamodel.hasOwnProperty("nodes")) {
+        palette.initNodePalette(metamodel);
       }
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+      if (metamodel.hasOwnProperty("edges")) {
+        palette.iniEdgePalette(metamodel);
+      }
+    } else {
+      //Create node tools for metamodeling
+      palette.addTool(new AbstractClassNodeTool());
+      palette.addTool(new ObjectNodeTool());
+      palette.addTool(new RelationshipNodeTool());
+      palette.addTool(new RelationshipGroupNodeTool());
+      palette.addTool(new EnumNodeTool());
+      palette.addTool(new NodeShapeNodeTool());
+      palette.addTool(new EdgeShapeNodeTool());
+
+      var viewObjectTool = new ViewObjectNodeTool();
+      palette.addTool(viewObjectTool);
+      viewObjectTool.get$node().hide();
+
+      var viewRelNodeTool = new ViewRelationshipNodeTool();
+      palette.addTool(viewRelNodeTool);
+      viewRelNodeTool.get$node().hide();
+
+      palette.addSeparator();
+      palette.addTool(new BiDirAssociationEdgeTool());
+      palette.addTool(new UniDirAssociationEdgeTool());
+      palette.addTool(new GeneralisationEdgeTool());
+    }
+  } catch (error) {
+    console.error(error);
+  }
 });

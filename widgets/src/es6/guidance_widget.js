@@ -37,6 +37,8 @@ yjsSync().then((y) => {
       y.clientID
   );
   initGuidanceWidget(y);
+}).catch((err) => {
+  console.error("GUIDANCE: Yjs Initialization failed: " + err);
 });
 
 function initGuidanceWidget(y) {
