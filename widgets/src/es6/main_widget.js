@@ -130,11 +130,9 @@ export default async function () {
         activityMap.set("UserLeftActivity", leaveActivity.toJSON());
       };
     })
-    .catch(function () {
-      console.warn("yjs log: Yjs intialization failed!");
-      alert(
-        "ERROR: YJS not available. This means widgets will not work properly."
-      );
+    .catch(function (err) {
+      console.warn(err);
+      alert("ERROR: " + err.error);
     });
 }
 

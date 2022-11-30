@@ -25,7 +25,7 @@ export async function yjsSync(spaceTitle = window.spaceTitle) {
       }
     });
     setTimeout(() => {
-      reject("YJS connection timed out");
+      reject("YJS connection timed out. This means syncmeta widgets wont work");
     }, 5000);
   });
   return doc;
