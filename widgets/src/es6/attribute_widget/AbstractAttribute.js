@@ -1,4 +1,4 @@
-import "jquery";
+import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "jquery-ui";
 import _ from "lodash-es";
 import AbstractEntity from "./AbstractEntity";
@@ -21,7 +21,7 @@ const abstractAttributeHtml = await loadHTML(
  */
 class AbstractAttribute extends AbstractEntity {
   constructor(id, name, subjectEntity) {
-    super( id);
+    super(id);
 
     /**
      * Name of Attribute
@@ -101,6 +101,5 @@ class AbstractAttribute extends AbstractEntity {
     this._get$node();
   }
 }
-
 
 export default AbstractAttribute;

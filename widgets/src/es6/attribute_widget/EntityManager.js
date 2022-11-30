@@ -1,4 +1,4 @@
-import "jquery";
+import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "jquery-ui";
 import { default as _ } from "lodash-es";
 import LogicalConjunctions from "../canvas_widget/viewpoint/LogicalConjunctions";

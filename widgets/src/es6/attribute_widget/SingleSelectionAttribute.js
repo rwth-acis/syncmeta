@@ -1,4 +1,4 @@
-import "jquery";
+import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "jquery-ui";
 import _ from "lodash-es";
 import AbstractAttribute from "./AbstractAttribute";
@@ -9,7 +9,6 @@ const singleSelectionAttributeHtml = await loadHTML(
   "../../templates/attribute_widget/single_selection_attribute.html",
   import.meta.url
 );
-
 
 /**
  * SingleSelectionAttribute
@@ -24,7 +23,7 @@ const singleSelectionAttributeHtml = await loadHTML(
  */
 class SingleSelectionAttribute extends AbstractAttribute {
   constructor(id, name, subjectEntity, options) {
-    super( id, name, subjectEntity);
+    super(id, name, subjectEntity);
 
     /***
      * Value object of value

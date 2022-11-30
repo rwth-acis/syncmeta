@@ -1,4 +1,4 @@
-import "jquery";
+import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "jquery-ui";
 import _ from "lodash-es";
 import AbstractAttribute from "./AbstractAttribute";
@@ -9,7 +9,6 @@ const integerAttributeHtml = await loadHTML(
   "../../templates/canvas_widget/single_selection_attribute.html",
   import.meta.url
 );
-
 
 /**
  * IntegerAttribute

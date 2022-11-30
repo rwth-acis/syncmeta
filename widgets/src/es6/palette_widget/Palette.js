@@ -1,7 +1,7 @@
 import { CONFIG } from "../config";
 import _ from "lodash-es";
 import IWCW from "../lib/IWCWrapper";
-import "jquery";
+import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import ToolSelectOperation from "../operations/non_ot/ToolSelectOperation";
 import SetViewTypesOperation from "../operations/non_ot/SetViewTypesOperation";
 import InitModelTypesOperation from "../operations/non_ot/InitModelTypesOperation";

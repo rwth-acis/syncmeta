@@ -3,7 +3,7 @@
  * @namespace activity_widget
  */
 
-import "jquery";
+import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "jquery-ui";
 // import test from "./../es6-test/ActivityWidgetTest";
 import { CONFIG, getWidgetTagName } from "./config";

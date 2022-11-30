@@ -1,6 +1,6 @@
-import "jquery";
+import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "jquery-ui";
-import "jsplumb/dist/js/jsPlumb-1.7.9.js";;
+import "jsplumb/dist/js/jsPlumb-1.7.9.js";
 import _ from "lodash-es";
 // import "bootstrap";
 import { EntityManagerInstance as __canvas_widget_EntityManager } from "../Manager";

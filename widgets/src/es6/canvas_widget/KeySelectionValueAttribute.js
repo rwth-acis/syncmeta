@@ -1,4 +1,4 @@
-import "jquery";
+import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "jquery-ui";
 import _ from "lodash-es";
 import AbstractAttribute from "./AbstractAttribute";
@@ -9,8 +9,6 @@ const keySelectionValueAttributeHtml = await loadHTML(
   "../../templates/canvas_widget/key_value_attribute.html",
   import.meta.url
 );
-
-
 
 /**
  * KeySelectionValueAttribute
@@ -25,8 +23,7 @@ const keySelectionValueAttributeHtml = await loadHTML(
  */
 class KeySelectionValueAttribute extends AbstractAttribute {
   constructor(id, name, subjectEntity, options) {
-
-    super( id, name, subjectEntity);
+    super(id, name, subjectEntity);
     var that = this;
 
     var _ymap = null;

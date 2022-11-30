@@ -1,7 +1,7 @@
 import { OpenAppProvider } from "../lib/openapp";
 const openapp = new OpenAppProvider().openapp;
 import { CONFIG } from "../config";
-import "jquery";
+import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "jquery-ui";
 import _ from "lodash-es";
 import IWCW from "../lib/IWCWrapper";

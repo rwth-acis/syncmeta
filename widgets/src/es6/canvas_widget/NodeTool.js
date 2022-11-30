@@ -1,4 +1,4 @@
-import "jquery";
+import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "jquery-ui";
 import { EntityManagerInstance as EntityManager } from "./Manager";
 import AbstractCanvasTool from "./AbstractCanvasTool";

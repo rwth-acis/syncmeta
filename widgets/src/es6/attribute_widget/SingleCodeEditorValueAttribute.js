@@ -1,4 +1,4 @@
-import "jquery";
+import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "jquery-ui";
 import _ from "lodash-es";
 import AbstractAttribute from "./AbstractAttribute";
@@ -8,7 +8,6 @@ const SingleCodeEditorValueAttributeHtml = await loadHTML(
   "../../templates/attribute_widget/single_value_attribute.html",
   import.meta.url
 );
-
 
 /**
  * SingleCodeEditorValueAttribute

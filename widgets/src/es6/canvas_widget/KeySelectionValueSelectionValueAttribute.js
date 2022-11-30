@@ -1,4 +1,4 @@
-import "jquery";
+import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "jquery-ui";
 import _ from "lodash-es";
 import AbstractAttribute from "./AbstractAttribute";
@@ -24,12 +24,8 @@ const keySelectionValueSelectionValueAttributeHtml = await loadHTML(
  * @param {Object} options2 Selection options
  */
 class KeySelectionValueSelectionValueAttribute extends AbstractAttribute {
-  constructor(id,
-    name,
-    subjectEntity,
-    options,
-    options2) {
-    super( id, name, subjectEntity);
+  constructor(id, name, subjectEntity, options, options2) {
+    super(id, name, subjectEntity);
 
     //noinspection UnnecessaryLocalVariableJS
     /**

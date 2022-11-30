@@ -1,4 +1,4 @@
-import "jquery";
+import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
 
@@ -30,4 +30,3 @@ export async function yjsSync(spaceTitle = window.spaceTitle) {
   });
   return doc;
 }
-
