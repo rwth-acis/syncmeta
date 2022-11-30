@@ -130,9 +130,9 @@ export default async function () {
         activityMap.set("UserLeftActivity", leaveActivity.toJSON());
       };
     })
-    .catch(function (err) {
-      console.warn(err);
-      alert("ERROR: " + err.error);
+    .catch(function (message) {
+      console.warn(message);
+      alert("ERROR: " + message);
     });
 }
 
