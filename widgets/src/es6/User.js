@@ -24,9 +24,7 @@ export async function getUserInfo() {
       space.user.globalId = -1;
       console.info("User promise by " + undefined, space);
       return space;
-    } else {
-      console.log("Error: " + response.status);
-    }
+    } 
   } catch (error) {
     console.error(error);
   }
