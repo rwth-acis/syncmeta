@@ -1,6 +1,6 @@
 import { default as _ } from "lodash-es";
 import "https://cdnjs.cloudflare.com/ajax/libs/graphlib/2.1.8/graphlib.min.js";
-import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
+import "jquery";
 import "jquery-contextmenu";
 import "jquery-ui";
 import "jsplumb/dist/js/jsPlumb-1.7.9.js";
