@@ -3605,7 +3605,7 @@ class EntityManager {
               top,
               width,
               height,
-              that?.getZIndex(),
+              32000,
               containment
             );
           };
