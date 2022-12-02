@@ -921,9 +921,8 @@ export default class Canvas extends AbstractCanvas {
         operation.toNonOTOperation()
       );
       const selectionMap = y.getMap("select");
+      const userMap = y.getMap("users");
       if (entity === null) {
-        const userMap = y.getMap("users");
-
         selectionMap.set(userMap.get(y.clientID), null);
       } else {
         selectionMap.set(userMap.get(y.clientID), entity.getEntityId());

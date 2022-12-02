@@ -1929,9 +1929,9 @@ export class AbstractNode extends AbstractEntity {
       $.contextMenu({
         selector: "#" + id,
         zIndex: AbstractEntity.CONTEXT_MENU_Z_INDEX,
-        build: function ($trigger, e) {
+        build: async function ($trigger, e) {
           var menuItems, offsetClick, offsetCanvas;
-          var EntityManager = require("canvas_widget/EntityManager");
+          var EntityManager = EntityManagerInstance;
 
           offsetClick = $(e.target).offset();
           offsetCanvas = that.getCanvas().get$node().offset();
@@ -2007,7 +2007,7 @@ export class AbstractNode extends AbstractEntity {
                edges[edgeId].setZIndex();
                }
                }*/
-      _.each(require("canvas_widget/EntityManager").getEdges(), function (e) {
+      _.each(EntityManagerInstance.getEdges(), function (e) {
         e.setZIndex();
       });
     };
@@ -2451,7 +2451,7 @@ export class AbstractNode extends AbstractEntity {
       this.unhighlight();
       _$node.addClass("selected");
       Util.delay(100).then(function () {
-        _.each(require("canvas_widget/EntityManager").getEdges(), function (e) {
+        _.each(EntityManagerInstance.getEdges(), function (e) {
           e.setZIndex();
         });
       });
@@ -2467,7 +2467,7 @@ export class AbstractNode extends AbstractEntity {
       //tigger save when unselecting an entity
       $("#save").click();
       Util.delay(100).then(function () {
-        _.each(require("canvas_widget/EntityManager").getEdges(), function (e) {
+        _.each(EntityManagerInstance.getEdges(), function (e) {
           e.setZIndex();
         });
       });
@@ -2491,12 +2491,9 @@ export class AbstractNode extends AbstractEntity {
             .text(username)
         );
         Util.delay(100).then(function () {
-          _.each(
-            require("canvas_widget/EntityManager").getEdges(),
-            function (e) {
-              e.setZIndex();
-            }
-          );
+          _.each(EntityManagerInstance.getEdges(), function (e) {
+            e.setZIndex();
+          });
         });
       }
     };
@@ -2510,7 +2507,7 @@ export class AbstractNode extends AbstractEntity {
       Util.delay(100).then(function () {
         var EntityManager = null;
         try {
-          EntityManager = require("canvas_widget/EntityManager");
+          EntityManager = EntityManagerInstance;
           _.each(EntityManager.getEdges(), function (e) {
             e.setZIndex();
           });
@@ -2530,7 +2527,7 @@ export class AbstractNode extends AbstractEntity {
     this.remove = function () {
       clearInterval(_awarenessTimer);
       this.removeFromCanvas();
-      require("canvas_widget/EntityManager").deleteNode(this.getEntityId());
+      EntityManagerInstance.deleteNode(this.getEntityId());
     };
 
     /**
@@ -2586,7 +2583,7 @@ export class AbstractNode extends AbstractEntity {
         clickedNode.droppable({
           hoverClass: "selected",
           drop: function (event, ui) {
-            const EntityManager = require("canvas_widget/EntityManager");
+            const EntityManager = EntityManagerInstance;
 
             var containerNode = EntityManager.getNodes()[$(this).attr("id")];
             var childNode = EntityManager.getNodes()[ui.draggable.attr("id")];
@@ -2891,7 +2888,7 @@ export class AbstractNode extends AbstractEntity {
 
     this._registerYMap = function () {
       _ymap.observe(function (event) {
-        var yUserId = event.object.map[event.name][0];
+        var yUserId = event.currentTarget.doc.clientID;
 
         if (
           y.clientID !== yUserId ||

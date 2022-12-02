@@ -1,6 +1,6 @@
-import _ from "lodash";
+import _ from "lodash-es";
 import "https://cdnjs.cloudflare.com/ajax/libs/graphlib/2.1.8/graphlib.min.js";
-import EntityManager from "canvas_widget/EntityManager";
+import { EntityManagerInstance as EntityManager } from "../Manager";
 /**
  * The closed-view-generation(CVG) algorithm
  * Searches for neighbors of a referenced object/relationship node and adds the neighbors to the viewpoint model

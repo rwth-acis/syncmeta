@@ -166,7 +166,7 @@ class SelectionValue extends AbstractValue{
       that
         .getRootSubjectEntity()
         .getYMap()
-        .observePath([that.getEntityId()], function (event) {
+        .observe(function (event) {
           if (event) {
             var operation = new ValueChangeOperation(
               event.entityId,
@@ -182,8 +182,10 @@ class SelectionValue extends AbstractValue{
             processValueChangeOperation(operation);
 
             //Only the local user Propagates the activity and saves the state of the model
-            if (_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] ===
-              operation.getJabberId()) {
+            if (
+              _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] ===
+              operation.getJabberId()
+            ) {
               const activityMap = y.getMap("activity");
 
               activityMap.set(
@@ -200,7 +202,9 @@ class SelectionValue extends AbstractValue{
                   {
                     value: operation.getValue(),
                     subjectEntityName: that.getSubjectEntity().getName(),
-                    rootSubjectEntityType: that.getRootSubjectEntity().getType(),
+                    rootSubjectEntityType: that
+                      .getRootSubjectEntity()
+                      .getType(),
                     rootSubjectEntityId: that
                       .getRootSubjectEntity()
                       .getEntityId(),
@@ -214,9 +218,7 @@ class SelectionValue extends AbstractValue{
                   that.getRootSubjectEntity()
                 );
                 //CVG
-                require([
-                  "canvas_widget/viewpoint/ClosedViewGeneration",
-                ], function (CVG) {
+                import("./viewpoint/ClosedViewGeneration").then(function (CVG) {
                   CVG(rootSubjectEntity);
                 });
               }

@@ -1,5 +1,5 @@
 {
   "scripts": {
-    "dev": "concurrently --kill-others \"cd app && npm run start:watch\" \"cd widgets && npm run bundle:watch\" \"cd app && npm run build:watch\""
+    "dev": "concurrently --kill-others \"cd app && npm run start:watch\" \"cd widgets && npm run bundle:watch\" \"cd app && npm run build:watch\" \"y-websocket\""
   }
 }

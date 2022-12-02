@@ -29,18 +29,12 @@ const attributeBooleanValueHtml = await loadHTML(
  * @param {canvas_widget.AbstractEntity} subjectEntity Entity the attribute is assigned to
  * @param {canvas_widget.AbstractNode|canvas_widget.AbstractEdge} rootSubjectEntity Topmost entity in the chain of entity the attribute is assigned to
  */
-class BooleanValue extends AbstractValue{
-  constructor(id,
-    name,
-    subjectEntity,
-    rootSubjectEntity,
-    useAttributeHtml) {
-   
-    if (useAttributeHtml)
-      booleanValueHtml = attributeBooleanValueHtml;
+class BooleanValue extends AbstractValue {
+  constructor(id, name, subjectEntity, rootSubjectEntity, useAttributeHtml) {
+    if (useAttributeHtml) booleanValueHtml = attributeBooleanValueHtml;
 
-    super( id, name, subjectEntity, rootSubjectEntity);
-       var that = this;
+    super(id, name, subjectEntity, rootSubjectEntity);
+    var that = this;
     /**
      * Value
      * @type {boolean}
@@ -67,7 +61,8 @@ class BooleanValue extends AbstractValue{
      * @returns {string[]}
      */
     var getEntityIdChain = function () {
-      var chain = [that.getEntityId()], entity = that;
+      var chain = [that.getEntityId()],
+        entity = that;
       while (entity instanceof AbstractAttribute) {
         chain.unshift(entity.getSubjectEntity().getEntityId());
         entity = entity.getSubjectEntity();
@@ -93,10 +88,8 @@ class BooleanValue extends AbstractValue{
      */
     this.setValue = function (value) {
       _value = value;
-      if (useAttributeHtml)
-        _$node.prop("checked", value);
-      else
-        _$node.text(value);
+      if (useAttributeHtml) _$node.prop("checked", value);
+      else _$node.text(value);
     };
 
     /**
@@ -137,7 +130,7 @@ class BooleanValue extends AbstractValue{
       that
         .getRootSubjectEntity()
         .getYMap()
-        .observePath([that.getEntityId()], function (event) {
+        .observe(function (event) {
           if (event) {
             var operation = new ValueChangeOperation(
               event.entityId,
@@ -153,8 +146,10 @@ class BooleanValue extends AbstractValue{
             processValueChangeOperation(operation);
 
             //Only the local user Propagates the activity
-            if (_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] ===
-              operation.getJabberId()) {
+            if (
+              _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] ===
+              operation.getJabberId()
+            ) {
               const activityMap = y.getMap("activity");
               activityMap.set(
                 ActivityOperation.TYPE,
@@ -170,7 +165,9 @@ class BooleanValue extends AbstractValue{
                   {
                     value: operation.getValue(),
                     subjectEntityName: that.getSubjectEntity().getName(),
-                    rootSubjectEntityType: that.getRootSubjectEntity().getType(),
+                    rootSubjectEntityType: that
+                      .getRootSubjectEntity()
+                      .getType(),
                     rootSubjectEntityId: that
                       .getRootSubjectEntity()
                       .getEntityId(),
@@ -192,11 +189,12 @@ class BooleanValue extends AbstractValue{
       that
         .getRootSubjectEntity()
         .getYMap()
-        .observePath(
-          [that.getEntityId()],
+        .observe(
           _.debounce(function (event) {
-            if (event &&
-              event.jabberId === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
+            if (
+              event &&
+              event.jabberId === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]
+            )
               $("#save").click();
           }, 500)
         );

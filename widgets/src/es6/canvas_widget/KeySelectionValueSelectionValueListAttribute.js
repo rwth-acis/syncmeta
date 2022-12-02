@@ -316,7 +316,8 @@ class KeySelectionValueSelectionValueListAttribute extends AbstractAttribute {
       }
 
       ymap.observe(function (event) {
-        if (event.name.indexOf("[key]") != -1) {
+        const changedKeys = Array.from(event.keysChanged);
+        if (changedKeys.indexOf("[key]") != -1) {
           var operation;
           var data = event.value;
           switch (event.type) {

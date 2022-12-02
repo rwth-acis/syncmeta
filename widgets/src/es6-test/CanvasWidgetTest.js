@@ -2,11 +2,9 @@ import { CONFIG } from "../config";
 import "jquery";
 import chai from "chai";
 import WebConsoleReporter from "WebConsoleReporter";
-import EntityManager from "canvas_widget/EntityManager";
+import { EntityManagerInstance as EntityManager } from "./canvas_widget/Manager";
 import MetamodelingTester from "./../test/canvas_widget/MetamodelingTester";
 import ModelingTester from "./../test/canvas_widget/ModelingTester";
-import JSONtoGraphTester from "./../test/canvas_widget/JSONtoGraphTester";
-import ViewpointModelingTest from "./../test/canvas_widget/ViewpointModelingTest";
 import Guidancemodel from "promise!Guidancemodel";
 import "mocha";
 function CanvasWidgetTestMain(canvas) {
