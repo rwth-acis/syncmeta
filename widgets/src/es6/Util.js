@@ -29,6 +29,16 @@ export default {
     return res;
   },
 
+  generateAnonymousUser: function () {
+    const user = {};
+    var id = this.generateRandomId();
+    user[CONFIG.NS.PERSON.TITLE] = "Anonymous";
+    user[CONFIG.NS.PERSON.JABBERID] = id;
+    user[CONFIG.NS.PERSON.MBOX] = id + "@anonym.com";
+    user.globalId = -1;
+    return user;
+  },
+
   /**
    * Wait for delay milliseconds then return
    * @param delay

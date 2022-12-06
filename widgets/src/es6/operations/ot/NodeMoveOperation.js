@@ -127,8 +127,6 @@ class NodeMoveOperation extends EntityOperation {
      * @returns {NodeMoveOperation}
      */
     this.inverse = function () {
-      var NodeMoveOperation = NodeMoveOperation;
-
       return new NodeMoveOperation(
         this.getEntityId(),
         -this.getOffsetX(),

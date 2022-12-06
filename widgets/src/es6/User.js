@@ -24,15 +24,11 @@ export async function getUserInfo() {
       space.user.globalId = -1;
       console.info("User promise by " + undefined, space);
       return space;
-    } 
+    }
   } catch (error) {
     console.error(error);
   }
-  const space = { user: {} };
-  var id = Util.generateRandomId();
-  space.user[CONFIG.NS.PERSON.TITLE] = "Anonymous";
-  space.user[CONFIG.NS.PERSON.JABBERID] = id;
-  space.user[CONFIG.NS.PERSON.MBOX] = id + "@anonym.com";
-  space.user.globalId = -1;
-  return space;
+
+  return { user: Util.generateAnonymousUser() };
 }
+

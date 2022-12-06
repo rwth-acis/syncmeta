@@ -1641,7 +1641,7 @@ export default class Canvas extends AbstractCanvas {
 
     init();
 
-    if (y) {
+    if (window.hasOwnProperty("y")) {
       const canvasMap = y.getMap("canvas");
       canvasMap.observe(function (event) {
         var yUserId = event.currentTarget.doc.clientID;

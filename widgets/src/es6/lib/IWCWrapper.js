@@ -426,7 +426,10 @@ class IWCWrapper {
       (this.getUser = function () {
         if (!this.Space) {
           console.error("Space is null");
-          return null;
+          this.Space = {user:{}}
+        } else if (!this.Space.user) {
+          console.error("User in space is null, generating new anonymous user");
+          this.Space.user = Util.generateAnonymousUser();
         }
         return this.Space.user;
       }),

@@ -1432,7 +1432,7 @@ export class AbstractNode extends AbstractEntity {
      * @type {Object}
      * @private
      */
-    var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
+    var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN, y);
     /**y-map instances which belongs to the node
      * @type {Y.Map}
      * @private
@@ -1634,7 +1634,7 @@ export class AbstractNode extends AbstractEntity {
             that.getLabel().getValue().getValue()
           ),
           { nodeType: that.getType() }
-        )
+        ).toJSON()
       );
 
       if (_ymap) {

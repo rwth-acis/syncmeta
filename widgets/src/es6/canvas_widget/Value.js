@@ -24,7 +24,7 @@ import valueHtml from "../../templates/canvas_widget/value.html";
 class Value extends AbstractValue {
   constructor(id, name, subjectEntity, rootSubjectEntity) {
     
-    var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
+    var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN, y);
     var _ytext = null;
     if (window.hasOwnProperty("y") && id.indexOf("undefined") == -1) {
       if (rootSubjectEntity.getYMap().has(id)) {

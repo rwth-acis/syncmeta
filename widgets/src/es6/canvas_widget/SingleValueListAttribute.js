@@ -278,7 +278,8 @@ class SingleValueListAttribute extends AbstractAttribute {
       ymap.observe(function (event) {
         var operation;
         var data = event.value;
-        if (event.name.indexOf("[value]") != -1) {
+        const eventName = Array.from(event.keysChanged)[0];
+        if (eventName.indexOf("[value]") != -1) {
           switch (event.type) {
             case "add": {
               var yUserId = event.object.map[event.name][0];
