@@ -9,13 +9,21 @@ import AbstractTool from "./AbstractTool";
  * @extends palette_widget.AbstractTool
  * @constructor
  */
-class NodeTool extends AbstractTool{
-  constructor(toolName, toolLabel, toolDescription, toolIcon) {
+class NodeTool extends AbstractTool {
+  constructor(
+    toolName,
+    toolLabel,
+    toolDescription,
+    toolIcon,
+    iconType = "img"
+  ) {
     super(
-            toolName,
+      toolName,
       toolLabel,
       toolDescription || "Click on an empty part of the canvas to add a node",
-      toolIcon || "class.png", null
+      toolIcon || "class.png",
+      null,
+      iconType
     );
   }
 }
