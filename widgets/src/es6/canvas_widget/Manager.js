@@ -675,13 +675,13 @@ export class AbstractEdge extends AbstractEntity {
      * Inter widget communication wrapper
      * @type {Object}
      */
-    var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
+    var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN, y); // y comes from the window object but should in the future be passed through the constructor since we should avoid binding to window
 
     var _ymap = null;
 
     if (window.hasOwnProperty("y")) {
       const edgeMap = y.getMap("edges");
-      if (edgeMap.has(id) != -1) {
+      if (edgeMap.has(id)) {
         _ymap = edgeMap.get(id);
       } else if (id && type && source && target) {
         _ymap = edgeMap.set(id, new Y.Map());
