@@ -36,7 +36,6 @@
     "lodash-es": "^4.17.21",
     "reflect-metadata": "^0.1.13",
     "requirejs": "^2.3.6",
-    "requirejs-promise": "github:jokeyrhyme/requirejs-promise",
     "requirejs-text": "^2.0.16",
     "rollup-plugin-html": "^0.2.1",
     "tslib": "^2.4.1",
@@ -71,7 +70,6 @@
     "rollup": "^3.2.3",
     "rollup-plugin-import-css": "^3.1.0",
     "rollup-plugin-minify-html-literals": "^1.2.6",
-    "rollup-plugin-summary": "^1.4.3",
     "rollup-plugin-terser": "^7.0.2"
   }
 }
