@@ -305,7 +305,6 @@ $(async function () {
           $exportGuidancemodel.prop("disabled", true);
           $deleteGuidancemodel.prop("disabled", true);
         } else {
-          console.log("Activate!");
           $exportGuidancemodel.prop("disabled", false);
           $deleteGuidancemodel.prop("disabled", false);
         }
