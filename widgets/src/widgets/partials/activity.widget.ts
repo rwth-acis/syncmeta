@@ -49,13 +49,8 @@ export class ActivityWidget extends SyncMetaWidget(LitElement) {
         }
 
         #user_list .item span {
-          position: absolute;
-          right: 0;
-          top: 0;
-          display: block;
-          font-weight: bold;
-          font-size: 1.2em;
-          text-align: right;
+          font-size: 0.8em;
+          text-align: end;
         }
 
         #activity_list {

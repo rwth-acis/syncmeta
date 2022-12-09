@@ -131,16 +131,34 @@ class ActivityList {
      * Add an user to the user list
      * @param {string} jabberId
      */
-    this.addUser = function (jabberId) {
+    this.addUser = function (jabberId, isLocalUser = false) {
       if (!jabberId) {
         console.error("jabberid not valid", jabberId, "aborting");
         return;
       }
       var user;
       if (!userList.hasOwnProperty(jabberId)) {
-        user = new User(jabberId, new Date());
-        userList[jabberId] = user;
-        _$userListNode.append(user.get$node().show("clip", {}, 200));
+        const userListContainsLocalUser = _.some(
+          userList,
+          (u) => u.isLocalUser
+        );
+        user = new User(jabberId, new Date(), isLocalUser);
+        if (user.isLocalUser && userListContainsLocalUser) {
+          console.warn(
+            "Local user already exists in user list. Not adding new local user."
+          );
+          return;
+        }
+        if (user.isAnonymous) {
+          if (!Object.values(userList).some((user) => user.isAnonymous)) {
+            // if there is no anonymous user in the list, add the new one
+            userList[jabberId] = user;
+            _$userListNode.append(user.get$node().show("clip", {}, 200));
+          }
+        } else {
+          userList[jabberId] = user;
+          _$userListNode.append(user.get$node().show("clip", {}, 200));
+        }
       } else {
         user = userList[jabberId];
         user.setLastActivityDate(new Date());
@@ -234,6 +252,10 @@ class ActivityList {
 
       if (operation instanceof ActivityOperation) {
         data = operation.getData();
+        if (!operation.getType()) {
+          console.warn("Operation type not set", operation);
+          return;
+        }
         switch (operation.getType()) {
           case NodeAddActivity.TYPE:
             activity = new NodeAddActivity(

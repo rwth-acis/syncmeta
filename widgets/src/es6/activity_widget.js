@@ -28,11 +28,11 @@ $(function () {
       joinMap.observe(function (event) {
         // the username "invisible_user" is a special one, which can be used to join without
         // appearing in the activity list
-        const key = [...event.keysChanged][0];
-        const value = event.currentTarget.get(key);
-        if (key != "invisible_user") {
-          activtyList.addUser(value);
-        }
+        event.keysChanged.forEach((key) => {
+          if (key != "invisible_user") {
+            activtyList.addUser(key, event.currentTarget.get(key));
+          }
+        });
       });
 
       WaitForCanvas(CONFIG.WIDGET.NAME.ACTIVITY, y)

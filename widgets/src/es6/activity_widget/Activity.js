@@ -13,9 +13,10 @@ import { CONFIG } from "../config";
  * @constructor
  * @param {string} entityId Entity id of the entity the activity works on
  * @param {string} sender JabberId of the user who issued this activity
- * @param {string} text Text of this activity which is displayed in the activity widget
+ * @param {string} text Text of this activit  y whichis displayed in the activity widget
  */
 class Activity {
+  _type = undefined;
   constructor(entityId, sender, text, timestamp) {
     var that = this;
 
@@ -60,7 +61,7 @@ class Activity {
      * @type {string}
      * @private
      */
-    var _type = undefined;
+    this._type = undefined;
 
     /**
      * Activity box template
@@ -75,27 +76,34 @@ class Activity {
     var getDateTimeAsString = function () {
       var d = new Date(_timestamp);
       var months = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
+        "01",
+        "02",
+        "03",
+        "04",
+        "05",
+        "06",
+        "07",
+        "08",
+        "09",
+        "10",
+        "11",
+        "12",
       ];
-      var year = d.getFullYear();
+      var year = d.getFullYear() % 100;
       var month = months[d.getMonth()];
       var date = d.getDate();
       var hour = d.getHours();
       var min = d.getMinutes();
-      var sec = d.getSeconds();
-      var dateTime =
-        date + "." + month + "." + year + "/" + hour + ":" + min + ":" + sec;
+
+      // add leading zero if necessary
+      if (hour < 10) {
+        hour = "0" + hour;
+      }
+      if (min < 10) {
+        min = "0" + min;
+      }
+
+      var dateTime = date + "." + month + "." + year + "/" + hour + ":" + min;
       return dateTime;
     };
 
@@ -116,7 +124,7 @@ class Activity {
         _activityBoxTemplate({
           heading: userList.get(_sender)
             ? userList.get(_sender)[CONFIG.NS.PERSON.TITLE]
-            : "Unknown",
+            : "Anonymous",
           text: _text,
           color: userList.get(_sender)
             ? Util.getColor(userList.get(_sender).globalId)
@@ -207,10 +215,10 @@ class Activity {
     };
 
     this.setType = function (type) {
-      _type = type;
+      this._type = type;
     };
     this.getType = function () {
-      return _type;
+      return this._type;
     };
 
     /**
@@ -222,7 +230,7 @@ class Activity {
         sender: _sender,
         text: _text,
         timestamp: _timestamp,
-        type: _type,
+        type: this._type,
       };
       const userList = y.getMap("userList");
       var user = userList.get(sender);
@@ -244,11 +252,23 @@ class Activity {
         );
       });
       _$node.hover(
-        function (event) {
-          $(this).css("border", "5px solid #ccc");
+        function () {
+          const color = y.getMap("userList").get(_sender)
+            ? Util.getColor(y.getMap("userList").get(_sender).globalId)
+            : "#ccc";
+          $(this).css(
+            "border",
+            "5px solid " + color
+          );
         },
-        function (event) {
-          $(this).css("border", "1px solid #ccc");
+        function () {
+           const color = y.getMap("userList").get(_sender)
+             ? Util.getColor(y.getMap("userList").get(_sender).globalId)
+             : "#ccc";
+          $(this).css(
+            "border",
+            "1px solid" + color
+          );
         }
       );
       _$node.find(".timestamp").css("border-color", "rgb(112, 222, 148)");
@@ -257,7 +277,12 @@ class Activity {
 
     this.untrackable = function () {
       _$node.off();
-      _$node.find(".timestamp").css("border-color", "#ea7f7f");
+      _$node
+        .find(".timestamp")
+        .css(
+          "border-color",
+          Util.getColor(y.getMap("userList").get(_sender).globalId)
+        );
       isTrackable = false;
     };
   }

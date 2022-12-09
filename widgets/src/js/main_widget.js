@@ -68,10 +68,10 @@ import IWCW from "../../util/IWCW";
 
       //not working pretty well
       window.onbeforeunload = function (event) {
-        // const userList = y.getMap("userList");
-        // const userMap = y.getMap("users");
-        //userList.delete(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
-        //userMap.delete(y.clientID);
+        const userList = y.getMap("userList");
+        const userMap = y.getMap("users");
+        userList.delete(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+        userMap.delete(y.clientID);
         const activityMap = y.getMap("activity");
         const leaveActivity = new ActivityOperation(
           "UserLeftActivity",

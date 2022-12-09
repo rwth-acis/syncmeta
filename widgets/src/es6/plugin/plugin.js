@@ -9,8 +9,9 @@ import Util from "../Util";
  */
 var onNode = function (key, callback) {
   var newObersever = function (event) {
-    if (key.indexOf(event.name) != -1) {
-      callback(event.value);
+    const eventName = Array.from(event.keysChanged)[0];
+    if (key.indexOf(eventName) != -1) {
+      callback(event);
     }
   };
 
