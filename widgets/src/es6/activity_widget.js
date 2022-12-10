@@ -56,7 +56,7 @@ $(function () {
           activtyList.init();
         })
         .catch(function (err) {
-          console.error("ACTIVITY: Error while waiting for CANVAS: " + err);
+          console.error("ACTIVITY: Error while waiting for CANVAS: ", err);
         });
 
       // if (CONFIG.TEST.ACTIVITY) test;
