@@ -276,13 +276,11 @@ class Activity {
     };
 
     this.untrackable = function () {
+       const color = y.getMap("userList").get(_sender)?.globalId
+         ? Util.getColor(y.getMap("userList").get(_sender).globalId)
+         : "rgb(112, 222, 148)";
       _$node.off();
-      _$node
-        .find(".timestamp")
-        .css(
-          "border-color",
-          Util.getColor(y.getMap("userList").get(_sender).globalId)
-        );
+      _$node.find(".timestamp").css("border-color", color);
       isTrackable = false;
     };
   }
