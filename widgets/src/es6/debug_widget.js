@@ -227,34 +227,37 @@ $(async function () {
       });
 
       $importMetamodel.click(function () {
-        getFileContent()
-          .then(function (data) {
-            const dataMap = y.getMap("data");
-            try {
-              var vls = GenerateViewpointModel(data);
-              //if everything is empty. Maybe it is already a VLS
-              if (
-                _.keys(vls.nodes).length === 0 &&
-                _.keys(vls.edges).length === 0 &&
-                _.keys(vls.attributes).length === 0
-              ) {
-                dataMap.set("metamodel", data);
-              } else {
-                dataMap.set("metamodel", vls);
-              }
-              feedback("Imported Meta Model, the page will reload now");
-              setTimeout(() => {
-                location.reload();
-              }, 300);
-            } catch (e) {
-              feedback("Error: " + e);
-              throw e;
-            }
-          })
-          .catch(function (err) {
-            console.error(err);
-            feedback("Error: " + err);
-          });
+         $importMetamodel.prop("disabled", true);
+         getFileContent()
+           .then(function (data) {
+             const dataMap = y.getMap("data");
+             try {
+               var vls = GenerateViewpointModel(data);
+               //if everything is empty. Maybe it is already a VLS
+               if (
+                 _.keys(vls.nodes).length === 0 &&
+                 _.keys(vls.edges).length === 0 &&
+                 _.keys(vls.attributes).length === 0
+               ) {
+                 dataMap.set("metamodel", data);
+               } else {
+                 dataMap.set("metamodel", vls);
+               }
+               feedback("Imported Meta Model, the page will reload now");
+               setTimeout(() => {
+                 location.reload();
+               }, 300);
+             } catch (e) {
+               feedback("Error: " + e);
+               throw e;
+             }
+             $importMetamodel.prop("disabled", false);
+           })
+           .catch(function (err) {
+             console.error(err);
+             feedback("Error: " + err);
+             $importMetamodel.prop("disabled", false);
+           });
       });
 
       $importGuidancemodel.click(function () {
