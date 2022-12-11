@@ -1522,9 +1522,14 @@ define([
      * Unbind events for edge tool
      */
     this.unbindEdgeToolEvents = function () {
-      _$node.removeClass("source target");
-      jsPlumb.unmakeSource(_$node);
-      jsPlumb.unmakeTarget(_$node);
+      try {
+        _$node.removeClass("source target");
+        jsPlumb.unmakeSource(_$node);
+        jsPlumb.unmakeTarget(_$node);
+      } catch (error) {
+        console.error(error);
+      }
+      
     };
 
     that.init();

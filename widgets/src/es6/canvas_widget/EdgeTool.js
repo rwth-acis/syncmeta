@@ -182,8 +182,12 @@ class EdgeTool extends AbstractCanvasTool {
       //Disable Edge Dragging
       $canvas.find(".node").each(function () {
         var $this = $(this);
-        jsPlumb.unmakeSource($this);
-        jsPlumb.unmakeTarget($this);
+        try {
+          jsPlumb.unmakeSource($this);
+          jsPlumb.unmakeTarget($this);
+        } catch (error) {
+          console.error(error);
+        }
       });
       jsPlumb.unbind("connectionDrag");
       jsPlumb.unbind("beforeDrop");

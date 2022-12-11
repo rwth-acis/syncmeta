@@ -29,9 +29,9 @@ class KeyValueAttribute extends AbstractAttribute {
 static   TYPE = "KeyValueAttribute";
 
   constructor(id, name, subjectEntity) {
-    var that = this;
 
-    AbstractAttribute.call(this, id, name, subjectEntity);
+    super(id, name, subjectEntity);
+    var that = this;
 
     /**
      * Value object of key
