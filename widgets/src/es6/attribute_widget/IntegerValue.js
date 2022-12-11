@@ -12,8 +12,7 @@ const integerValueHtml = await loadHTML(
   import.meta.url
 );
 
-IntegerValue.prototype = new AbstractValue();
-;
+
 /**
  * IntegerValue
  * @class attribute_widget.IntegerValue

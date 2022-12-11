@@ -18,9 +18,7 @@ const keySelectionValueSelectionValueListAttributeHtml = await loadHTML(
   import.meta.url
 );
 
-KeySelectionValueSelectionValueListAttribute.prototype =
-  new AbstractAttribute();
-;
+
 /**
  * Abstract Attribute
  * @class attribute_widget.KeySelectionValueSelectionValueListAttribute
