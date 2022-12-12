@@ -67,7 +67,7 @@ class WidgetContainer extends LitElement {
         </div>
         <div class="col-3 middle-container ">
           <div class="innercontainer">
-            <attribute-widget></attribute-widget>
+            <property-browser-widget></property-browser-widget>
           </div>
           <div class="innercontainer">
             <debug-widget></debug-widget>
