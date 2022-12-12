@@ -7,6 +7,18 @@ import { dependencies } from "./package.json";
 import json from "@rollup/plugin-json";
 import html from "rollup-plugin-html";
 import { ImportmapPlugin } from "./importmap.plugin.js";
+
+// dependencies which are not bundled
+const externalDependencies = Object.keys(dependencies).concat([
+  "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js",
+  "https://unpkg.com/jquery@3.6.0/dist/jquery.js",
+  "https://cdnjs.cloudflare.com/ajax/libs/graphlib/2.1.8/graphlib.min.js",
+  "https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.9.2/jquery.contextMenu.js",
+  "https://cdnjs.cloudflare.com/ajax/libs/jquery-migrate/1.4.1/jquery-migrate.min.js",
+  "https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js",
+  "https://cdnjs.cloudflare.com/ajax/libs/dagre/0.8.5/dagre.min.js",
+]);
+
 /**
  * @type {import('rollup').RollupOptions}
  */
@@ -40,8 +52,7 @@ export default [
         jsPlumb: "jsPlumb",
       },
     },
-    external: Object.keys(dependencies),
-    preserveEntrySignatures: "strict",
+    external: externalDependencies,
   },
   // activity widget
   {
@@ -73,7 +84,7 @@ export default [
         jsPlumb: "jsPlumb",
       },
     },
-    external: Object.keys(dependencies),
+    external: externalDependencies,
     preserveEntrySignatures: "strict",
   },
   // attribute.widget
@@ -110,7 +121,7 @@ export default [
         "jquery-ui": "jquery-ui",
       },
     },
-    external: Object.keys(dependencies),
+    external: externalDependencies,
     preserveEntrySignatures: "strict",
   },
   // debug.widget
@@ -143,7 +154,7 @@ export default [
         "jquery-contextmenu": "jquery-contextmenu",
       },
     },
-    external: Object.keys(dependencies),
+    external: externalDependencies,
     preserveEntrySignatures: "strict",
   },
   // guidance.widget
@@ -176,7 +187,7 @@ export default [
         graphlib: "graphlib",
       },
     },
-    external: Object.keys(dependencies),
+    external: externalDependencies,
     preserveEntrySignatures: "strict",
   },
   // heatmap.widget
@@ -208,7 +219,7 @@ export default [
         "lodash-es": "lodash-es",
       },
     },
-    external: Object.keys(dependencies),
+    external: externalDependencies,
     preserveEntrySignatures: "strict",
   },
   // imsld.export.widget
@@ -241,7 +252,7 @@ export default [
         mfexport: "mfexport",
       },
     },
-    external: Object.keys(dependencies),
+    external: externalDependencies,
     preserveEntrySignatures: "strict",
   },
   // json.export.widget
@@ -273,7 +284,7 @@ export default [
         mfexport: "mfexport",
       },
     },
-    external: Object.keys(dependencies),
+    external: externalDependencies,
     preserveEntrySignatures: "strict",
   },
   // main.widget
@@ -310,7 +321,7 @@ export default [
         "jquery-contextmenu": "jquery-contextmenu",
       },
     },
-    external: Object.keys(dependencies),
+    external: externalDependencies,
     preserveEntrySignatures: "strict",
   },
 
@@ -342,7 +353,7 @@ export default [
         "y-websocket": "WebsocketProvider",
       },
     },
-    external: Object.keys(dependencies),
+    external: externalDependencies,
     preserveEntrySignatures: "strict",
   },
   // viewcontrol.widget
@@ -373,7 +384,7 @@ export default [
         "y-websocket": "WebsocketProvider",
       },
     },
-    external: Object.keys(dependencies),
+    external: externalDependencies,
     preserveEntrySignatures: "strict",
   },
 ];
