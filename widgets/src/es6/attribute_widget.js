@@ -7,7 +7,7 @@ import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"
 import IWCW from "./lib/IWCWrapper";
 import { CONFIG } from "./config";
 // import AttributeWidgetTest from "./../test/AttributeWidgetTest";
-import { EntityManagerInstance as EntityManager } from "./canvas_widget/Manager";
+import { EntityManagerInstance as EntityManager } from "./attribute_widget/EntityManager";
 
 import { yjsSync } from "./lib/yjs-sync";
 import { WaitForCanvas } from "./WaitForCanvas";
@@ -25,7 +25,7 @@ $(async function () {
         WaitForCanvas(CONFIG.WIDGET.NAME.ATTRIBUTE, y)
           .then((user) => {
             $("#wrapper")
-              .find("h1")
+              .find("h3")
               .text("Got Response from Canvas! Connecting to Yjs....");
 
             var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE, y);
@@ -38,9 +38,9 @@ $(async function () {
               errors: {},
               firstAttemptFail: {},
             };
-            $("#wrapper").find("h1").text("Successfully connected to Yjs.");
+            $("#wrapper").find("h3").text("Successfully connected to Yjs.");
             setTimeout(function () {
-              $("#wrapper").find("h1").remove();
+              $("#wrapper").find("h3").remove();
             }, 2000);
             console.info(
               "ATTRIBUTE: Yjs successfully initialized in room " +
@@ -68,57 +68,10 @@ $(async function () {
             } else {
               EntityManager.init(dataMap.get("metamodel"));
             }
-            var wrapper = new AttributeWrapper($("#wrapper"));
+            var attributeWrapper = new AttributeWrapper($("#wrapper"));
 
             if (model) {
-              function JSONtoGraph(json) {
-                var modelAttributesNode;
-                var nodeId, edgeId;
-                if (
-                  json.attributes &&
-                  Object.keys(json.attributes).length > 0
-                ) {
-                  modelAttributesNode =
-                    EntityManager.createModelAttributesNodeFromJSON(
-                      json.attributes
-                    );
-                  wrapper.setModelAttributesNode(modelAttributesNode);
-                  modelAttributesNode.registerYType();
-                  modelAttributesNode.addToWrapper(wrapper);
-                  wrapper.select(modelAttributesNode);
-                }
-                for (nodeId in json.nodes) {
-                  if (json.nodes.hasOwnProperty(nodeId)) {
-                    var node = EntityManager.createNodeFromJSON(
-                      json.nodes[nodeId].type,
-                      nodeId,
-                      json.nodes[nodeId].left,
-                      json.nodes[nodeId].top,
-                      json.nodes[nodeId].width,
-                      json.nodes[nodeId].height,
-                      json.nodes[nodeId].zIndex,
-                      json.nodes[nodeId]
-                    );
-                    node.registerYType();
-                    node.addToWrapper(wrapper);
-                  }
-                }
-                for (edgeId in json.edges) {
-                  if (json.edges.hasOwnProperty(edgeId)) {
-                    var edge = EntityManager.createEdgeFromJSON(
-                      json.edges[edgeId].type,
-                      edgeId,
-                      json.edges[edgeId].source,
-                      json.edges[edgeId].target,
-                      json.edges[edgeId]
-                    );
-                    edge.registerYType();
-                    edge.addToWrapper(wrapper);
-                  }
-                }
-              }
-
-              JSONtoGraph(model);
+              JSONtoGraph(model, attributeWrapper);
             }
 
             console.info(
@@ -129,15 +82,15 @@ $(async function () {
             iwc.registerOnDataReceivedCallback(function (operation) {
               var modelAttributesNode;
               if (operation instanceof SetModelAttributeNodeOperation) {
-                modelAttributesNode = wrapper.getModelAttributesNode();
+                modelAttributesNode = attributeWrapper.getModelAttributesNode();
                 if (modelAttributesNode === null) {
                   modelAttributesNode =
                     EntityManager.createModelAttributesNode();
-                  wrapper.setModelAttributesNode(modelAttributesNode);
+                  attributeWrapper.setModelAttributesNode(modelAttributesNode);
                   modelAttributesNode.registerYType();
-                  modelAttributesNode.addToWrapper(wrapper);
+                  modelAttributesNode.addToWrapper(attributeWrapper);
                 }
-                wrapper.select(modelAttributesNode);
+                attributeWrapper.select(modelAttributesNode);
               } else if (operation instanceof InitModelTypesOperation) {
                 var vvs = operation.getVLS();
                 const dataMap = y.getMap("data");
@@ -182,7 +135,7 @@ $(async function () {
           .catch(function (e) {
             console.error(e);
             $("#wrapper")
-              .find("h1")
+              .find("h3")
               .text("Add Canvas Widget to Space and refresh the widget.");
             $("#loading").hide();
           });
@@ -195,3 +148,45 @@ $(async function () {
   }
 });
 
+function JSONtoGraph(json, wrapper) {
+  var modelAttributesNode;
+  var nodeId, edgeId;
+  if (json.attributes && Object.keys(json.attributes).length > 0) {
+    modelAttributesNode = EntityManager.createModelAttributesNodeFromJSON(
+      json.attributes
+    );
+    wrapper.setModelAttributesNode(modelAttributesNode);
+    modelAttributesNode.registerYType();
+    modelAttributesNode.addToWrapper(wrapper);
+    wrapper.select(modelAttributesNode);
+  }
+  for (nodeId in json.nodes) {
+    if (json.nodes.hasOwnProperty(nodeId)) {
+      var node = EntityManager.createNodeFromJSON(
+        json.nodes[nodeId].type,
+        nodeId,
+        json.nodes[nodeId].left,
+        json.nodes[nodeId].top,
+        json.nodes[nodeId].width,
+        json.nodes[nodeId].height,
+        json.nodes[nodeId].zIndex,
+        json.nodes[nodeId]
+      );
+      node.registerYType();
+      node.addToWrapper(wrapper);
+    }
+  }
+  for (edgeId in json.edges) {
+    if (json.edges.hasOwnProperty(edgeId)) {
+      var edge = EntityManager.createEdgeFromJSON(
+        json.edges[edgeId].type,
+        edgeId,
+        json.edges[edgeId].source,
+        json.edges[edgeId].target,
+        json.edges[edgeId]
+      );
+      edge.registerYType();
+      edge.addToWrapper(wrapper);
+    }
+  }
+}
