@@ -95,9 +95,20 @@ export class Client {
     var handler = this.receiveMessage.bind(this);
     //Todo
     const widgetTageName = getWidgetTagName(this._componentName);
-    document
-      .querySelector(widgetTageName)
-      .addEventListener("syncmeta-message", handler);
+    try {
+      const _node = document.querySelector(widgetTageName);
+      if (!_node) {
+        throw new Error(
+          "html tag not found in document. Please make sure that you added the " +
+            widgetTageName +
+            " to the document"
+        );
+      }
+      _node.addEventListener("syncmeta-message", handler);
+    } catch (error) {
+      console.error(error);
+    }
+    
 
     if (this._y) {
       // If yjs is available also connect a global listener
