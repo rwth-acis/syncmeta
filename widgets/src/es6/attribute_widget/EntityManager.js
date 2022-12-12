@@ -126,7 +126,8 @@ function EntityManager() {
           );
           nodeTypes[node.targetName].VIEWTYPE = node.label;
         } else {
-          _nodeTypes[node.label] = Node(
+          
+          _nodeTypes[node.label] = makeNode(
             node.label,
             node.shape.shape,
             node.shape.customShape,
@@ -159,7 +160,7 @@ function EntityManager() {
           );
           edgeTypes[edge.targetName].VIEWTYPE = edge.label;
         } else {
-          _edgeTypes[edge.label] = Edge(
+          _edgeTypes[edge.label] = makeEdge(
             edge.label,
             edge.shape.arrow,
             edge.shape.shape,
