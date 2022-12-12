@@ -4,8 +4,6 @@ import typescript from "@rollup/plugin-typescript";
 import commonjs from "@rollup/plugin-commonjs";
 import css from "rollup-plugin-import-css";
 import { dependencies } from "./package.json";
-import json from "@rollup/plugin-json";
-import html from "rollup-plugin-html";
 import { ImportmapPlugin } from "./importmap.plugin.js";
 
 // dependencies which are not bundled
@@ -29,10 +27,6 @@ export default [
       ImportmapPlugin(),
       typescript(),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
-      json(),
-      html({
-        include: "**/*.html",
-      }),
       resolve({ browser: true }),
     ],
     watch: {
@@ -60,11 +54,6 @@ export default [
       ImportmapPlugin(),
       typescript(),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
-      json(),
-      html({
-        include: "**/*.html",
-      }),
-
       resolve({ browser: true }),
     ],
     watch: {
@@ -96,10 +85,6 @@ export default [
         extensions: [".js", ".ts"],
         include: [/node_modules/, "./src/attribute.widget.ts"],
       }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
-      json(),
-      html({
-        include: "**/*.html",
-      }),
       resolve({ browser: true }),
     ],
     watch: {
@@ -130,10 +115,7 @@ export default [
       ImportmapPlugin(),
       typescript(),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
-      json(),
-      html({
-        include: "**/*.html",
-      }),
+
       resolve({ browser: true }),
     ],
     watch: {
@@ -163,10 +145,6 @@ export default [
       ImportmapPlugin(),
       typescript(),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
-      json(),
-      html({
-        include: "**/*.html",
-      }),
       resolve({ browser: true }),
     ],
     watch: {
@@ -196,10 +174,6 @@ export default [
       ImportmapPlugin(),
       typescript(),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
-      json(),
-      html({
-        include: "**/*.html",
-      }),
       resolve({ browser: true }),
     ],
     watch: {
@@ -228,10 +202,6 @@ export default [
       ImportmapPlugin(),
       typescript(),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
-      json(),
-      html({
-        include: "**/*.html",
-      }),
       resolve({ browser: true }),
     ],
     watch: {
@@ -261,10 +231,6 @@ export default [
       ImportmapPlugin(),
       typescript(),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
-      json(),
-      html({
-        include: "**/*.html",
-      }),
       resolve({ browser: true }),
     ],
     watch: {
@@ -297,9 +263,6 @@ export default [
         extensions: [".js", ".ts"],
       }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
       css(),
-      html({
-        include: "**/*.html",
-      }),
       resolve({ browser: true }),
     ],
     watch: {
@@ -331,10 +294,6 @@ export default [
       ImportmapPlugin(),
       typescript(),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
-      json(),
-      html({
-        include: "**/*.html",
-      }),
       resolve({ browser: true }),
     ],
     watch: {
@@ -362,10 +321,6 @@ export default [
       ImportmapPlugin(),
       typescript(),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
-      json(),
-      html({
-        include: "**/*.html",
-      }),
       resolve({ browser: true }),
     ],
     watch: {
