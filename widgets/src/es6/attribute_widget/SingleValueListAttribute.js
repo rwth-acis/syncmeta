@@ -29,7 +29,7 @@ const singleValueListAttributeHtml = await loadHTML(
  */
 class SingleValueListAttribute extends AbstractAttribute {
   constructor(id, name, subjectEntity) {
-    super(this, id, name, subjectEntity);
+    super(id, name, subjectEntity);
     var that = this;
 
     /**

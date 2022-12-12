@@ -30,7 +30,7 @@ const keySelectionValueListAttributeHtml = await loadHTML(
  */
 class KeySelectionValueListAttribute extends AbstractAttribute{
   constructor(id, name, subjectEntity, options) {
-     super(this, id, name, subjectEntity);
+     super(id, name, subjectEntity);
     var that = this;
 
    

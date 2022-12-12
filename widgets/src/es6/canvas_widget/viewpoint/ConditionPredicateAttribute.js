@@ -25,7 +25,7 @@ const condition_predicateHtml = await loadHTML(
 class ConditionPredicateAttribute extends AbstractAttribute {
   static TYPE = "ConditionPredicateAttribute";
   constructor(id, name, subjectEntity, options, options2) {
-    super(this, id, name, subjectEntity);
+    super(id, name, subjectEntity);
 
     //noinspection UnnecessaryLocalVariableJS
     /**

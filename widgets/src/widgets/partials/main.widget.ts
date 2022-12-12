@@ -1,7 +1,6 @@
 import { LitElement, html } from "lit";
 import { customElement } from "lit/decorators.js";
 import { SyncMetaWidget } from "../../widget";
-import "jquery-contextmenu/dist/jquery.contextMenu.css";
 //@ts-ignore
 import initMain from "../../es6/main_widget.js";
 import { CONFIG, getWidgetTagName } from "../../es6/config";
@@ -15,6 +14,7 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.9.2/jquery.contextMenu.min.css"
       />
+
       <style>
         ${getWidgetTagName(CONFIG.WIDGET.NAME.MAIN)} {
           height: 100%;

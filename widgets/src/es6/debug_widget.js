@@ -6,17 +6,27 @@ import GenerateViewpointModel from "./canvas_widget/GenerateViewpointModel";
 import { EntityManagerInstance as EntityManager } from "./canvas_widget/Manager";
 import { getGuidanceModeling } from "./Guidancemodel";
 
+const loadingSpinnerHTML = await loadHTML(
+  "../templates/loading-spinner.html",
+  import.meta.url
+);
+
+const $spinner = $(loadingSpinnerHTML);
+
 $(async function () {
   const guidance = getGuidanceModeling();
   yjsSync()
     .then((y) => {
       const dataMap = y.getMap("data");
       console.info(
-        "DEBUG: Yjs successfully initialized in room " +
+        "DEBUG: Yjs suc cessfully initialized in room " +
           window.spaceTitle +
           " with y-user-id: " +
           y.clientID
       );
+
+      $("#debug-container").append($spinner);
+      $spinner.hide();
 
       var $deleteMetamodel = $("#delete-meta-model").prop("disabled", false),
         $exportMetamodel = $("#export-meta-model").prop("disabled", false),
@@ -227,37 +237,40 @@ $(async function () {
       });
 
       $importMetamodel.click(function () {
-         $importMetamodel.prop("disabled", true);
-         getFileContent()
-           .then(function (data) {
-             const dataMap = y.getMap("data");
-             try {
-               var vls = GenerateViewpointModel(data);
-               //if everything is empty. Maybe it is already a VLS
-               if (
-                 _.keys(vls.nodes).length === 0 &&
-                 _.keys(vls.edges).length === 0 &&
-                 _.keys(vls.attributes).length === 0
-               ) {
-                 dataMap.set("metamodel", data);
-               } else {
-                 dataMap.set("metamodel", vls);
-               }
-               feedback("Imported Meta Model, the page will reload now");
-               setTimeout(() => {
-                 location.reload();
-               }, 300);
-             } catch (e) {
-               feedback("Error: " + e);
-               throw e;
-             }
-             $importMetamodel.prop("disabled", false);
-           })
-           .catch(function (err) {
-             console.error(err);
-             feedback("Error: " + err);
-             $importMetamodel.prop("disabled", false);
-           });
+        $importMetamodel.prop("disabled", true);
+        $spinner.show();
+        getFileContent()
+          .then(function (data) {
+            const dataMap = y.getMap("data");
+            try {
+              var vls = GenerateViewpointModel(data);
+              //if everything is empty. Maybe it is already a VLS
+              if (
+                _.keys(vls.nodes).length === 0 &&
+                _.keys(vls.edges).length === 0 &&
+                _.keys(vls.attributes).length === 0
+              ) {
+                dataMap.set("metamodel", data);
+              } else {
+                dataMap.set("metamodel", vls);
+              }
+              feedback("Imported Meta Model, the page will reload now");
+              setTimeout(() => {
+                location.reload();
+              }, 300);
+            } catch (e) {
+              feedback("Error: " + e);
+              throw e;
+            }
+            $importMetamodel.prop("disabled", false);
+            $spinner.hide();
+          })
+          .catch(function (err) {
+            console.error(err);
+            feedback("Error: " + err);
+            $importMetamodel.prop("disabled", false);
+            $spinner.hide();
+          });
       });
 
       $importGuidancemodel.click(function () {
