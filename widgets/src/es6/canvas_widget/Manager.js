@@ -6807,7 +6807,6 @@ export function makeEdge(
 
   dashstyle = dashstyle || "";
 
-
   /**
    * Edge
    * @class canvas_widget.Edge
@@ -6817,7 +6816,7 @@ export function makeEdge(
    * @param {canvas_widget.AbstractNode} source Source node
    * @param {canvas_widget.AbstractNode} target Target node
    */
-  class Edge extends AbstractEdge{
+  class Edge extends AbstractEdge {
     constructor(id, source, target) {
       super(id, type, source, target, overlayRotate);
       var that = this;
@@ -6839,8 +6838,6 @@ export function makeEdge(
       this.getCurrentViewType = function () {
         return currentViewType;
       };
-
-      
 
       /**
        * Stores jsPlumb overlays for the edge
@@ -7091,9 +7088,9 @@ export function makeEdge(
 
         color = color
           ? $colorTestElement
-            .css("color", "#aaaaaa")
-            .css("color", color)
-            .css("color")
+              .css("color", "#aaaaaa")
+              .css("color", color)
+              .css("color")
           : "#aaaaaa";
 
         if (Arrows().hasOwnProperty(arrowType)) {
@@ -7236,26 +7233,26 @@ export function makeEdge(
       init();
     }
     /**
-       * Get the arrow type of the edge type
-       * @static
-       * @returns {*}
-       */
+     * Get the arrow type of the edge type
+     * @static
+     * @returns {*}
+     */
     static getArrowType() {
       return arrowType;
     }
     /**
-       * Get the shape type of the edge type
-       * @static
-       * @returns {*}
-       */
+     * Get the shape type of the edge type
+     * @static
+     * @returns {*}
+     */
     static getShapeType() {
       return shapeType;
     }
     /**
-       * Get the color of the edge type
-       * @static
-       * @returns {*}
-       */
+     * Get the color of the edge type
+     * @static
+     * @returns {*}
+     */
     static getShape() {
       return shape;
     }
@@ -7263,34 +7260,34 @@ export function makeEdge(
       return color;
     }
     /**
-       * Get the overlay of the edge type
-       * @static
-       * @returns {*}
-       */
+     * Get the overlay of the edge type
+     * @static
+     * @returns {*}
+     */
     static getOverlay() {
       return overlay;
     }
     /**
-       * Get the overlay position of the edge type
-       * @static
-       * @returns {*}
-       */
+     * Get the overlay position of the edge type
+     * @static
+     * @returns {*}
+     */
     static getOverlayPosition() {
       return overlayPosition;
     }
     /**
-       * Get the overlay rotate of the edge type
-       * @static
-       * @returns {*}
-       */
+     * Get the overlay rotate of the edge type
+     * @static
+     * @returns {*}
+     */
     static getOverlayRotate() {
       return overlayRotate;
     }
     /**
-       * Get the attribute definition of the edge type
-       * @static
-       * @returns {*}
-       */
+     * Get the attribute definition of the edge type
+     * @static
+     * @returns {*}
+     */
     static getAttributes() {
       return attributes;
     }
@@ -7305,16 +7302,6 @@ export function makeEdge(
       return overlays;
     }
   }
-
-
-
-
-
-
-
-
-
-
 
   return Edge;
 }
@@ -7427,9 +7414,8 @@ export class ModelAttributesNode extends AbstractNode {
   static TYPE = "ModelAttributesNode";
 
   constructor(id, attr) {
-    var that = this;
     super(id, ModelAttributesNode.TYPE, 0, 0, 0, 0, 0);
-
+    var that = this;
     /**
      * jQuery object of node template
      * @type {jQuery}
@@ -8314,7 +8300,6 @@ export class UniDirAssociationEdge extends AbstractEdge {
           });*/
   }
 }
-
 
 export class BiDirAssociationEdge extends AbstractEdge {
   static TYPE = "Bi-Dir-Association";
