@@ -8,7 +8,11 @@ import AbstractAttribute from "./AbstractAttribute";
 import ActivityOperation from "../operations/non_ot/ActivityOperation";
 import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
 import "../lib/jquery/jquery.autoGrowInput";
-import valueHtml from "../../templates/canvas_widget/value.html";
+
+const valueHtml = await loadHTML(
+  "../../templates/canvas_widget/value.html",
+  import.meta.url
+);
 
 /**
  * Value

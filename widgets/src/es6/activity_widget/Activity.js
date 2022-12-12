@@ -4,7 +4,10 @@ import _ from "lodash-es";
 import IWCW from "../lib/IWCWrapper";
 import Util from "../Util";
 import MoveCanvasOperation from "../operations/non_ot/MoveCanvasOperation";
-import activityBoxHtml from "../../templates/activity_widget/activity_box.html";
+const activityBoxHtml = await loadHTML(
+  "../../templates/activity_widget/activity_box.html",
+  import.meta.url
+);
 import { CONFIG } from "../config";
 /**
  * An abstract user activity issued by one of the users
