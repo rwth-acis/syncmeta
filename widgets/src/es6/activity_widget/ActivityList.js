@@ -560,7 +560,7 @@ class ActivityList {
               );
               that.addActivity(activity);
               const nodesMap = y.getMap("nodes");
-              if (nodesMap.keys().indexOf()) break;
+               if (nodesMap.size > 0) break;
             }
             case ValueChangeActivity.TYPE: {
               activity = new ValueChangeActivity(
