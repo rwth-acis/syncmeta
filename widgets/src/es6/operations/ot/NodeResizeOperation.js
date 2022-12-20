@@ -116,8 +116,6 @@ class NodeResizeOperation extends EntityOperation {
      * @returns {NodeResizeOperation}
      */
     this.inverse = function () {
-      var NodeResizeOperation = NodeResizeOperation;
-
       return new NodeResizeOperation(
         this.getEntityId(),
         -this.getOffsetX(),
