@@ -1722,7 +1722,7 @@ export class AbstractNode extends AbstractEntity {
             that.getLabel().getValue().getValue()
           ),
           { nodeType: that.getType() }
-        )
+        ).toJSON()
       );
 
       if (_ymap) _ymap.set("NodeResizeOperation", operation.toJSON());
