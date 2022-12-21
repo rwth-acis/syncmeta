@@ -257,7 +257,7 @@ $(async function () {
               feedback("Imported Meta Model, the page will reload now");
               setTimeout(() => {
                 location.reload();
-              }, 300);
+              }, 1000);
             } catch (e) {
               feedback("Error: " + e);
               throw e;
