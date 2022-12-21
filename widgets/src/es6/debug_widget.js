@@ -5,6 +5,7 @@ import { yjsSync } from "./lib/yjs-sync";
 import GenerateViewpointModel from "./canvas_widget/GenerateViewpointModel";
 import { EntityManagerInstance as EntityManager } from "./canvas_widget/Manager";
 import { getGuidanceModeling } from "./Guidancemodel";
+import loadHTML from "./html.template.loader";
 
 const loadingSpinnerHTML = await loadHTML(
   "../templates/loading-spinner.html",
@@ -14,6 +15,8 @@ const loadingSpinnerHTML = await loadHTML(
 const $spinner = $(loadingSpinnerHTML);
 
 $(async function () {
+  $("#debug-container").append($spinner);
+  
   const guidance = getGuidanceModeling();
   yjsSync()
     .then((y) => {
@@ -24,9 +27,6 @@ $(async function () {
           " with y-user-id: " +
           y.clientID
       );
-
-      $("#debug-container").append($spinner);
-      $spinner.hide();
 
       var $deleteMetamodel = $("#delete-meta-model").prop("disabled", false),
         $exportMetamodel = $("#export-meta-model").prop("disabled", false),
@@ -295,12 +295,14 @@ $(async function () {
         if (!dataMap.get("model")) {
           $exportModel.prop("disabled", true);
           $deleteModel.prop("disabled", true);
+          $spinner.hide();
         } else {
           $exportModel.prop("disabled", false);
           $deleteModel.prop("disabled", false);
         }
 
         if (!dataMap.get("metamodel")) {
+          $spinner.hide();
           $exportMetamodel.prop("disabled", true);
           $deleteMetamodel.prop("disabled", true);
         } else {
