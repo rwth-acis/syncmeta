@@ -1,3 +1,4 @@
+import "https://cdn.quilljs.com/1.3.6/quill.js";
 import { LitElement, html } from "lit";
 import { customElement } from "lit/decorators.js";
 import init from "../../js/shared";
@@ -10,9 +11,18 @@ export class AttributeWidget extends SyncMetaWidget(LitElement) {
   render() {
     return html`
       <style>
+        ${getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE)} {
+          height: 100%;
+        }
+        #editor {
+          height: 80%;
+        }
         #wrapper {
-          max-height: 200px;
           overflow: auto;
+          height: 100%;
+          position: relative;
+        }
+        .main-wrapper {
           height: 100%;
         }
         .list_attribute ul.list {
@@ -187,10 +197,16 @@ export class AttributeWidget extends SyncMetaWidget(LitElement) {
         integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
         crossorigin="anonymous"
       />
+      <link
+        href="https://cdn.quilljs.com/1.3.6/quill.snow.css"
+        rel="stylesheet"
+      />
 
       <div class="main-wrapper">
         <div id="loading" class="loading"></div>
-        <div id="wrapper"><h3>Wait For Canvas Widget!</h3></div>
+        <div id="wrapper">
+          <div id="editor"></div>
+        </div>
         <div id="q"></div>
       </div>
     `;
