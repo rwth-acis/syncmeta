@@ -4,11 +4,11 @@
  */
 import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
+
 import IWCW from "./lib/IWCWrapper";
 import { CONFIG } from "./config";
 // import AttributeWidgetTest from "./../test/AttributeWidgetTest";
 import { EntityManagerInstance as EntityManager } from "./attribute_widget/EntityManager";
-
 import { yjsSync } from "./lib/yjs-sync";
 import { WaitForCanvas } from "./WaitForCanvas";
 import AttributeWrapper from "./attribute_widget/AttributeWrapper";
@@ -16,18 +16,30 @@ import ViewGenerator from "./attribute_widget/view/ViewGenerator";
 import InitModelTypesOperation from "./operations/non_ot/InitModelTypesOperation";
 import SetModelAttributeNodeOperation from "./operations/non_ot/SetModelAttributeNodeOperation";
 import { getGuidanceModeling } from "./Guidancemodel"; //promise!Guidancemod
+import loadHTML from "./html.template.loader";
+
+const loadingSpinnerHTML = await loadHTML(
+  "../templates/loading-spinner.html",
+  import.meta.url
+);
+
+const $spinner = $(loadingSpinnerHTML);
 
 $(async function () {
+  var quill = new Quill("#editor", {
+    theme: "snow",
+    modules: {
+      toolbar: false, // Snow includes toolbar by default
+    },
+  });
+  $("#editor").hide();
+  $("#wrapper").append($spinner);
   const guidancemodel = getGuidanceModeling();
   try {
     yjsSync()
       .then((y) => {
         WaitForCanvas(CONFIG.WIDGET.NAME.ATTRIBUTE, y)
           .then((user) => {
-            $("#wrapper")
-              .find("h3")
-              .text("Got Response from Canvas! Connecting to Yjs....");
-
             var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE, y);
             iwc.setSpace(user);
             window.y = y;
@@ -38,10 +50,9 @@ $(async function () {
               errors: {},
               firstAttemptFail: {},
             };
-            $("#wrapper").find("h3").text("Successfully connected to Yjs.");
-            setTimeout(function () {
-              $("#wrapper").find("h3").remove();
-            }, 2000);
+
+            $spinner.hide();
+            $("#editor").show();
             console.info(
               "ATTRIBUTE: Yjs successfully initialized in room " +
                 undefined +
@@ -151,6 +162,7 @@ $(async function () {
 function JSONtoGraph(json, wrapper) {
   var modelAttributesNode;
   var nodeId, edgeId;
+
   if (json.attributes && Object.keys(json.attributes).length > 0) {
     modelAttributesNode = EntityManager.createModelAttributesNodeFromJSON(
       json.attributes
@@ -172,8 +184,12 @@ function JSONtoGraph(json, wrapper) {
         json.nodes[nodeId].zIndex,
         json.nodes[nodeId]
       );
-      node.registerYType();
-      node.addToWrapper(wrapper);
+      if(!node){
+        throw new Error("Node could not be created from JSON");
+      }
+       node.registerYType();
+       node.addToWrapper(wrapper);
+     
     }
   }
   for (edgeId in json.edges) {
