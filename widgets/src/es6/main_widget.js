@@ -57,12 +57,11 @@ import UpdateViewListOperation from "./operations/non_ot/UpdateViewListOperation
 import ViewInitOperation from "./operations/non_ot/ViewInitOperation";
 import { getUserInfo } from "./User";
 
-export default async function () {
+$(async function () {
   const user = await getUserInfo();
   if (!user) {
     console.error("user is undefined");
   }
-
   yjsSync()
     .then((y) => {
       console.info(
@@ -91,16 +90,17 @@ export default async function () {
         userMap.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], userInfo);
       }
       let metamodel, model;
+      const dataMap = y.getMap("data");
       const guidancemodel = getGuidanceModeling();
       if (guidancemodel.isGuidanceEditor()) {
-        const dataMap = y.getMap("data");
+        
         //Set the model which is shown by the editor to the guidancemodel
         model = dataMap.get("guidancemodel");
         //Set the metamodel to the guidance metamodel
         metamodel = dataMap.get("guidancemetamodel");
       } else {
-        metamodel = y.getMap("data").get("metamodel");
-        model = y.getMap("data").get("model");
+        metamodel = dataMap.get("metamodel");
+        model = dataMap.get("model");
       }
       if (model) {
         console.info(
@@ -134,7 +134,8 @@ export default async function () {
       console.warn(message);
       alert("ERROR: " + message);
     });
-}
+})
+
 
 function InitMainWidget(metamodel, model, _iwcw, user, y) {
   const userList = [];

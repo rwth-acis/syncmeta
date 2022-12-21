@@ -1,8 +1,7 @@
 import { LitElement, html } from "lit";
 import { customElement } from "lit/decorators.js";
 import { SyncMetaWidget } from "../../widget";
-//@ts-ignore
-import initMain from "../../es6/main_widget.js";
+import "../../es6/main_widget.js";
 import { CONFIG, getWidgetTagName } from "../../es6/config";
 
 // canvas widget
@@ -679,7 +678,6 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
 
   firstUpdated(e: any) {
     super.firstUpdated(e);
-    initMain();
   }
 
   onSaveImage() {
