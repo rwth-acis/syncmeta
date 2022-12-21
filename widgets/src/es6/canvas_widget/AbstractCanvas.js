@@ -79,7 +79,12 @@ class AbstractCanvas {
         _tools[_currentToolName].unmount();
       if (_tools.hasOwnProperty(name)) {
         _tools[name].mount(defaultLabel, defaultAttributeValues);
-      } else _tools["MoveTool"].mount();
+      } else {
+        if (name !== "MoveTool") {
+          throw new Error("Tool " + name + " not found");
+        }
+        _tools["MoveTool"].mount();
+      }
       _currentToolName = name;
     };
 
