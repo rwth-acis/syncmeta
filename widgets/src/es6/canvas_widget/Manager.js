@@ -7446,6 +7446,7 @@ export class ModelAttributesNode extends AbstractNode {
 
   constructor(id, attr, y) {
     super(id, ModelAttributesNode.TYPE, 0, 0, 0, 0, 0, null, null, y);
+    y = y || window.y;
     if (!y) {
       throw new Error("y is not defined");
     }
