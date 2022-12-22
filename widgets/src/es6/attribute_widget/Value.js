@@ -89,7 +89,7 @@ function Value(id, name, subjectEntity, rootSubjectEntity) {
     _ytext = ytext;
     // _ytext.bind(_$node[0]);
 
-    _ytext.observe(function (event) {
+    _ytext?.observe(function (event) {
       _value = _ytext.toString();
     });
 

@@ -470,6 +470,7 @@ export default class IWCW {
    */
   static getInstance(componentName, y) {
     if (!IWCW.instance) {
+      y = y || window.y;
       if (!y) {
         console.error(
           "y is null, y is the shared y document that should be passed along when calling getInstance, proceed with caution"

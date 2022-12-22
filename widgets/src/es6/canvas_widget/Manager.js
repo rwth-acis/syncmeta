@@ -667,8 +667,9 @@ var relations = {};
  * @param {boolean} [overlayRotate] Flag if edge overlay should be flipped automatically to avoid being upside down
  */
 export class AbstractEdge extends AbstractEntity {
-  constructor(id, type, source, target, overlayRotate) {
+  constructor(id, type, source, target, overlayRotate, y) {
     super(id);
+    y = y || window.y;
     var that = this;
 
     /**
@@ -678,8 +679,11 @@ export class AbstractEdge extends AbstractEntity {
     var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN, y); // y comes from the window object but should in the future be passed through the constructor since we should avoid binding to window
 
     var _ymap = null;
+    if (!y) {
+      throw new Error("y is not defined");
+    }
 
-    if (window.hasOwnProperty("y")) {
+    if (y) {
       const edgeMap = y.getMap("edges");
       if (edgeMap.has(id)) {
         _ymap = edgeMap.get(id);
@@ -708,7 +712,7 @@ export class AbstractEdge extends AbstractEntity {
      * @type {canvas_widget.SingleValueAttribute}
      * @private
      */
-    var _label = new SingleValueAttribute(id + "[label]", "Label", this);
+    var _label = new SingleValueAttribute(id + "[label]", "Label", this, y);
 
     /**
      * Appearance information of edge
@@ -1423,7 +1427,18 @@ export class AbstractEdge extends AbstractEntity {
  * @param {number} zIndex Position of node on z-axis
  */
 export class AbstractNode extends AbstractEntity {
-  constructor(id, type, left, top, width, height, zIndex, containment, json) {
+  constructor(
+    id,
+    type,
+    left,
+    top,
+    width,
+    height,
+    zIndex,
+    containment,
+    json,
+    y
+  ) {
     super(id);
     var that = this;
 
@@ -1438,7 +1453,11 @@ export class AbstractNode extends AbstractEntity {
      * @private
      * */
     var _ymap = null;
-    if (window.hasOwnProperty("y")) {
+    y = y || window.y;
+    if (!y) {
+      throw new Error("y is undefined");
+    }
+    if (y) {
       const nodesMap = y.getMap("nodes");
       if (nodesMap.has(id)) {
         _ymap = nodesMap.get(id);
@@ -1473,7 +1492,7 @@ export class AbstractNode extends AbstractEntity {
      * @type {canvas_widget.SingleValueAttribute}
      * @private
      */
-    var _label = new SingleValueAttribute(id + "[label]", "Label", this);
+    var _label = new SingleValueAttribute(id + "[label]", "Label", this, y);
 
     /**
      * Appearance information of edge
@@ -3218,6 +3237,11 @@ export class NodeShapeNode extends AbstractNode {
  * @constructor
  */
 class EntityManager {
+  y = null;
+  setSharedDocument(y) {
+    this.y = y;
+  }
+
   constructor() {
     var that = this;
     /**
@@ -3274,7 +3298,8 @@ class EntityManager {
         height,
         zIndex,
         containment,
-        json
+        json,
+        y
       ) {
         var node;
         AbstractEntity.maxZIndex = Math.max(AbstractEntity.maxZIndex, zIndex);
@@ -3289,7 +3314,8 @@ class EntityManager {
             height,
             zIndex,
             containment,
-            json
+            json,
+            y
           );
         } else if (nodeTypes.hasOwnProperty(type)) {
           node = new nodeTypes[type](
@@ -3300,7 +3326,8 @@ class EntityManager {
             height,
             zIndex,
             containment,
-            json
+            json,
+            y
           );
         }
         _nodes[id] = node;
@@ -3310,17 +3337,19 @@ class EntityManager {
        * Create model Attributes node
        * @returns {canvas_widget.ModelAttributesNode}
        */
-      createModelAttributesNode: function () {
+      createModelAttributesNode: function (y) {
         if (_modelAttributesNode === null) {
           if (metamodel)
             _modelAttributesNode = new ModelAttributesNode(
               "modelAttributes",
-              metamodel.attributes
+              metamodel.attributes,
+              y
             );
           else
             _modelAttributesNode = new ModelAttributesNode(
               "modelAttributes",
-              null
+              null,
+              y
             );
           return _modelAttributesNode;
         }
@@ -3533,7 +3562,8 @@ class EntityManager {
         height,
         zIndex,
         containment,
-        json
+        json,
+        y
       ) {
         var node = this.createNode(
           type,
@@ -3544,7 +3574,8 @@ class EntityManager {
           height,
           zIndex,
           containment,
-          json
+          json,
+          y
         );
         if (node) {
           node.getLabel().getValue().setValue(json.label.value.value);
@@ -5760,8 +5791,8 @@ export class ObjectNode extends AbstractNode {
   static TYPE = "Object";
   static DEFAULT_WIDTH = 150;
   static DEFAULT_HEIGHT = 100;
-  constructor(id, left, top, width, height, zIndex, json) {
-    super(id, ObjectNode.TYPE, left, top, width, height, zIndex, json);
+  constructor(id, left, top, width, height, zIndex, json, y) {
+    super(id, ObjectNode.TYPE, left, top, width, height, zIndex, json, y);
     var that = this;
 
     /**
@@ -7413,8 +7444,12 @@ export class RelationshipGroupNode extends AbstractNode {
 export class ModelAttributesNode extends AbstractNode {
   static TYPE = "ModelAttributesNode";
 
-  constructor(id, attr) {
-    super(id, ModelAttributesNode.TYPE, 0, 0, 0, 0, 0);
+  constructor(id, attr, y) {
+    super(id, ModelAttributesNode.TYPE, 0, 0, 0, 0, 0, null, null, y);
+    if (!y) {
+      throw new Error("y is not defined");
+    }
+
     var that = this;
     /**
      * jQuery object of node template
@@ -7529,13 +7564,14 @@ export class ModelAttributesNode extends AbstractNode {
       }
     } else {
       this.addAttribute(
-        new SingleValueAttribute(this.getEntityId() + "[name]", "Name", this)
+        new SingleValueAttribute(this.getEntityId() + "[name]", "Name", this, y)
       );
       this.addAttribute(
         new SingleMultiLineValueAttribute(
           this.getEntityId() + "[description]",
           "Description",
-          this
+          this,
+          y
         )
       );
     }

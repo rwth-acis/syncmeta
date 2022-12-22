@@ -21,7 +21,7 @@ const singleMultiLineValueAttributeHtml = await loadHTML(
  * @param {canvas_widget.AbstractEntity} subjectEntity Entity the attribute is assigned to
  */
 class SingleMultiLineValueAttribute extends AbstractAttribute {
-  constructor(id, name, subjectEntity) {
+  constructor(id, name, subjectEntity, y) {
     super(id, name, subjectEntity);
 
     /***
@@ -33,7 +33,8 @@ class SingleMultiLineValueAttribute extends AbstractAttribute {
       id,
       name,
       this,
-      this.getRootSubjectEntity()
+      this.getRootSubjectEntity(),
+      y
     );
 
     /**

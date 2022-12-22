@@ -31,7 +31,8 @@ const listHtml = await loadHTML(
  */
 class ConditionListAttribute extends AbstractAttribute {
   static TYPE = "ConditionListAttribute";
-  constructor(id, name, subjectEntity, options, options2) {
+  constructor(id, name, subjectEntity, options, options2, y) {
+    y = y || window.y;
     super(id, name, subjectEntity);
     var that = this;
 
@@ -67,7 +68,7 @@ class ConditionListAttribute extends AbstractAttribute {
      * Inter widget communication wrapper
      * @type {Object}
      */
-    var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
+    var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN, y);
 
     /**
      * Apply an Attribute Add Operation

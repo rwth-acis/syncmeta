@@ -79,7 +79,8 @@ class SelectionValue extends AbstractValue{
      * @type {Object}
      * @private
      */
-    var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
+    y = y || window.y;
+    var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN, y);
 
     /**
      * Get chain of entities the attribute is assigned to

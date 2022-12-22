@@ -243,7 +243,7 @@ $(async function () {
           .then(function (data) {
             const dataMap = y.getMap("data");
             try {
-              var vls = GenerateViewpointModel(data);
+              var vls = GenerateViewpointModel(data, y);
               //if everything is empty. Maybe it is already a VLS
               if (
                 _.keys(vls.nodes).length === 0 &&

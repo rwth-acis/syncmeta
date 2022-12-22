@@ -27,16 +27,20 @@ const multiLineValueHtml = await loadHTML(
  * @param {canvas_widget.AbstractNode|canvas_widget.AbstractEdge} rootSubjectEntity Topmost entity in the chain of entity the attribute is assigned to
  */
 class MultiLineValue extends AbstractValue {
-  constructor(id, name, subjectEntity, rootSubjectEntity) {
+  constructor(id, name, subjectEntity, rootSubjectEntity, y) {
     super(id, name, subjectEntity, rootSubjectEntity);
     var that = this;
 
     var _ytext = null;
-    if (window.hasOwnProperty("y")) {
-      if (rootSubjectEntity.getYMap().has(id) )
+    if (y) {
+      const yMap = rootSubjectEntity.getYMap();
+      if (!yMap) {
+        rootSubjectEntity.registerYMap();
+      }
+
+      if (rootSubjectEntity.getYMap()?.has(id))
         _ytext = rootSubjectEntity.getYMap().get(id);
-      else
-        _ytext = rootSubjectEntity.getYMap().set(id, new Y.Text());
+      else _ytext = rootSubjectEntity.getYMap().set(id, new Y.Text());
     }
 
     /**
@@ -58,14 +62,16 @@ class MultiLineValue extends AbstractValue {
      * @type {Object}
      * @private
      */
-    var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
+    y = y || window.y;
+    var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN, y);
 
     /**
      * Get chain of entities the attribute is assigned to
      * @returns {string[]}
      */
     var getEntityIdChain = function () {
-      var chain = [that.getEntityId()], entity = that;
+      var chain = [that.getEntityId()],
+        entity = that;
       while (entity instanceof AbstractAttribute) {
         chain.unshift(entity.getSubjectEntity().getEntityId());
         entity = entity.getSubjectEntity();
@@ -136,8 +142,10 @@ class MultiLineValue extends AbstractValue {
      * @param {operations.ot.ValueChangeOperation} operation
      */
     var localValueChangeCallback = function (operation) {
-      if (operation instanceof ValueChangeOperation &&
-        operation.getEntityId() === that.getEntityId()) {
+      if (
+        operation instanceof ValueChangeOperation &&
+        operation.getEntityId() === that.getEntityId()
+      ) {
         propagateValueChangeOperation(operation);
       }
     };
@@ -147,8 +155,10 @@ class MultiLineValue extends AbstractValue {
      * @param {operations.ot.ValueChangeOperation} operation
      */
     var historyValueChangeCallback = function (operation) {
-      if (operation instanceof ValueChangeOperation &&
-        operation.getEntityId() === that.getEntityId()) {
+      if (
+        operation instanceof ValueChangeOperation &&
+        operation.getEntityId() === that.getEntityId()
+      ) {
         _iwcw.sendLocalOTOperation(
           CONFIG.WIDGET.NAME.ATTRIBUTE,
           operation.getOTOperation()

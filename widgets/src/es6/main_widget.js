@@ -899,7 +899,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
     }
   } else {
     if (canvas.getModelAttributesNode() === null) {
-      var modelAttributesNode = EntityManager.createModelAttributesNode();
+      var modelAttributesNode = EntityManager.createModelAttributesNode(y);
       modelAttributesNode.registerYMap();
       canvas.setModelAttributesNode(modelAttributesNode);
       modelAttributesNode.addToCanvas(canvas);

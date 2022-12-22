@@ -26,12 +26,15 @@ const valueHtml = await loadHTML(
  * @param {canvas_widget.AbstractNode|canvas_widget.AbstractEdge} rootSubjectEntity Topmost entity in the chain of entity the attribute is assigned to
  */
 class Value extends AbstractValue {
-  constructor(id, name, subjectEntity, rootSubjectEntity) {
-    
+  constructor(id, name, subjectEntity, rootSubjectEntity, y) {
     var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN, y);
     var _ytext = null;
-    if (window.hasOwnProperty("y") && id.indexOf("undefined") == -1) {
-      if (rootSubjectEntity.getYMap().has(id)) {
+    if (y && id.indexOf("undefined") == -1) {
+      const yMap = rootSubjectEntity.getYMap();
+      if(!yMap){
+        throw new Error("yMap is undefined");
+      }
+      if (yMap?.has(id)) {
         _ytext = rootSubjectEntity.getYMap().get(id);
         if (!(_ytext instanceof Y.Text))
           _ytext = rootSubjectEntity.getYMap().set(id, new Y.Text());
@@ -39,7 +42,7 @@ class Value extends AbstractValue {
         _ytext = rootSubjectEntity.getYMap().set(id, new Y.Text());
       }
     }
-    super( id, name, subjectEntity, rootSubjectEntity);
+    super(id, name, subjectEntity, rootSubjectEntity);
     var that = this;
     /**
      * Value
@@ -60,7 +63,8 @@ class Value extends AbstractValue {
      * @returns {string[]}
      */
     var getEntityIdChain = function () {
-      var chain = [that.getEntityId()], entity = that;
+      var chain = [that.getEntityId()],
+        entity = that;
       while (entity instanceof AbstractAttribute) {
         chain.unshift(entity.getSubjectEntity().getEntityId());
         entity = entity.getSubjectEntity();
@@ -143,7 +147,9 @@ class Value extends AbstractValue {
         _.debounce(function (event) {
           if (event.type !== "delete") {
             const userMap = y.getMap("users");
-            var jabberId = userMap.get(event.object._content[event.index].id[0]);
+            var jabberId = userMap.get(
+              event.object._content[event.index].id[0]
+            );
             if (jabberId === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]) {
               $("#save").click();
               const activityMap = y.getMap("activity");
@@ -161,7 +167,9 @@ class Value extends AbstractValue {
                   {
                     value: _value,
                     subjectEntityName: that.getSubjectEntity().getName(),
-                    rootSubjectEntityType: that.getRootSubjectEntity().getType(),
+                    rootSubjectEntityType: that
+                      .getRootSubjectEntity()
+                      .getType(),
                     rootSubjectEntityId: that
                       .getRootSubjectEntity()
                       .getEntityId(),

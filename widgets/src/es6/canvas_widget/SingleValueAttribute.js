@@ -21,7 +21,11 @@ const singleValueAttributeHtml = await loadHTML(
  * @param {canvas_widget.AbstractEntity} subjectEntity Entity the attribute is assigned to
  */
 class SingleValueAttribute extends AbstractAttribute {
-  constructor(id, name, subjectEntity) {
+  constructor(id, name, subjectEntity, y) {
+    y = y || window.y;
+    if (!y) {
+      throw new Error("y is undefined");
+    }
     super(id, name, subjectEntity);
     var that = this;
 
@@ -30,7 +34,7 @@ class SingleValueAttribute extends AbstractAttribute {
      * @type {canvas_widget.Value}
      * @private
      */
-    var _value = new Value(id, name, this, this.getRootSubjectEntity());
+    var _value = new Value(id, name, this, this.getRootSubjectEntity(), y);
 
     /**
      * jQuery object of DOM node representing the node

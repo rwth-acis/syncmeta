@@ -12,22 +12,29 @@ import { ViewObjectNode } from "./Manager";
 import ViewRelationshipNode from "./viewpoint/ViewRelationshipNode";
 import { EntityManagerInstance as EntityManager } from "./Manager";
 import { ObjectNode } from "./Manager";
-function GenerateViewpointModel(viewpointModel) {
+
+function GenerateViewpointModel(viewpointModel, y) {
   EntityManager.init();
 
   for (var node_key in viewpointModel.nodes) {
     if (viewpointModel.nodes.hasOwnProperty(node_key)) {
       var vpNode = viewpointModel.nodes[node_key];
+      const width = vpNode.width || vpNode.containment.width;
+      const height = vpNode.height || vpNode.containment.height;
+      const left = vpNode.left || vpNode.containment.left;
+      const top = vpNode.top || vpNode.containment.top;
+      const zIndex = vpNode.zIndex || vpNode.containment.zIndex;
       EntityManager.createNodeFromJSON(
         vpNode.type,
         node_key,
-        vpNode.left,
-        vpNode.top,
-        vpNode.widget,
-        vpNode.height,
-        vpNode.zIndex,
+        left,
+        top,
+        width,
+        height,
+        zIndex,
         vpNode.containment,
-        vpNode
+        vpNode,
+        y
       );
     }
   }
