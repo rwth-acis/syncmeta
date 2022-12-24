@@ -4,7 +4,7 @@ import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.9.2/jquery.contextMenu.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import "../lib/jquery.transformable-PATCHED";
-import "jsplumb/dist/js/jsPlumb-1.7.9.js";
+import "jsplumb/dist/js/jsPlumb-2.0.0.js";
 
 import { CONFIG } from "../config";
 import { default as loadHTML } from "../html.template.loader";
@@ -821,7 +821,7 @@ export class AbstractEdge extends AbstractEntity {
             that.getLabel().getValue().getValue()
           ),
           {}
-        )
+        ).toJSON()
       );
     };
 
