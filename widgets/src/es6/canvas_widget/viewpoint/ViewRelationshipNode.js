@@ -7,11 +7,8 @@ import ConditionListAttribute from "./ConditionListAttribute";
 import ViewTypesUtil from "./ViewTypesUtil";
 import LogicalOperator from "./LogicalOperator";
 import LogicalConjunctions from "./LogicalConjunctions";
-import { EdgeShapeNode as __canvas_widget_EdgeShapeNode } from "../Manager";
-import {
-  BiDirAssociationEdge as $__canvas_widget_BiDirAssociationEdge,
-  UniDirAssociationEdge as $__canvas_widget_UniDirAssociationEdge,
-} from "../Manager";
+import { EdgeShapeNode } from "../Manager";
+import { BiDirAssociationEdge, UniDirAssociationEdge } from "../Manager";
 import loadHTML from "../../html.template.loader";
 import { AbstractNode } from "../Manager";
 const viewrelationshipNodeHtml = await loadHTML(
@@ -198,9 +195,6 @@ class ViewRelationshipNode extends AbstractNode {
       that.showAttributes();
 
     this.setContextMenuItemCallback(function () {
-      var EdgeShapeNode = $__canvas_widget_EdgeShapeNode,
-        BiDirAssociationEdge = $__canvas_widget_BiDirAssociationEdge,
-        UniDirAssociationEdge = $__canvas_widget_UniDirAssociationEdge;
       var viewId = $("#lblCurrentView").text();
       return {
         addShape: {

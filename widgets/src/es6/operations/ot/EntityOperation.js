@@ -910,8 +910,6 @@ export class EdgeDeleteOperation extends EntityOperation {
      * @returns {EdgeAddOperation}
      */
     this.inverse = function () {
-      var EdgeAddOperation = $__operations_ot_EdgeAddOperation;
-
       return new EdgeAddOperation(
         this.getEntityId(),
         this.getType(),
@@ -1120,8 +1118,6 @@ export class EdgeAddOperation extends EntityOperation {
      * @returns {EdgeDeleteOperation}
      */
     this.inverse = function () {
-      var EdgeDeleteOperation = $__operations_ot_EdgeDeleteOperation;
-
       return new EdgeDeleteOperation(
         this.getEntityId(),
         this.getType(),
