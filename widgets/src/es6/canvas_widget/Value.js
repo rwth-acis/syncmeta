@@ -146,42 +146,49 @@ class Value extends AbstractValue {
 
       _ytext.observe(
         _.debounce(function (event) {
-          if (event.type !== "delete") {
-            const userMap = y.getMap("users");
-            var jabberId = userMap.get(
-              event.object._content[event.index].id[0]
-            );
-            if (jabberId === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]) {
-              $("#save").click();
-              const activityMap = y.getMap("activity");
-              activityMap.set(
-                ActivityOperation.TYPE,
-                new ActivityOperation(
-                  "ValueChangeActivity",
-                  that.getEntityId(),
-                  jabberId,
-                  ValueChangeOperation.getOperationDescription(
-                    that.getSubjectEntity().getName(),
-                    that.getRootSubjectEntity().getType(),
-                    that.getRootSubjectEntity().getLabel().getValue().getValue()
-                  ),
-                  {
-                    value: _value,
-                    subjectEntityName: that.getSubjectEntity().getName(),
-                    rootSubjectEntityType: that
-                      .getRootSubjectEntity()
-                      .getType(),
-                    rootSubjectEntityId: that
-                      .getRootSubjectEntity()
-                      .getEntityId(),
-                  }
-                )
+          event.keysChanged.forEach((key) => {
+            if (key !== "delete") {
+              const userMap = y.getMap("users");
+              var jabberId = userMap.get(
+                event.object._content[event.index].id[0]
               );
+              if (jabberId === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]) {
+                $("#save").click();
+                const activityMap = y.getMap("activity");
+                activityMap.set(
+                  ActivityOperation.TYPE,
+                  new ActivityOperation(
+                    "ValueChangeActivity",
+                    that.getEntityId(),
+                    jabberId,
+                    ValueChangeOperation.getOperationDescription(
+                      that.getSubjectEntity().getName(),
+                      that.getRootSubjectEntity().getType(),
+                      that
+                        .getRootSubjectEntity()
+                        .getLabel()
+                        .getValue()
+                        .getValue()
+                    ),
+                    {
+                      value: _value,
+                      subjectEntityName: that.getSubjectEntity().getName(),
+                      rootSubjectEntityType: that
+                        .getRootSubjectEntity()
+                        .getType(),
+                      rootSubjectEntityId: that
+                        .getRootSubjectEntity()
+                        .getEntityId(),
+                    }
+                  ).toJSON()
+                );
+              } else {
+                //I don't know who deleted here, so everyone saves  the current state for now
+                $("#save").click();
+              }
             }
-          } else {
-            //I don't know who deleted here, so everyone save's  the current state for now
-            $("#save").click();
-          }
+          });
+          
         }, 500)
       );
     };

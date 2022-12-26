@@ -46,16 +46,6 @@ class Value extends AbstractValue {
 
     var _$editorRef;
 
-    setTimeout(() => {
-      _$editorRef = new Quill("#" + editorId, {
-        theme: "snow",
-        modules: {
-          toolbar: false, // Snowincludes toolbar by default
-        },
-        placeholder: name,
-      });
-    }, 200);
-
     /**
      * Set value
      * @param {string} value
@@ -94,20 +84,31 @@ class Value extends AbstractValue {
     };
 
     this.registerYType = function (ytext) {
-      _ytext = ytext;
-      if (!_$editorRef) {
-        throw new Error("Editor not found");
-      }
-      new QuillBinding(_ytext, _$editorRef);
-      _ytext?.observe(function () {
-        _value = _ytext.toString();
-      });
+      setTimeout(() => {
+        _ytext = ytext;
+        const $editor = document.querySelector("#" + editorId);
+        if (!$editor) {
+          throw new Error("Editor not found " + editorId);
+        }
+        _$editorRef = new Quill($editor, {
+          theme: "snow",
+          modules: {
+            toolbar: false, // Snowincludes toolbar by default
+          },
+          placeholder: name,
+        });
 
-      //loging
-      window.syncmetaLog.initializedYTexts += 1;
-      if (window.syncmetaLog.hasOwnProperty(this.getEntityId()))
-        window.syncmetaLog.objects[this.getEntityId()] += 1;
-      else window.syncmetaLog.objects[this.getEntityId()] = 0;
+        new QuillBinding(_ytext, _$editorRef);
+        _ytext?.observe(function () {
+          _value = _ytext.toString();
+        });
+
+        //loging
+        window.syncmetaLog.initializedYTexts += 1;
+        if (window.syncmetaLog.hasOwnProperty(this.getEntityId()))
+          window.syncmetaLog.objects[this.getEntityId()] += 1;
+        else window.syncmetaLog.objects[this.getEntityId()] = 0;
+      }, 1000);
     };
   }
 }
