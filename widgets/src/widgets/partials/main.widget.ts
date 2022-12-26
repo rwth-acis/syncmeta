@@ -326,17 +326,17 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
           margin: 3px 0;
         }
 
-        /* .attributes .single_value_attribute .value {
+        .attributes .single_value_attribute .value {
           width: 50%;
           float: left;
-        } */
+        }
 
-        /* .attributes .single_value_attribute .value input {
+        .attributes .single_value_attribute .value input {
           border: 0;
           color: #666 !important;
           margin: 0;
           background: none;
-        } */
+        }
 
         .attributes .value div.val {
           text-align: right;
