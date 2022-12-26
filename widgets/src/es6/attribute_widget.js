@@ -26,13 +26,6 @@ const loadingSpinnerHTML = await loadHTML(
 const $spinner = $(loadingSpinnerHTML);
 
 $(async function () {
-  var quill = new Quill("#editor", {
-    theme: "snow",
-    modules: {
-      toolbar: false, // Snow includes toolbar by default
-    },
-  });
-  $("#editor").hide();
   $("#wrapper").append($spinner);
   const guidancemodel = getGuidanceModeling();
   try {
