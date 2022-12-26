@@ -100,9 +100,20 @@ class AbstractTool {
         })
       );
     } else {
+      let svgRef;
+      if (typeof toolIcon.find == "function") {
+        svgRef = toolIcon.find("svg");
+      }
+      if (svgRef) {
+        // we found an svg icon, we will use that one to display in the palette
+        svgRef.height(30);
+        svgRef.width(30);
+        type = "svg";
+      }
+      const tpl = svgRef?.get(0).outerHTML;
       _$node = $(
         _.template(abstractToolHtml)({
-          icon: toolIcon instanceof $ || !toolIcon ? "" : "/img/" + _icon,
+          icon: tpl || "",
           label: _label,
           color: _color,
           type,
