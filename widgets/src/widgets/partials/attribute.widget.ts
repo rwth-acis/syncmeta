@@ -139,7 +139,7 @@ export class AttributeWidget extends SyncMetaWidget(LitElement) {
           height: 80px;
         }
 
-        #modelAttributes .default_node .label {
+        #modelAttributes .attribute_default_node .label {
           font-weight: bold;
         }
 
