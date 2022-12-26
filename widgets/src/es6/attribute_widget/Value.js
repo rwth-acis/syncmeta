@@ -86,11 +86,12 @@ class Value extends AbstractValue {
     this.registerYType = function (ytext) {
       setTimeout(() => {
         _ytext = ytext;
-        const $editor = document.querySelector("#" + editorId);
-        if (!$editor) {
-          throw new Error("Editor not found " + editorId);
-        }
-        _$editorRef = new Quill($editor, {
+
+        // if (!$editor) {
+        //   throw new Error("Editor not found " + editorId);
+        // }
+        const domElem = _$node.get(0);
+        _$editorRef = new Quill(domElem, {
           theme: "snow",
           modules: {
             toolbar: false, // Snowincludes toolbar by default
