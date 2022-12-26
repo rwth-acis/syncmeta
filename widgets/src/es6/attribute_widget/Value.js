@@ -3,7 +3,7 @@ import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"
 import _ from "lodash-es";
 import AbstractValue from "./AbstractValue";
 import loadHTML from "../html.template.loader";
-
+import { QuillBinding } from "y-quill";
 
 const quillEditorHtml = await loadHTML(
   "../../templates/attribute_widget/quill_editor.html",
@@ -44,8 +44,10 @@ class Value extends AbstractValue {
      */
     var _$node = $(_.template(quillEditorHtml)({ id: editorId }));
 
+    var _$editorRef;
+
     setTimeout(() => {
-      new Quill("#" + editorId, {
+      _$editorRef = new Quill("#" + editorId, {
         theme: "snow",
         modules: {
           toolbar: false, // Snowincludes toolbar by default
@@ -93,8 +95,11 @@ class Value extends AbstractValue {
 
     this.registerYType = function (ytext) {
       _ytext = ytext;
-      // _ytext.bind(_$node[0]);
-      _ytext?.observe(function (event) {
+      if (!_$editorRef) {
+        throw new Error("Editor not found");
+      }
+      new QuillBinding(_ytext, _$editorRef);
+      _ytext?.observe(function () {
         _value = _ytext.toString();
       });
 
