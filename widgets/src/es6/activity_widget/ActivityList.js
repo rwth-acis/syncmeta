@@ -560,7 +560,7 @@ class ActivityList {
               );
               that.addActivity(activity);
               const nodesMap = y.getMap("nodes");
-              if (nodesMap.keys().indexOf()) break;
+               if (nodesMap.size > 0) break;
             }
             case ValueChangeActivity.TYPE: {
               activity = new ValueChangeActivity(
@@ -605,17 +605,21 @@ class ActivityList {
     if (y) {
       const activityMap = y.getMap("activity");
       activityMap.observe(function (event) {
-        const activity = event.currentTarget.get([...event.keysChanged][0]);
-        event.value = activity;
-        operationCallback(
-          new ActivityOperation(
-            event.value.type,
-            event.value.entityId,
-            event.value.sender,
-            event.value.text,
-            event.value.data
-          )
-        );
+        event.keysChanged.forEach((key) => {
+          if (key == "log") return;
+          const activity = event.currentTarget.get(key);
+          event.value = activity;
+          operationCallback(
+            new ActivityOperation(
+              event.value.type,
+              event.value.entityId,
+              event.value.sender,
+              event.value.text,
+              event.value.data
+            )
+          );
+        });
+        
       });
       const selectionMap = y.getMap("select");
       selectionMap.observe(function (event) {

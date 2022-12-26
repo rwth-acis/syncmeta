@@ -126,7 +126,6 @@ function EntityManager() {
           );
           nodeTypes[node.targetName].VIEWTYPE = node.label;
         } else {
-          
           _nodeTypes[node.label] = makeNode(
             node.label,
             node.shape.shape,
@@ -441,29 +440,33 @@ function EntityManager() {
         containment,
         json
       );
-      if (node) {
-        node.getLabel().getValue().setValue(json.label.value.value);
-        for (var attrId in json.attributes) {
-          if (json.attributes.hasOwnProperty(attrId)) {
-            var attr = node.getAttribute(attrId);
-            if (attr) {
-              attr.setValueFromJSON(json.attributes[attrId]);
-            } else {
-              var newId = attrId.replace(/[^\[\]]*/, id);
-              attr = node.getAttribute(newId);
-              if (attr) attr.setValueFromJSON(json.attributes[attrId]);
-              else {
-                var attributeList = node.getAttributes();
-                this.setAttributesByName(
-                  attributeList,
-                  json.attributes[attrId].name,
-                  json.attributes[attrId]
-                );
-              }
+      if (!node) {
+        console.error("Node could not be created: " + type + " " + id);
+        return null;
+      }
+
+      node.getLabel().getValue().setValue(json.label.value.value);
+      for (var attrId in json.attributes) {
+        if (json.attributes.hasOwnProperty(attrId)) {
+          var attr = node.getAttribute(attrId);
+          if (attr) {
+            attr.setValueFromJSON(json.attributes[attrId]);
+          } else {
+            var newId = attrId.replace(/[^\[\]]*/, id);
+            attr = node.getAttribute(newId);
+            if (attr) attr.setValueFromJSON(json.attributes[attrId]);
+            else {
+              var attributeList = node.getAttributes();
+              this.setAttributesByName(
+                attributeList,
+                json.attributes[attrId].name,
+                json.attributes[attrId]
+              );
             }
           }
         }
       }
+
       return node;
     },
     /**

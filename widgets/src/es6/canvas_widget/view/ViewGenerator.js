@@ -1,5 +1,5 @@
 import { EntityManagerInstance as EntityManager } from "../Manager";
-import jsPlumb from "jsplumb/dist/js/jsPlumb-1.7.9.js";
+import "jsplumb/dist/js/jsPlumb-2.0.0.js";
 
 /**
  * Generates the Views

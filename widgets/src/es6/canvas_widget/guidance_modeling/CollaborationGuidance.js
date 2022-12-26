@@ -9,26 +9,29 @@ const selectToolGuidanceHtml = await loadHTML(
   "../../../templates/guidance_modeling/collaboration_guidance.html",
   import.meta.url
 );
-function CollaborationGuidance(id, label, activityId, objectId, canvas) {
-  var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
-  var _canvas = canvas;
-  var _$node = $(
-    _.template(selectToolGuidanceHtml)({ text: label, icon: "users" })
-  );
-
-  _$node.click(function () {
-    var operation = new CollaborateInActivityOperation(activityId);
-    _iwcw.sendLocalNonOTOperation(
-      CONFIG.WIDGET.NAME.GUIDANCE,
-      operation.toNonOTOperation()
+class CollaborationGuidance {
+  constructor(id, label, activityId, objectId, canvas, y) {
+    y = y || window.y;
+    var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN, y);
+    var _canvas = canvas;
+    var _$node = $(
+      _.template(selectToolGuidanceHtml)({ text: label, icon: "users" })
     );
-    _canvas.hideGuidanceBox();
-    _canvas.scrollNodeIntoView(objectId);
-  });
 
-  this.get$node = function () {
-    return _$node;
-  };
+    _$node.click(function () {
+      var operation = new CollaborateInActivityOperation(activityId);
+      _iwcw.sendLocalNonOTOperation(
+        CONFIG.WIDGET.NAME.GUIDANCE,
+        operation.toNonOTOperation()
+      );
+      _canvas.hideGuidanceBox();
+      _canvas.scrollNodeIntoView(objectId);
+    });
+
+    this.get$node = function () {
+      return _$node;
+    };
+  }
 }
 
 export default CollaborationGuidance;

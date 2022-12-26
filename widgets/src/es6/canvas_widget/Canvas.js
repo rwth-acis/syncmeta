@@ -2,7 +2,7 @@ import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jquery-migrate/1.4.1/jquery-migrate.min.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js";
-import "jsplumb/dist/js/jsPlumb-1.7.9.js"; // note that the version from the CDN  does not come with bezier connectors
+import "jsplumb/dist/js/jsPlumb-2.0.0.js"; // note that the version from the CDN  does not come with bezier connectors
 import "https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.9.2/jquery.contextMenu.js";
 import AbstractEntity from "../canvas_widget/AbstractEntity";
 import DagreLayout from "../canvas_widget/DagreLayout";
@@ -97,7 +97,8 @@ export default class Canvas extends AbstractCanvas {
      * Inter widget communication wrapper
      * @type {Object}
      */
-    var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
+    y = y || window.y;
+    var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN, y);
 
     /**
      * Entity currently selected
@@ -295,7 +296,7 @@ export default class Canvas extends AbstractCanvas {
             targetNodeLabel: targetNode.getLabel().getValue().getValue(),
             targetNodeType: targetNode.getType(),
           }
-        )
+        ).toJSON()
       );
     };
 

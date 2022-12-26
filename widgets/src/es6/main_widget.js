@@ -57,12 +57,11 @@ import UpdateViewListOperation from "./operations/non_ot/UpdateViewListOperation
 import ViewInitOperation from "./operations/non_ot/ViewInitOperation";
 import { getUserInfo } from "./User";
 
-export default async function () {
+$(async function () {
   const user = await getUserInfo();
   if (!user) {
     console.error("user is undefined");
   }
-
   yjsSync()
     .then((y) => {
       console.info(
@@ -74,67 +73,77 @@ export default async function () {
       const _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN, y);
       _iwcw.setSpace(user);
       const userMap = y.getMap("users");
-      try {
-        const user = _iwcw.getUser();
-        if (!user) {
-          throw new Error("User not set");
-        }
-        if (user.globalId !== -1) {
-          userMap.set(y.clientID, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-      if (!userMap.get(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])) {
-        var userInfo = _iwcw.getUser();
-        userInfo.globalId = Util.getGlobalId(user, y);
-        userMap.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], userInfo);
-      }
-      let metamodel, model;
-      const guidancemodel = getGuidanceModeling();
-      if (guidancemodel.isGuidanceEditor()) {
-        const dataMap = y.getMap("data");
-        //Set the model which is shown by the editor to the guidancemodel
-        model = dataMap.get("guidancemodel");
-        //Set the metamodel to the guidance metamodel
-        metamodel = dataMap.get("guidancemetamodel");
-      } else {
-        metamodel = y.getMap("data").get("metamodel");
-        model = y.getMap("data").get("model");
-      }
-      if (model) {
-        console.info(
-          "CANVAS: Found model in yjs room with " +
-            Object.keys(model.nodes).length +
-            " nodes and " +
-            Object.keys(model.edges).length +
-            " edges."
-        );
-      }
-      EntityManager.init(metamodel);
-      EntityManager.setGuidance(guidancemodel);
+      const dataMap = y.getMap("data");
 
-      InitMainWidget(metamodel, model, _iwcw, user, y);
+      // TODO: dataMap is empty as it seems to need some time to be initialized
+      // This is a workaround to wait for the initialization
+      setTimeout(() => {
+        try {
+          const user = _iwcw.getUser();
+          if (!user) {
+            throw new Error("User not set");
+          }
+          if (user.globalId !== -1) {
+            userMap.set(y.clientID, _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+        if (!userMap.get(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])) {
+          var userInfo = _iwcw.getUser();
+          userInfo.globalId = Util.getGlobalId(user, y);
+          userMap.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], userInfo);
+        }
+        let metamodel, model;
 
-      window.onbeforeunload = function () {
-        const userList = y.getMap("userList");
-        const userMap = y.getMap("users");
-        userList.delete(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
-        userMap.delete(y.clientID);
-        const activityMap = y.getMap("activity");
-        const leaveActivity = new ActivityOperation(
-          "UserLeftActivity",
-          null,
-          _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]
-        );
-        activityMap.set("UserLeftActivity", leaveActivity.toJSON());
-      };
+        const guidancemodel = getGuidanceModeling();
+        if (guidancemodel.isGuidanceEditor()) {
+          //Set the model which is shown by the editor to the guidancemodel
+          model = dataMap.get("guidancemodel");
+          //Set the metamodel to the guidance metamodel
+          metamodel = dataMap.get("guidancemetamodel");
+        } else {
+          metamodel = dataMap.get("metamodel");
+          model = dataMap.get("model");
+        }
+        if (model) {
+          console.info(
+            "CANVAS: Found model in yjs room with " +
+              Object.keys(model.nodes).length +
+              " nodes and " +
+              Object.keys(model.edges).length +
+              " edges."
+          );
+        }
+        EntityManager.init(metamodel);
+        EntityManager.setGuidance(guidancemodel);
+
+        InitMainWidget(metamodel, model, _iwcw, user, y);
+
+        window.onbeforeunload = function () {
+          const userList = y.getMap("userList");
+          const userMap = y.getMap("users");
+          userList.delete(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+          userMap.delete(y.clientID);
+          const activityMap = y.getMap("activity");
+          const leaveActivity = new ActivityOperation(
+            "UserLeftActivity",
+            null,
+            _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]
+          );
+          activityMap.set("UserLeftActivity", leaveActivity.toJSON());
+        };
+      }, 1000);
+      
+
+     
     })
     .catch(function (message) {
       console.warn(message);
       alert("ERROR: " + message);
     });
-}
+})
+
 
 function InitMainWidget(metamodel, model, _iwcw, user, y) {
   const userList = [];
@@ -898,7 +907,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
     }
   } else {
     if (canvas.getModelAttributesNode() === null) {
-      var modelAttributesNode = EntityManager.createModelAttributesNode();
+      var modelAttributesNode = EntityManager.createModelAttributesNode(y);
       modelAttributesNode.registerYMap();
       canvas.setModelAttributesNode(modelAttributesNode);
       modelAttributesNode.addToCanvas(canvas);

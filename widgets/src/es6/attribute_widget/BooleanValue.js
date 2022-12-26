@@ -12,8 +12,7 @@ const booleanValueHtml = await loadHTML(
 );
 import { CONFIG } from "../config";
 
-BooleanValue.prototype = new AbstractValue();
-BooleanValue.prototype.constructor = BooleanValue;
+
 /**
  * BooleanValue
  * @class attribute_widget.BooleanValue
@@ -26,150 +25,145 @@ BooleanValue.prototype.constructor = BooleanValue;
  * @param {Object} options Selection options
  * @constructor
  */
-function BooleanValue(id, name, subjectEntity, rootSubjectEntity, options) {
-  var that = this;
+class BooleanValue extends AbstractValue {
+  constructor(id, name, subjectEntity, rootSubjectEntity, options) {
+    super(id, name, subjectEntity, rootSubjectEntity);
+    var that = this;
 
-  AbstractValue.prototype.constructor.call(
-    this,
-    id,
-    name,
-    subjectEntity,
-    rootSubjectEntity
-  );
+    /**
+     * Value
+     * @type {boolean}
+     * @private
+     */
+    var _value = false;
 
-  /**
-   * Value
-   * @type {boolean}
-   * @private
-   */
-  var _value = false;
-
-  /**
-   * jQuery object of DOM node representing the node
-   * @type {jQuery}
-   * @private
-   */
-  var _$node = $(
-    _.template(booleanValueHtml)({
-      name: name,
-      options: options,
-      value: _value,
-    })
-  );
-
-  /**
-   * Inter widget communication wrapper
-   * @type {Object}
-   * @private
-   */
-  var _iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE);
-
-  /**
-   * Apply a Value Change Operation
-   * @param {operations.ot.ValueChangeOperation} operation
-   */
-  var processValueChangeOperation = function (operation) {
-    that.setValue(operation.getValue());
-  };
-
-  /**
-   * Propagate a Value Change to the remote users and the local widgets
-   * @param type Type of the update (CONFIG.OPERATION.TYPE.INSERT,DELETE)
-   * @param value Char that was inserted or deleted
-   * @param position Position the change took place
-   */
-  var propagateValueChange = function (type, value) {
-    var operation = new ValueChangeOperation(
-      that.getEntityId(),
-      value,
-      type,
-      null,
-      _iwc.getUser()[CONFIG.NS.PERSON.JABBERID]
+    /**
+     * jQuery object of DOM node representing the node
+     * @type {jQuery}
+     * @private
+     */
+    var _$node = $(
+      _.template(booleanValueHtml)({
+        name: name,
+        options: options,
+        value: _value,
+      })
     );
-    propagateValueChangeOperation(operation);
-  };
-  /**
-   * Propagate a Value Change Operation to the remote users and the local widgets
-   * @param {operations.ot.ValueChangeOperation} operation
-   */
-  var propagateValueChangeOperation = function (operation) {
-    processValueChangeOperation(operation);
-    const nodesMap = y.getMap("nodes");
-    var ymap = nodesMap.get(rootSubjectEntity.getEntityId());
-    if (ymap) {
-      var json = operation.toJSON();
-      json.userId = _iwc.getUser()[CONFIG.NS.PERSON.JABBERID];
-      ymap.set(that.getEntityId(), json);
-    }
-  };
 
-  /**
-   * Callback for a Value Change Operation
-   * @param {operations.ot.ValueChangeOperation} operation
-   */
-  var valueChangeCallback = function (operation) {
-    if (
-      operation instanceof ValueChangeOperation &&
-      operation.getEntityId() === that.getEntityId()
-    ) {
+    /**
+     * Inter widget communication wrapper
+     * @type {Object}
+     * @private
+     */
+    var _iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE);
+
+    /**
+     * Apply a Value Change Operation
+     * @param {operations.ot.ValueChangeOperation} operation
+     */
+    var processValueChangeOperation = function (operation) {
+      that.setValue(operation.getValue());
+    };
+
+    /**
+     * Propagate a Value Change to the remote users and the local widgets
+     * @param type Type of the update (CONFIG.OPERATION.TYPE.INSERT,DELETE)
+     * @param value Char that was inserted or deleted
+     * @param position Position the change took place
+     */
+    var propagateValueChange = function (type, value) {
+      var operation = new ValueChangeOperation(
+        that.getEntityId(),
+        value,
+        type,
+        null,
+        _iwc.getUser()[CONFIG.NS.PERSON.JABBERID]
+      );
+      propagateValueChangeOperation(operation);
+    };
+    /**
+     * Propagate a Value Change Operation to the remote users and the local widgets
+     * @param {operations.ot.ValueChangeOperation} operation
+     */
+    var propagateValueChangeOperation = function (operation) {
       processValueChangeOperation(operation);
+      const nodesMap = y.getMap("nodes");
+      var ymap = nodesMap.get(rootSubjectEntity.getEntityId());
+      if (ymap) {
+        var json = operation.toJSON();
+        json.userId = _iwc.getUser()[CONFIG.NS.PERSON.JABBERID];
+        ymap.set(that.getEntityId(), json);
+      }
+    };
+
+    /**
+     * Callback for a Value Change Operation
+     * @param {operations.ot.ValueChangeOperation} operation
+     */
+    var valueChangeCallback = function (operation) {
+      if (
+        operation instanceof ValueChangeOperation &&
+        operation.getEntityId() === that.getEntityId()
+      ) {
+        processValueChangeOperation(operation);
+      }
+    };
+
+    var init = function () {
+      _$node.off();
+      _$node.change(function () {
+        propagateValueChange(CONFIG.OPERATION.TYPE.UPDATE, this.checked, 0);
+      });
+    };
+
+    /**
+     * Set value
+     * @param {boolean} value
+     */
+    this.setValue = function (value) {
+      _value = value;
+      _$node.prop("checked", value);
+    };
+
+    /**
+     * Get value
+     * @returns {boolean}
+     */
+    this.getValue = function () {
+      return _value;
+    };
+
+    /**
+     * Get jQuery object of DOM node representing the value
+     * @returns {jQuery}
+     */
+    this.get$node = function () {
+      return _$node;
+    };
+
+    /**
+     * Register inter widget communication callbacks
+     */
+    this.registerCallbacks = function () {
+      _iwc.registerOnDataReceivedCallback(valueChangeCallback);
+    };
+
+    /**
+     * Unregister inter widget communication callbacks
+     */
+    this.unregisterCallbacks = function () {
+      _iwc.unregisterOnDataReceivedCallback(valueChangeCallback);
+    };
+
+    this.setValueFromJSON = function (json) {
+      this.setValue(json.value);
+    };
+
+    init();
+
+    if (_iwc) {
+      that.registerCallbacks();
     }
-  };
-
-  var init = function () {
-    _$node.off();
-    _$node.change(function () {
-      propagateValueChange(CONFIG.OPERATION.TYPE.UPDATE, this.checked, 0);
-    });
-  };
-
-  /**
-   * Set value
-   * @param {boolean} value
-   */
-  this.setValue = function (value) {
-    _value = value;
-    _$node.prop("checked", value);
-  };
-
-  /**
-   * Get value
-   * @returns {boolean}
-   */
-  this.getValue = function () {
-    return _value;
-  };
-
-  /**
-   * Get jQuery object of DOM node representing the value
-   * @returns {jQuery}
-   */
-  this.get$node = function () {
-    return _$node;
-  };
-
-  /**
-   * Register inter widget communication callbacks
-   */
-  this.registerCallbacks = function () {
-    _iwc.registerOnDataReceivedCallback(valueChangeCallback);
-  };
-
-  /**
-   * Unregister inter widget communication callbacks
-   */
-  this.unregisterCallbacks = function () {
-    _iwc.unregisterOnDataReceivedCallback(valueChangeCallback);
-  };
-
-  this.setValueFromJSON = function (json) {
-    this.setValue(json.value);
-  };
-
-  init();
-
-  if (_iwc) {
-    that.registerCallbacks();
   }
 }
 

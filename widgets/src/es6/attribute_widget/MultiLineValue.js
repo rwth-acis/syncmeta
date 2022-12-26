@@ -6,8 +6,10 @@ import IWCW from "../lib/IWCWrapper";
 import AbstractValue from "./AbstractValue";
 import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
 import loadHTML from "../html.template.loader";
-const multiLineValueHtml = await loadHTML(
-  "../../templates/attribute_widget/multi_line_value.html",
+import { QuillBinding } from "y-quill";
+
+const quillEditorHtml = await loadHTML(
+  "../../templates/attribute_widget/quill_editor.html",
   import.meta.url
 );
 
@@ -36,12 +38,15 @@ class MultiLineValue extends AbstractValue {
      */
     var _value = "";
 
+    let editorId = name.replace(/ /g, "-");
+    editorId = editorId.toLowerCase();
     /**
      * jQuery object of DOM node representing the node
      * @type {jQuery}
      * @private
      */
-    var _$node = $(_.template(multiLineValueHtml)({ name: name }));
+    var _$node = $(_.template(quillEditorHtml)({ id: editorId }));
+    var _$editorRef;
 
     /**
      * Inter widget communication wrapper
@@ -348,9 +353,33 @@ class MultiLineValue extends AbstractValue {
       }
     };
     this.registerYType = function (ytext) {
-      _ytext = ytext;
-      // _ytext.bind(_$node[0]);
-      initData(ytext);
+      setTimeout(() => {
+        _ytext = ytext;
+        const $editor = document.querySelector("#" + editorId);
+        if (!$editor) {
+          throw new Error("Editor not found " + editorId);
+        }
+        _$editorRef = new Quill($editor, {
+          theme: "snow",
+          modules: {
+            toolbar: false, // Snowincludes toolbar by default
+          },
+          placeholder: name,
+        });
+
+        new QuillBinding(_ytext, _$editorRef);
+        _ytext?.observe(function () {
+          _value = _ytext.toString();
+        });
+
+        //loging
+        window.syncmetaLog.initializedYTexts += 1;
+        if (window.syncmetaLog.hasOwnProperty(this.getEntityId()))
+          window.syncmetaLog.objects[this.getEntityId()] += 1;
+        else window.syncmetaLog.objects[this.getEntityId()] = 0;
+
+        initData(ytext);
+      }, 1000);
     };
 
     this.getYText = function () {

@@ -50,7 +50,7 @@ class SingleValueListAttribute extends AbstractAttribute {
      * Inter widget communication wrapper
      * @type {Object}
      */
-    var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
+    var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN, (y = y || window.y));
 
     /**
      * Apply an Attribute Add Operation
@@ -230,7 +230,7 @@ class SingleValueListAttribute extends AbstractAttribute {
      */
     this.setValueFromJSON = function (json) {
       _.forEach(json.list, function (val, key) {
-        var attribute = new SingleValueAttribute(key, key, that);
+        var attribute = new SingleValueAttribute(key, key, that, y);
         attribute.setValueFromJSON(json.list[key]);
         that.addAttribute(attribute);
         _$node.find(".list").append(attribute.get$node());

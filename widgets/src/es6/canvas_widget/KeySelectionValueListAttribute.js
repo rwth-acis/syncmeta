@@ -62,7 +62,8 @@ class KeySelectionValueListAttribute  extends AbstractAttribute {
      * Inter widget communication wrapper
      * @type {Object}
      */
-    var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
+    y = y || window.y;
+    var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN, y);
 
     /**
      * Apply an Attribute Add Operation

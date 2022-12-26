@@ -30,7 +30,8 @@ const listHtml = await loadHTML(
  */
 class RenamingListAttribute extends AbstractAttribute {
   static TYPE = "RenamingListAttribute";
-  constructor(id, name, subjectEntity, options) {
+  constructor(id, name, subjectEntity, options, y) {
+    y = y || window.y;
     super(id, name, subjectEntity);
     var that = this;
 
@@ -59,7 +60,7 @@ class RenamingListAttribute extends AbstractAttribute {
      * Inter widget communication wrapper
      * @type {Object}
      */
-    var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN);
+    var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN, y);
 
     /**
      * Apply an Attribute Add Operation
