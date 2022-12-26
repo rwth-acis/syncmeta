@@ -32,6 +32,7 @@ class MultiLineValue extends AbstractValue {
     var that = this;
 
     var _ytext = null;
+    y = y || window.y;
     if (y) {
       const yMap = rootSubjectEntity.getYMap();
       if (!yMap) {
@@ -227,6 +228,7 @@ class MultiLineValue extends AbstractValue {
     };
 
     this.registerYType = function () {
+      if (!_ytext) throw new Error("_ytext is undefined");
       // _ytext.bind(_$node[0]);
 
       if (that.getValue() !== _ytext.toString()) {

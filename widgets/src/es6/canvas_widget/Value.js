@@ -29,6 +29,7 @@ class Value extends AbstractValue {
   constructor(id, name, subjectEntity, rootSubjectEntity, y) {
     var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN, y);
     var _ytext = null;
+    y = y || window.y;
     if (y && id.indexOf("undefined") == -1) {
       const yMap = rootSubjectEntity.getYMap();
       if(!yMap){
