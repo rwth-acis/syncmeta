@@ -39,6 +39,7 @@
     "tslib": "^2.4.1",
     "typescript": "^4.8.4",
     "utf-8-validate": "^5.0.9",
+    "y-quill": "^0.1.5",
     "y-websocket": "^1.4.5",
     "y-websockets-client": "github:y-js/y-websockets-client#v9.0.0-4",
     "yjs": "^13.5.41"
