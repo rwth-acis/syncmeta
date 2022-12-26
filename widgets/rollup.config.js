@@ -2,11 +2,11 @@
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
 import commonjs from "@rollup/plugin-commonjs";
-import css from "rollup-plugin-import-css";
 import { ImportmapPlugin } from "./importmap.plugin.js";
 
 // dependencies which are not bundled
 const externalDependencies = [
+  "yjs", // for some reason if we try to bundle yjs as well, the bundle will include some unresolved dependencies (perf_hooks, crypto) that are part of nodejs. My guess is that somewhere in the yjs lib they are using some nodejs functions and rollup adds those. web dev server cannot handle those. Thus we declare it here as external
   "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js",
   "https://unpkg.com/jquery@3.6.0/dist/jquery.js",
   "https://cdnjs.cloudflare.com/ajax/libs/graphlib/2.1.8/graphlib.min.js",
