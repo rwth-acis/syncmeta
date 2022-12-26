@@ -9,8 +9,8 @@
      * @param {attribute_widget.AbstractNode|attribute_widget.AbstractEdge} rootSubjectEntity Topmost entity in the chain of entity the attribute is assigned to
      * @constructor
      */
-    function AbstractValue(id,name,subjectEntity,rootSubjectEntity){
-
+    class AbstractValue {
+      constructor(id, name, subjectEntity, rootSubjectEntity) {
         /**
          * The entity identifier
          * @returns {string} entity id
@@ -42,33 +42,34 @@
          * Get the entity identifier
          * @returns {string} entity id
          */
-        this.getEntityId = function(){
-            return _id;
+        this.getEntityId = function () {
+          return _id;
         };
 
         /**
          * Get name of value
          * @returns {string}
          */
-        this.getName = function(){
-            return _name;
+        this.getName = function () {
+          return _name;
         };
 
         /**
          * Get entity the attribute is assigned to
          * @returns {attribute_widget.AbstractEntity}
          */
-        this.getSubjectEntity = function(){
-            return _subjectEntity;
+        this.getSubjectEntity = function () {
+          return _subjectEntity;
         };
 
         /**
          * Get topmost entity in the chain of entity the attribute is assigned to
          * @returns {attribute_widget.AbstractEdge|attribute_widget.AbstractNode}
          */
-        this.getRootSubjectEntity = function(){
-            return _rootSubjectEntity;
+        this.getRootSubjectEntity = function () {
+          return _rootSubjectEntity;
         };
+      }
     }
 
     export default AbstractValue;
