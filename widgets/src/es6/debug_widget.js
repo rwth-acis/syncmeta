@@ -8,7 +8,12 @@ import { getGuidanceModeling } from "./Guidancemodel";
 import loadHTML from "./html.template.loader";
 import { CONFIG, getWidgetTagName } from "./config";
 
+
+
 $(async function () {
+  const $spinner = $(getWidgetTagName(CONFIG.WIDGET.NAME.DEBUG)).find(
+    "loading-spinner"
+  );
   const guidance = getGuidanceModeling();
   yjsSync()
     .then((y) => {
@@ -74,6 +79,7 @@ $(async function () {
       };
 
       $deleteModel.click(function () {
+        $spinner.show();
         $exportModel.prop("disabled", true);
         $deleteModel.prop("disabled", true);
         const dataMap = y.getMap("data");
@@ -86,6 +92,7 @@ $(async function () {
       });
 
       $deleteMetamodel.click(function () {
+        $spinner.show();
         $exportMetamodel.prop("disabled", true);
         $deleteMetamodel.prop("disabled", true);
         const dataMap = y.getMap("data");
@@ -99,6 +106,7 @@ $(async function () {
       });
 
       $deleteGuidancemodel.click(function () {
+        $spinner.show();
         $exportGuidancemodel.prop("disabled", true);
         $deleteGuidancemodel.prop("disabled", true);
         const dataMap = y.getMap("data");
@@ -108,6 +116,7 @@ $(async function () {
       });
 
       $activityDelete.click(function () {
+        $spinner.show();
         const activityMap = y.getMap("activity");
         activityMap.set("log", null);
         feedback(
@@ -117,6 +126,7 @@ $(async function () {
       });
 
       $exportModel.click(function () {
+        $spinner.show();
         const dataMap = y.getMap("data");
         var link = document.createElement("a");
         link.download = "model.json";
@@ -124,9 +134,11 @@ $(async function () {
           "data:," +
           encodeURIComponent(JSON.stringify(dataMap.get("model"), null, 4));
         link.click();
+        $spinner.hide();
       });
 
       $exportMetamodel.click(function () {
+        $spinner.show();
         const dataMap = y.getMap("data");
         var link = document.createElement("a");
         link.download = "vls.json";
@@ -134,9 +146,11 @@ $(async function () {
           "data:," +
           encodeURIComponent(JSON.stringify(dataMap.get("metamodel"), null, 4));
         link.click();
+        $spinner.hide();
       });
 
       $exportGuidancemodel.click(function () {
+        $spinner.show();
         const dataMap = y.getMap("data");
         var link = document.createElement("a");
         link.download = "guidance_model.json";
@@ -144,18 +158,23 @@ $(async function () {
           "data:," +
           encodeURI(JSON.stringify(dataMap.get("guidancemodel"), null, 4));
         link.click();
+        $spinner.hide();
       });
 
       $activityExport.click(function () {
+        $spinner.show();
+
         const activityMap = y.getMap("activity");
         var link = document.createElement("a");
         link.download = "activityList.json";
         link.href =
           "data:," + encodeURI(JSON.stringify(activityMap.get("log"), null, 4));
         link.click();
+        $spinner.hide();
       });
 
       $importModel.click(function () {
+        $spinner.show();
         getFileContent()
           .then(function (data) {
             var initAttributes = function (attrs, map) {
@@ -225,10 +244,12 @@ $(async function () {
           .catch(function (err) {
             console.error(err);
             feedback("Error: " + err);
+            $spinner.hide();
           });
       });
 
       $importMetamodel.click(function () {
+        $spinner.show();
         $importMetamodel.prop("disabled", true);
         getFileContent()
           .then(function (data) {
@@ -254,15 +275,18 @@ $(async function () {
               throw e;
             }
             $importMetamodel.prop("disabled", false);
+            $spinner.hide();
           })
           .catch(function (err) {
             console.error(err);
             feedback("Error: " + err);
             $importMetamodel.prop("disabled", false);
+            $spinner.hide();
           });
       });
 
       $importGuidancemodel.click(function () {
+        $spinner.show();
         getFileContent()
           .then(function (data) {
             const dataMap = y.getMap("data");
@@ -274,9 +298,11 @@ $(async function () {
               EntityManager.generateLogicalGuidanceRepresentation(data)
             );
             feedback("Done!");
+            $spinner.hide();
           })
           .catch(function (e) {
             feedback("Error: " + e);
+            $spinner.hide();
           });
       });
 
@@ -318,9 +344,7 @@ $(async function () {
       checkExistence();
       setInterval(checkExistence, 10000);
 
-      $(getWidgetTagName(CONFIG.WIDGET.NAME.DEBUG))
-        .find("loading-spinner")
-        .hide();
+      $spinner.hide();
     })
     .catch((err) => {
       console.error(err);
