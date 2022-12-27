@@ -90,6 +90,18 @@ class AbstractTool {
      */
     var _$node;
 
+    if (typeof toolIcon.find === "function") {
+      // toolIcon is a jquery element
+      const svgRef = toolIcon.find("svg");
+      if (svgRef) {
+        // we found an svg icon, we will use that one to display in the palette
+        svgRef.height(30);
+        svgRef.width(30);
+        type = "svg";
+        toolIcon = svgRef.get(0).outerHTML;
+      }
+    }
+
     if (type == "svg") {
       _$node = $(
         _.template(abstractToolHtml)({
@@ -100,20 +112,10 @@ class AbstractTool {
         })
       );
     } else {
-      let svgRef;
-      if (typeof toolIcon.find == "function") {
-        svgRef = toolIcon.find("svg");
-      }
-      if (svgRef) {
-        // we found an svg icon, we will use that one to display in the palette
-        svgRef.height(30);
-        svgRef.width(30);
-        type = "svg";
-      }
-      const tpl = svgRef?.get(0).outerHTML;
+      // default image will be blank
       _$node = $(
         _.template(abstractToolHtml)({
-          icon: tpl || "",
+          icon: "",
           label: _label,
           color: _color,
           type,
