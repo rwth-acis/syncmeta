@@ -8,12 +8,11 @@ import { getGuidanceModeling } from "./Guidancemodel";
 import loadHTML from "./html.template.loader";
 import { CONFIG, getWidgetTagName } from "./config";
 
-
-
 $(async function () {
   const $spinner = $(getWidgetTagName(CONFIG.WIDGET.NAME.DEBUG)).find(
     "loading-spinner"
   );
+
   const guidance = getGuidanceModeling();
   yjsSync()
     .then((y) => {
@@ -46,6 +45,9 @@ $(async function () {
         feedback = function (msg) {
           alert(msg);
         };
+      $importGuidancemodel.hide();
+      $importMetamodel.hide();
+      $importModel.hide();
 
       var getFileContent = function () {
         var fileReader,
@@ -79,50 +81,70 @@ $(async function () {
       };
 
       $deleteModel.click(function () {
-        $spinner.show();
-        $exportModel.prop("disabled", true);
-        $deleteModel.prop("disabled", true);
-        const dataMap = y.getMap("data");
-        //dataMap.delete('model');
-        dataMap.set("model", null);
-        const canvasMap = y.getMap("canvas");
-        canvasMap.set("ReloadWidgetOperation", "delete");
-        feedback("The model was deleted. The page will be reloaded.");
-        location.reload();
+        const retVal = confirm("Are you sure you want to delete the model ?");
+        if (retVal) {
+          $spinner.show();
+          $exportModel.prop("disabled", true);
+          $deleteModel.prop("disabled", true);
+          const dataMap = y.getMap("data");
+          //dataMap.delete('model');
+          dataMap.set("model", null);
+          const canvasMap = y.getMap("canvas");
+          canvasMap.set("ReloadWidgetOperation", "delete");
+          feedback("The model was deleted. The page will be reloaded.");
+          location.reload();
+        }
       });
 
       $deleteMetamodel.click(function () {
-        $spinner.show();
-        $exportMetamodel.prop("disabled", true);
-        $deleteMetamodel.prop("disabled", true);
-        const dataMap = y.getMap("data");
-        //this does not work ??????
-        //dataMap.delete('metamodel');
-        dataMap.set("metamodel", null);
-        const canvasMap = y.getMap("canvas");
-        canvasMap.set("ReloadWidgetOperation", "meta_delete");
-        feedback("The meta model was deleted. The page will be reloaded.");
-        location.reload();
+        const retVal = confirm(
+          "Are you sure you want to delete the Metamodel ?"
+        );
+        if (retVal) {
+          $spinner.show();
+          $exportMetamodel.prop("disabled", true);
+          $deleteMetamodel.prop("disabled", true);
+          const dataMap = y.getMap("data");
+          //this does not work ??????
+          //dataMap.delete('metamodel');
+          dataMap.set("metamodel", null);
+          const canvasMap = y.getMap("canvas");
+          canvasMap.set("ReloadWidgetOperation", "meta_delete");
+          feedback("The meta model was deleted. The page will be reloaded.");
+          location.reload();
+        }
       });
 
       $deleteGuidancemodel.click(function () {
-        $spinner.show();
-        $exportGuidancemodel.prop("disabled", true);
-        $deleteGuidancemodel.prop("disabled", true);
-        const dataMap = y.getMap("data");
-        dataMap.set("guidancemodel", null);
-        feedback("The guidance model was deleted. The page will be reloaded.");
-        location.reload();
+        const retVal = confirm(
+          "Are you sure you want to delete the Guidancemodel ?"
+        );
+        if (retVal) {
+          $spinner.show();
+          $exportGuidancemodel.prop("disabled", true);
+          $deleteGuidancemodel.prop("disabled", true);
+          const dataMap = y.getMap("data");
+          dataMap.set("guidancemodel", null);
+          feedback(
+            "The guidance model was deleted. The page will be reloaded."
+          );
+          location.reload();
+        }
       });
 
       $activityDelete.click(function () {
-        $spinner.show();
-        const activityMap = y.getMap("activity");
-        activityMap.set("log", null);
-        feedback(
-          "The activity log has been deleted. The page will be reloaded."
+        const retVal = confirm(
+          "Are you sure you want to delete the activity list ?"
         );
-        location.reload();
+        if (retVal) {
+          $spinner.show();
+          const activityMap = y.getMap("activity");
+          activityMap.set("log", null);
+          feedback(
+            "The activity log has been deleted. The page will be reloaded."
+          );
+          location.reload();
+        }
       });
 
       $exportModel.click(function () {
@@ -345,6 +367,12 @@ $(async function () {
       setInterval(checkExistence, 10000);
 
       $spinner.hide();
+
+      $("input:file").change(() => {
+        $importGuidancemodel.show();
+        $importMetamodel.show();
+        $importModel.show();
+      });
     })
     .catch((err) => {
       console.error(err);
