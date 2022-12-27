@@ -7,7 +7,7 @@ import SetViewTypesOperation from "../operations/non_ot/SetViewTypesOperation";
 import InitModelTypesOperation from "../operations/non_ot/InitModelTypesOperation";
 import MoveTool from "./MoveTool";
 import NodeTool from "./NodeTool";
-import EdgeTool from "./EdgeTool";
+import { EdgeTool } from "./EdgeTool";
 
 const circleNodeHtml = await loadHTML(
   "../../templates/canvas_widget/circle_node.html",

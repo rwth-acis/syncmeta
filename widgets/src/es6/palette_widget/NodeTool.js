@@ -21,11 +21,12 @@ class NodeTool extends AbstractTool {
       toolName,
       toolLabel,
       toolDescription || "Click on an empty part of the canvas to add a node",
-      toolIcon || "class.png",
+      toolIcon,
       null,
-      iconType
+      "svg"
     );
   }
 }
+
 
 export default NodeTool;

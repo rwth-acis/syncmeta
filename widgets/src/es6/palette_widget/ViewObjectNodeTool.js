@@ -19,15 +19,9 @@ class ViewObjectNodeTool extends AbstractTool{
         toolLabel || "ViewObject",
         toolDescription ||
           "Click on an empty part of the canvas to add a view type",
-        toolIcon || "class.png",null
+        toolIcon,
+        null
       );
-    // AbstractTool.call(
-    //   toolName || "ViewObject",
-    //   toolLabel || "ViewObject",
-    //   toolDescription ||
-    //   "Click on an empty part of the canvas to add a view type",
-    //   toolIcon || "class.png"
-    // );
   }
 }
 

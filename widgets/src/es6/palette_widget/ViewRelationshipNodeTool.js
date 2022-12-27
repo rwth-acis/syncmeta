@@ -20,17 +20,9 @@ class ViewRelationshipNodeTool extends AbstractTool {
       toolLabel || "ViewRelationship",
       toolDescription ||
         "Click on an empty part of the canvas to add a view type",
-      toolIcon || "class.png",
+      toolIcon,
       null
     );
-    // AbstractTool.call(
-    //   this,
-    //   toolName || "ViewRelationship",
-    //   toolLabel || "ViewRelationship",
-    //   toolDescription ||
-    //   "Click on an empty part of the canvas to add a view type",
-    //   toolIcon || "class.png"
-    // );
   }
 }
 export default ViewRelationshipNodeTool;
