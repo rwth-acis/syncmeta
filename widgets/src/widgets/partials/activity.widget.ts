@@ -4,6 +4,7 @@ import init from "../../es6/shared";
 import { SyncMetaWidget } from "../../widget";
 import { CONFIG, getWidgetTagName } from "../../es6/config";
 import "../../es6/activity_widget.js";
+import "../../loading-spinner";
 
 // widget body used by all syncmeta widgets
 @customElement(getWidgetTagName(CONFIG.WIDGET.NAME.ACTIVITY))
@@ -13,6 +14,7 @@ export class ActivityWidget extends SyncMetaWidget(LitElement) {
       <style>
         ${getWidgetTagName(CONFIG.WIDGET.NAME.ACTIVITY)} {
           height: 100%;
+          position: relative;
         }
         h2 {
           font-size: 0.8em;
@@ -137,6 +139,7 @@ export class ActivityWidget extends SyncMetaWidget(LitElement) {
           <div id="activity_list" class="list"></div>
         </div>
         <div id="q"></div>
+        <loading-spinner></loading-spinner>
       </div>
     `;
   }

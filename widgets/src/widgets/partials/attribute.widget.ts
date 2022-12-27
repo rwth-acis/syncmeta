@@ -13,10 +13,9 @@ export class AttributeWidget extends SyncMetaWidget(LitElement) {
       <style>
         ${getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE)} {
           height: 100%;
+          position: relative;
         }
-        #editor {
-          height: 80%;
-        }
+
         #wrapper {
           overflow: auto;
           height: 100%;
@@ -206,6 +205,7 @@ export class AttributeWidget extends SyncMetaWidget(LitElement) {
         <div id="loading" class="loading"></div>
         <div id="wrapper"></div>
         <div id="q"></div>
+        <loading-spinner></loading-spinner>
       </div>
     `;
   }

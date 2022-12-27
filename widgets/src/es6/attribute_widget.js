@@ -22,8 +22,8 @@ const loadingSpinnerHTML = await loadHTML(
   "../templates/loading-spinner.html",
   import.meta.url
 );
+import { getWidgetTagName } from "./config.js";
 
-const $spinner = $(loadingSpinnerHTML);
 
 $(async function () {
   $("#wrapper").append($spinner);
@@ -44,8 +44,6 @@ $(async function () {
               firstAttemptFail: {},
             };
 
-            $spinner.hide();
-            $("#editor").show();
             console.info(
               "ATTRIBUTE: Yjs successfully initialized in room " +
                 undefined +
@@ -133,8 +131,9 @@ $(async function () {
                 }
               }
             });
-
-            $("#loading").hide();
+            $(getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE))
+              .find("loading-spinner")
+              .hide();
           })
           .catch(function (e) {
             console.error(e);

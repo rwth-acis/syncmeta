@@ -56,6 +56,7 @@ import UpdateMetamodelOperation from "./operations/non_ot/UpdateMetamodelOperati
 import UpdateViewListOperation from "./operations/non_ot/UpdateViewListOperation";
 import ViewInitOperation from "./operations/non_ot/ViewInitOperation";
 import { getUserInfo } from "./User";
+import { getWidgetTagName } from "./config";
 
 $(async function () {
   const user = await getUserInfo();
@@ -134,18 +135,17 @@ $(async function () {
           activityMap.set("UserLeftActivity", leaveActivity.toJSON());
         };
       }, 1000);
-      
-
-     
     })
     .catch(function (message) {
       console.warn(message);
       alert("ERROR: " + message);
     });
-})
-
+});
 
 function InitMainWidget(metamodel, model, _iwcw, user, y) {
+  const $mainWidgetRef = $(getWidgetTagName(CONFIG.WIDGET.NAME.MAIN));
+  const $spinner = $mainWidgetRef.find("loading-spinner");
+
   const userList = [];
   const canvasElement = $("#canvas");
   const canvas = new Canvas(canvasElement);
@@ -918,4 +918,6 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
   if (!joinMap.has(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]))
     joinMap.set(userId.toString(), false);
   ViewManager.GetViewpointList();
+
+  $spinner.hide();
 }

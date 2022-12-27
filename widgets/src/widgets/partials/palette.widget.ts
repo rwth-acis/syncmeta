@@ -18,7 +18,8 @@ export class PaletteWidget extends SyncMetaWidget(LitElement) {
           background-color: #eeeeee;
         }
         ${getWidgetTagName(CONFIG.WIDGET.NAME.PALETTE)} {
-          max-height: 100%;
+          height: 100%;
+          position: relative;
         }
 
         button .icon div.fill_parent {
@@ -53,6 +54,7 @@ export class PaletteWidget extends SyncMetaWidget(LitElement) {
         <div id="palette"></div>
         <p id="info"></p>
         <div id="q"></div>
+        <loading-spinner></loading-spinner>
       </div>
     `;
   }

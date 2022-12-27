@@ -23,20 +23,24 @@ $(function () {
           " with y-user-id: " +
           y.clientID
       );
-      var activtyList = new ActivityList($("#user_list"), $("#activity_list"));
-      const joinMap = y.getMap("join");
-      joinMap.observe(function (event) {
-        // the username "invisible_user" is a special one, which can be used to join without
-        // appearing in the activity list
-        event.keysChanged.forEach((key) => {
-          if (key != "invisible_user") {
-            activtyList.addUser(key, event.currentTarget.get(key));
-          }
-        });
-      });
+      
 
       WaitForCanvas(CONFIG.WIDGET.NAME.ACTIVITY, y)
         .then(function (data) {
+          var activtyList = new ActivityList(
+            $("#user_list"),
+            $("#activity_list")
+          );
+          const joinMap = y.getMap("join");
+          joinMap.observe(function (event) {
+            // the username "invisible_user" is a special one, which can be used to join without
+            // appearing in the activity list
+            event.keysChanged.forEach((key) => {
+              if (key != "invisible_user") {
+                activtyList.addUser(key, event.currentTarget.get(key));
+              }
+            });
+          });
           console.info("ACTIVITY: Got message from CANVAS");
           var user = data.local.user;
           const userMap = y.getMap("users");
@@ -54,6 +58,9 @@ $(function () {
             activtyList.addUser(list[i]);
           }
           activtyList.init();
+          $(getWidgetTagName(CONFIG.WIDGET.NAME.ACTIVITY))
+            .find("loading-spinner")
+            .hide();
         })
         .catch(function (err) {
           console.error("ACTIVITY: Error while waiting for CANVAS: ", err);

@@ -6,17 +6,9 @@ import GenerateViewpointModel from "./canvas_widget/GenerateViewpointModel";
 import { EntityManagerInstance as EntityManager } from "./canvas_widget/Manager";
 import { getGuidanceModeling } from "./Guidancemodel";
 import loadHTML from "./html.template.loader";
-
-const loadingSpinnerHTML = await loadHTML(
-  "../templates/loading-spinner.html",
-  import.meta.url
-);
-
-const $spinner = $(loadingSpinnerHTML);
+import { CONFIG, getWidgetTagName } from "./config";
 
 $(async function () {
-  $("#debug-container").append($spinner);
-  
   const guidance = getGuidanceModeling();
   yjsSync()
     .then((y) => {
@@ -238,7 +230,6 @@ $(async function () {
 
       $importMetamodel.click(function () {
         $importMetamodel.prop("disabled", true);
-        $spinner.show();
         getFileContent()
           .then(function (data) {
             const dataMap = y.getMap("data");
@@ -263,13 +254,11 @@ $(async function () {
               throw e;
             }
             $importMetamodel.prop("disabled", false);
-            $spinner.hide();
           })
           .catch(function (err) {
             console.error(err);
             feedback("Error: " + err);
             $importMetamodel.prop("disabled", false);
-            $spinner.hide();
           });
       });
 
@@ -295,14 +284,12 @@ $(async function () {
         if (!dataMap.get("model")) {
           $exportModel.prop("disabled", true);
           $deleteModel.prop("disabled", true);
-          $spinner.hide();
         } else {
           $exportModel.prop("disabled", false);
           $deleteModel.prop("disabled", false);
         }
 
         if (!dataMap.get("metamodel")) {
-          $spinner.hide();
           $exportMetamodel.prop("disabled", true);
           $deleteMetamodel.prop("disabled", true);
         } else {
@@ -330,6 +317,10 @@ $(async function () {
 
       checkExistence();
       setInterval(checkExistence, 10000);
+
+      $(getWidgetTagName(CONFIG.WIDGET.NAME.DEBUG))
+        .find("loading-spinner")
+        .hide();
     })
     .catch((err) => {
       console.error(err);
