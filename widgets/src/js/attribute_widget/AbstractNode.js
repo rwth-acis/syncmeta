@@ -509,7 +509,8 @@ define([
         };
 
         this._registerYType = function () {
-            var ymap = y.share.nodes.get(that.getEntityId());
+            const nodesMap = y.getMap("nodes");
+            var ymap = nodesMap.get(that.getEntityId());
             if(ymap){
                 var ytext = ymap.get(that.getLabel().getValue().getEntityId());
                 that.getLabel().getValue().registerYType(ytext);

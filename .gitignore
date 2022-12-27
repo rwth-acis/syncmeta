@@ -12,3 +12,6 @@ html/
 bower_components
 
 npm-debug.log
+app/report*.json
+app/build
+widgets/build

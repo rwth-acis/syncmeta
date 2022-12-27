@@ -5,12 +5,12 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function ($, _, Enti
 
         function cleanUpYSpace(entity) {
             var jsonKeys = _.keys(json[entity]);
-            var yKeys = y.share[entity].keys();
+            const entityMap = y.getMap(entity);
+            var yKeys = entityMap.keys();
             var diff = _.difference(yKeys, jsonKeys);
 
             for (var i = 0; i < diff.length; i++) {
-                if (diff[i] !== 'modelAttributes')
-                    y.share[entity].delete(diff[i]);
+              if (diff[i] !== "modelAttributes") entityMap.delete(diff[i]);
             }
         }
 
@@ -33,7 +33,8 @@ define(['jquery', 'lodash', 'canvas_widget/EntityManager'], function ($, _, Enti
         }
 
         function createNode(nodeId, jsonNode) {
-            var map = y.share.nodes.get(nodeId);
+            const nodesMap = y.getMap("nodes");
+            var map = nodesMap.get(nodeId);
 
             var node = null;
             if (map) {

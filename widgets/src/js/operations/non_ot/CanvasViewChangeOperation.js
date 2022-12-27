@@ -1,82 +1,79 @@
-define([
-    'operations/non_ot/NonOTOperation'
-],/** @lends EntitySelectOperation */function(NonOTOperation) {
+define([".//NonOTOperation"], /** @lends EntitySelectOperation */ function (
+  NonOTOperation
+) {
+  CanvasViewChangeOperation.TYPE = "CanvasViewChangeOperation";
 
-    CanvasViewChangeOperation.TYPE = "CanvasViewChangeOperation";
+  /**
+   * Entity Select Operation
+   * @class operations.non_ot.EntitySelectOperation
+   * @memberof operations.non_ot
+   * @constructor
+   * @param {string} selectedEntityId Entity id of the selected entity
+   */
+  function CanvasViewChangeOperation(left, top, width, height, zoom) {
+    /**
+     * Corresponding NonOtOperation
+     * @type {operations.non_ot.NonOTOperation}
+     * @private
+     */
+    var _nonOTOperation = null;
+
+    this.getLeft = function () {
+      return left;
+    };
+
+    this.getTop = function () {
+      return top;
+    };
+
+    this.getWidth = function () {
+      return width;
+    };
+
+    this.getHeight = function () {
+      return height;
+    };
+
+    this.getZoom = function () {
+      return zoom;
+    };
 
     /**
-     * Entity Select Operation
-     * @class operations.non_ot.EntitySelectOperation
-     * @memberof operations.non_ot
-     * @constructor
-     * @param {string} selectedEntityId Entity id of the selected entity
+     * Set corresponding NonOtOperation
+     * @type {operations.non_ot.NonOTOperation}
      */
-    function CanvasViewChangeOperation(left, top, width, height, zoom){
+    this.setNonOTOperation = function (nonOTOperation) {
+      _nonOTOperation = nonOTOperation;
+    };
 
-        /**
-         * Corresponding NonOtOperation
-         * @type {operations.non_ot.NonOTOperation}
-         * @private
-         */
-        var _nonOTOperation = null;
+    /**
+     * Get corresponding NonOtOperation
+     * @type {operations.non_ot.NonOTOperation}
+     */
+    this.getNonOTOperation = function () {
+      return _nonOTOperation;
+    };
 
-        this.getLeft = function(){
-            return left;
-        };
+    /**
+     * Convert operation to NonOTOperation
+     * @returns {operations.non_ot.NonOTOperation}
+     */
+    this.toNonOTOperation = function () {
+      if (_nonOTOperation === null) {
+        _nonOTOperation = new NonOTOperation(
+          CanvasViewChangeOperation.TYPE,
+          JSON.stringify({
+            left: left,
+            top: top,
+            width: width,
+            height: height,
+            zoom: zoom,
+          })
+        );
+      }
+      return _nonOTOperation;
+    };
+  }
 
-        this.getTop = function(){
-            return top;
-        };
-
-        this.getWidth = function(){
-            return width;
-        };
-
-        this.getHeight = function(){
-            return height;
-        };
-
-        this.getZoom = function(){
-            return zoom;
-        };
-
-        /**
-         * Set corresponding NonOtOperation
-         * @type {operations.non_ot.NonOTOperation}
-         */
-        this.setNonOTOperation = function(nonOTOperation){
-            _nonOTOperation = nonOTOperation;
-        };
-
-        /**
-         * Get corresponding NonOtOperation
-         * @type {operations.non_ot.NonOTOperation}
-         */
-        this.getNonOTOperation = function(){
-            return _nonOTOperation;
-        };
-
-        /**
-         * Convert operation to NonOTOperation
-         * @returns {operations.non_ot.NonOTOperation}
-         */
-        this.toNonOTOperation = function(){
-            if(_nonOTOperation === null){
-                _nonOTOperation = new NonOTOperation(
-                    CanvasViewChangeOperation.TYPE,
-                    JSON.stringify({
-                        left: left,
-                        top: top,
-                        width: width,
-                        height: height,
-                        zoom: zoom
-                    })
-                );
-            }
-            return _nonOTOperation;
-        };
-    }
-
-    return CanvasViewChangeOperation;
-
+  return CanvasViewChangeOperation;
 });

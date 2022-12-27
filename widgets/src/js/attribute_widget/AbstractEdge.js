@@ -323,7 +323,8 @@ define([
         };
 
         this._registerYType = function () {
-            var ymap = y.share.edges.get(that.getEntityId());
+            const edgeMap = y.getMap("edges");
+            var ymap = edgeMap.get(that.getEntityId());
             if(ymap){
                 var ytext = ymap.get(that.getLabel().getValue().getEntityId());
                 that.getLabel().getValue().registerYType(ytext);    

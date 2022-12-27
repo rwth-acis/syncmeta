@@ -16,15 +16,18 @@ define(['jquery'], function ($) {
                         else
                             $widget = $(event.target).parents('.widget-wrapper'); 
                         if(now - start >= 1500){
-                            y.share.activity.set('ActivityOperation', {
-                                sender: userId,
-                                type : 'WidgetTrackingActivity',
-                                entityId : $widget.find('.widget-title-bar span').text(),
-                                text : '',
-                                data : {
-                                    start : start,
-                                    end : now
-                                }
+                            const activityMap = y.getMap("activity");
+                            activityMap.set("ActivityOperation", {
+                              sender: userId,
+                              type: "WidgetTrackingActivity",
+                              entityId: $widget
+                                .find(".widget-title-bar span")
+                                .text(),
+                              text: "",
+                              data: {
+                                start: start,
+                                end: now,
+                              },
                             });
                         }
                     });
