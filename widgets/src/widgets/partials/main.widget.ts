@@ -17,6 +17,7 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
       <style>
         ${getWidgetTagName(CONFIG.WIDGET.NAME.MAIN)} {
           height: 100%;
+          position: relative;
         }
         .button_bar {
           width: 50%;
@@ -664,6 +665,7 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
           <div id="canvas"></div>
         </div>
         <div id="q"></div>
+        <loading-spinner></loading-spinner>
       </div>
     `;
   }

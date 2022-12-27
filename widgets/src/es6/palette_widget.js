@@ -22,6 +22,7 @@ import ViewObjectNodeTool from "./palette_widget/ViewObjectNodeTool";
 import ViewRelationshipNodeTool from "./palette_widget/ViewRelationshipNodeTool";
 import { CONFIG } from "./config.js";
 import { yjsSync } from "./lib/yjs-sync";
+import { getWidgetTagName } from "./config.js";
 // import test from "./../es6-test/PaletteWidgetTest";
 
 $(async function () {
@@ -67,5 +68,9 @@ $(async function () {
     }
   } catch (error) {
     console.error(error);
+  } finally {
+    $(getWidgetTagName(CONFIG.WIDGET.NAME.PALETTE))
+      .find("loading-spinner")
+      .hide();
   }
 });
