@@ -79,7 +79,7 @@ class IntegerAttribute extends AbstractAttribute {
     };
 
     _$node.find(".name").text(this.getName());
-    _$node.find(".value").append(_value.get$node());
+    _$node.find(".attribute_value").append(_value.get$node());
 
     // check if view only mode is enabled for the property browser
     // because then the input fields should be disabled
