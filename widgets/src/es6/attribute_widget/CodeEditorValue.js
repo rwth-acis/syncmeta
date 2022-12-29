@@ -53,7 +53,7 @@ class CodeEditorValue extends AbstractValue {
       initData(ytext, _value);
 
       _ytext.observe(function (event) {
-        _value = event.object.toString();
+        _value = event.currentTarget.toString();
         propagateValueChange(CONFIG.OPERATION.TYPE.INSERT, _value, 0);
       });
     };
