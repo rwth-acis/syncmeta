@@ -265,29 +265,32 @@ class KeySelectionValueSelectionValueListAttribute extends AbstractAttribute {
     }
     const nodesMap = y.getMap("nodes");
     nodesMap.get(subjectEntity.getEntityId()).observe(function (event) {
-      if (event.name.indexOf("[key]") != -1) {
-        switch (event.type) {
-          case "add": {
-            operation = new AttributeAddOperation(
-              event.name.replace(/\[\w*\]/g, ""),
-              that.getEntityId(),
-              that.getRootSubjectEntity().getEntityId(),
-              that.constructor.name
-            );
-            attributeAddCallback(operation);
-            break;
-          }
-          case "delete": {
-            operation = new AttributeDeleteOperation(
-              event.name.replace(/\[\w*\]/g, ""),
-              that.getEntityId(),
-              that.getRootSubjectEntity().getEntityId(),
-              that.constructor.name
-            );
-            attributeDeleteCallback(operation);
+      event.keysChanged.forEach(function (key) {
+        if (event.name.indexOf("[key]") != -1) {
+          switch (event.type) {
+            case "add": {
+              operation = new AttributeAddOperation(
+                event.name.replace(/\[\w*\]/g, ""),
+                that.getEntityId(),
+                that.getRootSubjectEntity().getEntityId(),
+                that.constructor.name
+              );
+              attributeAddCallback(operation);
+              break;
+            }
+            case "delete": {
+              operation = new AttributeDeleteOperation(
+                event.name.replace(/\[\w*\]/g, ""),
+                that.getEntityId(),
+                that.getRootSubjectEntity().getEntityId(),
+                that.constructor.name
+              );
+              attributeDeleteCallback(operation);
+            }
           }
         }
-      }
+      });
+      
     });
   }
 }
