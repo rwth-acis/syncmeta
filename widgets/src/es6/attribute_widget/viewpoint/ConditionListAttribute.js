@@ -31,9 +31,8 @@ const listAttributeHtml = await loadHTML(
  */
 class ConditionListAttribute extends AbstractAttribute {
   constructor(id, name, subjectEntity, options, options2) {
-   
     super(id, name, subjectEntity);
- var that = this;
+    var that = this;
 
     /**
      * Selection options
@@ -85,8 +84,7 @@ class ConditionListAttribute extends AbstractAttribute {
         );
         that.addAttribute(attribute);
         _$node.find(".list").append(attribute.get$node());
-      } else
-        attribute = that.getAttribute(operation.getEntityId());
+      } else attribute = that.getAttribute(operation.getEntityId());
       //this is strange if i call processAttributeAddOperation for first time ytext is undefined, but it shouldn't
       const nodesMap = y.getMap("nodes");
       var ymap = nodesMap.get(subjectEntity.getEntityId());
@@ -115,10 +113,12 @@ class ConditionListAttribute extends AbstractAttribute {
      * @param {operations.ot.AttributeDeleteOperation} operation
      */
     var attributeDeleteCallback = function (operation) {
-      if (operation instanceof AttributeDeleteOperation &&
+      if (
+        operation instanceof AttributeDeleteOperation &&
         operation.getRootSubjectEntityId() ===
-        that.getRootSubjectEntity().getEntityId() &&
-        operation.getSubjectEntityId() === that.getEntityId()) {
+          that.getRootSubjectEntity().getEntityId() &&
+        operation.getSubjectEntityId() === that.getEntityId()
+      ) {
         processAttributeDeleteOperation(operation);
       }
     };
@@ -139,10 +139,12 @@ class ConditionListAttribute extends AbstractAttribute {
      * @param {operations.ot.AttributeAddOperation} operation
      */
     var attributeAddCallback = function (operation) {
-      if (operation instanceof AttributeAddOperation &&
+      if (
+        operation instanceof AttributeAddOperation &&
         operation.getRootSubjectEntityId() ===
-        that.getRootSubjectEntity().getEntityId() &&
-        operation.getSubjectEntityId() === that.getEntityId()) {
+          that.getRootSubjectEntity().getEntityId() &&
+        operation.getSubjectEntityId() === that.getEntityId()
+      ) {
         processAttributeAddOperation(operation);
       }
     };
@@ -237,7 +239,7 @@ class ConditionListAttribute extends AbstractAttribute {
         _$node.find(".list").append(_list[attrId].get$node());
       }
     }
-    _$node.find(".ui-icon-plus").click(function () {
+    _$node.find(".btn-success").click(function () {
       var id = Util.generateRandomId();
       var operation = new AttributeAddOperation(
         id,
@@ -249,32 +251,35 @@ class ConditionListAttribute extends AbstractAttribute {
     });
     const nodesMap = y.getMap("nodes");
     nodesMap.get(subjectEntity.getEntityId()).observe(function (event) {
-      if (event.name.indexOf("[value]") != -1) {
-        switch (event.type) {
-          case "add": {
-            operation = new AttributeAddOperation(
-              event.name.replace(/\[\w*\]/g, ""),
-              that.getEntityId(),
-              that.getRootSubjectEntity().getEntityId(),
-              that.constructor.name
-            );
-            attributeAddCallback(operation);
-            break;
+      const array = Array.from(event.changes.keys.entries());
+      array.forEach(([key, change]) => {
+        if (key.indexOf("[value]") != -1) {
+          switch (change.action) {
+            case "add": {
+              operation = new AttributeAddOperation(
+                key.replace(/\[\w*\]/g, ""),
+                that.getEntityId(),
+                that.getRootSubjectEntity().getEntityId(),
+                that.constructor.name
+              );
+              attributeAddCallback(operation);
+              break;
+            }
+            case "delete": {
+              operation = new AttributeDeleteOperation(
+                key.replace(/\[\w*\]/g, ""),
+                that.getEntityId(),
+                that.getRootSubjectEntity().getEntityId(),
+                that.constructor.name
+              );
+              attributeDeleteCallback(operation);
+              break;
+            }
           }
-          case "delete": {
-            operation = new AttributeDeleteOperation(
-              event.name.replace(/\[\w*\]/g, ""),
-              that.getEntityId(),
-              that.getRootSubjectEntity().getEntityId(),
-              that.constructor.name
-            );
-            attributeDeleteCallback(operation);
-            break;
-          }
+        } else if (key.indexOf("updateConditionOption") != -1) {
+          that.setOptions(event.value);
         }
-      } else if (event.name.indexOf("updateConditionOption") != -1) {
-        that.setOptions(event.value);
-      }
+      });
     });
   }
 }

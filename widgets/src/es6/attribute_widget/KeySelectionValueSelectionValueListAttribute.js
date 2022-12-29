@@ -249,7 +249,7 @@ class KeySelectionValueSelectionValueListAttribute extends AbstractAttribute {
         _$node.find(".list").append(_list[attrId].get$node());
       }
     }
-    _$node.find(".ui-icon-plus").click(function () {
+    _$node.find(".btn-success").click(function () {
       var id = Util.generateRandomId();
       var operation = new AttributeAddOperation(
         id,
@@ -265,12 +265,15 @@ class KeySelectionValueSelectionValueListAttribute extends AbstractAttribute {
     }
     const nodesMap = y.getMap("nodes");
     nodesMap.get(subjectEntity.getEntityId()).observe(function (event) {
-      event.keysChanged.forEach(function (key) {
-        if (event.name.indexOf("[key]") != -1) {
-          switch (event.type) {
+      const array = Array.from(event.changes.keys.entries());
+      array.forEach(function (entry) {
+        const key = entry[0];
+        const action = entry[1].action;
+        if (key.indexOf("[key]") != -1) {
+          switch (action) {
             case "add": {
               operation = new AttributeAddOperation(
-                event.name.replace(/\[\w*\]/g, ""),
+                key.replace(/\[\w*\]/g, ""),
                 that.getEntityId(),
                 that.getRootSubjectEntity().getEntityId(),
                 that.constructor.name
@@ -280,7 +283,7 @@ class KeySelectionValueSelectionValueListAttribute extends AbstractAttribute {
             }
             case "delete": {
               operation = new AttributeDeleteOperation(
-                event.name.replace(/\[\w*\]/g, ""),
+                key.replace(/\[\w*\]/g, ""),
                 that.getEntityId(),
                 that.getRootSubjectEntity().getEntityId(),
                 that.constructor.name
@@ -290,7 +293,6 @@ class KeySelectionValueSelectionValueListAttribute extends AbstractAttribute {
           }
         }
       });
-      
     });
   }
 }

@@ -233,7 +233,7 @@ class KeySelectionValueListAttribute extends AbstractAttribute {
         _$node.find(".list").append(_list[attrId].get$node());
       }
     }
-    _$node.find(".ui-icon-plus").click(function () {
+    _$node.find(".btn-success").click(function () {
       var id = Util.generateRandomId();
       var operation = new AttributeAddOperation(
         id,

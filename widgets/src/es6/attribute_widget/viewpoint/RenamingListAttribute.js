@@ -54,7 +54,7 @@ class RenamingListAttribute extends AbstractAttribute {
      */
     var _$node = $(_.template(listAttributeHtml)());
     //remove the plus icon
-    _$node.find(".ui-icon-plus").parent().remove();
+    _$node.find(".btn-success").parent().remove();
 
     /**
      * Inter widget communication wrapper
@@ -77,8 +77,7 @@ class RenamingListAttribute extends AbstractAttribute {
         );
         that.addAttribute(attribute);
         _$node.find(".list").append(attribute.get$node());
-      } else
-        attribute = that.getAttribute(operation.getEntityId());
+      } else attribute = that.getAttribute(operation.getEntityId());
       //this is strange if i call processAttributeAddOperation for first time ytext is undefined, but it shouldn't
       const nodesMap = y.getMap("nodes");
       var ymap = nodesMap.get(subjectEntity.getEntityId());
@@ -107,10 +106,12 @@ class RenamingListAttribute extends AbstractAttribute {
      * @param {operations.ot.AttributeDeleteOperation} operation
      */
     var attributeDeleteCallback = function (operation) {
-      if (operation instanceof AttributeDeleteOperation &&
+      if (
+        operation instanceof AttributeDeleteOperation &&
         operation.getRootSubjectEntityId() ===
-        that.getRootSubjectEntity().getEntityId() &&
-        operation.getSubjectEntityId() === that.getEntityId()) {
+          that.getRootSubjectEntity().getEntityId() &&
+        operation.getSubjectEntityId() === that.getEntityId()
+      ) {
         processAttributeDeleteOperation(operation);
       }
     };
@@ -131,10 +132,12 @@ class RenamingListAttribute extends AbstractAttribute {
      * @param {operations.ot.AttributeAddOperation} operation
      */
     var attributeAddCallback = function (operation) {
-      if (operation instanceof AttributeAddOperation &&
+      if (
+        operation instanceof AttributeAddOperation &&
         operation.getRootSubjectEntityId() ===
-        that.getRootSubjectEntity().getEntityId() &&
-        operation.getSubjectEntityId() === that.getEntityId()) {
+          that.getRootSubjectEntity().getEntityId() &&
+        operation.getSubjectEntityId() === that.getEntityId()
+      ) {
         processAttributeAddOperation(operation);
         subjectEntity.showAttributes();
       }
@@ -227,13 +230,15 @@ class RenamingListAttribute extends AbstractAttribute {
 
     const nodesMap = y.getMap("nodes");
     nodesMap.get(subjectEntity.getEntityId()).observe(function (event) {
-      event.keysChanged.forEach(function (key) {
+      const array = Array.from(event.changes.keys.entries());
+
+      array.forEach(function ([key, value]) {
         if (key.indexOf("[val]") != -1) {
-          const val = nodesMap.get(subjectEntity.getEntityId()).get(key);
-          switch (event.type) {
+          const action = value.action;
+          switch (action) {
             case "add": {
               operation = new AttributeAddOperation(
-                event.name.replace(/\[\w*\]/g, ""),
+                key.replace(/\[\w*\]/g, ""),
                 that.getEntityId(),
                 that.getRootSubjectEntity().getEntityId(),
                 that.constructor.name
@@ -243,7 +248,7 @@ class RenamingListAttribute extends AbstractAttribute {
             }
             case "delete": {
               operation = new AttributeDeleteOperation(
-                event.name.replace(/\[\w*\]/g, ""),
+                key.replace(/\[\w*\]/g, ""),
                 that.getEntityId(),
                 that.getRootSubjectEntity().getEntityId(),
                 that.constructor.name
@@ -254,7 +259,6 @@ class RenamingListAttribute extends AbstractAttribute {
           }
         }
       });
-      
     });
   }
 }
