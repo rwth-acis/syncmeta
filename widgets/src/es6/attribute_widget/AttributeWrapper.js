@@ -350,68 +350,84 @@ class AttributeWrapper {
       });
       const edgesMap = y.getMap("edges");
       edgesMap.observe(function (event) {
-        switch (event.type) {
-          case "add":
-            {
-              edgesMap.get(event.name).observe(function (edgeEvent) {
-                switch (edgeEvent.name) {
-                  case "jabberId": {
-                    var map = edgeEvent.object;
-                    edgeAddCallback(
-                      new EdgeAddOperation(
-                        map.get("id"),
-                        map.get("type"),
-                        map.get("source"),
-                        map.get("target"),
-                        null,
-                        null,
-                        null,
-                        edgeEvent.value
-                      )
-                    );
-                    break;
-                  }
-                  default: {
-                    if (
-                      edgeEvent.name.search(/\w*\[(\w|\s)*\]/g) != -1 &&
-                      edgeEvent.type === "add"
-                    ) {
-                      var edge = EntityManager.findEdge(
-                        edgeEvent.object.get("id")
-                      );
-                      var attrs = edge.getAttributes();
-                      if (edge.getLabel().getEntityId() === edgeEvent.name)
-                        edge
-                          .getLabel()
-                          .getValue()
-                          .registerYType(edgeEvent.object.get(edgeEvent.name));
-                      else {
-                        var attrs = edge.getAttributes();
-                        for (var attrKey in attrs) {
-                          if (attrs.hasOwnProperty(attrKey)) {
-                            if (
-                              attrs[attrKey].getEntityId() === edgeEvent.name
-                            ) {
-                              var attr = attrs[attrKey];
-                              if (
-                                attr.getValue().hasOwnProperty("registerYType")
-                              )
-                                attr
-                                  .getValue()
-                                  .registerYType(
-                                    edgeEvent.object.get(edgeEvent.name)
-                                  );
+        const array = Array.from(event.changes.keys.entries());
+        array.forEach(function (entry) {
+          const key = entry[0];
+          const action = entry[1].action;
+          switch (action) {
+            case "add":
+              {
+                edgesMap.get(key).observe(function (edgeEvent) {
+                  edgeEvent.keysChanged.forEach(function (edgeKey) {
+                    switch (edgeKey) {
+                      case "jabberId": {
+                        var map = edgeEvent.currentTarget;
+                        const value = edgeEvent.currentTarget.get(edgeKey);
+                        if (!value) {
+                          throw new Error("edgeevent value is null");
+                        }
+                        edgeAddCallback(
+                          new EdgeAddOperation(
+                            map.get("id"),
+                            map.get("type"),
+                            map.get("source"),
+                            map.get("target"),
+                            null,
+                            null,
+                            null,
+                            value
+                          )
+                        );
+                        break;
+                      }
+                      default: {
+                        const action =
+                          edgeEvent.changes.keys.get(edgeKey).action;
+                        if (
+                          edgeKey.search(/\w*\[(\w|\s)*\]/g) != -1 &&
+                          action === "add"
+                        ) {
+                          var edge = EntityManager.findEdge(
+                            edgeEvent.currentTarget.get("id")
+                          );
+                          var attrs = edge.getAttributes();
+                          if (edge.getLabel().getEntityId() === edgeKey)
+                            edge
+                              .getLabel()
+                              .getValue()
+                              .registerYType(
+                                edgeEvent.currentTarget.get(edgeKey)
+                              );
+                          else {
+                            var attrs = edge.getAttributes();
+                            for (var attrKey in attrs) {
+                              if (attrs.hasOwnProperty(attrKey)) {
+                                if (attrs[attrKey].getEntityId() === edgeKey) {
+                                  var attr = attrs[attrKey];
+                                  if (
+                                    attr
+                                      .getValue()
+                                      .hasOwnProperty("registerYType")
+                                  )
+                                    attr
+                                      .getValue()
+                                      .registerYType(
+                                        edgeEvent.currentTarget.get(edgeKey)
+                                      );
+                                }
+                              }
                             }
                           }
                         }
                       }
                     }
-                  }
-                }
-              });
-            }
-            break;
-        }
+                  });
+                });
+              }
+              break;
+          }
+        });
+        
       });
     }
     this.select(_modelAttributesNode);
