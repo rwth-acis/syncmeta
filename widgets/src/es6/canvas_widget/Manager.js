@@ -5866,9 +5866,6 @@ export class ObjectNode extends AbstractNode {
     };
 
     this.setContextMenuItemCallback(function () {
-      var NodeShapeNode = NodeShapeNode,
-        BiDirAssociationEdge = BiDirAssociationEdge,
-        UniDirAssociationEdge = UniDirAssociationEdge;
       return {
         addShape: {
           name: "Add Node Shape",
@@ -7776,9 +7773,6 @@ export class ViewObjectNode extends AbstractNode {
       that.showAttributes();
 
     this.setContextMenuItemCallback(function () {
-      var NodeShapeNode = NodeShapeNode,
-        BiDirAssociationEdge = BiDirAssociationEdge,
-        UniDirAssociationEdge = UniDirAssociationEdge;
       var viewId = $("#lblCurrentView").text();
       return {
         addShape: {
