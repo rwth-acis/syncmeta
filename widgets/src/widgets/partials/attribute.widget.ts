@@ -15,7 +15,9 @@ export class AttributeWidget extends SyncMetaWidget(LitElement) {
           height: 100%;
           position: relative;
         }
-
+        .ql-container {
+          border-radius: 0.25rem;
+        }
         #wrapper {
           overflow: auto;
           height: 100%;

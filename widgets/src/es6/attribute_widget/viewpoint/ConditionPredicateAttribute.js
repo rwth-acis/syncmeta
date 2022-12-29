@@ -221,7 +221,7 @@ class ConditionPredicateAttribute extends AbstractAttribute {
     _$node.find(".val").append(_key.get$node());
     _$node.find(".property").append(_value.get$node());
     _$node.find(".operator").append(_value2.get$node());
-    _$node.find(".ui-icon-close").click(function () {
+    _$node.find(".btn-danger").click(function () {
       var operation = new AttributeDeleteOperation(
         that.getEntityId(),
         that.getSubjectEntityId(),

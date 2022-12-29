@@ -180,7 +180,7 @@ class KeySelectionValueAttribute extends AbstractAttribute {
 
     _$node.find(".key").append(_key.get$node());
     _$node.find(".attribute_value").append(_value.get$node());
-    _$node.find(".ui-icon-close").click(function () {
+    _$node.find(".btn-danger").click(function () {
       var operation = new AttributeDeleteOperation(
         that.getEntityId(),
         that.getSubjectEntityId(),
