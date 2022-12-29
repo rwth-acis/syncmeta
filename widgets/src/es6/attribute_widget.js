@@ -118,11 +118,14 @@ $(async function () {
             //   AttributeWidgetTest();
             const canvas = y.getMap("canvas");
             canvas.observe(function (event) {
-              switch (event.name) {
-                case "ReloadWidgetOperation": {
-                  frameElement.contentWindow.location.reload();
+              event.keysChanged.forEach((key) => {
+                switch (key) {
+                  case "ReloadWidgetOperation": {
+                    frameElement.contentWindow.location.reload();
+                  }
                 }
-              }
+              });
+              
             });
             $(getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE))
               .find("loading-spinner")
