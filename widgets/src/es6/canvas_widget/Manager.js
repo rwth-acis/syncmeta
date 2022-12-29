@@ -1948,7 +1948,7 @@ export class AbstractNode extends AbstractEntity {
       $.contextMenu({
         selector: "#" + id,
         zIndex: AbstractEntity.CONTEXT_MENU_Z_INDEX,
-        build: async function ($trigger, e) {
+        build: function ($trigger, e) {
           var menuItems, offsetClick, offsetCanvas;
           var EntityManager = EntityManagerInstance;
 
