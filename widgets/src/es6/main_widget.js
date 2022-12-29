@@ -313,7 +313,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
                 undefined,
                 _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
                 text
-              )
+              ).toJSON()
             );
             frameElement.contentWindow.location.reload();
           }

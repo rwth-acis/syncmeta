@@ -263,7 +263,7 @@ class MultiLineValue extends AbstractValue {
                 rootSubjectEntityType: that.getRootSubjectEntity().getType(),
                 rootSubjectEntityId: that.getRootSubjectEntity().getEntityId(),
               }
-            )
+            ).toJSON()
           );
         }
       });

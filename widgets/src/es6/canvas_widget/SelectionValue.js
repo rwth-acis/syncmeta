@@ -210,7 +210,7 @@ class SelectionValue extends AbstractValue{
                       .getRootSubjectEntity()
                       .getEntityId(),
                   }
-                )
+                ).toJSON()
               );
 
               //its a view type and create a reference to the origin

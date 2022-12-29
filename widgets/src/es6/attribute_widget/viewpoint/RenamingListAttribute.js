@@ -227,30 +227,34 @@ class RenamingListAttribute extends AbstractAttribute {
 
     const nodesMap = y.getMap("nodes");
     nodesMap.get(subjectEntity.getEntityId()).observe(function (event) {
-      if (event.name.indexOf("[val]") != -1) {
-        switch (event.type) {
-          case "add": {
-            operation = new AttributeAddOperation(
-              event.name.replace(/\[\w*\]/g, ""),
-              that.getEntityId(),
-              that.getRootSubjectEntity().getEntityId(),
-              that.constructor.name
-            );
-            attributeAddCallback(operation);
-            break;
-          }
-          case "delete": {
-            operation = new AttributeDeleteOperation(
-              event.name.replace(/\[\w*\]/g, ""),
-              that.getEntityId(),
-              that.getRootSubjectEntity().getEntityId(),
-              that.constructor.name
-            );
-            attributeDeleteCallback(operation);
-            break;
+      event.keysChanged.forEach(function (key) {
+        if (key.indexOf("[val]") != -1) {
+          const val = nodesMap.get(subjectEntity.getEntityId()).get(key);
+          switch (event.type) {
+            case "add": {
+              operation = new AttributeAddOperation(
+                event.name.replace(/\[\w*\]/g, ""),
+                that.getEntityId(),
+                that.getRootSubjectEntity().getEntityId(),
+                that.constructor.name
+              );
+              attributeAddCallback(operation);
+              break;
+            }
+            case "delete": {
+              operation = new AttributeDeleteOperation(
+                event.name.replace(/\[\w*\]/g, ""),
+                that.getEntityId(),
+                that.getRootSubjectEntity().getEntityId(),
+                that.constructor.name
+              );
+              attributeDeleteCallback(operation);
+              break;
+            }
           }
         }
-      }
+      });
+      
     });
   }
 }
