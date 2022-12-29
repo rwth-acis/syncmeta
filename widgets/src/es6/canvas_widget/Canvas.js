@@ -1101,8 +1101,11 @@ export default class Canvas extends AbstractCanvas {
         defaultLabel,
         defaultAttributeValues
       );
-
-      propagateNodeAddOperation(operation);
+        try {
+          propagateNodeAddOperation(operation);
+        } catch (error) {
+          console.error(error);
+        }
       if (y) {
         const canvasMap = y.getMap("canvas");
         canvasMap.set(NodeAddOperation.TYPE, operation.toJSON());
