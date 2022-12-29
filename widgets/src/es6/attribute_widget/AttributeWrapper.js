@@ -260,14 +260,16 @@ class AttributeWrapper {
                         action === "add"
                       ) {
                         var node = EntityManager.findNode(
-                          nodeEvent.object.get("id")
+                          nodeEvent.currentTarget.get("id")
                         );
                         //Check for label
                         if (node.getLabel().getEntityId() === nodeKey)
                           node
                             .getLabel()
                             .getValue()
-                            .registerYType(nodeEvent.object.get(nodeKey));
+                            .registerYType(
+                              nodeEvent.currentTarget.get(nodeKey)
+                            );
                         else {
                           var attrs = null;
 
@@ -290,7 +292,7 @@ class AttributeWrapper {
                                   attr
                                     .getKey()
                                     .registerYType(
-                                      nodeEvent.object.get(nodeKey)
+                                      nodeEvent.currentTarget.get(nodeKey)
                                     );
                               } else if (attr.hasOwnProperty("getValue")) {
                                 if (
@@ -301,7 +303,7 @@ class AttributeWrapper {
                                   attr
                                     .getValue()
                                     .registerYType(
-                                      nodeEvent.object.get(nodeKey)
+                                      nodeEvent.currentTarget.get(nodeKey)
                                     );
                               }
                             } else if (attrs.hasOwnProperty(nodeKey)) {
@@ -311,7 +313,9 @@ class AttributeWrapper {
                               )
                                 attr
                                   .getValue()
-                                  .registerYType(nodeEvent.object.get(nodeKey));
+                                  .registerYType(
+                                    nodeEvent.currentTarget.get(nodeKey)
+                                  );
                             }
                           } else {
                             attrs = node.getAttributes();
@@ -327,7 +331,7 @@ class AttributeWrapper {
                                   attr
                                     .getValue()
                                     .registerYType(
-                                      nodeEvent.object.get(nodeKey)
+                                      nodeEvent.currentTarget.get(nodeKey)
                                     );
                                   break;
                                 }
