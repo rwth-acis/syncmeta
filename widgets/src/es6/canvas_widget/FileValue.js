@@ -157,7 +157,7 @@ function FileValue(
             rootSubjectEntityType: that.getRootSubjectEntity().getType(),
             rootSubjectEntityId: that.getRootSubjectEntity().getEntityId(),
           }
-        )
+        ).toJSON()
       );
     }
   };

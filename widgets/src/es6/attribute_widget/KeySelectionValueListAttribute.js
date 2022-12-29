@@ -197,12 +197,17 @@ class KeySelectionValueListAttribute extends AbstractAttribute{
      */
     this.setValueFromJSON = function (json) {
       _.forEach(json.list, function (val, key) {
-        var attribute = new KeySelectionValueAttribute(key, key, that, _options);
+        var attribute = new KeySelectionValueAttribute(
+          key,
+          key,
+          that,
+          _options
+        );
         attribute.setValueFromJSON(json.list[key]);
-        if ((attr = that.getAttribute(attribute.getEntityId()))) {
-          that.deleteAttribute(attr.getEntityId());
-          attr.get$node().remove();
-        }
+        // if ((attr = that.getAttribute(attribute.getEntityId()))) {
+        //   that.deleteAttribute(attr.getEntityId());
+        //   attr.get$node().remove();
+        // }
         that.addAttribute(attribute);
         _$node.find(".list").append(attribute.get$node());
       });

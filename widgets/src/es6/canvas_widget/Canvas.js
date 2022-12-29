@@ -519,7 +519,7 @@ export default class Canvas extends AbstractCanvas {
             {}
           );
           const activityMap = y.getMap("activity");
-          activityMap.set("EditorGenerateActivity", op);
+          activityMap.set("EditorGenerateActivity", op.toJSON());
         }
       }
     };
@@ -1707,7 +1707,10 @@ export default class Canvas extends AbstractCanvas {
               );
               const activityMap = y.getMap("activity");
 
-              activityMap.set(ActivityOperation.TYPE, activityOperation);
+              activityMap.set(
+                ActivityOperation.TYPE,
+                activityOperation.toJSON()
+              );
               break;
             }
             case "triggerSave": {

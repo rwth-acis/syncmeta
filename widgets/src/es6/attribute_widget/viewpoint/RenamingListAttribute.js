@@ -209,10 +209,10 @@ class RenamingListAttribute extends AbstractAttribute {
       _.forEach(json.list, function (val, key) {
         var attribute = new RenamingAttribute(key, "Attribute", that, _options);
         attribute.setValueFromJSON(json.list[key]);
-        if ((attr = that.getAttribute(attribute.getEntityId()))) {
-          that.deleteAttribute(attr.getEntityId());
-          attr.get$node().remove();
-        }
+        // if ((attr = that.getAttribute(attribute.getEntityId()))) {
+        //   that.deleteAttribute(attr.getEntityId());
+        //   attr.get$node().remove();
+        // }
         that.addAttribute(attribute);
         _$node.find(".list").append(attribute.get$node());
       });
@@ -227,30 +227,34 @@ class RenamingListAttribute extends AbstractAttribute {
 
     const nodesMap = y.getMap("nodes");
     nodesMap.get(subjectEntity.getEntityId()).observe(function (event) {
-      if (event.name.indexOf("[val]") != -1) {
-        switch (event.type) {
-          case "add": {
-            operation = new AttributeAddOperation(
-              event.name.replace(/\[\w*\]/g, ""),
-              that.getEntityId(),
-              that.getRootSubjectEntity().getEntityId(),
-              that.constructor.name
-            );
-            attributeAddCallback(operation);
-            break;
-          }
-          case "delete": {
-            operation = new AttributeDeleteOperation(
-              event.name.replace(/\[\w*\]/g, ""),
-              that.getEntityId(),
-              that.getRootSubjectEntity().getEntityId(),
-              that.constructor.name
-            );
-            attributeDeleteCallback(operation);
-            break;
+      event.keysChanged.forEach(function (key) {
+        if (key.indexOf("[val]") != -1) {
+          const val = nodesMap.get(subjectEntity.getEntityId()).get(key);
+          switch (event.type) {
+            case "add": {
+              operation = new AttributeAddOperation(
+                event.name.replace(/\[\w*\]/g, ""),
+                that.getEntityId(),
+                that.getRootSubjectEntity().getEntityId(),
+                that.constructor.name
+              );
+              attributeAddCallback(operation);
+              break;
+            }
+            case "delete": {
+              operation = new AttributeDeleteOperation(
+                event.name.replace(/\[\w*\]/g, ""),
+                that.getEntityId(),
+                that.getRootSubjectEntity().getEntityId(),
+                that.constructor.name
+              );
+              attributeDeleteCallback(operation);
+              break;
+            }
           }
         }
-      }
+      });
+      
     });
   }
 }

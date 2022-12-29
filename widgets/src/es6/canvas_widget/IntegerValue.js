@@ -176,7 +176,7 @@ class IntegerValue extends AbstractValue {
                       .getRootSubjectEntity()
                       .getEntityId(),
                   }
-                )
+                ).toJSON()
               );
             } else {
               //the remote users propagtes the change to their local attribute widget

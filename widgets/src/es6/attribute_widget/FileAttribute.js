@@ -80,7 +80,7 @@ class FileAttribute extends AbstractAttribute {
     };
 
     _$node.find(".name").text(this.getName());
-    _$node.find(".value").append(_value.get$node());
+    _$node.find(".attribute_value").append(_value.get$node());
   }
 }
 

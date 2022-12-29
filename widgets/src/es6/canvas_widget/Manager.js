@@ -1691,7 +1691,7 @@ export class AbstractNode extends AbstractEntity {
             that.getLabel().getValue().getValue()
           ),
           { nodeType: that.getType() }
-        )
+        ).toJSON()
       );
 
       if (_ymap) _ymap.set(NodeMoveZOperation.TYPE, operation.toJSON());
@@ -1804,7 +1804,7 @@ export class AbstractNode extends AbstractEntity {
             that.getLabel().getValue().getValue()
           ),
           {}
-        )
+        ).toJSON()
       );
     };
 
@@ -5983,7 +5983,7 @@ export class ObjectNode extends AbstractNode {
 
                 //noinspection JSAccessibilityCheck
                 nodeId = canvas.createNode(
-                  $__canvas_widget_RelationshipNode.TYPE,
+                  RelationshipNode.TYPE,
                   appearance.left,
                   appearance.top,
                   appearance.width,
@@ -6251,7 +6251,7 @@ export class AbstractClassNode extends AbstractNode {
 
                 //noinspection JSAccessibilityCheck
                 nodeId = canvas.createNode(
-                  $__canvas_widget_RelationshipNode.TYPE,
+                  RelationshipNode.TYPE,
                   appearance.left,
                   appearance.top,
                   appearance.width,
