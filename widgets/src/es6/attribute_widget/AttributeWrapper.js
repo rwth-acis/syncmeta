@@ -262,39 +262,60 @@ class AttributeWrapper {
                         var node = EntityManager.findNode(
                           nodeEvent.currentTarget.get("id")
                         );
-                        //Check for label
-                        if (node.getLabel().getEntityId() === nodeKey)
-                          node
-                            .getLabel()
-                            .getValue()
-                            .registerYType(
-                              nodeEvent.currentTarget.get(nodeKey)
-                            );
-                        else {
-                          var attrs = null;
+                        if (!node) {
+                          throw new Error("node is null");
+                        }
 
-                          if (EntityManager.getLayer() === CONFIG.LAYER.META) {
-                            attrs = node.getAttribute("[attributes]");
-                            if (!attrs) attrs = node.getAttributes();
-                            else attrs = attrs.getAttributes();
-                            var attrId = nodeKey.replace(/\[\w*\]/g, "");
-                            if (attrs.hasOwnProperty(attrId)) {
-                              var attr = attrs[attrId];
-                              if (attr.hasOwnProperty("getKey")) {
-                                if (nodeKey.indexOf("ref") != -1)
-                                  attr.getRef().registerYType(nodeEvent.value);
-                                else if (
-                                  attr
-                                    .getKey()
-                                    .hasOwnProperty("registerYType") &&
-                                  nodeKey.indexOf("value") === -1
-                                )
-                                  attr
-                                    .getKey()
-                                    .registerYType(
-                                      nodeEvent.currentTarget.get(nodeKey)
-                                    );
-                              } else if (attr.hasOwnProperty("getValue")) {
+                          //Check for label
+                          if (node && node.getLabel().getEntityId() === nodeKey)
+                            node
+                              .getLabel()
+                              .getValue()
+                              .registerYType(
+                                nodeEvent.currentTarget.get(nodeKey)
+                              );
+                          else {
+                            var attrs = null;
+
+                            if (
+                              EntityManager.getLayer() === CONFIG.LAYER.META
+                            ) {
+                              attrs = node.getAttribute("[attributes]");
+                              if (!attrs) attrs = node.getAttributes();
+                              else attrs = attrs.getAttributes();
+                              var attrId = nodeKey.replace(/\[\w*\]/g, "");
+                              if (attrs.hasOwnProperty(attrId)) {
+                                var attr = attrs[attrId];
+                                if (attr.hasOwnProperty("getKey")) {
+                                  if (nodeKey.indexOf("ref") != -1)
+                                    attr
+                                      .getRef()
+                                      .registerYType(nodeEvent.value);
+                                  else if (
+                                    attr
+                                      .getKey()
+                                      .hasOwnProperty("registerYType") &&
+                                    nodeKey.indexOf("value") === -1
+                                  )
+                                    attr
+                                      .getKey()
+                                      .registerYType(
+                                        nodeEvent.currentTarget.get(nodeKey)
+                                      );
+                                } else if (attr.hasOwnProperty("getValue")) {
+                                  if (
+                                    attr
+                                      .getValue()
+                                      .hasOwnProperty("registerYType")
+                                  )
+                                    attr
+                                      .getValue()
+                                      .registerYType(
+                                        nodeEvent.currentTarget.get(nodeKey)
+                                      );
+                                }
+                              } else if (attrs.hasOwnProperty(nodeKey)) {
+                                var attr = attrs[nodeKey];
                                 if (
                                   attr
                                     .getValue()
@@ -306,39 +327,28 @@ class AttributeWrapper {
                                       nodeEvent.currentTarget.get(nodeKey)
                                     );
                               }
-                            } else if (attrs.hasOwnProperty(nodeKey)) {
-                              var attr = attrs[nodeKey];
-                              if (
-                                attr.getValue().hasOwnProperty("registerYType")
-                              )
-                                attr
-                                  .getValue()
-                                  .registerYType(
-                                    nodeEvent.currentTarget.get(nodeKey)
-                                  );
-                            }
-                          } else {
-                            attrs = node.getAttributes();
-                            for (var attrKey in attrs) {
-                              if (attrs.hasOwnProperty(attrKey)) {
-                                var attr = attrs[attrKey];
-                                if (
-                                  attr.getEntityId() === nodeKey &&
-                                  attr
-                                    .getValue()
-                                    .hasOwnProperty("registerYType")
-                                ) {
-                                  attr
-                                    .getValue()
-                                    .registerYType(
-                                      nodeEvent.currentTarget.get(nodeKey)
-                                    );
-                                  break;
+                            } else {
+                              attrs = node.getAttributes();
+                              for (var attrKey in attrs) {
+                                if (attrs.hasOwnProperty(attrKey)) {
+                                  var attr = attrs[attrKey];
+                                  if (
+                                    attr.getEntityId() === nodeKey &&
+                                    attr
+                                      .getValue()
+                                      .hasOwnProperty("registerYType")
+                                  ) {
+                                    attr
+                                      .getValue()
+                                      .registerYType(
+                                        nodeEvent.currentTarget.get(nodeKey)
+                                      );
+                                    break;
+                                  }
                                 }
                               }
                             }
                           }
-                        }
                       }
                   }
                 });
