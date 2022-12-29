@@ -220,10 +220,10 @@ class KeySelectionValueSelectionValueListAttribute extends AbstractAttribute {
           _options2
         );
         attribute.setValueFromJSON(json.list[key]);
-        if ((attr = that.getAttribute(attribute.getEntityId()))) {
-          that.deleteAttribute(attr.getEntityId());
-          attr.get$node().remove();
-        }
+        // if ((attr = that.getAttribute(attribute.getEntityId()))) {
+        //   that.deleteAttribute(attr.getEntityId());
+        //   attr.get$node().remove();
+        // }
         that.addAttribute(attribute);
         _$node.find(".list").append(attribute.get$node());
       });
