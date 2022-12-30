@@ -207,7 +207,7 @@ class SingleValueListAttribute extends AbstractAttribute {
       });
     };
 
-    _$node.find(".name").text(this.getName());
+    _$node.find(".attribute_name").text(this.getName());
     for (var attrId in _list) {
       if (_list.hasOwnProperty(attrId)) {
         _$node.find(".list").append(_list[attrId].get$node());

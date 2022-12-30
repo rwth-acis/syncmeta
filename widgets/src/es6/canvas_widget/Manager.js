@@ -6449,9 +6449,6 @@ export class RelationshipNode extends AbstractNode {
     }
 
     this.setContextMenuItemCallback(function () {
-      var EdgeShapeNode = EdgeShapeNode,
-        BiDirAssociationEdge = BiDirAssociationEdge,
-        UniDirAssociationEdge = UniDirAssociationEdge;
       return {
         addShape: {
           name: "Add Edge Shape",
@@ -8011,9 +8008,7 @@ export class ViewRelationshipNode extends AbstractNode {
       that.showAttributes();
 
     this.setContextMenuItemCallback(function () {
-      var EdgeShapeNode = EdgeShapeNode,
-        BiDirAssociationEdge = BiDirAssociationEdge,
-        UniDirAssociationEdge = UniDirAssociationEdge;
+
       var viewId = $("#lblCurrentView").text();
       return {
         addShape: {
