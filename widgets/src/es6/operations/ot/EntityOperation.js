@@ -398,8 +398,6 @@ export class NodeDeleteOperation extends EntityOperation {
      * @returns {operations.ot.NodeAddOperation}
      */
     this.inverse = function () {
-      var NodeAddOperation = $__operations_ot_NodeAddOperation;
-
       return new NodeAddOperation(
         this.getEntityId(),
         this.getType(),
@@ -1328,8 +1326,6 @@ export class AttributeAddOperation extends EntityOperation {
      * @returns {AttributeDeleteOperation}
      */
     this.inverse = function () {
-      var AttributeDeleteOperation = $__operations_ot_AttributeDeleteOperation;
-
       return new AttributeDeleteOperation(
         that.getEntityId(),
         that.getSubjectEntityId(),
@@ -1484,8 +1480,6 @@ export class AttributeDeleteOperation extends EntityOperation {
      * @returns {operations.ot.AttributeAddOperation}
      */
     this.inverse = function () {
-      var AttributeAddOperation = $__operations_ot_AttributeAddOperation;
-
       return new AttributeAddOperation(
         this.getEntityId(),
         this.getSubjectEntityId(),

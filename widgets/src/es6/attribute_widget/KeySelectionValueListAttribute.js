@@ -77,7 +77,7 @@ class KeySelectionValueListAttribute extends AbstractAttribute {
       setTimeout(function () {
         var ytext = ymap.get(attribute.getKey().getEntityId());
         attribute.getKey().registerYType(ytext);
-      }, 200);
+      }, 400);
       that.addAttribute(attribute);
       if (_$node.find(".list").find("#" + attribute.getEntityId()).length === 0)
         _$node.find(".list").append(attribute.get$node());

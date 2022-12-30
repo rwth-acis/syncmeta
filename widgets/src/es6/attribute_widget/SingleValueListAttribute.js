@@ -68,7 +68,7 @@ class SingleValueListAttribute extends AbstractAttribute {
       setTimeout(function () {
         var ytext = ymap.get(attribute.getValue().getEntityId());
         attribute.getValue().registerYType(ytext);
-      }, 200);
+      }, 400);
       that.addAttribute(attribute);
       if (
         _$node

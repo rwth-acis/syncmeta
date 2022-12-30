@@ -91,7 +91,7 @@ class ConditionListAttribute extends AbstractAttribute {
       setTimeout(function () {
         var ytext = ymap.get(attribute.getKey().getEntityId());
         attribute.getKey().registerYType(ytext);
-      }, 200);
+      }, 400);
       _$node.find(".list .operator2").show();
       _$node.find(".list").append(attribute.get$node());
     };

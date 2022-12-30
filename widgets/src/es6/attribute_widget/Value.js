@@ -98,7 +98,9 @@ class Value extends AbstractValue {
           },
           placeholder: name,
         });
-
+        if (!_ytext) {
+          throw new Error("YText not found");
+        }
         new QuillBinding(_ytext, _$editorRef);
         _ytext?.observe(function () {
           _value = _ytext.toString();

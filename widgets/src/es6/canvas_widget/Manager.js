@@ -6035,7 +6035,7 @@ export class ObjectNode extends AbstractNode {
 
                 //noinspection JSAccessibilityCheck
                 nodeId = canvas.createNode(
-                  $__canvas_widget_RelationshipGroupNode.TYPE,
+                  RelationshipGroupNode.TYPE,
                   appearance.left,
                   appearance.top,
                   appearance.width,
@@ -6304,7 +6304,7 @@ export class AbstractClassNode extends AbstractNode {
 
                 //noinspection JSAccessibilityCheck
                 nodeId = canvas.createNode(
-                  $__canvas_widget_RelationshipGroupNode.TYPE,
+                  RelationshipGroupNode.TYPE,
                   appearance.left,
                   appearance.top,
                   appearance.width,
@@ -6618,7 +6618,7 @@ export class RelationshipNode extends AbstractNode {
 
                 //noinspection JSAccessibilityCheck
                 nodeId = canvas.createNode(
-                  $__canvas_widget_RelationshipGroupNode.TYPE,
+                  RelationshipGroupNode.TYPE,
                   appearance.left,
                   appearance.top,
                   appearance.width,

@@ -86,7 +86,7 @@ class RenamingListAttribute extends AbstractAttribute {
         attribute.getKey().registerYType(ytext);
         var ytext2 = ymap.get(attribute.getRef().getEntityId());
         attribute.getRef().registerYType(ytext2);
-      }, 200);
+      }, 400);
     };
 
     /**
