@@ -135,7 +135,7 @@ class BooleanValue extends AbstractValue {
           const array = Array.from(event.changes.keys.entries());
           array.forEach(function ([key, value]) {
             const map = event.currentTarget.get(key);
-            const json = map.toJSON();
+            const json = map;
 
             var operation = new ValueChangeOperation(
               json.entityId,
@@ -196,14 +196,13 @@ class BooleanValue extends AbstractValue {
         .getYMap()
         .observe(
           _.debounce(function (event) {
-            event.changedKeys.forEach(function (key) {
+            event.keysChanged.forEach(function (key) {
               if (
                 key == "jabberId" &&
                 key === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]
               )
                 $("#save").click();
             });
-            
           }, 500)
         );
     };
