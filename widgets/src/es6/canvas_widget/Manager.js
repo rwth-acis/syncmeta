@@ -2911,48 +2911,51 @@ export class AbstractNode extends AbstractEntity {
 
     this._registerYMap = function () {
       _ymap.observe(function (event) {
-        var yUserId = event.currentTarget.doc.clientID;
+        const array = Array.from(event.changes.keys.entries());
+        array.forEach(([key, change]) => {
+          var yUserId = event.currentTarget.doc.clientID;
 
-        if (
-          y.clientID !== yUserId ||
-          (event.value && event.value.historyFlag)
-        ) {
-          var operation;
-          var data = event.value;
-          const userMap = y.getMap("users");
-          var jabberId = userMap.get(yUserId);
-          switch (event.name) {
-            case NodeMoveOperation.TYPE: {
-              operation = new NodeMoveOperation(
-                data.id,
-                data.offsetX,
-                data.offsetY,
-                jabberId
-              );
-              remoteNodeMoveCallback(operation);
-              break;
-            }
-            case NodeMoveZOperation.TYPE: {
-              operation = new NodeMoveZOperation(
-                data.id,
-                data.offsetZ,
-                jabberId
-              );
-              remoteNodeMoveZCallback(operation);
-              break;
-            }
-            case NodeResizeOperation.TYPE: {
-              operation = new NodeResizeOperation(
-                data.id,
-                data.offsetX,
-                data.offsetY,
-                jabberId
-              );
-              remoteNodeResizeCallback(operation);
-              break;
+          if (
+            y.clientID !== yUserId ||
+            (event.value && event.value.historyFlag)
+          ) {
+            var operation;
+            var data = event.value;
+            const userMap = y.getMap("users");
+            var jabberId = userMap.get(yUserId);
+            switch (key) {
+              case NodeMoveOperation.TYPE: {
+                operation = new NodeMoveOperation(
+                  data.id,
+                  data.offsetX,
+                  data.offsetY,
+                  jabberId
+                );
+                remoteNodeMoveCallback(operation);
+                break;
+              }
+              case NodeMoveZOperation.TYPE: {
+                operation = new NodeMoveZOperation(
+                  data.id,
+                  data.offsetZ,
+                  jabberId
+                );
+                remoteNodeMoveZCallback(operation);
+                break;
+              }
+              case NodeResizeOperation.TYPE: {
+                operation = new NodeResizeOperation(
+                  data.id,
+                  data.offsetX,
+                  data.offsetY,
+                  jabberId
+                );
+                remoteNodeResizeCallback(operation);
+                break;
+              }
             }
           }
-        }
+        });
       });
     };
   }
@@ -8008,7 +8011,6 @@ export class ViewRelationshipNode extends AbstractNode {
       that.showAttributes();
 
     this.setContextMenuItemCallback(function () {
-
       var viewId = $("#lblCurrentView").text();
       return {
         addShape: {

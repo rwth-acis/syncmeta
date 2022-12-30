@@ -307,37 +307,40 @@ class ConditionListAttribute extends AbstractAttribute {
       }
 
       ymap.observe(function (event) {
-        if (event.name.indexOf("[value]") != -1) {
-          var operation;
-          var data = event.value;
-          switch (event.type) {
-            case "add": {
-              var yUserId = event.object.map[event.name][0];
-              if (yUserId === y.clientID) return;
-              operation = new AttributeAddOperation(
-                event.name.replace(/\[\w*\]/g, ""),
-                that.getEntityId(),
-                that.getRootSubjectEntity().getEntityId(),
-                that.constructor.name
-              );
-              remoteAttributeAddCallback(operation);
+        const array = Array.from(event.changes.keys.entries());
+        array.forEach(([key, change]) => {
+          if (key.indexOf("[value]") != -1) {
+            var operation;
+            var data = event.currentTarget.get(key);
+            switch (change.action) {
+              case "add": {
+                var yUserId = event.object.map[key][0];
+                if (yUserId === y.clientID) return;
+                operation = new AttributeAddOperation(
+                  key.replace(/\[\w*\]/g, ""),
+                  that.getEntityId(),
+                  that.getRootSubjectEntity().getEntityId(),
+                  that.constructor.name
+                );
+                remoteAttributeAddCallback(operation);
 
-              break;
+                break;
+              }
+              case "delete": {
+                operation = new AttributeDeleteOperation(
+                  key.replace(/\[\w*\]/g, ""),
+                  that.getEntityId(),
+                  that.getRootSubjectEntity().getEntityId(),
+                  that.constructor.name
+                );
+                remoteAttributeDeleteCallback(operation);
+                break;
+              }
             }
-            case "delete": {
-              operation = new AttributeDeleteOperation(
-                event.name.replace(/\[\w*\]/g, ""),
-                that.getEntityId(),
-                that.getRootSubjectEntity().getEntityId(),
-                that.constructor.name
-              );
-              remoteAttributeDeleteCallback(operation);
-              break;
-            }
+          } else if (key.indexOf("updateConditionOption") != -1) {
+            that.setOptions(event.value);
           }
-        } else if (event.name.indexOf("updateConditionOption") != -1) {
-          that.setOptions(event.value);
-        }
+        });
       });
     };
 

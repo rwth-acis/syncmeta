@@ -134,7 +134,8 @@ class IntegerValue extends AbstractValue {
         .getRootSubjectEntity()
         .getYMap()
         .observe(function (event) {
-          if (event) {
+          const array = Array.from(event.changes.keys.entries());
+          array.forEach(([key, change]) => {
             var operation = new ValueChangeOperation(
               event.entityId,
               event.value,
@@ -186,7 +187,7 @@ class IntegerValue extends AbstractValue {
                 operation.getOTOperation()
               );
             }
-          }
+          });
         });
 
       //Debounce the save function

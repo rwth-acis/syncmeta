@@ -19,7 +19,6 @@ const attributeSelectionValueHtml = await loadHTML(
   import.meta.url
 );
 
-
 /**
  * SelectionValue
  * @class canvas_widget.SelectionValue
@@ -32,20 +31,21 @@ const attributeSelectionValueHtml = await loadHTML(
  * @param {canvas_widget.AbstractNode|canvas_widget.AbstractEdge} rootSubjectEntity Topmost entity in the chain of entity the attribute is assigned to
  * @param {Object} options Selection options
  */
-class SelectionValue extends AbstractValue{
-  constructor(id,
+class SelectionValue extends AbstractValue {
+  constructor(
+    id,
     name,
     subjectEntity,
     rootSubjectEntity,
     options,
-    useAttributeHtml) {
+    useAttributeHtml
+  ) {
     super(id, name, subjectEntity, rootSubjectEntity);
 
     var that = this;
 
     useAttributeHtml =
       typeof useAttributeHtml !== "undefinded" ? useAttributeHtml : false;
-
 
     /**
      * Value
@@ -87,7 +87,8 @@ class SelectionValue extends AbstractValue{
      * @returns {string[]}
      */
     var getEntityIdChain = function () {
-      var chain = [that.getEntityId()], entity = that;
+      var chain = [that.getEntityId()],
+        entity = that;
       while (entity instanceof AbstractAttribute) {
         chain.unshift(entity.getSubjectEntity().getEntityId());
         entity = entity.getSubjectEntity();
@@ -117,15 +118,13 @@ class SelectionValue extends AbstractValue{
               value.showTable();
             }
           });
-        }
-        else
+        } else
           Object.values(rootSubjectEntity.getAttributes()).forEach((value) => {
             if (value instanceof QuizAttribute) {
               value.hideTable();
             }
           });
-      } else
-        _$node.text(options[value]);
+      } else _$node.text(options[value]);
     };
 
     /**
@@ -168,7 +167,8 @@ class SelectionValue extends AbstractValue{
         .getRootSubjectEntity()
         .getYMap()
         .observe(function (event) {
-          if (event) {
+          const array = Array.from(event.changes.keys.entries());
+          array.forEach(([key, change]) => {
             var operation = new ValueChangeOperation(
               event.entityId,
               event.value,
@@ -233,7 +233,7 @@ class SelectionValue extends AbstractValue{
                 operation.getOTOperation()
               );
             }
-          }
+          });
         });
     };
   }

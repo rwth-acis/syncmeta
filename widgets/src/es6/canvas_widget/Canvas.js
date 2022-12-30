@@ -1101,11 +1101,11 @@ export default class Canvas extends AbstractCanvas {
         defaultLabel,
         defaultAttributeValues
       );
-        try {
-          propagateNodeAddOperation(operation);
-        } catch (error) {
-          console.error(error);
-        }
+      try {
+        propagateNodeAddOperation(operation);
+      } catch (error) {
+        console.error(error);
+      }
       if (y) {
         const canvasMap = y.getMap("canvas");
         canvasMap.set(NodeAddOperation.TYPE, operation.toJSON());
@@ -1794,73 +1794,95 @@ export default class Canvas extends AbstractCanvas {
             $("#save").click();
           }
         });
-        
       });
       const selectionMap = y.getMap("select");
       selectionMap.observe(function (event) {
-        const userMap = y.getMap("users");
-        if (event.name !== userMap.get(y.clientID)) {
-          const userList = y.getMap("userList");
-          var userInfo = userList.get(event.name);
-          if (event.oldValue != null) {
-            var unselectedEntity = EntityManager.find(event.oldValue);
-            if (unselectedEntity) unselectedEntity.unhighlight();
-          }
+        const array = Array.from(event.changes.keys.entries());
+        array.forEach(([key, change]) => {
+          const userMap = y.getMap("users");
+          if (key !== userMap.get(y.clientID)) {
+            const userList = y.getMap("userList");
+            var userInfo = userList.get(key);
+            if (event.oldValue != null) {
+              var unselectedEntity = EntityManager.find(event.oldValue);
+              if (unselectedEntity) unselectedEntity.unhighlight();
+            }
 
-          if (event.value != null) {
-            var selectedEntity = EntityManager.find(event.value);
-            if (selectedEntity)
-              selectedEntity.highlight(
-                Util.getColor(userInfo.globalId),
-                userInfo[CONFIG.NS.PERSON.TITLE]
-              );
+            if (event.value != null) {
+              var selectedEntity = EntityManager.find(event.value);
+              if (selectedEntity)
+                selectedEntity.highlight(
+                  Util.getColor(userInfo.globalId),
+                  userInfo[CONFIG.NS.PERSON.TITLE]
+                );
+            }
           }
-        }
+        });
       });
       const nodesMap = y.getMap("nodes");
       nodesMap.observe(function (event) {
-        switch (event.type) {
-          case "delete": {
-            var node = EntityManager.findNode(event.name);
-            if (node)
-              node.remoteNodeDeleteCallback(
-                new NodeDeleteOperation(event.name)
-              );
-            break;
+        const array = Array.from(event.changes.keys.entries());
+        array.forEach(([key, change]) => {
+          switch (change.action) {
+            case "delete": {
+              var node = EntityManager.findNode(key);
+              if (node)
+                node.remoteNodeDeleteCallback(new NodeDeleteOperation(key));
+              break;
+            }
+
+            case "add": {
+              var yUserId = event.object.map[key][0];
+              if (yUserId === y.clientID) return;
+              //var map = event.value;
+              const nodesMap = y.getMap("nodes");
+              var map = nodesMap.get(key);
+              map.observe(function (nodeEvent) {
+                const array = Array.from(nodeEvent.changes.keys.entries());
+                array.forEach(([nodeKey, change]) => {
+                  const value = nodeEvent.currentTarget.get(nodeKey);
+                  switch (nodeKey) {
+                    case "jabberId": {
+                      remoteNodeAddCallback(
+                        new NodeAddOperation(
+                          map.get("id"),
+                          map.get("type"),
+                          map.get("left"),
+                          map.get("top"),
+                          map.get("width"),
+                          map.get("height"),
+                          map.get("zIndex"),
+                          null,
+                          null,
+                          null,
+                          value
+                        )
+                      );
+                      break;
+                    }
+                    default: {
+                      break;
+                    }
+                  }
+                });
+              });
+            }
           }
-          /*
-                                                      case 'add': {
-                                                          var yUserId = event.object.map[event.name][0];
-                                                          if (yUserId === y.clientID) return;
-                                                          //var map = event.value;
-                                                          const nodesMap = y.getMap('nodes');
-                                                          var map = nodesMap.get(event.name);
-                                                          map.observe(function(nodeEvent) {
-                                                              switch (nodeEvent.name) {
-                                                                  case 'jabberId': {
-                                                                      remoteNodeAddCallback(new NodeAddOperation(map.get('id'), map.get('type'), map.get('left'), map.get('top'), map.get('width'), map.get('height'), map.get('zIndex'), null, null, null, nodeEvent.value));
-                                                                      break;
-                                                                  }
-                                                                  default: {
-                                                                      break;
-                                                                  }
-                                                              }
-                                                          });
-                                                      }*/
-        }
+        });
       });
       const edgeMap = y.getMap("edges");
       edgeMap.observe(function (event) {
-        switch (event.type) {
-          case "delete": {
-            var edge = EntityManager.findEdge(event.name);
-            if (edge)
-              edge.remoteEdgeDeleteCallback(
-                new EdgeDeleteOperation(event.name)
-              );
-            break;
+        const array = Array.from(event.changes.keys.entries());
+        array.forEach(([key, change]) => {
+          switch (change.action) {
+            case "delete": {
+              var edge = EntityManager.findEdge(key);
+              if (edge)
+                edge.remoteEdgeDeleteCallback(new EdgeDeleteOperation(key));
+              break;
+            }
           }
-        }
+        });
       });
     }
     if (_iwcw) {

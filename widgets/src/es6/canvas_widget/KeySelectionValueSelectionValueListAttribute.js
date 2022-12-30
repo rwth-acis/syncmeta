@@ -317,35 +317,37 @@ class KeySelectionValueSelectionValueListAttribute extends AbstractAttribute {
       }
 
       ymap.observe(function (event) {
-        const changedKeys = Array.from(event.keysChanged);
-        if (changedKeys.indexOf("[key]") != -1) {
-          var operation;
-          var data = event.value;
-          switch (event.type) {
-            case "add": {
-              var yUserId = event.object.map[event.name][0];
-              if (yUserId === y.clientID) return;
-              operation = new AttributeAddOperation(
-                event.name.replace(/\[\w*\]/g, ""),
-                that.getEntityId(),
-                that.getRootSubjectEntity().getEntityId(),
-                that.constructor.name
-              );
-              remoteAttributeAddCallback(operation);
-              break;
-            }
-            case "delete": {
-              operation = new AttributeDeleteOperation(
-                event.name.replace(/\[\w*\]/g, ""),
-                that.getEntityId(),
-                that.getRootSubjectEntity().getEntityId(),
-                that.constructor.name
-              );
-              remoteAttributeDeleteCallback(operation);
-              break;
+        const array = Array.from(event.changes.keys.entries());
+        array.forEach(([key, change]) => {
+          if (key.indexOf("[key]") != -1) {
+            var operation;
+            var data = event.currentTarget.get(key);
+            switch (change.action) {
+              case "add": {
+                var yUserId = event.object.map[key][0];
+                if (yUserId === y.clientID) return;
+                operation = new AttributeAddOperation(
+                  key.replace(/\[\w*\]/g, ""),
+                  that.getEntityId(),
+                  that.getRootSubjectEntity().getEntityId(),
+                  that.constructor.name
+                );
+                remoteAttributeAddCallback(operation);
+                break;
+              }
+              case "delete": {
+                operation = new AttributeDeleteOperation(
+                  key.replace(/\[\w*\]/g, ""),
+                  that.getEntityId(),
+                  that.getRootSubjectEntity().getEntityId(),
+                  that.constructor.name
+                );
+                remoteAttributeDeleteCallback(operation);
+                break;
+              }
             }
           }
-        }
+        });
       });
     };
   }
