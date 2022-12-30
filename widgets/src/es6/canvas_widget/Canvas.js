@@ -1101,8 +1101,11 @@ export default class Canvas extends AbstractCanvas {
         defaultLabel,
         defaultAttributeValues
       );
-
-      propagateNodeAddOperation(operation);
+      try {
+        propagateNodeAddOperation(operation);
+      } catch (error) {
+        console.error(error);
+      }
       if (y) {
         const canvasMap = y.getMap("canvas");
         canvasMap.set(NodeAddOperation.TYPE, operation.toJSON());
@@ -1646,213 +1649,240 @@ export default class Canvas extends AbstractCanvas {
       const canvasMap = y.getMap("canvas");
       canvasMap.observe(function (event) {
         var yUserId = event.currentTarget.doc.clientID;
-        const latestKeyChange = Array.from(event.keysChanged)[0];
-        const data = event.target.get(latestKeyChange);
-        if (yUserId !== y.clientID || data.historyFlagSet) {
-          // this code here needs to be fixed event.value is no longer supported by yjs13
-          const userMap = y.getMap("users");
-          var jabberId = userMap.get(yUserId);
-          var operation;
 
-          switch (event.name) {
-            case NodeAddOperation.TYPE: {
-              operation = new NodeAddOperation(
-                data.id,
-                data.type,
-                data.left,
-                data.top,
-                data.width,
-                data.height,
-                data.zIndex,
-                data.containment,
-                data.json,
-                data.viewId,
-                data.oType,
-                jabberId || data.jabberId,
-                data.defaultLabel,
-                data.defaultAttributeValues
-              );
-              remoteNodeAddCallback(operation);
-              break;
-            }
-            case EdgeAddOperation.TYPE: {
-              operation = new EdgeAddOperation(
-                data.id,
-                data.type,
-                data.source,
-                data.target,
-                data.json,
-                data.viewId,
-                data.oType,
-                jabberId || data.jabberId
-              );
-              remoteEdgeAddCallback(operation);
-              break;
-            }
-            case RevokeSharedActivityOperation.TYPE: {
-              operation = new RevokeSharedActivityOperation(data.id);
-              remoteRevokeSharedActivityOperationCallback(operation);
-              break;
-            }
-            case GuidanceStrategyOperation.TYPE: {
-              operation = new GuidanceStrategyOperation(data.data);
-              remoteGuidanceStrategyOperation(operation);
-              break;
-            }
-            case "ViewApplyActivity": {
-              var activityOperation = new ActivityOperation(
-                "ViewApplyActivity",
-                event.value.viewId,
-                event.value.jabberId
-              );
-              const activityMap = y.getMap("activity");
+        event.keysChanged.forEach(function (key) {
+          const data = event.currentTarget.get(key);
+          if (yUserId !== y.clientID || data.historyFlagSet) {
+            // this code here needs to be fixed event.value is no longer supported by yjs13
+            const userMap = y.getMap("users");
+            var jabberId = userMap.get(yUserId);
+            var operation;
 
-              activityMap.set(
-                ActivityOperation.TYPE,
-                activityOperation.toJSON()
-              );
-              break;
-            }
-            case "triggerSave": {
-              if (event.value === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
-                $("#save").click();
-              break;
-            }
-            case "applyLayout": {
-              //remote user
-              DagreLayout.apply();
-              break;
-            }
-            //used by the syncmeta-plugin only
-            case "highlight": {
-              var userId = _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID];
-              if (!event.value.remote && userId !== event.value.userId) return;
-
-              // when an entity (or multiple entities) get highlighted, then
-              // one of them can be selected where the canvas should move to
-              if (event.value.moveCanvasToEntity) {
-                var entityId = event.value.moveCanvasToEntity;
-                var entity = EntityManager.find(entityId);
-
-                // move canvas to entity
-                that.scrollEntityIntoView(entityId);
-
-                // select the entity (note: this needs to be done before the highlighting,
-                // because otherwise the "select" overwrites the highlighting)
-                that.select(entity);
+            switch (key) {
+              case NodeAddOperation.TYPE: {
+                operation = new NodeAddOperation(
+                  data.id,
+                  data.type,
+                  data.left,
+                  data.top,
+                  data.width,
+                  data.height,
+                  data.zIndex,
+                  data.containment,
+                  data.json,
+                  data.viewId,
+                  data.oType,
+                  jabberId || data.jabberId,
+                  data.defaultLabel,
+                  data.defaultAttributeValues
+                );
+                remoteNodeAddCallback(operation);
+                break;
               }
+              case EdgeAddOperation.TYPE: {
+                operation = new EdgeAddOperation(
+                  data.id,
+                  data.type,
+                  data.source,
+                  data.target,
+                  data.json,
+                  data.viewId,
+                  data.oType,
+                  jabberId || data.jabberId
+                );
+                remoteEdgeAddCallback(operation);
+                break;
+              }
+              case RevokeSharedActivityOperation.TYPE: {
+                operation = new RevokeSharedActivityOperation(data.id);
+                remoteRevokeSharedActivityOperationCallback(operation);
+                break;
+              }
+              case GuidanceStrategyOperation.TYPE: {
+                operation = new GuidanceStrategyOperation(data.data);
+                remoteGuidanceStrategyOperation(operation);
+                break;
+              }
+              case "ViewApplyActivity": {
+                var activityOperation = new ActivityOperation(
+                  "ViewApplyActivity",
+                  event.value.viewId,
+                  event.value.jabberId
+                );
+                const activityMap = y.getMap("activity");
 
-              // highlight entity/entities
-              for (var i = 0; i < event.value.entities.length; i++) {
-                var entityId = event.value.entities[i];
-                var entity = EntityManager.find(entityId);
-                if (entity) {
-                  entity.highlight(event.value.color, event.value.label);
+                activityMap.set(
+                  ActivityOperation.TYPE,
+                  activityOperation.toJSON()
+                );
+                break;
+              }
+              case "triggerSave": {
+                if (data.value === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
+                  $("#save").click();
+                break;
+              }
+              case "applyLayout": {
+                //remote user
+                DagreLayout.apply();
+                break;
+              }
+              //used by the syncmeta-plugin only
+              case "highlight": {
+                var userId = _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID];
+                if (!event.value.remote && userId !== event.value.userId)
+                  return;
+
+                // when an entity (or multiple entities) get highlighted, then
+                // one of them can be selected where the canvas should move to
+                if (event.value.moveCanvasToEntity) {
+                  var entityId = event.value.moveCanvasToEntity;
+                  var entity = EntityManager.find(entityId);
+
+                  // move canvas to entity
+                  that.scrollEntityIntoView(entityId);
+
+                  // select the entity (note: this needs to be done before the highlighting,
+                  // because otherwise the "select" overwrites the highlighting)
+                  that.select(entity);
                 }
-              }
 
-              break;
-            }
-            //used by the syncmeta-plugin only
-            case "unhighlight": {
-              var userId = _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID];
-              if (!event.value.remote && userId !== event.value.userId) return;
-              for (var i = 0; i < event.value.entities.length; i++) {
-                var entityId = event.value.entities[i];
-                var entity = EntityManager.find(entityId);
-                if (entity) {
-                  entity.unhighlight();
+                // highlight entity/entities
+                for (var i = 0; i < event.value.entities.length; i++) {
+                  var entityId = event.value.entities[i];
+                  var entity = EntityManager.find(entityId);
+                  if (entity) {
+                    entity.highlight(event.value.color, event.value.label);
+                  }
                 }
+
+                break;
               }
-              break;
+              //used by the syncmeta-plugin only
+              case "unhighlight": {
+                var userId = _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID];
+                if (!event.value.remote && userId !== event.value.userId)
+                  return;
+                for (var i = 0; i < event.value.entities.length; i++) {
+                  var entityId = event.value.entities[i];
+                  var entity = EntityManager.find(entityId);
+                  if (entity) {
+                    entity.unhighlight();
+                  }
+                }
+                break;
+              }
+              //used by the syncmeta-plugin only
+              case NodeDeleteOperation.TYPE: {
+                var userId = _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID];
+                const nodesMap = y.getMap("nodes");
+                if (event.value.jabberId === userId)
+                  nodesMap.delete(event.value.entityId);
+                setTimeout(function () {
+                  $("#save").click();
+                }, 300);
+                break;
+              }
+              //used by the syncmeta-plugin only
+              case EdgeDeleteOperation.TYPE: {
+                break;
+              }
             }
-            //used by the syncmeta-plugin only
-            case NodeDeleteOperation.TYPE: {
-              var userId = _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID];
-              const nodesMap = y.getMap("nodes");
-              if (event.value.jabberId === userId)
-                nodesMap.delete(event.value.entityId);
-              setTimeout(function () {
-                $("#save").click();
-              }, 300);
-              break;
-            }
-            //used by the syncmeta-plugin only
-            case EdgeDeleteOperation.TYPE: {
-              break;
-            }
+            //local user. todo ugly coding style
+          } else if (key === "applyLayout") {
+            DagreLayout.apply();
+            $("#save").click();
           }
-          //local user. todo ugly coding style
-        } else if (event.name === "applyLayout") {
-          DagreLayout.apply();
-          $("#save").click();
-        }
+        });
       });
       const selectionMap = y.getMap("select");
       selectionMap.observe(function (event) {
-        const userMap = y.getMap("users");
-        if (event.name !== userMap.get(y.clientID)) {
-          const userList = y.getMap("userList");
-          var userInfo = userList.get(event.name);
-          if (event.oldValue != null) {
-            var unselectedEntity = EntityManager.find(event.oldValue);
-            if (unselectedEntity) unselectedEntity.unhighlight();
-          }
+        const array = Array.from(event.changes.keys.entries());
+        array.forEach(([key, change]) => {
+          const userMap = y.getMap("users");
+          if (key !== userMap.get(y.clientID)) {
+            const userList = y.getMap("userList");
+            var userInfo = userList.get(key);
+            if (event.oldValue != null) {
+              var unselectedEntity = EntityManager.find(event.oldValue);
+              if (unselectedEntity) unselectedEntity.unhighlight();
+            }
 
-          if (event.value != null) {
-            var selectedEntity = EntityManager.find(event.value);
-            if (selectedEntity)
-              selectedEntity.highlight(
-                Util.getColor(userInfo.globalId),
-                userInfo[CONFIG.NS.PERSON.TITLE]
-              );
+            if (event.value != null) {
+              var selectedEntity = EntityManager.find(event.value);
+              if (selectedEntity)
+                selectedEntity.highlight(
+                  Util.getColor(userInfo.globalId),
+                  userInfo[CONFIG.NS.PERSON.TITLE]
+                );
+            }
           }
-        }
+        });
       });
       const nodesMap = y.getMap("nodes");
       nodesMap.observe(function (event) {
-        switch (event.type) {
-          case "delete": {
-            var node = EntityManager.findNode(event.name);
-            if (node)
-              node.remoteNodeDeleteCallback(
-                new NodeDeleteOperation(event.name)
-              );
-            break;
+        const array = Array.from(event.changes.keys.entries());
+        array.forEach(([key, change]) => {
+          switch (change.action) {
+            case "delete": {
+              var node = EntityManager.findNode(key);
+              if (node)
+                node.remoteNodeDeleteCallback(new NodeDeleteOperation(key));
+              break;
+            }
+
+            case "add": {
+              // var yUserId = event.object.map[key][0];
+              // if (yUserId === y.clientID) return;
+              //var map = event.value;
+              const nodesMap = y.getMap("nodes");
+              var map = nodesMap.get(key);
+              map.observe(function (nodeEvent) {
+                const array = Array.from(nodeEvent.changes.keys.entries());
+                array.forEach(([nodeKey, change]) => {
+                  const value = nodeEvent.currentTarget.get(nodeKey);
+                  switch (nodeKey) {
+                    case "jabberId": {
+                      remoteNodeAddCallback(
+                        new NodeAddOperation(
+                          map.get("id"),
+                          map.get("type"),
+                          map.get("left"),
+                          map.get("top"),
+                          map.get("width"),
+                          map.get("height"),
+                          map.get("zIndex"),
+                          null,
+                          null,
+                          null,
+                          value
+                        )
+                      );
+                      break;
+                    }
+                    default: {
+                      break;
+                    }
+                  }
+                });
+              });
+            }
           }
-          /*
-                                                      case 'add': {
-                                                          var yUserId = event.object.map[event.name][0];
-                                                          if (yUserId === y.clientID) return;
-                                                          //var map = event.value;
-                                                          const nodesMap = y.getMap('nodes');
-                                                          var map = nodesMap.get(event.name);
-                                                          map.observe(function(nodeEvent) {
-                                                              switch (nodeEvent.name) {
-                                                                  case 'jabberId': {
-                                                                      remoteNodeAddCallback(new NodeAddOperation(map.get('id'), map.get('type'), map.get('left'), map.get('top'), map.get('width'), map.get('height'), map.get('zIndex'), null, null, null, nodeEvent.value));
-                                                                      break;
-                                                                  }
-                                                                  default: {
-                                                                      break;
-                                                                  }
-                                                              }
-                                                          });
-                                                      }*/
-        }
+        });
       });
       const edgeMap = y.getMap("edges");
       edgeMap.observe(function (event) {
-        switch (event.type) {
-          case "delete": {
-            var edge = EntityManager.findEdge(event.name);
-            if (edge)
-              edge.remoteEdgeDeleteCallback(
-                new EdgeDeleteOperation(event.name)
-              );
-            break;
+        const array = Array.from(event.changes.keys.entries());
+        array.forEach(([key, change]) => {
+          switch (change.action) {
+            case "delete": {
+              var edge = EntityManager.findEdge(key);
+              if (edge)
+                edge.remoteEdgeDeleteCallback(new EdgeDeleteOperation(key));
+              break;
+            }
           }
-        }
+        });
       });
     }
     if (_iwcw) {

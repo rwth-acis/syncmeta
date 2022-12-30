@@ -252,72 +252,77 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
       });
       const canvasMap = y.getMap("canvas");
       canvasMap.observe(function (event) {
-        switch (event.name) {
-          case UpdateViewListOperation.TYPE: {
-            ViewManager.GetViewpointList();
-            break;
-          }
-          case "ReloadWidgetOperation": {
-            var text;
-            switch (event.value) {
-              case "import": {
-                const dataMap = y.getMap("data");
-                var model = dataMap.get("model");
-                text =
-                  "ATTENTION! Imported new model containing <strong>" +
-                  Object.keys(model.nodes).length +
-                  " nodes</strong> and <strong>" +
-                  Object.keys(model.edges).length +
-                  " edges</strong>. Some widgets will reload";
-                break;
-              }
-              case "delete": {
-                text =
-                  "ATTENTION! Deleted current model. Some widgets will reload";
-                break;
-              }
-              case "meta_delete": {
-                text =
-                  "ATTENTION! Deleted current metamodel. Some widgets will reload";
-                break;
-              }
-              case "meta_import": {
-                text =
-                  "ATTENTION! Imported new metamodel. Some widgets will reload";
-                break;
-              }
+        event.keysChanged.forEach((key) => {
+          switch (key) {
+            case UpdateViewListOperation.TYPE: {
+              ViewManager.GetViewpointList();
+              break;
             }
-
-            // when event.value is "import", then previously the model in the Yjs room should have
-            // been changed
-            // Problem: when the new model contains a node, that the previous model also contained,
-            // then the position of the node does not get updated
-            // therefore, this is manually done here
-            const dataMap = y.getMap("data");
-            const nodesMap = y.getMap("nodes");
-            for (var key of nodesMap.keys()) {
-              // check if the node also exists in the updated model
-
-              var nodeInModel = dataMap.get("model").nodes[key];
-              if (nodeInModel) {
-                // update left and top position values
-                nodesMap.get(key).set("left", nodeInModel.left);
-                nodesMap.get(key).set("top", nodeInModel.top);
+            case "ReloadWidgetOperation": {
+              var text;
+              const value = event.currentTarget.get(key);
+              switch (value) {
+                case "import": {
+                  const dataMap = y.getMap("data");
+                  var model = dataMap.get("model");
+                  text =
+                    "ATTENTION! Imported new model containing <strong>" +
+                    Object.keys(model.nodes).length +
+                    " nodes</strong> and <strong>" +
+                    Object.keys(model.edges).length +
+                    " edges</strong>. Some widgets will reload";
+                  break;
+                }
+                case "delete": {
+                  text =
+                    "ATTENTION! Deleted current model. Some widgets will reload";
+                  break;
+                }
+                case "meta_delete": {
+                  text =
+                    "ATTENTION! Deleted current metamodel. Some widgets will reload";
+                  break;
+                }
+                case "meta_import": {
+                  text =
+                    "ATTENTION! Imported new metamodel. Some widgets will reload";
+                  break;
+                }
               }
-            }
-            const activityMap = y.getMap("activity");
-            activityMap.set(
-              "ReloadWidgetOperation",
-              new ActivityOperation(
+
+              // when event.value is "import", then previously the model in the Yjs room should have
+              // been changed
+              // Problem: when the new model contains a node, that the previous model also contained,
+              // then the position of the node does not get updated
+              // therefore, this is manually done here
+              const dataMap = y.getMap("data");
+              const nodesMap = y.getMap("nodes");
+              for (var key of nodesMap.keys()) {
+                // check if the node also exists in the updated model
+
+                var nodeInModel = dataMap.get("model").nodes[key];
+                if (nodeInModel) {
+                  // update left and top position values
+                  nodesMap.get(key).set("left", nodeInModel.left);
+                  nodesMap.get(key).set("top", nodeInModel.top);
+                }
+              }
+              const activityMap = y.getMap("activity");
+              activityMap.set(
                 "ReloadWidgetOperation",
-                undefined,
-                _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
-                text
-              ).toJSON()
-            );
-            frameElement.contentWindow.location.reload();
+                new ActivityOperation(
+                  "ReloadWidgetOperation",
+                  undefined,
+                  _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
+                  text
+                ).toJSON()
+              );
+              frameElement.contentWindow.location.reload();
+            }
           }
-        }
+        });
+
+        
       });
     }
   });

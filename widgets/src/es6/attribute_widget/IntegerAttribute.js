@@ -78,7 +78,7 @@ class IntegerAttribute extends AbstractAttribute {
       _value.setValueFromJSON(json.value);
     };
 
-    _$node.find(".name").text(this.getName());
+    _$node.find(".attribute_name").text(this.getName());
     _$node.find(".attribute_value").append(_value.get$node());
 
     // check if view only mode is enabled for the property browser

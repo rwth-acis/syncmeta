@@ -77,7 +77,31 @@ class Activity {
      * Convert timestamp to a nice string to display in the activity list
      */
     var getDateTimeAsString = function () {
+      const today = new Date();
       var d = new Date(_timestamp);
+
+      // if the activity is from today, only display the time
+      if (
+        d.getDate() === today.getDate() &&
+        d.getMonth() === today.getMonth() &&
+        d.getFullYear() === today.getFullYear()
+      ) {
+        var hour = d.getHours();
+        var min = d.getMinutes();
+
+        // add leading zero if necessary
+        if (hour < 10) {
+          hour = "0" + hour;
+        }
+        if (min < 10) {
+          min = "0" + min;
+        }
+
+        var dateTime = hour + ":" + min;
+        return dateTime;
+      }
+      // if the activity is from this year, only display the date and time
+
       var months = [
         "01",
         "02",
@@ -92,6 +116,7 @@ class Activity {
         "11",
         "12",
       ];
+
       var year = d.getFullYear() % 100;
       var month = months[d.getMonth()];
       var date = d.getDate();
@@ -104,6 +129,12 @@ class Activity {
       }
       if (min < 10) {
         min = "0" + min;
+      }
+
+      // if the activity is from this year, only display the date and time
+      if (d.getFullYear() === today.getFullYear()) {
+        var dateTime = date + "." + month + "/" + hour + ":" + min;
+        return dateTime;
       }
 
       var dateTime = date + "." + month + "." + year + "/" + hour + ":" + min;
@@ -259,19 +290,13 @@ class Activity {
           const color = y.getMap("userList").get(_sender)
             ? Util.getColor(y.getMap("userList").get(_sender).globalId)
             : "#ccc";
-          $(this).css(
-            "border",
-            "5px solid " + color
-          );
+          $(this).css("border", "5px solid " + color);
         },
         function () {
-           const color = y.getMap("userList").get(_sender)
-             ? Util.getColor(y.getMap("userList").get(_sender).globalId)
-             : "#ccc";
-          $(this).css(
-            "border",
-            "1px solid" + color
-          );
+          const color = y.getMap("userList").get(_sender)
+            ? Util.getColor(y.getMap("userList").get(_sender).globalId)
+            : "#ccc";
+          $(this).css("border", "1px solid" + color);
         }
       );
       _$node.find(".timestamp").css("border-color", "rgb(112, 222, 148)");
@@ -279,9 +304,9 @@ class Activity {
     };
 
     this.untrackable = function () {
-       const color = y.getMap("userList").get(_sender)?.globalId
-         ? Util.getColor(y.getMap("userList").get(_sender).globalId)
-         : "rgb(112, 222, 148)";
+      const color = y.getMap("userList").get(_sender)?.globalId
+        ? Util.getColor(y.getMap("userList").get(_sender).globalId)
+        : "rgb(112, 222, 148)";
       _$node.off();
       _$node.find(".timestamp").css("border-color", color);
       isTrackable = false;

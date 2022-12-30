@@ -28,12 +28,10 @@ const keySelectionValueListAttributeHtml = await loadHTML(
  * @param {AbstractEntity} subjectEntity Entity the attribute is assigned to
  * @param {Object} options Selection options
  */
-class KeySelectionValueListAttribute extends AbstractAttribute{
+class KeySelectionValueListAttribute extends AbstractAttribute {
   constructor(id, name, subjectEntity, options) {
-     super(id, name, subjectEntity);
+    super(id, name, subjectEntity);
     var that = this;
-
-   
 
     /**
      * Selection options
@@ -79,7 +77,7 @@ class KeySelectionValueListAttribute extends AbstractAttribute{
       setTimeout(function () {
         var ytext = ymap.get(attribute.getKey().getEntityId());
         attribute.getKey().registerYType(ytext);
-      }, 200);
+      }, 400);
       that.addAttribute(attribute);
       if (_$node.find(".list").find("#" + attribute.getEntityId()).length === 0)
         _$node.find(".list").append(attribute.get$node());
@@ -113,10 +111,12 @@ class KeySelectionValueListAttribute extends AbstractAttribute{
      * @param {operations.ot.AttributeAddOperation} operation
      */
     var attributeAddCallback = function (operation) {
-      if (operation instanceof AttributeAddOperation &&
+      if (
+        operation instanceof AttributeAddOperation &&
         operation.getRootSubjectEntityId() ===
-        that.getRootSubjectEntity().getEntityId() &&
-        operation.getSubjectEntityId() === that.getEntityId()) {
+          that.getRootSubjectEntity().getEntityId() &&
+        operation.getSubjectEntityId() === that.getEntityId()
+      ) {
         processAttributeAddOperation(operation);
       }
     };
@@ -126,10 +126,12 @@ class KeySelectionValueListAttribute extends AbstractAttribute{
      * @param {operations.ot.AttributeDeleteOperation} operation
      */
     var attributeDeleteCallback = function (operation) {
-      if (operation instanceof AttributeDeleteOperation &&
+      if (
+        operation instanceof AttributeDeleteOperation &&
         operation.getRootSubjectEntityId() ===
-        that.getRootSubjectEntity().getEntityId() &&
-        operation.getSubjectEntityId() === that.getEntityId()) {
+          that.getRootSubjectEntity().getEntityId() &&
+        operation.getSubjectEntityId() === that.getEntityId()
+      ) {
         processAttributeDeleteOperation(operation);
       }
     };
@@ -225,13 +227,13 @@ class KeySelectionValueListAttribute extends AbstractAttribute{
       }
     };
 
-    _$node.find(".name").text(this.getName());
+    _$node.find(".attribute_name").text(this.getName());
     for (var attrId in _list) {
       if (_list.hasOwnProperty(attrId)) {
         _$node.find(".list").append(_list[attrId].get$node());
       }
     }
-    _$node.find(".ui-icon-plus").click(function () {
+    _$node.find(".btn-success").click(function () {
       var id = Util.generateRandomId();
       var operation = new AttributeAddOperation(
         id,
@@ -243,11 +245,13 @@ class KeySelectionValueListAttribute extends AbstractAttribute{
     });
     const nodesMap = y.getMap("nodes");
     nodesMap.get(subjectEntity.getEntityId()).observe(function (event) {
-      if (event.name.indexOf("[key]") != -1) {
-        switch (event.type) {
+      const array = Array.from(event.changes.keys.entries());
+      array.forEach(([key, change]) => {
+        const type = change.action;
+        switch (type) {
           case "add": {
-            operation = new AttributeAddOperation(
-              event.name.replace(/\[\w*\]/g, ""),
+            const operation = new AttributeAddOperation(
+              key.replace(/\[\w*\]/g, ""),
               that.getEntityId(),
               that.getRootSubjectEntity().getEntityId(),
               that.constructor.name
@@ -256,8 +260,8 @@ class KeySelectionValueListAttribute extends AbstractAttribute{
             break;
           }
           case "delete": {
-            operation = new AttributeDeleteOperation(
-              event.name.replace(/\[\w*\]/g, ""),
+            const operation = new AttributeDeleteOperation(
+              key.replace(/\[\w*\]/g, ""),
               that.getEntityId(),
               that.getRootSubjectEntity().getEntityId(),
               that.constructor.name
@@ -266,7 +270,7 @@ class KeySelectionValueListAttribute extends AbstractAttribute{
             break;
           }
         }
-      }
+      });
     });
   }
 }

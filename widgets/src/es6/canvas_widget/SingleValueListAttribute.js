@@ -277,33 +277,35 @@ class SingleValueListAttribute extends AbstractAttribute {
 
       ymap.observe(function (event) {
         var operation;
-        var data = event.value;
-        const eventName = Array.from(event.keysChanged)[0];
-        if (eventName.indexOf("[value]") != -1) {
-          switch (event.type) {
-            case "add": {
-              var yUserId = event.object.map[event.name][0];
-              if (yUserId === y.clientID) return;
-              operation = new AttributeAddOperation(
-                event.name.replace(/\[\w*\]/g, ""),
-                that.getEntityId(),
-                that.getRootSubjectEntity().getEntityId(),
-                that.constructor.name
-              );
-              remoteAttributeAddCallback(operation);
-              break;
-            }
-            case "delete": {
-              operation = new AttributeDeleteOperation(
-                event.name,
-                that.getEntityId(),
-                that.getRootSubjectEntity().getEntityId(),
-                that.constructor.name
-              );
-              remoteAttributeDeleteCallback(operation);
+
+        const array = Array.from(event.changes.keys.entries());
+        array.forEach(([key, change]) => {
+          if (key.indexOf("[value]") != -1) {
+            switch (change.action) {
+              case "add": {
+                var yUserId = event.object.map[key][0];
+                if (yUserId === y.clientID) return;
+                operation = new AttributeAddOperation(
+                  key.replace(/\[\w*\]/g, ""),
+                  that.getEntityId(),
+                  that.getRootSubjectEntity().getEntityId(),
+                  that.constructor.name
+                );
+                remoteAttributeAddCallback(operation);
+                break;
+              }
+              case "delete": {
+                operation = new AttributeDeleteOperation(
+                  key,
+                  that.getEntityId(),
+                  that.getRootSubjectEntity().getEntityId(),
+                  that.constructor.name
+                );
+                remoteAttributeDeleteCallback(operation);
+              }
             }
           }
-        }
+        });
       });
     };
   }

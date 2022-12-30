@@ -79,7 +79,7 @@ class FileAttribute extends AbstractAttribute {
       _value.setValueFromJSON(json.value);
     };
 
-    _$node.find(".name").text(this.getName());
+    _$node.find(".attribute_name").text(this.getName());
     _$node.find(".attribute_value").append(_value.get$node());
   }
 }

@@ -940,7 +940,7 @@ export function makeNode(
             if (renAttr.visibility === "hide") {
               $attr.hide();
             } else {
-              $attr.find(".name").text(renAttr.key);
+              $attr.find(".attribute_name").text(renAttr.key);
               if ($attr.is(":hidden")) {
                 $attr.show();
               }
@@ -2057,7 +2057,7 @@ export function makeEdge(
             if (renAttr.position === "hide") {
               $attr.hide();
             } else {
-              $attr.find(".name").text(renAttr.key);
+              $attr.find(".attribute_name").text(renAttr.key);
               if ($attr.is(":hidden")) {
                 $attr.show();
               }

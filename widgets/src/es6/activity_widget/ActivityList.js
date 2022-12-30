@@ -608,41 +608,43 @@ class ActivityList {
         event.keysChanged.forEach((key) => {
           if (key == "log") return;
           const activity = event.currentTarget.get(key);
-          event.value = activity;
+
           operationCallback(
             new ActivityOperation(
-              event.value.type,
-              event.value.entityId,
-              event.value.sender,
-              event.value.text,
-              event.value.data
+              activity.type,
+              activity.entityId,
+              activity.sender,
+              activity.text,
+              activity.data
             )
           );
         });
-        
       });
       const selectionMap = y.getMap("select");
       selectionMap.observe(function (event) {
-        if (event.value === null) {
-          _.each(activityList, function (activity) {
-            activity.show();
-          });
-        } else {
-          _.each(activityList, function (activity) {
-            activity.show();
-          });
-          _.each(
-            _.filter(activityList, function (activity) {
-              if (activity instanceof ValueChangeActivity) {
-                return activity.getRootSubjectEntityId() !== event.value;
+        event.keysChanged.forEach((key) => {
+          const value = event.currentTarget.get(key);
+          if (value === null) {
+            _.each(activityList, function (activity) {
+              activity.show();
+            });
+          } else {
+            _.each(activityList, function (activity) {
+              activity.show();
+            });
+            _.each(
+              _.filter(activityList, function (activity) {
+                if (activity instanceof ValueChangeActivity) {
+                  return activity.getRootSubjectEntityId() !== value;
+                }
+                return activity.getEntityId() !== value;
+              }),
+              function (activity) {
+                activity.hide();
               }
-              return activity.getEntityId() !== event.value;
-            }),
-            function (activity) {
-              activity.hide();
-            }
-          );
-        }
+            );
+          }
+        });
       });
     }
   }

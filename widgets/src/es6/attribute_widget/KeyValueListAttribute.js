@@ -178,13 +178,13 @@ class KeyValueListAttribute extends AbstractAttribute{
       iwc.unregisterOnDataReceivedCallback(attributeAddCallback);
     };
 
-    _$node.find(".name").text(this.getName());
+    _$node.find(".attribute_name").text(this.getName());
     for (var attrId in _list) {
       if (_list.hasOwnProperty(attrId)) {
         _$node.find(".list").append(_list[attrId].get$node());
       }
     }
-    _$node.find(".ui-icon-plus").click(function () {
+    _$node.find(".btn-success").click(function () {
       var id = Util.generateRandomId();
       var operation = new AttributeAddOperation(
         id,

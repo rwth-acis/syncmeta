@@ -68,7 +68,7 @@ class SingleValueListAttribute extends AbstractAttribute {
       setTimeout(function () {
         var ytext = ymap.get(attribute.getValue().getEntityId());
         attribute.getValue().registerYType(ytext);
-      }, 200);
+      }, 400);
       that.addAttribute(attribute);
       if (
         _$node
@@ -207,13 +207,13 @@ class SingleValueListAttribute extends AbstractAttribute {
       });
     };
 
-    _$node.find(".name").text(this.getName());
+    _$node.find(".attribute_name").text(this.getName());
     for (var attrId in _list) {
       if (_list.hasOwnProperty(attrId)) {
         _$node.find(".list").append(_list[attrId].get$node());
       }
     }
-    _$node.find(".ui-icon-plus").click(function () {
+    _$node.find(".btn-success").click(function () {
       var id = Util.generateRandomId();
       const userMap = y.getMap("users");
       var operation = new AttributeAddOperation(
@@ -228,30 +228,33 @@ class SingleValueListAttribute extends AbstractAttribute {
     const nodesMap = y.getMap("nodes");
 
     nodesMap.get(subjectEntity.getEntityId()).observe(function (event) {
-      if (event.name.indexOf("[value]") != -1) {
-        switch (event.type) {
-          case "add": {
-            operation = new AttributeAddOperation(
-              event.name.replace(/\[\w*\]/g, ""),
-              that.getEntityId(),
-              that.getRootSubjectEntity().getEntityId(),
-              that.constructor.name
-            );
-            attributeAddCallback(operation);
-            break;
-          }
-          case "delete": {
-            operation = new AttributeDeleteOperation(
-              event.name,
-              that.getEntityId(),
-              that.getRootSubjectEntity().getEntityId(),
-              that.constructor.name
-            );
-            attributeDeleteCallback(operation);
-            break;
+      const array = Array.from(event.changes.keys.entries());
+      array.forEach(([key, change]) => {
+        if (key.indexOf("[value]") != -1) {
+          switch (change.action) {
+            case "add": {
+              const operation = new AttributeAddOperation(
+                key.replace(/\[\w*\]/g, ""),
+                that.getEntityId(),
+                that.getRootSubjectEntity().getEntityId(),
+                that.constructor.name
+              );
+              attributeAddCallback(operation);
+              break;
+            }
+            case "delete": {
+              const operation = new AttributeDeleteOperation(
+                key,
+                that.getEntityId(),
+                that.getRootSubjectEntity().getEntityId(),
+                that.constructor.name
+              );
+              attributeDeleteCallback(operation);
+              break;
+            }
           }
         }
-      }
+      });
     });
   }
 }
