@@ -256,22 +256,22 @@ class ConditionListAttribute extends AbstractAttribute {
         if (key.indexOf("[value]") != -1) {
           switch (change.action) {
             case "add": {
-              operation = new AttributeAddOperation(
-                key.replace(/\[\w*\]/g, ""),
-                that.getEntityId(),
-                that.getRootSubjectEntity().getEntityId(),
-                that.constructor.name
-              );
+            const operation = new AttributeAddOperation(
+              key.replace(/\[\w*\]/g, ""),
+              that.getEntityId(),
+              that.getRootSubjectEntity().getEntityId(),
+              that.constructor.name
+            );
               attributeAddCallback(operation);
               break;
             }
             case "delete": {
-              operation = new AttributeDeleteOperation(
-                key.replace(/\[\w*\]/g, ""),
-                that.getEntityId(),
-                that.getRootSubjectEntity().getEntityId(),
-                that.constructor.name
-              );
+             const operation = new AttributeDeleteOperation(
+               key.replace(/\[\w*\]/g, ""),
+               that.getEntityId(),
+               that.getRootSubjectEntity().getEntityId(),
+               that.constructor.name
+             );
               attributeDeleteCallback(operation);
               break;
             }

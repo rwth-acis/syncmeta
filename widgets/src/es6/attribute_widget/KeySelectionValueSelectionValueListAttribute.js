@@ -272,7 +272,7 @@ class KeySelectionValueSelectionValueListAttribute extends AbstractAttribute {
         if (key.indexOf("[key]") != -1) {
           switch (action) {
             case "add": {
-              operation = new AttributeAddOperation(
+              const operation = new AttributeAddOperation(
                 key.replace(/\[\w*\]/g, ""),
                 that.getEntityId(),
                 that.getRootSubjectEntity().getEntityId(),
@@ -282,7 +282,7 @@ class KeySelectionValueSelectionValueListAttribute extends AbstractAttribute {
               break;
             }
             case "delete": {
-              operation = new AttributeDeleteOperation(
+              const operation = new AttributeDeleteOperation(
                 key.replace(/\[\w*\]/g, ""),
                 that.getEntityId(),
                 that.getRootSubjectEntity().getEntityId(),

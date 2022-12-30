@@ -220,9 +220,9 @@ class KeySelectionValueSelectionValueAttribute extends AbstractAttribute {
       _iwc.unregisterOnDataReceivedCallback(attributeDeleteCallback);
     };
 
-    _$node.find(".key").append(_key.get$node());
+    _$node.find(".attribute_key").append(_key.get$node());
     _$node.find(".attribute_value").append(_value.get$node());
-    _$node.find(".value2").append(_value2.get$node());
+    _$node.find(".attribute_value2").append(_value2.get$node());
     _$node.find(".btn-danger").click(function () {
       var operation = new AttributeDeleteOperation(
         that.getEntityId(),

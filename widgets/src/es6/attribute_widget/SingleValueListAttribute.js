@@ -233,7 +233,7 @@ class SingleValueListAttribute extends AbstractAttribute {
         if (key.indexOf("[value]") != -1) {
           switch (change.action) {
             case "add": {
-              operation = new AttributeAddOperation(
+              const operation = new AttributeAddOperation(
                 key.replace(/\[\w*\]/g, ""),
                 that.getEntityId(),
                 that.getRootSubjectEntity().getEntityId(),
@@ -243,7 +243,7 @@ class SingleValueListAttribute extends AbstractAttribute {
               break;
             }
             case "delete": {
-              operation = new AttributeDeleteOperation(
+              const operation = new AttributeDeleteOperation(
                 key,
                 that.getEntityId(),
                 that.getRootSubjectEntity().getEntityId(),

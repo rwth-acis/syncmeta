@@ -237,7 +237,7 @@ class RenamingListAttribute extends AbstractAttribute {
           const action = value.action;
           switch (action) {
             case "add": {
-              operation = new AttributeAddOperation(
+              const operation = new AttributeAddOperation(
                 key.replace(/\[\w*\]/g, ""),
                 that.getEntityId(),
                 that.getRootSubjectEntity().getEntityId(),
@@ -247,7 +247,7 @@ class RenamingListAttribute extends AbstractAttribute {
               break;
             }
             case "delete": {
-              operation = new AttributeDeleteOperation(
+              const operation = new AttributeDeleteOperation(
                 key.replace(/\[\w*\]/g, ""),
                 that.getEntityId(),
                 that.getRootSubjectEntity().getEntityId(),

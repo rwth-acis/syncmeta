@@ -1649,147 +1649,152 @@ export default class Canvas extends AbstractCanvas {
       const canvasMap = y.getMap("canvas");
       canvasMap.observe(function (event) {
         var yUserId = event.currentTarget.doc.clientID;
-        const latestKeyChange = Array.from(event.keysChanged)[0];
-        const data = event.target.get(latestKeyChange);
-        if (yUserId !== y.clientID || data.historyFlagSet) {
-          // this code here needs to be fixed event.value is no longer supported by yjs13
-          const userMap = y.getMap("users");
-          var jabberId = userMap.get(yUserId);
-          var operation;
 
-          switch (event.name) {
-            case NodeAddOperation.TYPE: {
-              operation = new NodeAddOperation(
-                data.id,
-                data.type,
-                data.left,
-                data.top,
-                data.width,
-                data.height,
-                data.zIndex,
-                data.containment,
-                data.json,
-                data.viewId,
-                data.oType,
-                jabberId || data.jabberId,
-                data.defaultLabel,
-                data.defaultAttributeValues
-              );
-              remoteNodeAddCallback(operation);
-              break;
-            }
-            case EdgeAddOperation.TYPE: {
-              operation = new EdgeAddOperation(
-                data.id,
-                data.type,
-                data.source,
-                data.target,
-                data.json,
-                data.viewId,
-                data.oType,
-                jabberId || data.jabberId
-              );
-              remoteEdgeAddCallback(operation);
-              break;
-            }
-            case RevokeSharedActivityOperation.TYPE: {
-              operation = new RevokeSharedActivityOperation(data.id);
-              remoteRevokeSharedActivityOperationCallback(operation);
-              break;
-            }
-            case GuidanceStrategyOperation.TYPE: {
-              operation = new GuidanceStrategyOperation(data.data);
-              remoteGuidanceStrategyOperation(operation);
-              break;
-            }
-            case "ViewApplyActivity": {
-              var activityOperation = new ActivityOperation(
-                "ViewApplyActivity",
-                event.value.viewId,
-                event.value.jabberId
-              );
-              const activityMap = y.getMap("activity");
+        event.keysChanged.forEach(function (key) {
+          const data = event.currentTarget.get(key);
+          if (yUserId !== y.clientID || data.historyFlagSet) {
+            // this code here needs to be fixed event.value is no longer supported by yjs13
+            const userMap = y.getMap("users");
+            var jabberId = userMap.get(yUserId);
+            var operation;
 
-              activityMap.set(
-                ActivityOperation.TYPE,
-                activityOperation.toJSON()
-              );
-              break;
-            }
-            case "triggerSave": {
-              if (event.value === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
-                $("#save").click();
-              break;
-            }
-            case "applyLayout": {
-              //remote user
-              DagreLayout.apply();
-              break;
-            }
-            //used by the syncmeta-plugin only
-            case "highlight": {
-              var userId = _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID];
-              if (!event.value.remote && userId !== event.value.userId) return;
-
-              // when an entity (or multiple entities) get highlighted, then
-              // one of them can be selected where the canvas should move to
-              if (event.value.moveCanvasToEntity) {
-                var entityId = event.value.moveCanvasToEntity;
-                var entity = EntityManager.find(entityId);
-
-                // move canvas to entity
-                that.scrollEntityIntoView(entityId);
-
-                // select the entity (note: this needs to be done before the highlighting,
-                // because otherwise the "select" overwrites the highlighting)
-                that.select(entity);
+            switch (key) {
+              case NodeAddOperation.TYPE: {
+                operation = new NodeAddOperation(
+                  data.id,
+                  data.type,
+                  data.left,
+                  data.top,
+                  data.width,
+                  data.height,
+                  data.zIndex,
+                  data.containment,
+                  data.json,
+                  data.viewId,
+                  data.oType,
+                  jabberId || data.jabberId,
+                  data.defaultLabel,
+                  data.defaultAttributeValues
+                );
+                remoteNodeAddCallback(operation);
+                break;
               }
+              case EdgeAddOperation.TYPE: {
+                operation = new EdgeAddOperation(
+                  data.id,
+                  data.type,
+                  data.source,
+                  data.target,
+                  data.json,
+                  data.viewId,
+                  data.oType,
+                  jabberId || data.jabberId
+                );
+                remoteEdgeAddCallback(operation);
+                break;
+              }
+              case RevokeSharedActivityOperation.TYPE: {
+                operation = new RevokeSharedActivityOperation(data.id);
+                remoteRevokeSharedActivityOperationCallback(operation);
+                break;
+              }
+              case GuidanceStrategyOperation.TYPE: {
+                operation = new GuidanceStrategyOperation(data.data);
+                remoteGuidanceStrategyOperation(operation);
+                break;
+              }
+              case "ViewApplyActivity": {
+                var activityOperation = new ActivityOperation(
+                  "ViewApplyActivity",
+                  event.value.viewId,
+                  event.value.jabberId
+                );
+                const activityMap = y.getMap("activity");
 
-              // highlight entity/entities
-              for (var i = 0; i < event.value.entities.length; i++) {
-                var entityId = event.value.entities[i];
-                var entity = EntityManager.find(entityId);
-                if (entity) {
-                  entity.highlight(event.value.color, event.value.label);
+                activityMap.set(
+                  ActivityOperation.TYPE,
+                  activityOperation.toJSON()
+                );
+                break;
+              }
+              case "triggerSave": {
+                if (data.value === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
+                  $("#save").click();
+                break;
+              }
+              case "applyLayout": {
+                //remote user
+                DagreLayout.apply();
+                break;
+              }
+              //used by the syncmeta-plugin only
+              case "highlight": {
+                var userId = _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID];
+                if (!event.value.remote && userId !== event.value.userId)
+                  return;
+
+                // when an entity (or multiple entities) get highlighted, then
+                // one of them can be selected where the canvas should move to
+                if (event.value.moveCanvasToEntity) {
+                  var entityId = event.value.moveCanvasToEntity;
+                  var entity = EntityManager.find(entityId);
+
+                  // move canvas to entity
+                  that.scrollEntityIntoView(entityId);
+
+                  // select the entity (note: this needs to be done before the highlighting,
+                  // because otherwise the "select" overwrites the highlighting)
+                  that.select(entity);
                 }
-              }
 
-              break;
-            }
-            //used by the syncmeta-plugin only
-            case "unhighlight": {
-              var userId = _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID];
-              if (!event.value.remote && userId !== event.value.userId) return;
-              for (var i = 0; i < event.value.entities.length; i++) {
-                var entityId = event.value.entities[i];
-                var entity = EntityManager.find(entityId);
-                if (entity) {
-                  entity.unhighlight();
+                // highlight entity/entities
+                for (var i = 0; i < event.value.entities.length; i++) {
+                  var entityId = event.value.entities[i];
+                  var entity = EntityManager.find(entityId);
+                  if (entity) {
+                    entity.highlight(event.value.color, event.value.label);
+                  }
                 }
+
+                break;
               }
-              break;
+              //used by the syncmeta-plugin only
+              case "unhighlight": {
+                var userId = _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID];
+                if (!event.value.remote && userId !== event.value.userId)
+                  return;
+                for (var i = 0; i < event.value.entities.length; i++) {
+                  var entityId = event.value.entities[i];
+                  var entity = EntityManager.find(entityId);
+                  if (entity) {
+                    entity.unhighlight();
+                  }
+                }
+                break;
+              }
+              //used by the syncmeta-plugin only
+              case NodeDeleteOperation.TYPE: {
+                var userId = _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID];
+                const nodesMap = y.getMap("nodes");
+                if (event.value.jabberId === userId)
+                  nodesMap.delete(event.value.entityId);
+                setTimeout(function () {
+                  $("#save").click();
+                }, 300);
+                break;
+              }
+              //used by the syncmeta-plugin only
+              case EdgeDeleteOperation.TYPE: {
+                break;
+              }
             }
-            //used by the syncmeta-plugin only
-            case NodeDeleteOperation.TYPE: {
-              var userId = _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID];
-              const nodesMap = y.getMap("nodes");
-              if (event.value.jabberId === userId)
-                nodesMap.delete(event.value.entityId);
-              setTimeout(function () {
-                $("#save").click();
-              }, 300);
-              break;
-            }
-            //used by the syncmeta-plugin only
-            case EdgeDeleteOperation.TYPE: {
-              break;
-            }
+            //local user. todo ugly coding style
+          } else if (key === "applyLayout") {
+            DagreLayout.apply();
+            $("#save").click();
           }
-          //local user. todo ugly coding style
-        } else if (event.name === "applyLayout") {
-          DagreLayout.apply();
-          $("#save").click();
-        }
+        });
+        
       });
       const selectionMap = y.getMap("select");
       selectionMap.observe(function (event) {

@@ -132,13 +132,17 @@ class BooleanValue extends AbstractValue {
         .getRootSubjectEntity()
         .getYMap()
         .observe(function (event) {
-          if (event) {
+          const array = Array.from(event.changes.keys.entries());
+          array.forEach(function ([key, value]) {
+            const map = event.currentTarget.get(key);
+            const json = map.toJSON();
+
             var operation = new ValueChangeOperation(
-              event.entityId,
-              event.value,
-              event.type,
-              event.position,
-              event.jabberId
+              json.entityId,
+              json.value,
+              json.type,
+              json.position,
+              json.jabberId
             );
             _iwcw.sendLocalOTOperation(
               CONFIG.WIDGET.NAME.GUIDANCE,
@@ -183,7 +187,7 @@ class BooleanValue extends AbstractValue {
                 operation.getOTOperation()
               );
             }
-          }
+          });
         });
 
       //Debounce the save function
@@ -192,11 +196,14 @@ class BooleanValue extends AbstractValue {
         .getYMap()
         .observe(
           _.debounce(function (event) {
-            if (
-              event &&
-              event.jabberId === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]
-            )
-              $("#save").click();
+            event.changedKeys.forEach(function (key) {
+              if (
+                key == "jabberId" &&
+                key === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]
+              )
+                $("#save").click();
+            });
+            
           }, 500)
         );
     };
