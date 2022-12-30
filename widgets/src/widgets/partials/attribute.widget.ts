@@ -92,22 +92,6 @@ export class AttributeWidget extends SyncMetaWidget(LitElement) {
           width: 120px;
         }
 
-        /* .single_value_attribute div.value input[type="text"],
-        .single_value_attribute div.value input[type="number"],
-        .single_value_attribute div.value textarea,
-        .single_value_attribute div.value select {
-          border: 1px solid #4a4a4a;
-          width: 200px;
-        } */
-
-        /* .single_quiz_attribute div.value input[type="text"],
-        .single_quiz_attribute div.value input[type="number"],
-        .single_quiz_attribute div.value textarea,
-        .single_quiz_attribute div.value select {
-          border: 1px solid #4a4a4a;
-          width: 200px;
-        } */
-
         .single_value_attribute div.value span.color_preview {
           width: 12px;
           height: 18px;
