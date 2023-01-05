@@ -958,7 +958,7 @@ export default class Canvas extends AbstractCanvas {
         transform: `scaleX(${zoom}) scaleY(${zoom})`,
       });
 
-      jsPlumb.setZoom(zoom);
+      window.jsPlumbInstance.setZoom(zoom);
       sendViewChangeOperation();
     };
 

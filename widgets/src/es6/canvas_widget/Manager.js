@@ -1160,9 +1160,9 @@ export class AbstractEdge extends AbstractEntity {
       target.addIngoingEdge(this);
       //noinspection JSAccessibilityCheck
       _jsPlumbConnection = window.jsPlumbInstance.connect({
-        source: _appearance.source.get$node(),
-        target: _appearance.target.get$node(),
-        paintStyle: { strokeStyle: "#aaaaaa", lineWidth: 2 },
+        source: _appearance.source.get$node().get(0),
+        target: _appearance.target.get$node().get(0),
+        paintStyle: { fill: "#aaaaaa", outlineWidth: 2 },
         endpoint: { type: "Blank" },
         connector: { type: FlowchartConnector.type },
         anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
@@ -1171,7 +1171,7 @@ export class AbstractEdge extends AbstractEntity {
             type: "Custom",
             options: {
               create: function () {
-                return _$overlay;
+                return _$overlay.get(0);
               },
               location: 0.5,
               id: "label",
@@ -2849,7 +2849,7 @@ export class AbstractNode extends AbstractEntity {
     this.makeSource = function () {
       _$node.addClass("source");
       window.jsPlumbInstance.makeSource(_$node, {
-        connectorPaintStyle: { strokeStyle: "#aaaaaa", lineWidth: 2 },
+        connectorPaintStyle: { fill: "#aaaaaa", strokeWidth: 2 },
         endpoint: { type: "Blank" },
         anchor: _anchorOptions,
         //maxConnections:1,
@@ -5605,7 +5605,7 @@ export function makeNode(type, $shape, anchors, attributes, jsplumb) {
       this.makeSource = function () {
         _$node.addClass("source");
         window.jsPlumbInstance.makeSource(_$node, {
-          connectorPaintStyle: { strokeStyle: "#aaaaaa", lineWidth: 2 },
+          connectorPaintStyle: { fill: "#aaaaaa", lineWidth: 2 },
           endpoint: { type: "Blank" },
           anchor: _anchorOptions,
           //maxConnections:1,
@@ -7046,8 +7046,8 @@ export function makeEdge(
         }
 
         that.setDefaultPaintStyle({
-          strokeStyle: color,
-          lineWidth: 2,
+          fill: color,
+          strokeWidth: 2,
         });
       };
 
@@ -8127,8 +8127,8 @@ export class GeneralisationEdge extends AbstractEdge {
         source: source.get$node().get(0),
         target: target.get$node().get(0),
         paintStyle: {
-          strokeStyle: "#aaaaaa",
-          lineWidth: 2,
+          stroke: "#aaaaaa",
+          strokeWidth: 3,
         },
         endpoint: { type: "Blank" },
         anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
@@ -8141,13 +8141,13 @@ export class GeneralisationEdge extends AbstractEdge {
             type: "Arrow",
             options: {
               width: 20,
-              length: 30,
+              length: 25,
               location: 1,
               foldback: 1,
               paintStyle: {
-                fillStyle: "#ffffff",
+                fill: "#ffffff",
                 outlineWidth: 2,
-                outlineColor: "#aaaaaa",
+                dashstyle: "#aaaaaa",
               },
             },
           },
@@ -8263,10 +8263,9 @@ export class UniDirAssociationEdge extends AbstractEdge {
       var connectOptions = {
         source: source.get$node().get(0),
         target: target.get$node().get(0),
-
         paintStyle: {
-          strokeStyle: "#aaaaaa",
-          lineWidth: 2,
+          stroke: "#aaaaaa",
+          strokeWidth: 3,
         },
         endpoint: { type: "Blank" },
         anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
@@ -8283,9 +8282,9 @@ export class UniDirAssociationEdge extends AbstractEdge {
               location: 1,
               foldback: 0.5,
               paintStyle: {
-                fillStyle: "#ffffff",
+                fill: "#ffffff",
                 outlineWidth: 2,
-                outlineColor: "#aaaaaa",
+                outlineStroke: "#aaaaaa",
               },
             },
           },
@@ -8423,8 +8422,8 @@ export class BiDirAssociationEdge extends AbstractEdge {
         source: source.get$node().get(0),
         target: target.get$node().get(0),
         paintStyle: {
-          strokeStyle: "#aaaaaa",
-          lineWidth: 2,
+          stroke: "#aaaaaa",
+          strokeWidth: 2,
         },
         endpoint: { type: "Blank" },
         anchors: [source.getAnchorOptions(), target.getAnchorOptions()],

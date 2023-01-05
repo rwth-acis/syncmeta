@@ -73,7 +73,7 @@ class WidgetContainer extends LitElement {
             <debug-widget></debug-widget>
           </div>
         </div>
-        <div class="col-2 innercontainer">
+        <div class="col-2 innercontainer" style="display:none">
           <user-activity-widget></user-activity-widget>
         </div>
       </div>
