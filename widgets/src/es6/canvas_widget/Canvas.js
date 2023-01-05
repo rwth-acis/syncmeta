@@ -37,7 +37,7 @@ import {
   EntityManagerInstance as EntityManager,
   HistoryManagerInstance as HistoryManager,
 } from "./Manager";
-import { BrowserJsPlumbInstance } from "@jsplumb/browser-ui";
+import { newInstance } from "@jsplumb/browser-ui";
 
 /**
  * Canvas
@@ -603,8 +603,8 @@ export default class Canvas extends AbstractCanvas {
      * @param {operations.ot.NodeAddOperation} operation
      */
     var init = function () {
-      const jsPlumbInstance = BrowserJsPlumbInstance.newInstance({
-        container: $node,
+      const jsPlumbInstance = newInstance({
+        container: _$node.get(0),
       });
 
       window.jsPlumbInstance = jsPlumbInstance;
@@ -616,8 +616,6 @@ export default class Canvas extends AbstractCanvas {
       jsPlumbInstance.importDefaults({
         ConnectionsDetachable: false,
       });
-
-      jsPlumbInstance.Defaults.Container = _$node;
 
       _$node.css({
         width: _canvasWidth,

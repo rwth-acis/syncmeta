@@ -40,6 +40,7 @@ import ConditionListAttribute from "./viewpoint/ConditionListAttribute";
 import LogicalConjunctions from "./viewpoint/LogicalConjunctions";
 import LogicalOperator from "./viewpoint/LogicalOperator";
 import RenamingListAttribute from "./viewpoint/RenamingListAttribute";
+import { StraightConnector } from "@jsplumb/core";
 
 const viewrelationshipNodeHtml = await loadHTML(
   "../../templates/canvas_widget/viewrelationship_node.html",
@@ -948,7 +949,7 @@ export class AbstractEdge extends AbstractEntity {
     this.removeFromCanvas = function () {
       _canvas = null;
       $.contextMenu("destroy", "." + that.getEntityId());
-      jsPlumb.detach(_jsPlumbConnection, { fireEvent: false });
+      window.jsPlumbInstance.detach(_jsPlumbConnection, { fireEvent: false });
       _jsPlumbConnection = null;
     };
 
@@ -1158,24 +1159,24 @@ export class AbstractEdge extends AbstractEntity {
       source.addOutgoingEdge(this);
       target.addIngoingEdge(this);
       //noinspection JSAccessibilityCheck
-      _jsPlumbConnection = jsPlumb.connect({
+      _jsPlumbConnection = window.jsPlumbInstance.connect({
         source: _appearance.source.get$node(),
         target: _appearance.target.get$node(),
         paintStyle: { strokeStyle: "#aaaaaa", lineWidth: 2 },
-        endpoint: "Blank",
+        endpoint: { type: "Blank" },
         connector: { type: FlowchartConnector.type },
         anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
         overlays: [
-          [
-            "Custom",
-            {
+          {
+            type: "Custom",
+            options: {
               create: function () {
                 return _$overlay;
               },
               location: 0.5,
               id: "label",
             },
-          ],
+          },
         ],
         cssClass: id,
       });
@@ -2017,15 +2018,8 @@ export class AbstractNode extends AbstractEntity {
      * Triggers jsPlumb's repaint function and adjusts the angle of the edge labels
      */
     var repaint = function () {
-      //var edgeId,
-      //    edges = that.getEdges();
-      jsPlumb.repaint(_$node);
-      /*for(edgeId in edges){
-               if(edges.hasOwnProperty(edgeId)){
-               edges[edgeId].repaintOverlays();
-               edges[edgeId].setZIndex();
-               }
-               }*/
+      window.jsPlumbInstance.repaint(_$node.get(0));
+
       _.each(EntityManagerInstance.getEdges(), function (e) {
         e.setZIndex();
       });
@@ -2035,7 +2029,10 @@ export class AbstractNode extends AbstractEntity {
      * Anchor options for new connections
      * @type {object}
      */
-    var _anchorOptions = ["Perimeter", { shape: "Rectangle", anchorCount: 10 }];
+    var _anchorOptions = {
+      type: "Perimeter",
+      options: { shape: "Rectangle", anchorCount: 10 },
+    };
 
     /**
      * Get options for new connections
@@ -2851,9 +2848,9 @@ export class AbstractNode extends AbstractEntity {
      */
     this.makeSource = function () {
       _$node.addClass("source");
-      jsPlumb.makeSource(_$node, {
+      window.jsPlumbInstance.makeSource(_$node, {
         connectorPaintStyle: { strokeStyle: "#aaaaaa", lineWidth: 2 },
-        endpoint: "Blank",
+        endpoint: { type: "Blank" },
         anchor: _anchorOptions,
         //maxConnections:1,
         uniqueEndpoint: false,
@@ -2874,9 +2871,9 @@ export class AbstractNode extends AbstractEntity {
      */
     this.makeTarget = function () {
       _$node.addClass("target");
-      jsPlumb.makeTarget(_$node, {
+      window.jsPlumbInstance.makeTarget(_$node, {
         isTarget: false,
-        endpoint: "Blank",
+        endpoint: { type: "Blank" },
         anchor: _anchorOptions,
         uniqueEndpoint: false,
         //maxConnections:1,
@@ -2900,8 +2897,8 @@ export class AbstractNode extends AbstractEntity {
     this.unbindEdgeToolEvents = function () {
       try {
         _$node.removeClass("source target");
-        jsPlumb.unmakeSource(_$node);
-        jsPlumb.unmakeTarget(_$node);
+        window.jsPlumbInstance.unmakeSource(_$node);
+        window.jsPlumbInstance.unmakeTarget(_$node);
       } catch (error) {
         console.error(error);
       }
@@ -2984,15 +2981,15 @@ export class AbstractNode extends AbstractEntity {
    */
   hide() {
     this.get$node().hide();
-    jsPlumb.hide(this.get$node());
+    window.jsPlumbInstance.hide(this.get$node());
   }
   /**
    * show the node and all associated edges
    */
   show() {
     this.get$node().show();
-    jsPlumb.show(this.get$node()[0]);
-    jsPlumb.repaint(this.get$node()[0]);
+    window.jsPlumbInstance.show(this.get$node()[0]);
+    window.jsPlumbInstance.repaint(this.get$node()[0]);
   }
   registerYMap() {
     this._registerYMap();
@@ -5607,9 +5604,9 @@ export function makeNode(type, $shape, anchors, attributes, jsplumb) {
        */
       this.makeSource = function () {
         _$node.addClass("source");
-        jsPlumb.makeSource(_$node, {
+        window.jsPlumbInstance.makeSource(_$node, {
           connectorPaintStyle: { strokeStyle: "#aaaaaa", lineWidth: 2 },
-          endpoint: "Blank",
+          endpoint: { type: "Blank" },
           anchor: _anchorOptions,
           //maxConnections:1,
           uniqueEndpoint: false,
@@ -5625,7 +5622,9 @@ export function makeNode(type, $shape, anchors, attributes, jsplumb) {
         });
 
         if (jsplumb)
-          jsPlumb.addEndpoint(_$node, jsplumb.endpoint, { uuid: id + "_eps1" });
+          window.jsPlumbInstance.addEndpoint(_$node, jsplumb.endpoint, {
+            uuid: id + "_eps1",
+          });
       };
 
       /**
@@ -5633,10 +5632,10 @@ export function makeNode(type, $shape, anchors, attributes, jsplumb) {
        */
       this.makeTarget = function () {
         _$node.addClass("target");
-        jsPlumb.makeTarget(_$node, {
+        window.jsPlumbInstance.makeTarget(_$node, {
           isTarget: false,
           uniqueEndpoint: false,
-          endpoint: "Blank",
+          endpoint: { type: "Blank" },
           anchor: _anchorOptions,
           //maxConnections:1,
           deleteEndpointsOnDetach: true,
@@ -5652,8 +5651,8 @@ export function makeNode(type, $shape, anchors, attributes, jsplumb) {
           },
         });
         //local user wants to create an edge selected from the pallette
-        jsPlumb.bind("beforeDrop", function (info) {
-          var allConn = jsPlumb.getConnections({
+        window.jsPlumbInstance.bind("beforeDrop", function (info) {
+          var allConn = window.jsPlumbInstance.getConnections({
             target: info.targetId,
             source: info.sourceId,
           });
@@ -5664,7 +5663,9 @@ export function makeNode(type, $shape, anchors, attributes, jsplumb) {
         });
 
         if (jsplumb)
-          jsPlumb.addEndpoint(_$node, jsplumb.endpoint, { uuid: id + "_ept1" });
+          window.jsPlumbInstance.addEndpoint(_$node, jsplumb.endpoint, {
+            uuid: id + "_ept1",
+          });
       };
 
       /**
@@ -5673,8 +5674,8 @@ export function makeNode(type, $shape, anchors, attributes, jsplumb) {
       this.unbindEdgeToolEvents = function () {
         try {
           _$node.removeClass("source target");
-          jsPlumb.unmakeSource(_$node);
-          jsPlumb.unmakeTarget(_$node);
+          window.jsPlumbInstance.unmakeSource(_$node);
+          window.jsPlumbInstance.unmakeTarget(_$node);
         } catch (error) {
           console.error(error);
         }
@@ -6896,9 +6897,10 @@ export function makeEdge(
        */
       var makeAttributeOverlayFunction = function (attribute) {
         return function () {
-          return $("<div></div>").append(
+          const $node = $("<div></div>").append(
             $("<div></div>").addClass("edge_label").append(attribute.get$node())
           );
+          return $node.get(0);
         };
       };
       var init = function () {
@@ -7029,7 +7031,7 @@ export function makeEdge(
           {
             create: function () {
               that.get$overlay().hide().find(".type").addClass(shapeType);
-              return that.get$overlay();
+              return that.get$overlay().get(0);
             },
             location: 0.5,
             id: "label",
@@ -7056,11 +7058,10 @@ export function makeEdge(
         var source = this.getSource();
         var target = this.getTarget();
         var connectOptions = {
-          source: source.get$node(),
-          target: target.get$node(),
-
+          source: source.get$node().get(0),
+          target: target.get$node().get(0),
           paintStyle: that.getDefaultPaintStyle(),
-          endpoint: "Blank",
+          endpoint: { type: "Blank" },
           anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
           connector: shape,
           overlays: overlays,
@@ -7073,8 +7074,8 @@ export function makeEdge(
 
         source.addOutgoingEdge(this);
         target.addIngoingEdge(this);
+        window.jsPlumbInstance.connect(connectOptions);
 
-        this.setJsPlumbConnection(jsPlumb.connect(connectOptions));
         this.repaintOverlays();
         _.each(EntityManagerInstance.getEdges(), function (e) {
           e.setZIndex();
@@ -7166,7 +7167,7 @@ export function makeEdge(
           {
             create: function () {
               that.get$overlay().hide().find(".type").addClass(shapeType);
-              return that.get$overlay();
+              return that.get$overlay().get(0);
             },
             location: 0.5,
             id: "label",
@@ -8123,19 +8124,22 @@ export class GeneralisationEdge extends AbstractEdge {
       var source = this.getSource();
       var target = this.getTarget();
       var connectOptions = {
-        source: source.get$node(),
-        target: target.get$node(),
+        source: source.get$node().get(0),
+        target: target.get$node().get(0),
         paintStyle: {
           strokeStyle: "#aaaaaa",
           lineWidth: 2,
         },
-        endpoint: "Blank",
+        endpoint: { type: "Blank" },
         anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
-        connector: ["Straight", { gap: 0 }],
+        connector: {
+          type: StraightConnector.type,
+          options: { gap: 0 },
+        },
         overlays: [
-          [
-            "Arrow",
-            {
+          {
+            type: "Arrow",
+            options: {
               width: 20,
               length: 30,
               location: 1,
@@ -8146,17 +8150,17 @@ export class GeneralisationEdge extends AbstractEdge {
                 outlineColor: "#aaaaaa",
               },
             },
-          ],
-          [
-            "Custom",
-            {
+          },
+          {
+            type: "Custom",
+            options: {
               create: function () {
-                return that.get$overlay();
+                return that.get$overlay().get(0);
               },
               location: 0.5,
               id: "label",
             },
-          ],
+          },
         ],
         cssClass: this.getEntityId(),
       };
@@ -8167,8 +8171,8 @@ export class GeneralisationEdge extends AbstractEdge {
 
       source.addOutgoingEdge(this);
       target.addIngoingEdge(this);
+      window.jsPlumbInstance.connect(connectOptions);
 
-      this.setJsPlumbConnection(jsPlumb.connect(connectOptions));
       this.repaintOverlays();
       _.each(EntityManagerInstance.getEdges(), function (e) {
         e.setZIndex();
@@ -8257,19 +8261,23 @@ export class UniDirAssociationEdge extends AbstractEdge {
       var source = this.getSource();
       var target = this.getTarget();
       var connectOptions = {
-        source: source.get$node(),
-        target: target.get$node(),
+        source: source.get$node().get(0),
+        target: target.get$node().get(0),
+
         paintStyle: {
           strokeStyle: "#aaaaaa",
           lineWidth: 2,
         },
-        endpoint: "Blank",
+        endpoint: { type: "Blank" },
         anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
-        connector: ["Straight", { gap: 0 }],
+        connector: {
+          type: StraightConnector.type,
+          options: { gap: 0 },
+        },
         overlays: [
-          [
-            "Arrow",
-            {
+          {
+            type: "Arrow",
+            options: {
               width: 20,
               length: 30,
               location: 1,
@@ -8280,17 +8288,17 @@ export class UniDirAssociationEdge extends AbstractEdge {
                 outlineColor: "#aaaaaa",
               },
             },
-          ],
-          [
-            "Custom",
-            {
+          },
+          {
+            type: "Custom",
+            options: {
               create: function () {
-                return that.get$overlay();
+                return that.get$overlay().get(0);
               },
               location: 0.5,
               id: "label",
             },
-          ],
+          },
         ],
         cssClass: this.getEntityId(),
       };
@@ -8301,8 +8309,8 @@ export class UniDirAssociationEdge extends AbstractEdge {
 
       source.addOutgoingEdge(this);
       target.addIngoingEdge(this);
+      window.jsPlumbInstance.connect(connectOptions);
 
-      this.setJsPlumbConnection(jsPlumb.connect(connectOptions));
       this.repaintOverlays();
       _.each(EntityManagerInstance.getEdges(), function (e) {
         e.setZIndex();
@@ -8412,26 +8420,29 @@ export class BiDirAssociationEdge extends AbstractEdge {
       var source = this.getSource();
       var target = this.getTarget();
       var connectOptions = {
-        source: source.get$node(),
-        target: target.get$node(),
+        source: source.get$node().get(0),
+        target: target.get$node().get(0),
         paintStyle: {
           strokeStyle: "#aaaaaa",
           lineWidth: 2,
         },
-        endpoint: "Blank",
+        endpoint: { type: "Blank" },
         anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
-        connector: ["Straight", { gap: 0 }],
+        connector: {
+          type: StraightConnector.type,
+          options: { gap: 0 },
+        },
         overlays: [
-          [
-            "Custom",
-            {
+          {
+            type: "Custom",
+            options: {
               create: function () {
-                return that.get$overlay();
+                return that.get$overlay().get(0);
               },
               location: 0.5,
               id: "label",
             },
-          ],
+          },
         ],
         cssClass: this.getEntityId(),
       };
@@ -8442,8 +8453,8 @@ export class BiDirAssociationEdge extends AbstractEdge {
 
       source.addOutgoingEdge(this);
       target.addIngoingEdge(this);
+      window.jsPlumbInstance.connect(connectOptions);
 
-      this.setJsPlumbConnection(jsPlumb.connect(connectOptions));
       this.repaintOverlays();
       _.each(EntityManagerInstance.getEdges(), function (e) {
         e.setZIndex();
