@@ -1364,6 +1364,7 @@ $(document).ready(function() {
   };
 
   $.fn.tDragStart = function (x, y, skipuntransformed, hasoffset) {
+    let c;
     var self = this;
     self.each(function (i) {
       var t = self.eq(i);
@@ -2075,7 +2076,10 @@ $(document).ready(function() {
       var m = par.matrixToArray(true);
       if (m) {
         var ur = par.untransformedOffset();
-        //var cn={x:ur.left+(par.outerWidth()/2.0), y: ur.top+(par.outerHeight()/2.0)};
+        var cn = {
+          x: ur.left + par.outerWidth() / 2.0,
+          y: ur.top + par.outerHeight() / 2.0,
+        };
         cn = getOrigin(par);
         points = $.singleLevelTP(points, cn, m);
       }
