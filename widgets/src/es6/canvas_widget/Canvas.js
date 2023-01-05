@@ -2,7 +2,7 @@ import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jquery-migrate/1.4.1/jquery-migrate.min.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js";
-import "jsplumb/dist/js/jsPlumb-2.0.0.js"; // note that the version from the CDN  does not come with bezier connectors
+// note that the version from the CDN  does not come with bezier connectors
 import "https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.9.2/jquery.contextMenu.js";
 import AbstractEntity from "../canvas_widget/AbstractEntity";
 import DagreLayout from "../canvas_widget/DagreLayout";
@@ -37,6 +37,7 @@ import {
   EntityManagerInstance as EntityManager,
   HistoryManagerInstance as HistoryManager,
 } from "./Manager";
+import { BrowserJsPlumbInstance } from "@jsplumb/browser-ui";
 
 /**
  * Canvas
@@ -602,15 +603,21 @@ export default class Canvas extends AbstractCanvas {
      * @param {operations.ot.NodeAddOperation} operation
      */
     var init = function () {
+      const jsPlumbInstance = BrowserJsPlumbInstance.newInstance({
+        container: $node,
+      });
+
+      window.jsPlumbInstance = jsPlumbInstance;
+
       var $canvasFrame = _$node.parent();
 
       that.addTool(MoveTool.TYPE, new MoveTool());
 
-      jsPlumb.importDefaults({
+      jsPlumbInstance.importDefaults({
         ConnectionsDetachable: false,
       });
 
-      jsPlumb.Defaults.Container = _$node;
+      jsPlumbInstance.Defaults.Container = _$node;
 
       _$node.css({
         width: _canvasWidth,

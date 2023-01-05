@@ -4,7 +4,7 @@ import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.9.2/jquery.contextMenu.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import "../lib/jquery.transformable-PATCHED";
-import "jsplumb/dist/js/jsPlumb-2.0.0.js";
+import { FlowchartConnector } from "@jsplumb/connector-flowchart";
 
 import { CONFIG } from "../config";
 import { default as loadHTML } from "../html.template.loader";
@@ -1163,7 +1163,7 @@ export class AbstractEdge extends AbstractEntity {
         target: _appearance.target.get$node(),
         paintStyle: { strokeStyle: "#aaaaaa", lineWidth: 2 },
         endpoint: "Blank",
-        connector: ["Flowchart", { gap: 0 }],
+        connector: { type: FlowchartConnector.type },
         anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
         overlays: [
           [

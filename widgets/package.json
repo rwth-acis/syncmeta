@@ -16,6 +16,9 @@
   },
   "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
+    "@jsplumb/browser-ui": "^5.13.2",
+    "@jsplumb/connector-flowchart": "^5.13.2",
+    "@jsplumb/core": "^5.13.2",
     "@types/jquery": "^3.5.14",
     "ace-builds": "^1.12.5",
     "async": "^3.2.4",
