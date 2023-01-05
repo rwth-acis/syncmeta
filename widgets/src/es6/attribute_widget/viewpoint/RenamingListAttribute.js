@@ -83,6 +83,7 @@ class RenamingListAttribute extends AbstractAttribute {
       var ymap = nodesMap.get(subjectEntity.getEntityId());
       setTimeout(function () {
         var ytext = ymap.get(attribute.getKey().getEntityId());
+        if (!ytext) throw new Error("ytext is undefined");
         attribute.getKey().registerYType(ytext);
         var ytext2 = ymap.get(attribute.getRef().getEntityId());
         attribute.getRef().registerYType(ytext2);

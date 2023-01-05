@@ -47,7 +47,7 @@ import {
  * @param {jQuery} $node jquery Selector of canvas node
  */
 export default class Canvas extends AbstractCanvas {
-  constructor($node) {
+  constructor($node, y = window.y) {
     super($node);
     var that = this;
 
@@ -97,7 +97,6 @@ export default class Canvas extends AbstractCanvas {
      * Inter widget communication wrapper
      * @type {Object}
      */
-    y = y || window.y;
     var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN, y);
 
     /**

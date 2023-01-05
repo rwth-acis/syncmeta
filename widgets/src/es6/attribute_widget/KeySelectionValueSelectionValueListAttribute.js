@@ -89,6 +89,7 @@ class KeySelectionValueSelectionValueListAttribute extends AbstractAttribute {
       //this is strange if i call processAttributeAddOperation for this time ytext is undefined, but it shouldn't
       setTimeout(function () {
         var ytext = ymap.get(attribute.getKey().getEntityId());
+        if (!ytext) throw new Error("ytext is undefined");
         attribute.getKey().registerYType(ytext);
       }, 400);
       that.addAttribute(attribute);
