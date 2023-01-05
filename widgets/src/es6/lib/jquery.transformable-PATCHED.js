@@ -2382,6 +2382,7 @@ $(document).ready(function() {
   };
 
   function setOffset(options) {
+    let curCSSTop, curCSSLeft, calculatePosition, props, curPosition;
     var elem = this[0];
     var position = jQuery.css(elem, "position");
 
@@ -2535,6 +2536,7 @@ $(document).ready(function() {
   };
 
   jQuery.fn.matrixToArray = function (returnFalse) {
+    let m;
     if (this.eq(0).is("body")) return [1, 0, 0, 1, 0, 0];
     var im = [1, 0, 0, 1, 0, 0],
       transform = this.eq(0).css("transform");
