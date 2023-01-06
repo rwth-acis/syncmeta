@@ -17,6 +17,7 @@
   "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
     "@jsplumb/browser-ui": "^5.13.2",
+    "@jsplumb/connector-bezier": "^5.13.2",
     "@jsplumb/connector-flowchart": "^5.13.2",
     "@jsplumb/core": "^5.13.2",
     "@types/jquery": "^3.5.14",

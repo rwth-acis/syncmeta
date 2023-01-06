@@ -41,6 +41,7 @@ import LogicalConjunctions from "./viewpoint/LogicalConjunctions";
 import LogicalOperator from "./viewpoint/LogicalOperator";
 import RenamingListAttribute from "./viewpoint/RenamingListAttribute";
 import { StraightConnector } from "@jsplumb/core";
+import { BezierConnector } from "@jsplumb/connector-bezier";
 
 const viewrelationshipNodeHtml = await loadHTML(
   "../../templates/canvas_widget/viewrelationship_node.html",
@@ -150,9 +151,18 @@ const setPropertyNodeHtml = await loadHTML(
 );
 
 var shapes = {
-  straight: ["Straight", { gap: 0 }],
-  curved: ["Bezier", { gap: 0 }],
-  segmented: ["Flowchart", { gap: 0 }],
+  straight: {
+    type: StraightConnector.type,
+    options: { gap: 0 },
+  },
+  curved: {
+    type: BezierConnector.type,
+    options: { gap: 0 },
+  },
+  segmented: {
+    type: FlowchartConnector.type,
+    options: { gap: 0 },
+  },
 };
 
 var $colorTestElement = $("<div></div>");
