@@ -1172,7 +1172,7 @@ export class AbstractEdge extends AbstractEntity {
         source: _appearance.source.get$node().get(0),
         target: _appearance.target.get$node().get(0),
         paintStyle: { fill: "#aaaaaa", outlineWidth: 2 },
-        endpoint: { type: "Blank" },
+        endpoint: "Blank",
         connector: { type: FlowchartConnector.type },
         anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
         overlays: [
@@ -2859,7 +2859,7 @@ export class AbstractNode extends AbstractEntity {
       _$node.addClass("source");
       window.jsPlumbInstance.makeSource(_$node, {
         connectorPaintStyle: { fill: "#aaaaaa", strokeWidth: 2 },
-        endpoint: { type: "Blank" },
+        endpoint: "Blank",
         anchor: _anchorOptions,
         //maxConnections:1,
         uniqueEndpoint: false,
@@ -2882,7 +2882,7 @@ export class AbstractNode extends AbstractEntity {
       _$node.addClass("target");
       window.jsPlumbInstance.makeTarget(_$node, {
         isTarget: false,
-        endpoint: { type: "Blank" },
+        endpoint: "Blank",
         anchor: _anchorOptions,
         uniqueEndpoint: false,
         //maxConnections:1,
@@ -5615,7 +5615,7 @@ export function makeNode(type, $shape, anchors, attributes, jsplumb) {
         _$node.addClass("source");
         window.jsPlumbInstance.makeSource(_$node, {
           connectorPaintStyle: { fill: "#aaaaaa", lineWidth: 2 },
-          endpoint: { type: "Blank" },
+          endpoint: "Blank",
           anchor: _anchorOptions,
           //maxConnections:1,
           uniqueEndpoint: false,
@@ -5644,7 +5644,7 @@ export function makeNode(type, $shape, anchors, attributes, jsplumb) {
         window.jsPlumbInstance.makeTarget(_$node, {
           isTarget: false,
           uniqueEndpoint: false,
-          endpoint: { type: "Blank" },
+          endpoint: "Blank",
           anchor: _anchorOptions,
           //maxConnections:1,
           deleteEndpointsOnDetach: true,
@@ -7070,7 +7070,7 @@ export function makeEdge(
           source: source.get$node().get(0),
           target: target.get$node().get(0),
           paintStyle: that.getDefaultPaintStyle(),
-          endpoint: { type: "Blank" },
+          endpoint: "Blank",
           anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
           connector: shape,
           overlays: overlays,
@@ -8139,7 +8139,7 @@ export class GeneralisationEdge extends AbstractEdge {
           stroke: "#aaaaaa",
           strokeWidth: 3,
         },
-        endpoint: { type: "Blank" },
+        endpoint: "Blank",
         anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
         connector: {
           type: StraightConnector.type,
@@ -8276,7 +8276,7 @@ export class UniDirAssociationEdge extends AbstractEdge {
           stroke: "#aaaaaa",
           strokeWidth: 3,
         },
-        endpoint: { type: "Blank" },
+        endpoint: "Blank",
         anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
         connector: {
           type: StraightConnector.type,
@@ -8434,7 +8434,7 @@ export class BiDirAssociationEdge extends AbstractEdge {
           stroke: "#aaaaaa",
           strokeWidth: 2,
         },
-        endpoint: { type: "Blank" },
+        endpoint: "Blank",
         anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
         connector: {
           type: StraightConnector.type,
