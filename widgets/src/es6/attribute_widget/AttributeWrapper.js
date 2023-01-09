@@ -239,10 +239,6 @@ class AttributeWrapper {
                   switch (nodeKey) {
                     case "jabberId": {
                       var map = nodeEvent.currentTarget;
-                      const value = nodeEvent.currentTarget.get(nodeKey);
-                      if (!value) {
-                        throw new Error("nodeevent value is null");
-                      }
                       nodeAddCallback(
                         new NodeAddOperation(
                           map.get("id"),
@@ -256,7 +252,7 @@ class AttributeWrapper {
                           map.get("json"),
                           null,
                           null,
-                          value
+                          nodeKey
                         )
                       );
                       break;
@@ -380,10 +376,7 @@ class AttributeWrapper {
                     switch (edgeKey) {
                       case "jabberId": {
                         var map = edgeEvent.currentTarget;
-                        const value = edgeEvent.currentTarget.get(edgeKey);
-                        if (!value) {
-                          throw new Error("edgeevent value is null");
-                        }
+
                         edgeAddCallback(
                           new EdgeAddOperation(
                             map.get("id"),
@@ -393,7 +386,7 @@ class AttributeWrapper {
                             null,
                             null,
                             null,
-                            value
+                            edgeKey
                           )
                         );
                         break;
