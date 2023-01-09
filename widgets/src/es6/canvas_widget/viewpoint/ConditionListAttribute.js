@@ -314,8 +314,8 @@ class ConditionListAttribute extends AbstractAttribute {
             var data = event.currentTarget.get(key);
             switch (change.action) {
               case "add": {
-                var yUserId = event.object.map[key][0];
-                if (yUserId === y.clientID) return;
+                // var yUserId = event.object.map[key][0];
+                // if (yUserId === y.clientID) return;
                 operation = new AttributeAddOperation(
                   key.replace(/\[\w*\]/g, ""),
                   that.getEntityId(),

@@ -40,7 +40,7 @@ class GhostEdge {
           outlineWidth: 2,
           dashstyle: "",
         },
-        endpoint: { type: "Blank" },
+        endpoint: "Dot",
         anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
         connector: edgeFunction.getShape(),
         overlays: overlays,
