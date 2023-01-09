@@ -5,6 +5,11 @@ import "https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.9.2/jquery.c
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import "../lib/jquery.transformable-PATCHED";
 import { FlowchartConnector } from "@jsplumb/connector-flowchart";
+import {
+  EVENT_DRAG_START,
+  EVENT_DRAG_MOVE,
+  EVENT_DRAG_STOP,
+} from "@jsplumb/browser-ui";
 
 import { CONFIG } from "../config";
 import { default as loadHTML } from "../html.template.loader";
@@ -164,7 +169,6 @@ var shapes = {
     options: { gap: 0 },
   },
 };
-
 
 function HistoryManager() {
   var bufferSize = 20;
@@ -872,7 +876,7 @@ export class AbstractEdge extends AbstractEntity {
             $e = $e.add(overlays[i].getElement());
           }
         }
-      }
+      } else throw new Error("jsPlumbConnection is null");
       return $e;
     };
 
@@ -1149,7 +1153,7 @@ export class AbstractEdge extends AbstractEntity {
               );
           }
         }
-      }
+      } else throw new Error("jsPlumbConnection is null");
     };
 
     /**
@@ -1172,7 +1176,7 @@ export class AbstractEdge extends AbstractEntity {
         source: _appearance.source.get$node().get(0),
         target: _appearance.target.get$node().get(0),
         paintStyle: { fill: "#aaaaaa", outlineWidth: 2 },
-        endpoint: "Blank",
+        endpoint: "Dot",
         connector: { type: FlowchartConnector.type },
         anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
         overlays: [
@@ -1233,7 +1237,7 @@ export class AbstractEdge extends AbstractEntity {
             $(overlays[i].getElement()).find(".fixed").each(makeBold);
           }
         }
-      }
+      } else throw new Error("jsPlumbConnection is null");
     };
 
     /**
@@ -1271,6 +1275,7 @@ export class AbstractEdge extends AbstractEntity {
         paintStyle.strokeStyle = color;
         paintStyle.lineWidth = 4;
         if (_jsPlumbConnection) _jsPlumbConnection.setPaintStyle(paintStyle);
+        else throw new Error("jsPlumbConnection is null");
       }
     };
 
@@ -1280,7 +1285,7 @@ export class AbstractEdge extends AbstractEntity {
     this.unhighlight = function () {
       if (_jsPlumbConnection) {
         _jsPlumbConnection.setPaintStyle(_defaultPaintStyle);
-      }
+      } else throw new Error("jsPlumbConnection is null");
     };
 
     /**
@@ -1336,7 +1341,7 @@ export class AbstractEdge extends AbstractEntity {
                    minWidth: 40,
                    maxWidth: 100
                    }).trigger("blur");*/
-      }
+      } else throw new Error("jsPlumbConnection is null");
 
       if (id) {
         // view_only is used by the CAE and allows to show a model in the Canvas which is not editable
@@ -1386,7 +1391,7 @@ export class AbstractEdge extends AbstractEntity {
           .find("input")
           .prop("disabled", true)
           .css("pointerEvents", "none");
-      }
+      } else throw new Error("jsPlumbConnection is null");
 
       //$("."+id).contextMenu(false);
     };
@@ -2701,107 +2706,6 @@ export class AbstractNode extends AbstractEntity {
             //_canvas.showGuidanceBox();
           },
         })
-
-        //Enable Node Dragging
-        .draggable({
-          containment: "parent",
-          start: function (ev, ui) {
-            originalPos.top = ui.position.top;
-            originalPos.left = ui.position.left;
-
-            lastDragPos.top = ui.position.top;
-            lastDragPos.left = ui.position.left;
-
-            //ui.position.top = 0;
-            //ui.position.left = 0;
-            _canvas.select(that);
-            _canvas.hideGuidanceBox();
-            _$node.css({ opacity: 0.5 });
-            _$node.resizable("disable");
-            drag = false;
-            _$node.draggable("option", "grid", ev.ctrlKey ? [20, 20] : "");
-          },
-          drag: function (ev, ui) {
-            // ui.position.left = Math.round(ui.position.left  / _canvas.getZoom());
-            // ui.position.top = Math.round(ui.position.top / _canvas.getZoom());
-            var offsetX = Math.round(
-              (ui.position.left - lastDragPos.left) / _canvas.getZoom()
-            );
-            var offsetY = Math.round(
-              (ui.position.top - lastDragPos.top) / _canvas.getZoom()
-            );
-
-            function setChildPosition(node) {
-              if (node.getContainment()) {
-                _.each(node.getOutgoingEdges(), function (edge) {
-                  $("#" + edge.getTarget().getEntityId()).offset({
-                    top:
-                      $("#" + edge.getTarget().getEntityId()).offset().top +
-                      offsetY,
-                    left:
-                      $("#" + edge.getTarget().getEntityId()).offset().left +
-                      offsetX,
-                  });
-                  setChildPosition(edge.getTarget());
-                });
-              }
-            }
-
-            setChildPosition(that);
-
-            lastDragPos.top = ui.position.top;
-            lastDragPos.left = ui.position.left;
-
-            if (drag) repaint();
-            drag = true;
-
-            _canvas.hideGuidanceBox();
-            _$node.draggable("option", "grid", ev.ctrlKey ? [20, 20] : "");
-          },
-          stop: function (ev, ui) {
-            _$node.css({ opacity: "" });
-            _$node.resizable("enable");
-            var id = _$node.attr("id");
-            //_$node.css({top: originalPos.top / _canvas.getZoom(), left: originalPos.left / _canvas.getZoom()});
-            var offsetX = Math.round(
-              (ui.position.left - originalPos.left) / _canvas.getZoom()
-            );
-            var offsetY = Math.round(
-              (ui.position.top - originalPos.top) / _canvas.getZoom()
-            );
-
-            var operation = new NodeMoveOperation(
-              that.getEntityId(),
-              offsetX,
-              offsetY
-            );
-            that.propagateNodeMoveOperation(operation);
-
-            function propagateChildPosition(node) {
-              if (node.getContainment()) {
-                _.each(node.getOutgoingEdges(), function (edge) {
-                  var operation = new NodeMoveOperation(
-                    edge.getTarget().getEntityId(),
-                    offsetX,
-                    offsetY
-                  );
-                  edge.getTarget().propagateNodeMoveOperation(operation);
-                  propagateChildPosition(edge.getTarget());
-                });
-              }
-            }
-
-            propagateChildPosition(that);
-
-            //Avoid node selection on drag stop
-            _$node.draggable("option", "grid", "");
-            _canvas.showGuidanceBox();
-            $(ev.toElement).one("click", function (ev) {
-              ev.stopImmediatePropagation();
-            });
-          },
-        })
-
         //Enable Node Rightclick menu
         .contextMenu(true)
 
@@ -2814,6 +2718,88 @@ export class AbstractNode extends AbstractEntity {
         .find("input")
         .prop("disabled", false)
         .css("pointerEvents", "");
+
+      jsPlumbInstance.bind(EVENT_DRAG_START, function (params) {
+        _canvas.select(that);
+        _canvas.hideGuidanceBox();
+        _$node.css({ opacity: 0.5 });
+        _$node.resizable("disable");
+        drag = false;
+      });
+
+      jsPlumbInstance.bind(EVENT_DRAG_STOP, function (params) {
+        _$node.css({ opacity: "" });
+        _$node.resizable("enable");
+        // var id = _$node.attr("id");
+        // //_$node.css({top: originalPos.top / _canvas.getZoom(), left: originalPos.left / _canvas.getZoom()});
+        // var offsetX = Math.round(
+        //   (ui.position.left - originalPos.left) / _canvas.getZoom()
+        // );
+        // var offsetY = Math.round(
+        //   (ui.position.top - originalPos.top) / _canvas.getZoom()
+        // );
+
+        // var operation = new NodeMoveOperation(
+        //   that.getEntityId(),
+        //   offsetX,
+        //   offsetY
+        // );
+        // that.propagateNodeMoveOperation(operation);
+
+        // function propagateChildPosition(node) {
+        //   if (node.getContainment()) {
+        //     _.each(node.getOutgoingEdges(), function (edge) {
+        //       var operation = new NodeMoveOperation(
+        //         edge.getTarget().getEntityId(),
+        //         offsetX,
+        //         offsetY
+        //       );
+        //       edge.getTarget().propagateNodeMoveOperation(operation);
+        //       propagateChildPosition(edge.getTarget());
+        //     });
+        //   }
+        // }
+
+        // propagateChildPosition(that);
+
+        //Avoid node selection on drag stop
+        _canvas.showGuidanceBox();
+      });
+
+      jsPlumbInstance.bind(EVENT_DRAG_MOVE, function (params) {
+        // var offsetX = Math.round(
+        //   (ui.position.left - lastDragPos.left) / _canvas.getZoom()
+        // );
+        // var offsetY = Math.round(
+        //   (ui.position.top - lastDragPos.top) / _canvas.getZoom()
+        // );
+
+        // function setChildPosition(node) {
+        //   if (node.getContainment()) {
+        //     _.each(node.getOutgoingEdges(), function (edge) {
+        //       $("#" + edge.getTarget().getEntityId()).offset({
+        //         top:
+        //           $("#" + edge.getTarget().getEntityId()).offset().top +
+        //           offsetY,
+        //         left:
+        //           $("#" + edge.getTarget().getEntityId()).offset().left +
+        //           offsetX,
+        //       });
+        //       setChildPosition(edge.getTarget());
+        //     });
+        //   }
+        // }
+
+        // setChildPosition(that);
+
+        // lastDragPos.top = ui.position.top;
+        // lastDragPos.left = ui.position.left;
+
+        if (drag) repaint();
+        drag = true;
+
+        _canvas.hideGuidanceBox();
+      });
 
       // view_only is used by the CAE and allows to show a model in the Canvas which is not editable
       // therefore, the nodes should not be draggable and their context menu should be disabled
@@ -2830,23 +2816,18 @@ export class AbstractNode extends AbstractEntity {
      */
     this.unbindMoveToolEvents = function () {
       //Disable Node Selection
+      //$canvas.find(".node.ui-draggable").draggable( "option", "disabled", true);
       _$node
         .off("click")
-
-        //$canvas.find(".node.ui-draggable").draggable( "option", "disabled", true);
         //Disable Node Resizing
         .resizable()
         .resizable("destroy")
-
         //Disable Node Draggin
         .draggable()
         .draggable("destroy")
-
         //Disable Node Rightclick Menu
         .contextMenu(false)
-
         .transformable("destroy")
-
         .find("input")
         .prop("disabled", true)
         .css("pointerEvents", "none");
@@ -2857,9 +2838,9 @@ export class AbstractNode extends AbstractEntity {
      */
     this.makeSource = function () {
       _$node.addClass("source");
-      window.jsPlumbInstance.makeSource(_$node, {
+      window.jsPlumbInstance.addSourceSelector(_$node.get(0), {
         connectorPaintStyle: { fill: "#aaaaaa", strokeWidth: 2 },
-        endpoint: "Blank",
+        endpoint: "Dot",
         anchor: _anchorOptions,
         //maxConnections:1,
         uniqueEndpoint: false,
@@ -2882,7 +2863,7 @@ export class AbstractNode extends AbstractEntity {
       _$node.addClass("target");
       window.jsPlumbInstance.makeTarget(_$node, {
         isTarget: false,
-        endpoint: "Blank",
+        endpoint: "Dot",
         anchor: _anchorOptions,
         uniqueEndpoint: false,
         //maxConnections:1,
@@ -5613,9 +5594,9 @@ export function makeNode(type, $shape, anchors, attributes, jsplumb) {
        */
       this.makeSource = function () {
         _$node.addClass("source");
-        window.jsPlumbInstance.makeSource(_$node, {
+        window.jsPlumbInstance.addSourceSelector(_$node.get(0), {
           connectorPaintStyle: { fill: "#aaaaaa", lineWidth: 2 },
-          endpoint: "Blank",
+          endpoint: "Dot",
           anchor: _anchorOptions,
           //maxConnections:1,
           uniqueEndpoint: false,
@@ -5644,7 +5625,7 @@ export function makeNode(type, $shape, anchors, attributes, jsplumb) {
         window.jsPlumbInstance.makeTarget(_$node, {
           isTarget: false,
           uniqueEndpoint: false,
-          endpoint: "Blank",
+          endpoint: "Dot",
           anchor: _anchorOptions,
           //maxConnections:1,
           deleteEndpointsOnDetach: true,
@@ -7070,7 +7051,7 @@ export function makeEdge(
           source: source.get$node().get(0),
           target: target.get$node().get(0),
           paintStyle: that.getDefaultPaintStyle(),
-          endpoint: "Blank",
+          endpoint: "Dot",
           anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
           connector: shape,
           overlays: overlays,
@@ -7083,7 +7064,9 @@ export function makeEdge(
 
         source.addOutgoingEdge(this);
         target.addIngoingEdge(this);
-        window.jsPlumbInstance.connect(connectOptions);
+        this.setJsPlumbConnection(
+          window.jsPlumbInstance.connect(connectOptions)
+        );
 
         this.repaintOverlays();
         _.each(EntityManagerInstance.getEdges(), function (e) {
@@ -8139,7 +8122,7 @@ export class GeneralisationEdge extends AbstractEdge {
           stroke: "#aaaaaa",
           strokeWidth: 3,
         },
-        endpoint: "Blank",
+        endpoint: "Dot",
         anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
         connector: {
           type: StraightConnector.type,
@@ -8180,7 +8163,7 @@ export class GeneralisationEdge extends AbstractEdge {
 
       source.addOutgoingEdge(this);
       target.addIngoingEdge(this);
-      window.jsPlumbInstance.connect(connectOptions);
+      _jsPlumbConnection = window.jsPlumbInstance.connect(connectOptions);
 
       this.repaintOverlays();
       _.each(EntityManagerInstance.getEdges(), function (e) {
@@ -8276,7 +8259,7 @@ export class UniDirAssociationEdge extends AbstractEdge {
           stroke: "#aaaaaa",
           strokeWidth: 3,
         },
-        endpoint: "Blank",
+        endpoint: "Dot",
         anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
         connector: {
           type: StraightConnector.type,
@@ -8317,7 +8300,7 @@ export class UniDirAssociationEdge extends AbstractEdge {
 
       source.addOutgoingEdge(this);
       target.addIngoingEdge(this);
-      window.jsPlumbInstance.connect(connectOptions);
+      this.setJsPlumbConnection(window.jsPlumbInstance.connect(connectOptions));
 
       this.repaintOverlays();
       _.each(EntityManagerInstance.getEdges(), function (e) {
@@ -8434,7 +8417,7 @@ export class BiDirAssociationEdge extends AbstractEdge {
           stroke: "#aaaaaa",
           strokeWidth: 2,
         },
-        endpoint: "Blank",
+        endpoint: "Dot",
         anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
         connector: {
           type: StraightConnector.type,
@@ -8461,7 +8444,7 @@ export class BiDirAssociationEdge extends AbstractEdge {
 
       source.addOutgoingEdge(this);
       target.addIngoingEdge(this);
-      window.jsPlumbInstance.connect(connectOptions);
+      this.setJsPlumbConnection(window.jsPlumbInstance.connect(connectOptions));
 
       this.repaintOverlays();
       _.each(EntityManagerInstance.getEdges(), function (e) {
