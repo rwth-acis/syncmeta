@@ -165,7 +165,6 @@ var shapes = {
   },
 };
 
-var $colorTestElement = $("<div></div>");
 
 function HistoryManager() {
   var bufferSize = 20;

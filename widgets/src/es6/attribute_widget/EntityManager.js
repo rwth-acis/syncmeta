@@ -343,6 +343,9 @@ function EntityManager() {
      * @returns {attribute_widget.AbstractEdge}
      */
     createEdge: function (type, id, source, target) {
+      if (!source || !target) {
+        throw new Error("Source or target node is not defined");
+      }
       var edge;
 
       if (viewId && viewEdgeTypes.hasOwnProperty(type)) {
@@ -351,7 +354,7 @@ function EntityManager() {
         edge = new edgeTypes[type](id, source, target);
       }
       source.addOutgoingEdge(edge);
-      target?.addIngoingEdge(edge);
+      target.addIngoingEdge(edge);
       _edges[id] = edge;
 
       return edge;
@@ -729,6 +732,7 @@ function EntityManager() {
       return _layer;
     },
     init: function (mm) {
+      console.log("init model types for attribute widget");
       metamodel = mm;
       if (metamodel && metamodel.hasOwnProperty("nodes")) {
         nodeTypes = _initNodeTypes(metamodel);
@@ -762,6 +766,12 @@ function EntityManager() {
         relations[UniDirAssociationEdge.TYPE] = UniDirAssociationEdge.RELATIONS;
         relations[GeneralisationEdge.TYPE] = GeneralisationEdge.RELATIONS;
       }
+    },
+    getEdges: function () {
+      return _edges;
+    },
+    getNodes: function () {
+      return _nodes;
     },
   };
 }
