@@ -78,7 +78,7 @@ class KeySelectionValueListAttribute extends AbstractAttribute {
         var ytext = ymap.get(attribute.getKey().getEntityId());
         if (!ytext) throw new Error("ytext is undefined");
         attribute.getKey().registerYType(ytext);
-      }, 400);
+      });
       that.addAttribute(attribute);
       if (_$node.find(".list").find("#" + attribute.getEntityId()).length === 0)
         _$node.find(".list").append(attribute.get$node());

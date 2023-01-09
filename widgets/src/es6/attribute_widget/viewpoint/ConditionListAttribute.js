@@ -92,7 +92,7 @@ class ConditionListAttribute extends AbstractAttribute {
         var ytext = ymap.get(attribute.getKey().getEntityId());
         if (!ytext) throw new Error("ytext is undefined");
         attribute.getKey().registerYType(ytext);
-      }, 400);
+      });
       _$node.find(".list .operator2").show();
       _$node.find(".list").append(attribute.get$node());
     };

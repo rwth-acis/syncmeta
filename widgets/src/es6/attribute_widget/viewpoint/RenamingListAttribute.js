@@ -29,8 +29,7 @@ const listAttributeHtml = await loadHTML(
  */
 class RenamingListAttribute extends AbstractAttribute {
   constructor(id, name, subjectEntity, options) {
-
-    super( id, name, subjectEntity);
+    super(id, name, subjectEntity);
     var that = this;
 
     /**
@@ -87,7 +86,7 @@ class RenamingListAttribute extends AbstractAttribute {
         attribute.getKey().registerYType(ytext);
         var ytext2 = ymap.get(attribute.getRef().getEntityId());
         attribute.getRef().registerYType(ytext2);
-      }, 400);
+      });
     };
 
     /**
