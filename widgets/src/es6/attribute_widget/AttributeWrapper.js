@@ -151,11 +151,19 @@ class AttributeWrapper {
             json
           );
         } else {
+          const source = EntityManager.findNode(operation.getSource()),
+            target = EntityManager.findNode(operation.getTarget());
+          if (!source || !target) {
+            throw new Error(
+              "Source or target node not found for edge " +
+                operation.getEntityId()
+            );
+          }
           edge = EntityManager.createEdge(
             type,
             operation.getEntityId(),
-            EntityManager.findNode(operation.getSource()),
-            EntityManager.findNode(operation.getTarget())
+            source,
+            target
           );
         }
         edge.addToWrapper(that);
