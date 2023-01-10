@@ -1834,15 +1834,17 @@ export default class Canvas extends AbstractCanvas {
                 node.remoteNodeDeleteCallback(new NodeDeleteOperation(key));
               break;
             }
-
             case "add": {
-              // var yUserId = event.object.map[key][0];
-              // if (yUserId === y.clientID) return;
-              //var map = event.value;
               const nodesMap = y.getMap("nodes");
               var map = nodesMap.get(key);
+              let triggeredByMe = false;
               map.observe(function (nodeEvent) {
+                if (triggeredByMe) return;
+                triggeredByMe = eventWasTriggeredByMe(nodeEvent);
+                if (triggeredByMe) return;
+
                 const array = Array.from(nodeEvent.changes.keys.entries());
+
                 array.forEach(([nodeKey, change]) => {
                   const value = nodeEvent.currentTarget.get(nodeKey);
                   switch (nodeKey) {
@@ -1893,4 +1895,22 @@ export default class Canvas extends AbstractCanvas {
       that.registerCallbacks();
     }
   }
+}
+
+/**
+ * Function to check if the event was triggered by the current user
+ * @param {Y.Event} yEvent Y.Event
+ * @returns  {boolean} true if the event was triggered by the current user
+ */
+function eventWasTriggeredByMe(yEvent) {
+  const array = Array.from(yEvent.changes.keys.keys());
+  if (!array) return false;
+  const modifiedByKey = array.find((key) => key === "modifiedBy");
+  if (
+    modifiedByKey &&
+    yEvent.currentTarget.get(modifiedByKey) === window.y.clientID
+  )
+    // modified by us
+    return true;
+  return false;
 }
