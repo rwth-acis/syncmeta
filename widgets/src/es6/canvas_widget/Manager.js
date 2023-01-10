@@ -457,70 +457,70 @@ var _initNodeTypes = function (vls) {
             anchors = JSON.parse(node.shape.customAnchors);
           }
           if (!node.shape.customAnchors instanceof Array) {
-            anchors = [
-              "Perimeter",
-              {
+            anchors = {
+              type: "Perimeter",
+              options: {
                 shape: "Rectangle",
                 anchorCount: 10,
               },
-            ];
+            };
           }
         } catch (e) {
-          anchors = [
-            "Perimeter",
-            {
+          anchors = {
+            type: "Perimeter",
+            options: {
               shape: "Rectangle",
               anchorCount: 10,
             },
-          ];
+          };
         }
       } else {
         switch (node.shape.shape) {
           case "circle":
-            anchors = [
-              "Perimeter",
-              {
+            anchors = {
+              type: "Perimeter",
+              options: {
                 shape: "Circle",
                 anchorCount: 10,
               },
-            ];
+            };
             break;
           case "diamond":
-            anchors = [
-              "Perimeter",
-              {
+            anchors = {
+              type: "Perimeter",
+              options: {
                 shape: "Diamond",
                 anchorCount: 10,
               },
-            ];
+            };
             break;
           case "rounded_rectangle":
-            anchors = [
-              "Perimeter",
-              {
+            anchors = {
+             type: "Perimeter",
+              options:{
                 shape: "Rectangle",
                 anchorCount: 10,
               },
-            ];
+            };
             break;
           case "triangle":
-            anchors = [
-              "Perimeter",
-              {
+            anchors = {
+             type: "Perimeter",
+             options: {
                 shape: "Triangle",
                 anchorCount: 10,
               },
-            ];
+            };
             break;
           default:
           case "rectangle":
-            anchors = [
-              "Perimeter",
-              {
+            anchors = {
+             type: "Perimeter",
+             options: {
                 shape: "Rectangle",
                 anchorCount: 10,
               },
-            ];
+            };
             break;
         }
       }
@@ -1474,10 +1474,12 @@ export class AbstractNode extends AbstractEntity {
     }
     if (y) {
       const nodesMap = y.getMap("nodes");
+
       if (nodesMap.has(id)) {
         _ymap = nodesMap.get(id);
       } else {
         _ymap = nodesMap.set(id, new Y.Map());
+        _ymap.set("modifiedBy", window.y.clientID);
         _ymap.set("left", left);
         _ymap.set("top", top);
         _ymap.set("width", width);
@@ -1486,6 +1488,7 @@ export class AbstractNode extends AbstractEntity {
         _ymap.set("containment", containment);
         _ymap.set("type", type);
         _ymap.set("id", id);
+
         if (json) _ymap.set("json", json);
         if (_iwcw.getUser().globalId !== -1)
           _ymap.set("jabberId", _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
@@ -6903,35 +6906,35 @@ export function makeEdge(
         if (overlay) {
           switch (overlayPosition) {
             case "top":
-              overlays.push([
-                "Custom",
-                {
+              overlays.push({
+                type: "Custom",
+                options: {
                   create: makeOverlayFunction(overlay),
                   location: 0.9,
                   id: "label",
                 },
-              ]);
+              });
               break;
             case "bottom":
-              overlays.push([
-                "Custom",
-                {
+              overlays.push({
+                type: "Custom",
+                options: {
                   create: makeOverlayFunction(overlay),
                   location: 0.1,
                   id: "label",
                 },
-              ]);
+              });
               break;
             default:
             case "center":
-              overlays.push([
-                "Custom",
-                {
+              overlays.push({
+                type: "Custom",
+                options: {
                   create: makeOverlayFunction(overlay),
                   location: 0.5,
                   id: "label",
                 },
-              ]);
+              });
               break;
           }
         }
@@ -6982,43 +6985,43 @@ export function makeEdge(
 
             switch (attribute.position) {
               case "top":
-                overlays.push([
-                  "Custom",
-                  {
+                overlays.push({
+                  type: "Custom",
+                  options: {
                     create: makeAttributeOverlayFunction(attrObj[attributeId]),
                     location: 1,
                     id: "label " + attributeId,
                   },
-                ]);
+                });
                 break;
               case "center":
-                overlays.push([
-                  "Custom",
-                  {
+                overlays.push({
+                  type: "Custom",
+                  options: {
                     create: makeAttributeOverlayFunction(attrObj[attributeId]),
                     location: 0.5,
                     id: "label " + attributeId,
                   },
-                ]);
+                });
                 break;
               case "bottom":
-                overlays.push([
-                  "Custom",
-                  {
+                overlays.push({
+                  type: "Custom",
+                  options: {
                     create: makeAttributeOverlayFunction(attrObj[attributeId]),
                     location: 0,
                     id: "label " + attributeId,
                   },
-                ]);
+                });
                 break;
             }
           }
         }
         that.setAttributes(attrObj);
 
-        overlays.push([
-          "Custom",
-          {
+        overlays.push({
+          type: "Custom",
+          options: {
             create: function () {
               that.get$overlay().hide().find(".type").addClass(shapeType);
               return that.get$overlay().get(0);
@@ -7026,7 +7029,7 @@ export function makeEdge(
             location: 0.5,
             id: "label",
           },
-        ]);
+        });
 
         if (overlay) {
           that
@@ -7121,42 +7124,42 @@ export function makeEdge(
         if (overlay) {
           switch (overlayPosition) {
             case "top":
-              overlays.push([
-                "Custom",
-                {
+              overlays.push({
+                type: "Custom",
+                options: {
                   create: makeOverlayFunction(overlay),
                   location: 0.9,
                   id: "label",
                 },
-              ]);
+              });
               break;
             case "bottom":
-              overlays.push([
-                "Custom",
-                {
+              overlays.push({
+                type: "Custom",
+                options: {
                   create: makeOverlayFunction(overlay),
                   location: 0.1,
                   id: "label",
                 },
-              ]);
+              });
               break;
             default:
             case "center":
-              overlays.push([
-                "Custom",
-                {
+              overlays.push({
+                type: "Custom",
+                options: {
                   create: makeOverlayFunction(overlay),
                   location: 0.5,
                   id: "label",
                 },
-              ]);
+              });
               break;
           }
         }
 
-        overlays.push([
-          "Custom",
-          {
+        overlays.push({
+          type: "Custom",
+          options: {
             create: function () {
               that.get$overlay().hide().find(".type").addClass(shapeType);
               return that.get$overlay().get(0);
@@ -7164,7 +7167,7 @@ export function makeEdge(
             location: 0.5,
             id: "label",
           },
-        ]);
+        });
 
         if (overlay) {
           that
@@ -7178,40 +7181,40 @@ export function makeEdge(
             var attribute = attributes[attributeId];
             switch (attribute.position) {
               case "top":
-                overlays.push([
-                  "Custom",
-                  {
+                overlays.push({
+                  type: "Custom",
+                  options: {
                     create: makeAttributeOverlayFunction(
                       that.getAttribute(attributeId)
                     ),
                     location: 1,
                     id: "label " + attributeId,
                   },
-                ]);
+                });
                 break;
               case "center":
-                overlays.push([
-                  "Custom",
-                  {
+                overlays.push({
+                  type: "Custom",
+                  options: {
                     create: makeAttributeOverlayFunction(
                       that.getAttribute(attributeId)
                     ),
                     location: 0.5,
                     id: "label " + attributeId,
                   },
-                ]);
+                });
                 break;
               case "bottom":
-                overlays.push([
-                  "Custom",
-                  {
+                overlays.push({
+                  type: "Custom",
+                  options: {
                     create: makeAttributeOverlayFunction(
                       that.getAttribute(attributeId)
                     ),
                     location: 0,
                     id: "label " + attributeId,
                   },
-                ]);
+                });
                 break;
             }
           }

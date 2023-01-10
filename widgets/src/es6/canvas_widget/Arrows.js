@@ -1,10 +1,10 @@
 
     export default  function(color){
         return {
-          //"bidirassociation": [], //No overlays for bi-dir-association
-          unidirassociation: [
-            "Arrow",
-            {
+          //"bidirassociation": {}, //No overlays for bi-dir-association
+          unidirassociation: {
+            type: "Arrow",
+            options: {
               width: 20,
               length: 30,
               location: 1,
@@ -15,10 +15,10 @@
                 outlineStroke: color,
               },
             },
-          ],
-          generalisation: [
-            "Arrow",
-            {
+          },
+          generalisation: {
+            type: "Arrow",
+            options: {
               width: 20,
               length: 30,
               location: 1,
@@ -29,10 +29,10 @@
                 outlineStroke: color,
               },
             },
-          ],
-          diamond: [
-            "Arrow",
-            {
+          },
+          diamond: {
+            type: "Arrow",
+            options: {
               width: 20,
               length: 20,
               location: 1,
@@ -43,6 +43,6 @@
                 outlineStroke: color,
               },
             },
-          ],
+          },
         };
     };
