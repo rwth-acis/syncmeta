@@ -2726,6 +2726,7 @@ export class AbstractNode extends AbstractEntity {
         .prop("disabled", false)
         .css("pointerEvents", "");
 
+      jsPlumbInstance.manage(_$node.get(0));
       jsPlumbInstance.bind(EVENT_DRAG_START, function (params) {
         _canvas.select(that);
         _canvas.hideGuidanceBox();
