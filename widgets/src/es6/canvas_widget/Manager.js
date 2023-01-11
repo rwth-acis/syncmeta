@@ -1456,6 +1456,10 @@ export class AbstractNode extends AbstractEntity {
   ) {
     super(id);
     var that = this;
+    y = y || window.y;
+    if (!y) {
+      throw new Error("y is undefined");
+    }
 
     /**
      * Inter widget communication wrapper
