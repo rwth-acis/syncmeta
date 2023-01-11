@@ -84,8 +84,6 @@ class CodeEditorValue extends AbstractValue {
       $(editor.container).parent().show();
       // $("#wrapper").hide();
     } else {
-      $(tagname).find("loading-spinner").show();
-
       var tpl = $(
         _.template(quillEditorModalHtml)({
           id: rootSubjectEntity.getEntityId(),
@@ -96,7 +94,6 @@ class CodeEditorValue extends AbstractValue {
       $(tagname).find(".main-wrapper").append(tpl);
       // $("#wrapper").hide();
 
-      
       const domElem = tpl
         .get(0)
         .querySelector("#" + rootSubjectEntity.getEntityId());
@@ -109,12 +106,10 @@ class CodeEditorValue extends AbstractValue {
         syntax: true,
       });
       // editor.getSession().setMode("ace/mode/svg");
-
     }
 
     _$node.click(function () {
       createYText();
-      $(tagname).find("loading-spinner").hide();
     });
 
     /**
