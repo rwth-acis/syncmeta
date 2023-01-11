@@ -37,7 +37,7 @@ class CodeEditorValue extends AbstractValue {
     var that = this;
 
     hljs.configure({
-      languages: ["svg"],
+      languages: ["svg", "html"],
     });
 
     var _ytext = null;

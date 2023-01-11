@@ -7,6 +7,7 @@ import { SyncMetaWidget } from "../../widget";
 import "../../es6/attribute_widget.js";
 import { CONFIG, getWidgetTagName } from "../../es6/config";
 import "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js";
+import "../../../node_modules/highlight.js/styles/atom-one-light.css";
 
 @customElement(getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE))
 export class AttributeWidget extends SyncMetaWidget(LitElement) {
@@ -15,6 +16,7 @@ export class AttributeWidget extends SyncMetaWidget(LitElement) {
       <style>
         ${getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE)} {
           height: 100%;
+          max-height: 46vh;
           position: relative;
         }
         .ql-container {
