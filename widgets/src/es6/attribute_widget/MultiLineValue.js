@@ -353,7 +353,7 @@ class MultiLineValue extends AbstractValue {
       }
     };
     this.registerYType = function (ytext) {
-      setTimeout(() => {
+      
         _ytext = ytext;
         const $editor = document.querySelector("#" + editorId);
         if (!$editor) {
@@ -381,7 +381,7 @@ class MultiLineValue extends AbstractValue {
         else window.syncmetaLog.objects[this.getEntityId()] = 0;
 
         initData(ytext);
-      }, 1000);
+      
     };
 
     this.getYText = function () {

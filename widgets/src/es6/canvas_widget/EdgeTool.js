@@ -4,6 +4,11 @@ import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"
 import _ from "lodash-es";
 import { EntityManagerInstance as EntityManager } from "./Manager";
 import AbstractCanvasTool from "./AbstractCanvasTool";
+import {
+  EVENT_DRAG_START,
+  EVENT_DRAG_MOVE,
+  EVENT_DRAG_STOP,
+} from "@jsplumb/browser-ui";
 
 /**
  * EdgeTool
@@ -27,6 +32,7 @@ class EdgeTool extends AbstractCanvasTool {
      * Mount the tool on canvas
      */
     this.mount = function () {
+      AbstractCanvasTool.prototype.mount.call(this);
       function makeNeighborhoodFilter(nodeId) {
         return function (n) {
           return (
@@ -44,8 +50,6 @@ class EdgeTool extends AbstractCanvasTool {
       }
 
       var that = this;
-
-      AbstractCanvasTool.prototype.mount.call(this);
 
       var $canvas = this.getCanvas().get$canvas();
 
@@ -92,7 +96,7 @@ class EdgeTool extends AbstractCanvasTool {
         }
       }
 
-      jsPlumbInstance.bind("connection:drag", function (info) {
+      jsPlumbInstance.bind(EVENT_DRAG_MOVE, function (info) {
         var sourceNode = EntityManager.findNode(info.sourceId),
           sourceType,
           i,
@@ -130,7 +134,7 @@ class EdgeTool extends AbstractCanvasTool {
         $canvas.addClass("dragging");
         return true;
       });
-      jsPlumbInstance.bind("beforeDrop", function () {
+      jsPlumbInstance.bind("EVENT_DRAG_STOP", function () {
         $canvas.removeClass("dragging");
         $(".node.current").removeClass("current");
         return true;
