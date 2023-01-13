@@ -1175,7 +1175,7 @@ export class AbstractEdge extends AbstractEntity {
       _jsPlumbConnection = window.jsPlumbInstance.connect({
         source: _appearance.source.get$node().get(0),
         target: _appearance.target.get$node().get(0),
-        paintStyle: { fill: "#aaaaaa", outlineWidth: 2 },
+        paintStyle: { fill: "black", outlineWidth: 4 },
         endpoint: "Dot",
         connector: { type: FlowchartConnector.type },
         anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
@@ -2842,7 +2842,7 @@ export class AbstractNode extends AbstractEntity {
     this.makeSource = function () {
       _$node.addClass("source");
       window.jsPlumbInstance.addSourceSelector(_$node.get(0), {
-        connectorPaintStyle: { fill: "#aaaaaa", strokeWidth: 2 },
+        connectorPaintStyle: { fill: "black", strokeWidth: 4 },
         endpoint: "Dot",
         anchor: _anchorOptions,
         //maxConnections:1,
@@ -4242,7 +4242,7 @@ class EntityManager {
               attributes: {},
               shape: {
                 shape: "rectangle",
-                color: "blue",
+                color: "black",
                 defaultWidth: 100,
                 defaultHeight: 50,
                 containment: false,
@@ -4368,7 +4368,7 @@ class EntityManager {
           shape: {
             arrow: "unidirassociation",
             shape: "curved",
-            color: "blue",
+            color: "black",
             overlay: "",
             overlayPosition: "top",
             overlayRotate: true,
@@ -5598,7 +5598,7 @@ export function makeNode(type, $shape, anchors, attributes, jsplumb) {
       this.makeSource = function () {
         _$node.addClass("source");
         window.jsPlumbInstance.addSourceSelector(_$node.get(0), {
-          connectorPaintStyle: { fill: "#aaaaaa", lineWidth: 2 },
+          connectorPaintStyle: { fill: "black", lineWidth: 4 },
           endpoint: "Dot",
           anchor: _anchorOptions,
           //maxConnections:1,
@@ -6824,8 +6824,8 @@ export function makeEdge(
     ? shapes[shapeType]
     : _.values(shapes)[0];
   color = color
-    ? $colorTestElement.css("color", "#aaaaaa").css("color", color).css("color")
-    : "#aaaaaa";
+    ? $colorTestElement.css("color", "#000000").css("color", color).css("color")
+    : "#000000";
 
   dashstyle = dashstyle || "";
 
@@ -7112,10 +7112,10 @@ export function makeEdge(
 
         color = color
           ? $colorTestElement
-              .css("color", "#aaaaaa")
+              .css("color", "black")
               .css("color", color)
               .css("color")
-          : "#aaaaaa";
+          : "black";
 
         if (Arrows().hasOwnProperty(arrowType)) {
           overlays.push(Arrows(color)[arrowType]);
@@ -8122,8 +8122,8 @@ export class GeneralisationEdge extends AbstractEdge {
         source: source.get$node().get(0),
         target: target.get$node().get(0),
         paintStyle: {
-          stroke: "#aaaaaa",
-          strokeWidth: 3,
+          stroke: "black",
+          strokeWidth: 4,
         },
         endpoint: "Dot",
         anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
@@ -8142,7 +8142,7 @@ export class GeneralisationEdge extends AbstractEdge {
               paintStyle: {
                 fill: "#ffffff",
                 outlineWidth: 2,
-                dashstyle: "#aaaaaa",
+                dashstyle: "black",
               },
             },
           },
@@ -8259,8 +8259,8 @@ export class UniDirAssociationEdge extends AbstractEdge {
         source: source.get$node().get(0),
         target: target.get$node().get(0),
         paintStyle: {
-          stroke: "#aaaaaa",
-          strokeWidth: 3,
+          stroke: "black",
+          strokeWidth: 4,
         },
         endpoint: "Dot",
         anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
@@ -8279,7 +8279,7 @@ export class UniDirAssociationEdge extends AbstractEdge {
               paintStyle: {
                 fill: "#ffffff",
                 outlineWidth: 2,
-                outlineStroke: "#aaaaaa",
+                outlineStroke: "black",
               },
             },
           },
@@ -8417,8 +8417,8 @@ export class BiDirAssociationEdge extends AbstractEdge {
         source: source.get$node().get(0),
         target: target.get$node().get(0),
         paintStyle: {
-          stroke: "#aaaaaa",
-          strokeWidth: 2,
+          stroke: "blackk",
+          strokeWidth: 4,
         },
         endpoint: "Dot",
         anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
