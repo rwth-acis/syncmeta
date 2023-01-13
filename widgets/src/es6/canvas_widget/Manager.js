@@ -1456,6 +1456,10 @@ export class AbstractNode extends AbstractEntity {
   ) {
     super(id);
     var that = this;
+    y = y || window.y;
+    if (!y) {
+      throw new Error("y is undefined");
+    }
 
     /**
      * Inter widget communication wrapper
@@ -2612,6 +2616,8 @@ export class AbstractNode extends AbstractEntity {
         _canvas.select(that);
       });
 
+      
+
       if (that.getContainment()) {
         clickedNode.droppable({
           hoverClass: "selected",
@@ -2722,8 +2728,11 @@ export class AbstractNode extends AbstractEntity {
         .prop("disabled", false)
         .css("pointerEvents", "");
 
+      jsPlumbInstance.manage(_$node.get(0));
+
       jsPlumbInstance.bind(EVENT_DRAG_START, function (params) {
         _canvas.select(that);
+        _canvas.unbindMoveToolEvents();
         _canvas.hideGuidanceBox();
         _$node.css({ opacity: 0.5 });
         _$node.resizable("disable");
@@ -2733,6 +2742,7 @@ export class AbstractNode extends AbstractEntity {
       jsPlumbInstance.bind(EVENT_DRAG_STOP, function (params) {
         _$node.css({ opacity: "" });
         _$node.resizable("enable");
+        _canvas.bindMoveToolEvents();
         // var id = _$node.attr("id");
         // //_$node.css({top: originalPos.top / _canvas.getZoom(), left: originalPos.left / _canvas.getZoom()});
         // var offsetX = Math.round(
@@ -2770,6 +2780,7 @@ export class AbstractNode extends AbstractEntity {
       });
 
       jsPlumbInstance.bind(EVENT_DRAG_MOVE, function (params) {
+        _canvas.unbindMoveToolEvents();
         // var offsetX = Math.round(
         //   (ui.position.left - lastDragPos.left) / _canvas.getZoom()
         // );

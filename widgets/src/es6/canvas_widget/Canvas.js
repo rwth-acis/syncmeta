@@ -606,6 +606,8 @@ export default class Canvas extends AbstractCanvas {
     var init = function () {
       const jsPlumbInstance = newInstance({
         container: _$node.get(0),
+        elementsDraggable: true,
+        connectionsDetachable: false,
       });
 
       window.jsPlumbInstance = jsPlumbInstance;
@@ -614,9 +616,6 @@ export default class Canvas extends AbstractCanvas {
 
       that.addTool(MoveTool.TYPE, new MoveTool());
 
-      jsPlumbInstance.importDefaults({
-        ConnectionsDetachable: false,
-      });
 
       _$node.css({
         width: _canvasWidth,

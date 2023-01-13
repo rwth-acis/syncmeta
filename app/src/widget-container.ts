@@ -66,10 +66,10 @@ class WidgetContainer extends LitElement {
           </div>
         </div>
         <div class="col-3 middle-container ">
-          <div class="innercontainer">
+          <div class="innercontainer" style="max-height=48vh; overflow=auto">
             <property-browser-widget></property-browser-widget>
           </div>
-          <div class="innercontainer">
+          <div class="innercontainer" style="max-height=48vh; overflow=auto">
             <debug-widget></debug-widget>
           </div>
         </div>

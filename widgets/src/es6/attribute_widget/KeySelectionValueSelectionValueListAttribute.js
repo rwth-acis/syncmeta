@@ -86,12 +86,11 @@ class KeySelectionValueSelectionValueListAttribute extends AbstractAttribute {
       );
       const nodesMap = y.getMap("nodes");
       var ymap = nodesMap.get(subjectEntity.getEntityId());
-      //this is strange if i call processAttributeAddOperation for this time ytext is undefined, but it shouldn't
-      setTimeout(function () {
+      
         var ytext = ymap.get(attribute.getKey().getEntityId());
         if (!ytext) throw new Error("ytext is undefined");
         attribute.getKey().registerYType(ytext);
-      });
+      
       that.addAttribute(attribute);
       if (_$node.find(".list").find("#" + attribute.getEntityId()).length === 0)
         _$node.find(".list").append(attribute.get$node());

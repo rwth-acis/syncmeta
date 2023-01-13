@@ -14,7 +14,6 @@ const multiLineValueHtml = await loadHTML(
   import.meta.url
 );
 
-
 /**
  * MultiLineValue
  * @class canvas_widget.MultiLineValue
@@ -41,7 +40,10 @@ class MultiLineValue extends AbstractValue {
 
       if (rootSubjectEntity.getYMap()?.has(id))
         _ytext = rootSubjectEntity.getYMap().get(id);
-      else _ytext = rootSubjectEntity.getYMap().set(id, new Y.Text());
+      else {
+        _ytext = new Y.Text();
+        rootSubjectEntity.getYMap().set(id, _ytext);
+      }
     }
 
     /**
@@ -243,7 +245,7 @@ class MultiLineValue extends AbstractValue {
         //TODO i can not find out who triggered the delete :-(. Therefore do this only for non delete event types
         if (event.type !== "delete") {
           const userMap = y.getMap("users");
-          var jabberId = userMap.get(event.object._content[event.index].id[0]);
+          var jabberId = "User";
           const activityMap = y.getMap("activity");
 
           activityMap.set(

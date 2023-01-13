@@ -77,16 +77,13 @@ class RenamingListAttribute extends AbstractAttribute {
         that.addAttribute(attribute);
         _$node.find(".list").append(attribute.get$node());
       } else attribute = that.getAttribute(operation.getEntityId());
-      //this is strange if i call processAttributeAddOperation for first time ytext is undefined, but it shouldn't
       const nodesMap = y.getMap("nodes");
       var ymap = nodesMap.get(subjectEntity.getEntityId());
-      setTimeout(function () {
-        var ytext = ymap.get(attribute.getKey().getEntityId());
-        if (!ytext) throw new Error("ytext is undefined");
-        attribute.getKey().registerYType(ytext);
-        var ytext2 = ymap.get(attribute.getRef().getEntityId());
-        attribute.getRef().registerYType(ytext2);
-      });
+      var ytext = ymap.get(attribute.getKey().getEntityId());
+      if (!ytext) throw new Error("ytext is undefined");
+      attribute.getKey().registerYType(ytext);
+      var ytext2 = ymap.get(attribute.getRef().getEntityId());
+      attribute.getRef().registerYType(ytext2);
     };
 
     /**

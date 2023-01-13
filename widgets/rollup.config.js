@@ -3,6 +3,7 @@ import { nodeResolve } from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
 import commonjs from "@rollup/plugin-commonjs";
 import { ImportmapPlugin } from "./importmap.plugin.js";
+import css from "rollup-plugin-import-css";
 
 // dependencies which are not bundled
 const externalDependencies = [
@@ -65,6 +66,7 @@ export default [
   // attribute.widget
   {
     plugins: [
+      css(),
       ImportmapPlugin(),
       typescript(),
       nodeResolve({ browser: true }),

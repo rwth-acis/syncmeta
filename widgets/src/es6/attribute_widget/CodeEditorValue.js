@@ -2,16 +2,23 @@ import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import _ from "lodash-es";
 import IWCW from "../lib/IWCWrapper";
-import { CONFIG } from "../config";
+import { CONFIG, getWidgetTagName } from "../config";
 import AbstractValue from "./AbstractValue";
 import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
 import loadHTML from "../html.template.loader";
+import hljs from "highlight.js";
+import { QuillBinding } from "y-quill";
+
+const quillEditorModalHtml = await loadHTML(
+  "../../templates/attribute_widget/editor_modal.html",
+  import.meta.url
+);
+
 const codeEditorValueHtml = await loadHTML(
   "../../templates/attribute_widget/code_edtior_value.html",
   import.meta.url
 );
 // import "ace-builds/src-min/ace";
-
 
 /**
  * CodeEditorValue
@@ -29,6 +36,10 @@ class CodeEditorValue extends AbstractValue {
     super(id, name, subjectEntity, rootSubjectEntity);
     var that = this;
 
+    hljs.configure({
+      languages: ["svg", "html"],
+    });
+
     var _ytext = null;
 
     /**
@@ -40,6 +51,8 @@ class CodeEditorValue extends AbstractValue {
 
     var editor = null;
 
+    var init = false
+
     /**
      * jQuery object of DOM node representing the node
      * @type {jQuery}
@@ -47,15 +60,15 @@ class CodeEditorValue extends AbstractValue {
      */
     var _$node = $(codeEditorValueHtml);
 
-    var bindAceEditor = function (ytext) {
+    var bindQuillEditor = function (ytext) {
+      if (init) {
+        return
+      }
+      init = true
       _ytext = ytext;
-      ytext.bindAce(editor);
-      initData(ytext, _value);
+      new QuillBinding(_ytext, editor);
 
-      _ytext.observe(function (event) {
-        _value = event.currentTarget.toString();
-        propagateValueChange(CONFIG.OPERATION.TYPE.INSERT, _value, 0);
-      });
+      initData(ytext, _value);
     };
 
     var createYText = function () {
@@ -63,37 +76,40 @@ class CodeEditorValue extends AbstractValue {
       var ymap = nodesMap.get(rootSubjectEntity.getEntityId());
       if (ymap) {
         var ytext = ymap.get(subjectEntity.getEntityId());
-        bindAceEditor(ytext);
+        bindQuillEditor(ytext);
       }
     };
+    const tagname = getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE);
+    if (editor) {
+      $(editor.container).parent().show();
+      // $("#wrapper").hide();
+    } else {
+      var tpl = $(
+        _.template(quillEditorModalHtml)({
+          id: rootSubjectEntity.getEntityId(),
+          title: name,
+        })
+      );
+
+      $(tagname).find(".main-wrapper").append(tpl);
+      // $("#wrapper").hide();
+
+      const domElem = tpl
+        .get(0)
+        .querySelector("#" + rootSubjectEntity.getEntityId());
+      editor = new Quill(domElem, {
+        theme: "snow",
+        modules: {
+          toolbar: false, // Snow includes toolbar by default
+        },
+        placeholder: "Paste your SVG code here",
+        syntax: true,
+      });
+      // editor.getSession().setMode("ace/mode/svg");
+    }
 
     _$node.click(function () {
-      if (editor) {
-        $(editor.container).parent().show();
-        $("#wrapper").hide();
-      } else {
-        $("#loading").show();
-
-        var tpl = $(
-          '<div class="ace-container"><button id="undo"><img width="10px" height="10px" src="<%= grunt.config("baseUrl") %>/img/undo.png" /></button><div class="codeEditorValue" id="ace-' +
-            rootSubjectEntity.getEntityId() +
-            '"></div></div>'
-        );
-
-        $("body").append(tpl);
-        $("#wrapper").hide();
-
-        tpl.find("button").click(function () {
-          $(editor.container).parent().hide();
-          $("#wrapper").show();
-        });
-        editor = ace.edit("ace-" + rootSubjectEntity.getEntityId());
-        editor.setTheme("ace/theme/github");
-        editor.getSession().setMode("ace/mode/svg");
-
-        createYText();
-        $("#loading").hide();
-      }
+      createYText();
     });
 
     /**
