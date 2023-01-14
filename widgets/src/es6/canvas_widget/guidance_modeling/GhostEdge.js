@@ -58,7 +58,8 @@ class GhostEdge {
     };
 
     this.remove = function () {
-      if (_jsPlumbConnection) window.JsPlumbInstance.detach(_jsPlumbConnection);
+      if (_jsPlumbConnection)
+        window.JsPlumbInstance.destroyConnector(_jsPlumbConnection);
       _jsPlumbConnection = null;
     };
 

@@ -45,8 +45,9 @@ import ConditionListAttribute from "./viewpoint/ConditionListAttribute";
 import LogicalConjunctions from "./viewpoint/LogicalConjunctions";
 import LogicalOperator from "./viewpoint/LogicalOperator";
 import RenamingListAttribute from "./viewpoint/RenamingListAttribute";
-import { StraightConnector } from "@jsplumb/core";
+import { EVENT_CONNECTION_MOVED, StraightConnector } from "@jsplumb/core";
 import { BezierConnector } from "@jsplumb/connector-bezier";
+import { getQuerySelectorFromNode } from "../getQuerySelectorFromNode";
 
 const viewrelationshipNodeHtml = await loadHTML(
   "../../templates/canvas_widget/viewrelationship_node.html",
@@ -315,6 +316,7 @@ function HistoryManager() {
 
   return {
     init: function (canvas) {
+      if (!canvas) throw new Error("Canvas is null");
       _canvas = canvas;
     },
     add: function (operation) {
@@ -496,8 +498,8 @@ var _initNodeTypes = function (vls) {
             break;
           case "rounded_rectangle":
             anchors = {
-             type: "Perimeter",
-              options:{
+              type: "Perimeter",
+              options: {
                 shape: "Rectangle",
                 anchorCount: 10,
               },
@@ -505,8 +507,8 @@ var _initNodeTypes = function (vls) {
             break;
           case "triangle":
             anchors = {
-             type: "Perimeter",
-             options: {
+              type: "Perimeter",
+              options: {
                 shape: "Triangle",
                 anchorCount: 10,
               },
@@ -515,8 +517,8 @@ var _initNodeTypes = function (vls) {
           default:
           case "rectangle":
             anchors = {
-             type: "Perimeter",
-             options: {
+              type: "Perimeter",
+              options: {
                 shape: "Rectangle",
                 anchorCount: 10,
               },
@@ -945,6 +947,7 @@ export class AbstractEdge extends AbstractEntity {
      * @param {canvas_widget.AbstractCanvas} canvas
      */
     this.addToCanvas = function (canvas) {
+      if (!canvas) throw new Error("Canvas is null");
       _canvas = canvas;
     };
 
@@ -962,7 +965,9 @@ export class AbstractEdge extends AbstractEntity {
     this.removeFromCanvas = function () {
       _canvas = null;
       $.contextMenu("destroy", "." + that.getEntityId());
-      window.jsPlumbInstance.detach(_jsPlumbConnection, { fireEvent: false });
+      window.jsPlumbInstance.destroyConnector(_jsPlumbConnection, {
+        fireEvent: false,
+      });
       _jsPlumbConnection = null;
     };
 
@@ -1560,6 +1565,8 @@ export class AbstractNode extends AbstractEntity {
      */
     var _$node = $(_.template(abstractNodeHtml)({ id: id }));
 
+    var nodeSelector = getQuerySelectorFromNode(_$node[0]);
+
     var _$awarenessTrace = $(
       _.template(awarenessTraceHtml)({ id: id + "_awareness" })
     );
@@ -2145,6 +2152,7 @@ export class AbstractNode extends AbstractEntity {
      * @param {canvas_widget.AbstractCanvas} canvas
      */
     this.addToCanvas = function (canvas) {
+      if (!canvas) throw new Error("Canvas is null");
       _canvas = canvas;
       canvas.get$canvas().append(_$awarenessTrace);
       canvas.get$canvas().append(_$node);
@@ -2619,8 +2627,6 @@ export class AbstractNode extends AbstractEntity {
         _canvas.select(that);
       });
 
-      
-
       if (that.getContainment()) {
         clickedNode.droppable({
           hoverClass: "selected",
@@ -2738,7 +2744,7 @@ export class AbstractNode extends AbstractEntity {
         _canvas.unbindMoveToolEvents();
         _canvas.hideGuidanceBox();
         _$node.css({ opacity: 0.5 });
-        _$node.resizable("disable");
+        _$node.resizable({ disabled: true });
         drag = false;
       });
 
@@ -2855,7 +2861,7 @@ export class AbstractNode extends AbstractEntity {
      */
     this.makeSource = function () {
       _$node.addClass("source");
-      window.jsPlumbInstance.addSourceSelector(_$node.get(0), {
+      window.jsPlumbInstance.addSourceSelector(nodeSelector, {
         connectorPaintStyle: { fill: "black", strokeWidth: 4 },
         endpoint: "Dot",
         anchor: _anchorOptions,
@@ -2878,7 +2884,7 @@ export class AbstractNode extends AbstractEntity {
      */
     this.makeTarget = function () {
       _$node.addClass("target");
-      window.jsPlumbInstance.makeTarget(_$node, {
+      window.jsPlumbInstance.addTargetSelector(nodeSelector, {
         isTarget: false,
         endpoint: "Dot",
         anchor: _anchorOptions,
@@ -2904,8 +2910,8 @@ export class AbstractNode extends AbstractEntity {
     this.unbindEdgeToolEvents = function () {
       try {
         _$node.removeClass("source target");
-        window.jsPlumbInstance.unmakeSource(_$node);
-        window.jsPlumbInstance.unmakeTarget(_$node);
+        window.jsPlumbInstance.removeSourceSelector(nodeSelector);
+        window.jsPlumbInstance.removeTargetSelector(nodeSelector);
       } catch (error) {
         console.error(error);
       }
@@ -5468,7 +5474,7 @@ export const EntityManagerInstance = new EntityManager();
  * @param attributes
  * @returns {Node}
  */
-export function makeNode(type, $shape, anchors, attributes, jsplumb) {
+export function makeNode(type, $shape, anchors, attributes) {
   /**
    * Node
    * @class canvas_widget.Node
@@ -5611,7 +5617,7 @@ export function makeNode(type, $shape, anchors, attributes, jsplumb) {
        */
       this.makeSource = function () {
         _$node.addClass("source");
-        window.jsPlumbInstance.addSourceSelector(_$node.get(0), {
+        window.jsPlumbInstance.addSourceSelector(nodeSelector, {
           connectorPaintStyle: { fill: "black", lineWidth: 4 },
           endpoint: "Dot",
           anchor: _anchorOptions,
@@ -5628,8 +5634,8 @@ export function makeNode(type, $shape, anchors, attributes, jsplumb) {
           },
         });
 
-        if (jsplumb)
-          window.jsPlumbInstance.addEndpoint(_$node, jsplumb.endpoint, {
+        if (window.jsPlumbInstance)
+          window.jsPlumbInstance.addEndpoint(_$node.get(0), {
             uuid: id + "_eps1",
           });
       };
@@ -5639,7 +5645,7 @@ export function makeNode(type, $shape, anchors, attributes, jsplumb) {
        */
       this.makeTarget = function () {
         _$node.addClass("target");
-        window.jsPlumbInstance.makeTarget(_$node, {
+        window.jsPlumbInstance.addTargetSelector(nodeSelector, {
           isTarget: false,
           uniqueEndpoint: false,
           endpoint: "Dot",
@@ -5658,7 +5664,7 @@ export function makeNode(type, $shape, anchors, attributes, jsplumb) {
           },
         });
         //local user wants to create an edge selected from the pallette
-        window.jsPlumbInstance.bind("beforeDrop", function (info) {
+        window.jsPlumbInstance.bind(EVENT_CONNECTION_MOVED, function (info) {
           var allConn = window.jsPlumbInstance.getConnections({
             target: info.targetId,
             source: info.sourceId,
@@ -5669,8 +5675,8 @@ export function makeNode(type, $shape, anchors, attributes, jsplumb) {
           else return true; //no duplicate create the edge
         });
 
-        if (jsplumb)
-          window.jsPlumbInstance.addEndpoint(_$node, jsplumb.endpoint, {
+        if (window.jsPlumbInstance)
+          window.jsPlumbInstance.addEndpoint(_$node.get(0), {
             uuid: id + "_ept1",
           });
       };
@@ -5681,8 +5687,8 @@ export function makeNode(type, $shape, anchors, attributes, jsplumb) {
       this.unbindEdgeToolEvents = function () {
         try {
           _$node.removeClass("source target");
-          window.jsPlumbInstance.unmakeSource(_$node);
-          window.jsPlumbInstance.unmakeTarget(_$node);
+          window.jsPlumbInstance.removeSourceSelector(nodeSelector);
+          window.jsPlumbInstance.removeTargetSelector(nodeSelector);
         } catch (error) {
           console.error(error);
         }
@@ -8180,7 +8186,7 @@ export class GeneralisationEdge extends AbstractEdge {
 
       source.addOutgoingEdge(this);
       target.addIngoingEdge(this);
-      _jsPlumbConnection = window.jsPlumbInstance.connect(connectOptions);
+      this.setJsPlumbConnection(window.jsPlumbInstance.connect(connectOptions));
 
       this.repaintOverlays();
       _.each(EntityManagerInstance.getEdges(), function (e) {

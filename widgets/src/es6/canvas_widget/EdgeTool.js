@@ -9,6 +9,8 @@ import {
   EVENT_DRAG_MOVE,
   EVENT_DRAG_STOP,
 } from "@jsplumb/browser-ui";
+import { getQuerySelectorFromNode } from "../getQuerySelectorFromNode";
+import { EVENT_CONNECTION, EVENT_CONNECTION_DETACHED } from "@jsplumb/core";
 
 /**
  * EdgeTool
@@ -134,12 +136,12 @@ class EdgeTool extends AbstractCanvasTool {
         $canvas.addClass("dragging");
         return true;
       });
-      jsPlumbInstance.bind("EVENT_DRAG_STOP", function () {
+      jsPlumbInstance.bind(EVENT_DRAG_START, function () {
         $canvas.removeClass("dragging");
         $(".node.current").removeClass("current");
         return true;
       });
-      jsPlumbInstance.bind("connection:detached", function (info) {
+      jsPlumbInstance.bind(EVENT_CONNECTION_DETACHED, function (info) {
         if (info.connection.pending) {
           $(".node.current").removeClass("current");
           $canvas.removeClass("dragging");
@@ -147,10 +149,12 @@ class EdgeTool extends AbstractCanvasTool {
         return true;
       });
 
-      jsPlumbInstance.bind("connection", function (info, originalEvent) {
+      jsPlumbInstance.bind(EVENT_CONNECTION, function (info, originalEvent) {
         if (typeof originalEvent !== "undefined") {
           //Was the connection established using Drag'n Drop?
-          jsPlumbInstance.detach(info.connection, { fireEvent: false });
+          jsPlumbInstance.destroyConnector(info.connection, {
+            fireEvent: false,
+          });
           that
             .getCanvas()
             .createEdge(that.getName(), info.sourceId, info.targetId);
@@ -200,8 +204,9 @@ class EdgeTool extends AbstractCanvasTool {
       $canvas.find(".node").each(function () {
         var $this = $(this);
         try {
-          jsPlumbInstance.unmakeSource($this);
-          jsPlumbInstance.unmakeTarget($this);
+          const nodeSelector = getQuerySelectorFromNode($this);
+          jsPlumbInstance.removeSourceSelector(nodeSelector);
+          jsPlumbInstance.removeTargetSelector(nodeSelector);
         } catch (error) {
           console.error(error);
         }
