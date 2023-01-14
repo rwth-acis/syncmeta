@@ -80,13 +80,14 @@ class CodeEditorValue extends AbstractValue {
       }
     };
     const tagname = getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE);
+    const editorId = "editor-" + rootSubjectEntity.getEntityId();
     if (editor) {
       $(editor.container).parent().show();
       // $("#wrapper").hide();
     } else {
       var tpl = $(
         _.template(quillEditorModalHtml)({
-          id: rootSubjectEntity.getEntityId(),
+          id: editorId,
           title: name,
         })
       );
@@ -94,9 +95,7 @@ class CodeEditorValue extends AbstractValue {
       $(tagname).find(".main-wrapper").append(tpl);
       // $("#wrapper").hide();
 
-      const domElem = tpl
-        .get(0)
-        .querySelector("#" + rootSubjectEntity.getEntityId());
+      const domElem = tpl.get(0).querySelector("#" + editorId);
       editor = new Quill(domElem, {
         theme: "snow",
         modules: {
