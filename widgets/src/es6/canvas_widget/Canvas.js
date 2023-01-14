@@ -1656,8 +1656,8 @@ export default class Canvas extends AbstractCanvas {
 
         event.keysChanged.forEach(function (key) {
           const data = event.currentTarget.get(key);
-          if (yUserId !== y.clientID || data.historyFlagSet) {
-            // this code here needs to be fixed event.value is no longer supported by yjs13
+          const eventTriggeredLocally = window.y.clientID === data.triggeredBy;
+          if (!eventTriggeredLocally || data.historyFlagSet) {
             const userMap = y.getMap("users");
             var jabberId = userMap.get(yUserId);
             var operation;
