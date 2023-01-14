@@ -1482,20 +1482,23 @@ export class AbstractNode extends AbstractEntity {
       if (nodesMap.has(id)) {
         _ymap = nodesMap.get(id);
       } else {
-        _ymap = nodesMap.set(id, new Y.Map());
-        _ymap.set("modifiedBy", window.y.clientID);
-        _ymap.set("left", left);
-        _ymap.set("top", top);
-        _ymap.set("width", width);
-        _ymap.set("height", height);
-        _ymap.set("zIndex", zIndex);
-        _ymap.set("containment", containment);
-        _ymap.set("type", type);
-        _ymap.set("id", id);
-
-        if (json) _ymap.set("json", json);
-        if (_iwcw.getUser().globalId !== -1)
-          _ymap.set("jabberId", _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+        window.y.transact(()=>{
+          _ymap = nodesMap.set(id, new Y.Map());
+          _ymap.set("modifiedBy", window.y.clientID);
+          _ymap.set("left", left);
+          _ymap.set("top", top);
+          _ymap.set("width", width);
+          _ymap.set("height", height);
+          _ymap.set("zIndex", zIndex);
+          _ymap.set("containment", containment);
+          _ymap.set("type", type);
+          _ymap.set("id", id);
+          if (json) _ymap.set("json", json);
+          if (_iwcw.getUser().globalId !== -1)
+            _ymap.set("jabberId", _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+        })
+        
+        
       }
     }
     this.getYMap = function () {
