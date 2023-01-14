@@ -37,7 +37,11 @@ import {
   EntityManagerInstance as EntityManager,
   HistoryManagerInstance as HistoryManager,
 } from "./Manager";
-import { newInstance } from "@jsplumb/browser-ui";
+import {
+  EVENT_ELEMENT_MOUSE_DOWN,
+  EVENT_ELEMENT_MOUSE_UP,
+  newInstance,
+} from "@jsplumb/browser-ui";
 import { eventWasTriggeredByMe } from "../yeventChecker";
 
 /**
@@ -119,6 +123,22 @@ export default class Canvas extends AbstractCanvas {
     var _guidanceDefinition = null;
     var _ghostEdges = [];
     var _guidanceBoxEntityId = null;
+
+    const jsPlumbInstance = newInstance({
+      container: _$node.get(0),
+      elementsDraggable: true,
+      connectionsDetachable: false,
+    });
+
+    window.jsPlumbInstance = jsPlumbInstance;
+
+    window.jsPlumbInstance.bind(EVENT_ELEMENT_MOUSE_DOWN,  ()=> {
+      this.unbindMoveToolEvents();
+    });
+
+    window.jsPlumbInstance.bind(EVENT_ELEMENT_MOUSE_UP,  ()=> {
+      this.bindMoveToolEvents();
+    });
 
     $(window).resize(function () {
       sendViewChangeOperation();
@@ -604,18 +624,9 @@ export default class Canvas extends AbstractCanvas {
      * @param {operations.ot.NodeAddOperation} operation
      */
     var init = function () {
-      const jsPlumbInstance = newInstance({
-        container: _$node.get(0),
-        elementsDraggable: true,
-        connectionsDetachable: false,
-      });
-
-      window.jsPlumbInstance = jsPlumbInstance;
-
       var $canvasFrame = _$node.parent();
 
       that.addTool(MoveTool.TYPE, new MoveTool());
-
 
       _$node.css({
         width: _canvasWidth,
