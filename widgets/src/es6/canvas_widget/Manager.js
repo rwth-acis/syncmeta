@@ -2617,12 +2617,8 @@ export class AbstractNode extends AbstractEntity {
       //Enable Node Selection
       var drag = false;
       var $sizePreview = $('<div class="size-preview"></div>').hide();
-      var clickedNode = _$node.on("click", function () {
-        _canvas.select(that);
-      });
 
-
-      clickedNode
+      _$node
         //Enable Node Resizing
         .resizable({
           containment: "parent",
@@ -2651,6 +2647,7 @@ export class AbstractNode extends AbstractEntity {
               width: ui.originalSize.width,
               height: ui.originalSize.height,
             });
+            repaint();
             var offsetX = ui.size.width - ui.originalSize.width;
             var offsetY = ui.size.height - ui.originalSize.height;
             var operation = new NodeResizeOperation(id, offsetX, offsetY);
@@ -2664,12 +2661,6 @@ export class AbstractNode extends AbstractEntity {
         })
         //Enable Node Rightclick menu
         .contextMenu(true)
-
-        .transformable({
-          rotatable: false,
-          skewable: false,
-          scalable: false,
-        })
 
         .find("input")
         .prop("disabled", false)
