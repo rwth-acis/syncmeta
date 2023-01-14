@@ -2621,62 +2621,6 @@ export class AbstractNode extends AbstractEntity {
         _canvas.select(that);
       });
 
-      if (that.getContainment()) {
-        clickedNode.droppable({
-          hoverClass: "selected",
-          drop: function (event, ui) {
-            const EntityManager = EntityManagerInstance;
-
-            var containerNode = EntityManager.getNodes()[$(this).attr("id")];
-            var childNode = EntityManager.getNodes()[ui.draggable.attr("id")];
-            var relations = EntityManager.getRelations();
-
-            var isConnected = false;
-            var relationshipType = null;
-
-            _.each(containerNode.getOutgoingEdges(), function (edge) {
-              if (edge.getTarget().getEntityId() === childNode.getEntityId()) {
-                isConnected = true;
-                return false;
-              }
-            });
-
-            _.each(relations, function (relation, key) {
-              _.each(relation, function (r) {
-                _.each(r.sourceTypes, function (source) {
-                  if (containerNode.getType() === source) {
-                    _.each(r.targetTypes, function (target) {
-                      if (childNode.getType() === target) {
-                        relationshipType = key;
-                        return false;
-                      }
-                    });
-                  }
-                });
-              });
-            });
-
-            if (!isConnected && relationshipType) {
-              _canvas.createEdge(
-                relationshipType,
-                $(this).attr("id"),
-                ui.draggable.attr("id")
-              );
-            }
-
-            // // now, the attributes left and top of the node are not related to the top left corner of the
-            // // canvas anymore, but instead they are related to the top left corner of the parent element
-            // // => move node to correct left and right attribute
-            // const EntityManager = require('canvas_widget/EntityManager');
-            //
-            // const containerLeft = that.getAppearance().left;
-            // const containerTop = that.getAppearance().top;
-            //
-            // const operation = new NodeMoveOperation(ui.draggable.attr("id"), -containerLeft, -containerTop);
-            // EntityManager.getNodes()[ui.draggable.attr("id")].propagateNodeMoveOperation(operation);
-          },
-        });
-      }
 
       clickedNode
         //Enable Node Resizing
