@@ -2683,12 +2683,8 @@ export class AbstractNode extends AbstractEntity {
         //_$node.css({top: originalPos.top / _canvas.getZoom(), left: originalPos.left / _canvas.getZoom()});
         const x = _$node.position().left;
         const y = _$node.position().top;
-        var offsetX = Math.round(
-          (x - params.e.screenX) / _canvas.getZoom()
-        );
-        var offsetY = Math.round(
-          (y - params.e.screenY) / _canvas.getZoom()
-        );
+        var offsetX = Math.round((x - params.e.screenX) / _canvas.getZoom());
+        var offsetY = Math.round((y - params.e.screenY) / _canvas.getZoom());
 
         var operation = new NodeMoveOperation(
           that.getEntityId(),
@@ -2718,17 +2714,7 @@ export class AbstractNode extends AbstractEntity {
       });
 
       jsPlumbInstance.bind(EVENT_DRAG_MOVE, function (params) {
-        _canvas.unbindMoveToolEvents();
         _canvas.hideGuidanceBox();
-      });
-
-      jsPlumbInstance.bind(EVENT_ELEMENT_MOUSE_DOWN, function (params) {
-        // _canvas.select(that);
-        _canvas.unbindMoveToolEvents();
-      });
-
-      jsPlumbInstance.bind(EVENT_ELEMENT_MOUSE_UP, function (params) {
-        _canvas.bindMoveToolEvents();
       });
 
       // view_only is used by the CAE and allows to show a model in the Canvas which is not editable
