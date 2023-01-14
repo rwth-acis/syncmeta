@@ -9,6 +9,9 @@ import {
   EVENT_DRAG_START,
   EVENT_DRAG_MOVE,
   EVENT_DRAG_STOP,
+  EVENT_ELEMENT_CLICK,
+  EVENT_ELEMENT_MOUSE_DOWN,
+  EVENT_ELEMENT_MOUSE_UP,
 } from "@jsplumb/browser-ui";
 
 import { CONFIG } from "../config";
@@ -1487,7 +1490,7 @@ export class AbstractNode extends AbstractEntity {
       if (nodesMap.has(id)) {
         _ymap = nodesMap.get(id);
       } else {
-        window.y.transact(()=>{
+        window.y.transact(() => {
           _ymap = nodesMap.set(id, new Y.Map());
           _ymap.set("modifiedBy", window.y.clientID);
           _ymap.set("left", left);
@@ -1501,9 +1504,7 @@ export class AbstractNode extends AbstractEntity {
           if (json) _ymap.set("json", json);
           if (_iwcw.getUser().globalId !== -1)
             _ymap.set("jabberId", _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
-        })
-        
-        
+        });
       }
     }
     this.getYMap = function () {
@@ -1638,7 +1639,7 @@ export class AbstractNode extends AbstractEntity {
      */
     var processNodeMoveOperation = function (operation) {
       _canvas.hideGuidanceBox();
-      that.move(operation.getOffsetX(), operation.getOffsetY(), 0);
+      // that.move(operation.getOffsetX(), operation.getOffsetY(), 0);
       _canvas.showGuidanceBox();
     };
 
@@ -2298,18 +2299,11 @@ export class AbstractNode extends AbstractEntity {
      * @param {number} offsetZ Offset in z-direction
      */
     this.move = function (offsetX, offsetY, offsetZ) {
-      _appearance.left += offsetX;
-      _appearance.top += offsetY;
-
-      _zIndex += offsetZ;
-
       if (_ymap) {
-        _ymap.set("left", _appearance.left);
-        _ymap.set("top", _appearance.top);
+        _ymap.set("left", (_appearance.left += offsetX));
+        _ymap.set("top", (_appearance.top += offsetY));
         _ymap.set("zIndex", _zIndex);
       }
-      this._draw();
-      repaint();
     };
 
     this.moveAbs = function (left, top, zIndex) {
@@ -2740,8 +2734,6 @@ export class AbstractNode extends AbstractEntity {
       jsPlumbInstance.manage(_$node.get(0));
 
       jsPlumbInstance.bind(EVENT_DRAG_START, function (params) {
-        _canvas.select(that);
-        _canvas.unbindMoveToolEvents();
         _canvas.hideGuidanceBox();
         _$node.css({ opacity: 0.5 });
         _$node.resizable({ disabled: true });
@@ -2752,37 +2744,39 @@ export class AbstractNode extends AbstractEntity {
         _$node.css({ opacity: "" });
         _$node.resizable("enable");
         _canvas.bindMoveToolEvents();
-        // var id = _$node.attr("id");
-        // //_$node.css({top: originalPos.top / _canvas.getZoom(), left: originalPos.left / _canvas.getZoom()});
-        // var offsetX = Math.round(
-        //   (ui.position.left - originalPos.left) / _canvas.getZoom()
-        // );
-        // var offsetY = Math.round(
-        //   (ui.position.top - originalPos.top) / _canvas.getZoom()
-        // );
+        var id = _$node.attr("id");
+        //_$node.css({top: originalPos.top / _canvas.getZoom(), left: originalPos.left / _canvas.getZoom()});
+        const x = _$node.position().left;
+        const y = _$node.position().top;
+        var offsetX = Math.round(
+          (x - params.e.screenX) / _canvas.getZoom()
+        );
+        var offsetY = Math.round(
+          (y - params.e.screenY) / _canvas.getZoom()
+        );
 
-        // var operation = new NodeMoveOperation(
-        //   that.getEntityId(),
-        //   offsetX,
-        //   offsetY
-        // );
-        // that.propagateNodeMoveOperation(operation);
+        var operation = new NodeMoveOperation(
+          that.getEntityId(),
+          offsetX,
+          offsetY
+        );
+        that.propagateNodeMoveOperation(operation);
 
-        // function propagateChildPosition(node) {
-        //   if (node.getContainment()) {
-        //     _.each(node.getOutgoingEdges(), function (edge) {
-        //       var operation = new NodeMoveOperation(
-        //         edge.getTarget().getEntityId(),
-        //         offsetX,
-        //         offsetY
-        //       );
-        //       edge.getTarget().propagateNodeMoveOperation(operation);
-        //       propagateChildPosition(edge.getTarget());
-        //     });
-        //   }
-        // }
+        function propagateChildPosition(node) {
+          if (node.getContainment()) {
+            _.each(node.getOutgoingEdges(), function (edge) {
+              var operation = new NodeMoveOperation(
+                edge.getTarget().getEntityId(),
+                offsetX,
+                offsetY
+              );
+              edge.getTarget().propagateNodeMoveOperation(operation);
+              propagateChildPosition(edge.getTarget());
+            });
+          }
+        }
 
-        // propagateChildPosition(that);
+        propagateChildPosition(that);
 
         //Avoid node selection on drag stop
         _canvas.showGuidanceBox();
@@ -2790,38 +2784,16 @@ export class AbstractNode extends AbstractEntity {
 
       jsPlumbInstance.bind(EVENT_DRAG_MOVE, function (params) {
         _canvas.unbindMoveToolEvents();
-        // var offsetX = Math.round(
-        //   (ui.position.left - lastDragPos.left) / _canvas.getZoom()
-        // );
-        // var offsetY = Math.round(
-        //   (ui.position.top - lastDragPos.top) / _canvas.getZoom()
-        // );
-
-        // function setChildPosition(node) {
-        //   if (node.getContainment()) {
-        //     _.each(node.getOutgoingEdges(), function (edge) {
-        //       $("#" + edge.getTarget().getEntityId()).offset({
-        //         top:
-        //           $("#" + edge.getTarget().getEntityId()).offset().top +
-        //           offsetY,
-        //         left:
-        //           $("#" + edge.getTarget().getEntityId()).offset().left +
-        //           offsetX,
-        //       });
-        //       setChildPosition(edge.getTarget());
-        //     });
-        //   }
-        // }
-
-        // setChildPosition(that);
-
-        // lastDragPos.top = ui.position.top;
-        // lastDragPos.left = ui.position.left;
-
-        if (drag) repaint();
-        drag = true;
-
         _canvas.hideGuidanceBox();
+      });
+
+      jsPlumbInstance.bind(EVENT_ELEMENT_MOUSE_DOWN, function (params) {
+        // _canvas.select(that);
+        _canvas.unbindMoveToolEvents();
+      });
+
+      jsPlumbInstance.bind(EVENT_ELEMENT_MOUSE_UP, function (params) {
+        _canvas.bindMoveToolEvents();
       });
 
       // view_only is used by the CAE and allows to show a model in the Canvas which is not editable
