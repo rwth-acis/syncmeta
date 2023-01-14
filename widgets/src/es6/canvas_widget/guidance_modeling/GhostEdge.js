@@ -36,8 +36,8 @@ class GhostEdge {
         source: source.get$node(),
         target: target.get$node(),
         paintStyle: {
-          fill: edgeFunction.getColor(),
-          outlineWidth: 2,
+          stroke: edgeFunction.getColor(),
+          strokeWidth: 4,
           dashstyle: "",
         },
         endpoint: "Dot",

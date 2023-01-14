@@ -1183,7 +1183,7 @@ export class AbstractEdge extends AbstractEntity {
       _jsPlumbConnection = window.jsPlumbInstance.connect({
         source: _appearance.source.get$node().get(0),
         target: _appearance.target.get$node().get(0),
-        paintStyle: { fill: "black", outlineWidth: 4 },
+        paintStyle: { stroke: "black", outlineWidth: 4 },
         endpoint: "Dot",
         connector: { type: FlowchartConnector.type },
         anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
@@ -6952,8 +6952,8 @@ export function makeEdge(
         }
 
         that.setDefaultPaintStyle({
-          fill: color,
-          strokeWidth: 2,
+          stroke: color,
+          strokeWidth: 4,
         });
       };
 
@@ -8330,7 +8330,7 @@ export class BiDirAssociationEdge extends AbstractEdge {
         source: source.get$node().get(0),
         target: target.get$node().get(0),
         paintStyle: {
-          stroke: "blackk",
+          stroke: "black",
           strokeWidth: 4,
         },
         endpoint: "Dot",
