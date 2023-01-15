@@ -1364,6 +1364,7 @@ $(document).ready(function() {
   };
 
   $.fn.tDragStart = function (x, y, skipuntransformed, hasoffset) {
+    let c;
     var self = this;
     self.each(function (i) {
       var t = self.eq(i);
@@ -2075,7 +2076,10 @@ $(document).ready(function() {
       var m = par.matrixToArray(true);
       if (m) {
         var ur = par.untransformedOffset();
-        //var cn={x:ur.left+(par.outerWidth()/2.0), y: ur.top+(par.outerHeight()/2.0)};
+        var cn = {
+          x: ur.left + par.outerWidth() / 2.0,
+          y: ur.top + par.outerHeight() / 2.0,
+        };
         cn = getOrigin(par);
         points = $.singleLevelTP(points, cn, m);
       }
@@ -2382,6 +2386,7 @@ $(document).ready(function() {
   };
 
   function setOffset(options) {
+    let curCSSTop, curCSSLeft, calculatePosition, props, curPosition;
     var elem = this[0];
     var position = jQuery.css(elem, "position");
 
@@ -2535,6 +2540,7 @@ $(document).ready(function() {
   };
 
   jQuery.fn.matrixToArray = function (returnFalse) {
+    let m;
     if (this.eq(0).is("body")) return [1, 0, 0, 1, 0, 0];
     var im = [1, 0, 0, 1, 0, 0],
       transform = this.eq(0).css("transform");

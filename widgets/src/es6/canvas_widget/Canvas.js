@@ -2,7 +2,7 @@ import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jquery-migrate/1.4.1/jquery-migrate.min.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js";
-import "jsplumb/dist/js/jsPlumb-2.0.0.js"; // note that the version from the CDN  does not come with bezier connectors
+// note that the version from the CDN  does not come with bezier connectors
 import "https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.9.2/jquery.contextMenu.js";
 import AbstractEntity from "../canvas_widget/AbstractEntity";
 import DagreLayout from "../canvas_widget/DagreLayout";
@@ -37,6 +37,12 @@ import {
   EntityManagerInstance as EntityManager,
   HistoryManagerInstance as HistoryManager,
 } from "./Manager";
+import {
+  EVENT_ELEMENT_MOUSE_DOWN,
+  EVENT_ELEMENT_MOUSE_UP,
+  newInstance,
+} from "@jsplumb/browser-ui";
+import { eventWasTriggeredByMe } from "../yeventChecker";
 
 /**
  * Canvas
@@ -117,6 +123,22 @@ export default class Canvas extends AbstractCanvas {
     var _guidanceDefinition = null;
     var _ghostEdges = [];
     var _guidanceBoxEntityId = null;
+
+    const jsPlumbInstance = newInstance({
+      container: _$node.get(0),
+      elementsDraggable: true,
+      connectionsDetachable: false,
+    });
+
+    window.jsPlumbInstance = jsPlumbInstance;
+
+    window.jsPlumbInstance.bind(EVENT_ELEMENT_MOUSE_DOWN,  ()=> {
+      this.unbindMoveToolEvents();
+    });
+
+    window.jsPlumbInstance.bind(EVENT_ELEMENT_MOUSE_UP,  ()=> {
+      this.bindMoveToolEvents();
+    });
 
     $(window).resize(function () {
       sendViewChangeOperation();
@@ -606,12 +628,6 @@ export default class Canvas extends AbstractCanvas {
 
       that.addTool(MoveTool.TYPE, new MoveTool());
 
-      jsPlumb.importDefaults({
-        ConnectionsDetachable: false,
-      });
-
-      jsPlumb.Defaults.Container = _$node;
-
       _$node.css({
         width: _canvasWidth,
         height: _canvasHeight,
@@ -953,7 +969,7 @@ export default class Canvas extends AbstractCanvas {
         transform: `scaleX(${zoom}) scaleY(${zoom})`,
       });
 
-      jsPlumb.setZoom(zoom);
+      window.jsPlumbInstance.setZoom(zoom);
       sendViewChangeOperation();
     };
 
@@ -1651,8 +1667,8 @@ export default class Canvas extends AbstractCanvas {
 
         event.keysChanged.forEach(function (key) {
           const data = event.currentTarget.get(key);
-          if (yUserId !== y.clientID || data.historyFlagSet) {
-            // this code here needs to be fixed event.value is no longer supported by yjs13
+          const eventTriggeredLocally = window.y.clientID === data.triggeredBy;
+          if (!eventTriggeredLocally || data.historyFlagSet) {
             const userMap = y.getMap("users");
             var jabberId = userMap.get(yUserId);
             var operation;
@@ -1829,15 +1845,17 @@ export default class Canvas extends AbstractCanvas {
                 node.remoteNodeDeleteCallback(new NodeDeleteOperation(key));
               break;
             }
-
             case "add": {
-              // var yUserId = event.object.map[key][0];
-              // if (yUserId === y.clientID) return;
-              //var map = event.value;
               const nodesMap = y.getMap("nodes");
               var map = nodesMap.get(key);
+              let triggeredByMe = false;
               map.observe(function (nodeEvent) {
+                if (triggeredByMe) return;
+                triggeredByMe = eventWasTriggeredByMe(nodeEvent);
+                if (triggeredByMe) return;
+
                 const array = Array.from(nodeEvent.changes.keys.entries());
+
                 array.forEach(([nodeKey, change]) => {
                   const value = nodeEvent.currentTarget.get(nodeKey);
                   switch (nodeKey) {

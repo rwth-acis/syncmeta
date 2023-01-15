@@ -1,5 +1,5 @@
 import { EntityManagerInstance as EntityManager } from "../Manager";
-import "jsplumb/dist/js/jsPlumb-2.0.0.js";
+
 
 /**
  * Generates the Views
@@ -227,7 +227,7 @@ ViewGenerator.generate = function (vls, vvs) {
   }
 
   //Repaint all jsPlumb connections
-  jsPlumb.repaintEverything();
+  window.jsPlumbInstance.repaintEverything();
   _.each(EntityManager.getEdges(), function (e) {
     e.setZIndex();
   });
@@ -262,7 +262,7 @@ ViewGenerator.reset = function (vls) {
   }
 
   //Repaint all jsPlumb connections
-  jsPlumb.repaintEverything();
+  window.jsPlumbInstance.repaintEverything();
   _.each(EntityManager.getEdges(), function (e) {
     e.setZIndex();
   });

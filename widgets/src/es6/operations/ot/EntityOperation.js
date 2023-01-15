@@ -30,7 +30,11 @@ export class EntityOperation {
   adjust;
   inverse;
   toJSON;
+
+  triggeredBy;
   constructor(operationType, entityId, entityType) {
+    this.triggeredBy = window.y.clientID;
+
     /**
      * Type of operation
      * @type {string}
@@ -740,6 +744,7 @@ export class NodeAddOperation extends EntityOperation {
         jabberId: this.getJabberId(),
         defaultLabel: this.getDefaultLabel(),
         defaultAttributeValues: this.getDefaultAttributeValues(),
+        triggeredBy: this.triggeredBy,
       };
     };
   }

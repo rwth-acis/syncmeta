@@ -64,11 +64,10 @@ class SingleValueListAttribute extends AbstractAttribute {
       );
       const nodesMap = y.getMap("nodes");
       var ymap = nodesMap.get(subjectEntity.getEntityId());
-      //this is strange if i call processAttributeAddOperation for this time ytext is undefined, but it shouldn't
-      setTimeout(function () {
+     
         var ytext = ymap.get(attribute.getValue().getEntityId());
         attribute.getValue().registerYType(ytext);
-      }, 400);
+      
       that.addAttribute(attribute);
       if (
         _$node

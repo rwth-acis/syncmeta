@@ -73,12 +73,11 @@ class KeySelectionValueListAttribute extends AbstractAttribute {
       );
       const nodesMap = y.getMap("nodes");
       var ymap = nodesMap.get(subjectEntity.getEntityId());
-      //this is strange if i call processAttributeAddOperation for first time ytext is undefined, but it shouldn't
-      setTimeout(function () {
-        var ytext = ymap.get(attribute.getKey().getEntityId());
-        if (!ytext) throw new Error("ytext is undefined");
-        attribute.getKey().registerYType(ytext);
-      }, 400);
+
+      var ytext = ymap.get(attribute.getKey().getEntityId());
+      if (!ytext) throw new Error("ytext is undefined");
+      attribute.getKey().registerYType(ytext);
+
       that.addAttribute(attribute);
       if (_$node.find(".list").find("#" + attribute.getEntityId()).length === 0)
         _$node.find(".list").append(attribute.get$node());
@@ -248,6 +247,7 @@ class KeySelectionValueListAttribute extends AbstractAttribute {
     nodesMap.get(subjectEntity.getEntityId()).observe(function (event) {
       const array = Array.from(event.changes.keys.entries());
       array.forEach(([key, change]) => {
+        if (key.indexOf("[key]") === -1) return;
         const type = change.action;
         switch (type) {
           case "add": {

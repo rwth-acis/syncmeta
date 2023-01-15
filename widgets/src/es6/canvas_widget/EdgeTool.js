@@ -2,11 +2,15 @@ import { CONFIG } from "../config";
 import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import _ from "lodash-es";
-import "jsplumb/dist/js/jsPlumb-2.0.0.js";
 import { EntityManagerInstance as EntityManager } from "./Manager";
 import AbstractCanvasTool from "./AbstractCanvasTool";
-
-
+import {
+  EVENT_DRAG_START,
+  EVENT_DRAG_MOVE,
+  EVENT_DRAG_STOP,
+} from "@jsplumb/browser-ui";
+import { getQuerySelectorFromNode } from "../getQuerySelectorFromNode";
+import { EVENT_CONNECTION, EVENT_CONNECTION_DETACHED } from "@jsplumb/core";
 
 /**
  * EdgeTool
@@ -21,11 +25,8 @@ import AbstractCanvasTool from "./AbstractCanvasTool";
  */
 class EdgeTool extends AbstractCanvasTool {
   constructor(name, relations, className, description) {
-    super(
-      name,
-      className || "tool-edge",
-      description || "Add an edge"
-    );
+    super(name, className || "tool-edge", description || "Add an edge");
+    const jsPlumbInstance = window.jsPlumbInstance;
 
     var _relations = relations;
 
@@ -33,10 +34,12 @@ class EdgeTool extends AbstractCanvasTool {
      * Mount the tool on canvas
      */
     this.mount = function () {
+      AbstractCanvasTool.prototype.mount.call(this);
       function makeNeighborhoodFilter(nodeId) {
         return function (n) {
           return (
-            n.getEntityId() !== nodeId && !n.getNeighbors().hasOwnProperty(nodeId)
+            n.getEntityId() !== nodeId &&
+            !n.getNeighbors().hasOwnProperty(nodeId)
           );
         };
       }
@@ -50,8 +53,6 @@ class EdgeTool extends AbstractCanvasTool {
 
       var that = this;
 
-      AbstractCanvasTool.prototype.mount.call(this);
-
       var $canvas = this.getCanvas().get$canvas();
 
       //Bind Node Events
@@ -63,22 +64,30 @@ class EdgeTool extends AbstractCanvasTool {
         if (nodes.hasOwnProperty(nodeId)) {
           node = nodes[nodeId];
           node.lowlight();
-          if (EntityManager.getViewId() === undefined ||
-            EntityManager.getLayer() === CONFIG.LAYER.META) {
+          if (
+            EntityManager.getViewId() === undefined ||
+            EntityManager.getLayer() === CONFIG.LAYER.META
+          ) {
             nodeType = node.getType();
             strGetNodesByType = "getNodesByType";
           } else {
             nodeType = node.getCurrentViewType();
             strGetNodesByType = "getNodesByViewType";
           }
-          for (i = 0, numOfRelations = _relations.length; i < numOfRelations; i++) {
+          for (
+            i = 0, numOfRelations = _relations.length;
+            i < numOfRelations;
+            i++
+          ) {
             if (relations[i].sourceTypes.indexOf(nodeType) !== -1) {
-              if (_.size(
-                _.filter(
-                  EntityManager[strGetNodesByType](relations[i].targetTypes),
-                  makeNeighborhoodFilter(node.getEntityId())
-                )
-              ) > 0) {
+              if (
+                _.size(
+                  _.filter(
+                    EntityManager[strGetNodesByType](relations[i].targetTypes),
+                    makeNeighborhoodFilter(node.getEntityId())
+                  )
+                ) > 0
+              ) {
                 node.makeSource();
                 node.unbindMoveToolEvents();
                 node.unlowlight();
@@ -89,11 +98,17 @@ class EdgeTool extends AbstractCanvasTool {
         }
       }
 
-      jsPlumb.bind("connectionDrag", function (info) {
-        var sourceNode = EntityManager.findNode(info.sourceId), sourceType, i, numOfRelations, strGetNodesByType;
+      jsPlumbInstance.bind(EVENT_DRAG_MOVE, function (info) {
+        var sourceNode = EntityManager.findNode(info.sourceId),
+          sourceType,
+          i,
+          numOfRelations,
+          strGetNodesByType;
         if (sourceNode) {
-          if (EntityManager.getViewId() === undefined ||
-            EntityManager.getLayer() === CONFIG.LAYER.META) {
+          if (
+            EntityManager.getViewId() === undefined ||
+            EntityManager.getLayer() === CONFIG.LAYER.META
+          ) {
             sourceType = sourceNode.getType();
             strGetNodesByType = "getNodesByType";
           } else {
@@ -101,7 +116,11 @@ class EdgeTool extends AbstractCanvasTool {
             strGetNodesByType = "getNodesByViewType";
           }
 
-          for (i = 0, numOfRelations = _relations.length; i < numOfRelations; i++) {
+          for (
+            i = 0, numOfRelations = _relations.length;
+            i < numOfRelations;
+            i++
+          ) {
             if (relations[i].sourceTypes.indexOf(sourceType) !== -1) {
               _.each(
                 _.filter(
@@ -117,12 +136,12 @@ class EdgeTool extends AbstractCanvasTool {
         $canvas.addClass("dragging");
         return true;
       });
-      jsPlumb.bind("beforeDrop", function () {
+      jsPlumbInstance.bind(EVENT_DRAG_START, function () {
         $canvas.removeClass("dragging");
         $(".node.current").removeClass("current");
         return true;
       });
-      jsPlumb.bind("connectionDetached", function (info) {
+      jsPlumbInstance.bind(EVENT_CONNECTION_DETACHED, function (info) {
         if (info.connection.pending) {
           $(".node.current").removeClass("current");
           $canvas.removeClass("dragging");
@@ -130,10 +149,12 @@ class EdgeTool extends AbstractCanvasTool {
         return true;
       });
 
-      jsPlumb.bind("connection", function (info, originalEvent) {
+      jsPlumbInstance.bind(EVENT_CONNECTION, function (info, originalEvent) {
         if (typeof originalEvent !== "undefined") {
           //Was the connection established using Drag'n Drop?
-          jsPlumb.detach(info.connection, { fireEvent: false });
+          jsPlumbInstance.destroyConnector(info.connection, {
+            fireEvent: false,
+          });
           that
             .getCanvas()
             .createEdge(that.getName(), info.sourceId, info.targetId);
@@ -183,15 +204,16 @@ class EdgeTool extends AbstractCanvasTool {
       $canvas.find(".node").each(function () {
         var $this = $(this);
         try {
-          jsPlumb.unmakeSource($this);
-          jsPlumb.unmakeTarget($this);
+          const nodeSelector = getQuerySelectorFromNode($this);
+          jsPlumbInstance.removeSourceSelector(nodeSelector);
+          jsPlumbInstance.removeTargetSelector(nodeSelector);
         } catch (error) {
           console.error(error);
         }
       });
-      jsPlumb.unbind("connectionDrag");
-      jsPlumb.unbind("beforeDrop");
-      jsPlumb.unbind("connection");
+      jsPlumbInstance.unbind("connectionDrag");
+      jsPlumbInstance.unbind("beforeDrop");
+      jsPlumbInstance.unbind("connection");
 
       $canvas.unbind("contextmenu");
       $canvas.find(".node").unbind("contextmenu");

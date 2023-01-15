@@ -11,6 +11,7 @@ import {
   AttributeAddOperation,
   AttributeDeleteOperation,
 } from "../../operations/ot/EntityOperation";
+import { eventWasTriggeredByMe } from "../../yeventChecker";
 
 const listHtml = await loadHTML(
   "../../../templates/canvas_widget/list_attribute.html",
@@ -314,8 +315,9 @@ class ConditionListAttribute extends AbstractAttribute {
             var data = event.currentTarget.get(key);
             switch (change.action) {
               case "add": {
-                var yUserId = event.object.map[key][0];
-                if (yUserId === y.clientID) return;
+                if (eventWasTriggeredByMe(event)) return;
+                // var yUserId = event.object.map[key][0];
+                // if (yUserId === y.clientID) return;
                 operation = new AttributeAddOperation(
                   key.replace(/\[\w*\]/g, ""),
                   that.getEntityId(),

@@ -45,6 +45,7 @@
          * @param {canvas_widget.AbstractCanvas} canvas
          */
         this.setCanvas = function (canvas) {
+          if (!canvas) throw new Error("Canvas is null");
           _canvas = canvas;
         };
 

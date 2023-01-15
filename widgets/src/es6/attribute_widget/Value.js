@@ -84,34 +84,32 @@ class Value extends AbstractValue {
     };
 
     this.registerYType = function (ytext) {
-      setTimeout(() => {
-        _ytext = ytext;
+      _ytext = ytext;
 
-        // if (!$editor) {
-        //   throw new Error("Editor not found " + editorId);
-        // }
-        const domElem = _$node.get(0);
-        _$editorRef = new Quill(domElem, {
-          theme: "snow",
-          modules: {
-            toolbar: false, // Snowincludes toolbar by default
-          },
-          placeholder: name,
-        });
-        if (!_ytext) {
-          throw new Error("YText not found");
-        }
-        new QuillBinding(_ytext, _$editorRef);
-        _ytext?.observe(function () {
-          _value = _ytext.toString();
-        });
+      // if (!$editor) {
+      //   throw new Error("Editor not found " + editorId);
+      // }
+      const domElem = _$node.get(0);
+      _$editorRef = new Quill(domElem, {
+        theme: "snow",
+        modules: {
+          toolbar: false, // Snow includes toolbar by default
+        },
+        placeholder: name,
+      });
+      if (!_ytext) {
+        throw new Error("YText not found");
+      }
+      new QuillBinding(_ytext, _$editorRef);
+      _ytext?.observe(function () {
+        _value = _ytext.toString();
+      });
 
-        //loging
-        window.syncmetaLog.initializedYTexts += 1;
-        if (window.syncmetaLog.hasOwnProperty(this.getEntityId()))
-          window.syncmetaLog.objects[this.getEntityId()] += 1;
-        else window.syncmetaLog.objects[this.getEntityId()] = 0;
-      }, 1000);
+      //loging
+      window.syncmetaLog.initializedYTexts += 1;
+      if (window.syncmetaLog.hasOwnProperty(this.getEntityId()))
+        window.syncmetaLog.objects[this.getEntityId()] += 1;
+      else window.syncmetaLog.objects[this.getEntityId()] = 0;
     };
   }
 }

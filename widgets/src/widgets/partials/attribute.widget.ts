@@ -6,6 +6,9 @@ import { SyncMetaWidget } from "../../widget";
 //@ts-ignore
 import "../../es6/attribute_widget.js";
 import { CONFIG, getWidgetTagName } from "../../es6/config";
+import "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js";
+import "../../../node_modules/highlight.js/styles/atom-one-light.css";
+
 @customElement(getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE))
 export class AttributeWidget extends SyncMetaWidget(LitElement) {
   render() {
@@ -13,6 +16,7 @@ export class AttributeWidget extends SyncMetaWidget(LitElement) {
       <style>
         ${getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE)} {
           height: 100%;
+          max-height: 46vh;
           position: relative;
         }
         .ql-container {
@@ -173,6 +177,10 @@ export class AttributeWidget extends SyncMetaWidget(LitElement) {
       </style>
       <link
         rel="stylesheet"
+        href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css"
+      />
+      <link
+        rel="stylesheet"
         type="text/css"
         href="https://code.jquery.com/ui/1.13.1/themes/smoothness/jquery-ui.css"
       />
@@ -182,6 +190,7 @@ export class AttributeWidget extends SyncMetaWidget(LitElement) {
         integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
         crossorigin="anonymous"
       />
+
       <link
         href="https://cdn.quilljs.com/1.3.6/quill.snow.css"
         rel="stylesheet"

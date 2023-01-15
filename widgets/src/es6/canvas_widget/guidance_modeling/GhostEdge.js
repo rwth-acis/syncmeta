@@ -1,6 +1,5 @@
 import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
-import "jsplumb/dist/js/jsPlumb-2.0.0.js";
 import _ from "lodash-es";
 // import "bootstrap";
 import { EntityManagerInstance as EntityManager } from "../Manager";
@@ -37,11 +36,11 @@ class GhostEdge {
         source: source.get$node(),
         target: target.get$node(),
         paintStyle: {
-          strokeStyle: edgeFunction.getColor(),
-          lineWidth: 2,
+          stroke: edgeFunction.getColor(),
+          strokeWidth: 4,
           dashstyle: "",
         },
-        endpoint: "Blank",
+        endpoint: "Dot",
         anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
         connector: edgeFunction.getShape(),
         overlays: overlays,
@@ -52,14 +51,15 @@ class GhostEdge {
         connectOptions.anchors = ["TopCenter", "LeftMiddle"];
       }
 
-      _jsPlumbConnection = jsPlumb.connect(connectOptions);
+      _jsPlumbConnection = window.JsPlumbInstance.connect(connectOptions);
       _.each(EntityManager.getEdges(), function (e) {
         e.setZIndex();
       });
     };
 
     this.remove = function () {
-      if (_jsPlumbConnection) jsPlumb.detach(_jsPlumbConnection);
+      if (_jsPlumbConnection)
+        window.JsPlumbInstance.destroyConnector(_jsPlumbConnection);
       _jsPlumbConnection = null;
     };
 

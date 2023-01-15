@@ -16,12 +16,14 @@ export class DebugWidget extends SyncMetaWidget(LitElement) {
         integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
         crossorigin="anonymous"
       />
-      <style type="text/css">
+      <style>
         #debug-container {
           position: relative;
         }
         ${getWidgetTagName(CONFIG.WIDGET.NAME.DEBUG)} {
           position: relative;
+          max-height: 46vh;
+          overflow-y: auto;
         }
       </style>
 

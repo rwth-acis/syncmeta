@@ -32,15 +32,20 @@ class Value extends AbstractValue {
     y = y || window.y;
     if (y && id.indexOf("undefined") == -1) {
       const yMap = rootSubjectEntity.getYMap();
-      if(!yMap){
+      if (!yMap) {
         throw new Error("yMap is undefined");
       }
       if (yMap?.has(id)) {
         _ytext = rootSubjectEntity.getYMap().get(id);
-        if (!(_ytext instanceof Y.Text))
-          _ytext = rootSubjectEntity.getYMap().set(id, new Y.Text());
+        if (!(_ytext instanceof Y.Text)) {
+          _ytext = new Y.Text();
+          rootSubjectEntity.getYMap().set(id, _ytext);
+        }
       } else {
-        _ytext = rootSubjectEntity.getYMap().set(id, new Y.Text());
+        {
+          _ytext = new Y.Text();
+          rootSubjectEntity.getYMap().set(id, _ytext);
+        }
       }
     }
     super(id, name, subjectEntity, rootSubjectEntity);
@@ -188,7 +193,6 @@ class Value extends AbstractValue {
               }
             }
           });
-          
         }, 500)
       );
     };
