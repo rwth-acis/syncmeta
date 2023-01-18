@@ -354,7 +354,6 @@ $(async function () {
         }
 
         if (!dataMap.get("guidancemodel")) {
-          console.log("No guidance model found!");
           $exportGuidancemodel.prop("disabled", true);
           $deleteGuidancemodel.prop("disabled", true);
         } else {

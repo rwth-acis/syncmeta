@@ -1566,7 +1566,7 @@ export class AbstractNode extends AbstractEntity {
      */
     var _$node = $(_.template(abstractNodeHtml)({ id: id }));
 
-    var nodeSelector = getQuerySelectorFromNode(_$node[0]);
+    this.nodeSelector = getQuerySelectorFromNode(_$node[0]);
 
     var _$awarenessTrace = $(
       _.template(awarenessTraceHtml)({ id: id + "_awareness" })
@@ -2754,7 +2754,7 @@ export class AbstractNode extends AbstractEntity {
      */
     this.makeSource = function () {
       _$node.addClass("source");
-      window.jsPlumbInstance.addSourceSelector(nodeSelector, {
+      window.jsPlumbInstance.addSourceSelector(this.nodeSelector, {
         connectorPaintStyle: { fill: "black", strokeWidth: 4 },
         endpoint: "Dot",
         anchor: _anchorOptions,
@@ -2777,7 +2777,7 @@ export class AbstractNode extends AbstractEntity {
      */
     this.makeTarget = function () {
       _$node.addClass("target");
-      window.jsPlumbInstance.addTargetSelector(nodeSelector, {
+      window.jsPlumbInstance.addTargetSelector(this.nodeSelector, {
         isTarget: false,
         endpoint: "Dot",
         anchor: _anchorOptions,
@@ -2803,8 +2803,8 @@ export class AbstractNode extends AbstractEntity {
     this.unbindEdgeToolEvents = function () {
       try {
         _$node.removeClass("source target");
-        window.jsPlumbInstance.removeSourceSelector(nodeSelector);
-        window.jsPlumbInstance.removeTargetSelector(nodeSelector);
+        window.jsPlumbInstance.removeSourceSelector(this.nodeSelector);
+        window.jsPlumbInstance.removeTargetSelector(this.nodeSelector);
       } catch (error) {
         console.error(error);
       }
@@ -2862,6 +2862,7 @@ export class AbstractNode extends AbstractEntity {
       });
     };
   }
+  nodeSelector;
   /**
    * Apply position and dimension attributes to the node
    */
@@ -5510,7 +5511,7 @@ export function makeNode(type, $shape, anchors, attributes) {
        */
       this.makeSource = function () {
         _$node.addClass("source");
-        window.jsPlumbInstance.addSourceSelector(nodeSelector, {
+        window.jsPlumbInstance.addSourceSelector(this.nodeSelector, {
           connectorPaintStyle: { fill: "black", lineWidth: 4 },
           endpoint: "Dot",
           anchor: _anchorOptions,
@@ -5538,7 +5539,7 @@ export function makeNode(type, $shape, anchors, attributes) {
        */
       this.makeTarget = function () {
         _$node.addClass("target");
-        window.jsPlumbInstance.addTargetSelector(nodeSelector, {
+        window.jsPlumbInstance.addTargetSelector(this.nodeSelector, {
           isTarget: false,
           uniqueEndpoint: false,
           endpoint: "Dot",
@@ -5580,8 +5581,8 @@ export function makeNode(type, $shape, anchors, attributes) {
       this.unbindEdgeToolEvents = function () {
         try {
           _$node.removeClass("source target");
-          window.jsPlumbInstance.removeSourceSelector(nodeSelector);
-          window.jsPlumbInstance.removeTargetSelector(nodeSelector);
+          window.jsPlumbInstance.removeSourceSelector(this.nodeSelector);
+          window.jsPlumbInstance.removeTargetSelector(this.nodeSelector);
         } catch (error) {
           console.error(error);
         }

@@ -413,7 +413,7 @@ function EntityManager() {
     },
     /**
      * Create a new node by its JSON representation
-     * @memberof attribute_widget.EntityManager#
+     * @memberof attribute_widget.EntityManager
      * @param {string} type Type of node
      * @param {string} id Entity identifier of node
      * @param {number} left x-coordinate of node position
