@@ -2666,6 +2666,10 @@ export class AbstractNode extends AbstractEntity {
         .prop("disabled", false)
         .css("pointerEvents", "");
 
+      _$node.on("mousedown", function (e) {
+        _canvas.select(that);
+      });
+
       jsPlumbInstance.manage(_$node.get(0));
 
       jsPlumbInstance.bind(EVENT_DRAG_START, function (params) {
