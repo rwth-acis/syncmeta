@@ -38,12 +38,11 @@ class NodeTool extends AbstractCanvasTool {
 
         if (ev.which != 1) return;
 
-        offsetCanvas = $canvas.offset();
+        offsetCanvas = $canvas.offset(); // current offset of the canvas relative to the document
         var zoom = that.getCanvas().getZoom();
-        var nodeX = (ev.pageX - offsetCanvas.left) / zoom - _defaultWidth / 2;
-        var nodeY = (ev.pageY - offsetCanvas.top) / zoom - _defaultHeight / 2;
+        var nodeX = (ev.pageX - offsetCanvas.left) / zoom - _defaultWidth / 2; // center position of the node
+        var nodeY = (ev.pageY - offsetCanvas.top) / zoom - _defaultHeight / 2; // center position of the node
 
-        //if(this == ev.target){
         that
           .getCanvas()
           .createNode(
@@ -60,8 +59,6 @@ class NodeTool extends AbstractCanvasTool {
             defaultLabel,
             defaultAttributeValues
           );
-        //that.canvas.callListeners(CONFIG.CANVAS.LISTENERS.NODEADD,that.name,ev.originalEvent.offsetX,ev.originalEvent.offsetY,_defaultWidth,_defaultHeight);
-        //}
         that.getCanvas().resetTool();
       });
 
