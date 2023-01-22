@@ -83,14 +83,14 @@ export default class Canvas extends AbstractCanvas {
      * @type {number}
      * @private
      */
-    var _canvasWidth = 6000;
+    var _canvasWidth = 9000;
 
     /**
      * Default canvas height
      * @type {number}
      * @private
      */
-    var _canvasHeight = 6000;
+    var _canvasHeight = 9000;
 
     /**
      * Model attributes
