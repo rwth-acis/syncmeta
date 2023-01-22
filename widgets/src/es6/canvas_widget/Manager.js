@@ -707,12 +707,15 @@ export class AbstractEdge extends AbstractEntity {
       if (edgeMap.has(id)) {
         _ymap = edgeMap.get(id);
       } else if (id && type && source && target) {
-        _ymap = edgeMap.set(id, new Y.Map());
-        _ymap.set("id", id);
-        _ymap.set("type", type);
-        _ymap.set("source", source.getEntityId());
-        _ymap.set("target", target.getEntityId());
-        _ymap.set("jabberId", _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+        y.transact(() => {
+          _ymap = new Y.Map();
+          edgeMap.set(id, _ymap);
+          _ymap.set("id", id);
+          _ymap.set("type", type);
+          _ymap.set("source", source.getEntityId());
+          _ymap.set("target", target.getEntityId());
+          _ymap.set("jabberId", _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+        });
       }
     }
     this.getYMap = function () {
