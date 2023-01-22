@@ -2777,6 +2777,26 @@ export class AbstractNode extends AbstractEntity {
           );
         },
       });
+      window.jsPlumbInstance.addEndpoint(_$node.get(0), {
+        connectorPaintStyle: { fill: "black", strokeWidth: 4 },
+        endpoint: {
+          type: "Rectangle",
+          options: { width: _$node.width() + 5, height: _$node.height() + 5 },
+        },
+        anchor: _anchorOptions,
+        //maxConnections:1,
+        uniqueEndpoint: false,
+        deleteEndpointsOnDetach: true,
+        onMaxConnections: function (info /*, originalEvent*/) {
+          console.log(
+            "element is ",
+            info.element,
+            "maxConnections is",
+            info.maxConnections
+          );
+        },
+        source: true,
+      });
     };
 
     /**
@@ -2789,6 +2809,27 @@ export class AbstractNode extends AbstractEntity {
         endpoint: "Dot",
         anchor: _anchorOptions,
         uniqueEndpoint: false,
+        //maxConnections:1,
+        deleteEndpointsOnDetach: true,
+        onMaxConnections: function (info /*, originalEvent*/) {
+          console.log(
+            "user tried to drop connection",
+            info.connection,
+            "on element",
+            info.element,
+            "with max connections",
+            info.maxConnections
+          );
+        },
+      });
+      window.jsPlumbInstance.addEndpoint(_$node.get(0), {
+        target: true,
+        uniqueEndpoint: false,
+        endpoint: {
+          type: "Rectangle",
+          options: { width: _$node.width() + 5, height: _$node.height() + 5 },
+        },
+        anchor: _anchorOptions,
         //maxConnections:1,
         deleteEndpointsOnDetach: true,
         onMaxConnections: function (info /*, originalEvent*/) {
@@ -5538,6 +5579,7 @@ export function makeNode(type, $shape, anchors, attributes) {
         if (window.jsPlumbInstance)
           window.jsPlumbInstance.addEndpoint(_$node.get(0), {
             uuid: id + "_eps1",
+            source: true,
           });
       };
 
@@ -5579,6 +5621,7 @@ export function makeNode(type, $shape, anchors, attributes) {
         if (window.jsPlumbInstance)
           window.jsPlumbInstance.addEndpoint(_$node.get(0), {
             uuid: id + "_ept1",
+            target: true,
           });
       };
 
