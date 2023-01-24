@@ -45,7 +45,7 @@ import ViewObjectNodeTool from "./canvas_widget/viewpoint/ViewObjectNodeTool";
 import ViewRelationshipNode from "./canvas_widget/viewpoint/ViewRelationshipNode";
 import ViewRelationshipNodeTool from "./canvas_widget/viewpoint/ViewRelationshipNodeTool";
 import { CONFIG } from "./config";
-import { getGuidanceModeling } from "./GuidanceModel";
+import { getGuidanceModeling } from "./Guidancemodel";
 import { yjsSync } from "./lib/yjs-sync";
 import ActivityOperation from "./operations/non_ot/ActivityOperation";
 import InitModelTypesOperation from "./operations/non_ot/InitModelTypesOperation";
