@@ -2,7 +2,7 @@ import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import _ from "lodash-es";
 import Util from "./Util";
-import MFExport from "./lib/MFExport";
+import MFExport from "./lib/mfexport";
 import JSZip from "jszip";
 import ILDE from "./lib/ildeApi";
 import { CONFIG } from "./config";
