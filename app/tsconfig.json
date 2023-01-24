@@ -16,6 +16,6 @@
     "outDir": "build",
     "types": ["reflect-metadata"]
   },
-  "include": ["src/**/*.ts", "rollup.config.js"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }
