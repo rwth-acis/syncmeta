@@ -2620,45 +2620,45 @@ export class AbstractNode extends AbstractEntity {
 
       _$node
         //Enable Node Resizing
-        .resizable({
-          containment: "parent",
-          start: function (ev /*,ui*/) {
-            _canvas.hideGuidanceBox();
-            $sizePreview.show();
-            _$node.css({ opacity: 0.5 });
-            _$node.append($sizePreview);
-            _$node.resizable("option", "aspectRatio", ev.shiftKey);
-            _$node.resizable("option", "grid", ev.ctrlKey ? [20, 20] : "");
-          },
-          resize: function (ev, ui) {
-            _canvas.hideGuidanceBox();
-            $sizePreview.text(
-              Math.round(ui.size.width) + "x" + Math.round(ui.size.height)
-            );
-            repaint();
-            _$node.resizable("option", "aspectRatio", ev.shiftKey);
-            _$node.resizable("option", "grid", ev.ctrlKey ? [20, 20] : "");
-          },
-          stop: function (ev, ui) {
-            $sizePreview.hide();
-            _$node.css({ opacity: "" });
-            var $target = ui.helper;
-            $target.css({
-              width: ui.originalSize.width,
-              height: ui.originalSize.height,
-            });
-            repaint();
-            var offsetX = ui.size.width - ui.originalSize.width;
-            var offsetY = ui.size.height - ui.originalSize.height;
-            var operation = new NodeResizeOperation(id, offsetX, offsetY);
-            that.propagateNodeResizeOperation(operation);
-            _$node.resizable("option", "aspectRatio", false);
-            _$node.resizable("option", "grid", "");
+        // .resizable({
+        //   containment: "parent",
+        //   start: function (ev /*,ui*/) {
+        //     _canvas.hideGuidanceBox();
+        //     $sizePreview.show();
+        //     _$node.css({ opacity: 0.5 });
+        //     _$node.append($sizePreview);
+        //     _$node.resizable("option", "aspectRatio", ev.shiftKey);
+        //     _$node.resizable("option", "grid", ev.ctrlKey ? [20, 20] : "");
+        //   },
+        //   resize: function (ev, ui) {
+        //     _canvas.hideGuidanceBox();
+        //     $sizePreview.text(
+        //       Math.round(ui.size.width) + "x" + Math.round(ui.size.height)
+        //     );
+        //     repaint();
+        //     _$node.resizable("option", "aspectRatio", ev.shiftKey);
+        //     _$node.resizable("option", "grid", ev.ctrlKey ? [20, 20] : "");
+        //   },
+        //   stop: function (ev, ui) {
+        //     $sizePreview.hide();
+        //     _$node.css({ opacity: "" });
+        //     var $target = ui.helper;
+        //     $target.css({
+        //       width: ui.originalSize.width,
+        //       height: ui.originalSize.height,
+        //     });
+        //     repaint();
+        //     var offsetX = ui.size.width - ui.originalSize.width;
+        //     var offsetY = ui.size.height - ui.originalSize.height;
+        //     var operation = new NodeResizeOperation(id, offsetX, offsetY);
+        //     that.propagateNodeResizeOperation(operation);
+        //     _$node.resizable("option", "aspectRatio", false);
+        //     _$node.resizable("option", "grid", "");
 
-            //TODO: check that! Already called in processNodeResizeOperation called by propagateNodeResizeOperation
-            //_canvas.showGuidanceBox();
-          },
-        })
+        //     //TODO: check that! Already called in processNodeResizeOperation called by propagateNodeResizeOperation
+        //     //_canvas.showGuidanceBox();
+        //   },
+        // })
         //Enable Node Rightclick menu
         .contextMenu(true)
 
@@ -2675,13 +2675,13 @@ export class AbstractNode extends AbstractEntity {
       jsPlumbInstance.bind(EVENT_DRAG_START, function (params) {
         _canvas.hideGuidanceBox();
         _$node.css({ opacity: 0.5 });
-        _$node.resizable({ disabled: true });
+        // _$node.resizable({ disabled: true });
         drag = false;
       });
 
       jsPlumbInstance.bind(EVENT_DRAG_STOP, function (params) {
         _$node.css({ opacity: "" });
-        _$node.resizable("enable");
+        // _$node.resizable("enable");
         _canvas.bindMoveToolEvents();
         var id = _$node.attr("id");
         //_$node.css({top: originalPos.top / _canvas.getZoom(), left: originalPos.left / _canvas.getZoom()});
@@ -2740,8 +2740,8 @@ export class AbstractNode extends AbstractEntity {
       _$node
         .off("click")
         //Disable Node Resizing
-        .resizable()
-        .resizable("destroy")
+        // .resizable()
+        // .resizable("destroy")
         //Disable Node Draggin
         .draggable()
         .draggable("destroy")
