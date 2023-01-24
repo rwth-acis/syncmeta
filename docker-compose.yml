@@ -1,0 +1,15 @@
+services:
+  ywebsocket:
+    platform: linux/amd64
+    image: "lakhoune/y-websocket:latest"
+    restart: always
+    ports:
+      - "1234:1234"
+
+  syncmeta:
+    platform: linux/amd64
+    build: .
+    depends_on :
+      - ywebsocket
+    ports:
+      - "8000:8000"
