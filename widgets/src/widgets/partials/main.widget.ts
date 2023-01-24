@@ -3,6 +3,7 @@ import { customElement } from "lit/decorators.js";
 import { SyncMetaWidget } from "../../widget";
 import "../../es6/main_widget.js";
 import { CONFIG, getWidgetTagName } from "../../es6/config";
+import "@jsplumb/browser-ui/css/jsplumbtoolkit.css";
 
 // canvas widget
 @customElement(getWidgetTagName(CONFIG.WIDGET.NAME.MAIN))
@@ -13,9 +14,18 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.9.2/jquery.contextMenu.min.css"
       />
+
       <style>
         ${getWidgetTagName(CONFIG.WIDGET.NAME.MAIN)} {
           height: 100%;
+        }
+        .ui-resizable {
+          /*jquery-ui adds this class to resizable objects. 
+          However, the jsplumb library requires the position to be absolute, otherwise 
+          offsets will be wrong. So we need to override this here.
+          see https://github.com/rwth-acis/syncmeta/issues/86
+          */
+          position: absolute !important;
         }
         .button_bar {
           width: 50%;
@@ -121,7 +131,7 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
           max-height: none !important;
           border-radius: 6px;
           background-color: #e2e2e2;
-          position: relative;
+          position: relative !important; /*important because jsplumb will position according to this*/
           background-image: none !important;
           opacity: 1 !important;
         }

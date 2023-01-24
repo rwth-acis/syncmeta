@@ -5,13 +5,12 @@ import "https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.9.2/jquery.c
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import "../lib/jquery.transformable-PATCHED";
 import { FlowchartConnector } from "@jsplumb/connector-flowchart";
+import interact from "interactjs";
 import {
   EVENT_DRAG_START,
   EVENT_DRAG_MOVE,
   EVENT_DRAG_STOP,
-  EVENT_ELEMENT_CLICK,
-  EVENT_ELEMENT_MOUSE_DOWN,
-  EVENT_ELEMENT_MOUSE_UP,
+  EventManager,
 } from "@jsplumb/browser-ui";
 
 import { CONFIG } from "../config";
@@ -2621,47 +2620,67 @@ export class AbstractNode extends AbstractEntity {
       var drag = false;
       var $sizePreview = $('<div class="size-preview"></div>').hide();
 
-      _$node
-        //Enable Node Resizing
-        .resizable({
-          containment: "parent",
-          start: function (ev /*,ui*/) {
+      const selector = getQuerySelectorFromNode(_$node);
+      interact(selector).resizable({
+        // resize from all edges and corners
+        edges: { left: true, right: true, bottom: true, top: true },
+        listeners: {
+          start: () => {
             _canvas.hideGuidanceBox();
-            $sizePreview.show();
+            // $sizePreview.show();
             _$node.css({ opacity: 0.5 });
             _$node.append($sizePreview);
-            _$node.resizable("option", "aspectRatio", ev.shiftKey);
-            _$node.resizable("option", "grid", ev.ctrlKey ? [20, 20] : "");
+            jsPlumbInstance.setDraggable(_$node.get(0), false);
           },
-          resize: function (ev, ui) {
-            _canvas.hideGuidanceBox();
-            $sizePreview.text(
-              Math.round(ui.size.width) + "x" + Math.round(ui.size.height)
-            );
-            repaint();
-            _$node.resizable("option", "aspectRatio", ev.shiftKey);
-            _$node.resizable("option", "grid", ev.ctrlKey ? [20, 20] : "");
-          },
-          stop: function (ev, ui) {
-            $sizePreview.hide();
+          end: () => {
+            // $sizePreview.hide();
             _$node.css({ opacity: "" });
-            var $target = ui.helper;
-            $target.css({
-              width: ui.originalSize.width,
-              height: ui.originalSize.height,
-            });
-            repaint();
-            var offsetX = ui.size.width - ui.originalSize.width;
-            var offsetY = ui.size.height - ui.originalSize.height;
-            var operation = new NodeResizeOperation(id, offsetX, offsetY);
-            that.propagateNodeResizeOperation(operation);
-            _$node.resizable("option", "aspectRatio", false);
-            _$node.resizable("option", "grid", "");
-
-            //TODO: check that! Already called in processNodeResizeOperation called by propagateNodeResizeOperation
-            //_canvas.showGuidanceBox();
+            // repaint();
+            // var operation = new NodeResizeOperation(id, event.dx, event.dy);
+            // that.propagateNodeResizeOperation(operation);
+            jsPlumbInstance.setDraggable(_$node.get(0), true);
           },
-        })
+          move(event) {
+            // jsPlumbInstance.setDraggable(_$node.get(0), false);
+            var target = event.target;
+            var x = parseFloat(target.getAttribute("data-x")) || 0;
+            var y = parseFloat(target.getAttribute("data-y")) || 0;
+
+            // update the element's style
+            target.style.width = event.rect.width + "px";
+            target.style.height = event.rect.height + "px";
+
+            // translate when resizing from top or left edges
+            x += event.deltaRect.left;
+            y += event.deltaRect.top;
+
+            target.style.transform = "translate(" + x + "px," + y + "px)";
+
+            target.setAttribute("data-x", x);
+            target.setAttribute("data-y", y);
+
+            // $sizePreview.text(
+            //   Math.round(event.rect.width) +
+            //     "\u00D7" +
+            //     Math.round(event.rect.height)
+            // );
+            // repaint();
+          },
+        },
+        modifiers: [
+          // keep the edges inside the parent
+          interact.modifiers.restrictEdges({
+            outer: "parent",
+          }),
+          // minimum size
+          interact.modifiers.restrictSize({
+            min: { width: 10, height: 10 },
+          }),
+        ],
+        inertia: true,
+      });
+
+      _$node
         //Enable Node Rightclick menu
         .contextMenu(true)
 
@@ -2678,13 +2697,13 @@ export class AbstractNode extends AbstractEntity {
       jsPlumbInstance.bind(EVENT_DRAG_START, function (params) {
         _canvas.hideGuidanceBox();
         _$node.css({ opacity: 0.5 });
-        _$node.resizable({ disabled: true });
+        // _$node.resizable({ disabled: true });
         drag = false;
       });
 
       jsPlumbInstance.bind(EVENT_DRAG_STOP, function (params) {
         _$node.css({ opacity: "" });
-        _$node.resizable("enable");
+        // _$node.resizable("enable");
         _canvas.bindMoveToolEvents();
         var id = _$node.attr("id");
         //_$node.css({top: originalPos.top / _canvas.getZoom(), left: originalPos.left / _canvas.getZoom()});
@@ -2743,11 +2762,8 @@ export class AbstractNode extends AbstractEntity {
       _$node
         .off("click")
         //Disable Node Resizing
-        .resizable()
-        .resizable("destroy")
-        //Disable Node Draggin
-        .draggable()
-        .draggable("destroy")
+        // .resizable()
+        // .resizable("destroy")
         //Disable Node Rightclick Menu
         .contextMenu(false)
         .transformable("destroy")

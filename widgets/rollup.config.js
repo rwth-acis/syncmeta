@@ -198,8 +198,8 @@ export default [
     plugins: [
       ImportmapPlugin(),
       typescript(),
+      css(),
       nodeResolve({ browser: true }),
-
       commonjs({
         include: [/node_modules/, "./src/main.widget.ts"],
         extensions: [".js", ".ts"],
