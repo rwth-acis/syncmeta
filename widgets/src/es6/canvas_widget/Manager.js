@@ -1452,6 +1452,8 @@ export class AbstractEdge extends AbstractEntity {
  * @param {number} zIndex Position of node on z-axis
  */
 export class AbstractNode extends AbstractEntity {
+  nodeSelector;
+  _$node;
   constructor(
     id,
     type,
@@ -1509,6 +1511,7 @@ export class AbstractNode extends AbstractEntity {
         });
       }
     }
+
     this.getYMap = function () {
       return _ymap;
     };
@@ -1566,9 +1569,9 @@ export class AbstractNode extends AbstractEntity {
      * @type {jQuery}
      * @private
      */
-    var _$node = $(_.template(abstractNodeHtml)({ id: id }));
+    this._$node = $(_.template(abstractNodeHtml)({ id: id }));
 
-    this.nodeSelector = getQuerySelectorFromNode(_$node[0]);
+    this.nodeSelector = getQuerySelectorFromNode(this._$node[0]);
 
     var _$awarenessTrace = $(
       _.template(awarenessTraceHtml)({ id: id + "_awareness" })
@@ -2051,13 +2054,6 @@ export class AbstractNode extends AbstractEntity {
     /**
      * Triggers jsPlumb's repaint function and adjusts the angle of the edge labels
      */
-    var repaint = function () {
-      window.jsPlumbInstance.repaint(_$node.get(0));
-
-      _.each(EntityManagerInstance.getEdges(), function (e) {
-        e.setZIndex();
-      });
-    };
 
     /**
      * Anchor options for new connections
@@ -2158,7 +2154,7 @@ export class AbstractNode extends AbstractEntity {
       if (!canvas) throw new Error("Canvas is null");
       _canvas = canvas;
       canvas.get$canvas().append(_$awarenessTrace);
-      canvas.get$canvas().append(_$node);
+      canvas.get$canvas().append(this._$node);
     };
 
     /**
@@ -2173,7 +2169,7 @@ export class AbstractNode extends AbstractEntity {
      * Removes node from canvas
      */
     this.removeFromCanvas = function () {
-      _$node.remove();
+      this._$node.remove();
       //destroy the context menu
       $.contextMenu("destroy", "#" + that.getEntityId());
       _canvas = null;
@@ -2269,7 +2265,7 @@ export class AbstractNode extends AbstractEntity {
      * @private
      */
     this._get$node = function () {
-      return _$node;
+      return this._$node;
     };
 
     /**
@@ -2285,7 +2281,7 @@ export class AbstractNode extends AbstractEntity {
         height: _appearance.height * 1.2,
         zIndex: _zIndex - 1,
       });
-      _$node.css({
+      this._$node.css({
         left: _appearance.left,
         top: _appearance.top,
         width: _appearance.width,
@@ -2320,7 +2316,7 @@ export class AbstractNode extends AbstractEntity {
         if (zIndex) _ymap.set("zIndex", _zIndex);
       }
       this._draw();
-      repaint();
+      this.repaint();
     };
 
     /**
@@ -2336,7 +2332,7 @@ export class AbstractNode extends AbstractEntity {
         _ymap.set("height", _appearance.height);
       }
       this._draw();
-      repaint();
+      this.repaint();
     };
 
     /**
@@ -2477,14 +2473,14 @@ export class AbstractNode extends AbstractEntity {
      * Lowlight the node
      */
     this.lowlight = function () {
-      _$node.addClass("lowlighted");
+      this._$node.addClass("lowlighted");
     };
 
     /**
      * Unlowlight the node
      */
     this.unlowlight = function () {
-      _$node.removeClass("lowlighted");
+      this._$node.removeClass("lowlighted");
     };
 
     /**
@@ -2493,7 +2489,7 @@ export class AbstractNode extends AbstractEntity {
     this.select = function () {
       _isSelected = true;
       this.unhighlight();
-      _$node.addClass("selected");
+      this._$node.addClass("selected");
       Util.delay(100).then(function () {
         _.each(EntityManagerInstance.getEdges(), function (e) {
           e.setZIndex();
@@ -2507,7 +2503,7 @@ export class AbstractNode extends AbstractEntity {
     this.unselect = function () {
       _isSelected = false;
       //this.highlight(_highlightColor,_highlightUsername);
-      _$node.removeClass("selected");
+      this._$node.removeClass("selected");
       //tigger save when unselecting an entity
       $("#save").click();
       Util.delay(100).then(function () {
@@ -2527,8 +2523,8 @@ export class AbstractNode extends AbstractEntity {
       //$('.node:not(.selected)').css({border: "2px solid transparent"});
       //$('.user_highlight').remove();
       if (color && username) {
-        _$node.css({ border: "2px solid " + color });
-        _$node.append(
+        this._$node.css({ border: "2px solid " + color });
+        this._$node.append(
           $("<div></div>")
             .addClass("user_highlight")
             .css("color", color)
@@ -2546,8 +2542,8 @@ export class AbstractNode extends AbstractEntity {
      * Unhighlight the node
      */
     this.unhighlight = function () {
-      _$node.css({ border: "" });
-      _$node.find(".user_highlight").remove();
+      this._$node.css({ border: "" });
+      this._$node.find(".user_highlight").remove();
       Util.delay(100).then(function () {
         var EntityManager = null;
         try {
@@ -2620,67 +2616,9 @@ export class AbstractNode extends AbstractEntity {
       var drag = false;
       var $sizePreview = $('<div class="size-preview"></div>').hide();
 
-      const selector = getQuerySelectorFromNode(_$node);
-      interact(selector).resizable({
-        // resize from all edges and corners
-        edges: { left: true, right: true, bottom: true, top: true },
-        listeners: {
-          start: () => {
-            _canvas.hideGuidanceBox();
-            // $sizePreview.show();
-            _$node.css({ opacity: 0.5 });
-            _$node.append($sizePreview);
-            jsPlumbInstance.setDraggable(_$node.get(0), false);
-          },
-          end: () => {
-            // $sizePreview.hide();
-            _$node.css({ opacity: "" });
-            // repaint();
-            // var operation = new NodeResizeOperation(id, event.dx, event.dy);
-            // that.propagateNodeResizeOperation(operation);
-            jsPlumbInstance.setDraggable(_$node.get(0), true);
-          },
-          move(event) {
-            // jsPlumbInstance.setDraggable(_$node.get(0), false);
-            var target = event.target;
-            var x = parseFloat(target.getAttribute("data-x")) || 0;
-            var y = parseFloat(target.getAttribute("data-y")) || 0;
+      this.makeResizable(that, _canvas, $sizePreview, id);
 
-            // update the element's style
-            target.style.width = event.rect.width + "px";
-            target.style.height = event.rect.height + "px";
-
-            // translate when resizing from top or left edges
-            x += event.deltaRect.left;
-            y += event.deltaRect.top;
-
-            target.style.transform = "translate(" + x + "px," + y + "px)";
-
-            target.setAttribute("data-x", x);
-            target.setAttribute("data-y", y);
-
-            // $sizePreview.text(
-            //   Math.round(event.rect.width) +
-            //     "\u00D7" +
-            //     Math.round(event.rect.height)
-            // );
-            // repaint();
-          },
-        },
-        modifiers: [
-          // keep the edges inside the parent
-          interact.modifiers.restrictEdges({
-            outer: "parent",
-          }),
-          // minimum size
-          interact.modifiers.restrictSize({
-            min: { width: 10, height: 10 },
-          }),
-        ],
-        inertia: true,
-      });
-
-      _$node
+      this._$node
         //Enable Node Rightclick menu
         .contextMenu(true)
 
@@ -2688,27 +2626,27 @@ export class AbstractNode extends AbstractEntity {
         .prop("disabled", false)
         .css("pointerEvents", "");
 
-      _$node.on("mousedown", function (e) {
+      this._$node.on("mousedown", function (e) {
         _canvas.select(that);
       });
 
-      jsPlumbInstance.manage(_$node.get(0));
+      
 
-      jsPlumbInstance.bind(EVENT_DRAG_START, function (params) {
+      jsPlumbInstance.bind(EVENT_DRAG_START, (params) => {
         _canvas.hideGuidanceBox();
-        _$node.css({ opacity: 0.5 });
-        // _$node.resizable({ disabled: true });
+        that._$node.css({ opacity: 0.5 });
+        // this._$node.resizable({ disabled: true });
         drag = false;
       });
 
-      jsPlumbInstance.bind(EVENT_DRAG_STOP, function (params) {
-        _$node.css({ opacity: "" });
-        // _$node.resizable("enable");
+      jsPlumbInstance.bind(EVENT_DRAG_STOP, (params) => {
+        that._$node.css({ opacity: "" });
+        // this._$node.resizable("enable");
         _canvas.bindMoveToolEvents();
-        var id = _$node.attr("id");
-        //_$node.css({top: originalPos.top / _canvas.getZoom(), left: originalPos.left / _canvas.getZoom()});
-        const x = _$node.position().left;
-        const y = _$node.position().top;
+        var id = that._$node.attr("id");
+        //this._$node.css({top: originalPos.top / _canvas.getZoom(), left: originalPos.left / _canvas.getZoom()});
+        const x = that._$node.position().left;
+        const y = that._$node.position().top;
         var offsetX = Math.round((x - params.e.screenX) / _canvas.getZoom());
         var offsetY = Math.round((y - params.e.screenY) / _canvas.getZoom());
 
@@ -2739,7 +2677,7 @@ export class AbstractNode extends AbstractEntity {
         _canvas.showGuidanceBox();
       });
 
-      jsPlumbInstance.bind(EVENT_DRAG_MOVE, function (params) {
+      jsPlumbInstance.bind(EVENT_DRAG_MOVE, () => {
         _canvas.hideGuidanceBox();
       });
 
@@ -2748,8 +2686,8 @@ export class AbstractNode extends AbstractEntity {
       const widgetConfigMap = y.getMap("widgetConfig");
       var viewOnly = widgetConfigMap.get("view_only");
       if (viewOnly) {
-        _$node.on("click").draggable().draggable("destroy");
-        _$node.on("click").contextMenu(false);
+        this._$node.on("click").draggable().draggable("destroy");
+        this._$node.on("click").contextMenu(false);
       }
     };
 
@@ -2759,12 +2697,8 @@ export class AbstractNode extends AbstractEntity {
     this.unbindMoveToolEvents = function () {
       //Disable Node Selection
       //$canvas.find(".node.ui-draggable").draggable( "option", "disabled", true);
-      _$node
+      this._$node
         .off("click")
-        //Disable Node Resizing
-        // .resizable()
-        // .resizable("destroy")
-        //Disable Node Rightclick Menu
         .contextMenu(false)
         .transformable("destroy")
         .find("input")
@@ -2776,7 +2710,7 @@ export class AbstractNode extends AbstractEntity {
      * Bind source node events for edge tool
      */
     this.makeSource = function () {
-      _$node.addClass("source");
+      this._$node.addClass("source");
       window.jsPlumbInstance.addSourceSelector(this.nodeSelector, {
         connectorPaintStyle: { fill: "black", strokeWidth: 4 },
         endpoint: "Dot",
@@ -2793,11 +2727,14 @@ export class AbstractNode extends AbstractEntity {
           );
         },
       });
-      window.jsPlumbInstance.addEndpoint(_$node.get(0), {
+      window.jsPlumbInstance.addEndpoint(this._$node.get(0), {
         connectorPaintStyle: { fill: "black", strokeWidth: 4 },
         endpoint: {
           type: "Rectangle",
-          options: { width: _$node.width() + 5, height: _$node.height() + 5 },
+          options: {
+            width: this._$node.width() + 5,
+            height: this._$node.height() + 5,
+          },
         },
         anchor: _anchorOptions,
         //maxConnections:1,
@@ -2819,7 +2756,7 @@ export class AbstractNode extends AbstractEntity {
      * Bind target node events for edge tool
      */
     this.makeTarget = function () {
-      _$node.addClass("target");
+      this._$node.addClass("target");
       window.jsPlumbInstance.addTargetSelector(this.nodeSelector, {
         isTarget: false,
         endpoint: "Dot",
@@ -2838,12 +2775,15 @@ export class AbstractNode extends AbstractEntity {
           );
         },
       });
-      window.jsPlumbInstance.addEndpoint(_$node.get(0), {
+      window.jsPlumbInstance.addEndpoint(this._$node.get(0), {
         target: true,
         uniqueEndpoint: false,
         endpoint: {
           type: "Rectangle",
-          options: { width: _$node.width() + 5, height: _$node.height() + 5 },
+          options: {
+            width: this._$node.width() + 5,
+            height: this._$node.height() + 5,
+          },
         },
         anchor: _anchorOptions,
         //maxConnections:1,
@@ -2866,7 +2806,7 @@ export class AbstractNode extends AbstractEntity {
      */
     this.unbindEdgeToolEvents = function () {
       try {
-        _$node.removeClass("source target");
+        this._$node.removeClass("source target");
         window.jsPlumbInstance.removeSourceSelector(this.nodeSelector);
         window.jsPlumbInstance.removeTargetSelector(this.nodeSelector);
       } catch (error) {
@@ -2925,8 +2865,86 @@ export class AbstractNode extends AbstractEntity {
         });
       });
     };
+
+    jsPlumbInstance.manage(this._$node.get(0));
   }
-  nodeSelector;
+
+  repaint() {
+    window.jsPlumbInstance.repaint(this._$node.get(0));
+
+    _.each(EntityManagerInstance.getEdges(), function (e) {
+      e.setZIndex();
+    });
+  }
+
+  makeResizable(that, _canvas, $sizePreview, id) {
+    interact(that.nodeSelector).resizable({
+      // resize from all edges and corners
+      edges: { left: true, right: true, bottom: true, top: true },
+      listeners: {
+        start: () => {
+          _canvas.hideGuidanceBox();
+          $sizePreview.show();
+          that._$node.css({ opacity: 0.5 });
+          that._$node.append($sizePreview);
+          jsPlumbInstance.setDraggable(that._$node.get(0), false);
+        },
+        end: (event) => {
+          $sizePreview.hide();
+          that._$node.css({ opacity: "" });
+          that.repaint();
+          var operation = new NodeResizeOperation(id, event.dx, event.dy);
+          that.propagateNodeResizeOperation(operation);
+          jsPlumbInstance.setDraggable(that._$node.get(0), true);
+        },
+        move(event) {
+          jsPlumbInstance.setDraggable(that._$node.get(0), false);
+          var target = event.target;
+          var x = parseFloat(target.getAttribute("data-x")) || 0;
+          var y = parseFloat(target.getAttribute("data-y")) || 0;
+
+          // update the element's style
+          target.style.width = event.rect.width + "px";
+          target.style.height = event.rect.height + "px";
+
+          // translate when resizing from top or left edges
+          x += event.deltaRect.left;
+          y += event.deltaRect.top;
+
+          target.style.transform = "translate(" + x + "px," + y + "px)";
+
+          target.setAttribute("data-x", x);
+          target.setAttribute("data-y", y);
+
+          // $sizePreview.text(
+          //   Math.round(event.rect.width) +
+          //     "\u00D7" +
+          //     Math.round(event.rect.height)
+          // );
+          // this.repaint();
+        },
+      },
+      modifiers: [
+        // keep the edges inside the parent
+        interact.modifiers.restrictEdges({
+          outer: "parent",
+        }),
+        // minimum size
+        interact.modifiers.restrictSize({
+          min: { width: 10, height: 10 },
+        }),
+      ],
+      inertia: true,
+    });
+  }
+
+  disableResizable() {
+    interact(this.nodeSelector).resizable({
+      // resize from all edges and corners
+      edges: { left: false, right: false, bottom: false, top: false },
+    });
+  }
+
   /**
    * Apply position and dimension attributes to the node
    */

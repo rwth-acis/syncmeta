@@ -317,7 +317,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
                   text
                 ).toJSON()
               );
-              frameElement.contentWindow.location.reload();
+            location.reload();
             }
           }
         });
