@@ -4,7 +4,10 @@ import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"
 import _ from "lodash-es";
 import { EntityManagerInstance as EntityManager } from "./Manager";
 import AbstractCanvasTool from "./AbstractCanvasTool";
-import { EVENT_DRAG_START, EVENT_CLICK } from "@jsplumb/browser-ui";
+import {
+  EVENT_DRAG_START,
+  EVENT_ENDPOINT_MOUSEOVER,
+} from "@jsplumb/browser-ui";
 import { getQuerySelectorFromNode } from "../getQuerySelectorFromNode";
 import { EVENT_CONNECTION, EVENT_CONNECTION_DETACHED } from "@jsplumb/core";
 
@@ -94,7 +97,7 @@ class EdgeTool extends AbstractCanvasTool {
         }
       }
 
-      jsPlumbInstance.bind(EVENT_CLICK, function (info) {
+      jsPlumbInstance.bind("beforeDrag", function (info) {
         var sourceNode = EntityManager.findNode(info.sourceId),
           sourceType,
           i,
@@ -132,12 +135,12 @@ class EdgeTool extends AbstractCanvasTool {
         $canvas.addClass("dragging");
         return true;
       });
-      jsPlumbInstance.bind(EVENT_DRAG_START, function () {
+      jsPlumbInstance.bind("beforeDrop", function () {
         $canvas.removeClass("dragging");
         $(".node.current").removeClass("current");
         return true;
       });
-      jsPlumbInstance.bind(EVENT_CONNECTION_DETACHED, function (info) {
+      jsPlumbInstance.bind("beforeDetach", function (info) {
         if (info.connection.pending) {
           $(".node.current").removeClass("current");
           $canvas.removeClass("dragging");
@@ -145,7 +148,7 @@ class EdgeTool extends AbstractCanvasTool {
         return true;
       });
 
-      jsPlumbInstance.bind(EVENT_CONNECTION, function (info, originalEvent) {
+      jsPlumbInstance.bind("connection", function (info, originalEvent) {
         if (typeof originalEvent !== "undefined") {
           //Was the connection established using Drag'n Drop?
           jsPlumbInstance.destroyConnector(info.connection, {

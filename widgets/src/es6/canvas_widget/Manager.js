@@ -2741,21 +2741,20 @@ export class AbstractNode extends AbstractEntity {
      */
     this.unbindMoveToolEvents = function () {
       //Disable Node Selection
-      //$canvas.find(".node.ui-draggable").draggable( "option", "disabled", true);
       _$node
         .off("click")
         //Disable Node Resizing
         // .resizable()
         // .resizable("destroy")
-        //Disable Node Draggin
-        .draggable()
-        .draggable("destroy")
         //Disable Node Rightclick Menu
         .contextMenu(false)
         .transformable("destroy")
         .find("input")
         .prop("disabled", true)
         .css("pointerEvents", "none");
+
+      //Disable Node Dragging
+      jsPlumbInstance.setDraggable(_$node.get(0), false);
     };
 
     /**
@@ -2773,6 +2772,7 @@ export class AbstractNode extends AbstractEntity {
             height: _$node.height() + 50,
           },
         },
+        endpointStyle: { fill: "#222" },
         anchor: AnchorLocations.Center,
         //maxConnections:1,
         uniqueEndpoint: false,
