@@ -2679,6 +2679,7 @@ export class AbstractNode extends AbstractEntity {
       jsPlumbInstance.manage(_$node.get(0));
 
       jsPlumbInstance.bind(EVENT_DRAG_START, function (params) {
+        if(params.el.id !== _$node.attr("id")) return;
         _canvas.hideGuidanceBox();
         _$node.css({ opacity: 0.5 });
         // _$node.resizable({ disabled: true });
@@ -2686,6 +2687,7 @@ export class AbstractNode extends AbstractEntity {
       });
 
       jsPlumbInstance.bind(EVENT_DRAG_STOP, function (params) {
+        if (params.el.id !== _$node.attr("id")) return;
         _$node.css({ opacity: "" });
         // _$node.resizable("enable");
         _canvas.bindMoveToolEvents();
@@ -2724,6 +2726,7 @@ export class AbstractNode extends AbstractEntity {
       });
 
       jsPlumbInstance.bind(EVENT_DRAG_MOVE, function (params) {
+        if (params.el.id !== _$node.attr("id")) return;
         _canvas.hideGuidanceBox();
       });
 
