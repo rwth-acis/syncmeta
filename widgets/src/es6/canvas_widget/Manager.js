@@ -2300,9 +2300,11 @@ export class AbstractNode extends AbstractEntity {
      */
     this.move = function (offsetX, offsetY, offsetZ) {
       if (_ymap) {
-        _ymap.set("left", (_appearance.left += offsetX));
-        _ymap.set("top", (_appearance.top += offsetY));
-        _ymap.set("zIndex", _zIndex);
+        y.transact(() => {
+          _ymap.set("left", (_appearance.left += offsetX));
+          _ymap.set("top", (_appearance.top += offsetY));
+          _ymap.set("zIndex", _zIndex);
+        });
       }
     };
 
@@ -2313,9 +2315,11 @@ export class AbstractNode extends AbstractEntity {
       if (zIndex) _zIndex = zIndex;
 
       if (_ymap) {
-        _ymap.set("left", _appearance.left);
-        _ymap.set("top", _appearance.top);
-        if (zIndex) _ymap.set("zIndex", _zIndex);
+        y.transact(() => {
+          _ymap.set("left", _appearance.left);
+          _ymap.set("top", _appearance.top);
+          if (zIndex) _ymap.set("zIndex", _zIndex);
+        });
       }
       this._draw();
       repaint();
@@ -2330,8 +2334,10 @@ export class AbstractNode extends AbstractEntity {
       _appearance.width += offsetX;
       _appearance.height += offsetY;
       if (_ymap) {
-        _ymap.set("width", _appearance.width);
-        _ymap.set("height", _appearance.height);
+        y.transact(() => {
+          _ymap.set("width", _appearance.width);
+          _ymap.set("height", _appearance.height);
+        });
       }
       this._draw();
       repaint();
