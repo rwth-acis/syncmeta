@@ -83,14 +83,14 @@ export default class Canvas extends AbstractCanvas {
      * @type {number}
      * @private
      */
-    var _canvasWidth = 6000;
+    var _canvasWidth = 9000;
 
     /**
      * Default canvas height
      * @type {number}
      * @private
      */
-    var _canvasHeight = 6000;
+    var _canvasHeight = 9000;
 
     /**
      * Model attributes
@@ -132,11 +132,11 @@ export default class Canvas extends AbstractCanvas {
 
     window.jsPlumbInstance = jsPlumbInstance;
 
-    window.jsPlumbInstance.bind(EVENT_ELEMENT_MOUSE_DOWN,  ()=> {
+    window.jsPlumbInstance.bind(EVENT_ELEMENT_MOUSE_DOWN, () => {
       this.unbindMoveToolEvents();
     });
 
-    window.jsPlumbInstance.bind(EVENT_ELEMENT_MOUSE_UP,  ()=> {
+    window.jsPlumbInstance.bind(EVENT_ELEMENT_MOUSE_UP, () => {
       this.bindMoveToolEvents();
     });
 
@@ -1740,6 +1740,7 @@ export default class Canvas extends AbstractCanvas {
               case "applyLayout": {
                 //remote user
                 DagreLayout.apply();
+                jsPlumbInstance.repaintEverything();
                 break;
               }
               //used by the syncmeta-plugin only
