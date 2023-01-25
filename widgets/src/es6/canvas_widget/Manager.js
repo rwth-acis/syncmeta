@@ -2675,7 +2675,7 @@ export class AbstractNode extends AbstractEntity {
       that.jsPlumbManagedElement = jsPlumbInstance.manage(_$node.get(0));
 
       jsPlumbInstance.bind(EVENT_DRAG_START, function (params) {
-        if(params.el.id !== _$node.attr("id")) return;
+        if (params.el.id !== _$node.attr("id")) return;
         _canvas.hideGuidanceBox();
         _$node.css({ opacity: 0.5 });
         // _$node.resizable({ disabled: true });
@@ -5809,21 +5809,18 @@ export class ObjectNode extends AbstractNode {
               nodeId;
 
             //noinspection JSAccessibilityCheck
-            canvas
-              .createNode(
-                NodeShapeNode.TYPE,
-                appearance.left + appearance.width + 50,
-                appearance.top,
-                150,
-                100
-              )
-              .done(function (nodeId) {
-                canvas.createEdge(
-                  BiDirAssociationEdge.TYPE,
-                  that.getEntityId(),
-                  nodeId
-                );
-              });
+            const id = canvas.createNode(
+              NodeShapeNode.TYPE,
+              appearance.left + appearance.width + 50,
+              appearance.top,
+              150,
+              100
+            );
+            canvas.createEdge(
+              BiDirAssociationEdge.TYPE,
+              that.getEntityId(),
+              id
+            );
           },
           disabled: function () {
             var edges = that.getEdges(),
