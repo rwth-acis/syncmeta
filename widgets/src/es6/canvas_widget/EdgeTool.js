@@ -4,11 +4,7 @@ import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"
 import _ from "lodash-es";
 import { EntityManagerInstance as EntityManager } from "./Manager";
 import AbstractCanvasTool from "./AbstractCanvasTool";
-import {
-  EVENT_DRAG_START,
-  EVENT_DRAG_MOVE,
-  EVENT_DRAG_STOP,
-} from "@jsplumb/browser-ui";
+import { EVENT_DRAG_START, EVENT_CLICK } from "@jsplumb/browser-ui";
 import { getQuerySelectorFromNode } from "../getQuerySelectorFromNode";
 import { EVENT_CONNECTION, EVENT_CONNECTION_DETACHED } from "@jsplumb/core";
 
@@ -98,7 +94,7 @@ class EdgeTool extends AbstractCanvasTool {
         }
       }
 
-      jsPlumbInstance.bind(EVENT_DRAG_MOVE, function (info) {
+      jsPlumbInstance.bind(EVENT_CLICK, function (info) {
         var sourceNode = EntityManager.findNode(info.sourceId),
           sourceType,
           i,

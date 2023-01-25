@@ -9,10 +9,9 @@ import {
   EVENT_DRAG_START,
   EVENT_DRAG_MOVE,
   EVENT_DRAG_STOP,
-  EVENT_ELEMENT_CLICK,
-  EVENT_ELEMENT_MOUSE_DOWN,
-  EVENT_ELEMENT_MOUSE_UP,
 } from "@jsplumb/browser-ui";
+
+import { AnchorLocations } from "@jsplumb/common";
 
 import { CONFIG } from "../config";
 import { default as loadHTML } from "../html.template.loader";
@@ -2061,10 +2060,7 @@ export class AbstractNode extends AbstractEntity {
      * Anchor options for new connections
      * @type {object}
      */
-    var _anchorOptions = {
-      type: "Perimeter",
-      options: { shape: "Rectangle", anchorCount: 10 },
-    };
+    var _anchorOptions = AnchorLocations.AutoDefault;
 
     /**
      * Get options for new connections
@@ -2608,7 +2604,7 @@ export class AbstractNode extends AbstractEntity {
     /**
      * Bind events for move tool
      */
-    this.bindMoveToolEvents = function () {
+    this.bindMoveToolEvents = () => {
       //$canvas.find(".node.ui-draggable").draggable("option","disabled",false);
       var originalPos = {
         left: 0,
@@ -2676,7 +2672,7 @@ export class AbstractNode extends AbstractEntity {
         _canvas.select(that);
       });
 
-      jsPlumbInstance.manage(_$node.get(0));
+      that.jsPlumbManagedElement = jsPlumbInstance.manage(_$node.get(0));
 
       jsPlumbInstance.bind(EVENT_DRAG_START, function (params) {
         if(params.el.id !== _$node.attr("id")) return;
@@ -2767,10 +2763,17 @@ export class AbstractNode extends AbstractEntity {
      */
     this.makeSource = function () {
       _$node.addClass("source");
-      window.jsPlumbInstance.addSourceSelector(this.nodeSelector, {
+      window.jsPlumbInstance.addEndpoint(_$node.get(0), {
         connectorPaintStyle: { fill: "black", strokeWidth: 4 },
-        endpoint: "Dot",
-        anchor: _anchorOptions,
+        source: true,
+        endpoint: {
+          type: "Rectangle",
+          options: {
+            width: _$node.width() + 50,
+            height: _$node.height() + 50,
+          },
+        },
+        anchor: AnchorLocations.Center,
         //maxConnections:1,
         uniqueEndpoint: false,
         deleteEndpointsOnDetach: true,
@@ -2790,10 +2793,16 @@ export class AbstractNode extends AbstractEntity {
      */
     this.makeTarget = function () {
       _$node.addClass("target");
-      window.jsPlumbInstance.addTargetSelector(this.nodeSelector, {
-        isTarget: false,
-        endpoint: "Dot",
-        anchor: _anchorOptions,
+      window.jsPlumbInstance.addEndpoint(_$node.get(0), {
+        target: true,
+        endpoint: {
+          type: "Rectangle",
+          options: {
+            width: _$node.width() + 50,
+            height: _$node.height() + 50,
+          },
+        },
+        anchor: AnchorLocations.Center,
         uniqueEndpoint: false,
         //maxConnections:1,
         deleteEndpointsOnDetach: true,
@@ -2876,6 +2885,7 @@ export class AbstractNode extends AbstractEntity {
     };
   }
   nodeSelector;
+  jsPlumbManagedElement;
   /**
    * Apply position and dimension attributes to the node
    */
