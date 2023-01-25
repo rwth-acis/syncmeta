@@ -2762,7 +2762,7 @@ export class AbstractNode extends AbstractEntity {
      */
     this.makeSource = function () {
       _$node.addClass("source");
-      window.jsPlumbInstance.addEndpoint(_$node.get(0), {
+      this.endPoint = window.jsPlumbInstance.addEndpoint(_$node.get(0), {
         connectorPaintStyle: { fill: "black", strokeWidth: 4 },
         source: true,
         endpoint: {
@@ -2772,7 +2772,7 @@ export class AbstractNode extends AbstractEntity {
             height: _$node.height() + 50,
           },
         },
-        endpointStyle: { fill: "#222" },
+        paintStyle: { fill: "transparent" },
         anchor: AnchorLocations.Center,
         //maxConnections:1,
         uniqueEndpoint: false,
@@ -2793,7 +2793,7 @@ export class AbstractNode extends AbstractEntity {
      */
     this.makeTarget = function () {
       _$node.addClass("target");
-      window.jsPlumbInstance.addEndpoint(_$node.get(0), {
+      this.endPoint = window.jsPlumbInstance.addEndpoint(_$node.get(0), {
         target: true,
         endpoint: {
           type: "Rectangle",
@@ -2802,6 +2802,7 @@ export class AbstractNode extends AbstractEntity {
             height: _$node.height() + 50,
           },
         },
+        paintStyle: { fill: "transparent" },
         anchor: AnchorLocations.Center,
         uniqueEndpoint: false,
         //maxConnections:1,
@@ -2886,6 +2887,7 @@ export class AbstractNode extends AbstractEntity {
   }
   nodeSelector;
   jsPlumbManagedElement;
+  endPoint;
   /**
    * Apply position and dimension attributes to the node
    */
