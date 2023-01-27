@@ -2764,7 +2764,7 @@ export class AbstractNode extends AbstractEntity {
     /**
      * Bind source node events for edge tool
      */
-    this.makeSource = function () {
+    this.makeSource = () => {
       _$node.addClass("source");
       this.endPoint = window.jsPlumbInstance.addEndpoint(_$node.get(0), {
         connectorPaintStyle: { fill: "black", strokeWidth: 4 },
@@ -2795,7 +2795,7 @@ export class AbstractNode extends AbstractEntity {
     /**
      * Bind target node events for edge tool
      */
-    this.makeTarget = function () {
+    this.makeTarget = () => {
       _$node.addClass("target");
       this.endPoint = window.jsPlumbInstance.addEndpoint(_$node.get(0), {
         target: true,
