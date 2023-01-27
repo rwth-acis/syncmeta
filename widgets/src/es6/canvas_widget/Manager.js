@@ -1485,30 +1485,29 @@ export class AbstractNode extends AbstractEntity {
     if (!y) {
       throw new Error("y is undefined");
     }
-    if (y) {
-      const nodesMap = y.getMap("nodes");
+    const nodesMap = y.getMap("nodes");
 
-      if (nodesMap.has(id)) {
-        _ymap = nodesMap.get(id);
-      } else {
-        window.y.transact(() => {
-          _ymap = new Y.Map();
-          nodesMap.set(id, _ymap);
-          _ymap.set("modifiedBy", window.y.clientID);
-          _ymap.set("left", left);
-          _ymap.set("top", top);
-          _ymap.set("width", width);
-          _ymap.set("height", height);
-          _ymap.set("zIndex", zIndex);
-          _ymap.set("containment", containment);
-          _ymap.set("type", type);
-          _ymap.set("id", id);
-          if (json) _ymap.set("json", json);
-          if (_iwcw.getUser().globalId !== -1)
-            _ymap.set("jabberId", _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
-        });
-      }
+    if (nodesMap.has(id)) {
+      _ymap = nodesMap.get(id);
+    } else {
+      window.y.transact(() => {
+        _ymap = new Y.Map();
+        nodesMap.set(id, _ymap);
+        _ymap.set("modifiedBy", window.y.clientID);
+        _ymap.set("left", left);
+        _ymap.set("top", top);
+        _ymap.set("width", width);
+        _ymap.set("height", height);
+        _ymap.set("zIndex", zIndex);
+        _ymap.set("containment", containment);
+        _ymap.set("type", type);
+        _ymap.set("id", id);
+        if (json) _ymap.set("json", json);
+        if (_iwcw.getUser().globalId !== -1)
+          _ymap.set("jabberId", _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+      });
     }
+
     this.getYMap = function () {
       return _ymap;
     };
@@ -1570,6 +1569,8 @@ export class AbstractNode extends AbstractEntity {
 
     this.nodeSelector = getQuerySelectorFromNode(_$node[0]);
 
+    // this is the node's awareness trace.
+    // If I understand correctly, it is showing the activity of other users on the node.
     var _$awarenessTrace = $(
       _.template(awarenessTraceHtml)({ id: id + "_awareness" })
     );
@@ -2526,9 +2527,6 @@ export class AbstractNode extends AbstractEntity {
      * @param {String} username
      */
     this.highlight = function (color, username) {
-      //unhighlight everything else
-      //$('.node:not(.selected)').css({border: "2px solid transparent"});
-      //$('.user_highlight').remove();
       if (color && username) {
         _$node.css({ border: "2px solid " + color });
         _$node.append(
@@ -2552,19 +2550,9 @@ export class AbstractNode extends AbstractEntity {
       _$node.css({ border: "" });
       _$node.find(".user_highlight").remove();
       Util.delay(100).then(function () {
-        var EntityManager = null;
-        try {
-          EntityManager = EntityManagerInstance;
-          _.each(EntityManager.getEdges(), function (e) {
-            e.setZIndex();
-          });
-        } catch (error) {
-          require(["canvas_widget/EntityManager"], function (EntityManager) {
-            _.each(EntityManager.getEdges(), function (e) {
-              e.setZIndex();
-            });
-          });
-        }
+        _.each(EntityManagerInstance.getEdges(), function (e) {
+          e.setZIndex();
+        });
       });
     };
 
@@ -2574,6 +2562,8 @@ export class AbstractNode extends AbstractEntity {
     this.remove = function () {
       clearInterval(_awarenessTimer);
       this.removeFromCanvas();
+      jsPlumbInstance.removeAllEndpoints(_$node.get(0));
+      jsPlumbInstance.unmanage(_$node.get(0));
       EntityManagerInstance.deleteNode(this.getEntityId());
     };
 
@@ -2604,13 +2594,15 @@ export class AbstractNode extends AbstractEntity {
       _relatedGhostEdges.push(ghostEdge);
     };
 
+    _$node.on("mousedown", function (e) {
+      _canvas.select(that);
+    });
     /**
      * Bind events for move tool
      */
     this.bindMoveToolEvents = () => {
-      jsPlumbInstance.setDraggable(_$node.get(0), true);
+      jsPlumbInstance.setDraggable(_$node.get(0), true); //Enable Node Dragging
 
-      //$canvas.find(".node.ui-draggable").draggable("option","disabled",false);
       var originalPos = {
         left: 0,
         top: 0,
@@ -2621,11 +2613,12 @@ export class AbstractNode extends AbstractEntity {
         top: 0,
       };
 
-      //Enable Node Selection
       var drag = false;
       var $sizePreview = $('<div class="size-preview"></div>').hide();
 
       _$node
+        //Enable Node Rightclick menu
+        .contextMenu(true)
         //Enable Node Resizing
         // .resizable({
         //   containment: "parent",
@@ -2666,18 +2659,11 @@ export class AbstractNode extends AbstractEntity {
         //     //_canvas.showGuidanceBox();
         //   },
         // })
-        //Enable Node Rightclick menu
-        .contextMenu(true)
-
         .find("input")
         .prop("disabled", false)
         .css("pointerEvents", "");
 
-      _$node.on("mousedown", function (e) {
-        _canvas.select(that);
-      });
-
-      that.jsPlumbManagedElement = jsPlumbInstance.manage(_$node.get(0));
+      this.jsPlumbManagedElement = jsPlumbInstance.manage(_$node.get(0));
 
       jsPlumbInstance.bind(EVENT_DRAG_START, function (params) {
         if (params.el.id !== _$node.attr("id")) return;
@@ -2685,6 +2671,8 @@ export class AbstractNode extends AbstractEntity {
         _$node.css({ opacity: 0.5 });
         // _$node.resizable({ disabled: true });
         drag = false;
+
+        return true;
       });
 
       jsPlumbInstance.bind(EVENT_DRAG_STOP, function (params) {
@@ -2777,7 +2765,7 @@ export class AbstractNode extends AbstractEntity {
             height: _$node.height() + 50,
           },
         },
-        paintStyle: { fill: "transparent" },
+        paintStyle: { fill: "black" },
         anchor: AnchorLocations.Center,
         deleteOnEmpty: true,
         //maxConnections:1,
@@ -2808,7 +2796,7 @@ export class AbstractNode extends AbstractEntity {
             height: _$node.height() + 50,
           },
         },
-        paintStyle: { fill: "transparent" },
+        paintStyle: { fill: "black" },
         anchor: AnchorLocations.Center,
         uniqueEndpoint: false,
         //maxConnections:1,
@@ -2832,8 +2820,10 @@ export class AbstractNode extends AbstractEntity {
     this.unbindEdgeToolEvents = function () {
       try {
         _$node.removeClass("source target");
-        window.jsPlumbInstance.removeSourceSelector(this.nodeSelector);
-        window.jsPlumbInstance.removeTargetSelector(this.nodeSelector);
+        if (this.endPoint) {
+          window.jsPlumbInstance.deleteEndpoint(this.endPoint);
+          this.endPoint = null;
+        }
       } catch (error) {
         console.error(error);
       }
