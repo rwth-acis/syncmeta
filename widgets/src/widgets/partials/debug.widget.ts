@@ -22,103 +22,130 @@ export class DebugWidget extends SyncMetaWidget(LitElement) {
         }
         ${getWidgetTagName(CONFIG.WIDGET.NAME.DEBUG)} {
           position: relative;
-          max-height: 46vh;
           overflow-y: auto;
         }
       </style>
 
-      <div id="debug-container">
-        <div class="seperating_box">
-          <h6>Select a JSON file</h6>
-          <input
-            class="form-control"
-            type="file"
-            id="file-object"
-            accept=".json"
-            value="Load a file"
-          />
-        </div>
+      <div
+        class="modal fade"
+        id="exportModal"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+        style="z-index: 2147483647 !important;display: block;"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <div id="debug-container">
+                <div class="seperating_box">
+                  <h6>Select a JSON file</h6>
+                  <input
+                    class="form-control"
+                    type="file"
+                    id="file-object"
+                    accept=".json"
+                    value="Load a file"
+                  />
+                </div>
 
-        <hr />
-        <div id="import-export-container">
-          <div id="modelDiv" class="seperating_box">
-            <h6>
-              <strong>(Meta- or Guidance-)Model</strong>
-            </h6>
-            <button
-              id="import-model"
-              class="btn btn-primary"
-              title="Import a model to the canvas"
-            >
-              Import
-            </button>
-            <button
-              id="export-model"
-              class="btn btn-secondary"
-              title="export the model as JSON"
-            >
-              Export
-            </button>
-            <button
-              id="delete-model"
-              title="delete the model"
-              class="btn btn-danger"
-            >
-              Delete
-            </button>
-          </div>
-          <hr />
-          <div id="vlsDiv" class="seperating_box">
-            <h6><strong>Metamodel</strong> (Model Editor only)</h6>
-            <button
-              class="btn btn-primary"
-              id="import-meta-model"
-              title="Refresh the role space to apply the new VLS."
-            >
-              Import
-            </button>
-            <button
-              id="export-meta-model"
-              title="Download the VLS as JSON"
-              class="btn btn-secondary"
-            >
-              Export
-            </button>
-            <button
-              id="delete-meta-model"
-              title="Refresh the role space and delete the current modeling language"
-              class="btn btn-danger"
-            >
-              Delete
-            </button>
-          </div>
-          <hr />
-          <div id="guidanceDiv" class="seperating_box">
-            <h6><strong>Logical Guidancemodel</strong> (Model Editor only)</h6>
-            <button id="import-guidance-model" class="btn btn-primary">
-              Import
-            </button>
-            <button id="export-guidance-model" class="btn btn-secondary">
-              Export
-            </button>
-            <button id="delete-guidance-model" class="btn btn-danger">
-              Delete
-            </button>
-          </div>
-          <hr />
-          <div id="activityDiv" class="seperating_box">
-            <h6><strong>Activity list</strong></h6>
-            <button id="export-activity-list" class="btn btn-secondary">
-              Export
-            </button>
-            <button id="delete-activity-list" class="btn btn-danger">
-              Delete
-            </button>
+                <hr />
+                <div id="import-export-container">
+                  <div id="modelDiv" class="seperating_box">
+                    <h6>
+                      <strong>(Meta- or Guidance-)Model</strong>
+                    </h6>
+                    <button
+                      id="import-model"
+                      class="btn btn-primary"
+                      title="Import a model to the canvas"
+                    >
+                      Import
+                    </button>
+                    <button
+                      id="export-model"
+                      class="btn btn-secondary"
+                      title="export the model as JSON"
+                    >
+                      Export
+                    </button>
+                    <button
+                      id="delete-model"
+                      title="delete the model"
+                      class="btn btn-danger"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                  <hr />
+                  <div id="vlsDiv" class="seperating_box">
+                    <h6><strong>Metamodel</strong> (Model Editor only)</h6>
+                    <button
+                      class="btn btn-primary"
+                      id="import-meta-model"
+                      title="Refresh the role space to apply the new VLS."
+                    >
+                      Import
+                    </button>
+                    <button
+                      id="export-meta-model"
+                      title="Download the VLS as JSON"
+                      class="btn btn-secondary"
+                    >
+                      Export
+                    </button>
+                    <button
+                      id="delete-meta-model"
+                      title="Refresh the role space and delete the current modeling language"
+                      class="btn btn-danger"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                  <hr />
+                  <div id="guidanceDiv" class="seperating_box">
+                    <h6>
+                      <strong>Logical Guidancemodel</strong> (Model Editor only)
+                    </h6>
+                    <button id="import-guidance-model" class="btn btn-primary">
+                      Import
+                    </button>
+                    <button
+                      id="export-guidance-model"
+                      class="btn btn-secondary"
+                    >
+                      Export
+                    </button>
+                    <button id="delete-guidance-model" class="btn btn-danger">
+                      Delete
+                    </button>
+                  </div>
+                  <hr />
+                  <div id="activityDiv" class="seperating_box">
+                    <h6><strong>Activity list</strong></h6>
+                    <button id="export-activity-list" class="btn btn-secondary">
+                      Export
+                    </button>
+                    <button id="delete-activity-list" class="btn btn-danger">
+                      Delete
+                    </button>
+                  </div>
+                </div>
+                <loading-spinner></loading-spinner>
+              </div>
+              <br />
+            </div>
           </div>
         </div>
-        <loading-spinner></loading-spinner>
       </div>
-      <br />
     `;
   }
 

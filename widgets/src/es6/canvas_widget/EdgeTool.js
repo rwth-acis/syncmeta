@@ -6,8 +6,7 @@ import { EntityManagerInstance as EntityManager } from "./Manager";
 import AbstractCanvasTool from "./AbstractCanvasTool";
 import {
   EVENT_DRAG_START,
-  EVENT_DRAG_MOVE,
-  EVENT_DRAG_STOP,
+  EVENT_ENDPOINT_MOUSEOVER,
 } from "@jsplumb/browser-ui";
 import { getQuerySelectorFromNode } from "../getQuerySelectorFromNode";
 import { EVENT_CONNECTION, EVENT_CONNECTION_DETACHED } from "@jsplumb/core";
@@ -98,7 +97,7 @@ class EdgeTool extends AbstractCanvasTool {
         }
       }
 
-      jsPlumbInstance.bind(EVENT_DRAG_MOVE, function (info) {
+      jsPlumbInstance.bind("beforeDrag", function (info) {
         var sourceNode = EntityManager.findNode(info.sourceId),
           sourceType,
           i,
@@ -136,25 +135,31 @@ class EdgeTool extends AbstractCanvasTool {
         $canvas.addClass("dragging");
         return true;
       });
-      jsPlumbInstance.bind(EVENT_DRAG_START, function () {
+      jsPlumbInstance.bind("beforeDrop", function () {
         $canvas.removeClass("dragging");
         $(".node.current").removeClass("current");
         return true;
       });
-      jsPlumbInstance.bind(EVENT_CONNECTION_DETACHED, function (info) {
-        if (info.connection.pending) {
+      jsPlumbInstance.bind("beforeDetach", function (info) {
+        if (info.connection?.pending) {
           $(".node.current").removeClass("current");
           $canvas.removeClass("dragging");
         }
         return true;
       });
 
-      jsPlumbInstance.bind(EVENT_CONNECTION, function (info, originalEvent) {
+      jsPlumbInstance.bind("connection", function (info, originalEvent) {
         if (typeof originalEvent !== "undefined") {
           //Was the connection established using Drag'n Drop?
-          jsPlumbInstance.destroyConnector(info.connection, {
-            fireEvent: false,
-          });
+          // If so we delete the connection and form it manually again
+          if (info.connection.endpoints) {
+            jsPlumbInstance.removeAllEndpoints(info.source);
+            jsPlumbInstance.removeAllEndpoints(info.target);
+            jsPlumbInstance.deleteConnection(info.connection, {
+              fireEvent: false,
+            });
+          }
+
           that
             .getCanvas()
             .createEdge(that.getName(), info.sourceId, info.targetId);

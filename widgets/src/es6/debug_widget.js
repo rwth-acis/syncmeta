@@ -16,6 +16,12 @@ $(async function () {
   const guidance = getGuidanceModeling();
   yjsSync()
     .then((y) => {
+      const debugButton = $("#exportModel");
+      const modal = $("#exportModal");
+      modal.css("display", "none");
+      // debugButton.on("click", () => {
+      //   modal.css("display", "block");
+      // });
       const dataMap = y.getMap("data");
       console.info(
         "DEBUG: Yjs suc cessfully initialized in room " +
