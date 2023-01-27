@@ -1492,7 +1492,8 @@ export class AbstractNode extends AbstractEntity {
         _ymap = nodesMap.get(id);
       } else {
         window.y.transact(() => {
-          _ymap = nodesMap.set(id, new Y.Map());
+          _ymap = new Y.Map();
+          nodesMap.set(id, _ymap);
           _ymap.set("modifiedBy", window.y.clientID);
           _ymap.set("left", left);
           _ymap.set("top", top);
