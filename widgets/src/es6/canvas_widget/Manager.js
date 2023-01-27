@@ -2605,6 +2605,8 @@ export class AbstractNode extends AbstractEntity {
      * Bind events for move tool
      */
     this.bindMoveToolEvents = () => {
+      jsPlumbInstance.setDraggable(_$node.get(0), true);
+
       //$canvas.find(".node.ui-draggable").draggable("option","disabled",false);
       var originalPos = {
         left: 0,
