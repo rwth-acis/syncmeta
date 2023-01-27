@@ -706,12 +706,15 @@ export class AbstractEdge extends AbstractEntity {
       if (edgeMap.has(id)) {
         _ymap = edgeMap.get(id);
       } else if (id && type && source && target) {
-        _ymap = edgeMap.set(id, new Y.Map());
-        _ymap.set("id", id);
-        _ymap.set("type", type);
-        _ymap.set("source", source.getEntityId());
-        _ymap.set("target", target.getEntityId());
-        _ymap.set("jabberId", _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+        _ymap = new Y.Map();
+        edgeMap.set(id, new Y.Map());
+        y.transact(() => {
+          _ymap.set("id", id);
+          _ymap.set("type", type);
+          _ymap.set("source", source.getEntityId());
+          _ymap.set("target", target.getEntityId());
+          _ymap.set("jabberId", _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+        });
       }
     }
     this.getYMap = function () {
@@ -817,7 +820,6 @@ export class AbstractEdge extends AbstractEntity {
      */
     var propagateEdgeDeleteOperation = function (operation) {
       processEdgeDeleteOperation(operation);
-      $("#save").click();
 
       _iwcw.sendLocalOTOperation(
         CONFIG.WIDGET.NAME.ATTRIBUTE,
@@ -967,7 +969,7 @@ export class AbstractEdge extends AbstractEntity {
     this.removeFromCanvas = function () {
       _canvas = null;
       $.contextMenu("destroy", "." + that.getEntityId());
-      window.jsPlumbInstance.destroyConnector(_jsPlumbConnection, {
+      window.jsPlumbInstance.deleteConnection(_jsPlumbConnection, {
         fireEvent: false,
       });
       _jsPlumbConnection = null;
