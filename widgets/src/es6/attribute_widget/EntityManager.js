@@ -2422,6 +2422,9 @@ export class ModelAttributesNode extends AbstractNode {
           ) {
             const nodesMap = y.getMap("nodes");
             var ymap = nodesMap.get(this.getEntityId());
+            if (!ymap) {
+              throw new Error("YMap not found");
+            }
             var ytext = ymap.get(val.getEntityId());
             val.registerYType(ytext);
           }
