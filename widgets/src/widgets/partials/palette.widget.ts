@@ -13,10 +13,6 @@ export class PaletteWidget extends SyncMetaWidget(LitElement) {
   render() {
     return html`
       <style>
-        button.selected {
-          border: 1px solid #999999;
-          background-color: #eeeeee;
-        }
         ${getWidgetTagName(CONFIG.WIDGET.NAME.PALETTE)} {
           height: 100%;
           position: relative;

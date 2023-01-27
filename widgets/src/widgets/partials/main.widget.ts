@@ -93,7 +93,6 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
           text-align: center;
         }
 
-
         div.simple_node div.label {
           display: table-cell;
           text-align: center;
@@ -484,7 +483,7 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
 
       <div class="main-container container d-flex flex-column h-100">
         <div id="loading" class="loading"></div>
-        <div class="row">
+        <div class="row mb-2">
           <div class="col">
             <div class="flex">
               <button
@@ -511,6 +510,15 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
               <!-- Uncommented the below line for Export as PNG! -->
               <button id="save_image" class="btn btn-light">
                 <i class="bi bi-camera"></i>
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondary "
+                data-bs-toggle="modal"
+                data-bs-target="#exportModal"
+                id="exportModel"
+              >
+                <i class="bi bi-cloud me-1"></i>Import/Export
               </button>
               <!--<button id="generate" style="display: none"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/generate.png" /></button>-->
               <span id="feedback"></span>

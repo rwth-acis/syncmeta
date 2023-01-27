@@ -141,7 +141,7 @@ class EdgeTool extends AbstractCanvasTool {
         return true;
       });
       jsPlumbInstance.bind("beforeDetach", function (info) {
-        if (info.connection.pending) {
+        if (info.connection?.pending) {
           $(".node.current").removeClass("current");
           $canvas.removeClass("dragging");
         }
@@ -151,9 +151,15 @@ class EdgeTool extends AbstractCanvasTool {
       jsPlumbInstance.bind("connection", function (info, originalEvent) {
         if (typeof originalEvent !== "undefined") {
           //Was the connection established using Drag'n Drop?
-          jsPlumbInstance.destroyConnector(info.connection, {
-            fireEvent: false,
-          });
+          // If so we delete the connection and form it manually again
+          if (info.connection.endpoints) {
+            jsPlumbInstance.removeAllEndpoints(info.source);
+            jsPlumbInstance.removeAllEndpoints(info.target);
+            jsPlumbInstance.deleteConnection(info.connection, {
+              fireEvent: false,
+            });
+          }
+
           that
             .getCanvas()
             .createEdge(that.getName(), info.sourceId, info.targetId);
