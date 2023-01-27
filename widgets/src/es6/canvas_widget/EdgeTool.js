@@ -141,7 +141,7 @@ class EdgeTool extends AbstractCanvasTool {
         return true;
       });
       jsPlumbInstance.bind("beforeDetach", function (info) {
-        if (info.connection.pending) {
+        if (info.connection?.pending) {
           $(".node.current").removeClass("current");
           $canvas.removeClass("dragging");
         }
