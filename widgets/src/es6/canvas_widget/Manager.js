@@ -2778,6 +2778,7 @@ export class AbstractNode extends AbstractEntity {
         },
         paintStyle: { fill: "transparent" },
         anchor: AnchorLocations.Center,
+        deleteOnEmpty: true,
         //maxConnections:1,
         uniqueEndpoint: false,
         deleteEndpointsOnDetach: true,
@@ -2810,7 +2811,7 @@ export class AbstractNode extends AbstractEntity {
         anchor: AnchorLocations.Center,
         uniqueEndpoint: false,
         //maxConnections:1,
-        deleteEndpointsOnDetach: true,
+        deleteOnEmpty: true,
         onMaxConnections: function (info /*, originalEvent*/) {
           console.log(
             "user tried to drop connection",
