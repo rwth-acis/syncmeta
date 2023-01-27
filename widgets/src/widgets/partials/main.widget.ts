@@ -93,6 +93,7 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
           text-align: center;
         }
 
+
         div.simple_node div.label {
           display: table-cell;
           text-align: center;
@@ -419,6 +420,10 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
           font-weight: bold;
           white-space: nowrap;
           text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+        }
+
+        .jtk-endpoint {
+          z-index: 300000;
         }
 
         .ghost-edge {
