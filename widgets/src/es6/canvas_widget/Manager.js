@@ -1641,7 +1641,7 @@ export class AbstractNode extends AbstractEntity {
      */
     var processNodeMoveOperation = function (operation) {
       _canvas.hideGuidanceBox();
-      // that.move(operation.getOffsetX(), operation.getOffsetY(), 0);
+      that.move(operation.getOffsetX(), operation.getOffsetY(), 0);
       _canvas.showGuidanceBox();
     };
 
