@@ -110,7 +110,7 @@ class WidgetContainer extends LitElement {
                 data-bs-target="#exportModal"
                 id="exportModel"
               >
-                <i class="bi bi-cloud me-1"></i>Import/Export
+                <i class="bi bi-cloud-fill me-1"></i>Import/Export
               </button>`;
       const rowContainer = document.querySelector(
         "#main-widget-utilities-container"
@@ -129,6 +129,6 @@ class WidgetContainer extends LitElement {
         new DOMParser().parseFromString(btnTemplate, "text/html").body
           .firstChild as Node
       );
-    }, 300);
+    }, 100);
   }
 }
