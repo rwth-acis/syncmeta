@@ -80,6 +80,7 @@ export default class Canvas extends AbstractCanvas {
      * @private
      */
     var _canvasWidth = 9000;
+    this.width = _canvasWidth;
 
     /**
      * Default canvas height
@@ -87,6 +88,7 @@ export default class Canvas extends AbstractCanvas {
      * @private
      */
     var _canvasHeight = 9000;
+    this.height = _canvasHeight;
 
     /**
      * Model attributes
@@ -1895,4 +1897,6 @@ export default class Canvas extends AbstractCanvas {
       that.registerCallbacks();
     }
   }
+  width;
+  height;
 }
