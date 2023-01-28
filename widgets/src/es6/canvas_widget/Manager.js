@@ -1569,7 +1569,8 @@ export class AbstractNode extends AbstractEntity {
      * @type {jQuery}
      * @private
      */
-    this._$node = $(_.template(abstractNodeHtml)({ id: id }));
+    var _$node = $(_.template(abstractNodeHtml)({ id: id }));
+    this._$node = _$node;
 
     this.nodeSelector = getQuerySelectorFromNode(this._$node[0]);
 
@@ -1588,11 +1589,12 @@ export class AbstractNode extends AbstractEntity {
       });
     }, 3000);
 
-    _$node.on("mousedown", function (e) {
+    this._$node.on("mousedown", function (e) {
+      _canvas.select(that);
       _canvas.unbindMoveToolEvents();
     });
 
-    _$node.on("mouseup", function (e) {
+    this._$node.on("mouseup", function (e) {
       _canvas.bindMoveToolEvents();
     });
 
@@ -2617,14 +2619,11 @@ export class AbstractNode extends AbstractEntity {
       _relatedGhostEdges.push(ghostEdge);
     };
 
-    _$node.on("mousedown", function (e) {
-      _canvas.select(that);
-    });
     /**
      * Bind events for move tool
      */
     this.bindMoveToolEvents = () => {
-      jsPlumbInstance.setDraggable(_$node.get(0), true); //Enable Node Dragging
+      jsPlumbInstance.setDraggable(this._$node.get(0), true); //Enable Node Dragging
 
       var originalPos = {
         left: 0,
@@ -2648,10 +2647,10 @@ export class AbstractNode extends AbstractEntity {
         .prop("disabled", false)
         .css("pointerEvents", "");
 
-      this.jsPlumbManagedElement = jsPlumbInstance.manage(_$node.get(0));
+      this.jsPlumbManagedElement = jsPlumbInstance.manage(this._$node.get(0));
 
-      jsPlumbInstance.bind(EVENT_DRAG_START, function (params) {
-        if (params.el.id !== _$node.attr("id")) return true;
+      jsPlumbInstance.bind(EVENT_DRAG_START, (params) => {
+        if (params.el.id !== this._$node.attr("id")) return true;
 
         setTimeout(function () {
           originalPos.top = params.el.offsetTop;
@@ -2667,8 +2666,8 @@ export class AbstractNode extends AbstractEntity {
         return true;
       });
 
-      jsPlumbInstance.bind(EVENT_DRAG_MOVE, function (params) {
-        if (params.el.id !== _$node.attr("id")) return true;
+      jsPlumbInstance.bind(EVENT_DRAG_MOVE, (params) => {
+        if (params.el.id !== this._$node.attr("id")) return true;
         setTimeout(() => {
           lastDragPos.top = params.pos.y;
           lastDragPos.left = params.pos.x;
@@ -2677,8 +2676,8 @@ export class AbstractNode extends AbstractEntity {
         return true;
       });
 
-      jsPlumbInstance.bind(EVENT_DRAG_STOP, function (params) {
-        if (params.el.id !== _$node.attr("id")) return true;
+      jsPlumbInstance.bind(EVENT_DRAG_STOP, (params) => {
+        if (params.el.id !== this._$node.attr("id")) return true;
         setTimeout(() => {
           _$node.css({ opacity: "" });
           // _$node.resizable("enable");
@@ -2926,71 +2925,79 @@ export class AbstractNode extends AbstractEntity {
   }
 
   makeResizable(that, _canvas, $sizePreview, id) {
-    interact(that.nodeSelector).resizable({
-      // resize from all edges and corners
-      edges: { left: true, right: true, bottom: true, top: true },
-      listeners: {
-        start: () => {
-          _canvas.hideGuidanceBox();
-          $sizePreview.show();
-          that._$node.css({ opacity: 0.5 });
-          that._$node.append($sizePreview);
-          jsPlumbInstance.setDraggable(that._$node.get(0), false);
+    const initialSize = {
+      width: that._$node.width(),
+      height: that._$node.height(),
+    };
+    interact(that.nodeSelector)
+      .resizable({
+        // resize from all edges and corners
+        edges: { left: true, right: true, bottom: true, top: true },
+        square: true,
+        listeners: {
+          move(event) {
+            let { x, y } = event.target.dataset;
+
+            x = (parseFloat(x) || 0) + event.deltaRect.left;
+            y = (parseFloat(y) || 0) + event.deltaRect.top;
+
+            Object.assign(event.target.style, {
+              width: `${event.rect.width}px`,
+              height: `${event.rect.height}px`,
+              transform: `translate(${x}px, ${y}px)`,
+            });
+
+            Object.assign(event.target.dataset, { x, y });
+
+            event.rect.width = Math.max(50, event.rect.width);
+            event.rect.height = Math.max(50, event.rect.height);
+
+            $sizePreview.text(
+              Math.round(event.rect.width) +
+                "\u00D7" +
+                Math.round(event.rect.height)
+            );
+            // that.repaint();
+          },
         },
-        end: (event) => {
-          $sizePreview.hide();
-          that._$node.css({ opacity: "" });
-          that.repaint();
-          var operation = new NodeResizeOperation(id, event.dx, event.dy);
-          that.propagateNodeResizeOperation(operation);
-          jsPlumbInstance.setDraggable(that._$node.get(0), true);
-        },
-        move(event) {
-          jsPlumbInstance.setDraggable(that._$node.get(0), false);
-          var target = event.target;
-          var x = parseFloat(target.getAttribute("data-x")) || 0;
-          var y = parseFloat(target.getAttribute("data-y")) || 0;
-
-          // update the element's style
-          target.style.width = event.rect.width + "px";
-          target.style.height = event.rect.height + "px";
-
-          // translate when resizing from top or left edges
-          x += event.deltaRect.left;
-          y += event.deltaRect.top;
-
-          target.style.transform = "translate(" + x + "px," + y + "px)";
-
-          target.setAttribute("data-x", x);
-          target.setAttribute("data-y", y);
-
-          // $sizePreview.text(
-          //   Math.round(event.rect.width) +
-          //     "\u00D7" +
-          //     Math.round(event.rect.height)
-          // );
-          // this.repaint();
-        },
-      },
-      modifiers: [
-        // keep the edges inside the parent
-        interact.modifiers.restrictEdges({
-          outer: "parent",
-        }),
-        // minimum size
-        interact.modifiers.restrictSize({
-          min: { width: 10, height: 10 },
-        }),
-      ],
-      inertia: true,
-    });
+        modifiers: [
+          // keep the edges inside the parent
+          interact.modifiers.restrictEdges({
+            outer: "parent",
+          }),
+          // minimum size
+          interact.modifiers.restrictSize({
+            min: { width: 40, height: 40 },
+          }),
+        ],
+        inertia: { enabled: false },
+      })
+      .on(["resizestart"], (event) => {
+        jsPlumbInstance.setDraggable(that._$node.get(0), false);
+        _canvas.hideGuidanceBox();
+        $sizePreview.show();
+        that._$node.css({ opacity: 0.5 });
+        that._$node.append($sizePreview);
+        initialSize.width = that._$node.width();
+        initialSize.height = that._$node.height();
+        _canvas.unbindMoveToolEvents();
+      })
+      .on(["resizeend"], (event) => {
+        const offsetX = event.rect.width - initialSize.width;
+        const offsetY = event.rect.height - initialSize.height;
+        $sizePreview.hide();
+        that._$node.css({ opacity: "" });
+        that.repaint();
+        var operation = new NodeResizeOperation(id, offsetX, offsetY);
+        that.propagateNodeResizeOperation(operation);
+        jsPlumbInstance.setDraggable(that._$node.get(0), true);
+        _canvas.bindMoveToolEvents();
+      })
+      .draggable();
   }
 
   disableResizable() {
-    interact(this.nodeSelector).resizable({
-      // resize from all edges and corners
-      edges: { left: false, right: false, bottom: false, top: false },
-    });
+    interact(this.nodeSelector).unset();
   }
 
   /**
