@@ -348,7 +348,7 @@ class AttributeWrapper {
           const jabberId = edgesMap.get(key).get("jabberId");
           if (!jabberId) return;
 
-          var map = event.currentTarget.get(key);
+          const map = event.currentTarget.get(key);
 
           edgeAddCallback(
             new EdgeAddOperation(

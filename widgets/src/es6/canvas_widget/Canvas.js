@@ -37,11 +37,7 @@ import {
   EntityManagerInstance as EntityManager,
   HistoryManagerInstance as HistoryManager,
 } from "./Manager";
-import {
-  EVENT_ELEMENT_MOUSE_DOWN,
-  EVENT_ELEMENT_MOUSE_UP,
-  newInstance,
-} from "@jsplumb/browser-ui";
+import { newInstance } from "@jsplumb/browser-ui";
 import { eventWasTriggeredByMe } from "../yeventChecker";
 
 /**
@@ -84,6 +80,7 @@ export default class Canvas extends AbstractCanvas {
      * @private
      */
     var _canvasWidth = 9000;
+    this.width = _canvasWidth;
 
     /**
      * Default canvas height
@@ -91,6 +88,7 @@ export default class Canvas extends AbstractCanvas {
      * @private
      */
     var _canvasHeight = 9000;
+    this.height = _canvasHeight;
 
     /**
      * Model attributes
@@ -131,14 +129,6 @@ export default class Canvas extends AbstractCanvas {
     });
 
     window.jsPlumbInstance = jsPlumbInstance;
-
-    window.jsPlumbInstance.bind(EVENT_ELEMENT_MOUSE_DOWN, () => {
-      this.unbindMoveToolEvents();
-    });
-
-    window.jsPlumbInstance.bind(EVENT_ELEMENT_MOUSE_UP, () => {
-      this.bindMoveToolEvents();
-    });
 
     $(window).resize(function () {
       sendViewChangeOperation();
@@ -810,14 +800,6 @@ export default class Canvas extends AbstractCanvas {
     this.bindMoveToolEvents = function () {
       //Enable Canvas Dragging
       _$node.draggable("enable");
-
-      if (_$node.transformable != null) {
-        _$node.transformable({
-          rotatable: false,
-          skewable: false,
-          scalable: false,
-        });
-      }
 
       // view_only is used by the CAE and allows to show a model in the Canvas which is not editable
       // therefore, the context menu in the Canvas must be disabled
@@ -1740,6 +1722,7 @@ export default class Canvas extends AbstractCanvas {
               case "applyLayout": {
                 //remote user
                 DagreLayout.apply();
+                jsPlumbInstance.repaintEverything();
                 break;
               }
               //used by the syncmeta-plugin only
@@ -1888,4 +1871,6 @@ export default class Canvas extends AbstractCanvas {
       that.registerCallbacks();
     }
   }
+  width;
+  height;
 }

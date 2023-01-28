@@ -16,7 +16,6 @@ export class AttributeWidget extends SyncMetaWidget(LitElement) {
       <style>
         ${getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE)} {
           height: 100%;
-          max-height: 46vh;
           position: relative;
         }
         .ql-container {

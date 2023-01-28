@@ -431,6 +431,10 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
           text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
         }
 
+        .jtk-endpoint {
+          z-index: 300000;
+        }
+
         .ghost-edge {
           opacity: 0.3;
           z-index: 30000;
@@ -489,7 +493,7 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
 
       <div class="main-container container d-flex flex-column h-100">
         <div id="loading" class="loading"></div>
-        <div class="row">
+        <div class="row mb-2" id="main-widget-utilities-container">
           <div class="col">
             <div class="flex">
               <button

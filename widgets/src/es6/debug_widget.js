@@ -5,7 +5,6 @@ import { yjsSync } from "./lib/yjs-sync";
 import GenerateViewpointModel from "./canvas_widget/GenerateViewpointModel";
 import { EntityManagerInstance as EntityManager } from "./canvas_widget/Manager";
 import { getGuidanceModeling } from "./Guidancemodel";
-import loadHTML from "./html.template.loader";
 import { CONFIG, getWidgetTagName } from "./config";
 
 $(async function () {

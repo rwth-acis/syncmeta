@@ -9,10 +9,9 @@ import {
   EVENT_DRAG_START,
   EVENT_DRAG_MOVE,
   EVENT_DRAG_STOP,
-  EVENT_ELEMENT_CLICK,
-  EVENT_ELEMENT_MOUSE_DOWN,
-  EVENT_ELEMENT_MOUSE_UP,
 } from "@jsplumb/browser-ui";
+
+import { AnchorLocations } from "@jsplumb/common";
 
 import { CONFIG } from "../config";
 import { default as loadHTML } from "../html.template.loader";
@@ -48,7 +47,7 @@ import ConditionListAttribute from "./viewpoint/ConditionListAttribute";
 import LogicalConjunctions from "./viewpoint/LogicalConjunctions";
 import LogicalOperator from "./viewpoint/LogicalOperator";
 import RenamingListAttribute from "./viewpoint/RenamingListAttribute";
-import { EVENT_CONNECTION_MOVED, StraightConnector } from "@jsplumb/core";
+import { StraightConnector } from "@jsplumb/core";
 import { BezierConnector } from "@jsplumb/connector-bezier";
 import { getQuerySelectorFromNode } from "../getQuerySelectorFromNode";
 
@@ -707,9 +706,9 @@ export class AbstractEdge extends AbstractEntity {
       if (edgeMap.has(id)) {
         _ymap = edgeMap.get(id);
       } else if (id && type && source && target) {
+        _ymap = new Y.Map();
+        edgeMap.set(id, new Y.Map());
         y.transact(() => {
-          _ymap = new Y.Map();
-          edgeMap.set(id, _ymap);
           _ymap.set("id", id);
           _ymap.set("type", type);
           _ymap.set("source", source.getEntityId());
@@ -821,7 +820,6 @@ export class AbstractEdge extends AbstractEntity {
      */
     var propagateEdgeDeleteOperation = function (operation) {
       processEdgeDeleteOperation(operation);
-      $("#save").click();
 
       _iwcw.sendLocalOTOperation(
         CONFIG.WIDGET.NAME.ATTRIBUTE,
@@ -971,7 +969,7 @@ export class AbstractEdge extends AbstractEntity {
     this.removeFromCanvas = function () {
       _canvas = null;
       $.contextMenu("destroy", "." + that.getEntityId());
-      window.jsPlumbInstance.destroyConnector(_jsPlumbConnection, {
+      window.jsPlumbInstance.deleteConnection(_jsPlumbConnection, {
         fireEvent: false,
       });
       _jsPlumbConnection = null;
@@ -1487,29 +1485,29 @@ export class AbstractNode extends AbstractEntity {
     if (!y) {
       throw new Error("y is undefined");
     }
-    if (y) {
-      const nodesMap = y.getMap("nodes");
+    const nodesMap = y.getMap("nodes");
 
-      if (nodesMap.has(id)) {
-        _ymap = nodesMap.get(id);
-      } else {
-        window.y.transact(() => {
-          _ymap = nodesMap.set(id, new Y.Map());
-          _ymap.set("modifiedBy", window.y.clientID);
-          _ymap.set("left", left);
-          _ymap.set("top", top);
-          _ymap.set("width", width);
-          _ymap.set("height", height);
-          _ymap.set("zIndex", zIndex);
-          _ymap.set("containment", containment);
-          _ymap.set("type", type);
-          _ymap.set("id", id);
-          if (json) _ymap.set("json", json);
-          if (_iwcw.getUser().globalId !== -1)
-            _ymap.set("jabberId", _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
-        });
-      }
+    if (nodesMap.has(id)) {
+      _ymap = nodesMap.get(id);
+    } else {
+      window.y.transact(() => {
+        _ymap = new Y.Map();
+        nodesMap.set(id, _ymap);
+        _ymap.set("modifiedBy", window.y.clientID);
+        _ymap.set("left", left);
+        _ymap.set("top", top);
+        _ymap.set("width", width);
+        _ymap.set("height", height);
+        _ymap.set("zIndex", zIndex);
+        _ymap.set("containment", containment);
+        _ymap.set("type", type);
+        _ymap.set("id", id);
+        if (json) _ymap.set("json", json);
+        if (_iwcw.getUser().globalId !== -1)
+          _ymap.set("jabberId", _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+      });
     }
+
     this.getYMap = function () {
       return _ymap;
     };
@@ -1571,6 +1569,8 @@ export class AbstractNode extends AbstractEntity {
 
     this.nodeSelector = getQuerySelectorFromNode(_$node[0]);
 
+    // this is the node's awareness trace.
+    // If I understand correctly, it is showing the activity of other users on the node.
     var _$awarenessTrace = $(
       _.template(awarenessTraceHtml)({ id: id + "_awareness" })
     );
@@ -1583,6 +1583,14 @@ export class AbstractNode extends AbstractEntity {
         opacity: opacity,
       });
     }, 3000);
+
+    _$node.on("mousedown", function (e) {
+      _canvas.unbindMoveToolEvents();
+    });
+
+    _$node.on("mouseup", function (e) {
+      _canvas.bindMoveToolEvents();
+    });
 
     /**
      * Attributes of node
@@ -2064,10 +2072,7 @@ export class AbstractNode extends AbstractEntity {
      * Anchor options for new connections
      * @type {object}
      */
-    var _anchorOptions = {
-      type: "Perimeter",
-      options: { shape: "Rectangle", anchorCount: 10 },
-    };
+    var _anchorOptions = AnchorLocations.AutoDefault;
 
     /**
      * Get options for new connections
@@ -2302,23 +2307,45 @@ export class AbstractNode extends AbstractEntity {
      * @param {number} offsetZ Offset in z-direction
      */
     this.move = function (offsetX, offsetY, offsetZ) {
+      if (_appearance.left + offsetX < 0 || _appearance.top + offsetY < 0) {
+        console.error("Node cannot be moved outside of canvas");
+      }
+      if (
+        _appearance.left + offsetX > _canvas.width - _appearance.width ||
+        _appearance.top + offsetY > _canvas.height - _appearance.height
+      ) {
+        console.error("Node cannot be moved outside of canvas");
+      }
       if (_ymap) {
-        _ymap.set("left", (_appearance.left += offsetX));
-        _ymap.set("top", (_appearance.top += offsetY));
-        _ymap.set("zIndex", _zIndex);
+        y.transact(() => {
+          _ymap.set("left", (_appearance.left += offsetX));
+          _ymap.set("top", (_appearance.top += offsetY));
+          _ymap.set("zIndex", _zIndex);
+        });
       }
     };
 
     this.moveAbs = function (left, top, zIndex) {
+      if (left < 0 || top < 0) {
+        console.error("Node cannot be moved outside of canvas");
+      }
+      if (
+        left > _canvas.width - _appearance.width ||
+        top > _canvas.height - _appearance.height
+      ) {
+        console.error("Node cannot be moved outside of canvas");
+      }
       _appearance.left = left;
       _appearance.top = top;
 
       if (zIndex) _zIndex = zIndex;
 
       if (_ymap) {
-        _ymap.set("left", _appearance.left);
-        _ymap.set("top", _appearance.top);
-        if (zIndex) _ymap.set("zIndex", _zIndex);
+        y.transact(() => {
+          _ymap.set("left", _appearance.left);
+          _ymap.set("top", _appearance.top);
+          if (zIndex) _ymap.set("zIndex", _zIndex);
+        });
       }
       this._draw();
       repaint();
@@ -2333,8 +2360,10 @@ export class AbstractNode extends AbstractEntity {
       _appearance.width += offsetX;
       _appearance.height += offsetY;
       if (_ymap) {
-        _ymap.set("width", _appearance.width);
-        _ymap.set("height", _appearance.height);
+        y.transact(() => {
+          _ymap.set("width", _appearance.width);
+          _ymap.set("height", _appearance.height);
+        });
       }
       this._draw();
       repaint();
@@ -2524,9 +2553,6 @@ export class AbstractNode extends AbstractEntity {
      * @param {String} username
      */
     this.highlight = function (color, username) {
-      //unhighlight everything else
-      //$('.node:not(.selected)').css({border: "2px solid transparent"});
-      //$('.user_highlight').remove();
       if (color && username) {
         _$node.css({ border: "2px solid " + color });
         _$node.append(
@@ -2550,19 +2576,9 @@ export class AbstractNode extends AbstractEntity {
       _$node.css({ border: "" });
       _$node.find(".user_highlight").remove();
       Util.delay(100).then(function () {
-        var EntityManager = null;
-        try {
-          EntityManager = EntityManagerInstance;
-          _.each(EntityManager.getEdges(), function (e) {
-            e.setZIndex();
-          });
-        } catch (error) {
-          require(["canvas_widget/EntityManager"], function (EntityManager) {
-            _.each(EntityManager.getEdges(), function (e) {
-              e.setZIndex();
-            });
-          });
-        }
+        _.each(EntityManagerInstance.getEdges(), function (e) {
+          e.setZIndex();
+        });
       });
     };
 
@@ -2572,6 +2588,8 @@ export class AbstractNode extends AbstractEntity {
     this.remove = function () {
       clearInterval(_awarenessTimer);
       this.removeFromCanvas();
+      jsPlumbInstance.removeAllEndpoints(_$node.get(0));
+      jsPlumbInstance.unmanage(_$node.get(0));
       EntityManagerInstance.deleteNode(this.getEntityId());
     };
 
@@ -2602,11 +2620,15 @@ export class AbstractNode extends AbstractEntity {
       _relatedGhostEdges.push(ghostEdge);
     };
 
+    _$node.on("mousedown", function (e) {
+      _canvas.select(that);
+    });
     /**
      * Bind events for move tool
      */
-    this.bindMoveToolEvents = function () {
-      //$canvas.find(".node.ui-draggable").draggable("option","disabled",false);
+    this.bindMoveToolEvents = () => {
+      jsPlumbInstance.setDraggable(_$node.get(0), true); //Enable Node Dragging
+
       var originalPos = {
         left: 0,
         top: 0,
@@ -2617,111 +2639,68 @@ export class AbstractNode extends AbstractEntity {
         top: 0,
       };
 
-      //Enable Node Selection
       var drag = false;
       var $sizePreview = $('<div class="size-preview"></div>').hide();
 
       _$node
-        //Enable Node Resizing
-        // .resizable({
-        //   containment: "parent",
-        //   start: function (ev /*,ui*/) {
-        //     _canvas.hideGuidanceBox();
-        //     $sizePreview.show();
-        //     _$node.css({ opacity: 0.5 });
-        //     _$node.append($sizePreview);
-        //     _$node.resizable("option", "aspectRatio", ev.shiftKey);
-        //     _$node.resizable("option", "grid", ev.ctrlKey ? [20, 20] : "");
-        //   },
-        //   resize: function (ev, ui) {
-        //     _canvas.hideGuidanceBox();
-        //     $sizePreview.text(
-        //       Math.round(ui.size.width) + "x" + Math.round(ui.size.height)
-        //     );
-        //     repaint();
-        //     _$node.resizable("option", "aspectRatio", ev.shiftKey);
-        //     _$node.resizable("option", "grid", ev.ctrlKey ? [20, 20] : "");
-        //   },
-        //   stop: function (ev, ui) {
-        //     $sizePreview.hide();
-        //     _$node.css({ opacity: "" });
-        //     var $target = ui.helper;
-        //     $target.css({
-        //       width: ui.originalSize.width,
-        //       height: ui.originalSize.height,
-        //     });
-        //     repaint();
-        //     var offsetX = ui.size.width - ui.originalSize.width;
-        //     var offsetY = ui.size.height - ui.originalSize.height;
-        //     var operation = new NodeResizeOperation(id, offsetX, offsetY);
-        //     that.propagateNodeResizeOperation(operation);
-        //     _$node.resizable("option", "aspectRatio", false);
-        //     _$node.resizable("option", "grid", "");
-
-        //     //TODO: check that! Already called in processNodeResizeOperation called by propagateNodeResizeOperation
-        //     //_canvas.showGuidanceBox();
-        //   },
-        // })
         //Enable Node Rightclick menu
         .contextMenu(true)
-
         .find("input")
         .prop("disabled", false)
         .css("pointerEvents", "");
 
-      _$node.on("mousedown", function (e) {
-        _canvas.select(that);
-      });
-
-      jsPlumbInstance.manage(_$node.get(0));
+      this.jsPlumbManagedElement = jsPlumbInstance.manage(_$node.get(0));
 
       jsPlumbInstance.bind(EVENT_DRAG_START, function (params) {
-        _canvas.hideGuidanceBox();
-        _$node.css({ opacity: 0.5 });
-        // _$node.resizable({ disabled: true });
-        drag = false;
-      });
+        if (params.el.id !== _$node.attr("id")) return true;
 
-      jsPlumbInstance.bind(EVENT_DRAG_STOP, function (params) {
-        _$node.css({ opacity: "" });
-        // _$node.resizable("enable");
-        _canvas.bindMoveToolEvents();
-        var id = _$node.attr("id");
-        //_$node.css({top: originalPos.top / _canvas.getZoom(), left: originalPos.left / _canvas.getZoom()});
-        const x = _$node.position().left;
-        const y = _$node.position().top;
-        var offsetX = Math.round((x - params.e.screenX) / _canvas.getZoom());
-        var offsetY = Math.round((y - params.e.screenY) / _canvas.getZoom());
+        setTimeout(function () {
+          originalPos.top = params.el.offsetTop;
+          originalPos.left = params.el.offsetLeft;
 
-        var operation = new NodeMoveOperation(
-          that.getEntityId(),
-          offsetX,
-          offsetY
-        );
-        that.propagateNodeMoveOperation(operation);
-
-        function propagateChildPosition(node) {
-          if (node.getContainment()) {
-            _.each(node.getOutgoingEdges(), function (edge) {
-              var operation = new NodeMoveOperation(
-                edge.getTarget().getEntityId(),
-                offsetX,
-                offsetY
-              );
-              edge.getTarget().propagateNodeMoveOperation(operation);
-              propagateChildPosition(edge.getTarget());
-            });
-          }
-        }
-
-        propagateChildPosition(that);
-
-        //Avoid node selection on drag stop
-        _canvas.showGuidanceBox();
+          lastDragPos.top = params.el.offsetTop;
+          lastDragPos.left = params.el.offsetLeft;
+          _canvas.hideGuidanceBox();
+          _$node.css({ opacity: 0.5 });
+          // _$node.resizable({ disabled: true });
+          drag = false;
+        });
+        return true;
       });
 
       jsPlumbInstance.bind(EVENT_DRAG_MOVE, function (params) {
-        _canvas.hideGuidanceBox();
+        if (params.el.id !== _$node.attr("id")) return true;
+        setTimeout(() => {
+          lastDragPos.top = params.pos.y;
+          lastDragPos.left = params.pos.x;
+          _canvas.hideGuidanceBox();
+        });
+        return true;
+      });
+
+      jsPlumbInstance.bind(EVENT_DRAG_STOP, function (params) {
+        if (params.el.id !== _$node.attr("id")) return true;
+        setTimeout(() => {
+          _$node.css({ opacity: "" });
+          // _$node.resizable("enable");
+          _canvas.bindMoveToolEvents();
+          var offsetX = Math.round(
+            (_$node.position().left - originalPos.left) / _canvas.getZoom()
+          );
+          var offsetY = Math.round(
+            (_$node.position().top - originalPos.top) / _canvas.getZoom()
+          );
+
+          var operation = new NodeMoveOperation(
+            that.getEntityId(),
+            offsetX,
+            offsetY
+          );
+          that.propagateNodeMoveOperation(operation);
+
+          //Avoid node selection on drag stop
+          _canvas.showGuidanceBox();
+        });
       });
 
       // view_only is used by the CAE and allows to show a model in the Canvas which is not editable
@@ -2729,7 +2708,7 @@ export class AbstractNode extends AbstractEntity {
       const widgetConfigMap = y.getMap("widgetConfig");
       var viewOnly = widgetConfigMap.get("view_only");
       if (viewOnly) {
-        _$node.on("click").draggable().draggable("destroy");
+        jsPlumbInstance.setDraggable(_$node.get(0), false);
         _$node.on("click").contextMenu(false);
       }
     };
@@ -2739,32 +2718,40 @@ export class AbstractNode extends AbstractEntity {
      */
     this.unbindMoveToolEvents = function () {
       //Disable Node Selection
-      //$canvas.find(".node.ui-draggable").draggable( "option", "disabled", true);
       _$node
         .off("click")
         //Disable Node Resizing
         // .resizable()
         // .resizable("destroy")
-        //Disable Node Draggin
-        .draggable()
-        .draggable("destroy")
         //Disable Node Rightclick Menu
         .contextMenu(false)
         .transformable("destroy")
         .find("input")
         .prop("disabled", true)
         .css("pointerEvents", "none");
+
+      //Disable Node Dragging
+      jsPlumbInstance.setDraggable(_$node.get(0), false);
     };
 
     /**
      * Bind source node events for edge tool
      */
-    this.makeSource = function () {
+    this.makeSource = () => {
       _$node.addClass("source");
-      window.jsPlumbInstance.addSourceSelector(this.nodeSelector, {
+      this.endPoint = window.jsPlumbInstance.addEndpoint(_$node.get(0), {
         connectorPaintStyle: { fill: "black", strokeWidth: 4 },
-        endpoint: "Dot",
-        anchor: _anchorOptions,
+        source: true,
+        endpoint: {
+          type: "Rectangle",
+          options: {
+            width: _$node.width() + 50,
+            height: _$node.height() + 50,
+          },
+        },
+        paintStyle: { fill: "transparent" },
+        anchor: AnchorLocations.Center,
+        deleteOnEmpty: true,
         //maxConnections:1,
         uniqueEndpoint: false,
         deleteEndpointsOnDetach: true,
@@ -2802,15 +2789,22 @@ export class AbstractNode extends AbstractEntity {
     /**
      * Bind target node events for edge tool
      */
-    this.makeTarget = function () {
+    this.makeTarget = () => {
       _$node.addClass("target");
-      window.jsPlumbInstance.addTargetSelector(this.nodeSelector, {
-        isTarget: false,
-        endpoint: "Dot",
-        anchor: _anchorOptions,
+      this.endPoint = window.jsPlumbInstance.addEndpoint(_$node.get(0), {
+        target: true,
+        endpoint: {
+          type: "Rectangle",
+          options: {
+            width: _$node.width() + 50,
+            height: _$node.height() + 50,
+          },
+        },
+        paintStyle: { fill: "transparent" },
+        anchor: AnchorLocations.Center,
         uniqueEndpoint: false,
         //maxConnections:1,
-        deleteEndpointsOnDetach: true,
+        deleteOnEmpty: true,
         onMaxConnections: function (info /*, originalEvent*/) {
           console.log(
             "user tried to drop connection",
@@ -2851,8 +2845,13 @@ export class AbstractNode extends AbstractEntity {
     this.unbindEdgeToolEvents = function () {
       try {
         _$node.removeClass("source target");
-        window.jsPlumbInstance.removeSourceSelector(this.nodeSelector);
-        window.jsPlumbInstance.removeTargetSelector(this.nodeSelector);
+        jsPlumbInstance.getEndpoints(_$node.get(0)).forEach((endpoint) => {
+          // We need to remove the endpoint that was created to enable node connection by dragging
+          // since we are not using the edge tool anymore
+          if (endpoint.connections.length === 0) {
+            jsPlumbInstance.deleteEndpoint(endpoint);
+          }
+        });
       } catch (error) {
         console.error(error);
       }
@@ -2911,6 +2910,8 @@ export class AbstractNode extends AbstractEntity {
     };
   }
   nodeSelector;
+  jsPlumbManagedElement;
+  endPoint;
   /**
    * Apply position and dimension attributes to the node
    */
@@ -5467,6 +5468,8 @@ export function makeNode(type, $shape, anchors, attributes) {
        */
       var _anchorOptions = anchors;
 
+      this.nodeSelector = getQuerySelectorFromNode(_$node);
+
       var init = function () {
         var attribute, attributeId, attrObj;
         attrObj = {};
@@ -5557,12 +5560,22 @@ export function makeNode(type, $shape, anchors, attributes) {
       /**
        * Bind source node events for edge tool
        */
-      this.makeSource = function () {
+      this.makeSource = () => {
         _$node.addClass("source");
-        window.jsPlumbInstance.addSourceSelector(this.nodeSelector, {
-          connectorPaintStyle: { fill: "black", lineWidth: 4 },
-          endpoint: "Dot",
-          anchor: _anchorOptions,
+        window.jsPlumbInstance.addEndpoint(_$node.get(0), {
+          connectorPaintStyle: { fill: "black", strokeWidth: 4 },
+          source: true,
+          endpoint: {
+            type: "Rectangle",
+            options: {
+              width: _$node.width() + 50,
+              height: _$node.height() + 50,
+            },
+          },
+          paintStyle: { fill: "transparent" },
+          anchor: AnchorLocations.Center,
+          deleteOnEmpty: true,
+          uuid: id + "_eps1",
           //maxConnections:1,
           uniqueEndpoint: false,
           deleteEndpointsOnDetach: true,
@@ -5575,26 +5588,28 @@ export function makeNode(type, $shape, anchors, attributes) {
             );
           },
         });
-
-        if (window.jsPlumbInstance)
-          window.jsPlumbInstance.addEndpoint(_$node.get(0), {
-            uuid: id + "_eps1",
-            source: true,
-          });
       };
 
       /**
        * Bind target node events for edge tool
        */
-      this.makeTarget = function () {
+      this.makeTarget = () => {
         _$node.addClass("target");
-        window.jsPlumbInstance.addTargetSelector(this.nodeSelector, {
-          isTarget: false,
+        window.jsPlumbInstance.addEndpoint(_$node.get(0), {
+          target: true,
+          endpoint: {
+            type: "Rectangle",
+            options: {
+              width: _$node.width() + 50,
+              height: _$node.height() + 50,
+            },
+          },
+          uuid: id + "_ept1",
+          paintStyle: { fill: "transparent" },
+          anchor: AnchorLocations.Center,
           uniqueEndpoint: false,
-          endpoint: "Dot",
-          anchor: _anchorOptions,
           //maxConnections:1,
-          deleteEndpointsOnDetach: true,
+          deleteOnEmpty: true,
           onMaxConnections: function (info /*, originalEvent*/) {
             console.log(
               "user tried to drop connection",
@@ -5606,8 +5621,9 @@ export function makeNode(type, $shape, anchors, attributes) {
             );
           },
         });
+
         //local user wants to create an edge selected from the pallette
-        window.jsPlumbInstance.bind(EVENT_CONNECTION_MOVED, function (info) {
+        window.jsPlumbInstance.bind("beforeDrop", function (info) {
           var allConn = window.jsPlumbInstance.getConnections({
             target: info.targetId,
             source: info.sourceId,
@@ -5617,12 +5633,6 @@ export function makeNode(type, $shape, anchors, attributes) {
           if (length > 0) return false; //don't create the edge
           else return true; //no duplicate create the edge
         });
-
-        if (window.jsPlumbInstance)
-          window.jsPlumbInstance.addEndpoint(_$node.get(0), {
-            uuid: id + "_ept1",
-            target: true,
-          });
       };
 
       /**
@@ -5631,8 +5641,13 @@ export function makeNode(type, $shape, anchors, attributes) {
       this.unbindEdgeToolEvents = function () {
         try {
           _$node.removeClass("source target");
-          window.jsPlumbInstance.removeSourceSelector(this.nodeSelector);
-          window.jsPlumbInstance.removeTargetSelector(this.nodeSelector);
+          jsPlumbInstance.getEndpoints(_$node.get(0)).forEach((endpoint) => {
+          // We need to remove the endpoint that was created to enable node connection by dragging
+          // since we are not using the edge tool anymore
+          if (endpoint.connections.length === 0) {
+            jsPlumbInstance.deleteEndpoint(endpoint);
+          }
+        });
         } catch (error) {
           console.error(error);
         }
@@ -5695,6 +5710,7 @@ export function makeNode(type, $shape, anchors, attributes) {
         }
       };
     }
+    nodeSelector;
     /**
      * Get the jquery shape object from the node type
      * @static
@@ -5836,21 +5852,18 @@ export class ObjectNode extends AbstractNode {
               nodeId;
 
             //noinspection JSAccessibilityCheck
-            canvas
-              .createNode(
-                NodeShapeNode.TYPE,
-                appearance.left + appearance.width + 50,
-                appearance.top,
-                150,
-                100
-              )
-              .done(function (nodeId) {
-                canvas.createEdge(
-                  BiDirAssociationEdge.TYPE,
-                  that.getEntityId(),
-                  nodeId
-                );
-              });
+            const id = canvas.createNode(
+              NodeShapeNode.TYPE,
+              appearance.left + appearance.width + 50,
+              appearance.top,
+              150,
+              100
+            );
+            canvas.createEdge(
+              BiDirAssociationEdge.TYPE,
+              that.getEntityId(),
+              id
+            );
           },
           disabled: function () {
             var edges = that.getEdges(),
