@@ -2,7 +2,7 @@
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
 import commonjs from "@rollup/plugin-commonjs";
-import { ImportmapPlugin } from "./importmap.plugin.js";
+import { replaceHtml } from "./replace.html.js";
 import css from "rollup-plugin-import-css";
 
 // dependencies which are not bundled
@@ -25,7 +25,7 @@ export default [
   // palette.widget
   {
     plugins: [
-      ImportmapPlugin(),
+      replaceHtml(),
       typescript(),
       nodeResolve({ browser: true }),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
@@ -45,7 +45,7 @@ export default [
   // activity widget
   {
     plugins: [
-      ImportmapPlugin(),
+      replaceHtml(),
       typescript(),
       nodeResolve({ browser: true }),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
@@ -67,7 +67,7 @@ export default [
   {
     plugins: [
       css(),
-      ImportmapPlugin(),
+      replaceHtml(),
       typescript(),
       nodeResolve({ browser: true }),
       commonjs({
@@ -91,7 +91,7 @@ export default [
   // debug.widget
   {
     plugins: [
-      ImportmapPlugin(),
+      replaceHtml(),
       typescript(),
       nodeResolve({ browser: true }),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
@@ -112,7 +112,7 @@ export default [
   // guidance.widget
   {
     plugins: [
-      ImportmapPlugin(),
+      replaceHtml(),
       nodeResolve({ browser: true }),
       typescript(),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
@@ -133,7 +133,7 @@ export default [
   // heatmap.widget
   {
     plugins: [
-      ImportmapPlugin(),
+      replaceHtml(),
       typescript(),
       nodeResolve({ browser: true }),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
@@ -154,7 +154,7 @@ export default [
   // imsld.export.widget
   {
     plugins: [
-      ImportmapPlugin(),
+      replaceHtml(),
       typescript(),
       nodeResolve({ browser: true }),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
@@ -175,7 +175,7 @@ export default [
   // json.export.widget
   {
     plugins: [
-      ImportmapPlugin(),
+      replaceHtml(),
       typescript(),
       nodeResolve({ browser: true }),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
@@ -196,7 +196,7 @@ export default [
   // main.widget
   {
     plugins: [
-      ImportmapPlugin(),
+      replaceHtml(),
       typescript(),
       nodeResolve({ browser: true }),
 
@@ -223,7 +223,7 @@ export default [
   // test.widget
   {
     plugins: [
-      ImportmapPlugin(),
+      replaceHtml(),
       typescript(),
       nodeResolve({ browser: true }),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
@@ -244,7 +244,7 @@ export default [
   // viewcontrol.widget
   {
     plugins: [
-      ImportmapPlugin(),
+      replaceHtml(),
       typescript(),
       nodeResolve({ browser: true }),
       commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),

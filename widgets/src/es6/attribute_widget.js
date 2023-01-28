@@ -16,7 +16,6 @@ import ViewGenerator from "./attribute_widget/view/ViewGenerator";
 import InitModelTypesOperation from "./operations/non_ot/InitModelTypesOperation";
 import SetModelAttributeNodeOperation from "./operations/non_ot/SetModelAttributeNodeOperation";
 import { getGuidanceModeling } from "./Guidancemodel"; //promise!Guidancemod
-import loadHTML from "./html.template.loader";
 import { getWidgetTagName } from "./config.js";
 
 $(async function () {
