@@ -37,11 +37,7 @@ import {
   EntityManagerInstance as EntityManager,
   HistoryManagerInstance as HistoryManager,
 } from "./Manager";
-import {
-  EVENT_ELEMENT_MOUSE_DOWN,
-  EVENT_ELEMENT_MOUSE_UP,
-  newInstance,
-} from "@jsplumb/browser-ui";
+import { newInstance } from "@jsplumb/browser-ui";
 import { eventWasTriggeredByMe } from "../yeventChecker";
 
 /**

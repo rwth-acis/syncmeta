@@ -1584,13 +1584,13 @@ export class AbstractNode extends AbstractEntity {
       });
     }, 3000);
 
-     _$node.on("mousedown", function (e) {
-       _canvas.unbindMoveToolEvents();
-     });
+    _$node.on("mousedown", function (e) {
+      _canvas.unbindMoveToolEvents();
+    });
 
-     _$node.on("mouseup", function (e) {
-       _canvas.bindMoveToolEvents();
-     });
+    _$node.on("mouseup", function (e) {
+      _canvas.bindMoveToolEvents();
+    });
 
     /**
      * Attributes of node
@@ -2674,57 +2674,98 @@ export class AbstractNode extends AbstractEntity {
       this.jsPlumbManagedElement = jsPlumbInstance.manage(_$node.get(0));
 
       jsPlumbInstance.bind(EVENT_DRAG_START, function (params) {
-        if (params.el.id !== _$node.attr("id")) return;
-        _canvas.hideGuidanceBox();
-        _$node.css({ opacity: 0.5 });
-        // _$node.resizable({ disabled: true });
-        drag = false;
+        if (params.el.id !== _$node.attr("id")) return true;
 
+        setTimeout(function () {
+          originalPos.top = params.el.offsetTop;
+          originalPos.left = params.el.offsetLeft;
+
+          lastDragPos.top = params.el.offsetTop;
+          lastDragPos.left = params.el.offsetLeft;
+          _canvas.hideGuidanceBox();
+          _$node.css({ opacity: 0.5 });
+          // _$node.resizable({ disabled: true });
+          drag = false;
+        });
+        return true;
+      });
+
+      jsPlumbInstance.bind(EVENT_DRAG_MOVE, function (params) {
+        if (params.el.id !== _$node.attr("id")) return true;
+        setTimeout(() => {
+          const offsetX = Math.round(
+            (params.pos.x - params.originalPosition.x) / _canvas.getZoom()
+          );
+          const offsetY = Math.round(
+            (params.pos.y - params.originalPosition.y) / _canvas.getZoom()
+          );
+          function setChildPosition(node) {
+            if (node.getContainment()) {
+              _.each(node.getOutgoingEdges(), function (edge) {
+                $("#" + edge.getTarget().getEntityId()).offset({
+                  top:
+                    $("#" + edge.getTarget().getEntityId()).offset().top +
+                    offsetY,
+                  left:
+                    $("#" + edge.getTarget().getEntityId()).offset().left +
+                    offsetX,
+                });
+                setChildPosition(edge.getTarget());
+              });
+            }
+          }
+
+          setChildPosition(that);
+
+          lastDragPos.top = params.pos.y;
+          lastDragPos.left = params.pos.x;
+
+          if (drag) repaint();
+          drag = true;
+          _canvas.hideGuidanceBox();
+        });
         return true;
       });
 
       jsPlumbInstance.bind(EVENT_DRAG_STOP, function (params) {
-        if (params.el.id !== _$node.attr("id")) return;
-        _$node.css({ opacity: "" });
-        // _$node.resizable("enable");
-        _canvas.bindMoveToolEvents();
-        var id = _$node.attr("id");
-        //_$node.css({top: originalPos.top / _canvas.getZoom(), left: originalPos.left / _canvas.getZoom()});
-        const x = _$node.position().left;
-        const y = _$node.position().top;
-        var offsetX = Math.round((x - params.e.screenX) / _canvas.getZoom());
-        var offsetY = Math.round((y - params.e.screenY) / _canvas.getZoom());
+        if (params.el.id !== _$node.attr("id")) return true;
+        setTimeout(() => {
+          _$node.css({ opacity: "" });
+          // _$node.resizable("enable");
+          _canvas.bindMoveToolEvents();
+          var id = _$node.attr("id");
+          //_$node.css({top: originalPos.top / _canvas.getZoom(), left: originalPos.left / _canvas.getZoom()});
+          const x = _$node.position().left;
+          const y = _$node.position().top;
+          var offsetX = Math.round((x - originalPos.left) / _canvas.getZoom());
+          var offsetY = Math.round((y - originalPos.top) / _canvas.getZoom());
 
-        var operation = new NodeMoveOperation(
-          that.getEntityId(),
-          offsetX,
-          offsetY
-        );
-        that.propagateNodeMoveOperation(operation);
+          var operation = new NodeMoveOperation(
+            that.getEntityId(),
+            offsetX,
+            offsetY
+          );
+          that.propagateNodeMoveOperation(operation);
 
-        function propagateChildPosition(node) {
-          if (node.getContainment()) {
-            _.each(node.getOutgoingEdges(), function (edge) {
-              var operation = new NodeMoveOperation(
-                edge.getTarget().getEntityId(),
-                offsetX,
-                offsetY
-              );
-              edge.getTarget().propagateNodeMoveOperation(operation);
-              propagateChildPosition(edge.getTarget());
-            });
+          function propagateChildPosition(node) {
+            if (node.getContainment()) {
+              _.each(node.getOutgoingEdges(), function (edge) {
+                var operation = new NodeMoveOperation(
+                  edge.getTarget().getEntityId(),
+                  offsetX,
+                  offsetY
+                );
+                edge.getTarget().propagateNodeMoveOperation(operation);
+                propagateChildPosition(edge.getTarget());
+              });
+            }
           }
-        }
 
-        propagateChildPosition(that);
+          propagateChildPosition(that);
 
-        //Avoid node selection on drag stop
-        _canvas.showGuidanceBox();
-      });
-
-      jsPlumbInstance.bind(EVENT_DRAG_MOVE, function (params) {
-        if (params.el.id !== _$node.attr("id")) return;
-        _canvas.hideGuidanceBox();
+          //Avoid node selection on drag stop
+          _canvas.showGuidanceBox();
+        });
       });
 
       // view_only is used by the CAE and allows to show a model in the Canvas which is not editable
@@ -2732,7 +2773,7 @@ export class AbstractNode extends AbstractEntity {
       const widgetConfigMap = y.getMap("widgetConfig");
       var viewOnly = widgetConfigMap.get("view_only");
       if (viewOnly) {
-        _$node.on("click").draggable().draggable("destroy");
+        jsPlumbInstance.setDraggable(_$node.get(0), false);
         _$node.on("click").contextMenu(false);
       }
     };
@@ -5448,7 +5489,7 @@ export function makeNode(type, $shape, anchors, attributes) {
        */
       var _anchorOptions = anchors;
 
-      this.nodeSelector = getQuerySelectorFromNode(_$node)
+      this.nodeSelector = getQuerySelectorFromNode(_$node);
 
       var init = function () {
         var attribute, attributeId, attrObj;
