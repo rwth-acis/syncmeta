@@ -2780,7 +2780,7 @@ export class AbstractNode extends AbstractEntity {
     this.makeSource = () => {
       _$node.addClass("source");
       this.endPoint = window.jsPlumbInstance.addEndpoint(_$node.get(0), {
-        connectorPaintStyle: { fill: "transparent", strokeWidth: 4 },
+        connectorPaintStyle: { fill: "black", strokeWidth: 4 },
         source: true,
         endpoint: {
           type: "Rectangle",
@@ -5561,10 +5561,20 @@ export function makeNode(type, $shape, anchors, attributes) {
        */
       this.makeSource = () => {
         _$node.addClass("source");
-        window.jsPlumbInstance.addSourceSelector(this.nodeSelector, {
-          connectorPaintStyle: { fill: "black", lineWidth: 4 },
-          endpoint: "Dot",
-          anchor: _anchorOptions,
+        window.jsPlumbInstance.addEndpoint(_$node.get(0), {
+          connectorPaintStyle: { fill: "black", strokeWidth: 4 },
+          source: true,
+          endpoint: {
+            type: "Rectangle",
+            options: {
+              width: _$node.width() + 50,
+              height: _$node.height() + 50,
+            },
+          },
+          paintStyle: { fill: "transparent" },
+          anchor: AnchorLocations.Center,
+          deleteOnEmpty: true,
+          uuid: id + "_eps1",
           //maxConnections:1,
           uniqueEndpoint: false,
           deleteEndpointsOnDetach: true,
@@ -5577,10 +5587,6 @@ export function makeNode(type, $shape, anchors, attributes) {
             );
           },
         });
-
-        window.jsPlumbInstance.addEndpoint(_$node.get(0), {
-          uuid: id + "_eps1",
-        });
       };
 
       /**
@@ -5588,13 +5594,21 @@ export function makeNode(type, $shape, anchors, attributes) {
        */
       this.makeTarget = () => {
         _$node.addClass("target");
-        window.jsPlumbInstance.addTargetSelector(this.nodeSelector, {
-          isTarget: false,
+        window.jsPlumbInstance.addEndpoint(_$node.get(0), {
+          target: true,
+          endpoint: {
+            type: "Rectangle",
+            options: {
+              width: _$node.width() + 50,
+              height: _$node.height() + 50,
+            },
+          },
+          uuid: id + "_ept1",
+          paintStyle: { fill: "transparent" },
+          anchor: AnchorLocations.Center,
           uniqueEndpoint: false,
-          endpoint: "Dot",
-          anchor: _anchorOptions,
           //maxConnections:1,
-          deleteEndpointsOnDetach: true,
+          deleteOnEmpty: true,
           onMaxConnections: function (info /*, originalEvent*/) {
             console.log(
               "user tried to drop connection",
@@ -5606,6 +5620,7 @@ export function makeNode(type, $shape, anchors, attributes) {
             );
           },
         });
+
         //local user wants to create an edge selected from the pallette
         window.jsPlumbInstance.bind("beforeDrop", function (info) {
           var allConn = window.jsPlumbInstance.getConnections({
@@ -5617,9 +5632,6 @@ export function makeNode(type, $shape, anchors, attributes) {
           if (length > 0) return false; //don't create the edge
           else return true; //no duplicate create the edge
         });
-        window.jsPlumbInstance.addEndpoint(_$node.get(0), {
-          uuid: id + "_ept1",
-        });
       };
 
       /**
@@ -5628,10 +5640,13 @@ export function makeNode(type, $shape, anchors, attributes) {
       this.unbindEdgeToolEvents = function () {
         try {
           _$node.removeClass("source target");
-          if (this.endPoint) {
-            this.endPoint.destroy();
-            this.endPoint = null;
+          jsPlumbInstance.getEndpoints(_$node.get(0)).forEach((endpoint) => {
+          // We need to remove the endpoint that was created to enable node connection by dragging
+          // since we are not using the edge tool anymore
+          if (endpoint.connections.length === 0) {
+            jsPlumbInstance.deleteEndpoint(endpoint);
           }
+        });
         } catch (error) {
           console.error(error);
         }
