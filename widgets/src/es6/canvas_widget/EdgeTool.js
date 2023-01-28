@@ -152,9 +152,7 @@ class EdgeTool extends AbstractCanvasTool {
         if (typeof originalEvent !== "undefined") {
           //Was the connection established using Drag'n Drop?
           // If so we delete the connection and form it manually again
-          if (info.connection.endpoints) {
-            jsPlumbInstance.removeAllEndpoints(info.source);
-            jsPlumbInstance.removeAllEndpoints(info.target);
+          if (info.connection) {
             jsPlumbInstance.deleteConnection(info.connection, {
               fireEvent: false,
             });
@@ -206,16 +204,16 @@ class EdgeTool extends AbstractCanvasTool {
       }
 
       //Disable Edge Dragging
-      $canvas.find(".node").each(function () {
-        var $this = $(this);
-        try {
-          const nodeSelector = getQuerySelectorFromNode($this);
-          jsPlumbInstance.removeSourceSelector(nodeSelector);
-          jsPlumbInstance.removeTargetSelector(nodeSelector);
-        } catch (error) {
-          console.error(error);
-        }
-      });
+      // $canvas.find(".node").each(function () {
+      //   var $this = $(this);
+      //   try {
+      //     const nodeSelector = getQuerySelectorFromNode($this);
+      //     jsPlumbInstance.removeSourceSelector(nodeSelector);
+      //     jsPlumbInstance.removeTargetSelector(nodeSelector);
+      //   } catch (error) {
+      //     console.error(error);
+      //   }
+      // });
       jsPlumbInstance.unbind("connectionDrag");
       jsPlumbInstance.unbind("beforeDrop");
       jsPlumbInstance.unbind("connection");

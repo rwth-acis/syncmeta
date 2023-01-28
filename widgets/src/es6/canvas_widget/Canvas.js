@@ -801,14 +801,6 @@ export default class Canvas extends AbstractCanvas {
       //Enable Canvas Dragging
       _$node.draggable("enable");
 
-      if (_$node.transformable != null) {
-        _$node.transformable({
-          rotatable: false,
-          skewable: false,
-          scalable: false,
-        });
-      }
-
       // view_only is used by the CAE and allows to show a model in the Canvas which is not editable
       // therefore, the context menu in the Canvas must be disabled
       const widgetConfigMap = y.getMap("widgetConfig");

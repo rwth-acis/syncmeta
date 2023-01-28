@@ -2738,22 +2738,6 @@ export class AbstractNode extends AbstractEntity {
           );
           that.propagateNodeMoveOperation(operation);
 
-          function propagateChildPosition(node) {
-            if (node.getContainment()) {
-              _.each(node.getOutgoingEdges(), function (edge) {
-                var operation = new NodeMoveOperation(
-                  edge.getTarget().getEntityId(),
-                  offsetX,
-                  offsetY
-                );
-                edge.getTarget().propagateNodeMoveOperation(operation);
-                propagateChildPosition(edge.getTarget());
-              });
-            }
-          }
-
-          propagateChildPosition(that);
-
           //Avoid node selection on drag stop
           _canvas.showGuidanceBox();
         });
@@ -2796,7 +2780,7 @@ export class AbstractNode extends AbstractEntity {
     this.makeSource = () => {
       _$node.addClass("source");
       this.endPoint = window.jsPlumbInstance.addEndpoint(_$node.get(0), {
-        connectorPaintStyle: { fill: "black", strokeWidth: 4 },
+        connectorPaintStyle: { fill: "transparent", strokeWidth: 4 },
         source: true,
         endpoint: {
           type: "Rectangle",
@@ -2860,10 +2844,13 @@ export class AbstractNode extends AbstractEntity {
     this.unbindEdgeToolEvents = function () {
       try {
         _$node.removeClass("source target");
-        if (this.endPoint) {
-          window.jsPlumbInstance.deleteEndpoint(this.endPoint);
-          this.endPoint = null;
-        }
+        jsPlumbInstance.getEndpoints(_$node.get(0)).forEach((endpoint) => {
+          // We need to remove the endpoint that was created to enable node connection by dragging
+          // since we are not using the edge tool anymore
+          if (endpoint.connections.length === 0) {
+            jsPlumbInstance.deleteEndpoint(endpoint);
+          }
+        });
       } catch (error) {
         console.error(error);
       }
@@ -5641,8 +5628,10 @@ export function makeNode(type, $shape, anchors, attributes) {
       this.unbindEdgeToolEvents = function () {
         try {
           _$node.removeClass("source target");
-          window.jsPlumbInstance.removeSourceSelector(this.nodeSelector);
-          window.jsPlumbInstance.removeTargetSelector(this.nodeSelector);
+          if (this.endPoint) {
+            this.endPoint.destroy();
+            this.endPoint = null;
+          }
         } catch (error) {
           console.error(error);
         }
