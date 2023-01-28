@@ -55,7 +55,7 @@ class WidgetContainer extends LitElement {
         }
       </style>
       <div class="container-fluid row w-100 px-0 mx-0" style="height:98vh">
-        <div class="col-7 innercontainer">
+        <div class="col-9 innercontainer">
           <div class="row h-100">
             <div class="col-9 px-1 border-end h-100">
               <canvas-widget></canvas-widget>
@@ -65,7 +65,7 @@ class WidgetContainer extends LitElement {
             </div>
           </div>
         </div>
-        <div class="col-3 innercontainer ">
+        <div class="col-4 innercontainer ">
           <property-browser-widget></property-browser-widget>
         </div>
         <div class="col-2 innercontainer" style="display:none">
