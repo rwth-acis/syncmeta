@@ -1584,6 +1584,14 @@ export class AbstractNode extends AbstractEntity {
       });
     }, 3000);
 
+     _$node.on("mousedown", function (e) {
+       _canvas.unbindMoveToolEvents();
+     });
+
+     _$node.on("mouseup", function (e) {
+       _canvas.bindMoveToolEvents();
+     });
+
     /**
      * Attributes of node
      * @type {Object}

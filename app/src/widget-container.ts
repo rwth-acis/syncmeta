@@ -115,7 +115,6 @@ class WidgetContainer extends LitElement {
       const rowContainer = document.querySelector(
         "#main-widget-utilities-container"
       );
-      console.log(rowContainer.firstElementChild);
       if (!rowContainer?.firstElementChild) {
         console.error(
           `Could not find the first col of row container. ${document.querySelector(

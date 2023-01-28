@@ -132,14 +132,6 @@ export default class Canvas extends AbstractCanvas {
 
     window.jsPlumbInstance = jsPlumbInstance;
 
-    window.jsPlumbInstance.bind(EVENT_ELEMENT_MOUSE_DOWN, () => {
-      this.unbindMoveToolEvents();
-    });
-
-    window.jsPlumbInstance.bind(EVENT_ELEMENT_MOUSE_UP, () => {
-      this.bindMoveToolEvents();
-    });
-
     $(window).resize(function () {
       sendViewChangeOperation();
     });
