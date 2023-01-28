@@ -5440,6 +5440,8 @@ export function makeNode(type, $shape, anchors, attributes) {
        */
       var _anchorOptions = anchors;
 
+      this.nodeSelector = getQuerySelectorFromNode(_$node)
+
       var init = function () {
         var attribute, attributeId, attrObj;
         attrObj = {};
@@ -5530,7 +5532,7 @@ export function makeNode(type, $shape, anchors, attributes) {
       /**
        * Bind source node events for edge tool
        */
-      this.makeSource = function () {
+      this.makeSource = () => {
         _$node.addClass("source");
         window.jsPlumbInstance.addSourceSelector(this.nodeSelector, {
           connectorPaintStyle: { fill: "black", lineWidth: 4 },
@@ -5549,16 +5551,15 @@ export function makeNode(type, $shape, anchors, attributes) {
           },
         });
 
-        if (window.jsPlumbInstance)
-          window.jsPlumbInstance.addEndpoint(_$node.get(0), {
-            uuid: id + "_eps1",
-          });
+        window.jsPlumbInstance.addEndpoint(_$node.get(0), {
+          uuid: id + "_eps1",
+        });
       };
 
       /**
        * Bind target node events for edge tool
        */
-      this.makeTarget = function () {
+      this.makeTarget = () => {
         _$node.addClass("target");
         window.jsPlumbInstance.addTargetSelector(this.nodeSelector, {
           isTarget: false,
@@ -5579,7 +5580,7 @@ export function makeNode(type, $shape, anchors, attributes) {
           },
         });
         //local user wants to create an edge selected from the pallette
-        window.jsPlumbInstance.bind(EVENT_CONNECTION_MOVED, function (info) {
+        window.jsPlumbInstance.bind("beforeDrop", function (info) {
           var allConn = window.jsPlumbInstance.getConnections({
             target: info.targetId,
             source: info.sourceId,
@@ -5589,11 +5590,9 @@ export function makeNode(type, $shape, anchors, attributes) {
           if (length > 0) return false; //don't create the edge
           else return true; //no duplicate create the edge
         });
-
-        if (window.jsPlumbInstance)
-          window.jsPlumbInstance.addEndpoint(_$node.get(0), {
-            uuid: id + "_ept1",
-          });
+        window.jsPlumbInstance.addEndpoint(_$node.get(0), {
+          uuid: id + "_ept1",
+        });
       };
 
       /**
@@ -5666,6 +5665,7 @@ export function makeNode(type, $shape, anchors, attributes) {
         }
       };
     }
+    nodeSelector;
     /**
      * Get the jquery shape object from the node type
      * @static

@@ -1,3 +1,5 @@
+import { JsPlumbInstance } from "@jsplumb/core";
+
 export {};
 
 declare global {
@@ -9,5 +11,6 @@ declare global {
     _iwc_instance_: any;
     _addIwcIntentListener: (f: any) => void;
     _reloadThisFuckingInstance: () => void;
+    jsPlumbInstance: JsPlumbInstance;
   }
 }

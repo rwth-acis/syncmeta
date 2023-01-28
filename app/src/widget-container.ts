@@ -99,4 +99,37 @@ class WidgetContainer extends LitElement {
       </div>
     `;
   }
+  connectedCallback(): void {
+    super.connectedCallback();
+
+    setTimeout(() => {
+      const btnTemplate = `<button
+                type="button"
+                class="btn btn-secondary "
+                data-bs-toggle="modal"
+                data-bs-target="#exportModal"
+                id="exportModel"
+              >
+                <i class="bi bi-cloud me-1"></i>Import/Export
+              </button>`;
+      const rowContainer = document.querySelector(
+        "#main-widget-utilities-container"
+      );
+      console.log(rowContainer.firstElementChild);
+      if (!rowContainer?.firstElementChild) {
+        console.error(
+          `Could not find the first col of row container. ${document.querySelector(
+            "#main-widget-utilities-container"
+          )} 
+          This means that the debug widget button will not be added. 
+          Make sure that the following selector is correct: #main-widget-utilities-container. The first child will be used to append the button.`
+        );
+        return;
+      }
+      rowContainer.firstElementChild?.appendChild(
+        new DOMParser().parseFromString(btnTemplate, "text/html").body
+          .firstChild as Node
+      );
+    }, 300);
+  }
 }
