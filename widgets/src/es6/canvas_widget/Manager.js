@@ -2307,6 +2307,15 @@ export class AbstractNode extends AbstractEntity {
      * @param {number} offsetZ Offset in z-direction
      */
     this.move = function (offsetX, offsetY, offsetZ) {
+      if (_appearance.left + offsetX < 0 || _appearance.top + offsetY < 0) {
+        console.error("Node cannot be moved outside of canvas");
+      }
+      if (
+        _appearance.left + offsetX > _canvas.width - _appearance.width ||
+        _appearance.top + offsetY > _canvas.height - _appearance.height
+      ) {
+        console.error("Node cannot be moved outside of canvas");
+      }
       if (_ymap) {
         y.transact(() => {
           _ymap.set("left", (_appearance.left += offsetX));
@@ -2317,6 +2326,15 @@ export class AbstractNode extends AbstractEntity {
     };
 
     this.moveAbs = function (left, top, zIndex) {
+      if (left < 0 || top < 0) {
+        console.error("Node cannot be moved outside of canvas");
+      }
+      if (
+        left > _canvas.width - _appearance.width ||
+        top > _canvas.height - _appearance.height
+      ) {
+        console.error("Node cannot be moved outside of canvas");
+      }
       _appearance.left = left;
       _appearance.top = top;
 
@@ -2693,35 +2711,8 @@ export class AbstractNode extends AbstractEntity {
       jsPlumbInstance.bind(EVENT_DRAG_MOVE, function (params) {
         if (params.el.id !== _$node.attr("id")) return true;
         setTimeout(() => {
-          const offsetX = Math.round(
-            (params.pos.x - params.originalPosition.x) / _canvas.getZoom()
-          );
-          const offsetY = Math.round(
-            (params.pos.y - params.originalPosition.y) / _canvas.getZoom()
-          );
-          function setChildPosition(node) {
-            if (node.getContainment()) {
-              _.each(node.getOutgoingEdges(), function (edge) {
-                $("#" + edge.getTarget().getEntityId()).offset({
-                  top:
-                    $("#" + edge.getTarget().getEntityId()).offset().top +
-                    offsetY,
-                  left:
-                    $("#" + edge.getTarget().getEntityId()).offset().left +
-                    offsetX,
-                });
-                setChildPosition(edge.getTarget());
-              });
-            }
-          }
-
-          setChildPosition(that);
-
           lastDragPos.top = params.pos.y;
           lastDragPos.left = params.pos.x;
-
-          if (drag) repaint();
-          drag = true;
           _canvas.hideGuidanceBox();
         });
         return true;
@@ -2733,12 +2724,12 @@ export class AbstractNode extends AbstractEntity {
           _$node.css({ opacity: "" });
           // _$node.resizable("enable");
           _canvas.bindMoveToolEvents();
-          var id = _$node.attr("id");
-          //_$node.css({top: originalPos.top / _canvas.getZoom(), left: originalPos.left / _canvas.getZoom()});
-          const x = _$node.position().left;
-          const y = _$node.position().top;
-          var offsetX = Math.round((x - originalPos.left) / _canvas.getZoom());
-          var offsetY = Math.round((y - originalPos.top) / _canvas.getZoom());
+          var offsetX = Math.round(
+            (_$node.position().left - originalPos.left) / _canvas.getZoom()
+          );
+          var offsetY = Math.round(
+            (_$node.position().top - originalPos.top) / _canvas.getZoom()
+          );
 
           var operation = new NodeMoveOperation(
             that.getEntityId(),
