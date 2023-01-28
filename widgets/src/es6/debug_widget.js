@@ -5,7 +5,6 @@ import { yjsSync } from "./lib/yjs-sync";
 import GenerateViewpointModel from "./canvas_widget/GenerateViewpointModel";
 import { EntityManagerInstance as EntityManager } from "./canvas_widget/Manager";
 import { getGuidanceModeling } from "./Guidancemodel";
-import loadHTML from "./html.template.loader";
 import { CONFIG, getWidgetTagName } from "./config";
 
 $(async function () {
@@ -16,12 +15,6 @@ $(async function () {
   const guidance = getGuidanceModeling();
   yjsSync()
     .then((y) => {
-      const debugButton = $("#exportModel");
-      const modal = $("#exportModal");
-      modal.css("display", "none");
-      // debugButton.on("click", () => {
-      //   modal.css("display", "block");
-      // });
       const dataMap = y.getMap("data");
       console.info(
         "DEBUG: Yjs suc cessfully initialized in room " +

@@ -26,25 +26,7 @@ export class DebugWidget extends SyncMetaWidget(LitElement) {
         }
       </style>
 
-      <div
-        class="modal fade"
-        id="exportModal"
-        tabindex="-1"
-        aria-labelledby="exampleModalLabel"
-        aria-hidden="true"
-        style="z-index: 2147483647 !important;display: block;"
-      >
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div class="modal-body">
+      
               <div id="debug-container">
                 <div class="seperating_box">
                   <h6>Select a JSON file</h6>
@@ -143,9 +125,7 @@ export class DebugWidget extends SyncMetaWidget(LitElement) {
               </div>
               <br />
             </div>
-          </div>
-        </div>
-      </div>
+          
     `;
   }
 
