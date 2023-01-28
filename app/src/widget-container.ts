@@ -67,10 +67,34 @@ class WidgetContainer extends LitElement {
         </div>
         <div class="col-3 innercontainer ">
           <property-browser-widget></property-browser-widget>
-          <debug-widget></debug-widget>
         </div>
         <div class="col-2 innercontainer" style="display:none">
           <user-activity-widget></user-activity-widget>
+        </div>
+
+        <div
+          class="modal fade"
+          id="exportModal"
+          tabindex="-1"
+          aria-labelledby="exampleModalLabel"
+          aria-hidden="true"
+          style="z-index: 2147483647 !important;"
+        >
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body">
+                <debug-widget></debug-widget>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     `;
