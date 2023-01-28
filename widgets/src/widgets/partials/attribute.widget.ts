@@ -7,8 +7,6 @@ import { SyncMetaWidget } from "../../widget";
 import "../../es6/attribute_widget.js";
 import { CONFIG, getWidgetTagName } from "../../es6/config";
 import "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js";
-import "../../../node_modules/highlight.js/styles/atom-one-light.css";
-
 @customElement(getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE))
 export class AttributeWidget extends SyncMetaWidget(LitElement) {
   render() {
@@ -174,10 +172,6 @@ export class AttributeWidget extends SyncMetaWidget(LitElement) {
           position: relative;
         }
       </style>
-      <link
-        rel="stylesheet"
-        href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css"
-      />
       <link
         rel="stylesheet"
         type="text/css"
