@@ -495,7 +495,7 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
         <error-alert></error-alert>
         <div id="loading" class="loading"></div>
         <div class="row mb-2" id="main-widget-utilities-container">
-          <div class="col">
+          <div class="col-7">
             <div class="flex">
               <button
                 id="viewsHide"
@@ -589,7 +589,7 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
             </div>
           </div>
 
-          <div class="col d-flex justify-content-end align-items-start">
+          <div class="col-5 d-flex justify-content-end align-items-start">
             <button
               id="showtype"
               class="btn btn-light"

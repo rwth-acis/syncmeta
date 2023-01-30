@@ -68,9 +68,6 @@ export class WidgetContainer extends LitElement {
         <div class="col-4 innercontainer ">
           <property-browser-widget></property-browser-widget>
         </div>
-        <div class="col-2 innercontainer" style="display:none">
-          <user-activity-widget></user-activity-widget>
-        </div>
 
         <div
           class="modal fade"
@@ -97,21 +94,56 @@ export class WidgetContainer extends LitElement {
           </div>
         </div>
       </div>
+
+      <div
+        class="offcanvas offcanvas-end"
+        tabindex="-1"
+        id="offcanvasRight"
+        aria-labelledby="offcanvasRightLabel"
+      >
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="offcanvasRightLabel">
+            Offcanvas right
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="offcanvas"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="offcanvas-body">
+          <user-activity-widget></user-activity-widget>
+        </div>
+      </div>
     `;
   }
   connectedCallback(): void {
     super.connectedCallback();
 
     setTimeout(() => {
-      const btnTemplate = `<button
+      const debugWidgetButton = `<button
                 type="button"
-                class="btn btn-secondary "
+                class="btn btn-outline-secondary "
                 data-bs-toggle="modal"
                 data-bs-target="#exportModal"
                 id="exportModel"
+                title="Export/Import Utilities"
               >
-                <i class="bi bi-cloud-fill me-1"></i>Import/Export
+                <i class="bi bi-cloud-fill me-1"></i> Export/Import
               </button>`;
+
+      const activityWidgetButton = ` <button
+        class="btn btn-outline-primary me-1"
+        type="button"
+        data-bs-toggle="offcanvas"
+        data-bs-target="#offcanvasRight"
+        aria-controls="offcanvasRight",
+        title="User Activities"
+      >
+        <i class="bi bi-people-fill me-1"></i> Activities 
+      </button>`;
+
       const rowContainer = document.querySelector(
         "#main-widget-utilities-container"
       );
@@ -125,8 +157,12 @@ export class WidgetContainer extends LitElement {
         );
         return;
       }
-      rowContainer.firstElementChild?.appendChild(
-        new DOMParser().parseFromString(btnTemplate, "text/html").body
+      rowContainer.firstElementChild?.firstElementChild?.appendChild(
+        new DOMParser().parseFromString(activityWidgetButton, "text/html").body
+          .firstChild as Node
+      );
+      rowContainer.firstElementChild?.firstElementChild?.appendChild(
+        new DOMParser().parseFromString(debugWidgetButton, "text/html").body
           .firstChild as Node
       );
     }, 100);
