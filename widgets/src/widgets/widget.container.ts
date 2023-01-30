@@ -102,9 +102,6 @@ export class WidgetContainer extends LitElement {
         aria-labelledby="offcanvasRightLabel"
       >
         <div class="offcanvas-header">
-          <h5 class="offcanvas-title" id="offcanvasRightLabel">
-            Offcanvas right
-          </h5>
           <button
             type="button"
             class="btn-close"

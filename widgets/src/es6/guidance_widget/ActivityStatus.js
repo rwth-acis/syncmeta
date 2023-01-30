@@ -1,10 +1,48 @@
 import Util from "../Util";
 import ConcurrentRegion from "./ConcurrentRegion";
-import "../lib/Class";
+
 import "https://cdnjs.cloudflare.com/ajax/libs/graphlib/2.1.8/graphlib.min.js";
 
-var ActivityStatus = Class.extend({
-  init: function (logicalGuidanceRepresentation, initialNode, strategy) {
+class ActivityStatus extends ConcurrentRegion {
+  constructor() {
+    this.createFromShareOperation = function (
+      logicalGuidanceRepresentation,
+      strategy,
+      opData
+    ) {
+      var id = opData.id;
+      var initialNode = opData.initialNode;
+      var joinNode = opData.joinNode;
+      var objectMappings = opData.objectMappings;
+      var remainingThreads = opData.remainingThreads;
+      var lastAddedNode = opData.objectId;
+
+      var activity = new ActivityStatus(
+        logicalGuidanceRepresentation,
+        initialNode,
+        strategy
+      );
+      activity.nodeMappings = objectMappings;
+      activity.id = id;
+      activity.lastAddedNode = lastAddedNode;
+      activity.isOwner = false;
+
+      var concurrentRegion = new ConcurrentRegion(
+        activity,
+        logicalGuidanceRepresentation,
+        joinNode
+      );
+      concurrentRegion.remainingThreadIds = remainingThreads;
+      concurrentRegion.started = true;
+      concurrentRegion._isOwner = false;
+
+      activity.concurrentRegion = concurrentRegion;
+      activity.currentNode =
+        logicalGuidanceRepresentation.predecessors(joinNode)[0];
+      return activity;
+    };
+  }
+  init(logicalGuidanceRepresentation, initialNode, strategy) {
     this.id = Util.generateRandomId();
     this.logicalGuidanceRepresentation = logicalGuidanceRepresentation;
     this.initialNode = initialNode;
@@ -18,8 +56,8 @@ var ActivityStatus = Class.extend({
     this.nodeHistory = [];
     this.strategy = strategy;
     this.isOwner = true;
-  },
-  computeExpectedNodes: function () {
+  }
+  computeExpectedNodes() {
     var nodesToResolve = this.logicalGuidanceRepresentation.successors(
       this.currentNode
     );
@@ -95,8 +133,8 @@ var ActivityStatus = Class.extend({
       return self.indexOf(item) == pos;
     });
     this.expectedNodes = expectedNodes;
-  },
-  proceed: function (nodeId) {
+  }
+  proceed(nodeId) {
     //var node = this.logicalGuidanceRepresentation.node(nodeId);
     //Are we entering a subactivity?
     if (!this.currentSubActivity && this.possibleSubActivities.length > 0) {
@@ -130,8 +168,8 @@ var ActivityStatus = Class.extend({
       }
       this.computeExpectedNodes();
     }
-  },
-  revertLastAction: function () {
+  }
+  revertLastAction() {
     if (this.nodeHistory.length == 0) {
       return;
     }
@@ -141,8 +179,8 @@ var ActivityStatus = Class.extend({
       this.currentNode = this.nodeHistory.pop();
       this.computeExpectedNodes();
     }
-  },
-  getExpectedNodes: function () {
+  }
+  getExpectedNodes() {
     var expectedNodes = [];
     if (this.currentSubActivity) {
       expectedNodes = this.currentSubActivity.getExpectedNodes();
@@ -155,38 +193,38 @@ var ActivityStatus = Class.extend({
     }
 
     return expectedNodes;
-  },
-  reset: function () {
+  }
+  reset() {
     this.currentSubActivity = null;
     this.currentNode = this.initialNode;
     this.computeExpectedNodes();
     this.nodeMappings = {};
-  },
-  isAtStart: function () {
+  }
+  isAtStart() {
     return this.currentNode == this.initialNode;
-  },
-  reachesEnd: function () {
+  }
+  reachesEnd() {
     for (var i = 0; i < this.expectedNodes.length; i++) {
       var nodeId = this.expectedNodes[i];
       var node = this.logicalGuidanceRepresentation.node(nodeId);
       if (node.type == "ACTIVITY_FINAL_NODE") return true;
     }
     return false;
-  },
-  getName: function () {
+  }
+  getName() {
     var name = this.name;
     if (this.currentSubActivity)
       name = name + " > " + this.currentSubActivity.getName();
     return name;
-  },
-  setNodeMapping: function (guidanceNodeId, modelNodeId) {
+  }
+  setNodeMapping(guidanceNodeId, modelNodeId) {
     this.lastAddedNode = modelNodeId;
     this.nodeMappings[guidanceNodeId] = modelNodeId;
-  },
-  getNodeMapping: function (guidanceNodeId) {
+  }
+  getNodeMapping(guidanceNodeId) {
     return this.nodeMappings[guidanceNodeId];
-  },
-  shareActivityOperation: function (joinNode, remainingThreads) {
+  }
+  shareActivityOperation(joinNode, remainingThreads) {
     var data = {
       operationType: "CollaborationStrategy:ShareActivity",
       joinNode: joinNode,
@@ -199,57 +237,20 @@ var ActivityStatus = Class.extend({
     };
     this.strategy.sharedActivities[this.id] = this;
     this.strategy.sendGuidanceStrategyOperation(data);
-  },
-  updateSharedActivityOperation: function (removedThreadId) {
+  }
+  updateSharedActivityOperation(removedThreadId) {
     var data = {
       operationType: "CollaborationStrategy:UpdateSharedActivity",
       activityId: this.id,
       removedThreadId: removedThreadId,
     };
     this.strategy.sendGuidanceStrategyOperation(data);
-  },
-  removeThreadFromConcurrentRegion: function (threadId) {
+  }
+  removeThreadFromConcurrentRegion(threadId) {
     if (this.concurrentRegion) {
       this.concurrentRegion.removeOpenThread(threadId);
     }
-  },
-});
-
-ActivityStatus.createFromShareOperation = function (
-  logicalGuidanceRepresentation,
-  strategy,
-  opData
-) {
-  var id = opData.id;
-  var initialNode = opData.initialNode;
-  var joinNode = opData.joinNode;
-  var objectMappings = opData.objectMappings;
-  var remainingThreads = opData.remainingThreads;
-  var lastAddedNode = opData.objectId;
-
-  var activity = new ActivityStatus(
-    logicalGuidanceRepresentation,
-    initialNode,
-    strategy
-  );
-  activity.nodeMappings = objectMappings;
-  activity.id = id;
-  activity.lastAddedNode = lastAddedNode;
-  activity.isOwner = false;
-
-  var concurrentRegion = new ConcurrentRegion(
-    activity,
-    logicalGuidanceRepresentation,
-    joinNode
-  );
-  concurrentRegion.remainingThreadIds = remainingThreads;
-  concurrentRegion.started = true;
-  concurrentRegion._isOwner = false;
-
-  activity.concurrentRegion = concurrentRegion;
-  activity.currentNode =
-    logicalGuidanceRepresentation.predecessors(joinNode)[0];
-  return activity;
-};
+  }
+}
 
 export default ActivityStatus;

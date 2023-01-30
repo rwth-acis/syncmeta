@@ -434,11 +434,11 @@ export class OpenAppProvider {
         if (0 < j) {
           // @ts-ignore
           j = "";
-          -1 !== b.indexOf("?") &&
-            ((j = b.substring(b.indexOf("?"))),
+          -1 !== b?.indexOf("?") &&
+            ((j = b?.substring(b.indexOf("?"))),
             // @ts-ignore
-            (b = b.substring(0, b.length - j.length)));
-          switch (b.substring(b.length - 1)) {
+            (b = b?.substring(0, b.length - j.length)));
+          switch (b?.substring(b.length - 1)) {
             case "/":
               b += ":";
               break;

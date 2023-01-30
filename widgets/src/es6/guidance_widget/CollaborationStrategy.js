@@ -12,8 +12,12 @@ const guidanceStrategyUiHtml = await loadHTML(
   import.meta.url
 );
 
-var CollaborationStrategy = GuidanceStrategy.extend({
-  init: function (logicalGuidanceRepresentation, space) {
+
+class CollaborationStrategy extends GuidanceStrategy {
+  static NAME = "Collaboration Strategy";
+  static ICON = "users";
+
+  init(logicalGuidanceRepresentation, space) {
     this._super(logicalGuidanceRepresentation, space);
     this.initialNodes = this.logicalGuidanceRepresentation.sources();
     this.nodeMappings = {};
@@ -44,11 +48,11 @@ var CollaborationStrategy = GuidanceStrategy.extend({
       this.onCollaborateInActivityOperation,
       this
     );
-  },
-  getUserName: function () {
+  }
+  getUserName() {
     return this.space.user[CONFIG.NS.PERSON.TITLE];
-  },
-  checkNodeAddForActivity: function (id, type, activityStatus) {
+  }
+  checkNodeAddForActivity(id, type, activityStatus) {
     var activityExpectedNodes = activityStatus.getExpectedNodes();
     for (var i = 0; i < activityExpectedNodes.length; i++) {
       var nodeId = activityExpectedNodes[i];
@@ -58,8 +62,8 @@ var CollaborationStrategy = GuidanceStrategy.extend({
       }
     }
     return null;
-  },
-  checkEdgeAddForActivity: function (id, type, activityStatus) {
+  }
+  checkEdgeAddForActivity(id, type, activityStatus) {
     var activityExpectedNodes = activityStatus.getExpectedNodes();
     for (var i = 0; i < activityExpectedNodes.length; i++) {
       var nodeId = activityExpectedNodes[i];
@@ -72,8 +76,8 @@ var CollaborationStrategy = GuidanceStrategy.extend({
       }
     }
     return null;
-  },
-  onNodeAdd: function (id, type) {
+  }
+  onNodeAdd(id, type) {
     this.lastCreatedObjectId = id;
     this.lastCreatedEntityId = id;
     this.createdEntityHistory.push(id);
@@ -107,14 +111,14 @@ var CollaborationStrategy = GuidanceStrategy.extend({
     }
     this.highlightActiveActivity();
     this.showExpectedActions(id);
-  },
-  checkActivityValidityAfterNodeDelete: function (activity, nodeId) {
+  }
+  checkActivityValidityAfterNodeDelete(activity, nodeId) {
     for (var mappingId in activity.nodeMappings) {
       if (activity.nodeMappings[mappingId] == nodeId) return false;
     }
     return true;
-  },
-  onNodeDelete: function (id, type) {
+  }
+  onNodeDelete(id, type) {
     var lastCreatedEntityId =
       this.createdEntityHistory[this.createdEntityHistory.length - 1];
     if (lastCreatedEntityId == id && this.currentActivity) {
@@ -154,8 +158,8 @@ var CollaborationStrategy = GuidanceStrategy.extend({
 
       if (updateGuidance) this.showExpectedActions(this.lastCreatedObjectId);
     }
-  },
-  onEdgeAdd: function (id, type) {
+  }
+  onEdgeAdd(id, type) {
     this.lastCreatedEntityId = id;
     this.createdEntityHistory.push(id);
     var nextNode = null;
@@ -169,8 +173,8 @@ var CollaborationStrategy = GuidanceStrategy.extend({
     } else this.currentActivity = null;
 
     this.showExpectedActions(this.lastCreatedObjectId);
-  },
-  onEdgeDelete: function (id, type) {
+  }
+  onEdgeDelete(id, type) {
     var lastCreatedEntityId =
       this.createdEntityHistory[this.createdEntityHistory.length - 1];
     if (lastCreatedEntityId == id) {
@@ -180,8 +184,8 @@ var CollaborationStrategy = GuidanceStrategy.extend({
     } else {
       this.showGuidanceBox("", []);
     }
-  },
-  showExpectedActions: function (entityId) {
+  }
+  showExpectedActions(entityId) {
     var guidanceItems = [];
     var activityName = "";
 
@@ -221,8 +225,8 @@ var CollaborationStrategy = GuidanceStrategy.extend({
       guidanceItems.push(this.createCollaborationGuidanceItem(activity));
     }
     this.showGuidanceBox(activityName, guidanceItems, entityId);
-  },
-  createSetPropertyGuidanceItem: function (id, action) {
+  }
+  createSetPropertyGuidanceItem(id, action) {
     var guidanceItem = {
       id: id,
       type: "SET_PROPERTY_GUIDANCE",
@@ -231,8 +235,8 @@ var CollaborationStrategy = GuidanceStrategy.extend({
       propertyName: action.propertyName,
     };
     return guidanceItem;
-  },
-  createSelectToolGuidanceItem: function (id, action) {
+  }
+  createSelectToolGuidanceItem(id, action) {
     var guidanceItem = {
       id: id,
       type: "SELECT_TOOL_GUIDANCE",
@@ -240,8 +244,8 @@ var CollaborationStrategy = GuidanceStrategy.extend({
       tool: action.objectType,
     };
     return guidanceItem;
-  },
-  createGhostEdgeGuidanceItem: function (id, action) {
+  }
+  createGhostEdgeGuidanceItem(id, action) {
     var guidanceItem = {
       id: id,
       type: "GHOST_EDGE_GUIDANCE",
@@ -250,8 +254,8 @@ var CollaborationStrategy = GuidanceStrategy.extend({
       relationshipType: action.relationshipType,
     };
     return guidanceItem;
-  },
-  createCollaborationGuidanceItem: function (activity) {
+  }
+  createCollaborationGuidanceItem(activity) {
     var guidanceItem = {
       type: "COLLABORATION_GUIDANCE",
       activityId: activity.id,
@@ -259,8 +263,8 @@ var CollaborationStrategy = GuidanceStrategy.extend({
       objectId: activity.lastAddedNode,
     };
     return guidanceItem;
-  },
-  buildUi: function () {
+  }
+  buildUi() {
     this.ui = $(guidanceStrategyUiHtml);
     //Create the available guidance list
     var guidanceList = this.ui.find(".guidance-list");
@@ -289,15 +293,15 @@ var CollaborationStrategy = GuidanceStrategy.extend({
       guidanceList.append(listItem);
     }
     return this.ui;
-  },
-  highlightActiveActivity: function () {
+  }
+  highlightActiveActivity() {
     $(".guidance-item").removeClass("bs-list-group-item-info");
     if (this.currentActivity) {
       var nodeId = this.currentActivity.initialNode;
       $("#" + nodeId + "guidance-text").addClass("bs-list-group-item-info");
     }
-  },
-  getDescriptionTextForAction: function (nodeId) {
+  }
+  getDescriptionTextForAction(nodeId) {
     var node = this.logicalGuidanceRepresentation.node(nodeId);
     switch (node.type) {
       case "CREATE_OBJECT_ACTION":
@@ -305,16 +309,16 @@ var CollaborationStrategy = GuidanceStrategy.extend({
       default:
         break;
     }
-  },
-  addActivityToHistory: function (activity) {
+  }
+  addActivityToHistory(activity) {
     if (activity == null) return;
     if (this.activityHistory.length > 4) {
       this.activityHistory.shift();
     }
     this.activityHistory.push(activity);
     this.redrawHistoryList();
-  },
-  redrawHistoryList: function () {
+  }
+  redrawHistoryList() {
     var historyList = this.ui.find(".history-list");
     historyList.find(".guidance-history-item").off("click");
     historyList.empty();
@@ -346,15 +350,15 @@ var CollaborationStrategy = GuidanceStrategy.extend({
       });
       historyList.append(listItem);
     }
-  },
-  onRevokeSharedActivityOperation: function (operation) {
+  }
+  onRevokeSharedActivityOperation(operation) {
     if (operation instanceof RevokeSharedActivityOperation) {
       if (this.sharedActivities.hasOwnProperty(operation.getId())) {
         delete this.sharedActivities[operation.getId()];
       }
     }
-  },
-  onCollaborateInActivityOperation: function (operation) {
+  }
+  onCollaborateInActivityOperation(operation) {
     if (operation instanceof CollaborateInActivityOperation) {
       if (this.sharedActivities.hasOwnProperty(operation.getId())) {
         this.addActivityToHistory(this.currentActivity);
@@ -364,8 +368,8 @@ var CollaborationStrategy = GuidanceStrategy.extend({
         this.showExpectedActions(this.currentActivity.lastAddedNode);
       }
     }
-  },
-  onGuidanceOperation: function (data) {
+  }
+  onGuidanceOperation(data) {
     switch (data.operationType) {
       case "CollaborationStrategy:ShareActivity":
         var activity = ActivityStatus.createFromShareOperation(
@@ -385,10 +389,7 @@ var CollaborationStrategy = GuidanceStrategy.extend({
         }
         break;
     }
-  },
-});
-
-CollaborationStrategy.NAME = "Collaboration Strategy";
-CollaborationStrategy.ICON = "users";
+  }
+}
 
 export default CollaborationStrategy;

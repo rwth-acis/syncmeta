@@ -1,11 +1,10 @@
 import IWCW from "../lib/IWCWrapper";
 import RevokeSharedActivityOperation from "../operations/non_ot/RevokeSharedActivityOperation";
-import "../lib/Class";
 import { CONFIG } from "../config";
 import "https://cdnjs.cloudflare.com/ajax/libs/graphlib/2.1.8/graphlib.min.js";
-
-var ConcurrentRegion = Class.extend({
-  init: function (activity, logicalGuidanceRepresentation, initialNode) {
+class ConcurrentRegion {
+  constructor() {}
+  init(activity, logicalGuidanceRepresentation, initialNode) {
     this.activity = activity;
     this.logicalGuidanceRepresentation = logicalGuidanceRepresentation;
     this.initialNode = initialNode;
@@ -28,20 +27,20 @@ var ConcurrentRegion = Class.extend({
     }
 
     this.currentThreadId = this.remainingThreadIds.shift();
-  },
-  isOwner: function () {
+  }
+  isOwner() {
     return this._isOwner;
-  },
-  getCurrentThreadStart: function (nodeId) {
+  }
+  getCurrentThreadStart(nodeId) {
     return this.threadStartingNodes[this.currentThreadId];
-  },
-  getNextThreadStart: function (nodeId) {
+  }
+  getNextThreadStart(nodeId) {
     return this.threadStartingNodes[this.remainingThreadIds[0]];
-  },
-  isFinished: function () {
+  }
+  isFinished() {
     return this._isFinished;
-  },
-  update: function (nodeId) {
+  }
+  update(nodeId) {
     //Check if we are still in the current thread
     if (this.threads[this.currentThreadId].indexOf(nodeId) >= 0) {
       if (!this.started) {
@@ -82,21 +81,21 @@ var ConcurrentRegion = Class.extend({
         return;
       }
     }
-  },
-  isLastThread: function () {
+  }
+  isLastThread() {
     return this.remainingThreadIds.length == 0;
-  },
-  removeOpenThread: function (threadId) {
+  }
+  removeOpenThread(threadId) {
     var index = this.remainingThreadIds.indexOf(threadId);
     if (index >= 0) {
       this.remainingThreadIds.splice(index, 1);
     }
-  },
-  startNextThread: function (threadId) {
+  }
+  startNextThread(threadId) {
     this.currentThreadId = this.remainingThreadIds.shift();
     this.activity.updateSharedActivityOperation(this.currentThreadId);
-  },
-  findThread: function (startNodeId) {
+  }
+  findThread(startNodeId) {
     var nodesInThread = [startNodeId];
     var nodesToCheck = [];
     var nextNodesToCheck = [];
@@ -120,7 +119,8 @@ var ConcurrentRegion = Class.extend({
       nodesToCheck = nextNodesToCheck;
     }
     return nodesInThread;
-  },
-});
+  }
+}
+
 
 export default ConcurrentRegion;

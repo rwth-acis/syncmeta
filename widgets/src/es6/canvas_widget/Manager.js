@@ -17,7 +17,6 @@ import { CONFIG } from "../config";
 import { getQuerySelectorFromNode } from "../getQuerySelectorFromNode";
 import { default as loadHTML } from "../html.template.loader";
 import { default as IWCW } from "../lib/IWCWrapper";
-import "../lib/jquery.transformable-PATCHED";
 import { OpenAppProvider } from "../lib/openapp";
 import { default as ActivityOperation } from "../operations/non_ot/ActivityOperation";
 import {

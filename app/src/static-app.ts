@@ -11,7 +11,7 @@ import { Common } from "./common";
 import Static from "./static";
 import * as IWC from "../../widgets/src/es6/lib/iwc";
 
-import "../../widgets/build/widgets/widget.container";
+import "../../widgets";
 
 const routes = [
   {

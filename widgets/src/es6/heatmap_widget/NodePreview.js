@@ -3,10 +3,9 @@ const heatspotHtml = await loadHTML(
   "../../templates/heatmap_widget/heatspot.html",
   import.meta.url
 );
-import "../lib/Class";
 
-export default Class.extend({
-  init: function (id, x, y, width, height, scaleFactor, color) {
+class Heatspot {
+  constructor(id, x, y, width, height, scaleFactor, color) {
     this.$node = $(heatspotHtml);
     this.originalX = x;
     this.originalY = y;
@@ -31,50 +30,53 @@ export default Class.extend({
     //         that.remove();
     //     }
     // }, 1000)
-  },
-  get$node: function () {
+  }
+  get$node() {
     return this.$node;
-  },
-  remove: function () {
+  }
+  remove() {
     this.$node.remove();
-  },
-  moveX: function (x) {
+  }
+  moveX(x) {
     this.originalX += x;
     this.draw();
-  },
-  moveY: function (y) {
+  }
+  moveY(y) {
     this.originalY += y;
     this.draw();
-  },
-  changeWidth: function (offsetWidth) {
+  }
+  changeWidth(offsetWidth) {
     this.originalWidth += offsetWidth;
     this.draw();
-  },
-  changeHeight: function (offsetHeight) {
+  }
+  changeHeight(offsetHeight) {
     this.originalHeight += offsetHeight;
     this.draw();
-  },
-  setScaleFactor: function (scaleFactor) {
+  }
+  setScaleFactor(scaleFactor) {
     this.scaleFactor = scaleFactor;
     this.draw();
-  },
-  draw: function () {
+  }
+  draw() {
     this.$node.css({
       top: this.originalY * this.scaleFactor,
       left: this.originalX * this.scaleFactor,
       width: this.originalWidth * this.scaleFactor,
       height: this.originalHeight * this.scaleFactor,
     });
-  },
-  setColor: function (color) {
+  }
+  setColor(color) {
     this.$node.find(".background").css({
       opacity: 1,
       "background-color": color,
     });
-  },
-  resetColor: function () {
+  }
+  resetColor() {
     this.$node.find(".background").css({
-      opacity: 0,
+      opacity: 0.5,
+      "background-color": "white",
     });
-  },
-});
+  }
+}
+
+export default Heatspot;
