@@ -6,7 +6,7 @@ import { CONFIG, getWidgetTagName } from "../config";
 import AbstractValue from "./AbstractValue";
 import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
 import loadHTML from "../html.template.loader";
-import hljs from "highlight.js";
+
 import { QuillBinding } from "y-quill";
 
 const quillEditorModalHtml = await loadHTML(
@@ -35,11 +35,6 @@ class CodeEditorValue extends AbstractValue {
   constructor(id, name, subjectEntity, rootSubjectEntity) {
     super(id, name, subjectEntity, rootSubjectEntity);
     var that = this;
-
-    hljs.configure({
-      languages: ["svg", "html"],
-    });
-
     var _ytext = null;
 
     /**
