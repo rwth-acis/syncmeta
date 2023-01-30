@@ -97,11 +97,12 @@ export class Client {
     const widgetTageName = getWidgetTagName(this._componentName);
     try {
       const _node = document.querySelector(widgetTageName);
+
       if (!_node) {
         throw new Error(
           "html tag not found in document. Please make sure that you added the " +
             widgetTageName +
-            " to the document"
+            " to the document. Hint: do not use the shadow dom."
         );
       }
       _node.addEventListener("syncmeta-message", handler);

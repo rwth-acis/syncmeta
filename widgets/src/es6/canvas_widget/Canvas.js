@@ -1819,6 +1819,8 @@ export default class Canvas extends AbstractCanvas {
       });
       const nodesMap = y.getMap("nodes");
       nodesMap.observe(function (event) {
+        if (eventWasTriggeredByMe(event)) return;
+
         const array = Array.from(event.changes.keys.entries());
         array.forEach(([key, change]) => {
           switch (change.action) {
@@ -1829,43 +1831,23 @@ export default class Canvas extends AbstractCanvas {
               break;
             }
             case "add": {
-              const nodesMap = y.getMap("nodes");
-              var map = nodesMap.get(key);
-              let triggeredByMe = false;
-              map.observe(function (nodeEvent) {
-                if (triggeredByMe) return;
-                triggeredByMe = eventWasTriggeredByMe(nodeEvent);
-                if (triggeredByMe) return;
-
-                const array = Array.from(nodeEvent.changes.keys.entries());
-
-                array.forEach(([nodeKey, change]) => {
-                  const value = nodeEvent.currentTarget.get(nodeKey);
-                  switch (nodeKey) {
-                    case "jabberId": {
-                      remoteNodeAddCallback(
-                        new NodeAddOperation(
-                          map.get("id"),
-                          map.get("type"),
-                          map.get("left"),
-                          map.get("top"),
-                          map.get("width"),
-                          map.get("height"),
-                          map.get("zIndex"),
-                          null,
-                          null,
-                          null,
-                          value
-                        )
-                      );
-                      break;
-                    }
-                    default: {
-                      break;
-                    }
-                  }
-                });
-              });
+              const node = nodesMap.get(key);
+              const jabberId = node.get("jabberId");
+              remoteNodeAddCallback(
+                new NodeAddOperation(
+                  node.get("id"),
+                  node.get("type"),
+                  node.get("left"),
+                  node.get("top"),
+                  node.get("width"),
+                  node.get("height"),
+                  node.get("zIndex"),
+                  null,
+                  null,
+                  null,
+                  jabberId
+                )
+              );
             }
           }
         });

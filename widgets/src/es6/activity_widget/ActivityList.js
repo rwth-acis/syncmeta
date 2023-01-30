@@ -608,7 +608,7 @@ class ActivityList {
         event.keysChanged.forEach((key) => {
           if (key == "log") return;
           const activity = event.currentTarget.get(key);
-
+          if (!activity) return;
           operationCallback(
             new ActivityOperation(
               activity.type,

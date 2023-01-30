@@ -1,15 +1,15 @@
 import { LitElement, html } from "lit";
 import { customElement } from "lit/decorators.js";
 
-// // Syncmeta Widgets
-import "../../widgets/build/widgets/partials/main.widget";
-import "../../widgets/build/widgets/partials/attribute.widget";
-import "../../widgets/build/widgets/partials/debug.widget";
-import "../../widgets/build/widgets/partials/palette.widget";
-import "../../widgets/build/widgets/partials/activity.widget";
+// Syncmeta Widgets
+import "./partials/main.widget";
+import "./partials/attribute.widget";
+import "./partials/debug.widget";
+import "./partials/palette.widget";
+import "./partials/activity.widget";
 
 @customElement("widget-container")
-class WidgetContainer extends LitElement {
+export class WidgetContainer extends LitElement {
   createRenderRoot() {
     return this;
   }

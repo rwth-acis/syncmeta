@@ -344,8 +344,11 @@ class AttributeWrapper {
           const key = entry[0];
           const action = entry[1].action;
           if (action !== "add") return;
-          const map = edgesMap.get(key);
-          if (!map || !map.has("jabberId")) return;
+
+          const jabberId = edgesMap.get(key).get("jabberId");
+          if (!jabberId) return;
+
+          const map = event.currentTarget.get(key);
 
           edgeAddCallback(
             new EdgeAddOperation(
@@ -356,29 +359,24 @@ class AttributeWrapper {
               null,
               null,
               null,
-              edgeKey
+              jabberId
             )
           );
-          var edge = EntityManager.findEdge(edgeEvent.currentTarget.get("id"));
+          var edge = EntityManager.findEdge(map.get("id"));
           if (!edge) {
             throw new Error("edge is null");
           }
           var attrs = edge.getAttributes();
-          if (edge.getLabel().getEntityId() === edgeKey)
-            edge
-              .getLabel()
-              .getValue()
-              .registerYType(edgeEvent.currentTarget.get(edgeKey));
+          if (edge.getLabel().getEntityId() === key)
+            edge.getLabel().getValue().registerYType(map.get(key));
           else {
             var attrs = edge.getAttributes();
             for (var attrKey in attrs) {
               if (attrs.hasOwnProperty(attrKey)) {
-                if (attrs[attrKey].getEntityId() === edgeKey) {
+                if (attrs[attrKey].getEntityId() === key) {
                   var attr = attrs[attrKey];
                   if (attr.getValue().hasOwnProperty("registerYType"))
-                    attr
-                      .getValue()
-                      .registerYType(edgeEvent.currentTarget.get(edgeKey));
+                    attr.getValue().registerYType(map.get(key));
                 }
               }
             }

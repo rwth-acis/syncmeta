@@ -199,8 +199,8 @@ export default [
     plugins: [
       replaceHtml(),
       typescript(),
+      css(),
       nodeResolve({ browser: true }),
-
       commonjs({
         include: [/node_modules/, "./src/main.widget.ts"],
         extensions: [".js", ".ts"],
@@ -256,6 +256,32 @@ export default [
     input: "src/widgets/partials/viewcontrol.widget.ts",
     output: {
       file: "build/widgets/partials/viewcontrol.widget.js",
+      sourcemap: true,
+      inlineDynamicImports: true,
+      format: "es",
+    },
+    external: externalDependencies,
+    preserveEntrySignatures: "strict",
+  },
+  // widget container
+  {
+    plugins: [
+      replaceHtml(),
+      typescript(),
+      css(),
+      nodeResolve({ browser: true }),
+      commonjs({
+        include: [/node_modules/],
+        extensions: [".js", ".ts"],
+      }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
+      // css(),
+    ],
+    watch: {
+      include: "src/**",
+    },
+    input: "src/widgets/widget.container.ts",
+    output: {
+      file: "build/widgets/widget.container.js",
       sourcemap: true,
       inlineDynamicImports: true,
       format: "es",

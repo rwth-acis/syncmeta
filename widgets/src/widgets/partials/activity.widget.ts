@@ -5,6 +5,7 @@ import { SyncMetaWidget } from "../../widget";
 import { CONFIG, getWidgetTagName } from "../../es6/config";
 import "../../es6/activity_widget.js";
 import "../../loading-spinner";
+import "../../error-alert";
 
 // widget body used by all syncmeta widgets
 @customElement(getWidgetTagName(CONFIG.WIDGET.NAME.ACTIVITY))
@@ -130,6 +131,7 @@ export class ActivityWidget extends SyncMetaWidget(LitElement) {
         crossorigin="anonymous"
       />
       <div class="h-100" style="overflow-y:auto">
+        <error-alert></error-alert>
         <h4>Users online</h4>
         <div class="list_wrapper">
           <div id="user_list" class="list"></div>

@@ -47,6 +47,7 @@ export class PaletteWidget extends SyncMetaWidget(LitElement) {
         href="https://code.jquery.com/ui/1.13.1/themes/smoothness/jquery-ui.css"
       />
       <div class="h-100" style="overflow-y:auto">
+        <error-alert></error-alert>
         <div id="palette"></div>
         <p id="info"></p>
         <div id="q"></div>

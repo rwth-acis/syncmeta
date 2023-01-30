@@ -18,7 +18,11 @@ import SetModelAttributeNodeOperation from "./operations/non_ot/SetModelAttribut
 import { getGuidanceModeling } from "./Guidancemodel"; //promise!Guidancemod
 import { getWidgetTagName } from "./config.js";
 
-$(async function () {
+$(function () {
+  const alertDiv = $(getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE)).find(
+    ".alert"
+  );
+  alertDiv.attr("style", "display:none !important");
   const guidancemodel = getGuidanceModeling();
   try {
     yjsSync()
@@ -27,7 +31,7 @@ $(async function () {
           .then((user) => {
             var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE, y);
             iwc.setSpace(user);
-            window.y = y;
+            if (!window.y) window.y = y;
             window.syncmetaLog = {
               widget: "Attribute",
               initializedYTexts: 0,
@@ -124,22 +128,25 @@ $(async function () {
                   }
                 }
               });
-              
             });
-            $(getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE))
-              .find("loading-spinner")
-              .hide();
           })
           .catch(function (e) {
             console.error(e);
-            $("#wrapper")
-              .find("h3")
-              .text("Add Canvas Widget to Space and refresh the widget.");
-            $("#loading").hide();
+            alertDiv
+              .find("#alert-message")
+              .text("Cannot connect to Canvas widget.");
+            alertDiv.show();
+          })
+          .finally(() => {
+            $(getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE))
+              .find("loading-spinner")
+              .hide();
           });
       })
       .catch((err) => {
         console.error(err);
+        alertDiv.find("#alert-message").text("Cannot connect to Yjs server.");
+        alertDiv.show();
       });
   } catch (error) {
     console.error(error);
