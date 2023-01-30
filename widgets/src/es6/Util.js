@@ -36,6 +36,7 @@ export default {
     user[CONFIG.NS.PERSON.JABBERID] = id;
     user[CONFIG.NS.PERSON.MBOX] = id + "@anonym.com";
     user.globalId = -1;
+    user.self = true;
     return user;
   },
 

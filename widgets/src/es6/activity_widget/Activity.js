@@ -152,13 +152,22 @@ class Activity {
          color: space.members.hasOwnProperty(_sender) ? Util.getColor(space.members[_sender].globalId) : "#000000"
          })).hide();*/
     var _$node;
+
     if (_sender) {
       const userList = y.getMap("userList");
+
+      let username;
+      if (userList.get(_sender)) {
+        username = userList.get(_sender)[CONFIG.NS.PERSON.TITLE];
+        if (userList.get(_sender).self) {
+          username = username + " (You)";
+        }
+      } else {
+        username = "Anonymous";
+      }
       _$node = $(
         _activityBoxTemplate({
-          heading: userList.get(_sender)
-            ? userList.get(_sender)[CONFIG.NS.PERSON.TITLE]
-            : "Anonymous",
+          heading: username,
           text: _text,
           color: userList.get(_sender)
             ? Util.getColor(userList.get(_sender).globalId)

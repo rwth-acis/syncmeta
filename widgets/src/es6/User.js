@@ -22,6 +22,7 @@ export async function getUserInfo() {
       space.user[CONFIG.NS.PERSON.JABBERID] = data.sub;
       space.user[CONFIG.NS.PERSON.MBOX] = data.email;
       space.user.globalId = -1;
+      space.user.self = true;
       console.info("User promise by " + undefined, space);
       return space;
     }

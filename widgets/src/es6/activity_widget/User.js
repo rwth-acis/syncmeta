@@ -57,16 +57,24 @@ class User {
      */
     var _userBoxTemplate = _.template(userBoxHtml);
 
+    let username;
+    if (userList.get(jabberId)) {
+      username = userList.get(jabberId)[CONFIG.NS.PERSON.TITLE];
+      if (userList.get(jabberId).self) {
+        username = username + " (You)";
+      }
+    } else {
+      username = "Anonymous";
+    }
     /**
      * jQuery object of DOM node representing the user
      * @type {jQuery}
      * @private
      */
+
     var _$node = $(
       _userBoxTemplate({
-        heading: userList.get(jabberId)
-          ? userList.get(jabberId)[CONFIG.NS.PERSON.TITLE]
-          : "Anonymous",
+        heading: username,
         text: "",
         color: userList.get(jabberId)
           ? Util.getColor(userList.get(jabberId).globalId)
