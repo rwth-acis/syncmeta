@@ -18,8 +18,10 @@ import SetModelAttributeNodeOperation from "./operations/non_ot/SetModelAttribut
 import { getGuidanceModeling } from "./Guidancemodel"; //promise!Guidancemod
 import { getWidgetTagName } from "./config.js";
 
-$(async function () {
-  const alertDiv = $(getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE));
+$(function () {
+  const alertDiv = $(getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE)).find(
+    ".alert"
+  );
   alertDiv.attr("style", "display:none !important");
   const guidancemodel = getGuidanceModeling();
   try {
@@ -29,7 +31,7 @@ $(async function () {
           .then((user) => {
             var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE, y);
             iwc.setSpace(user);
-            window.y = y;
+            if (!window.y) window.y = y;
             window.syncmetaLog = {
               widget: "Attribute",
               initializedYTexts: 0,
