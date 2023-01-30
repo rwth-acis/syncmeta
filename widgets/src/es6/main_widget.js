@@ -142,6 +142,9 @@ $(async function () {
       console.warn(message);
       alertDiv.find("#alert-message").text("Cannot connect to Yjs server.");
       alertDiv.show();
+      const $mainWidgetRef = $(getWidgetTagName(CONFIG.WIDGET.NAME.MAIN));
+      const $spinner = $mainWidgetRef.find("loading-spinner");
+      $spinner.hide();
       alert("ERROR: " + message);
     });
 });

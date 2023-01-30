@@ -1,16 +1,7 @@
-import { default as _ } from "lodash-es";
-import "https://cdnjs.cloudflare.com/ajax/libs/graphlib/2.1.8/graphlib.min.js";
-import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
-import "https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.9.2/jquery.contextMenu.js";
-import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
-import "../lib/jquery.transformable-PATCHED";
-import { FlowchartConnector } from "@jsplumb/connector-flowchart";
-import interact from "interactjs";
 import {
-  EVENT_DRAG_START,
   EVENT_DRAG_MOVE,
+  EVENT_DRAG_START,
   EVENT_DRAG_STOP,
-  EventManager,
 } from "@jsplumb/browser-ui";
 import { AnchorLocations } from "@jsplumb/common";
 import { BezierConnector } from "@jsplumb/connector-bezier";
@@ -20,18 +11,20 @@ import "https://cdnjs.cloudflare.com/ajax/libs/graphlib/2.1.8/graphlib.min.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.9.2/jquery.contextMenu.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
+import interact from "interactjs";
 import { default as _ } from "lodash-es";
 import { CONFIG } from "../config";
 import { getQuerySelectorFromNode } from "../getQuerySelectorFromNode";
 import { default as loadHTML } from "../html.template.loader";
 import { default as IWCW } from "../lib/IWCWrapper";
+import "../lib/jquery.transformable-PATCHED";
 import { OpenAppProvider } from "../lib/openapp";
 import { default as ActivityOperation } from "../operations/non_ot/ActivityOperation";
 import {
   EdgeAddOperation,
   EdgeDeleteOperation,
   NodeAddOperation,
-  NodeDeleteOperation
+  NodeDeleteOperation,
 } from "../operations/ot/EntityOperation";
 import { default as NodeMoveOperation } from "../operations/ot/NodeMoveOperation";
 import { default as NodeMoveZOperation } from "../operations/ot/NodeMoveZOperation";
@@ -56,9 +49,6 @@ import ConditionListAttribute from "./viewpoint/ConditionListAttribute";
 import LogicalConjunctions from "./viewpoint/LogicalConjunctions";
 import LogicalOperator from "./viewpoint/LogicalOperator";
 import RenamingListAttribute from "./viewpoint/RenamingListAttribute";
-import { StraightConnector } from "@jsplumb/core";
-import { BezierConnector } from "@jsplumb/connector-bezier";
-import { getQuerySelectorFromNode } from "../getQuerySelectorFromNode";
 
 const viewrelationshipNodeHtml = await loadHTML(
   "../../templates/canvas_widget/viewrelationship_node.html",
@@ -5737,12 +5727,12 @@ export function makeNode(type, $shape, anchors, attributes) {
         try {
           _$node.removeClass("source target");
           jsPlumbInstance.getEndpoints(_$node.get(0)).forEach((endpoint) => {
-          // We need to remove the endpoint that was created to enable node connection by dragging
-          // since we are not using the edge tool anymore
-          if (endpoint.connections.length === 0) {
-            jsPlumbInstance.deleteEndpoint(endpoint);
-          }
-        });
+            // We need to remove the endpoint that was created to enable node connection by dragging
+            // since we are not using the edge tool anymore
+            if (endpoint.connections.length === 0) {
+              jsPlumbInstance.deleteEndpoint(endpoint);
+            }
+          });
         } catch (error) {
           console.error(error);
         }

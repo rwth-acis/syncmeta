@@ -9,7 +9,7 @@ import "./partials/palette.widget";
 import "./partials/activity.widget";
 
 @customElement("widget-container")
-export class WidgetContainer extends LitElement {
+class WidgetContainer extends LitElement {
   createRenderRoot() {
     return this;
   }
