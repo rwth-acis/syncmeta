@@ -262,4 +262,30 @@ export default [
     external: externalDependencies,
     preserveEntrySignatures: "strict",
   },
+  // widget container
+  {
+    plugins: [
+      replaceHtml(),
+      typescript(),
+      css(),
+      nodeResolve({ browser: true }),
+      commonjs({
+        include: [/node_modules/],
+        extensions: [".js", ".ts"],
+      }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
+      // css(),
+    ],
+    watch: {
+      include: "src/**",
+    },
+    input: "src/widgets/widget.container.ts",
+    output: {
+      file: "build/widgets/widget.container.js",
+      sourcemap: true,
+      inlineDynamicImports: true,
+      format: "es",
+    },
+    external: externalDependencies,
+    preserveEntrySignatures: "strict",
+  },
 ];

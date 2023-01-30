@@ -13,6 +13,10 @@ import { WaitForCanvas } from "./WaitForCanvas";
 import Util from "./Util";
 import WidgetTracker from "./activity_widget/WidgetTracker";
 $(function () {
+  const alertDiv = $(getWidgetTagName(CONFIG.WIDGET.NAME.ACTIVITY)).find(
+    ".alert"
+  );
+  alertDiv.attr("style", "display:none !important");
   yjsSync()
     .then((y) => {
       window.y = y;
@@ -23,7 +27,6 @@ $(function () {
           " with y-user-id: " +
           y.clientID
       );
-      
 
       WaitForCanvas(CONFIG.WIDGET.NAME.ACTIVITY, y)
         .then(function (data) {
@@ -70,5 +73,7 @@ $(function () {
     })
     .catch(function (err) {
       console.error("ACTIVITY: Error while initializing Yjs: " + err);
+      alertDiv.find("#alert-message").text("Cannot connect to Yjs server.");
+      alertDiv.show();
     });
 });

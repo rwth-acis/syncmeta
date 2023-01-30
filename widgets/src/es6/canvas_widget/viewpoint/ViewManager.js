@@ -32,6 +32,7 @@ function ViewManager() {
      * initialize the viewpoint selection list of the generic editor instance
      */
     GetViewpointList: function () {
+      y = window.y;
       const viewsMap = y.getMap("views");
       _$selection.empty();
       var viewpointList = viewsMap.keys();

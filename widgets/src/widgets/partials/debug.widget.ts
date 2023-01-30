@@ -28,6 +28,8 @@ export class DebugWidget extends SyncMetaWidget(LitElement) {
 
       
               <div id="debug-container">
+                 <error-alert></error-alert>
+
                 <div class="seperating_box">
                   <h6>Select a JSON file</h6>
                   <input

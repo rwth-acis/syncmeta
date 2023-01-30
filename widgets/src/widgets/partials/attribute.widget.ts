@@ -196,6 +196,7 @@ export class AttributeWidget extends SyncMetaWidget(LitElement) {
       />
 
       <div class="main-wrapper">
+        <error-alert></error-alert>
         <div id="loading" class="loading"></div>
         <div id="wrapper"></div>
         <div id="q"></div>

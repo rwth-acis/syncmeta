@@ -19,6 +19,8 @@ import { getGuidanceModeling } from "./Guidancemodel"; //promise!Guidancemod
 import { getWidgetTagName } from "./config.js";
 
 $(async function () {
+  const alertDiv = $(getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE));
+  alertDiv.attr("style", "display:none !important");
   const guidancemodel = getGuidanceModeling();
   try {
     yjsSync()
@@ -124,22 +126,25 @@ $(async function () {
                   }
                 }
               });
-              
             });
-            $(getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE))
-              .find("loading-spinner")
-              .hide();
           })
           .catch(function (e) {
             console.error(e);
-            $("#wrapper")
-              .find("h3")
-              .text("Add Canvas Widget to Space and refresh the widget.");
-            $("#loading").hide();
+            alertDiv
+              .find("#alert-message")
+              .text("Cannot connect to Canvas widget.");
+            alertDiv.show();
+          })
+          .finally(() => {
+            $(getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE))
+              .find("loading-spinner")
+              .hide();
           });
       })
       .catch((err) => {
         console.error(err);
+        alertDiv.find("#alert-message").text("Cannot connect to Yjs server.");
+        alertDiv.show();
       });
   } catch (error) {
     console.error(error);

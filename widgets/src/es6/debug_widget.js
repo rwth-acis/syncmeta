@@ -11,6 +11,8 @@ $(async function () {
   const $spinner = $(getWidgetTagName(CONFIG.WIDGET.NAME.DEBUG)).find(
     "loading-spinner"
   );
+  const alertDiv = $(getWidgetTagName(CONFIG.WIDGET.NAME.DEBUG)).find(".alert");
+  alertDiv.attr("style", "display:none !important");
 
   const guidance = getGuidanceModeling();
   yjsSync()
@@ -374,5 +376,7 @@ $(async function () {
     })
     .catch((err) => {
       console.error(err);
+      alertDiv.find("#alert-message").text("Cannot connect to Yjs server.");
+      alertDiv.show();
     });
 });

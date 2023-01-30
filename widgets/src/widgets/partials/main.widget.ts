@@ -492,6 +492,7 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
       />
 
       <div class="main-container container d-flex flex-column h-100">
+        <error-alert></error-alert>
         <div id="loading" class="loading"></div>
         <div class="row mb-2" id="main-widget-utilities-container">
           <div class="col">

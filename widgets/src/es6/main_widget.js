@@ -59,6 +59,8 @@ import { getUserInfo } from "./User";
 import { getWidgetTagName } from "./config";
 
 $(async function () {
+  const alertDiv = $(getWidgetTagName(CONFIG.WIDGET.NAME.MAIN)).find(".alert");
+  alertDiv.attr("style", "display:none !important");
   const user = await getUserInfo();
   if (!user) {
     console.error("user is undefined");
@@ -138,6 +140,8 @@ $(async function () {
     })
     .catch(function (message) {
       console.warn(message);
+      alertDiv.find("#alert-message").text("Cannot connect to Yjs server.");
+      alertDiv.show();
       alert("ERROR: " + message);
     });
 });
