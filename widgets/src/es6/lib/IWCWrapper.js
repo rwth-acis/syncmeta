@@ -452,15 +452,15 @@ class IWCWrapper {
  * @exports IWCW
  */
 export default class IWCW {
-  static instance;
+  static instances = {}; //static variable to store instances of IWCWrapper. One for each widget
   constructor() {}
   /**
    * Instance of IWCWrapper
    * @type {IWCWrapper}
    */
 
-  static hasInstance() {
-    return !!IWCW.instance;
+  static hasInstance(componentName) {
+    return componentName in IWCW.instances;
   }
 
   /**
@@ -469,16 +469,16 @@ export default class IWCW {
    * @returns {IWCWrapper}
    */
   static getInstance(componentName, y) {
-    if (!IWCW.instance) {
+    if (!this.hasInstance(componentName)) {
       y = y || window.y;
       if (!y) {
         console.error(
           "y is null, y is the shared y document that should be passed along when calling getInstance, proceed with caution"
         );
       }
-      IWCW.instance = new IWCWrapper(componentName, y);
-      IWCW.instance.connect();
+      IWCW.instances[componentName] = new IWCWrapper(componentName, y);
+      IWCW.instances[componentName].connect();
     }
-    return IWCW.instance;
+    return IWCW.instances[componentName];
   }
 }
