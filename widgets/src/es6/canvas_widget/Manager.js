@@ -2710,7 +2710,7 @@ export class AbstractNode extends AbstractEntity {
     /**
      * Unbind events for move tool
      */
-    this.unbindMoveToolEvents = function () {
+    this.unbindMoveToolEvents = () => {
       //Disable Node Selection
       //$canvas.find(".node.ui-draggable").draggable( "option", "disabled", true);
       this._$node
@@ -2722,7 +2722,7 @@ export class AbstractNode extends AbstractEntity {
         .css("pointerEvents", "none");
 
       //Disable Node Dragging
-      jsPlumbInstance.setDraggable(_$node.get(0), false);
+      jsPlumbInstance.setDraggable(this._$node.get(0), false);
     };
 
     /**
