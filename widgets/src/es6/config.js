@@ -1,4 +1,4 @@
-export default CONFIG = {
+export const CONFIG = {
   TEST: {
     USER: "Luigi Test",
     EMAIL: "luigi.test05@gmail.com",
@@ -21,6 +21,7 @@ export default CONFIG = {
       HEATMAP: "Heatmap",
       METADATA: "METADATA",
       OPENAPI: "Metadata Widget",
+      DEBUG: "Debug",
       IMSLD_EXPORT: "IMSLD Export",
       JSON_EXPORT: "JSON Export",
       VIEWCONTROL: "View Control",
@@ -136,6 +137,7 @@ export default CONFIG = {
 
 export function getWidgetTagName(name) {
   //@ts-ignore
+  if(!name) return;
   let widgetName = name;
   widgetName = widgetName.replace(/\s+/g, "-");
   return `${widgetName}-widget`.toLowerCase();
