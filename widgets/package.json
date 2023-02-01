@@ -25,7 +25,7 @@
     "jquery-mousewheel": "^3.1.13",
     "jquery-ui": "~1.10.3",
     "jsPlumb": "github:jsplumb/jsplumb#1.5.5",
-    "jszip": "^2.0.0",
+    "jszip": "^3.8.0",
     "lodash": "^4.17.21",
     "requirejs": "^2.1.22",
     "requirejs-promise": "github:jokeyrhyme/requirejs-promise",
