@@ -3233,6 +3233,8 @@ class EntityManager {
   setSharedDocument(y) {
     this.y = y;
   }
+  _nodes;
+  _edges;
 
   constructor() {
     var that = this;
@@ -3255,12 +3257,14 @@ class EntityManager {
      * @private
      */
     var _nodes = {};
+    this._nodes = _nodes;
     /**
      * Edges of the graph
      * @type {{}}
      * @private
      */
     var _edges = {};
+    this._edges = _edges;
 
     var metamodel = null;
 
@@ -3324,6 +3328,12 @@ class EntityManager {
         }
         _nodes[id] = node;
         return node;
+      },
+      findObjectNodeByLabel(label) {
+        for (const node of Object.values(_nodes)) {
+          if (node.getType().match(label)) return node;
+        }
+        return null;
       },
       /**
        * Create model Attributes node
