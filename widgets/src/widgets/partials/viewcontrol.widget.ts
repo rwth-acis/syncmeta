@@ -1,12 +1,9 @@
-import { LitElement, html, CSSResultGroup, css } from "lit";
-import { customElement, property } from "lit/decorators.js";
-import * as Y from "yjs";
-import { WebsocketProvider } from "y-websocket";
-import { CONFIG } from "../../es6/config";
+import { css, CSSResultGroup, html, LitElement } from "lit";
+import { customElement } from "lit/decorators.js";
+import { CONFIG, getWidgetTagName } from "../../es6/config";
+import "../../es6/viewcontrol_widget.js";
 import init from "../../js/shared";
 import { SyncMetaWidget } from "../../widget";
-import "../../es6/viewcontrol_widget.js";
-import { getWidgetTagName } from "../../es6/config";
 // widget body used by all syncmeta widgets
 @customElement(getWidgetTagName(CONFIG.WIDGET.NAME.VIEWCONTROL))
 export class ViewControlWidget extends SyncMetaWidget(LitElement) {
