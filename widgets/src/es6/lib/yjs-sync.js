@@ -2,7 +2,11 @@ import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
 
-export async function yjsSync(spaceTitle = window.spaceTitle) {
+export async function yjsSync(
+  spaceTitle = window.spaceTitle,
+  yjsServer = "localhost:1234",
+  yjsProtocol = "ws"
+) {
   if (!window.Y) {
     window.Y = Y;
   }
@@ -11,7 +15,7 @@ export async function yjsSync(spaceTitle = window.spaceTitle) {
 
   // Sync clients with the y-websocket provider
   const websocketProvider = new WebsocketProvider(
-    "ws://localhost:1234",
+    `${yjsProtocol}://${yjsServer}`,
     spaceTitle,
     doc
   );
