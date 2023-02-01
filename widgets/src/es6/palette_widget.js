@@ -29,6 +29,9 @@ $(function () {
   const alertDiv = $(getWidgetTagName(CONFIG.WIDGET.NAME.PALETTE)).find(
     ".alert"
   );
+  const $spinner = $(getWidgetTagName(CONFIG.WIDGET.NAME.PALETTE)).find(
+    "loading-spinner"
+  );
   alertDiv.attr("style", "display:none !important");
   yjsSync()
     .then((y) => {
@@ -93,6 +96,7 @@ $(function () {
     .catch((error) => {
       console.error("PALETTE: Error while waiting for CANVAS: ", error);
       alertDiv.find("#alert-message").text("Cannot connect to Yjs server.");
+      $spinner.hide();
       alertDiv.show();
     });
 });
