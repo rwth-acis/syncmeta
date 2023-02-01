@@ -147,6 +147,7 @@ class Value extends AbstractValue {
       }
       _ytext.observe(function (event) {
         _value = _ytext.toString().replace(/\n/g, "");
+        that.setValue(_value);
       });
 
       _ytext.observe(

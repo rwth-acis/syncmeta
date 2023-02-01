@@ -1,9 +1,32 @@
 <div class="custom_node">
-    <div class="type"><%= type %></div>
-    <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 100 100" class="fill_parent">
-        <rect x="0" y="0" rx="20" ry="20" width="100" height="100" fill="<%= color %>" stroke="lightgray" stroke-width="2" />
-    </svg>
-    <div class="fill_parent">
-        <div style="position: absolute; left: 50%; top: 50%; -webkit-transform: translateY(-50%) translateX(-50%)" class="label"></div>
-    </div>
+  <div class="type"><%= type %></div>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    preserveAspectRatio="none"
+    viewBox="0 0 100 100"
+    class="fill_parent"
+  >
+    <rect
+      x="0"
+      y="0"
+      rx="20"
+      ry="20"
+      width="100"
+      height="100"
+      fill="<%= color %>"
+      stroke="lightgray"
+      stroke-width="2"
+    />
+  </svg>
+  <div class="fill_parent">
+    <div
+      style="
+        position: absolute;
+        left: 50%;
+        top: -10px;
+        -webkit-transform: translateY(-50%) translateX(-50%);
+      "
+      class="label"
+    ></div>
+  </div>
 </div>

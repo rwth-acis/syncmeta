@@ -905,6 +905,17 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
     );
   }
 
+  const $searchInput = $("#searchNodeInput");
+  const $searchButton = $("#searchNodeButton");
+  $searchButton.click(function () {
+    const searchValue = $searchInput.val();
+    const searchResultNode = EntityManager.findObjectNodeByLabel(searchValue);
+    if (searchResultNode) {
+      canvas.scrollNodeIntoView(searchResultNode);
+      canvas.select(searchResultNode);
+    }
+  });
+
   if (model) {
     var report = JSONtoGraph(model, canvas);
     console.info("CANVAS: Initialization of model completed ", report);

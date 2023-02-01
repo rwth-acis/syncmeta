@@ -85,9 +85,11 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
         /*adjust label of custom nodes*/
         div.custom_node .fill_parent > div {
           left: 50%;
-          top: 50%;
+          top: -8px !important;
           -webkit-transform: translateY(-50%) translateX(-50%);
           -moz-transform: translateY(-50%) translateX(-50%);
+          pointer-events: none;
+          overflow-x: auto;
         }
 
         div.simple_node {
@@ -495,101 +497,33 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
         <error-alert></error-alert>
         <div id="loading" class="loading"></div>
         <div class="row mb-2" id="main-widget-utilities-container">
-          <div class="col-7">
-            <div class="flex">
-              <button
-                id="viewsHide"
-                class="btn btn-light"
-                title="Close the View Panel"
-              >
-                <i class="bi bi-caret-up"></i>
-              </button>
-              <button
-                id="viewsShow"
-                class="btn btn-light"
-                title="Show the View Panel"
-              >
-                <i class="bi bi-caret-down"></i>
-              </button>
-              <button
-                id="save"
-                class="btn btn-light"
-                title="Save the current state of the model"
-              >
-                <i class="bi bi-save"></i>
-              </button>
-              <!-- Uncommented the below line for Export as PNG! -->
-              <button id="save_image" class="btn btn-light">
-                <i class="bi bi-camera"></i>
-              </button>
-              <!--<button id="generate" style="display: none"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/generate.png" /></button>-->
-              <span id="feedback"></span>
-              <strong id="lblCurrentView"
-                >View:<span id="lblCurrentViewId"></span
-              ></strong>
-            </div>
-            <div id="ViewCtrlContainer" class="flex my-2" style="display:none">
-              <button
-                id="btnCreateViewpoint"
-                class="btn btn-light"
-                title="Create a viewpoint"
-              >
-                <i class="bi bi-plus-circle"></i>
-              </button>
-              <button
-                class="btn btn-light"
-                id="btnCancelCreateViewpoint"
-                title="Cancel"
-                style="display: none;"
-              >
-                <i class="bi bi-x-circle"></i>
-              </button>
-              <input
-                id="txtNameViewpoint"
-                type="text"
-                placeholder="name"
-                style="display: none;"
-              />
-              <select
-                id="ddmViewpointSelection"
-                style="display: none;"
-              ></select>
-              <button
-                class="btn btn-light"
-                id="btnAddViewpoint"
-                title="Create an empty viewpoint"
-                style="display: none;"
-              >
-                <i class="bi bi-check"></i>
-              </button>
-
-              <select id="ddmViewSelection"></select>
-              <button
-                id="btnShowView"
-                class="btn btn-light"
-                title="Apply a viewpoint to the current model or visualize the viewpoint"
-              >
-                Show
-              </button>
-              <button
-                class="btn btn-light"
-                id="btnRefreshView"
-                title="Refresh viewpoint list"
-                style="display: none;"
-              >
-                Refresh
-              </button>
-              <button
-                class="btn btn-light"
-                id="btnDelViewPoint"
-                title="Delete current viewpoint in the list"
-              >
-                <i class="bi bi-trash"></i>
-              </button>
-            </div>
-          </div>
-
-          <div class="col-5 d-flex justify-content-end align-items-start">
+          <div class="col-9">
+            <button
+              id="viewsHide"
+              class="btn btn-light"
+              title="Close the View Panel"
+            >
+              <i class="bi bi-caret-up"></i>
+            </button>
+            <button
+              id="viewsShow"
+              class="btn btn-light"
+              title="Show the View Panel"
+            >
+              <i class="bi bi-caret-down"></i>
+            </button>
+            <button
+              id="save"
+              class="btn btn-light"
+              title="Save the current state of the model"
+            >
+              <i class="bi bi-save"></i>
+            </button>
+            <!-- Uncommented the below line for Export as PNG! -->
+            <button id="save_image" class="btn btn-light">
+              <i class="bi bi-camera"></i>
+            </button>
+            <!--<button id="generate" style="display: none"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/generate.png" /></button>-->
             <button
               id="showtype"
               class="btn btn-light"
@@ -627,7 +561,87 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
             >
               <i class="bi bi-arrow-clockwise"></i>
             </button>
+            <span id="feedback"></span>
+            <strong id="lblCurrentView"
+              >View:<span id="lblCurrentViewId"></span
+            ></strong>
           </div>
+          <div class="col-3">
+            <div class="input-group mb-3">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Search Node..."
+                aria-label="Search Node..."
+                aria-describedby="button-addon2"
+                id="searchNodeInput"
+              />
+              <button
+                class="btn btn-outline-secondary"
+                type="button"
+                id="searchNodeButton"
+              >
+                <i class="bi bi-search"></i>
+              </button>
+            </div>
+          </div>
+          <div id="ViewCtrlContainer" class="flex my-2" style="display:none">
+            <button
+              id="btnCreateViewpoint"
+              class="btn btn-light"
+              title="Create a viewpoint"
+            >
+              <i class="bi bi-plus-circle"></i>
+            </button>
+            <button
+              class="btn btn-light"
+              id="btnCancelCreateViewpoint"
+              title="Cancel"
+              style="display: none;"
+            >
+              <i class="bi bi-x-circle"></i>
+            </button>
+            <input
+              id="txtNameViewpoint"
+              type="text"
+              placeholder="name"
+              style="display: none;"
+            />
+            <select id="ddmViewpointSelection" style="display: none;"></select>
+            <button
+              class="btn btn-light"
+              id="btnAddViewpoint"
+              title="Create an empty viewpoint"
+              style="display: none;"
+            >
+              <i class="bi bi-check"></i>
+            </button>
+
+            <select id="ddmViewSelection"></select>
+            <button
+              id="btnShowView"
+              class="btn btn-light"
+              title="Apply a viewpoint to the current model or visualize the viewpoint"
+            >
+              Show
+            </button>
+            <button
+              class="btn btn-light"
+              id="btnRefreshView"
+              title="Refresh viewpoint list"
+              style="display: none;"
+            >
+              Refresh
+            </button>
+            <button
+              class="btn btn-light"
+              id="btnDelViewPoint"
+              title="Delete current viewpoint in the list"
+            >
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+
           <div
             class="col"
             id="dialog"
@@ -693,14 +707,5 @@ export class CanvasWidget extends SyncMetaWidget(LitElement) {
 
   firstUpdated(e: any) {
     super.firstUpdated(e);
-  }
-
-  onSaveImage() {
-    // canvas.toPNG().then(function (uri) {
-    //   var link = document.createElement("a");
-    //   link.download = "export.png";
-    //   link.href = uri;
-    //   link.click();
-    // });
   }
 }

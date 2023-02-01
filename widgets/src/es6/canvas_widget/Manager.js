@@ -3331,7 +3331,8 @@ class EntityManager {
       },
       findObjectNodeByLabel(label) {
         for (const node of Object.values(_nodes)) {
-          if (node.getType().match(label)) return node;
+          const labelValue = node.getLabel().getValue().getValue();
+          if (labelValue.match(label)) return node;
         }
         return null;
       },
