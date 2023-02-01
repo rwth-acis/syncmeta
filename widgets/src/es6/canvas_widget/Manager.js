@@ -3060,7 +3060,7 @@ export class EnumNode extends AbstractNode {
     this.unregisterCallbacks = function () {
       that.getAttribute("[attributes]").unregisterCallbacks();
     };
-    var registerYTextAttributes = function (map) {
+    this.registerYTextAttributes = function (map) {
       map.get(that.getLabel().getValue().getEntityId()).then(function (ytext) {
         that.getLabel().getValue().registerYType(ytext);
       });

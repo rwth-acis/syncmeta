@@ -324,8 +324,9 @@ class KeySelectionValueSelectionValueListAttribute extends AbstractAttribute {
             var data = event.currentTarget.get(key);
             switch (change.action) {
               case "add": {
-                // var yUserId = event.object.map[key][0];
-                // if (yUserId === y.clientID) return;
+              const jabberId = event.currentTarget.get("jabberId");
+              if (jabberId === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
+                return;
                 operation = new AttributeAddOperation(
                   key.replace(/\[\w*\]/g, ""),
                   that.getEntityId(),
