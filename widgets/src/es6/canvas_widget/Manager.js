@@ -2712,11 +2712,10 @@ export class AbstractNode extends AbstractEntity {
      */
     this.unbindMoveToolEvents = () => {
       //Disable Node Selection
-      //$canvas.find(".node.ui-draggable").draggable( "option", "disabled", true);
+      // called for e.g. if we want to draw an edge
       this._$node
         .off("click")
         .contextMenu(false)
-        .transformable("destroy")
         .find("input")
         .prop("disabled", true)
         .css("pointerEvents", "none");
@@ -2730,7 +2729,7 @@ export class AbstractNode extends AbstractEntity {
      */
     this.makeSource = () => {
       _$node.addClass("source");
-      this.endPoint = window.jsPlumbInstance.addEndpoint(_$node.get(0), {
+      this.endPoint = window.jsPlumbInstance.addEndpoint(this._$node.get(0), {
         connectorPaintStyle: { fill: "black", strokeWidth: 4 },
         source: true,
         endpoint: {
@@ -2754,29 +2753,6 @@ export class AbstractNode extends AbstractEntity {
             info.maxConnections
           );
         },
-      });
-      window.jsPlumbInstance.addEndpoint(this._$node.get(0), {
-        connectorPaintStyle: { fill: "black", strokeWidth: 4 },
-        endpoint: {
-          type: "Rectangle",
-          options: {
-            width: this._$node.width() + 5,
-            height: this._$node.height() + 5,
-          },
-        },
-        anchor: _anchorOptions,
-        //maxConnections:1,
-        uniqueEndpoint: false,
-        deleteEndpointsOnDetach: true,
-        onMaxConnections: function (info /*, originalEvent*/) {
-          console.log(
-            "element is ",
-            info.element,
-            "maxConnections is",
-            info.maxConnections
-          );
-        },
-        source: true,
       });
     };
 
@@ -2785,7 +2761,7 @@ export class AbstractNode extends AbstractEntity {
      */
     this.makeTarget = () => {
       _$node.addClass("target");
-      this.endPoint = window.jsPlumbInstance.addEndpoint(_$node.get(0), {
+      this.endPoint = window.jsPlumbInstance.addEndpoint(this._$node.get(0), {
         target: true,
         endpoint: {
           type: "Rectangle",
@@ -2799,30 +2775,6 @@ export class AbstractNode extends AbstractEntity {
         uniqueEndpoint: false,
         //maxConnections:1,
         deleteOnEmpty: true,
-        onMaxConnections: function (info /*, originalEvent*/) {
-          console.log(
-            "user tried to drop connection",
-            info.connection,
-            "on element",
-            info.element,
-            "with max connections",
-            info.maxConnections
-          );
-        },
-      });
-      window.jsPlumbInstance.addEndpoint(this._$node.get(0), {
-        target: true,
-        uniqueEndpoint: false,
-        endpoint: {
-          type: "Rectangle",
-          options: {
-            width: this._$node.width() + 5,
-            height: this._$node.height() + 5,
-          },
-        },
-        anchor: _anchorOptions,
-        //maxConnections:1,
-        deleteEndpointsOnDetach: true,
         onMaxConnections: function (info /*, originalEvent*/) {
           console.log(
             "user tried to drop connection",
@@ -3395,6 +3347,21 @@ class EntityManager {
         }
         return _modelAttributesNode;
       },
+      /**
+       * Find nodeby attr
+       * @memberof attribute_widget.EntityManager#
+       * @param {string} name Entity name
+       * @returns {canvas_widget.AbstractNode}
+       */
+      findNodeByAttribute: function (attr, name) {
+        for (const key in _nodes) {
+          const node = _nodes[key];
+          if (node.getAttribute(attr) === name) {
+            return node;
+          }
+        }
+      },
+
       /**
        * Find node by id
        * @memberof canvas_widget.EntityManager#
