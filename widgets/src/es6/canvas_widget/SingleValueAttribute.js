@@ -5,7 +5,7 @@ import AbstractAttribute from "./AbstractAttribute";
 import Value from "./Value";
 import loadHTML from "../html.template.loader";
 
-const singleValueAttributeHtml = await loadHTML(
+const canvasSingleValueAttributeHtml = await loadHTML(
   "../../templates/canvas_widget/single_value_attribute.html",
   import.meta.url
 );
@@ -21,6 +21,7 @@ const singleValueAttributeHtml = await loadHTML(
  * @param {canvas_widget.AbstractEntity} subjectEntity Entity the attribute is assigned to
  */
 class SingleValueAttribute extends AbstractAttribute {
+  value;
   constructor(id, name, subjectEntity, y) {
     y = y || window.y;
     if (!y) {
@@ -35,13 +36,14 @@ class SingleValueAttribute extends AbstractAttribute {
      * @private
      */
     var _value = new Value(id, name, this, this.getRootSubjectEntity(), y);
+    this.value = _value;
 
     /**
      * jQuery object of DOM node representing the node
      * @type {jQuery}
      * @private
      */
-    var _$node = $(_.template(singleValueAttributeHtml)());
+    var _$node = $(_.template(canvasSingleValueAttributeHtml)());
 
     /**
      * Set Value object of value
@@ -49,6 +51,7 @@ class SingleValueAttribute extends AbstractAttribute {
      */
     this.setValue = function (value) {
       _value = value;
+      this.value = value;
     };
 
     /**

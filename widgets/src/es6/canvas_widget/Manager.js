@@ -3329,10 +3329,16 @@ class EntityManager {
         _nodes[id] = node;
         return node;
       },
-      findObjectNodeByLabel(label) {
-        for (const node of Object.values(_nodes)) {
-          const labelValue = node.getLabel().getValue().getValue();
-          if (labelValue.match(label)) return node;
+      findObjectNodeByLabel(searchLabel) {
+        for (const [id, node] of Object.entries(_nodes)) {
+          const currentNode = y.getMap("nodes").get(id).toJSON();
+          for (const [key, property] of Object.entries(currentNode)) {
+            if (key.match(id)) {
+              if (property.match(searchLabel)) {
+                return node;
+              }
+            }
+          }
         }
         return null;
       },
