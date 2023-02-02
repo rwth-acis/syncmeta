@@ -3060,7 +3060,7 @@ export class EnumNode extends AbstractNode {
     this.unregisterCallbacks = function () {
       that.getAttribute("[attributes]").unregisterCallbacks();
     };
-    var registerYTextAttributes = function (map) {
+    this.registerYTextAttributes = function (map) {
       map.get(that.getLabel().getValue().getEntityId()).then(function (ytext) {
         that.getLabel().getValue().registerYType(ytext);
       });
@@ -3233,6 +3233,8 @@ class EntityManager {
   setSharedDocument(y) {
     this.y = y;
   }
+  _nodes;
+  _edges;
 
   constructor() {
     var that = this;
@@ -3255,12 +3257,14 @@ class EntityManager {
      * @private
      */
     var _nodes = {};
+    this._nodes = _nodes;
     /**
      * Edges of the graph
      * @type {{}}
      * @private
      */
     var _edges = {};
+    this._edges = _edges;
 
     var metamodel = null;
 
@@ -3324,6 +3328,19 @@ class EntityManager {
         }
         _nodes[id] = node;
         return node;
+      },
+      findObjectNodeByLabel(searchLabel) {
+        for (const [id, node] of Object.entries(_nodes)) {
+          const currentNode = y.getMap("nodes").get(id).toJSON();
+          for (const [key, property] of Object.entries(currentNode)) {
+            if (key.match(id)) {
+              if (property.match(searchLabel)) {
+                return node;
+              }
+            }
+          }
+        }
+        return null;
       },
       /**
        * Create model Attributes node

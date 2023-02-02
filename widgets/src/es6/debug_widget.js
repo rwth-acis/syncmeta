@@ -45,6 +45,7 @@ $(async function () {
         $activityDelete = $("#delete-activity-list").prop("disabled", false),
         feedback = function (msg) {
           alert(msg);
+          $spinner.hide();
         };
       $importGuidancemodel.hide();
       $importMetamodel.hide();

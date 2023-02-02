@@ -26,6 +26,7 @@ const valueHtml = await loadHTML(
  * @param {canvas_widget.AbstractNode|canvas_widget.AbstractEdge} rootSubjectEntity Topmost entity in the chain of entity the attribute is assigned to
  */
 class Value extends AbstractValue {
+  value = "";
   constructor(id, name, subjectEntity, rootSubjectEntity, y) {
     var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN, y);
     var _ytext = null;
@@ -56,7 +57,7 @@ class Value extends AbstractValue {
      * @private
      */
     var _value = "";
-
+    this.value = _value;
     /**
      * jQuery object of DOM node representing the node
      * @type {jQuery}
@@ -93,6 +94,7 @@ class Value extends AbstractValue {
           _ytext.insert(0, value);
         }
       }
+      this.value = _ytext.toString();
     };
 
     /**
@@ -147,6 +149,7 @@ class Value extends AbstractValue {
       }
       _ytext.observe(function (event) {
         _value = _ytext.toString().replace(/\n/g, "");
+        that.setValue(_value);
       });
 
       _ytext.observe(

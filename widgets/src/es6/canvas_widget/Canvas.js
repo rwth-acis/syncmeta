@@ -1833,6 +1833,10 @@ export default class Canvas extends AbstractCanvas {
             case "add": {
               const node = nodesMap.get(key);
               const jabberId = node.get("jabberId");
+              if (jabberId === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]) {
+                // triggered by us
+                break
+              }
               remoteNodeAddCallback(
                 new NodeAddOperation(
                   node.get("id"),

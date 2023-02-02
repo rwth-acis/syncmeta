@@ -154,11 +154,11 @@ export class WidgetContainer extends LitElement {
         );
         return;
       }
-      rowContainer.firstElementChild?.firstElementChild?.appendChild(
+      rowContainer.firstElementChild?.appendChild(
         new DOMParser().parseFromString(activityWidgetButton, "text/html").body
           .firstChild as Node
       );
-      rowContainer.firstElementChild?.firstElementChild?.appendChild(
+      rowContainer.firstElementChild?.appendChild(
         new DOMParser().parseFromString(debugWidgetButton, "text/html").body
           .firstChild as Node
       );
