@@ -195,7 +195,7 @@ class SingleValueListAttribute extends AbstractAttribute {
      */
     this.setValueFromJSON = function (json) {
       _.forEach(json.list, function (val, key) {
-        var attribute = new SingleValueAttribute(key, key, that);
+        var attribute = new SingleValueAttribute(key, "Attribute", that);
         attribute.setValueFromJSON(json.list[key]);
         // if ((attr = that.getAttribute(attribute.getEntityId()))) {
         //   that.deleteAttribute(attr.getEntityId());
