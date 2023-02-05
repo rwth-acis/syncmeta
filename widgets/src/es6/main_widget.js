@@ -149,6 +149,78 @@ $(async function () {
     });
 });
 
+function registerOnDataReceivedCallback(_iwcw, y, userList) {
+  _iwcw.registerOnDataReceivedCallback(function (operation) {
+    const canvasMap = y.getMap("canvas");
+    if (operation instanceof SetModelAttributeNodeOperation) {
+      _iwcw.sendLocalNonOTOperation(
+        CONFIG.WIDGET.NAME.ATTRIBUTE,
+        new SetModelAttributeNodeOperation().toNonOTOperation()
+      );
+    } else if (operation instanceof UpdateViewListOperation) {
+      canvasMap.set(UpdateViewListOperation.TYPE, true);
+    } else if (operation instanceof UpdateMetamodelOperation) {
+      const dataMap = y.getMap("data");
+      var model = dataMap.get("model");
+      var vls = GenerateViewpointModel(model);
+      yjsSyncLoader(operation.getModelingRoomName())
+        .done(function (y) {
+          const dataMap = y.getMap("data");
+          dataMap.set("metamodel", vls);
+          yjsSyncLoader(operation.getMetaModelingRoomName())
+            .done(function (y) {
+              const metaModelStatus = y.getMap("metaModelStatus");
+              metaModelStatus.set("uploaded", true);
+            })
+            .fail(() => {
+              const metaModelStatus = y.getMap("metaModelStatus");
+              metaModelStatus.set("error", true);
+            });
+        })
+        .fail(() => {
+          const metaModelStatus = y.getMap("metaModelStatus");
+          metaModelStatus.set("error", true);
+        });
+    } else if (operation.hasOwnProperty("getType")) {
+      if (operation.getType() === "WaitForCanvasOperation") {
+        switch (operation.getData().widget) {
+          case CONFIG.WIDGET.NAME.ACTIVITY:
+            _iwcw.sendLocalNonOTOperation(
+              CONFIG.WIDGET.NAME.ACTIVITY,
+              new NonOTOperation(
+                "WaitForCanvasOperation",
+                JSON.stringify({ local: user, list: userList })
+              )
+            );
+            break;
+          case CONFIG.WIDGET.NAME.HEATMAP:
+            _iwcw.sendLocalNonOTOperation(
+              CONFIG.WIDGET.NAME.HEATMAP,
+              new NonOTOperation("WaitForCanvasOperation", JSON.stringify(user))
+            );
+            break;
+          case CONFIG.WIDGET.NAME.ATTRIBUTE:
+            _iwcw.sendLocalNonOTOperation(
+              CONFIG.WIDGET.NAME.ATTRIBUTE,
+              new NonOTOperation("WaitForCanvasOperation", JSON.stringify(user))
+            );
+            break;
+          case CONFIG.WIDGET.NAME.PALETTE:
+            const dataMap = y.getMap("data");
+            var metamodel = dataMap.get("metamodel");
+            if (!metamodel) metamodel = "{}";
+            else metamodel = JSON.stringify(metamodel);
+            _iwcw.sendLocalNonOTOperation(
+              CONFIG.WIDGET.NAME.PALETTE,
+              new NonOTOperation("WaitForCanvasOperation", metamodel)
+            );
+            break;
+        }
+      }
+    }
+  });
+}
+
 function InitMainWidget(metamodel, model, _iwcw, user, y) {
   const $mainWidgetRef = $(getWidgetTagName(CONFIG.WIDGET.NAME.MAIN));
   const $spinner = $mainWidgetRef.find("loading-spinner");
@@ -182,81 +254,6 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
       // )
       //   CanvasWidgetTest(canvas);
 
-      _iwcw.registerOnDataReceivedCallback(function (operation) {
-        const canvasMap = y.getMap("canvas");
-        if (operation instanceof SetModelAttributeNodeOperation) {
-          _iwcw.sendLocalNonOTOperation(
-            CONFIG.WIDGET.NAME.ATTRIBUTE,
-            new SetModelAttributeNodeOperation().toNonOTOperation()
-          );
-        } else if (operation instanceof UpdateViewListOperation) {
-          canvasMap.set(UpdateViewListOperation.TYPE, true);
-        } else if (operation instanceof UpdateMetamodelOperation) {
-          const dataMap = y.getMap("data");
-          var model = dataMap.get("model");
-          var vls = GenerateViewpointModel(model);
-          yjsSyncLoader(operation.getModelingRoomName())
-            .done(function (y) {
-              const dataMap = y.getMap("data");
-              dataMap.set("metamodel", vls);
-              yjsSyncLoader(operation.getMetaModelingRoomName())
-                .done(function (y) {
-                  const metaModelStatus = y.getMap("metaModelStatus");
-                  metaModelStatus.set("uploaded", true);
-                })
-                .fail(() => {
-                  const metaModelStatus = y.getMap("metaModelStatus");
-                  metaModelStatus.set("error", true);
-                });
-            })
-            .fail(() => {
-              const metaModelStatus = y.getMap("metaModelStatus");
-              metaModelStatus.set("error", true);
-            });
-        } else if (operation.hasOwnProperty("getType")) {
-          if (operation.getType() === "WaitForCanvasOperation") {
-            switch (operation.getData().widget) {
-              case CONFIG.WIDGET.NAME.ACTIVITY:
-                _iwcw.sendLocalNonOTOperation(
-                  CONFIG.WIDGET.NAME.ACTIVITY,
-                  new NonOTOperation(
-                    "WaitForCanvasOperation",
-                    JSON.stringify({ local: user, list: userList })
-                  )
-                );
-                break;
-              case CONFIG.WIDGET.NAME.HEATMAP:
-                _iwcw.sendLocalNonOTOperation(
-                  CONFIG.WIDGET.NAME.HEATMAP,
-                  new NonOTOperation(
-                    "WaitForCanvasOperation",
-                    JSON.stringify(user)
-                  )
-                );
-                break;
-              case CONFIG.WIDGET.NAME.ATTRIBUTE:
-                _iwcw.sendLocalNonOTOperation(
-                  CONFIG.WIDGET.NAME.ATTRIBUTE,
-                  new NonOTOperation(
-                    "WaitForCanvasOperation",
-                    JSON.stringify(user)
-                  )
-                );
-                break;
-              case CONFIG.WIDGET.NAME.PALETTE:
-                const dataMap = y.getMap("data");
-                var metamodel = dataMap.get("metamodel");
-                if (!metamodel) metamodel = "{}";
-                else metamodel = JSON.stringify(metamodel);
-                _iwcw.sendLocalNonOTOperation(
-                  CONFIG.WIDGET.NAME.PALETTE,
-                  new NonOTOperation("WaitForCanvasOperation", metamodel)
-                );
-                break;
-            }
-          }
-        }
-      });
       const canvasMap = y.getMap("canvas");
       canvasMap.observe(function (event) {
         event.keysChanged.forEach((key) => {
@@ -324,15 +321,15 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
                   text
                 ).toJSON()
               );
-            location.reload();
+              location.reload();
             }
           }
         });
-
-        
       });
     }
   });
+
+  registerOnDataReceivedCallback(_iwcw, y, userList);
 
   if (metamodel) {
     if (metamodel.hasOwnProperty("nodes")) {
