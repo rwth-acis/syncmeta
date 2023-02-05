@@ -1,6 +1,6 @@
 import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
-import MFExport from "./lib/mfexport";
+import MFExport from "./lib/MFExport";
 $("#json").click(function () {
   var $this = $(this).addClass("loading_button");
   MFExport.getJSON(function (data, title) {
