@@ -49,7 +49,7 @@ class ListSingleValueAttribute extends AbstractAttribute {
      * @type {Object}
      * @private
      */
-    var _iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE);
+    var _iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE, window.y);
 
     /**
      * Propagate an Attribute Delete Operation to the remote users and the local widgets
