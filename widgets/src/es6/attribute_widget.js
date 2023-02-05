@@ -178,12 +178,18 @@ function JSONtoGraph(json, wrapper) {
         json.nodes[nodeId].zIndex,
         json.nodes[nodeId]
       );
-      if(!node){
+      if (!node) {
         throw new Error("Node could not be created from JSON");
       }
-       node.registerYType();
-       node.addToWrapper(wrapper);
-     
+      if ("registerYMap" in node) {
+        // this fixes #93. For some reason, the attributes of EnumNode are not initialized
+        // when calling registerYType. Since regisiterYMap also internally call registerYType this
+        // fix should not break anything.
+        node.registerYMap();
+      } else {
+        node.registerYType();
+      }
+      node.addToWrapper(wrapper);
     }
   }
   for (edgeId in json.edges) {
