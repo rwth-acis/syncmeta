@@ -50,7 +50,7 @@ class SingleValueListAttribute extends AbstractAttribute {
      * Inter widget communication wrapper
      * @type {Object}
      */
-    var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE);
+    var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE, window.y);
 
     /**
      * Apply an Attribute Add Operation
@@ -64,10 +64,8 @@ class SingleValueListAttribute extends AbstractAttribute {
       );
       const nodesMap = y.getMap("nodes");
       var ymap = nodesMap.get(subjectEntity.getEntityId());
-     
-        var ytext = ymap.get(attribute.getValue().getEntityId());
-        attribute.getValue().registerYType(ytext);
-      
+      var ytext = ymap.get(attribute.getValue().getEntityId());
+      attribute.getValue().registerYType(ytext);
       that.addAttribute(attribute);
       if (
         _$node
@@ -193,14 +191,10 @@ class SingleValueListAttribute extends AbstractAttribute {
      * Set attribute list by its JSON representation
      * @param json
      */
-    this.setValueFromJSON = function (json) {
+    this.setValueFromJSON = (json) => {
       _.forEach(json.list, function (val, key) {
         var attribute = new SingleValueAttribute(key, "Attribute", that);
         attribute.setValueFromJSON(json.list[key]);
-        // if ((attr = that.getAttribute(attribute.getEntityId()))) {
-        //   that.deleteAttribute(attr.getEntityId());
-        //   attr.get$node().remove();
-        // }
         that.addAttribute(attribute);
         _$node.find(".list").append(attribute.get$node());
       });
@@ -232,6 +226,15 @@ class SingleValueListAttribute extends AbstractAttribute {
         if (key.indexOf("[value]") != -1) {
           switch (change.action) {
             case "add": {
+              const jabberId = event.currentTarget.get("jabberId");
+              if (
+                jabberId ===
+                IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE).getUser()[
+                  CONFIG.NS.PERSON.JABBERID
+                ]
+              ) {
+                return;
+              }
               const operation = new AttributeAddOperation(
                 key.replace(/\[\w*\]/g, ""),
                 that.getEntityId(),
