@@ -23,7 +23,8 @@ define(['jqueryui', 'lodash', 'operations/ot/AttributeAddOperation', 'Util'], fu
     };
 
     ViewTypesUtil.createReferenceToOrigin = function (viewtype) {
-        var vls = y.share.data.get('metamodelpreview');
+        const dataMap = y.getMap("data");
+        var vls = dataMap.get("metamodelpreview");
         var originEntity;
         if (vls) {
             var targetAttr = viewtype.getAttribute(viewtype.getEntityId() + '[target]');

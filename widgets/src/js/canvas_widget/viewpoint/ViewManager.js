@@ -30,17 +30,20 @@ define([
              * initialize the viewpoint selection list of the generic editor instance
              */
             GetViewpointList : function() {
+                const viewsMap = y.getMap("views");
                 _$selection.empty();
-                var viewpointList = y.share.views.keys();
-                for(var i=0;i<viewpointList.length;i++) {
-                    var viewpoint = y.share.views.get(viewpointList[i]);
-                    if(viewpoint) {
-                        _$selection.append($(optionTpl({
-                            id: viewpointList[i]
-                        })));
-                    }
-                    else
-                        y.share.views.delete(viewpointList[i]);
+                var viewpointList = viewsMap.keys();
+                for (var i = 0; i < viewpointList.length; i++) {
+                  var viewpoint = viewsMap.get(viewpointList[i]);
+                  if (viewpoint) {
+                    _$selection.append(
+                      $(
+                        optionTpl({
+                          id: viewpointList[i],
+                        })
+                      )
+                    );
+                  } else viewsMap.delete(viewpointList[i]);
                 }
             },
             /**
@@ -49,7 +52,8 @@ define([
              * @returns {boolean} true if the view already exits false if not
              */
             existsView : function(viewId) {
-                return y.share.views.keys().indexOf(viewId) != -1;
+                const viewsMap = y.getMap("views");
+                return viewsMap.keys().indexOf(viewId) != -1;
             },
             /**
              * returns the view identifier of  currently selected html selection element
@@ -70,8 +74,9 @@ define([
              * @param {string} viewId the view identifier
              */
             addView : function(viewId){
-                if(y.share.views.keys().indexOf(viewId) == -1) {
-                    y.share.views.set(viewId, {viewId:viewId, attributes:{}, nodes:{}, edges:{}});
+                const viewsMap = y.getMap("views");
+                if(viewsMap.keys().indexOf(viewId) == -1) {
+                    viewsMap.set(viewId, {viewId:viewId, attributes:{}, nodes:{}, edges:{}});
                     return true;
                 }
                 else return false;
@@ -81,7 +86,8 @@ define([
              * @param {string} viewId the identifier of the view
              */
             deleteView: function(viewId){
-                y.share.views.delete(viewId);
+                const viewsMap = y.getMap("views");
+                viewsMap.delete(viewId);
                 _$selection.find('#'+viewId).remove();
             },
             /**
@@ -92,8 +98,9 @@ define([
              * @returns {object} jquery promise
              */
             updateViewContent:function(viewId){
+                const viewsMap = y.getMap("views");
                 var data = this.viewToJSON(viewId);
-                y.share.views.set(viewId,data);
+                viewsMap.set(viewId,data);
             },
             /**
              * generates the json representation of a view

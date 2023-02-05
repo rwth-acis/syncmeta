@@ -17,13 +17,15 @@ define(['chai','canvas_widget/EntityManager'], function(chai, EntityManager){
             });
 
             it(nodeId + ' node should no longer be in Yjs data model', function(){
-                expect(y.share.data.get('model').nodes.hasOwnProperty(nodeId)).to.be.false;
+                const dataMap = y.getMap("data");
+                expect(dataMap.get("model").nodes.hasOwnProperty(nodeId)).to.be
+                  .false;
             });
             
             it(nodeId + 'node should no longer b in y nodes map', function(){
-            
-              expect(y.share.nodes.get(nodeId)).to.be.undefined;
-              expect(y.share.nodes.keys().indexOf(nodeId)).to.be.equal(-1);
+            const nodesMap = y.getMap("nodes");
+            expect(nodesMap.get(nodeId)).to.be.undefined;
+            expect(nodesMap.keys().indexOf(nodeId)).to.be.equal(-1);
               
             });
             

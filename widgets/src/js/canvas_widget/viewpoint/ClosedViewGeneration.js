@@ -8,7 +8,8 @@ define(['lodash', 'Util', 'graphlib', 'canvas_widget/EntityManager'],
          */
         function CVG(viewType) {
             //the metamodel as json from the y-space
-            var metamodel = y.share.data.get('model');
+            const dataMap = y.getMap("data");
+            var metamodel = dataMap.get("model");
             //initilaize the current metamodel using the graphlib.Graph
             var metaGraph = new graphlib.Graph();
             _.forEach(metamodel.nodes, function (value, index) {

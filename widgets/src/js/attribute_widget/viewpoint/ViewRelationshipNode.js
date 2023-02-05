@@ -101,7 +101,8 @@ define([
 
             var targetAttribute, renamingList, conjSelection, cla;
             _$node.find(".label").append(this.getLabel().get$node());
-            var model = y.share.data.get('model');
+            const dataMap = y.getMap("data");
+            var model = dataMap.get("model");
             if (model) {
                 var selectionValues = ViewTypesUtil.GetAllNodesOfBaseModelAsSelectionList2(model.nodes, ['Relationship']);
                 targetAttribute = new SingleSelectionAttribute(id + "[target]", "Reference", that, selectionValues);
@@ -138,7 +139,8 @@ define([
              */
             this.registerYType = function () {
                 AbstractNode.prototype.registerYType.call(this);
-                var ymap = y.share.nodes.get(that.getEntityId());
+                const nodesMap = y.getMap("nodes");
+                var ymap = nodesMap.get(that.getEntityId());
                 var attrs = _attributes["[attributes]"].getAttributes();
                 for (var attributeKey in attrs) {
                     if (attrs.hasOwnProperty(attributeKey)) {

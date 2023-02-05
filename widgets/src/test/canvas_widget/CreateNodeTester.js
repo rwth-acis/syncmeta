@@ -30,7 +30,8 @@ define(['chai', 'canvas_widget/EntityManager'], function (chai, EntityManager) {
             });
 
             it(p_type + ':' + p_Id + ' node should be in Yjs', function () {
-                expect(y.share.nodes.opContents.hasOwnProperty(nodeId)).to.be.true;
+                const nodesMap = y.getMap("nodes");
+                expect(nodesMap.opContents.hasOwnProperty(nodeId)).to.be.true;
             });
 
             after(function (done) {

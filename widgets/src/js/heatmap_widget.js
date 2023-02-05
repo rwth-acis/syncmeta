@@ -20,21 +20,29 @@ requirejs([
     //'promise!Guidancemodel',
 ], function ($, _, require, IWCW, yjsSync, Util, NodePreview, NodeAddOperation, NodeMoveOperation, NodeResizeOperation, NodeDeleteOperation, CanvasViewChangeOperation, WaitForCanvas/*, guidancemodel*/) {
     yjsSync().done(function (y, spaceTitle) {
-        console.info('HEATMAP: Yjs successfully initialized in room ' + spaceTitle + ' with y-user-id: ' + y.db.userId);
-        var model = y.share.data.get('model');
+        console.info(
+          "HEATMAP: Yjs successfully initialized in room " +
+            spaceTitle +
+            " with y-user-id: " +
+            y.clientID
+        );
+        var model = y.getMap("data").get("model");
         var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.HEATMAP);
         WaitForCanvas(CONFIG.WIDGET.NAME.HEATMAP, 7).done(function (user) {
-            iwc.setSpace(user);
+          iwc.setSpace(user);
         });
 
         var $heatmap = $("#heatmap");
         var scaleFactor = $heatmap.width() / 9000;
-        var $window = $("<div id='viewpoint' style='position:absolute; z-index:10000; width:50px; height:50px; border-style:groove; border-width: 1px;'></div>");
+        var $window = $(
+          "<div id='viewpoint' style='position:absolute; z-index:10000; width:50px; height:50px; border-style:groove; border-width: 1px;'></div>"
+        );
         $window.hide();
         $heatmap.append($window);
         //$('#viewpoint').draggable({ cursor: "move", containment:'#heatmap'});
         var previewNodes = {};
-        var localUserId = y.share.users.get(y.db.userId);
+        const userMap = y.getMap("users");
+        var localUserId = userMap.get(y.clientID);
 
         /*if(guidancemodel.isGuidanceEditor()){
          model = guidancemodel.guidancemodel;
@@ -46,90 +54,100 @@ requirejs([
         var maxRight = 5000;
 
         var addNodePreview = function (id, x, y, width, height, color) {
-            var nodePreview = new NodePreview(id, x, y, width, height, scaleFactor, color);
-            previewNodes[id] = nodePreview;
-            $heatmap.append(nodePreview.get$node());
-            return nodePreview;
+          var nodePreview = new NodePreview(
+            id,
+            x,
+            y,
+            width,
+            height,
+            scaleFactor,
+            color
+          );
+          previewNodes[id] = nodePreview;
+          $heatmap.append(nodePreview.get$node());
+          return nodePreview;
         };
 
         var operationCallback = function (operation) {
-            var id, node, senderJabberId;
-            if (operation instanceof NodeAddOperation) {
-                senderJabberId = operation.getJabberId();
-                var color = null;
-                //if(senderJabberId != localUserId)
-                //color = iwc.getUserColor(senderJabberId);
-                color = Util.getColor(y.share.userList.get(senderJabberId).globalId);
-                node = addNodePreview(operation.getEntityId(), operation.getLeft(), operation.getTop(), operation.getWidth(), operation.getHeight(), color);
-                updateBoundingBox(node);
-                updateZoom();
+          var id, node, senderJabberId;
+          if (operation instanceof NodeAddOperation) {
+            senderJabberId = operation.getJabberId();
+            var color = null;
+            //if(senderJabberId != localUserId)
+            //color = iwc.getUserColor(senderJabberId);
+            const userList = y.getMap("userList");
+            color = Util.getColor(userList.get(senderJabberId).globalId);
+            node = addNodePreview(
+              operation.getEntityId(),
+              operation.getLeft(),
+              operation.getTop(),
+              operation.getWidth(),
+              operation.getHeight(),
+              color
+            );
+            updateBoundingBox(node);
+            updateZoom();
+          } else if (operation instanceof NodeMoveOperation) {
+            id = operation.getEntityId();
+            if (previewNodes.hasOwnProperty(id)) {
+              node = previewNodes[id];
+              node.moveX(operation.getOffsetX());
+              node.moveY(operation.getOffsetY());
+              senderJabberId = operation.getJabberId();
+              updateColor(node, senderJabberId);
+              updateBoundingBox(node);
+              updateZoom();
             }
-            else if (operation instanceof NodeMoveOperation) {
-                id = operation.getEntityId();
-                if (previewNodes.hasOwnProperty(id)) {
-                    node = previewNodes[id];
-                    node.moveX(operation.getOffsetX());
-                    node.moveY(operation.getOffsetY());
-                    senderJabberId = operation.getJabberId();
-                    updateColor(node, senderJabberId);
-                    updateBoundingBox(node);
-                    updateZoom();
-                }
-
+          } else if (operation instanceof NodeResizeOperation) {
+            id = operation.getEntityId();
+            if (previewNodes.hasOwnProperty(id)) {
+              node = previewNodes[id];
+              node.changeWidth(operation.getOffsetX());
+              node.changeHeight(operation.getOffsetY());
+              senderJabberId = operation.getJabberId();
+              updateColor(node, senderJabberId);
+              updateBoundingBox(node);
+              updateZoom();
             }
-            else if (operation instanceof NodeResizeOperation) {
-                id = operation.getEntityId();
-                if (previewNodes.hasOwnProperty(id)) {
-                    node = previewNodes[id];
-                    node.changeWidth(operation.getOffsetX());
-                    node.changeHeight(operation.getOffsetY());
-                    senderJabberId = operation.getJabberId();
-                    updateColor(node, senderJabberId);
-                    updateBoundingBox(node);
-                    updateZoom();
-                }
+          } else if (operation instanceof NodeDeleteOperation) {
+            id = operation.getEntityId();
+            if (previewNodes.hasOwnProperty(id)) {
+              node = previewNodes[id];
+              node.remove();
+              delete previewNodes[id];
             }
-            else if (operation instanceof NodeDeleteOperation) {
-                id = operation.getEntityId();
-                if (previewNodes.hasOwnProperty(id)) {
-                    node = previewNodes[id];
-                    node.remove();
-                    delete previewNodes[id];
-                }
-            }
-            else if (operation instanceof CanvasViewChangeOperation) {
-                updateWindow(operation);
-            }
+          } else if (operation instanceof CanvasViewChangeOperation) {
+            updateWindow(operation);
+          }
         };
 
         var registerCallbacks = function () {
-            iwc.registerOnDataReceivedCallback(operationCallback);
+          iwc.registerOnDataReceivedCallback(operationCallback);
         };
 
         var updateWindow = function (viewChangeOperation) {
-            var top = viewChangeOperation.getTop();
-            var left = viewChangeOperation.getLeft();
-            var width = viewChangeOperation.getWidth();
-            var height = viewChangeOperation.getHeight();
-            var zoom = viewChangeOperation.getZoom();
-            $window.css({
-                top: -top * scaleFactor / zoom,
-                left: -left * scaleFactor / zoom,
-                width: width * scaleFactor / zoom,
-                height: height * scaleFactor / zoom
-            });
-            $window.show();
+          var top = viewChangeOperation.getTop();
+          var left = viewChangeOperation.getLeft();
+          var width = viewChangeOperation.getWidth();
+          var height = viewChangeOperation.getHeight();
+          var zoom = viewChangeOperation.getZoom();
+          $window.css({
+            top: (-top * scaleFactor) / zoom,
+            left: (-left * scaleFactor) / zoom,
+            width: (width * scaleFactor) / zoom,
+            height: (height * scaleFactor) / zoom,
+          });
+          $window.show();
         };
 
         var updateColor = function (node, userId) {
-            if (userId == localUserId) {
-                node.resetColor();
-            }
-            else {
-                //node.setColor(iwc.getUserColor(userId));
-                node.setColor(Util.getColor(y.share.userList.get(userId).globalId));
-
-            }
+          if (userId == localUserId) {
+            node.resetColor();
+          } else {
+            //node.setColor(iwc.getUserColor(userId));
+            const userList = y.getMap("userList");
+            node.setColor(Util.getColor(userList.get(userId).globalId));
+          }
         };
 
         var updateZoom = function () {
