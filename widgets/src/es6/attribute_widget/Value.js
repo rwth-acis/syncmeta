@@ -4,6 +4,7 @@ import _ from "lodash-es";
 import AbstractValue from "./AbstractValue";
 import loadHTML from "../html.template.loader";
 import { QuillBinding } from "y-quill";
+import "https://cdn.quilljs.com/1.3.7/quill.js";
 
 const quillEditorHtml = await loadHTML(
   "../../templates/attribute_widget/quill_editor.html",
@@ -35,7 +36,7 @@ class Value extends AbstractValue {
      */
     var _value = "";
 
-    let editorId = name.replace(/ /g, "-");
+    let editorId = sanitizeValue("editor-" + rootSubjectEntity.getEntityId());
     editorId = editorId.toLowerCase();
     /**
      * jQuery object of DOM node representing the node
@@ -86,17 +87,16 @@ class Value extends AbstractValue {
     this.registerYType = function (ytext) {
       _ytext = ytext;
 
-      // if (!$editor) {
-      //   throw new Error("Editor not found " + editorId);
-      // }
       const domElem = _$node.get(0);
       _$editorRef = new Quill(domElem, {
         theme: "snow",
         modules: {
           toolbar: false, // Snow includes toolbar by default
         },
+        cursors: false,
         placeholder: name,
       });
+
       if (!_ytext) {
         throw new Error("YText not found");
       }
@@ -104,7 +104,6 @@ class Value extends AbstractValue {
       _ytext?.observe(function () {
         _value = _ytext.toString();
       });
-
       //loging
       window.syncmetaLog.initializedYTexts += 1;
       if (window.syncmetaLog.hasOwnProperty(this.getEntityId()))
@@ -112,6 +111,20 @@ class Value extends AbstractValue {
       else window.syncmetaLog.objects[this.getEntityId()] = 0;
     };
   }
+}
+
+/**
+ * transforms value such that spaces are removed, html tags are sanitized and [] are replaced by ()
+ * @param {*} value
+ * @returns sanitized value
+ */
+function sanitizeValue(value) {
+  return value
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/ /g, "-")
+    .replace("[", "(")
+    .replace("]", ")");
 }
 
 export default Value;

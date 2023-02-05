@@ -1,4 +1,4 @@
-import "https://cdn.quilljs.com/1.3.6/quill.js";
+import "https://cdn.quilljs.com/1.3.7/quill.js";
 import { LitElement, html } from "lit";
 import { customElement } from "lit/decorators.js";
 import init from "../../js/shared";
@@ -185,7 +185,7 @@ export class AttributeWidget extends SyncMetaWidget(LitElement) {
       />
 
       <link
-        href="https://cdn.quilljs.com/1.3.6/quill.snow.css"
+        href="https://cdn.quilljs.com/1.3.7/quill.snow.css"
         rel="stylesheet"
       />
 
