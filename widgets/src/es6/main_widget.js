@@ -912,6 +912,12 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
       canvas.select(searchResultNode);
     }
   });
+  $searchInput.keypress(function (e) {
+    //Enter key
+    if (e.which == 13) {
+      $searchButton.click();
+    }
+  });
 
   if (model) {
     var report = JSONtoGraph(model, canvas);
