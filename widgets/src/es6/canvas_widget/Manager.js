@@ -3330,11 +3330,12 @@ class EntityManager {
         return node;
       },
       findObjectNodeByLabel(searchLabel) {
+        const re = new RegExp(searchLabel, "gi");
         for (const [id, node] of Object.entries(_nodes)) {
           const currentNode = y.getMap("nodes").get(id).toJSON();
           for (const [key, property] of Object.entries(currentNode)) {
             if (key.match(id)) {
-              if (property.match(searchLabel)) {
+              if (property.match(re)) {
                 return node;
               }
             }
