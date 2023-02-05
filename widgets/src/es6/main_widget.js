@@ -149,7 +149,7 @@ $(async function () {
     });
 });
 
-function registerOnDataReceivedCallback(_iwcw, y, userList) {
+function registerOnDataReceivedCallback(_iwcw, y, userList, user) {
   _iwcw.registerOnDataReceivedCallback(function (operation) {
     const canvasMap = y.getMap("canvas");
     if (operation instanceof SetModelAttributeNodeOperation) {
@@ -329,7 +329,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
     }
   });
 
-  registerOnDataReceivedCallback(_iwcw, y, userList);
+  registerOnDataReceivedCallback(_iwcw, y, userList, user);
 
   if (metamodel) {
     if (metamodel.hasOwnProperty("nodes")) {
