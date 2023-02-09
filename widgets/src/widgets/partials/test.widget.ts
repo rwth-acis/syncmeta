@@ -7,7 +7,7 @@ import init from "../../js/shared";
 import { SyncMetaWidget } from "../../widget";
 // widget body used by all syncmeta widgets
 @customElement("test-widget")
-export class TestWidget extends SyncMetaWidget(LitElement) {
+export class TestWidget extends SyncMetaWidget(LitElement, "test-widget") {
   render() {
     return html`
       <link

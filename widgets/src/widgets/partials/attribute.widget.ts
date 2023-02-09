@@ -1,14 +1,159 @@
+import "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js";
 import "https://cdn.quilljs.com/1.3.7/quill.js";
-import { LitElement, html } from "lit";
+import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
+import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
+import { html, LitElement } from "lit";
 import { customElement } from "lit/decorators.js";
+import AttributeWrapper from "../../es6/attribute_widget/AttributeWrapper";
+import { EntityManagerInstance as EntityManager } from "../../es6/attribute_widget/EntityManager";
+import ViewGenerator from "../../es6/attribute_widget/view/ViewGenerator";
+import { CONFIG, getWidgetTagName } from "../../es6/config";
+import { getWidgetTagName } from "../../es6/config.js";
+import { getGuidanceModeling } from "../../es6/Guidancemodel";
+import IWCW from "../../es6/lib/IWCWrapper";
+import { yjsSync } from "../../es6/lib/yjs-sync";
+import InitModelTypesOperation from "../../es6/operations/non_ot/InitModelTypesOperation";
+import SetModelAttributeNodeOperation from "../../es6/operations/non_ot/SetModelAttributeNodeOperation";
+import { WaitForCanvas } from "../../es6/WaitForCanvas";
 import init from "../../js/shared";
 import { SyncMetaWidget } from "../../widget";
-//@ts-ignore
-import "../../es6/attribute_widget.js";
-import { CONFIG, getWidgetTagName } from "../../es6/config";
-import "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js";
+
 @customElement(getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE))
-export class AttributeWidget extends SyncMetaWidget(LitElement) {
+export class AttributeWidget extends SyncMetaWidget(
+  LitElement,
+  getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE)
+) {
+  firstUpdated(e: any) {
+    super.firstUpdated(e);
+    const guidancemodel = getGuidanceModeling();
+    try {
+      yjsSync()
+        .then((y) => {
+          WaitForCanvas(CONFIG.WIDGET.NAME.ATTRIBUTE, y)
+            .then((user) => {
+              var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE, y);
+              iwc.setSpace(user);
+              if (!window.y) window.y = y;
+              window.syncmetaLog = {
+                widget: "Attribute",
+                initializedYTexts: 0,
+                objects: {},
+                errors: {},
+                firstAttemptFail: {},
+              };
+
+              console.info(
+                "ATTRIBUTE: Yjs successfully initialized in room " +
+                  undefined +
+                  " with y-user-id: " +
+                  y.clientID
+              );
+              const userMap = y.getMap("users");
+              userMap.set(y.clientID, iwc.getUser()[CONFIG.NS.PERSON.JABBERID]);
+              const dataMap = y.getMap("data");
+              var model = dataMap.get("model");
+              if (model)
+                console.info(
+                  "ATTRIBUTE: Found model in yjs room with " +
+                    Object.keys(model.nodes).length +
+                    " nodes and " +
+                    Object.keys(model.edges).length +
+                    " edges."
+                );
+              // InitAttributeWidget(model);
+              if (guidancemodel.isGuidanceEditor()) {
+                const dataMap = y.getMap("data");
+                EntityManager.init(dataMap.get("guidancemetamodel"));
+                model = dataMap.get("guidancemodel");
+              } else {
+                EntityManager.init(dataMap.get("metamodel"));
+              }
+              var attributeWrapper = new AttributeWrapper($("#wrapper"));
+
+              if (model) {
+                JSONToGraph(model, attributeWrapper);
+              }
+
+              console.info(
+                "ATTRIBUTE: Initialization of model completed",
+                window.syncmetaLog
+              );
+
+              iwc.registerOnDataReceivedCallback(function (operation) {
+                var modelAttributesNode;
+                if (operation instanceof SetModelAttributeNodeOperation) {
+                  modelAttributesNode =
+                    attributeWrapper.getModelAttributesNode();
+                  if (modelAttributesNode === null) {
+                    modelAttributesNode =
+                      EntityManager.createModelAttributesNode();
+                    attributeWrapper.setModelAttributesNode(
+                      modelAttributesNode
+                    );
+                    modelAttributesNode.registerYType();
+                    modelAttributesNode.addToWrapper(attributeWrapper);
+                  }
+                  attributeWrapper.select(modelAttributesNode);
+                } else if (operation instanceof InitModelTypesOperation) {
+                  var vvs = operation.getVLS();
+                  const dataMap = y.getMap("data");
+                  var metamodel = dataMap.get("metamodel");
+                  if (vvs.hasOwnProperty("id")) {
+                    EntityManager.initViewTypes(vvs);
+                    if (operation.getViewGenerationFlag()) {
+                      ViewGenerator.generate(metamodel, vvs);
+                    }
+                  } else {
+                    EntityManager.setViewId(null);
+                    if (operation.getViewGenerationFlag()) {
+                      ViewGenerator.reset(metamodel);
+                    }
+                  }
+                }
+              });
+
+              var operation = new SetModelAttributeNodeOperation();
+              iwc.sendLocalNonOTOperation(
+                CONFIG.WIDGET.NAME.MAIN,
+                operation.toNonOTOperation()
+              );
+
+              // if (
+              //   CONFIG.TEST.ATTRIBUTE &&
+              //   (iwc.getUser()[CONFIG.NS.PERSON.TITLE] === CONFIG.TEST.USER ||
+              //     iwc.getUser()[CONFIG.NS.PERSON.MBOX] === CONFIG.TEST.EMAIL)
+              // )
+              //   AttributeWidgetTest();
+              const canvas = y.getMap("canvas");
+              canvas.observe(function (event) {
+                event.keysChanged.forEach((key) => {
+                  switch (key) {
+                    case "ReloadWidgetOperation": {
+                      frameElement.contentWindow.location.reload();
+                    }
+                  }
+                });
+              });
+            })
+            .catch(function (e) {
+              console.error(e);
+              this.showErrorAlert("Cannot connect to Canvas widget.");
+            })
+            .finally(() => {
+              $(getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE))
+                .find("loading-spinner")
+                .hide();
+            });
+        })
+        .catch((err) => {
+          console.error(err);
+          this.showErrorAlert("Cannot connect to Yjs server.");
+        });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   render() {
     return html`
       <style>
@@ -199,10 +344,6 @@ export class AttributeWidget extends SyncMetaWidget(LitElement) {
     `;
   }
 
-  firstUpdated(e: any) {
-    super.firstUpdated(e);
-  }
-
   connectedCallback() {
     super.connectedCallback();
     init();
@@ -210,5 +351,59 @@ export class AttributeWidget extends SyncMetaWidget(LitElement) {
 
   disconnectedCallback() {
     super.disconnectedCallback();
+  }
+}
+
+function JSONToGraph(json, wrapper) {
+  var modelAttributesNode;
+  var nodeId, edgeId;
+
+  if (json.attributes && Object.keys(json.attributes).length > 0) {
+    modelAttributesNode = EntityManager.createModelAttributesNodeFromJSON(
+      json.attributes
+    );
+    wrapper.setModelAttributesNode(modelAttributesNode);
+    modelAttributesNode.registerYType();
+    modelAttributesNode.addToWrapper(wrapper);
+    wrapper.select(modelAttributesNode);
+  }
+  for (nodeId in json.nodes) {
+    if (json.nodes.hasOwnProperty(nodeId)) {
+      var node = EntityManager.createNodeFromJSON(
+        json.nodes[nodeId].type,
+        nodeId,
+        json.nodes[nodeId].left,
+        json.nodes[nodeId].top,
+        json.nodes[nodeId].width,
+        json.nodes[nodeId].height,
+        json.nodes[nodeId].zIndex,
+        json.nodes[nodeId]
+      );
+      if (!node) {
+        throw new Error("Node could not be created from JSON");
+      }
+      if ("registerYMap" in node) {
+        // this fixes #93. For some reason, the attributes of EnumNode are not initialized
+        // when calling registerYType. Since regisiterYMap also internally call registerYType this
+        // fix should not break anything.
+        node.registerYMap();
+      } else {
+        node.registerYType();
+      }
+      node.addToWrapper(wrapper);
+    }
+  }
+  for (edgeId in json.edges) {
+    if (json.edges.hasOwnProperty(edgeId)) {
+      var edge = EntityManager.createEdgeFromJSON(
+        json.edges[edgeId].type,
+        edgeId,
+        json.edges[edgeId].source,
+        json.edges[edgeId].target,
+        json.edges[edgeId]
+      );
+      edge.registerYType();
+      edge.addToWrapper(wrapper);
+    }
   }
 }

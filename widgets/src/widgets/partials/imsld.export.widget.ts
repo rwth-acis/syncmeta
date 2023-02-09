@@ -6,7 +6,10 @@ import "../../es6/imsld_export_widget.js";
 import { CONFIG, getWidgetTagName } from "../../es6/config";
 // widget body used by all syncmeta widgets
 @customElement(getWidgetTagName(CONFIG.WIDGET.NAME.IMSLD_EXPORT))
-export class IMSLDExportWidget extends SyncMetaWidget(LitElement) {
+export class IMSLDExportWidget extends SyncMetaWidget(
+  LitElement,
+  getWidgetTagName(CONFIG.WIDGET.NAME.IMSLD_EXPORT)
+) {
   render() {
     return html`
       <div class="seperating_box">
