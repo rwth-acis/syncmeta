@@ -1,17 +1,26 @@
-import { LitElement, css } from "lit";
+import { LitElement, css, html, TemplateResult } from "lit";
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
 import createReloadHandler from "./js/shared";
-
+import { getWidgetTagName } from "./es6/config";
+import { yjsSync } from "./es6/lib/yjs-sync";
 type Constructor<T = {}> = new (...args: any[]) => T;
 
 export const SyncMetaWidget = <T extends Constructor<LitElement>>(
-  superClass: T
+  superClass: T,
+  widgetName: string
 ) => {
+  if (!widgetName) {
+    throw new Error("widgetName cannot be empty");
+  }
   // cannot use arrow function here, see https://lit.dev/docs/composition/mixins/#applying-decorators-in-mixins
   class SyncMetaWidgetElement extends superClass {
+    widgetName = widgetName;
     createRenderRoot() {
       return this;
+    }
+    protected render(): TemplateResult<1> {
+      return html` <error-alert></error-alert> `;
     }
     // @property({ type: String }) widgetName = "SyncMetaWidget";
 
@@ -46,15 +55,32 @@ export const SyncMetaWidget = <T extends Constructor<LitElement>>(
       }
     `;
 
+    firstUpdated() {
+      this.hideErrorAlert();
+    }
+
     connectedCallback() {
       super.connectedCallback();
       createReloadHandler();
       window.Y = Y;
       window.WebsocketProvider = WebsocketProvider;
+      if (!window.hasOwnProperty("y")) {
+        yjsSync().then((y: Y.Doc) => {
+          if (!window.hasOwnProperty("y")) window.y = y;
+        });
+      }
     }
 
     disconnectedCallback() {
       super.disconnectedCallback();
+    }
+    hideErrorAlert() {
+      $(this.widgetName).find("#alert-message").text("");
+      $(this.widgetName).find("error-alert").hide();
+    }
+    showErrorAlert(message: string) {
+      $(this.widgetName).find("#alert-message").text(message);
+      $(this.widgetName).find("error-alert").hide();
     }
   }
   return SyncMetaWidgetElement as T;
