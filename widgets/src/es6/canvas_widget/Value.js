@@ -8,6 +8,7 @@ import AbstractAttribute from "./AbstractAttribute";
 import ActivityOperation from "../operations/non_ot/ActivityOperation";
 import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
 import "../lib/jquery/jquery.autoGrowInput";
+import { Text as YText } from "yjs";
 
 const valueHtml = await loadHTML(
   "../../templates/canvas_widget/value.html",
@@ -38,13 +39,15 @@ class Value extends AbstractValue {
       }
       if (yMap?.has(id)) {
         _ytext = rootSubjectEntity.getYMap().get(id);
-        if (!(_ytext instanceof Y.Text)) {
-          _ytext = new Y.Text();
+        if (!(_ytext instanceof YText)) {
+          _ytext = new YText();
+
           rootSubjectEntity.getYMap().set(id, _ytext);
         }
       } else {
         {
-          _ytext = new Y.Text();
+          _ytext = new YText();
+
           rootSubjectEntity.getYMap().set(id, _ytext);
         }
       }

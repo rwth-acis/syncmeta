@@ -1,5 +1,5 @@
 import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
-import * as Y from "yjs";
+import { Doc as YDoc } from "yjs";
 import { WebsocketProvider } from "y-websocket";
 
 export async function yjsSync(
@@ -11,7 +11,7 @@ export async function yjsSync(
     return new Promise((resolve) => resolve(window.y));
   }
 
-  const doc = new Y.Doc();
+  const doc = new YDoc();
 
   // Sync clients with the y-websocket provider
   const websocketProvider = new WebsocketProvider(

@@ -55,7 +55,7 @@ import ViewInitOperation from "../../es6/operations/non_ot/ViewInitOperation";
 import { getUserInfo } from "../../es6/User";
 import Util from "../../es6/Util";
 import { SyncMetaWidget } from "../../widget";
-import * as Y from "yjs";
+import { Doc as YDoc } from "yjs";
 
 // canvas widget
 @customElement(getWidgetTagName(CONFIG.WIDGET.NAME.MAIN))
@@ -771,7 +771,7 @@ export class CanvasWidget extends SyncMetaWidget(
       console.error("user is undefined");
     }
     yjsSync()
-      .then((y: Y.Doc) => {
+      .then((y: YDoc) => {
         console.info(
           "CANVAS: Yjs Initialized successfully in room " +
             window.spaceTitle +

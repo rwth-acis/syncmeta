@@ -1,5 +1,5 @@
 import { LitElement, css, html, TemplateResult } from "lit";
-import * as Y from "yjs";
+import { Doc as YDoc } from "yjs";
 import { WebsocketProvider } from "y-websocket";
 import createReloadHandler from "./js/shared";
 import { getWidgetTagName } from "./es6/config";
@@ -62,10 +62,8 @@ export const SyncMetaWidget = <T extends Constructor<LitElement>>(
     connectedCallback() {
       super.connectedCallback();
       createReloadHandler();
-      window.Y = Y;
-      window.WebsocketProvider = WebsocketProvider;
       if (!window.hasOwnProperty("y")) {
-        yjsSync().then((y: Y.Doc) => {
+        yjsSync().then((y: YDoc) => {
           if (!window.hasOwnProperty("y")) window.y = y;
         });
       }

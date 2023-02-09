@@ -1,6 +1,5 @@
 import { LitElement, html, PropertyValueMap } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
 import { CONFIG } from "../../js/config";
 import init from "../../js/shared";

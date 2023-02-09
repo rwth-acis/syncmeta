@@ -41,6 +41,9 @@ export default [
       sourcemap: true,
       inlineDynamicImports: true,
       format: "es",
+      globals: {
+        yjs: "Y",
+      },
     },
     external: externalDependencies,
   },
@@ -61,6 +64,9 @@ export default [
       sourcemap: true,
       inlineDynamicImports: true,
       format: "es",
+      globals: {
+        yjs: "Y",
+      },
     },
     external: externalDependencies,
     preserveEntrySignatures: "strict",
@@ -86,6 +92,9 @@ export default [
       sourcemap: true,
       inlineDynamicImports: true,
       format: "es",
+      globals: {
+        yjs: "Y",
+      },
     },
     external: externalDependencies,
     preserveEntrySignatures: "strict",
@@ -107,6 +116,9 @@ export default [
       sourcemap: true,
       inlineDynamicImports: true,
       format: "es",
+      globals: {
+        yjs: "Y",
+      },
     },
     external: externalDependencies,
     preserveEntrySignatures: "strict",
@@ -128,6 +140,9 @@ export default [
       sourcemap: true,
       inlineDynamicImports: true,
       format: "es",
+      globals: {
+        yjs: "Y",
+      },
     },
     external: externalDependencies,
     preserveEntrySignatures: "strict",
@@ -149,6 +164,9 @@ export default [
       sourcemap: true,
       inlineDynamicImports: true,
       format: "es",
+      globals: {
+        yjs: "Y",
+      },
     },
     external: externalDependencies,
     preserveEntrySignatures: "strict",
@@ -170,6 +188,9 @@ export default [
       sourcemap: true,
       inlineDynamicImports: true,
       format: "es",
+      globals: {
+        yjs: "Y",
+      },
     },
     external: externalDependencies,
     preserveEntrySignatures: "strict",
@@ -191,6 +212,9 @@ export default [
       sourcemap: true,
       inlineDynamicImports: true,
       format: "es",
+      globals: {
+        yjs: "Y",
+      },
     },
     external: externalDependencies,
     preserveEntrySignatures: "strict",
@@ -217,6 +241,9 @@ export default [
       sourcemap: true,
       inlineDynamicImports: true,
       format: "es",
+      globals: {
+        yjs: "Y",
+      },
     },
     external: externalDependencies,
     preserveEntrySignatures: "strict",
@@ -239,6 +266,9 @@ export default [
       sourcemap: true,
       inlineDynamicImports: true,
       format: "es",
+      globals: {
+        yjs: "Y",
+      },
     },
     external: externalDependencies,
     preserveEntrySignatures: "strict",
@@ -260,6 +290,9 @@ export default [
       sourcemap: true,
       inlineDynamicImports: true,
       format: "es",
+      globals: {
+        yjs: "Y",
+      },
     },
     external: externalDependencies,
     preserveEntrySignatures: "strict",
@@ -286,6 +319,9 @@ export default [
       sourcemap: true,
       inlineDynamicImports: true,
       format: "es",
+      globals: {
+        yjs: "Y",
+      },
     },
     external: externalDependencies,
     preserveEntrySignatures: "strict",
