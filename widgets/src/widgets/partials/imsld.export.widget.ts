@@ -2,7 +2,6 @@ import { LitElement, html, css } from "lit";
 import { customElement } from "lit/decorators.js";
 import init from "../../js/shared";
 import { SyncMetaWidget } from "../../widget";
-import "../../es6/imsld_export_widget.js";
 import { CONFIG, getWidgetTagName } from "../../es6/config";
 // widget body used by all syncmeta widgets
 @customElement(getWidgetTagName(CONFIG.WIDGET.NAME.IMSLD_EXPORT))

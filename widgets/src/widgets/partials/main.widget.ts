@@ -1013,7 +1013,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
               for (var key of nodesMap.keys()) {
                 // check if the node also exists in the updated model
 
-                var nodeInModel = dataMap.get("model").nodes[key];
+                var nodeInModel = dataMap.get("model")?.nodes[key];
                 if (nodeInModel) {
                   // update left and top position values
                   nodesMap.get(key).set("left", nodeInModel.left);

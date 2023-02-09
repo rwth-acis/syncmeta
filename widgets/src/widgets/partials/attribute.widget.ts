@@ -129,7 +129,7 @@ export class AttributeWidget extends SyncMetaWidget(
                 event.keysChanged.forEach((key) => {
                   switch (key) {
                     case "ReloadWidgetOperation": {
-                      frameElement.contentWindow.location.reload();
+                      location.reload();
                     }
                   }
                 });
