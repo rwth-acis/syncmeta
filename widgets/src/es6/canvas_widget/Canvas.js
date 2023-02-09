@@ -1830,29 +1830,6 @@ export default class Canvas extends AbstractCanvas {
                 node.remoteNodeDeleteCallback(new NodeDeleteOperation(key));
               break;
             }
-            case "add": {
-              const node = nodesMap.get(key);
-              const jabberId = node.get("jabberId");
-              if (jabberId === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]) {
-                // triggered by us
-                break
-              }
-              remoteNodeAddCallback(
-                new NodeAddOperation(
-                  node.get("id"),
-                  node.get("type"),
-                  node.get("left"),
-                  node.get("top"),
-                  node.get("width"),
-                  node.get("height"),
-                  node.get("zIndex"),
-                  null,
-                  null,
-                  null,
-                  jabberId
-                )
-              );
-            }
           }
         });
       });
