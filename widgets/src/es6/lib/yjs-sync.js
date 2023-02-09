@@ -11,6 +11,10 @@ export async function yjsSync(
     window.Y = Y;
   }
 
+  if (window.y) {
+    return new Promise((resolve) => resolve(window.y));
+  }
+
   const doc = new Y.Doc();
 
   // Sync clients with the y-websocket provider
@@ -25,6 +29,9 @@ export async function yjsSync(
       // console.log(event.status); // logs "connected" or "disconnected"
 
       if (event.status == "connected") {
+        if (!window.y) {
+          window.y = doc;
+        }
         resolve(spaceTitle);
       }
     });
@@ -32,5 +39,8 @@ export async function yjsSync(
       reject("YJS connection timed out. This means syncmeta widgets wont work");
     }, 5000);
   });
+  if (window.y) {
+    return window.y;
+  }
   return doc;
 }
