@@ -7,10 +7,6 @@ export async function yjsSync(
   yjsServer = "localhost:1234",
   yjsProtocol = "ws"
 ) {
-  if (!window.Y) {
-    window.Y = Y;
-  }
-
   if (window.y) {
     return new Promise((resolve) => resolve(window.y));
   }
