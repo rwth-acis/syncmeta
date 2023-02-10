@@ -65,7 +65,7 @@ export class WidgetContainer extends LitElement {
             </div>
           </div>
         </div>
-        <div class="col-4 innercontainer ">
+        <div class="col-3 innercontainer ">
           <property-browser-widget></property-browser-widget>
         </div>
 

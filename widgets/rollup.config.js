@@ -18,6 +18,8 @@ const externalDependencies = [
   "https://cdn.quilljs.com/1.3.6/quill.js",
   "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js",
   "lit",
+  "y-websocket",
+  "y-quill",
 ];
 
 /**
@@ -41,6 +43,9 @@ export default [
       sourcemap: true,
       inlineDynamicImports: true,
       format: "es",
+      globals: {
+        yjs: "Y",
+      },
     },
     external: externalDependencies,
   },
@@ -61,6 +66,9 @@ export default [
       sourcemap: true,
       inlineDynamicImports: true,
       format: "es",
+      globals: {
+        yjs: "Y",
+      },
     },
     external: externalDependencies,
     preserveEntrySignatures: "strict",
@@ -86,6 +94,9 @@ export default [
       sourcemap: true,
       inlineDynamicImports: true,
       format: "es",
+      globals: {
+        yjs: "Y",
+      },
     },
     external: externalDependencies,
     preserveEntrySignatures: "strict",
@@ -107,6 +118,9 @@ export default [
       sourcemap: true,
       inlineDynamicImports: true,
       format: "es",
+      globals: {
+        yjs: "Y",
+      },
     },
     external: externalDependencies,
     preserveEntrySignatures: "strict",
@@ -128,6 +142,9 @@ export default [
       sourcemap: true,
       inlineDynamicImports: true,
       format: "es",
+      globals: {
+        yjs: "Y",
+      },
     },
     external: externalDependencies,
     preserveEntrySignatures: "strict",
@@ -149,6 +166,9 @@ export default [
       sourcemap: true,
       inlineDynamicImports: true,
       format: "es",
+      globals: {
+        yjs: "Y",
+      },
     },
     external: externalDependencies,
     preserveEntrySignatures: "strict",
@@ -170,6 +190,9 @@ export default [
       sourcemap: true,
       inlineDynamicImports: true,
       format: "es",
+      globals: {
+        yjs: "Y",
+      },
     },
     external: externalDependencies,
     preserveEntrySignatures: "strict",
@@ -191,6 +214,9 @@ export default [
       sourcemap: true,
       inlineDynamicImports: true,
       format: "es",
+      globals: {
+        yjs: "Y",
+      },
     },
     external: externalDependencies,
     preserveEntrySignatures: "strict",
@@ -217,6 +243,9 @@ export default [
       sourcemap: true,
       inlineDynamicImports: true,
       format: "es",
+      globals: {
+        yjs: "Y",
+      },
     },
     external: externalDependencies,
     preserveEntrySignatures: "strict",
@@ -239,6 +268,9 @@ export default [
       sourcemap: true,
       inlineDynamicImports: true,
       format: "es",
+      globals: {
+        yjs: "Y",
+      },
     },
     external: externalDependencies,
     preserveEntrySignatures: "strict",
@@ -260,6 +292,9 @@ export default [
       sourcemap: true,
       inlineDynamicImports: true,
       format: "es",
+      globals: {
+        yjs: "Y",
+      },
     },
     external: externalDependencies,
     preserveEntrySignatures: "strict",
@@ -286,6 +321,11 @@ export default [
       sourcemap: true,
       inlineDynamicImports: true,
       format: "es",
+      globals: {
+        yjs: "Y",
+        "y-quill": "QuillBinding",
+        "y-websocket": "WebsocketProvider",
+      },
     },
     external: externalDependencies,
     preserveEntrySignatures: "strict",
