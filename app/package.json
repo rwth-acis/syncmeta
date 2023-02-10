@@ -22,6 +22,7 @@
     "lit": "^2.4.0",
     "lodash-es": "^4.17.21",
     "reflect-metadata": "^0.1.13",
+    "y-quill": "^0.1.5",
     "y-websocket": "^1.4.5",
     "yjs": "^13.5.41"
   },
