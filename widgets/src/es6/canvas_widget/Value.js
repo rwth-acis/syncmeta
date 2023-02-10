@@ -47,7 +47,6 @@ class Value extends AbstractValue {
       } else {
         {
           _ytext = new YText();
-
           rootSubjectEntity.getYMap().set(id, _ytext);
         }
       }

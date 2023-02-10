@@ -3,7 +3,7 @@ import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import _ from "lodash-es";
 import IWCW from "../../lib/IWCWrapper";
-
+import { Text as YText } from "yjs";
 import AbstractAttribute from "../AbstractAttribute";
 import ConditionPredicateAttribute from "./ConditionPredicateAttribute";
 import loadHTML from "../../html.template.loader";
@@ -74,7 +74,7 @@ class ConditionListAttribute extends AbstractAttribute {
     /**
      * Apply an Attribute Add Operation
      * @param {operations.ot.AttributeAddOperation} operation
-     * @param {new Y.Text()} ytext
+     * @param {YText} ytext
      */
     var processAttributeAddOperation = function (operation) {
       var attribute = new ConditionPredicateAttribute(

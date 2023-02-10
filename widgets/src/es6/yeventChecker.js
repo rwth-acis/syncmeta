@@ -1,6 +1,7 @@
+import { YEvent } from "yjs";
 /**
  * Function to check if the event was triggered by the current user
- * @param {Y.Event} yEvent Y.Event
+ * @param {YEvent} yEvent YEvent
  * @returns  {boolean} true if the event was triggered by the current user
  */
 export function eventWasTriggeredByMe(yEvent) {

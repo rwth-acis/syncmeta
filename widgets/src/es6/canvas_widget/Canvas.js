@@ -14,6 +14,7 @@ import SetPropertyGuidance from "../canvas_widget/guidance_modeling/SetPropertyG
 import MoveTool from "../canvas_widget/MoveTool";
 import { CONFIG } from "../config";
 import IWCW from "../lib/IWCWrapper";
+import { Map as YMap } from "yjs";
 import ActivityOperation from "../operations/non_ot/ActivityOperation";
 import CanvasViewChangeOperation from "../operations/non_ot/CanvasViewChangeOperation";
 import EntitySelectOperation from "../operations/non_ot/EntitySelectOperation";
@@ -149,7 +150,7 @@ export default class Canvas extends AbstractCanvas {
     /**
      * Apply a Node Add Operation
      * @param {operations.ot.NodeAddOperation} operation
-     * @param {Y.Map} ymap
+     * @param {YMap} ymap
      */
     var processNodeAddOperation = function (operation) {
       var node;
@@ -239,7 +240,7 @@ export default class Canvas extends AbstractCanvas {
     /**
      * Apply an Edge Add Operation
      * @param {operations.ot.EdgeAddOperation} operation
-     * @param {Y.Map} ymap
+     * @param {YMap} ymap
      */
     var processEdgeAddOperation = function (operation) {
       var edge;

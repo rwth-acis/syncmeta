@@ -59,7 +59,7 @@ export class Intent {
  * Provides messaging functionality.
  * @param {Array} categories - (currently not implemented) categories of widgets that shall process the intent (e.g. ["editor","proxy" ])
  * @param {String} origin - The origin (i.e. the url where your application script lives) is needed for messaging
- * @param {Y} y - A reference to yjs' Y object for global messaging
+ * @param {} y - A reference to yjs' Y object for global messaging
  */
 export class Client {
   //console.log(y);

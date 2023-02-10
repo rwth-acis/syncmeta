@@ -10,6 +10,7 @@ import { getGuidanceModeling } from "../../es6/Guidancemodel";
 import { yjsSync } from "../../es6/lib/yjs-sync";
 import init from "../../js/shared";
 import { SyncMetaWidget } from "../../widget";
+import { Text as YText, Map as YMap } from "yjs";
 // widget body used by all syncmeta widgets
 @customElement(getWidgetTagName(CONFIG.WIDGET.NAME.DEBUG))
 export class DebugWidget extends SyncMetaWidget(
@@ -221,10 +222,10 @@ export class DebugWidget extends SyncMetaWidget(
                   for (var key in attr) {
                     if (attr.hasOwnProperty(key)) {
                       if (attr[key].hasOwnProperty("key")) {
-                        var ytext = map.set(attr[key].key.id, new Y.Text());
+                        var ytext = map.set(attr[key].key.id, new YText());
                         ytext.insert(0, attr[key].key.value);
                       } else {
-                        var ytext = map.set(attr[key].value.id, new Y.Text());
+                        var ytext = map.set(attr[key].value.id, new YText());
                         ytext.insert(0, attr[key].value.value);
                       }
                     }
@@ -235,7 +236,7 @@ export class DebugWidget extends SyncMetaWidget(
                       var value = attrs[key].value;
                       if (!value.hasOwnProperty("option")) {
                         if (value.value instanceof String) {
-                          var ytext = map.set(value.id, new Y.Text());
+                          var ytext = map.set(value.id, new YText());
                           ytext.insert(0, value.value);
                         }
                       }
@@ -251,10 +252,10 @@ export class DebugWidget extends SyncMetaWidget(
                 if (data.nodes.hasOwnProperty(key)) {
                   var entity = data.nodes[key];
                   const nodesMap = y.getMap("nodes");
-                  nodesMap.set(key, new Y.Map());
+                  nodesMap.set(key, new YMap());
                   var attrs = entity.attributes;
                   if (entity.hasOwnProperty("label")) {
-                    var ytext = new Y.Text(entity.label.value.id);
+                    var ytext = new YText(entity.label.value.id);
                     nodesMap.set(entity.label.value.id, ytext);
                     ytext.insert(0, entity.label.value.value);
                   }
@@ -265,10 +266,11 @@ export class DebugWidget extends SyncMetaWidget(
                 if (data.edges.hasOwnProperty(key)) {
                   var entity = data.edges[key];
                   const edgeMap = y.getMap("edges");
-                  var map = edgeMap.set(key, new Y.Map());
+                  var map = edgeMap.set(key, new YMap());
                   var attrs = entity.attributes;
                   if (entity.hasOwnProperty("label")) {
-                    var ytext = map.set(entity.label.value.id, new Y.Text());
+                    const ytext = new YText();
+                    map.set(entity.label.value.id, ytext);
                     ytext.insert(0, entity.label.value.value);
                   }
                   initAttributes(attrs, map);
