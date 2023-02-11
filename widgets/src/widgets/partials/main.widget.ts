@@ -535,12 +535,6 @@ export class CanvasWidget extends SyncMetaWidget(
         type="text/css"
         href="https://code.jquery.com/ui/1.13.1/themes/smoothness/jquery-ui.css"
       />
-      <!-- <link
-        rel="stylesheet"
-        type="text/css"
-        href="<%= grunt.config('baseUrl') %>/css/vendor/bootstrap.min.prefixed.css"
-      />
-     -->
       <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
         rel="stylesheet"
@@ -548,7 +542,7 @@ export class CanvasWidget extends SyncMetaWidget(
         crossorigin="anonymous"
       />
 
-      <div class="main-container container d-flex flex-column h-100">
+      <div class="main-container p-2 d-flex flex-column h-100">
         <error-alert></error-alert>
         <div id="loading" class="loading"></div>
         <div class="row mb-2" id="main-widget-utilities-container">
