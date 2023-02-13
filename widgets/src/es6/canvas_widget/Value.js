@@ -41,14 +41,11 @@ class Value extends AbstractValue {
         _ytext = rootSubjectEntity.getYMap().get(id);
         if (!(_ytext instanceof YText)) {
           _ytext = new YText();
-
           rootSubjectEntity.getYMap().set(id, _ytext);
         }
       } else {
-        {
-          _ytext = new YText();
-          rootSubjectEntity.getYMap().set(id, _ytext);
-        }
+        _ytext = new YText();
+        rootSubjectEntity.getYMap().set(id, _ytext);
       }
     }
     super(id, name, subjectEntity, rootSubjectEntity);
