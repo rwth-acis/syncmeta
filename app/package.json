@@ -32,7 +32,7 @@
     "@web/rollup-plugin-html": "^1.11.0",
     "@webcomponents/webcomponentsjs": "^2.7.0",
     "chai": "^4.3.6",
-    "mocha": "^7.0.0",
+    "mocha": "^10.2.0",
     "tslib": "^2.4.0",
     "typescript": "^4.8.4",
     "wct-mocha": "^1.1.0"
