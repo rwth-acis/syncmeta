@@ -1,13 +1,10 @@
-import { LitElement, html, CSSResultGroup, css } from "lit";
-import { customElement, property } from "lit/decorators.js";
-import * as Y from "yjs";
-import { WebsocketProvider } from "y-websocket";
-import { CONFIG } from "../../js/config";
+import { LitElement, html, css } from "lit";
+import { customElement } from "lit/decorators.js";
 import init from "../../js/shared";
 import { SyncMetaWidget } from "../../widget";
 // widget body used by all syncmeta widgets
 @customElement("test-widget")
-export class TestWidget extends SyncMetaWidget(LitElement) {
+export class TestWidget extends SyncMetaWidget(LitElement, "test-widget") {
   render() {
     return html`
       <link

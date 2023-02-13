@@ -65,7 +65,7 @@ class RenamingListAttribute extends AbstractAttribute {
     /**
      * Apply an Attribute Add Operation
      * @param {operations.ot.AttributeAddOperation} operation
-     * @param {new Y.Text()} ytext
+     * @param { YText} ytext
      */
     var processAttributeAddOperation = function (operation) {
       var attribute = new RenamingAttribute(
@@ -298,38 +298,37 @@ class RenamingListAttribute extends AbstractAttribute {
       }
 
       ymap.observe(function (event) {
-         const array = Array.from(event.changes.keys.entries());
-         array.forEach(([key, change]) => {
-           if (key.indexOf("[val]") != -1) {
-             var data = event.currentTarget.get(key);
-             switch (change.action) {
-               case "add": {
+        const array = Array.from(event.changes.keys.entries());
+        array.forEach(([key, change]) => {
+          if (key.indexOf("[val]") != -1) {
+            var data = event.currentTarget.get(key);
+            switch (change.action) {
+              case "add": {
                 //  var yUserId = event.object.map[key][0];
                 //  if (yUserId === y.clientID) return;
-                 const operation = new AttributeAddOperation(
-                   key.replace(/\[\w*\]/g, ""),
-                   that.getEntityId(),
-                   that.getRootSubjectEntity().getEntityId(),
-                   that.constructor.name
-                 );
-                 remoteAttributeAddCallback(operation);
+                const operation = new AttributeAddOperation(
+                  key.replace(/\[\w*\]/g, ""),
+                  that.getEntityId(),
+                  that.getRootSubjectEntity().getEntityId(),
+                  that.constructor.name
+                );
+                remoteAttributeAddCallback(operation);
 
-                 break;
-               }
-               case "delete": {
-                 const operation = new AttributeDeleteOperation(
-                   key.replace(/\[\w*\]/g, ""),
-                   that.getEntityId(),
-                   that.getRootSubjectEntity().getEntityId(),
-                   that.constructor.name
-                 );
-                 remoteAttributeDeleteCallback(operation);
-                 break;
-               }
-             }
-           }
-         });
-        
+                break;
+              }
+              case "delete": {
+                const operation = new AttributeDeleteOperation(
+                  key.replace(/\[\w*\]/g, ""),
+                  that.getEntityId(),
+                  that.getRootSubjectEntity().getEntityId(),
+                  that.constructor.name
+                );
+                remoteAttributeDeleteCallback(operation);
+                break;
+              }
+            }
+          }
+        });
       });
     };
   }

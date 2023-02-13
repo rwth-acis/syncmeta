@@ -1,4 +1,5 @@
 import { JsPlumbInstance } from "@jsplumb/core";
+import { Doc as YDoc } from "yjs";
 
 export {};
 
@@ -7,10 +8,12 @@ declare global {
     Y: any;
     WebsocketProvider: any;
     syncmetaRoom: string;
+    y: YDoc;
     caeFrames: any;
     _iwc_instance_: any;
     _addIwcIntentListener: (f: any) => void;
     _reloadThisFuckingInstance: () => void;
     jsPlumbInstance: JsPlumbInstance;
+    spaceTitle: any;
   }
 }

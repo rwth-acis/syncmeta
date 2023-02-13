@@ -10,7 +10,7 @@ import QuizAttribute from "./QuizAttribute";
 import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
 import ActivityOperation from "../operations/non_ot/ActivityOperation";
 import loadHTML from "../html.template.loader";
-const selectionValueHtml = await loadHTML(
+let selectionValueHtml = await loadHTML(
   "../../templates/canvas_widget/selection_value.html",
   import.meta.url
 );

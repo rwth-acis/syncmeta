@@ -48,6 +48,7 @@ import ConditionListAttribute from "./viewpoint/ConditionListAttribute";
 import LogicalConjunctions from "./viewpoint/LogicalConjunctions";
 import LogicalOperator from "./viewpoint/LogicalOperator";
 import RenamingListAttribute from "./viewpoint/RenamingListAttribute";
+import { Map as YMap } from "yjs";
 
 const viewrelationshipNodeHtml = await loadHTML(
   "../../templates/canvas_widget/viewrelationship_node.html",
@@ -704,8 +705,8 @@ export class AbstractEdge extends AbstractEntity {
       if (edgeMap.has(id)) {
         _ymap = edgeMap.get(id);
       } else if (id && type && source && target) {
-        _ymap = new Y.Map();
-        edgeMap.set(id, new Y.Map());
+        _ymap = new YMap();
+        edgeMap.set(id, new YMap());
         y.transact(() => {
           _ymap.set("id", id);
           _ymap.set("type", type);
@@ -1477,7 +1478,7 @@ export class AbstractNode extends AbstractEntity {
      */
     var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN, y);
     /**y-map instances which belongs to the node
-     * @type {Y.Map}
+     * @type {YMap}
      * @private
      * */
     var _ymap = null;
@@ -1491,7 +1492,7 @@ export class AbstractNode extends AbstractEntity {
       _ymap = nodesMap.get(id);
     } else {
       window.y.transact(() => {
-        _ymap = new Y.Map();
+        _ymap = new YMap();
         nodesMap.set(id, _ymap);
         _ymap.set("modifiedBy", window.y.clientID);
         _ymap.set("left", left);
