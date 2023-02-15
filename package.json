@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "dev": "concurrently --kill-others \"cd app && npm run start:watch\" \"cd widgets && npm run bundle:watch\" \"cd app && npm run build:watch\" \"y-websocket\""
+  },
+  "devDependencies": {
+    "concurrently": "^7.6.0",
+    "y-websocket": "^1.4.5",
+    "yjs": "^13.5.44"
+  }
+}

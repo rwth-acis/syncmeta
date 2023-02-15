@@ -1,7 +1,17 @@
-<button>
-    <div style="display: table; width: 100%px; height: 12px; float: left; margin: 2px 4px 2px 0" class="icon">
-        <img style="background-color: <%= color %>;" width="12px" height="12px " src="<%= icon %>" />
+<button class="btn btn-light my-1 border border-dark flex w-100">
+  <div
+    style="max-height: 30px"
+    class="d-flex justify-content-between align-items-center"
+  >
+    <% if (type == "svg" ) { %> <%=icon%> <% } else { %>
+    <img
+      style="background-color: <%= color %>"
+      width="12px"
+      height="12px "
+      src="<%= icon %>"
+    />
 
-    </div>
-    <span><%= label %></span>
+    <% } %>
+    <span style="text-align: right"><%= label %></span>
+  </div>
 </button>

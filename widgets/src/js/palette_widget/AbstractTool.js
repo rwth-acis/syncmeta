@@ -1,5 +1,5 @@
 define([
-    'jqueryui',
+    'jquery-ui',
     'lodash',
     'text!templates/palette_widget/abstract_tool.html'
 ],/** @lends AbstractTool */function ($,_,abstractToolHtml) {
