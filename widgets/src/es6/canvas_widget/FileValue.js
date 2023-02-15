@@ -11,7 +11,7 @@ import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
 import ActivityOperation from "../operations/non_ot/ActivityOperation";
 import loadHTML from "../html.template.loader";
 
-const fileValueHtml = await loadHTML(
+let fileValueHtml = await loadHTML(
   "../../templates/canvas_widget/file_value.html",
   import.meta.url
 );

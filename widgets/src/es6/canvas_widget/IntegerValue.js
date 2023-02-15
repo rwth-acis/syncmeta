@@ -9,7 +9,7 @@ import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
 import ActivityOperation from "../operations/non_ot/ActivityOperation";
 import loadHTML from "../html.template.loader";
 
-const integerValueHtml = await loadHTML(
+let integerValueHtml = await loadHTML(
   "../../templates/canvas_widget/integer_value.html",
   import.meta.url
 );

@@ -1,5 +1,5 @@
 import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
-import * as Y from "yjs";
+import { Doc as YDoc } from "yjs";
 import { WebsocketProvider } from "y-websocket";
 
 export async function yjsSync(
@@ -7,11 +7,11 @@ export async function yjsSync(
   yjsServer = "localhost:1234",
   yjsProtocol = "ws"
 ) {
-  if (!window.Y) {
-    window.Y = Y;
+  if (window.y) {
+    return new Promise((resolve) => resolve(window.y));
   }
 
-  const doc = new Y.Doc();
+  const doc = new YDoc();
 
   // Sync clients with the y-websocket provider
   const websocketProvider = new WebsocketProvider(
@@ -25,6 +25,9 @@ export async function yjsSync(
       // console.log(event.status); // logs "connected" or "disconnected"
 
       if (event.status == "connected") {
+        if (!window.y) {
+          window.y = doc;
+        }
         resolve(spaceTitle);
       }
     });
@@ -32,5 +35,8 @@ export async function yjsSync(
       reject("YJS connection timed out. This means syncmeta widgets wont work");
     }, 5000);
   });
+  if (window.y) {
+    return window.y;
+  }
   return doc;
 }

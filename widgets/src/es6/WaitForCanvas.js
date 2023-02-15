@@ -7,7 +7,7 @@ export async function WaitForCanvas(
   widgetName,
   doc,
   maxAttempts = 10,
-  interval = 300
+  interval = 3000
 ) {
   const iwc = IWCW.getInstance(widgetName, doc);
   var gotResponseFromCanvas = false;

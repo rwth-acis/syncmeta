@@ -14,6 +14,7 @@ import SetPropertyGuidance from "../canvas_widget/guidance_modeling/SetPropertyG
 import MoveTool from "../canvas_widget/MoveTool";
 import { CONFIG } from "../config";
 import IWCW from "../lib/IWCWrapper";
+import { Map as YMap } from "yjs";
 import ActivityOperation from "../operations/non_ot/ActivityOperation";
 import CanvasViewChangeOperation from "../operations/non_ot/CanvasViewChangeOperation";
 import EntitySelectOperation from "../operations/non_ot/EntitySelectOperation";
@@ -149,7 +150,7 @@ export default class Canvas extends AbstractCanvas {
     /**
      * Apply a Node Add Operation
      * @param {operations.ot.NodeAddOperation} operation
-     * @param {Y.Map} ymap
+     * @param {YMap} ymap
      */
     var processNodeAddOperation = function (operation) {
       var node;
@@ -239,7 +240,7 @@ export default class Canvas extends AbstractCanvas {
     /**
      * Apply an Edge Add Operation
      * @param {operations.ot.EdgeAddOperation} operation
-     * @param {Y.Map} ymap
+     * @param {YMap} ymap
      */
     var processEdgeAddOperation = function (operation) {
       var edge;
@@ -1829,29 +1830,6 @@ export default class Canvas extends AbstractCanvas {
               if (node)
                 node.remoteNodeDeleteCallback(new NodeDeleteOperation(key));
               break;
-            }
-            case "add": {
-              const node = nodesMap.get(key);
-              const jabberId = node.get("jabberId");
-              if (jabberId === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]) {
-                // triggered by us
-                break
-              }
-              remoteNodeAddCallback(
-                new NodeAddOperation(
-                  node.get("id"),
-                  node.get("type"),
-                  node.get("left"),
-                  node.get("top"),
-                  node.get("width"),
-                  node.get("height"),
-                  node.get("zIndex"),
-                  null,
-                  null,
-                  null,
-                  jabberId
-                )
-              );
             }
           }
         });

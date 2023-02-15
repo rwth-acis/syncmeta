@@ -8,6 +8,7 @@ import AbstractAttribute from "./AbstractAttribute";
 import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
 import ActivityOperation from "../operations/non_ot/ActivityOperation";
 import loadHTML from "../html.template.loader";
+import { Text as YText } from "yjs";
 
 const multiLineValueHtml = await loadHTML(
   "../../templates/canvas_widget/multi_line_value.html",
@@ -41,7 +42,7 @@ class MultiLineValue extends AbstractValue {
       if (rootSubjectEntity.getYMap()?.has(id))
         _ytext = rootSubjectEntity.getYMap().get(id);
       else {
-        _ytext = new Y.Text();
+        _ytext = new YText();
         rootSubjectEntity.getYMap().set(id, _ytext);
       }
     }

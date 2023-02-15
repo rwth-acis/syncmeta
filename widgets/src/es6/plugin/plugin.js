@@ -1,5 +1,6 @@
 import yjsSync from "../lib/yjs-sync";
 import Util from "../Util";
+import { Text as YText, Map as YMap } from "yjs";
 
 /**
  * Listen to node manipulations. Private helper function
@@ -103,7 +104,7 @@ var onAttributeChange = function (type, callback) {
  * @param {string} entityId the id of the node/edge
  * @param {string} entityType where is the concrete type to find which u want to create in nodes or edges
  * @param {string} type the concrete node/edge type to create
- * @param {Y.Map} ymap the ymap of the node/edge
+ * @param {YMap} ymap the ymap of the node/edge
  */
 var createYTextsForEntityType = function (
   metamodel,
@@ -121,7 +122,7 @@ var createYTextsForEntityType = function (
           attrs.hasOwnProperty(attrKey) &&
           attrs[attrKey].value === "string"
         ) {
-          ymap.set(entityId + "[" + attrs[attrKey].key + "]", new Y.Text());
+          ymap.set(entityId + "[" + attrs[attrKey].key + "]", new YText());
         }
       }
     }
@@ -466,19 +467,19 @@ export default {
     var metamodel = ySyncMetaInstance.share.data.get("metamodel");
 
     var id = Util.generateRandomId();
-    var _ymap = ySyncMetaInstance.share.nodes.set(id, new Y.Map());
+    var _ymap = ySyncMetaInstance.share.nodes.set(id, new YMap());
     if (metamodel) {
       createYTextsForEntityType(metamodel, id, "nodes", type, _ymap);
     } else {
-      _ymap.set(id + "[label]", new Y.Text());
+      _ymap.set(id + "[label]", new YText());
       if (type === "Node Shape") {
-        _ymap.set(id + "[color]", new Y.Text());
-        _ymap.set(id + "[customAnchors]", new Y.Text());
-        _ymap.set(id + "[customShape]", new Y.Text());
-        _ymap.set(id + "[containment]", new Y.Text());
+        _ymap.set(id + "[color]", new YText());
+        _ymap.set(id + "[customAnchors]", new YText());
+        _ymap.set(id + "[customShape]", new YText());
+        _ymap.set(id + "[containment]", new YText());
       } else if (type === "Edge Shape") {
-        _ymap.set(id + "[color]", new Y.Text());
-        _ymap.set(id + "[overlay]", new Y.Text());
+        _ymap.set(id + "[color]", new YText());
+        _ymap.set(id + "[overlay]", new YText());
       }
     }
     _ymap.set("left", left);
@@ -528,11 +529,13 @@ export default {
     setTimeout(function () {
       var metamodel = ySyncMetaInstance.share.data.get("metamodel");
 
-      var _ymap = ySyncMetaInstance.share.edges.set(id, new Y.Map());
+      const _ymap = new YMap();
+
+      ySyncMetaInstance.share.edges.set(id, _ymap);
       if (metamodel) {
         createYTextsForEntityType(metamodel, id, "edges", type, _ymap);
       } else {
-        _ymap.set(id + "[label]", new Y.Text());
+        _ymap.set(id + "[label]", new YText());
       }
       _ymap.set("id", id);
       _ymap.set("type", type);
