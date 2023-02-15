@@ -31,7 +31,9 @@
     "tslib": "^2.4.1",
     "typescript": "^4.8.4",
     "y-quill": "^0.1.5",
-    "y-websocket": "^1.4.5",
+    "y-websocket": "^1.4.5"
+  },
+  "peerDependencies": {
     "yjs": "^13.5.44"
   },
   "devDependencies": {
