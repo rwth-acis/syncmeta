@@ -83,7 +83,7 @@ export default function (json, canvas) {
       $("#canvas-frame").hide();
       $errorMsg.parent().css("display", "inline-table");
       $errorMsg.text(
-        "SYNCMETA: Model is not compatible to the current Metamodel!"
+        "SYNCMETA: Model is not compatible to the current Metamodel! Delete the current model or change the metamodel."
       );
       return;
     }
@@ -127,7 +127,7 @@ export default function (json, canvas) {
           $("#loading").hide();
           $errorMsg.parent().css("display", "inline-table");
           $errorMsg.text(
-            "SYNCMETA: Model is not compatible to the current Metamodel!"
+            "SYNCMETA: Model is not compatible to the current Metamodel! Delete the current model or change the metamodel."
           );
           continue;
         }
