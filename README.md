@@ -40,31 +40,38 @@ The application will be accessible via <http://127.0.0.1:8000>
 
 ## Usage
 
-When application is up and running, you will see two option in the main page as meta modeling space and modeling space. As their names imply, you can create metamodel in the meta modeling space and after creating the meta model, it can be uploaded to modeling space with 'Generate Metamodel' button. Created metamodel can be tried instantly in the modeling space in this way.
+When the application is up and running, you will see two option in the main page as meta modeling space and modeling space. As their names imply, you can create metamodel in the meta modeling space and after creating the meta model, it can be uploaded to modeling space with 'Generate Metamodel' button. Created metamodel can be tried instantly in the modeling space in this way.
 
 Please note that this is currently broken. So export the metamodel using the debug widget and then delete the current model and then import the exported metamodel.
 
 ## Library Documentation
 
 Syncmeta is built using a modular widget system. Each widget is defined as its own LitElement, so you can import only the ones required.
-If you want all main widgets in one container, you can import the widget.container element
+If you want all main widgets in one container, you can import the widget container.
+
+```javascript
+import "./widgets/src/widgets/widget.container.ts"
+``` 
 
 ### Widgets
+Widgets are contained in the following folder: `widgets/src/widgets/partials`
 
-The most important widget, which is always required is the canvas widget or main widget. This widget will be used to create our (meta-) models.
+The most important widget, which is always required is the canvas widget or main widget (`widgets/src/widgets/partials/main.widget.ts`). This widget will be used to create our (meta-) models.
 
-The palette widget can be used to more easily select tools to work on the canvas.
+The palette widget (`widgets/src/widgets/partials/palette.widget.ts`) can be used to more easily select tools to work on the canvas.
 
-The attribute widget displays the attributes of the currently selected element in the canvas. This makes it easier to modify them.
+The attribute widget (`widgets/src/widgets/partials/attribute.widget.ts`) displays the attributes of the currently selected element in the canvas. This makes it easier to modify them.
 
-The Import/Export widget can be used to import or export various aspects of the app. Most notably the metamodel, the model and the activity list.
+The Import/Export widget (`widgets/src/widgets/partials/debug.widget.ts`) can be used to import or export various aspects of the app. Most notably the metamodel, the model and the activity list. 
 
-The activity widget logs the activities of the users of the app.
+The activity widget (`widgets/src/widgets/partials/activity.widget.ts`) logs the activities of the users of the app and displays them as a list. It also shows a list of online users.
 
 ### Inter-Widget Communication(IWC)
 
 For the __local__ communication between the various widgets of the SyncMeta the IWC is used. This module allows each syncmeta widget to communicate with all other widgets. This is done through PostMessage calls on the widget. 
-If you develop custom widgets you need to follow the same naming conventions in order to receive messages. The naming convention is described in the following file {}
+
+If you develop custom widgets you need to follow the same naming conventions in order to receive messages. 
+The `config` object in `widgets/src/es6/config.js` declares a field `WIDGET.NAME`. Add your custom widget name there. The naming convention is described in the function `getWidgetTagName` of the following file `widgets/src/es6/config.js`. It follows the pattern `<custom-name>-widget` where `<custom-name>`is the custom name you gave your widget.
 
 ### Versions
 
