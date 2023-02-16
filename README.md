@@ -70,9 +70,41 @@ The activity widget (`widgets/src/widgets/partials/activity.widget.ts`) logs the
 
 For the __local__ communication between the various widgets of the SyncMeta the IWC is used. This module allows each syncmeta widget to communicate with all other widgets. This is done through PostMessage calls on the widget. 
 
-If you develop custom widgets you need to follow the same naming conventions in order to receive messages. 
-The `config` object in `widgets/src/es6/config.js` declares a field `WIDGET.NAME`. Add your custom widget name there. The naming convention is described in the function `getWidgetTagName` of the following file `widgets/src/es6/config.js`. It follows the pattern `<custom-name>-widget` where `<custom-name>`is the custom name you gave your widget.
+### Developing your own widgets
 
+If you develop custom widgets you need to follow the same naming conventions in order to receive messages. 
+The `config` object in `widgets/src/es6/config.js` declares a field `WIDGET.NAME`. Add your custom widget name there. The naming convention is described in the function `getWidgetTagName` of the following file `widgets/src/es6/config.js`. It follows the pattern `<custom-name>-widget` where `<custom-name>`is the custom name you gave your widget. You may want to use that function and the property in the config for declaring the LitElement.
+
+Furthermore, each widget extends the SyncMetaWidget superclass.
+
+An example could look as follows
+```js
+// config.js
+export const CONFIG = {
+  ...,
+  WIDGET: {
+    NAME: {
+      MAIN: "Canvas",
+      ...,
+      MY_FANCY_NAME: "My Fancy Widget",
+      ...
+    },
+  },
+  ...
+}
+```
+
+```js
+// your.fancy.widget.ts
+const tagName = getWidgetTagName(CONFIG.WIDGET.NAME.YOUR_FANCY_NAME)
+
+@customElement(tagName)
+class MyFancyWidget extends SyncMetaWidget(
+  LitElement,
+  tagName
+)
+
+```
 ### Versions
 
 Syncmeta uses the awesome [Yjs](http://y-js.org/) framework to provide near-realtime collaborative modeling in the web browser.
