@@ -144,7 +144,11 @@ export const CONFIG = {
   */
 export function getWidgetTagName(name) {
   if (!name) return;
-  if (!(name in CONFIG.WIDGET.NAME)) {
+  if (
+    !Object.values(CONFIG.WIDGET.NAME).some(
+      (n) => n.toLocaleLowerCase() === name.toLocaleLowerCase()
+    )
+  ) {
     console.warn(
       `Widget name ${name} is not defined in config.js. Add it to the CONFIG.WIDGET.NAME object.`
     );

@@ -1,4 +1,4 @@
-import { LitElement, html, css } from "lit";
+import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
@@ -129,9 +129,6 @@ class StaticApp extends LitElement {
       <las2peer-frontend-statusbar
         id="statusBar"
         service="Syncmeta"
-        oidcpopupsigninurl="/callbacks/popup-signin-callback.html"
-        oidcpopupsignouturl="/callbacks/popup-signout-callback.html"
-        oidcsilentsigninturl="/callbacks/silent-callback.html"
         oidcclientid="localtestclient"
         autoAppendWidget="true"
       ></las2peer-frontend-statusbar>
@@ -180,12 +177,12 @@ class StaticApp extends LitElement {
       case "meta-modeling-space":
         Common.setSpace(Static.MetaModelingSpaceId);
         this.changeVisibility("#generateModelButton", true);
-        this.reloadFrames();
+        location.reload();
         break;
       case "modeling-space":
         this.changeVisibility("#generateModelButton", false);
         Common.setSpace(Static.ModelingSpaceId);
-        this.reloadFrames();
+        location.reload();
         break;
       default:
         this.page = "meta-modeling-space";
@@ -199,7 +196,6 @@ class StaticApp extends LitElement {
   }
 
   firstUpdated() {
-    parent.caeFrames = document.querySelectorAll("iframe");
     const statusBar = document.querySelector("#statusBar");
     statusBar.addEventListener("signed-in", this.handleLogin);
     statusBar.addEventListener("signed-out", this.handleLogout);
@@ -219,7 +215,7 @@ class StaticApp extends LitElement {
     var roomName = (document.getElementById("roomNameInput") as any).value;
     Common.setYjsRoomName(roomName);
     this.changeVisibility("#roomEnterLoader", true);
-    this.reloadFrames();
+    location.reload();
     setTimeout(() => {
       this.changeVisibility("#roomEnterLoader", false);
       this.displayCurrentRoomName();
@@ -295,12 +291,6 @@ class StaticApp extends LitElement {
     }
   }
 
-  reloadFrames() {
-    if (parent.caeFrames) {
-      parent.caeFrames.forEach((f) => f.contentWindow.location.reload());
-    }
-  }
-
   handleLogin(event: any) {
     var cached_access_token = localStorage.getItem("access_token");
     localStorage.setItem(
@@ -314,14 +304,12 @@ class StaticApp extends LitElement {
       return; // already logged in
     }
     localStorage.setItem("access_token", event.detail.access_token);
-    if (parent.caeFrames) {
-      parent.caeFrames.forEach((f) => f.contentWindow.location.reload());
-    }
   }
 
   handleLogout() {
     localStorage.removeItem("access_token");
     localStorage.removeItem("userinfo_endpoint");
+    location.reload();
   }
 
   displayCurrentRoomName() {
