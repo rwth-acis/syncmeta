@@ -332,4 +332,36 @@ export default [
     external: externalDependencies,
     preserveEntrySignatures: "strict",
   },
+  // minified widget container
+  {
+    plugins: [
+      replaceHtml(),
+      typescript(),
+      css(),
+      nodeResolve({ browser: true }),
+      commonjs({
+        include: [/node_modules/],
+        extensions: [".js", ".ts"],
+      }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
+      // css(),
+      terser(),
+    ],
+    watch: {
+      include: "src/**",
+    },
+    input: "src/widgets/widget.container.ts",
+    output: {
+      file: "build/widgets/widget.container.min.js",
+      sourcemap: true,
+      inlineDynamicImports: true,
+      format: "es",
+      globals: {
+        yjs: "Y",
+        "y-quill": "QuillBinding",
+        "y-websocket": "WebsocketProvider",
+      },
+    },
+    external: externalDependencies,
+    preserveEntrySignatures: "strict",
+  },
 ];
