@@ -135,9 +135,24 @@ export const CONFIG = {
   },
 };
 
+ /**
+  * Gets the html tag name of a widget. 
+  * Use this function to get the tag name of a or your own widget.
+  * @example getWidgetTagName("My Widget") // returns "my-widget-widget"
+  * @param {*} name name of the widget
+  * @returns  {string} tag name of the widget
+  */
 export function getWidgetTagName(name) {
-  //@ts-ignore
-  if(!name) return;
+  if (!name) return;
+  if (
+    !Object.values(CONFIG.WIDGET.NAME).some(
+      (n) => n.toLocaleLowerCase() === name.toLocaleLowerCase()
+    )
+  ) {
+    console.warn(
+      `Widget name ${name} is not defined in config.js. Add it to the CONFIG.WIDGET.NAME object.`
+    );
+  }
   let widgetName = name;
   widgetName = widgetName.replace(/\s+/g, "-");
   return `${widgetName}-widget`.toLowerCase();
