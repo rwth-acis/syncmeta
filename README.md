@@ -20,8 +20,7 @@ docker compose -f "docker-compose.yml" up -d --build
 ```
 
 This will build the Syncmeta Docker image and run the containers for Syncmeta and the y-websocket.
-
-After container started to run, application will be accessible via <http://127.0.0.1:8000>
+After the container started to run, the application will be accessible via <http://127.0.0.1:8000>
 
 ### Dev server
 
@@ -40,7 +39,7 @@ The application will be accessible via <http://127.0.0.1:8000>
 
 ## Usage
 
-When the application is up and running, you will see two option in the main page as meta modeling space and modeling space. As their names imply, you can create metamodel in the meta modeling space and after creating the meta model, it can be uploaded to modeling space with 'Generate Metamodel' button. Created metamodel can be tried instantly in the modeling space in this way.
+When the application is up and running, you will see two options on the main page metamodeling space and modeling space. As their names imply, you can create metamodel in the meta modeling space and after creating the meta model, it can be uploaded to the modeling space with the 'Generate Metamodel' button. Created metamodel can be tried instantly in the modeling space in this way.
 
 Please note that this is currently broken. So export the metamodel using the debug widget and then delete the current model and then import the exported metamodel.
 
@@ -51,9 +50,10 @@ If you want all main widgets in one container, you can import the widget contain
 
 ```javascript
 import "./widgets/src/widgets/widget.container.ts"
-``` 
+```
 
 ### Widgets
+
 Widgets are contained in the following folder: `widgets/src/widgets/partials`
 
 The most important widget, which is always required is the canvas widget or main widget (`widgets/src/widgets/partials/main.widget.ts`). This widget will be used to create our (meta-) models.
@@ -62,22 +62,23 @@ The palette widget (`widgets/src/widgets/partials/palette.widget.ts`) can be use
 
 The attribute widget (`widgets/src/widgets/partials/attribute.widget.ts`) displays the attributes of the currently selected element in the canvas. This makes it easier to modify them.
 
-The Import/Export widget (`widgets/src/widgets/partials/debug.widget.ts`) can be used to import or export various aspects of the app. Most notably the metamodel, the model and the activity list. 
+The Import/Export widget (`widgets/src/widgets/partials/debug.widget.ts`) can be used to import or export various aspects of the app. Most notably the metamodel, the model and the activity list.
 
 The activity widget (`widgets/src/widgets/partials/activity.widget.ts`) logs the activities of the users of the app and displays them as a list. It also shows a list of online users.
 
 ### Inter-Widget Communication(IWC)
 
-For the __local__ communication between the various widgets of the SyncMeta the IWC is used. This module allows each syncmeta widget to communicate with all other widgets. This is done through PostMessage calls on the widget. 
+For the __local__ communication between the various widgets of the SyncMeta the IWC is used. This module allows each syncmeta widget to communicate with all other widgets. This is done through PostMessage calls on the widget.
 
 ### Developing your own widgets
 
-If you develop custom widgets you need to follow the same naming conventions in order to receive messages. 
+If you develop custom widgets you need to follow the same naming conventions in order to receive messages.
 The `config` object in `widgets/src/es6/config.js` declares a field `WIDGET.NAME`. Add your custom widget name there. The naming convention is described in the function `getWidgetTagName` of the following file `widgets/src/es6/config.js`. It follows the pattern `<custom-name>-widget` where `<custom-name>`is the custom name you gave your widget. You may want to use that function and the property in the config for declaring the LitElement.
 
 Furthermore, each widget extends the SyncMetaWidget superclass.
 
 An example could look as follows
+
 ```js
 // config.js
 export const CONFIG = {
@@ -105,6 +106,26 @@ class MyFancyWidget extends SyncMetaWidget(
 )
 
 ```
+
+### Authentication
+
+Syncmeta creates profiles for each user based on information provided by third party providers. The following information is required:
+
+* `email`: the email of the user
+* `preferred_username`: the username which will be used as a display name
+* `sub`: the oidc sub of the user
+
+It fetches the information from the url under `localStorage.getItem("userinfo_endpoint")`. As authentication the access token `localStorage.getItem("access_token")` is used. If you use syncmeta widgets outside of this project, make sure that they are available in localstorage.
+The data fetched from the endpoint is supposed to contain json in the following format
+
+```js
+{
+  email: "<alice@example.org>"
+  preferred_username: "some_username"
+  sub: "some_sub"
+}
+```
+
 ### Versions
 
 Syncmeta uses the awesome [Yjs](http://y-js.org/) framework to provide near-realtime collaborative modeling in the web browser.

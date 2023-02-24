@@ -17,7 +17,7 @@
     "@vaadin/router": "^1.7.4",
     "@web/dev-server-legacy": "^1.0.1",
     "jquery": "^3.6.1",
-    "las2peer-frontend-statusbar": "github:rwth-acis/las2peer-frontend-statusbar#oidc-rework",
+    "las2peer-frontend-statusbar": "github:rwth-acis/las2peer-frontend-statusbar#0.4.0",
     "las2peer-frontend-user-widget": "github:rwth-acis/las2peer-frontend-user-widget#0.3.3",
     "lit": "^2.4.0",
     "lodash-es": "^4.17.21",

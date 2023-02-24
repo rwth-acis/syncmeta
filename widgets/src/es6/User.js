@@ -12,14 +12,12 @@ export async function getUserInfo() {
   const response = await fetch(url, {
     headers: { Authorization: "Bearer " + localStorage.access_token },
   }).catch((error) => {
-    console.log("Error: " + error);
+    console.warn("Error while fetching profile information : " + error);
   });
 
   try {
     if (response && response.ok) {
-      console.log(response);
       const data = await response.json();
-      console.log(data);
       const space = { user: {} };
       space.user[CONFIG.NS.PERSON.TITLE] = data.preferred_username;
       space.user[CONFIG.NS.PERSON.JABBERID] = data.sub;
