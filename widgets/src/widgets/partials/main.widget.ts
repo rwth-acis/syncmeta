@@ -934,102 +934,108 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
   const joinMap = y.getMap("join");
 
   HistoryManager.init(canvas);
+
+  joinMap.forEach(function (value, key) {
+    userList.push(key);
+  });
+
   joinMap.observe(function (event) {
-    const userId = [...event.keysChanged][0];
+    event.keysChanged.forEach(function (key) {
+      const userId = event.keysChanged[key];
 
-    if (userList.indexOf(userId) === -1) {
-      userList.push(userId);
-    }
+      if (userList.indexOf(userId) === -1) {
+        userList.push(userId);
+      }
 
-    if (userId !== _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]) {
-      //send to activity widget that a remote user has joined.
-      const joinMap = y.getMap("join");
-      if (!joinMap.has(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]))
-        joinMap.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], true);
-    } else {
-      canvas.resetTool();
-      $("#loading").hide();
+      if (userId !== _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]) {
+        //send to activity widget that a remote user has joined.
+        const joinMap = y.getMap("join");
+        if (!joinMap.has(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]))
+          joinMap.set(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID], true);
+      } else {
+        canvas.resetTool();
+      }
+    });
 
-      // if (
-      //   CONFIG.TEST.CANVAS &&
-      //   (_iwcw.getUser()[CONFIG.NS.PERSON.TITLE] === CONFIG.TEST.USER ||
-      //     _iwcw.getUser()[CONFIG.NS.PERSON.MBOX] === CONFIG.TEST.EMAIL)
-      // )
-      //   CanvasWidgetTest(canvas);
+    // if (
+    //   CONFIG.TEST.CANVAS &&
+    //   (_iwcw.getUser()[CONFIG.NS.PERSON.TITLE] === CONFIG.TEST.USER ||
+    //     _iwcw.getUser()[CONFIG.NS.PERSON.MBOX] === CONFIG.TEST.EMAIL)
+    // )
+    //   CanvasWidgetTest(canvas);
 
-      const canvasMap = y.getMap("canvas");
-      canvasMap.observe(function (event) {
-        event.keysChanged.forEach((key) => {
-          switch (key) {
-            case UpdateViewListOperation.TYPE: {
-              ViewManager.GetViewpointList();
-              break;
-            }
-            case "ReloadWidgetOperation": {
-              var text;
-              const value = event.currentTarget.get(key);
-              switch (value) {
-                case "import": {
-                  const dataMap = y.getMap("data");
-                  var model = dataMap.get("model");
-                  text =
-                    "ATTENTION! Imported new model containing <strong>" +
-                    Object.keys(model.nodes).length +
-                    " nodes</strong> and <strong>" +
-                    Object.keys(model.edges).length +
-                    " edges</strong>. Some widgets will reload";
-                  break;
-                }
-                case "delete": {
-                  text =
-                    "ATTENTION! Deleted current model. Some widgets will reload";
-                  break;
-                }
-                case "meta_delete": {
-                  text =
-                    "ATTENTION! Deleted current metamodel. Some widgets will reload";
-                  break;
-                }
-                case "meta_import": {
-                  text =
-                    "ATTENTION! Imported new metamodel. Some widgets will reload";
-                  break;
-                }
-              }
-
-              // when event.value is "import", then previously the model in the Yjs room should have
-              // been changed
-              // Problem: when the new model contains a node, that the previous model also contained,
-              // then the position of the node does not get updated
-              // therefore, this is manually done here
-              const dataMap = y.getMap("data");
-              const nodesMap = y.getMap("nodes");
-              for (var key of nodesMap.keys()) {
-                // check if the node also exists in the updated model
-
-                var nodeInModel = dataMap.get("model")?.nodes[key];
-                if (nodeInModel) {
-                  // update left and top position values
-                  nodesMap.get(key).set("left", nodeInModel.left);
-                  nodesMap.get(key).set("top", nodeInModel.top);
-                }
-              }
-              const activityMap = y.getMap("activity");
-              activityMap.set(
-                "ReloadWidgetOperation",
-                new ActivityOperation(
-                  "ReloadWidgetOperation",
-                  undefined,
-                  _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
-                  text
-                ).toJSON()
-              );
-              location.reload();
-            }
+    const canvasMap = y.getMap("canvas");
+    canvasMap.observe(function (event) {
+      event.keysChanged.forEach((key) => {
+        switch (key) {
+          case UpdateViewListOperation.TYPE: {
+            ViewManager.GetViewpointList();
+            break;
           }
-        });
+          case "ReloadWidgetOperation": {
+            var text;
+            const value = event.currentTarget.get(key);
+            switch (value) {
+              case "import": {
+                const dataMap = y.getMap("data");
+                var model = dataMap.get("model");
+                text =
+                  "ATTENTION! Imported new model containing <strong>" +
+                  Object.keys(model.nodes).length +
+                  " nodes</strong> and <strong>" +
+                  Object.keys(model.edges).length +
+                  " edges</strong>. Some widgets will reload";
+                break;
+              }
+              case "delete": {
+                text =
+                  "ATTENTION! Deleted current model. Some widgets will reload";
+                break;
+              }
+              case "meta_delete": {
+                text =
+                  "ATTENTION! Deleted current metamodel. Some widgets will reload";
+                break;
+              }
+              case "meta_import": {
+                text =
+                  "ATTENTION! Imported new metamodel. Some widgets will reload";
+                break;
+              }
+            }
+
+            // when event.value is "import", then previously the model in the Yjs room should have
+            // been changed
+            // Problem: when the new model contains a node, that the previous model also contained,
+            // then the position of the node does not get updated
+            // therefore, this is manually done here
+            const dataMap = y.getMap("data");
+            const nodesMap = y.getMap("nodes");
+            for (var key of nodesMap.keys()) {
+              // check if the node also exists in the updated model
+
+              var nodeInModel = dataMap.get("model")?.nodes[key];
+              if (nodeInModel) {
+                // update left and top position values
+                nodesMap.get(key).set("left", nodeInModel.left);
+                nodesMap.get(key).set("top", nodeInModel.top);
+              }
+            }
+            const activityMap = y.getMap("activity");
+            activityMap.set(
+              "ReloadWidgetOperation",
+              new ActivityOperation(
+                "ReloadWidgetOperation",
+                undefined,
+                _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
+                text
+              ).toJSON()
+            );
+            location.reload();
+          }
+        }
       });
-    }
+    });
   });
 
   registerOnDataReceivedCallback(_iwcw, y, userList, user);
