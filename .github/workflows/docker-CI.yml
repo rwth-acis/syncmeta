@@ -15,7 +15,7 @@ jobs:
         run: npm install --verbose
         working-directory: ${{env.working-directory}}
       - name: Run Rollup Bundle
-        run: npm run bundle
+        run: npx rollup -c rollup.config.reduced.js --bundleConfigAsCjs
         working-directory: ${{env.working-directory}}
   build:
     runs-on: ubuntu-latest
