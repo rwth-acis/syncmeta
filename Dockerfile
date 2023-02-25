@@ -9,7 +9,7 @@ COPY . .
 
 WORKDIR /usr/src/app/widgets
 RUN npm install
-RUN npm run bundle
+RUN npx rollup -c rollup.config.reduced.js --bundleConfigAsCjs
 
 WORKDIR /usr/src/app/app
 RUN npm install

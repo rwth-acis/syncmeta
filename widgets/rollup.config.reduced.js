@@ -18,9 +18,9 @@ const externalDependencies = [
   "https://cdnjs.cloudflare.com/ajax/libs/jquery-migrate/1.4.1/jquery-migrate.min.js",
   "https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js",
   "https://cdnjs.cloudflare.com/ajax/libs/dagre/0.8.5/dagre.min.js",
-  "https://cdn.quilljs.com/1.3.6/quill.js",
+  "https://cdn.quilljs.com/1.3.7/quill.js",
   "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js",
-  "lit",
+  "lit", 
   "y-websocket",
   "y-quill",
 ];
