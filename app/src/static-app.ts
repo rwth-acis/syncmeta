@@ -214,6 +214,7 @@ class StaticApp extends LitElement {
   _onChangeButtonClicked() {
     var roomName = (document.getElementById("roomNameInput") as any).value;
     Common.setYjsRoomName(roomName);
+    Common.setSpace(this.page || "meta-modeling-space");
     this.changeVisibility("#roomEnterLoader", true);
     location.reload();
     setTimeout(() => {

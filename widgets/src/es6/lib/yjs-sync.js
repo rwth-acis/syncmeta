@@ -1,13 +1,27 @@
 import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import { Doc as YDoc } from "yjs";
 import { WebsocketProvider } from "y-websocket";
+import Util from "../Util";
 
 export async function yjsSync(
-  spaceTitle = window.spaceTitle,
+  spaceTitle,
   yjsServer = "localhost:1234",
   yjsProtocol = "ws"
 ) {
-  if (window.y) {
+  let title;
+
+  if (!spaceTitle) {
+    if (window.caeRoom) {
+      title = window.caeRoom;
+    } else if (localStorage.getItem("syncmetaSpace")) {
+      title = localStorage.getItem("syncmetaSpace");
+    } else {
+      title = Util.getSpaceTitle(location.href);
+    }
+  }
+
+  if (window.y && title === spaceTitle) {
+    // yjs is already initialized and we are using the same spaceTitle
     return new Promise((resolve) => resolve(window.y));
   }
 
@@ -16,7 +30,7 @@ export async function yjsSync(
   // Sync clients with the y-websocket provider
   const websocketProvider = new WebsocketProvider(
     `${yjsProtocol}://${yjsServer}`,
-    spaceTitle,
+    title,
     doc
   );
 
@@ -28,7 +42,7 @@ export async function yjsSync(
         if (!window.y) {
           window.y = doc;
         }
-        resolve(spaceTitle);
+        resolve(title);
       }
     });
     setTimeout(() => {
@@ -36,6 +50,7 @@ export async function yjsSync(
     }, 5000);
   });
   if (window.y) {
+    // it could be that another yjsSync call was made before this one resolved
     return window.y;
   }
   return doc;
