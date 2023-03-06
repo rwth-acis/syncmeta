@@ -1,6 +1,7 @@
 export class Common {
   static setSpace(syncmetaSpace: string) {
-    parent.syncmetaRoom = this.createYjsRoomNameWithSpace(syncmetaSpace);
+    window.syncmetaRoom = this.createYjsRoomNameWithSpace(syncmetaSpace);
+    localStorage.setItem("syncmetaSpace", window.syncmetaRoom);
   }
 
   static createYjsRoomNameWithSpace(space: string) {
