@@ -1,9 +1,9 @@
 import "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js";
-import "https://cdn.quilljs.com/1.3.7/quill.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import { html, LitElement } from "lit";
 import { customElement } from "lit/decorators.js";
+import Quill from "quill/dist/quill";
 import AttributeWrapper from "../../es6/attribute_widget/AttributeWrapper";
 import { EntityManagerInstance as EntityManager } from "../../es6/attribute_widget/EntityManager";
 import ViewGenerator from "../../es6/attribute_widget/view/ViewGenerator";

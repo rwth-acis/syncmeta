@@ -6,7 +6,7 @@ import { CONFIG, getWidgetTagName } from "../config";
 import AbstractValue from "./AbstractValue";
 import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
 import loadHTML from "../html.template.loader";
-
+import Quill from "quill/dist/quill";
 import { QuillBinding } from "y-quill";
 
 const quillEditorModalHtml = await loadHTML(

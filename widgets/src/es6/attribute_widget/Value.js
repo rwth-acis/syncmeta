@@ -4,7 +4,7 @@ import _ from "lodash-es";
 import AbstractValue from "./AbstractValue";
 import loadHTML from "../html.template.loader";
 import { QuillBinding } from "y-quill";
-import "https://cdn.quilljs.com/1.3.7/quill.js";
+import Quill from "quill/dist/quill";
 
 const quillEditorHtml = await loadHTML(
   "../../templates/attribute_widget/quill_editor.html",
