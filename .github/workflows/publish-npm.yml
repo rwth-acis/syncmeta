@@ -23,7 +23,7 @@ jobs:
     - name: Build
       run: |
         cd widgets
-        npm run bundle
+        npx rollup -c rollup.config.reduced.js --bundleConfigAsCjs
       
     - name: Publish to NPM
       env:
