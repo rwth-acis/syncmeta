@@ -23,7 +23,7 @@ jobs:
     - name: Build
       run: |
         cd widgets
-        npm run build
+        npm run bundle
       
     - name: Publish to NPM
       env:
