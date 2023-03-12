@@ -7,6 +7,8 @@ import AbstractValue from "./AbstractValue";
 import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
 import loadHTML from "../html.template.loader";
 import { QuillBinding } from "y-quill";
+import Quill from "quill/dist/quill";
+
 
 const quillEditorHtml = await loadHTML(
   "../../templates/attribute_widget/quill_editor.html",

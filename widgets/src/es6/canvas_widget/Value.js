@@ -86,13 +86,6 @@ class Value extends AbstractValue {
       _value = value;
       _$node.val(value).trigger("blur");
 
-      if (_ytext) {
-        if (value !== _ytext.toString()) {
-          if (_ytext.toString().length > 0)
-            _ytext.delete(0, _ytext.toString().length);
-          _ytext.insert(0, value);
-        }
-      }
       this.value = _ytext.toString();
     };
 
