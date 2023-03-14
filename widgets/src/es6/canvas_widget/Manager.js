@@ -2677,7 +2677,6 @@ export class AbstractNode extends AbstractEntity {
         if (params.el.id !== this._$node.attr("id")) return true;
         setTimeout(() => {
           _$node.css({ opacity: "" });
-          // _$node.resizable("enable");
           _canvas.bindMoveToolEvents();
           var offsetX = Math.round(
             (_$node.position().left - originalPos.left) / _canvas.getZoom()
@@ -2685,6 +2684,16 @@ export class AbstractNode extends AbstractEntity {
           var offsetY = Math.round(
             (_$node.position().top - originalPos.top) / _canvas.getZoom()
           );
+          // if offset is 0, no need to send the operation
+          if (offsetX === 0 && offsetY === 0) return;
+          // if offset bigger than canvas size, no need to send the operation
+          if (
+            Math.abs(offsetX) > _canvas.width ||
+            Math.abs(offsetY) > _canvas.height
+          ) {
+            console.error(" offset bigger than canvas size");
+            return;
+          }
 
           var operation = new NodeMoveOperation(
             that.getEntityId(),
@@ -2885,6 +2894,7 @@ export class AbstractNode extends AbstractEntity {
         square: true,
         listeners: {
           move(event) {
+            jsPlumbInstance.setDraggable(that._$node.get(0), false);
             let { x, y } = event.target.dataset;
 
             x = (parseFloat(x) || 0) + event.deltaRect.left;
