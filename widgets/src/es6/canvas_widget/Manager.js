@@ -1571,7 +1571,7 @@ export class AbstractNode extends AbstractEntity {
     // make icon font bigger
 
     const resizeHandle = $(
-      `<i class="bi bi-textarea-resize" sytle="font-size:3em;"></i>`
+      `<i class="bi bi-aspect-ratio" sytle="font-size:3em;"></i>`
     );
     resizeHandle.css({
       position: "absolute",
