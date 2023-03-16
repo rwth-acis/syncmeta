@@ -127,6 +127,9 @@ export default class Canvas extends AbstractCanvas {
       container: _$node.get(0),
       elementsDraggable: true,
       connectionsDetachable: false,
+      dragOptions: {
+        filter: ".resizing",
+      },
     });
 
     window.jsPlumbInstance = jsPlumbInstance;

@@ -1568,6 +1568,25 @@ export class AbstractNode extends AbstractEntity {
      */
     var _$node = $(_.template(abstractNodeHtml)({ id: id }));
     this._$node = _$node;
+    // make icon font bigger
+
+    const resizeHandle = $(
+      `<i class="bi bi-aspect-ratio" sytle="font-size:3em;"></i>`
+    );
+    resizeHandle.css({
+      position: "absolute",
+      bottom: "0",
+      right: "0",
+      cursor: "nwse-resize",
+      zIndex: 100000,
+    });
+
+    // append to node
+    _$node.append(resizeHandle);
+    resizeHandle.on("mouseover", () => {
+      console.log("over");
+      this.disableDraggable();
+    });
 
     this.nodeSelector = getQuerySelectorFromNode(this._$node[0]);
 
@@ -2303,22 +2322,33 @@ export class AbstractNode extends AbstractEntity {
      * @param {number} offsetZ Offset in z-direction
      */
     this.move = function (offsetX, offsetY, offsetZ) {
-      if (_appearance.left + offsetX < 0 || _appearance.top + offsetY < 0) {
-        console.error("Node cannot be moved outside of canvas");
-      }
+      const x = _appearance.left + offsetX;
+      const y = _appearance.top + offsetY;
       if (
-        _appearance.left + offsetX > _canvas.width - _appearance.width ||
-        _appearance.top + offsetY > _canvas.height - _appearance.height
+        x < 0 ||
+        y < 0 ||
+        x > _canvas.width - _appearance.width ||
+        y > _canvas.height - _appearance.height
       ) {
         console.error("Node cannot be moved outside of canvas");
+        if (_ymap) {
+          window.y.transact(() => {
+            _ymap.set("left", _appearance.left);
+            _ymap.set("top", _appearance.top);
+            _ymap.set("zIndex", _zIndex);
+          });
+        }
+      } else {
+        if (_ymap) {
+          window.y.transact(() => {
+            _ymap.set("left", (_appearance.left += offsetX));
+            _ymap.set("top", (_appearance.top += offsetY));
+            _ymap.set("zIndex", _zIndex);
+          });
+        }
       }
-      if (_ymap) {
-        y.transact(() => {
-          _ymap.set("left", (_appearance.left += offsetX));
-          _ymap.set("top", (_appearance.top += offsetY));
-          _ymap.set("zIndex", _zIndex);
-        });
-      }
+      this._draw();
+      this.repaint();
     };
 
     this.moveAbs = function (left, top, zIndex) {
@@ -2620,8 +2650,7 @@ export class AbstractNode extends AbstractEntity {
      * Bind events for move tool
      */
     this.bindMoveToolEvents = () => {
-      jsPlumbInstance.setDraggable(this._$node.get(0), true); //Enable Node Dragging
-
+      this.enableDraggable();
       var originalPos = {
         left: 0,
         top: 0,
@@ -2688,6 +2717,8 @@ export class AbstractNode extends AbstractEntity {
           if (offsetX === 0 && offsetY === 0) return;
           // if offset bigger than canvas size, no need to send the operation
           if (
+            offsetX < 0 ||
+            offsetY < 0 ||
             Math.abs(offsetX) > _canvas.width ||
             Math.abs(offsetY) > _canvas.height
           ) {
@@ -2712,7 +2743,7 @@ export class AbstractNode extends AbstractEntity {
       const widgetConfigMap = y.getMap("widgetConfig");
       var viewOnly = widgetConfigMap.get("view_only");
       if (viewOnly) {
-        jsPlumbInstance.setDraggable(_$node.get(0), false);
+        this.disableDraggable();
         _$node.on("click").contextMenu(false);
       }
     };
@@ -2731,7 +2762,7 @@ export class AbstractNode extends AbstractEntity {
         .css("pointerEvents", "none");
 
       //Disable Node Dragging
-      jsPlumbInstance.setDraggable(this._$node.get(0), false);
+      this.disableDraggable();
     };
 
     /**
@@ -2882,6 +2913,14 @@ export class AbstractNode extends AbstractEntity {
     });
   }
 
+  enableDraggable() {
+    jsPlumbInstance.setDraggable(this._$node.get(0), true);
+  }
+
+  disableDraggable() {
+    jsPlumbInstance.setDraggable(this._$node.get(0), false);
+  }
+
   makeResizable(that, _canvas, $sizePreview, id) {
     const initialSize = {
       width: that._$node.width(),
@@ -2890,11 +2929,11 @@ export class AbstractNode extends AbstractEntity {
     interact(that.nodeSelector)
       .resizable({
         // resize from all edges and corners
-        edges: { left: true, right: true, bottom: true, top: true },
+        edges: { right: ".bi", bottom: ".bi" },
         square: true,
         listeners: {
           move(event) {
-            jsPlumbInstance.setDraggable(that._$node.get(0), false);
+            that.disableDraggable();
             let { x, y } = event.target.dataset;
 
             x = (parseFloat(x) || 0) + event.deltaRect.left;
@@ -2932,7 +2971,9 @@ export class AbstractNode extends AbstractEntity {
         inertia: { enabled: false },
       })
       .on(["resizestart"], (event) => {
-        jsPlumbInstance.setDraggable(that._$node.get(0), false);
+        // add resizing class
+        that._$node.addClass("resizing");
+        that.disableDraggable();
         _canvas.hideGuidanceBox();
         $sizePreview.show();
         that._$node.css({ opacity: 0.5 });
@@ -2942,6 +2983,9 @@ export class AbstractNode extends AbstractEntity {
         _canvas.unbindMoveToolEvents();
       })
       .on(["resizeend"], (event) => {
+        // remove resizing class
+        that._$node.removeClass("resizing");
+        that.enableDraggable();
         const offsetX = event.rect.width - initialSize.width;
         const offsetY = event.rect.height - initialSize.height;
         $sizePreview.hide();
@@ -2949,7 +2993,6 @@ export class AbstractNode extends AbstractEntity {
         that.repaint();
         var operation = new NodeResizeOperation(id, offsetX, offsetY);
         that.propagateNodeResizeOperation(operation);
-        jsPlumbInstance.setDraggable(that._$node.get(0), true);
         _canvas.bindMoveToolEvents();
       })
       .draggable();
