@@ -1568,6 +1568,25 @@ export class AbstractNode extends AbstractEntity {
      */
     var _$node = $(_.template(abstractNodeHtml)({ id: id }));
     this._$node = _$node;
+    // make icon font bigger
+
+    const resizeHandle = $(
+      `<i class="bi bi-textarea-resize" sytle="font-size:3em;"></i>`
+    );
+    resizeHandle.css({
+      position: "absolute",
+      bottom: "0",
+      right: "0",
+      cursor: "nwse-resize",
+      zIndex: 100000,
+    });
+
+    // append to node
+    _$node.append(resizeHandle);
+    resizeHandle.on("mouseover", () => {
+      console.log("over");
+      this.disableDraggable();
+    });
 
     this.nodeSelector = getQuerySelectorFromNode(this._$node[0]);
 
@@ -2910,7 +2929,7 @@ export class AbstractNode extends AbstractEntity {
     interact(that.nodeSelector)
       .resizable({
         // resize from all edges and corners
-        edges: { left: true, right: true, bottom: true, top: true },
+        edges: { right: ".bi", bottom: ".bi" },
         square: true,
         listeners: {
           move(event) {
@@ -2952,6 +2971,8 @@ export class AbstractNode extends AbstractEntity {
         inertia: { enabled: false },
       })
       .on(["resizestart"], (event) => {
+        // add resizing class
+        that._$node.addClass("resizing");
         that.disableDraggable();
         _canvas.hideGuidanceBox();
         $sizePreview.show();
@@ -2962,6 +2983,8 @@ export class AbstractNode extends AbstractEntity {
         _canvas.unbindMoveToolEvents();
       })
       .on(["resizeend"], (event) => {
+        // remove resizing class
+        that._$node.removeClass("resizing");
         that.enableDraggable();
         const offsetX = event.rect.width - initialSize.width;
         const offsetY = event.rect.height - initialSize.height;
