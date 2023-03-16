@@ -2652,12 +2652,6 @@ export class AbstractNode extends AbstractEntity {
         top: 0,
       };
 
-      var lastDragPos = {
-        left: 0,
-        top: 0,
-      };
-
-      var drag = false;
       var $sizePreview = $('<div class="size-preview"></div>').hide();
 
       this.makeResizable(that, _canvas, $sizePreview, id);
@@ -2674,64 +2668,48 @@ export class AbstractNode extends AbstractEntity {
       jsPlumbInstance.bind(EVENT_DRAG_START, (params) => {
         if (params.el.id !== this._$node.attr("id")) return true;
 
-        setTimeout(function () {
-          originalPos.top = params.el.offsetTop;
-          originalPos.left = params.el.offsetLeft;
+        originalPos.top = params.el.offsetTop;
+        originalPos.left = params.el.offsetLeft;
 
-          lastDragPos.top = params.el.offsetTop;
-          lastDragPos.left = params.el.offsetLeft;
-          _canvas.hideGuidanceBox();
-          _$node.css({ opacity: 0.5 });
-          // _$node.resizable({ disabled: true });
-          drag = false;
-        });
-        return true;
-      });
+        _canvas.hideGuidanceBox();
+        _$node.css({ opacity: 0.5 });
 
-      jsPlumbInstance.bind(EVENT_DRAG_MOVE, (params) => {
-        if (params.el.id !== this._$node.attr("id")) return true;
-        setTimeout(() => {
-          lastDragPos.top = params.pos.y;
-          lastDragPos.left = params.pos.x;
-          _canvas.hideGuidanceBox();
-        });
         return true;
       });
 
       jsPlumbInstance.bind(EVENT_DRAG_STOP, (params) => {
         if (params.el.id !== this._$node.attr("id")) return true;
-        setTimeout(() => {
-          _$node.css({ opacity: "" });
-          _canvas.bindMoveToolEvents();
-          var offsetX = Math.round(
-            (_$node.position().left - originalPos.left) / _canvas.getZoom()
-          );
-          var offsetY = Math.round(
-            (_$node.position().top - originalPos.top) / _canvas.getZoom()
-          );
-          // if offset is 0, no need to send the operation
-          if (offsetX === 0 && offsetY === 0) return;
-          // if offset bigger than canvas size, no need to send the operation
-          if (
-            offsetX < 0 ||
-            offsetY < 0 ||
-            Math.abs(offsetX) > _canvas.width ||
-            Math.abs(offsetY) > _canvas.height
-          ) {
-            console.error(" offset bigger than canvas size");
-            return;
-          }
 
-          var operation = new NodeMoveOperation(
-            that.getEntityId(),
-            offsetX,
-            offsetY
-          );
-          that.propagateNodeMoveOperation(operation);
+        _$node.css({ opacity: "" });
+        _canvas.bindMoveToolEvents();
+        var offsetX = Math.round(
+          (params.el.offsetLeft - originalPos.left) / _canvas.getZoom()
+        );
+        var offsetY = Math.round(
+          (params.el.offsetTop - originalPos.top) / _canvas.getZoom()
+        );
+        // if offset is 0, no need to send the operation
+        if (offsetX === 0 && offsetY === 0) return;
+        // if offset bigger than canvas size, no need to send the operation
+        if (
+          params.el.offsetLeft < 0 ||
+          params.el.offsetTop < 0 ||
+          params.el.offsetLeft > _canvas.width ||
+          params.el.offsetTop > _canvas.height
+        ) {
+          console.error(" offset bigger than canvas size");
+          return;
+        }
 
-          //Avoid node selection on drag stop
-          _canvas.showGuidanceBox();
-        });
+        var operation = new NodeMoveOperation(
+          that.getEntityId(),
+          offsetX,
+          offsetY
+        );
+        that.propagateNodeMoveOperation(operation);
+
+        //Avoid node selection on drag stop
+        _canvas.showGuidanceBox();
       });
 
       // view_only is used by the CAE and allows to show a model in the Canvas which is not editable
