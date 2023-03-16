@@ -700,22 +700,21 @@ export class AbstractEdge extends AbstractEntity {
       throw new Error("y is not defined");
     }
 
-    if (y) {
-      const edgeMap = y.getMap("edges");
-      if (edgeMap.has(id)) {
-        _ymap = edgeMap.get(id);
-      } else if (id && type && source && target) {
-        _ymap = new YMap();
-        edgeMap.set(id, new YMap());
-        y.transact(() => {
-          _ymap.set("id", id);
-          _ymap.set("type", type);
-          _ymap.set("source", source.getEntityId());
-          _ymap.set("target", target.getEntityId());
-          _ymap.set("jabberId", _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
-        });
-      }
+    const edgeMap = y.getMap("edges");
+    if (edgeMap.has(id)) {
+      _ymap = edgeMap.get(id);
+    } else if (id && type && source && target) {
+      _ymap = new YMap();
+      edgeMap.set(id, new YMap());
+      y.transact(() => {
+        _ymap.set("id", id);
+        _ymap.set("type", type);
+        _ymap.set("source", source.getEntityId());
+        _ymap.set("target", target.getEntityId());
+        _ymap.set("jabberId", _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+      });
     }
+
     this.getYMap = function () {
       return _ymap;
     };
@@ -1335,7 +1334,7 @@ export class AbstractEdge extends AbstractEntity {
     this.bindMoveToolEvents = function () {
       if (_jsPlumbConnection) {
         //Enable Edge Select
-        _jsPlumbConnection.bind("click", function (/*conn*/) {
+        $("." + id).on("click", function (e) {
           _canvas.select(that);
         });
 
@@ -1568,8 +1567,6 @@ export class AbstractNode extends AbstractEntity {
      */
     var _$node = $(_.template(abstractNodeHtml)({ id: id }));
     this._$node = _$node;
-    // make icon font bigger
-
     const resizeHandle = $(
       `<i class="bi bi-aspect-ratio" sytle="font-size:3em;"></i>`
     );
@@ -1584,7 +1581,6 @@ export class AbstractNode extends AbstractEntity {
     // append to node
     _$node.append(resizeHandle);
     resizeHandle.on("mouseover", () => {
-      console.log("over");
       this.disableDraggable();
     });
 
