@@ -2683,10 +2683,10 @@ export class AbstractNode extends AbstractEntity {
         _$node.css({ opacity: "" });
         _canvas.bindMoveToolEvents();
         var offsetX = Math.round(
-          (params.el.offsetLeft - originalPos.left) / _canvas.getZoom()
+          (params.el.offsetLeft - originalPos.left) 
         );
         var offsetY = Math.round(
-          (params.el.offsetTop - originalPos.top) / _canvas.getZoom()
+          (params.el.offsetTop - originalPos.top) 
         );
         // if offset is 0, no need to send the operation
         if (offsetX === 0 && offsetY === 0) return;
