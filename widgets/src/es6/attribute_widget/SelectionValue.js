@@ -68,6 +68,9 @@ class SelectionValue extends AbstractValue{
      * @param {bool} fromCallback determines if the method is called from the callback or not
      */
     var processValueChangeOperation = function (operation, fromCallback) {
+      if (operation.triggeredBy === window.y.clientID) {
+        return;
+      }
       that.setValue(operation.getValue());
     };
 
@@ -106,8 +109,10 @@ class SelectionValue extends AbstractValue{
      * @param {operations.ot.ValueChangeOperation} operation
      */
     var valueChangeCallback = function (operation) {
-      if (operation instanceof ValueChangeOperation &&
-        operation.getEntityId() === that.getEntityId()) {
+      if (
+        operation instanceof ValueChangeOperation &&
+        operation.getEntityId() === that.getEntityId()
+      ) {
         processValueChangeOperation(operation);
       }
     };
@@ -115,7 +120,11 @@ class SelectionValue extends AbstractValue{
     var init = function () {
       _$node.off();
       _$node.change(function () {
-        that.propagateValueChange(CONFIG.OPERATION.TYPE.UPDATE, $(this).val(), 0);
+        that.propagateValueChange(
+          CONFIG.OPERATION.TYPE.UPDATE,
+          $(this).val(),
+          0
+        );
       });
     };
 
@@ -124,6 +133,10 @@ class SelectionValue extends AbstractValue{
      * @param {string} value
      */
     this.setValue = function (value) {
+      if (value === undefined) {
+        console.error("value is undefined");
+        return;
+      }
       if (name == "Content Type") {
         if (value == "Quiz") {
           Object.values(rootSubjectEntity.getAttributes()).forEach((value) => {
@@ -131,8 +144,7 @@ class SelectionValue extends AbstractValue{
               value.showTable();
             }
           });
-        }
-        else
+        } else
           Object.values(rootSubjectEntity.getAttributes()).forEach((value) => {
             if (value instanceof QuizAttribute) {
               value.hideTable();
@@ -140,7 +152,7 @@ class SelectionValue extends AbstractValue{
           });
       }
       _value = value;
-      _$node.val(value);
+      _$node.val(value).change();
     };
 
     /**
