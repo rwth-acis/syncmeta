@@ -11,6 +11,7 @@ import {
   selectionValueHtml,
   attributeSelectionValueHtml,
 } from "./SelectionValue";
+import { EntityManagerInstance } from "./Manager";
 
 /**
  * SelectionValue
@@ -215,7 +216,7 @@ export function SelectionValue(
               });
             }
             //trigger the save
-            $("#save").click();
+            EntityManagerInstance.storeDataYjs();
           } else {
             //the remote users propagtes the change to their local attribute widget
             //TODO(PENDING): can be replaced with yjs as well

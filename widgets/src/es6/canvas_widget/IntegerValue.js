@@ -8,6 +8,7 @@ import AbstractAttribute from "./AbstractAttribute";
 import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
 import ActivityOperation from "../operations/non_ot/ActivityOperation";
 import loadHTML from "../html.template.loader";
+import { EntityManagerInstance } from "./Manager";
 
 let integerValueHtml = await loadHTML(
   "../../templates/canvas_widget/integer_value.html",
@@ -200,7 +201,7 @@ class IntegerValue extends AbstractValue {
               event &&
               event.jabberId === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]
             )
-              $("#save").click();
+              EntityManagerInstance.storeDataYjs();
           }, 500)
         );
     };
