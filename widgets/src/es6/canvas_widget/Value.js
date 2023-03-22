@@ -9,6 +9,7 @@ import ActivityOperation from "../operations/non_ot/ActivityOperation";
 import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
 import "../lib/jquery/jquery.autoGrowInput";
 import { Text as YText } from "yjs";
+import { EntityManagerInstance } from "./Manager";
 
 const valueHtml = await loadHTML(
   "../../templates/canvas_widget/value.html",
@@ -153,7 +154,8 @@ class Value extends AbstractValue {
                 event.object._content[event.index].id[0]
               );
               if (jabberId === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]) {
-                $("#save").click();
+                EntityManagerInstance.storeDataYjs();
+
                 const activityMap = y.getMap("activity");
                 activityMap.set(
                   ActivityOperation.TYPE,
@@ -184,7 +186,7 @@ class Value extends AbstractValue {
                 );
               } else {
                 //I don't know who deleted here, so everyone saves  the current state for now
-                $("#save").click();
+                EntityManagerInstance.storeDataYjs();
               }
             }
           });

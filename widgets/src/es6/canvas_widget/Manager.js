@@ -1268,7 +1268,7 @@ export class AbstractEdge extends AbstractEntity {
           }
         }
       }
-      $("#save").click();
+      EntityManagerInstance.storeDataYjs();
     };
 
     /**
@@ -1568,7 +1568,7 @@ export class AbstractNode extends AbstractEntity {
     var _$node = $(_.template(abstractNodeHtml)({ id: id }));
     this._$node = _$node;
     const resizeHandle = $(
-      `<i class="bi bi-aspect-ratio" sytle="font-size:3em;"></i>`
+      `<div class="resize-handle p-1"><i class="bi bi-aspect-ratio" style="font-size:3em;"></i></div>`
     );
     resizeHandle.css({
       position: "absolute",
@@ -1582,6 +1582,9 @@ export class AbstractNode extends AbstractEntity {
     _$node.append(resizeHandle);
     resizeHandle.on("mouseover", () => {
       this.disableDraggable();
+    });
+    resizeHandle.on("mouseout", () => {
+      this.enableDraggable();
     });
 
     this.nodeSelector = getQuerySelectorFromNode(this._$node[0]);
@@ -1688,7 +1691,7 @@ export class AbstractNode extends AbstractEntity {
       operation.setJabberId(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
       processNodeMoveOperation(operation);
       HistoryManagerInstance.add(operation);
-      $("#save").click();
+      EntityManagerInstance.storeDataYjs();
 
       hideTraceAwareness();
       _iwcw.sendLocalOTOperation(
@@ -1777,7 +1780,7 @@ export class AbstractNode extends AbstractEntity {
       operation.setJabberId(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
       processNodeResizeOperation(operation);
       HistoryManagerInstance.add(operation);
-      $("#save").click();
+      EntityManagerInstance.storeDataYjs();
       hideTraceAwareness();
       _iwcw.sendLocalOTOperation(
         CONFIG.WIDGET.NAME.ATTRIBUTE,
@@ -1841,7 +1844,7 @@ export class AbstractNode extends AbstractEntity {
      */
     var propagateNodeDeleteOperation = function (operation) {
       processNodeDeleteOperation(operation);
-      $("#save").click();
+      EntityManagerInstance.storeDataYjs();
       _iwcw.sendLocalOTOperation(
         CONFIG.WIDGET.NAME.ATTRIBUTE,
         operation.getOTOperation()
@@ -2326,6 +2329,11 @@ export class AbstractNode extends AbstractEntity {
         x > _canvas.width - _appearance.width ||
         y > _canvas.height - _appearance.height
       ) {
+        // reset the position
+        _$node.css({
+          left: _appearance.left,
+          top: _appearance.top,
+        });
         console.error("Node cannot be moved outside of canvas");
         if (_ymap) {
           window.y.transact(() => {
@@ -2561,7 +2569,8 @@ export class AbstractNode extends AbstractEntity {
       //this.highlight(_highlightColor,_highlightUsername);
       this._$node.removeClass("selected");
       //tigger save when unselecting an entity
-      $("#save").click();
+      EntityManagerInstance.storeDataYjs();
+
       Util.delay(100).then(function () {
         _.each(EntityManagerInstance.getEdges(), function (e) {
           e.setZIndex();

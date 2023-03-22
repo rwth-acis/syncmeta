@@ -36,6 +36,7 @@ import Util from "../Util";
 import AbstractCanvas from "./AbstractCanvas";
 import {
   EntityManagerInstance as EntityManager,
+  EntityManagerInstance,
   HistoryManagerInstance as HistoryManager,
 } from "./Manager";
 import { newInstance } from "@jsplumb/browser-ui";
@@ -215,7 +216,6 @@ export default class Canvas extends AbstractCanvas {
      */
     var propagateNodeAddOperation = function (operation) {
       processNodeAddOperation(operation);
-      $("#save").click();
       //_iwcw.sendLocalOTOperation(CONFIG.WIDGET.NAME.ATTRIBUTE, operation.getOTOperation());
       _iwcw.sendLocalOTOperation(
         CONFIG.WIDGET.NAME.GUIDANCE,
@@ -281,7 +281,7 @@ export default class Canvas extends AbstractCanvas {
       var targetNode = EntityManager.findNode(operation.getTarget());
 
       processEdgeAddOperation(operation);
-      $("#save").click();
+      EntityManagerInstance.storeDataYjs();
 
       _iwcw.sendLocalOTOperation(
         CONFIG.WIDGET.NAME.GUIDANCE,
@@ -1720,7 +1720,8 @@ export default class Canvas extends AbstractCanvas {
               }
               case "triggerSave": {
                 if (data.value === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
-                  $("#save").click();
+                  EntityManagerInstance.storeDataYjs();
+
                 break;
               }
               case "applyLayout": {
@@ -1781,7 +1782,7 @@ export default class Canvas extends AbstractCanvas {
                 if (event.value.jabberId === userId)
                   nodesMap.delete(event.value.entityId);
                 setTimeout(function () {
-                  $("#save").click();
+                  EntityManagerInstance.storeDataYjs();
                 }, 300);
                 break;
               }
@@ -1793,7 +1794,7 @@ export default class Canvas extends AbstractCanvas {
             //local user. todo ugly coding style
           } else if (key === "applyLayout") {
             DagreLayout.apply();
-            $("#save").click();
+            EntityManagerInstance.storeDataYjs();
           }
         });
       });

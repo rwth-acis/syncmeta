@@ -10,6 +10,7 @@ import QuizAttribute from "./QuizAttribute";
 import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
 import ActivityOperation from "../operations/non_ot/ActivityOperation";
 import loadHTML from "../html.template.loader";
+import { EntityManagerInstance } from "./Manager";
 let selectionValueHtml = await loadHTML(
   "../../templates/canvas_widget/selection_value.html",
   import.meta.url
@@ -224,7 +225,7 @@ class SelectionValue extends AbstractValue {
                 });
               }
               //trigger the save
-              $("#save").click();
+              EntityManagerInstance.storeDataYjs();
             } else {
               //the remote users propagtes the change to their local attribute widget
               //TODO(PENDING): can be replaced with yjs as well
