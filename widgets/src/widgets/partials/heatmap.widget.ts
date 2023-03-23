@@ -1,8 +1,7 @@
 import { LitElement, html, PropertyValueMap } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { WebsocketProvider } from "y-websocket";
-import { CONFIG } from "../../js/config";
-import init from "../../js/shared";
+import init from "../../es6/shared";
 import { SyncMetaWidget } from "../../widget"; // needed to prevent ts errors when bundling with rollup
 import { getWidgetTagName } from "../../es6/config";
 import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
@@ -26,7 +25,7 @@ export class HeatMapWidget extends SyncMetaWidget(
 ) {
   protected async firstUpdated(
     _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
-  ): void {
+  ) {
     super.firstUpdated(_changedProperties);
     try {
       const y = await yjsSync();
@@ -172,7 +171,7 @@ export class HeatMapWidget extends SyncMetaWidget(
         var originY = (centerY / 9000) * 100;
 
         var translateX = -(centerX - 4500) * scaleFactor;
-        var translatY = -(centerY - 4500) * scaleFactor;
+        var translateY = -(centerY - 4500) * scaleFactor;
         var zoom = (9000 / bigger) * 0.9;
         $heatmap.css({
           "transform-origin": originX + "%" + " " + originY + "%",
@@ -180,7 +179,7 @@ export class HeatMapWidget extends SyncMetaWidget(
             "translate(" +
             translateX +
             "px, " +
-            translatY +
+            translateY +
             "px) scale(" +
             zoom +
             ")",
@@ -207,8 +206,7 @@ export class HeatMapWidget extends SyncMetaWidget(
             node.top,
             node.width,
             node.height,
-            scaleFactor,
-            null
+            scaleFactor
           );
           updateColor(nodePreview, localUserId);
           updateBoundingBox(nodePreview);

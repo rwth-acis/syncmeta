@@ -22,7 +22,7 @@ import NodeMoveZOperation from "../../es6/operations/ot/NodeMoveZOperation";
 import NodeResizeOperation from "../../es6/operations/ot/NodeResizeOperation";
 import ValueChangeOperation from "../../es6/operations/ot/ValueChangeOperation";
 import Space from "../../es6/Space"; // not sure how to transform !promise/Space
-import init from "../../js/shared";
+import init from "../../es6/shared";
 import { SyncMetaWidget } from "../../widget";
 
 // widget body used by all syncmeta widgets

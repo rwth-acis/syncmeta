@@ -1,7 +1,7 @@
 import { LitElement, css, html, TemplateResult } from "lit";
 import { Doc as YDoc } from "yjs";
 import { WebsocketProvider } from "y-websocket";
-import createReloadHandler from "./js/shared";
+import createReloadHandler from "./es6/shared";
 import { getWidgetTagName } from "./es6/config";
 import { yjsSync } from "./es6/lib/yjs-sync";
 type Constructor<T = {}> = new (...args: any[]) => T;

@@ -8,14 +8,13 @@ import AttributeWrapper from "../../es6/attribute_widget/AttributeWrapper";
 import { EntityManagerInstance as EntityManager } from "../../es6/attribute_widget/EntityManager";
 import ViewGenerator from "../../es6/attribute_widget/view/ViewGenerator";
 import { CONFIG, getWidgetTagName } from "../../es6/config";
-import { getWidgetTagName } from "../../es6/config.js";
 import { getGuidanceModeling } from "../../es6/Guidancemodel";
 import IWCW from "../../es6/lib/IWCWrapper";
 import { yjsSync } from "../../es6/lib/yjs-sync";
 import InitModelTypesOperation from "../../es6/operations/non_ot/InitModelTypesOperation";
 import SetModelAttributeNodeOperation from "../../es6/operations/non_ot/SetModelAttributeNodeOperation";
 import { WaitForCanvas } from "../../es6/WaitForCanvas";
-import init from "../../js/shared";
+import init from "../../es6/shared";
 import { SyncMetaWidget } from "../../widget";
 
 @customElement(getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE))
@@ -23,6 +22,7 @@ export class AttributeWidget extends SyncMetaWidget(
   LitElement,
   getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE)
 ) {
+  widgetName = getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE);
   firstUpdated(e: any) {
     super.firstUpdated(e);
     const guidancemodel = getGuidanceModeling();
@@ -118,12 +118,6 @@ export class AttributeWidget extends SyncMetaWidget(
                 operation.toNonOTOperation()
               );
 
-              // if (
-              //   CONFIG.TEST.ATTRIBUTE &&
-              //   (iwc.getUser()[CONFIG.NS.PERSON.TITLE] === CONFIG.TEST.USER ||
-              //     iwc.getUser()[CONFIG.NS.PERSON.MBOX] === CONFIG.TEST.EMAIL)
-              // )
-              //   AttributeWidgetTest();
               const canvas = y.getMap("canvas");
               canvas.observe(function (event) {
                 event.keysChanged.forEach((key) => {
@@ -152,6 +146,15 @@ export class AttributeWidget extends SyncMetaWidget(
     } catch (error) {
       console.error(error);
     }
+  }
+
+  hideErrorAlert() {
+    $(this.widgetName).find("#alert-message").text("");
+    $(this.widgetName).find("error-alert").hide();
+  }
+  showErrorAlert(message: string) {
+    $(this.widgetName).find("#alert-message").text(message);
+    $(this.widgetName).find("error-alert").hide();
   }
 
   render() {
@@ -384,7 +387,7 @@ function JSONToGraph(json, wrapper) {
       }
       if ("registerYMap" in node) {
         // this fixes #93. For some reason, the attributes of EnumNode are not initialized
-        // when calling registerYType. Since regisiterYMap also internally call registerYType this
+        // when calling registerYType. Since registerYMap also internally call registerYType this
         // fix should not break anything.
         node.registerYMap();
       } else {

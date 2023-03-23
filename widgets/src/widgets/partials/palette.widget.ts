@@ -21,7 +21,7 @@ import UniDirAssociationEdgeTool from "../../es6/palette_widget/UniDirAssociatio
 import ViewObjectNodeTool from "../../es6/palette_widget/ViewObjectNodeTool";
 import ViewRelationshipNodeTool from "../../es6/palette_widget/ViewRelationshipNodeTool";
 import { WaitForCanvas } from "../../es6/WaitForCanvas";
-import init from "../../js/shared";
+import init from "../../es6/shared";
 import { SyncMetaWidget } from "../../widget";
 
 // widget body used by all syncmeta widgets
@@ -30,10 +30,13 @@ export class PaletteWidget extends SyncMetaWidget(
   LitElement,
   getWidgetTagName(CONFIG.WIDGET.NAME.PALETTE)
 ) {
+  widgetName = getWidgetTagName(CONFIG.WIDGET.NAME.PALETTE);
+
   protected async firstUpdated(
     _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
   ) {
     super.firstUpdated(_changedProperties);
+    this.hideErrorAlert();
     yjsSync()
       .then((y) => {
         console.info(
@@ -99,6 +102,15 @@ export class PaletteWidget extends SyncMetaWidget(
 
   createRenderRoot() {
     return this;
+  }
+  hideErrorAlert() {
+    console.log($(this.widgetName).find("#alert-message"));
+    $(this.widgetName).find("#alert-message").text("");
+    $(this.widgetName).find("error-alert").hide();
+  }
+  showErrorAlert(message: string) {
+    $(this.widgetName).find("#alert-message").text(message);
+    $(this.widgetName).find("error-alert").hide();
   }
   render() {
     return html`

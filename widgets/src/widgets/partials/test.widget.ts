@@ -1,6 +1,6 @@
 import { LitElement, html, css } from "lit";
 import { customElement } from "lit/decorators.js";
-import init from "../../js/shared";
+import init from "../../es6/shared";
 import { SyncMetaWidget } from "../../widget";
 // widget body used by all syncmeta widgets
 @customElement("test-widget")

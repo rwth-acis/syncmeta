@@ -35,7 +35,7 @@ export class ActivityWidget extends SyncMetaWidget(
 
         WaitForCanvas(CONFIG.WIDGET.NAME.ACTIVITY, y)
           .then(function (data) {
-            var activtyList = new ActivityList(
+            var activityList = new ActivityList(
               $("#user_list"),
               $("#activity_list")
             );
@@ -45,7 +45,7 @@ export class ActivityWidget extends SyncMetaWidget(
               // appearing in the activity list
               event.keysChanged.forEach((key) => {
                 if (key != "invisible_user") {
-                  activtyList.addUser(key, event.currentTarget.get(key));
+                  activityList.addUser(key, event.currentTarget.get(key));
                 }
               });
             });
@@ -63,9 +63,9 @@ export class ActivityWidget extends SyncMetaWidget(
 
             var list = data.list;
             for (var i = 0; i < list.length; i++) {
-              activtyList.addUser(list[i]);
+              activityList.addUser(list[i]);
             }
-            activtyList.init();
+            activityList.init();
             $(getWidgetTagName(CONFIG.WIDGET.NAME.ACTIVITY))
               .find("loading-spinner")
               .hide();

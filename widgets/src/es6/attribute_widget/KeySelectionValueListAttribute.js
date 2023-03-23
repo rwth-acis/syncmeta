@@ -72,7 +72,7 @@ class KeySelectionValueListAttribute extends AbstractAttribute {
         _options
       );
       const nodesMap = y.getMap("nodes");
-      var ymap = nodesMap.get(subjectEntity.getEntityId());
+      const ymap = nodesMap.get(subjectEntity.getEntityId());
 
       var ytext = ymap.get(attribute.getKey().getEntityId());
       if (!ytext) throw new Error("ytext is undefined");

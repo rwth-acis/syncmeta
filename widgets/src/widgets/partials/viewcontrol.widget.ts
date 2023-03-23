@@ -10,7 +10,7 @@ import { CONFIG, getWidgetTagName } from "../../es6/config";
 import IWC from "../../es6/lib/IWCWrapper";
 import { yjsSync } from "../../es6/lib/yjs-sync";
 import UpdateViewListOperation from "../../es6/operations/non_ot/UpdateViewListOperation";
-import init from "../../js/shared";
+import init from "../../es6/shared";
 import { SyncMetaWidget } from "../../widget";
 // widget body used by all syncmeta widgets
 @customElement(getWidgetTagName(CONFIG.WIDGET.NAME.VIEWCONTROL))
@@ -20,7 +20,7 @@ export class ViewControlWidget extends SyncMetaWidget(
 ) {
   protected async firstUpdated(
     _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
-  ): void {
+  ) {
     super.firstUpdated(_changedProperties);
     try {
       const y = await yjsSync();
@@ -85,7 +85,7 @@ export class ViewControlWidget extends SyncMetaWidget(
       };
       var getFileContent = function () {
         var fileReader,
-          files = $("#btnImport")[0].files,
+          files = ($("#btnImport")[0] as HTMLInputElement).files,
           file,
           deferred = $.Deferred();
 

@@ -15,5 +15,16 @@ declare global {
     _reloadThisFuckingInstance: () => void;
     jsPlumbInstance: JsPlumbInstance;
     spaceTitle: any;
+    syncmetaLog: {
+      widget: string;
+      initializedYTexts: number;
+      objects: any;
+      errors: any;
+      firstAttemptFail: any;
+    };
+  }
+
+  interface JQuery {
+    dialog(o: any): void;
   }
 }

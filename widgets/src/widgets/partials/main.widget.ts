@@ -29,6 +29,7 @@ import {
   UniDirAssociationEdge,
   ViewObjectNode,
 } from "../../es6/canvas_widget/Manager";
+import { DeleteViewOperation } from "../../es6/operations/non_ot/DeleteViewOperation";
 import NodeShapeNodeTool from "../../es6/canvas_widget/NodeShapeNodeTool";
 import NodeTool from "../../es6/canvas_widget/NodeTool";
 import { ObjectNodeTool } from "../../es6/canvas_widget/ObjectNodeTool";
@@ -143,6 +144,7 @@ export class CanvasWidget extends SyncMetaWidget(
           top: -8px !important;
           -webkit-transform: translateY(-50%) translateX(-50%);
           -moz-transform: translateY(-50%) translateX(-50%);
+          transform: translateY(-50%) translateX(-50%);
           pointer-events: none;
           overflow-x: auto;
         }
@@ -581,7 +583,7 @@ export class CanvasWidget extends SyncMetaWidget(
               <i class="bi bi-tag"></i>
             </button>
             <button
-              id="hidetype"
+              id="hideType"
               class="btn btn-light"
               title="Hide types of nodes and edges"
             >
@@ -590,10 +592,10 @@ export class CanvasWidget extends SyncMetaWidget(
             <button id="applyLayout" class="btn btn-light" title="Apply Layout">
               <i class="bi bi-layout-wtf"></i>
             </button>
-            <button id="zoomin" class="btn btn-light" title="Zoom in">
+            <button id="zoomIn" class="btn btn-light" title="Zoom in">
               <i class="bi bi-zoom-in"></i>
             </button>
-            <button id="zoomout" class="btn btn-light" title="Zoom out">
+            <button id="zoomOut" class="btn btn-light" title="Zoom out">
               <i class="bi bi-zoom-out"></i>
             </button>
             <button
@@ -787,7 +789,7 @@ export class CanvasWidget extends SyncMetaWidget(
             }
             if (user.globalId !== -1) {
               userMap.set(
-                y.clientID,
+                y.clientID.toString(),
                 _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]
               );
             }
@@ -829,7 +831,7 @@ export class CanvasWidget extends SyncMetaWidget(
             const userList = y.getMap("userList");
             const userMap = y.getMap("users");
             userList.delete(_iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
-            userMap.delete(y.clientID);
+            userMap.delete(y.clientID.toString());
             const activityMap = y.getMap("activity");
             const leaveActivity = new ActivityOperation(
               "UserLeftActivity",
@@ -866,19 +868,13 @@ function registerOnDataReceivedCallback(_iwcw, y, userList, user) {
       const dataMap = y.getMap("data");
       var model = dataMap.get("model");
       var vls = GenerateViewpointModel(model);
-      yjsSyncLoader(operation.getModelingRoomName())
-        .done(function (y) {
+      yjsSync(operation.getModelingRoomName())
+        .then(function (y) {
           const dataMap = y.getMap("data");
           dataMap.set("metamodel", vls);
-          yjsSyncLoader(operation.getMetaModelingRoomName())
-            .done(function (y) {
-              const metaModelStatus = y.getMap("metaModelStatus");
-              metaModelStatus.set("uploaded", true);
-            })
-            .fail(() => {
-              const metaModelStatus = y.getMap("metaModelStatus");
-              metaModelStatus.set("error", true);
-            });
+
+          const metaModelStatus = y.getMap("metaModelStatus");
+          metaModelStatus.set("uploaded", true);
         })
         .fail(() => {
           const metaModelStatus = y.getMap("metaModelStatus");
@@ -956,13 +952,6 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
         canvas.resetTool();
       }
     });
-
-    // if (
-    //   CONFIG.TEST.CANVAS &&
-    //   (_iwcw.getUser()[CONFIG.NS.PERSON.TITLE] === CONFIG.TEST.USER ||
-    //     _iwcw.getUser()[CONFIG.NS.PERSON.MBOX] === CONFIG.TEST.EMAIL)
-    // )
-    //   CanvasWidgetTest(canvas);
 
     const canvasMap = y.getMap("canvas");
     canvasMap.observe(function (event) {
@@ -1358,7 +1347,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
       }
     }
     var nodes = EntityManager.getNodes();
-    for (nodeId in nodes) {
+    for (const nodeId in nodes) {
       if (nodes.hasOwnProperty(nodeId)) {
         var node = EntityManager.findNode(nodeId);
         //node.triggerDeletion();
@@ -1437,11 +1426,11 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
     .click(function () {
       canvas.get$node().removeClass("hide_type");
       $(this).hide();
-      $("#hidetype").show();
+      $("#hideType").show();
     })
     .hide();
 
-  $("#hidetype").click(function () {
+  $("#hideType").click(function () {
     canvas.get$node().addClass("hide_type");
     $(this).hide();
     $("#showtype").show();
@@ -1453,25 +1442,25 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
     $("#ViewCtrlContainer").show("fast");
   });
 
-  $("#zoomin").click(function () {
+  $("#zoomIn").click(function () {
     canvas.setZoom(canvas.getZoom() + 0.1);
   });
 
-  $("#zoomout").click(function () {
+  $("#zoomOut").click(function () {
     canvas.setZoom(canvas.getZoom() - 0.1);
   });
 
   $("#applyLayout").click(function () {
     const userMap = window.y.getMap("users");
     const canvasMap = window.y.getMap("canvas");
-    canvasMap.set("applyLayout", userMap.get(window.y.clientID));
+    canvasMap.set("applyLayout", userMap.get(window.y.clientID.toString()));
     const activityMap = window.y.getMap("activity");
     activityMap.set(
       "ApplyLayoutActivity",
       new ActivityOperation(
         "ApplyLayoutActivity",
         null,
-        userMap.get(window.y.clientID),
+        userMap.get(window.y.clientID.toString()),
         "..applied Layout"
       ).toJSON()
     );
@@ -1535,6 +1524,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
         var title = $("#space_title").val();
         var label = $("#space_label")
           .val()
+          .toString()
           .replace(/[^a-zA-Z]/g, "")
           .toLowerCase();
 

@@ -2568,7 +2568,7 @@ export class AbstractNode extends AbstractEntity {
       _isSelected = false;
       //this.highlight(_highlightColor,_highlightUsername);
       this._$node.removeClass("selected");
-      //tigger save when unselecting an entity
+      //trigger save when unselecting an entity
       EntityManagerInstance.storeDataYjs();
 
       Util.delay(100).then(function () {
@@ -2691,12 +2691,8 @@ export class AbstractNode extends AbstractEntity {
 
         _$node.css({ opacity: "" });
         _canvas.bindMoveToolEvents();
-        var offsetX = Math.round(
-          (params.el.offsetLeft - originalPos.left) 
-        );
-        var offsetY = Math.round(
-          (params.el.offsetTop - originalPos.top) 
-        );
+        var offsetX = Math.round(params.el.offsetLeft - originalPos.left);
+        var offsetY = Math.round(params.el.offsetTop - originalPos.top);
         // if offset is 0, no need to send the operation
         if (offsetX === 0 && offsetY === 0) return;
         // if offset bigger than canvas size, no need to send the operation
@@ -3748,10 +3744,10 @@ class EntityManager {
         return items;
       },
       /**
-       * generates the context menu for the show and hide opeations on node types
+       * generates the context menu for the show and hide operations on node types
        * @returns {object}
        */
-      generateVisibilityNodeMenu: function (visibilty) {
+      generateVisibilityNodeMenu: function (visibility) {
         var _applyVisibilityCallback = function (nodeType, vis) {
           return function () {
             if (vis !== "show" && vis !== "hide") return;
@@ -3806,14 +3802,14 @@ class EntityManager {
             )
               continue;
 
-            items[visibilty + nodeType] = {
+            items[visibility + nodeType] = {
               name: ".." + nodeType,
-              callback: _applyVisibilityCallback(nodeType, visibilty),
+              callback: _applyVisibilityCallback(nodeType, visibility),
               disabled: (function (nodeType) {
                 return function () {
-                  if (visibilty === "hide")
-                    return this.data(visibilty + nodeType + "Disabled");
-                  else return !this.data(visibilty + nodeType + "Disabled");
+                  if (visibility === "hide")
+                    return this.data(visibility + nodeType + "Disabled");
+                  else return !this.data(visibility + nodeType + "Disabled");
                 };
               })(nodeType),
             };
@@ -4174,13 +4170,13 @@ class EntityManager {
             createObjectNodes[id] = guidanceMetamodel.nodes[id];
 
             //Generate the 'entity node'
-            var entitylabel = guidancemodel.getEntityNodeLabelForType(
+            var entityLabel = guidancemodel.getEntityNodeLabelForType(
               node.label
             );
             createObjectNodeToEntityNodeRelation.targetTypes.push(label);
             id = Util.generateRandomId();
             guidanceMetamodel.nodes[id] = {
-              label: entitylabel,
+              label: entityLabel,
               attributes: {},
               shape: {
                 shape: "rectangle",
@@ -4232,12 +4228,12 @@ class EntityManager {
             //Define the 'create object node' to 'entity node' relation
             dataFlowEdgeRelations.push({
               sourceTypes: [label],
-              targetTypes: [entitylabel],
+              targetTypes: [entityLabel],
             });
 
             //Define the 'entity node' to 'set property node' relation
             dataFlowEdgeRelations.push({
-              sourceTypes: [entitylabel],
+              sourceTypes: [entityLabel],
               targetTypes: [setPropertyLabel],
             });
 
@@ -4251,7 +4247,7 @@ class EntityManager {
                   relation.targetTypes.indexOf(node.label) > -1
                 ) {
                   dataFlowEdgeRelations.push({
-                    sourceTypes: [entitylabel],
+                    sourceTypes: [entityLabel],
                     targetTypes:
                       guidancemodel.getCreateRelationshipNodeLabelForType(
                         edge.label
@@ -4301,13 +4297,13 @@ class EntityManager {
             createRelationshipNodes[id] = guidanceMetamodel.nodes[id];
 
             //Generate 'entity node'
-            var entitylabel = guidancemodel.getEntityNodeLabelForType(
+            var entityLabel = guidancemodel.getEntityNodeLabelForType(
               edge.label
             );
 
             var id = Util.generateRandomId();
             guidanceMetamodel.nodes[id] = {
-              label: entitylabel,
+              label: entityLabel,
               attributes: {},
               shape: {
                 shape: "rectangle",
@@ -4364,12 +4360,12 @@ class EntityManager {
             //Define the 'create relationship node' to 'entity node' relation
             dataFlowEdgeRelations.push({
               sourceTypes: [label],
-              targetTypes: [entitylabel],
+              targetTypes: [entityLabel],
             });
 
             //Define the 'entity node' to 'set property node' relation
             dataFlowEdgeRelations.push({
-              sourceTypes: [entitylabel],
+              sourceTypes: [entityLabel],
               targetTypes: [setPropertyLabel],
             });
           }
@@ -4735,7 +4731,7 @@ class EntityManager {
         return guidanceRules;
       },
       /**
-       * Generate the JSON Representation of the meta-model for a new editr instance based on the current graph
+       * Generate the JSON Representation of the meta-model for a new editor instance based on the current graph
        * @returns {{nodes: {}, edges: {}}} JSON representation of meta model
        */
       generateMetaModel: function () {

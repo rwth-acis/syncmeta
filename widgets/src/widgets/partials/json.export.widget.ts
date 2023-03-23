@@ -1,6 +1,6 @@
 import { LitElement, html, css, PropertyValueMap } from "lit";
 import { customElement } from "lit/decorators.js";
-import init from "../../js/shared";
+import init from "../../es6/shared";
 import { SyncMetaWidget } from "../../widget";
 import { CONFIG, getWidgetTagName } from "../../es6/config";
 import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";

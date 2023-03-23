@@ -1,6 +1,6 @@
 import { LitElement, html, css } from "lit";
 import { customElement } from "lit/decorators.js";
-import init from "../../js/shared";
+import init from "../../es6/shared";
 import { SyncMetaWidget } from "../../widget";
 import { CONFIG, getWidgetTagName } from "../../es6/config";
 // widget body used by all syncmeta widgets
@@ -18,7 +18,7 @@ export class IMSLDExportWidget extends SyncMetaWidget(
       <div style="font-size:3pt">&nbsp;</div>
       <div class="seperating_box">
         <h5>Integrated Learning Design Environment (ILDE)</h5>
-        <form id="ilde_login_form" class="nodisplay">
+        <form id="ilde_login_form" class="hide">
           <div>
             Please provide your ILDE credentials to use this feature. There are
             different installations of ILDE. Please provide the URL of
@@ -47,7 +47,7 @@ export class IMSLDExportWidget extends SyncMetaWidget(
             </tr>
           </table>
           <input type="submit" value="Login" />
-          <span class="error_notification nodisplay" style="color:red"> </span>
+          <span class="error_notification hide" style="color:red"> </span>
         </form>
         <div id="ilde_upload_form">
           <div id="createIldeDiv" class="">
@@ -68,7 +68,7 @@ export class IMSLDExportWidget extends SyncMetaWidget(
               value="Start ILDE Sync!"
             />
           </div>
-          <div id="syncIldeDiv" class="nodisplay">
+          <div id="syncIldeDiv" class="hide">
             <div>
               This design is now available also on ILDE:
               <a id="ildeLink" href="" target="_blank"></a>
@@ -81,15 +81,11 @@ export class IMSLDExportWidget extends SyncMetaWidget(
               type="submit"
               value="Unlink from ILDE"
             />
-            <span
-              id="success_notification"
-              class="nodisplay"
-              style="color:green"
-            >
+            <span id="success_notification" class="hide" style="color:green">
               Success!
             </span>
           </div>
-          <span class="error_notification nodisplay" style="color:red"> </span>
+          <span class="error_notification hide" style="color:red"> </span>
         </div>
       </div>
     `;
@@ -102,12 +98,10 @@ export class IMSLDExportWidget extends SyncMetaWidget(
       background-position: right center;
       padding-right: 20px;
     }
-    .nodisplay {
+    .hide {
       display: none;
     }
-    .inputreadonly {
-      background: grey;
-    }
+
     #ilde_login_form * {
       font-size: 12px;
     }

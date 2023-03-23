@@ -8,7 +8,7 @@ import { EntityManagerInstance as EntityManager } from "../../es6/canvas_widget/
 import { CONFIG, getWidgetTagName } from "../../es6/config";
 import { getGuidanceModeling } from "../../es6/Guidancemodel";
 import { yjsSync } from "../../es6/lib/yjs-sync";
-import init from "../../js/shared";
+import init from "../../es6/shared";
 import { SyncMetaWidget } from "../../widget";
 import { Text as YText, Map as YMap } from "yjs";
 // widget body used by all syncmeta widgets
@@ -17,6 +17,7 @@ export class DebugWidget extends SyncMetaWidget(
   LitElement,
   getWidgetTagName(CONFIG.WIDGET.NAME.DEBUG)
 ) {
+  widgetName = CONFIG.WIDGET.NAME.DEBUG;
   protected firstUpdated(
     _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
   ): void {
@@ -30,7 +31,7 @@ export class DebugWidget extends SyncMetaWidget(
       .then((y) => {
         const dataMap = y.getMap("data");
         console.info(
-          "DEBUG: Yjs suc cessfully initialized in room " +
+          "DEBUG: Yjs successfully initialized in room " +
             window.spaceTitle +
             " with y-user-id: " +
             y.clientID
@@ -64,7 +65,7 @@ export class DebugWidget extends SyncMetaWidget(
 
         var getFileContent = function () {
           var fileReader,
-            files = $fileObject[0].files,
+            files = ($fileObject[0] as HTMLInputElement).files,
             file,
             deferred = $.Deferred();
 
@@ -397,6 +398,15 @@ export class DebugWidget extends SyncMetaWidget(
         console.error(err);
         this.showErrorAlert("Cannot connect to Yjs server.");
       });
+  }
+
+  hideErrorAlert() {
+    $(this.widgetName).find("#alert-message").text("");
+    $(this.widgetName).find("error-alert").hide();
+  }
+  showErrorAlert(message: string) {
+    $(this.widgetName).find("#alert-message").text(message);
+    $(this.widgetName).find("error-alert").hide();
   }
 
   render() {
