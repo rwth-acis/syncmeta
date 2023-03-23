@@ -17,7 +17,7 @@ export class DebugWidget extends SyncMetaWidget(
   LitElement,
   getWidgetTagName(CONFIG.WIDGET.NAME.DEBUG)
 ) {
-  widgetName = CONFIG.WIDGET.NAME.DEBUG;
+  widgetName = getWidgetTagName(CONFIG.WIDGET.NAME.DEBUG);
   protected firstUpdated(
     _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
   ): void {

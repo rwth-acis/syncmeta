@@ -104,7 +104,6 @@ export class PaletteWidget extends SyncMetaWidget(
     return this;
   }
   hideErrorAlert() {
-    console.log($(this.widgetName).find("#alert-message"));
     $(this.widgetName).find("#alert-message").text("");
     $(this.widgetName).find("error-alert").hide();
   }
