@@ -90,135 +90,134 @@ const nodeHtml = await loadHTML(
  * @memberof attribute_widget
  * @constructor
  */
-function EntityManager() {
-  var metamodel = null;
+class EntityManager {
+  constructor() {
+    var metamodel = null;
 
-  var _layer = null;
+    var _layer = null;
 
-  /**
-   * Different node types
-   * @type {object}
-   */
-  var nodeTypes = {};
-  /**
-   * Different edge types
-   * @type {object}
-   */
-  var edgeTypes = {};
-  var relations = {};
+    /**
+     * Different node types
+     * @type {object}
+     */
+    var nodeTypes = {};
+    /**
+     * Different edge types
+     * @type {object}
+     */
+    var edgeTypes = {};
+    var relations = {};
 
-  var _initNodeTypes = function (vls) {
-    var nodes = vls.nodes,
-      node;
-    var _nodeTypes = {};
-    for (var nodeId in nodes) {
-      if (nodes.hasOwnProperty(nodeId)) {
-        node = nodes[nodeId];
-        if (
-          node.hasOwnProperty("targetName") &&
-          !$.isEmptyObject(nodeTypes) &&
-          nodeTypes.hasOwnProperty(node.targetName)
-        ) {
-          _nodeTypes[node.label] = ViewNode(
-            node.label,
-            node.attributes,
-            nodeTypes[node.targetName]
-          );
-          nodeTypes[node.targetName].VIEWTYPE = node.label;
-        } else {
-          _nodeTypes[node.label] = makeNode(
-            node.label,
-            node.shape.shape,
-            node.shape.customShape,
-            node.shape.customAnchors,
-            node.shape.color,
-            node.attributes
-          );
+    var _initNodeTypes = function (vls) {
+      var nodes = vls.nodes,
+        node;
+      var _nodeTypes = {};
+      for (var nodeId in nodes) {
+        if (nodes.hasOwnProperty(nodeId)) {
+          node = nodes[nodeId];
+          if (
+            node.hasOwnProperty("targetName") &&
+            !$.isEmptyObject(nodeTypes) &&
+            nodeTypes.hasOwnProperty(node.targetName)
+          ) {
+            _nodeTypes[node.label] = ViewNode(
+              node.label,
+              node.attributes,
+              nodeTypes[node.targetName]
+            );
+            nodeTypes[node.targetName].VIEWTYPE = node.label;
+          } else {
+            _nodeTypes[node.label] = makeNode(
+              node.label,
+              node.shape.shape,
+              node.shape.customShape,
+              node.shape.customAnchors,
+              node.shape.color,
+              node.attributes
+            );
+          }
         }
       }
-    }
-    return _nodeTypes;
-  };
-  var _initEdgeTypes = function (vls) {
-    var edges = vls.edges,
-      edge;
-    var _edgeTypes = {},
-      _relations = {};
-
-    for (var edgeId in edges) {
-      if (edges.hasOwnProperty(edgeId)) {
-        edge = edges[edgeId];
-        if (
-          edge.hasOwnProperty("targetName") &&
-          !$.isEmptyObject(edgeTypes) &&
-          edgeTypes.hasOwnProperty(edge.targetName)
-        ) {
-          _edgeTypes[edge.label] = ViewEdge(
-            edge.attributes,
-            edgeTypes[edge.targetName]
-          );
-          edgeTypes[edge.targetName].VIEWTYPE = edge.label;
-        } else {
-          _edgeTypes[edge.label] = makeEdge(
-            edge.label,
-            edge.shape.arrow,
-            edge.shape.shape,
-            edge.shape.color,
-            edge.shape.overlay,
-            edge.shape.overlayPosition,
-            edge.shape.overlayRotate,
-            edge.attributes
-          );
-        }
-        _relations[edge.label] = edge.relations;
-      }
-    }
-    return {
-      edgeTypes: _edgeTypes,
-      relations: _relations,
+      return _nodeTypes;
     };
-  };
+    var _initEdgeTypes = function (vls) {
+      var edges = vls.edges,
+        edge;
+      var _edgeTypes = {},
+        _relations = {};
 
-  /**
-   * Model attributes node
-   * @type {attribute_widget.ModelAttributesNode}
-   */
-  var _modelAttributesNode = null;
-  /**
-   * Nodes of the graph
-   * @type {{}}
-   */
-  var _nodes = {};
-  /**
-   * Edges of the graph
-   * @type {{}}
-   */
+      for (var edgeId in edges) {
+        if (edges.hasOwnProperty(edgeId)) {
+          edge = edges[edgeId];
+          if (
+            edge.hasOwnProperty("targetName") &&
+            !$.isEmptyObject(edgeTypes) &&
+            edgeTypes.hasOwnProperty(edge.targetName)
+          ) {
+            _edgeTypes[edge.label] = ViewEdge(
+              edge.attributes,
+              edgeTypes[edge.targetName]
+            );
+            edgeTypes[edge.targetName].VIEWTYPE = edge.label;
+          } else {
+            _edgeTypes[edge.label] = makeEdge(
+              edge.label,
+              edge.shape.arrow,
+              edge.shape.shape,
+              edge.shape.color,
+              edge.shape.overlay,
+              edge.shape.overlayPosition,
+              edge.shape.overlayRotate,
+              edge.attributes
+            );
+          }
+          _relations[edge.label] = edge.relations;
+        }
+      }
+      return {
+        edgeTypes: _edgeTypes,
+        relations: _relations,
+      };
+    };
 
-  var _map = {};
+    /**
+     * Model attributes node
+     * @type {attribute_widget.ModelAttributesNode}
+     */
+    var _modelAttributesNode = null;
+    /**
+     * Nodes of the graph
+     * @type {{}}
+     */
+    var _nodes = {};
+    /**
+     * Edges of the graph
+     * @type {{}}
+     */
 
-  /**
-   * the view id indicates if the EntityManager should use View types for modeling or node types
-   * @type {string}
-   * @private
-   */
-  var viewId = null;
+    var _map = {};
 
-  /**
-   * contains all view node types of the current view
-   * @type {{}}
-   */
-  var viewNodeTypes = {};
+    /**
+     * the view id indicates if the EntityManager should use View types for modeling or node types
+     * @type {string}
+     * @private
+     */
+    var viewId = null;
 
-  /**
-   * contains all view edge types of the current view
-   * @type {{}}
-   */
-  var viewEdgeTypes = {};
+    /**
+     * contains all view node types of the current view
+     * @type {{}}
+     */
+    var viewNodeTypes = {};
 
-  var _edges = {};
+    /**
+     * contains all view edge types of the current view
+     * @type {{}}
+     */
+    var viewEdgeTypes = {};
 
-  //noinspection JSUnusedGlobalSymbols
-  return {
+    var _edges = {};
+
     /**
      * Create a new node
      * @memberof attribute_widget.EntityManager#
@@ -231,7 +230,7 @@ function EntityManager() {
      * @param {object} json  the json representation of the node
      * @returns {attribute_widget.AbstractNode}
      */
-    createNode: function (
+    this.createNode = function (
       type,
       id,
       left,
@@ -250,12 +249,12 @@ function EntityManager() {
       }
       _nodes[id] = node;
       return node;
-    },
+    };
     /**
      * Create model Attributes node
      * @returns {attribute_widget.ModelAttributesNode}
      */
-    createModelAttributesNode: function () {
+    this.createModelAttributesNode = function () {
       if (_modelAttributesNode === null)
         if (metamodel)
           return new ModelAttributesNode(
@@ -264,36 +263,37 @@ function EntityManager() {
           );
         else return new ModelAttributesNode("modelAttributes", null);
       return null;
-    },
+    };
+
     /**
      * Find node by id
      * @memberof attribute_widget.EntityManager#
      * @param {string} id Entity id
      * @returns {attribute_widget.AbstractNode}
      */
-    findNode: function (id) {
+    this.findNode = function (id) {
       if (_nodes.hasOwnProperty(id)) {
         return _nodes[id];
       }
       return null;
-    },
+    };
     /**
      * Delete node by id
      * @memberof attribute_widget.EntityManager#
      * @param {string} id Entity id
      */
-    deleteNode: function (id) {
+    this.deleteNode = function (id) {
       if (_nodes.hasOwnProperty(id)) {
         delete _nodes[id];
       }
-    },
+    };
     /**
      * Get nodes by type
      * @memberof attribute_widget.EntityManager#
      * @param {string|string[]} type Entity type
      * @returns {object}
      */
-    getNodesByType: function (type) {
+    this.getNodesByType = function (type) {
       var nodeId,
         node,
         nodesByType = {};
@@ -311,14 +311,14 @@ function EntityManager() {
         }
       }
       return nodesByType;
-    },
+    };
     /**
      * Get edges by type
      * @memberof canvas_widget.EntityManager#
      * @param {string} type Entity type
      * @returns {object}
      */
-    getEdgesByType: function (type) {
+    this.getEdgesByType = function (type) {
       var edgeId,
         edge,
         edgesByType = {};
@@ -332,7 +332,7 @@ function EntityManager() {
         }
       }
       return edgesByType;
-    },
+    };
     /**
      * Create a new edge
      * @memberof attribute_widget.EntityManager#
@@ -342,7 +342,7 @@ function EntityManager() {
      * @param {attribute_widget.AbstractNode} target Target node
      * @returns {attribute_widget.AbstractEdge}
      */
-    createEdge: function (type, id, source, target) {
+    this.createEdge = function (type, id, source, target) {
       if (!source || !target) {
         throw new Error("Source or target node is not defined");
       }
@@ -358,45 +358,45 @@ function EntityManager() {
       _edges[id] = edge;
 
       return edge;
-    },
+    };
     /**
      * Find edge by id
      * @memberof attribute_widget.EntityManager#
      * @param {string} id Entity id
      * @returns {*}
      */
-    findEdge: function (id) {
+    this.findEdge = function (id) {
       if (_edges.hasOwnProperty(id)) {
         return _edges[id];
       }
       return null;
-    },
+    };
     /**
      * Delete edge by id
      * @memberof attribute_widget.EntityManager#
      * @param {string} id Entity id
      */
-    deleteEdge: function (id) {
+    this.deleteEdge = function (id) {
       if (_edges.hasOwnProperty(id)) {
         delete _edges[id];
       }
-    },
+    };
     /**
      * Find node or edge by id
      * @memberof attribute_widget.EntityManager#
      * @param {string} id Entity id
      * @returns {*}
      */
-    find: function (id) {
+    this.find = function (id) {
       return this.findNode(id) || this.findEdge(id);
-    },
+    };
     /**
      * Create model attributes node by its JSON representation
      * @memberof attribute_widget.EntityManager#
      * @param {object} json JSON representation
      * @returns {attribute_widget.AbstractNode}
      */
-    createModelAttributesNodeFromJSON: function (json) {
+    this.createModelAttributesNodeFromJSON = function (json) {
       var node = this.createModelAttributesNode();
       if (node) {
         node.getLabel().getValue().setValue(json.label.value.value);
@@ -410,7 +410,7 @@ function EntityManager() {
         }
       }
       return node;
-    },
+    };
     /**
      * Create a new node by its JSON representation
      * @memberof attribute_widget.EntityManager
@@ -423,7 +423,7 @@ function EntityManager() {
      * @param {object} json JSON representation
      * @returns {attribute_widget.AbstractNode}
      */
-    createNodeFromJSON: function (
+    this.createNodeFromJSON = function (
       type,
       id,
       left,
@@ -471,7 +471,7 @@ function EntityManager() {
       }
 
       return node;
-    },
+    };
     /**
      * Create a new node by its JSON representation
      * @memberof attribute_widget.EntityManager#
@@ -482,7 +482,7 @@ function EntityManager() {
      * @param {object} json JSON representation
      * @returns {attribute_widget.AbstractEdge}
      */
-    createEdgeFromJSON: function (type, id, sourceId, targetId, json) {
+    this.createEdgeFromJSON = function (type, id, sourceId, targetId, json) {
       const sourceNode = this.findNode(sourceId);
       const targetNode = this.findNode(targetId);
       var edge = this.createEdge(type, id, sourceNode, targetNode, viewId);
@@ -505,14 +505,14 @@ function EntityManager() {
         }
       }
       return edge;
-    },
+    };
     /**
      * Sets a attribute by its name
      * @param attributeList the attribute list
      * @param name the name of attribute in the attribute list
      * @param value the value
      */
-    setAttributesByName: function (attributeList, name, value) {
+    this.setAttributesByName = (attributeList, name, value) => {
       for (var key in attributeList) {
         if (
           attributeList.hasOwnProperty(key) &&
@@ -522,12 +522,12 @@ function EntityManager() {
           break;
         }
       }
-    },
+    };
     /**
      * Generate the 'This node can be connected to..' hint for the passed node
      * @param {attribute_widget.AbstractNode} node
      */
-    generateConnectToText: function (node) {
+    this.generateConnectToText = (node) => {
       function mapTargetNodeItems(e) {
         return "<i>" + e + "</i>";
       }
@@ -618,52 +618,54 @@ function EntityManager() {
       } else {
         return "";
       }
-    },
+    };
     /**
      * initializes the node types
      * @param vls the vls
      */
-    initNodeTypes: function (vls) {
+    this.initNodeTypes = (vls) => {
       nodeTypes = _initNodeTypes(vls);
-    },
+    };
     /**
      * initializes the edge types
      * @param vls the vls
      */
-    initEdgeTypes: function (vls) {
+    this.initEdgeTypes = function (vls) {
       var res = _initEdgeTypes(vls);
       edgeTypes = res.edgeTypes;
       relations = res.relations;
-    },
+    };
     /**
      * initializes both the node and edge types
      * @param vls the vls
      */
-    initModelTypes: function (vls) {
+    this.initModelTypes = function (vls) {
       this.initNodeTypes(vls);
       this.initEdgeTypes(vls);
-    },
+    };
     /**
      * Get the node type by its name
      * @param type the name of the node type
      * @returns {object}
      */
-    getNodeType: function (type) {
+    this.getNodeType = function (type) {
       return nodeTypes.hasOwnProperty(type) ? nodeTypes[type] : null;
-    },
+    };
+
     /**
      * Get the edge type bt its name
      * @param {string} type the name of the edge type
      * @returns {*}
      */
-    getEdgeType: function (type) {
+    this.getEdgeType = function (type) {
       return edgeTypes.hasOwnProperty(type) ? edgeTypes[type] : null;
-    },
+    };
+
     /**
      * initializes the node types of a view
      * @param vvs
      */
-    initViewNodeTypes: function (vvs) {
+    this.initViewNodeTypes = function (vvs) {
       //delete the old view type references
       for (var nodeTypeName in nodeTypes) {
         if (nodeTypes.hasOwnProperty(nodeTypeName)) {
@@ -672,12 +674,12 @@ function EntityManager() {
       }
       //initialize the new
       viewNodeTypes = _initNodeTypes(vvs);
-    },
+    };
     /**
      * initializes the edge types of a view
      * @param vvs
      */
-    initViewEdgeTypes: function (vvs) {
+    this.initViewEdgeTypes = function (vvs) {
       //delete the old view type references
       for (var edgeTypeName in edgeTypes) {
         if (edgeTypes.hasOwnProperty(edgeTypeName)) {
@@ -688,50 +690,50 @@ function EntityManager() {
       var res = _initEdgeTypes(vvs);
       viewEdgeTypes = res.edgeTypes;
       relations = res.relations;
-    },
+    };
     /**
      * initializes the node and edge types of view
      * @param vvs
      */
-    initViewTypes: function (vvs) {
+    this.initViewTypes = function (vvs) {
       this.setViewId(vvs.id);
       this.initViewNodeTypes(vvs);
       this.initViewEdgeTypes(vvs);
-    },
+    };
     /**
      * get a view node type
      * @param {string} type the name of the view type
      * @returns {*}
      */
-    getViewNodeType: function (type) {
+    this.getViewNodeType = function (type) {
       return viewNodeTypes.hasOwnProperty(type) ? viewNodeTypes[type] : null;
-    },
+    };
     /**
      * get a view edge type
      * @param {string} type the name of the view edge type
      * @returns {*}
      */
-    getViewEdgeType: function (type) {
+    this.getViewEdgeType = function (type) {
       return viewEdgeTypes.hasOwnProperty(type) ? viewEdgeTypes[type] : null;
-    },
+    };
     /**
      * set the identifier of the view
      * @param {string} id
      */
-    setViewId: function (id) {
+    this.setViewId = function (id) {
       viewId = id;
-    },
+    };
     /**
      * get the identifier of the view
      * @returns {*}
      */
-    getViewId: function () {
+    this.getViewId = function () {
       return viewId;
-    },
-    getLayer: function () {
+    };
+    this.getLayer = function () {
       return _layer;
-    },
-    init: function (mm) {
+    };
+    this.init = function (mm) {
       console.log("init model types for attribute widget");
       metamodel = mm;
       if (metamodel && metamodel.hasOwnProperty("nodes")) {
@@ -766,14 +768,14 @@ function EntityManager() {
         relations[UniDirAssociationEdge.TYPE] = UniDirAssociationEdge.RELATIONS;
         relations[GeneralisationEdge.TYPE] = GeneralisationEdge.RELATIONS;
       }
-    },
-    getEdges: function () {
+    };
+    this.getEdges = function () {
       return _edges;
-    },
-    getNodes: function () {
+    };
+    this.getNodes = function () {
       return _nodes;
-    },
-  };
+    };
+  }
 }
 
 export const EntityManagerInstance = new EntityManager();
