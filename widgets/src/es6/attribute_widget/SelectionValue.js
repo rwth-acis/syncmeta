@@ -24,24 +24,17 @@ const selectionValueHtml = await loadHTML(
  * @param {Object} options Selection options
  * @constructor
  */
-class SelectionValue extends AbstractValue{
+export class SelectionValue extends AbstractValue {
   constructor(id, name, subjectEntity, rootSubjectEntity, options) {
-
-    super(
-      id,
-      name,
-      subjectEntity,
-      rootSubjectEntity
-    );
+    super(id, name, subjectEntity, rootSubjectEntity);
     var that = this;
-
 
     /**
      * Value
      * @type {string}
      * @private
      */
-    var _value = _.keys(options)[0];
+    var _value = Object.keys(options)[0];
 
     /**
      * jQuery object of DOM node representing the node
@@ -68,9 +61,6 @@ class SelectionValue extends AbstractValue{
      * @param {bool} fromCallback determines if the method is called from the callback or not
      */
     var processValueChangeOperation = function (operation, fromCallback) {
-      if (operation.triggeredBy === window.y.clientID) {
-        return;
-      }
       that.setValue(operation.getValue());
     };
 
@@ -152,7 +142,7 @@ class SelectionValue extends AbstractValue{
           });
       }
       _value = value;
-      _$node.val(value).change();
+      _$node.val(value);
     };
 
     /**
