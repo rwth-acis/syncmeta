@@ -9,9 +9,9 @@ import "@polymer/paper-button/paper-button.js";
 
 import { Common } from "./common";
 import Static from "./static";
-import * as IWC from "../../widgets/src/es6/lib/iwc";
+import * as IWC from "../../src/es6/lib/iwc";
 
-import "../../widgets";
+import "../../index";
 
 const routes = [
   {
