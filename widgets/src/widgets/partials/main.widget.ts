@@ -189,9 +189,8 @@ export class CanvasWidget extends SyncMetaWidget(
           max-width: none !important;
           max-height: none !important;
           border-radius: 6px;
-          background-color: #e2e2e2;
           position: relative !important; /*important because jsplumb will position according to this*/
-          background-image: none !important;
+          background-image: url("../images/grid.png");
           opacity: 1 !important;
         }
         #canvas.tool-move {
