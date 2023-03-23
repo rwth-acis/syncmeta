@@ -1,17 +1,17 @@
 import { LitElement, html } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators";
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
 import { Router } from "@vaadin/router";
-import "@polymer/paper-input/paper-input.js";
+import "@polymer/paper-input/paper-input";
 import "las2peer-frontend-statusbar/las2peer-frontend-statusbar.js";
-import "@polymer/paper-button/paper-button.js";
+import "@polymer/paper-button";
 
 import { Common } from "./common";
 import Static from "./static";
-import * as IWC from "../../widgets/src/es6/lib/iwc";
+import * as IWC from "../../src/es6/lib/iwc";
 
-import "../../widgets";
+import "../../index";
 
 const routes = [
   {
