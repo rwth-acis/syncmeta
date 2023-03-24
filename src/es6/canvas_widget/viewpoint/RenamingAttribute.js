@@ -3,7 +3,7 @@ import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"
 import _ from "lodash-es";
 import AbstractAttribute from "../AbstractAttribute";
 import Value from "../Value";
-import SelectionValue from "../SelectionValue";
+import { SelectionValue } from "../Manager";
 import loadHTML from "../../html.template.loader";
 
 const renamingAttrHTML = await loadHTML(
