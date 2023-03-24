@@ -1,4 +1,3 @@
-import { YEvent } from "yjs";
 /**
  * Function to check if the event was triggered by the current user
  * @param {YEvent} yEvent YEvent
