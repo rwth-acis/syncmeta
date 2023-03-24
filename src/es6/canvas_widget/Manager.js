@@ -39,7 +39,6 @@ import { default as FileAttribute } from "./FileAttribute";
 import KeySelectionValueSelectionValueListAttribute from "./KeySelectionValueSelectionValueListAttribute";
 import QuizAttribute from "./QuizAttribute";
 import { default as SingleMultiLineValueAttribute } from "./SingleMultiLineValueAttribute";
-import { default as SingleSelectionAttribute } from "./SingleSelectionAttribute";
 import { default as SingleValueAttribute } from "./SingleValueAttribute";
 import SingleValueListAttribute from "./SingleValueListAttribute";
 import ViewEdge from "./view/ViewEdge";
@@ -49,6 +48,11 @@ import LogicalConjunctions from "./viewpoint/LogicalConjunctions";
 import LogicalOperator from "./viewpoint/LogicalOperator";
 import RenamingListAttribute from "./viewpoint/RenamingListAttribute";
 import ViewTypesUtil from "./viewpoint/ViewTypesUtil";
+
+const singleSelectionAttributeHtml = await loadHTML(
+  "../../templates/canvas_widget/single_selection_attribute.html",
+  import.meta.url
+);
 
 const singleColorValueAttributeHtml = await loadHTML(
   "../../templates/canvas_widget/single_value_attribute.html",
@@ -7850,6 +7854,109 @@ export class IntegerAttribute extends AbstractAttribute {
         _$node.find(".val").attr("disabled", "true");
       }
     }
+  }
+}
+
+/**
+ * SingleSelectionAttribute
+ * @class canvas_widget.SingleSelectionAttribute
+ * @extends canvas_widget.AbstractAttribute
+ * @memberof canvas_widget
+ * @constructor
+ * @param {string} id Entity id
+ * @param {string} name Name of attribute
+ * @param {canvas_widget.AbstractEntity} subjectEntity Entity the attribute is assigned to
+ * @param {Object} options Selection options as key value object
+ */
+
+export class SingleSelectionAttribute extends AbstractAttribute {
+  constructor(id, name, subjectEntity, options, useAttributeHtml) {
+    super(id, name, subjectEntity);
+    useAttributeHtml =
+      typeof useAttributeHtml !== "undefinded" ? useAttributeHtml : false;
+    var that = this;
+    /***
+     * Value object of value
+     * @type {canvas_widget.SelectionValue}
+     * @private
+     */
+    var _value = new SelectionValue(
+      id,
+      name,
+      this,
+      this.getRootSubjectEntity(),
+      options,
+      useAttributeHtml
+    );
+
+    /**
+     * jQuery object of DOM node representing the node
+     * @type {jQuery}
+     * @private
+     */
+    var _$node = $(_.template(singleSelectionAttributeHtml)());
+
+    /**
+     * Set Value object of value
+     * @param {canvas_widget.SelectionValue} value
+     */
+    this.setValue = function (value) {
+      _value = value;
+      _$node.val(value);
+    };
+
+    /**
+     * Get Value object of value
+     * @return {canvas_widget.SelectionValue} value
+     */
+    this.getValue = function () {
+      return _value;
+    };
+
+    /**
+     * jQuery object of DOM node representing the attribute
+     * @type {jQuery}
+     * @private
+     */
+    this.get$node = function () {
+      return _$node;
+    };
+
+    /**
+     * Get the options object for the Attribute
+     * @returns {Object}
+     */
+    this.getOptionValue = function () {
+      return options.hasOwnProperty(_value.getValue())
+        ? options[_value.getValue()]
+        : null;
+    };
+
+    /**
+     * Get JSON representation of the attribute
+     * @returns {Object}
+     */
+    this.toJSON = function () {
+      var json = AbstractAttribute.prototype.toJSON.call(this);
+      json.value = _value.toJSON();
+      json.option = that.getOptionValue();
+      return json;
+    };
+
+    this.getOptions = function () {
+      return options;
+    };
+
+    /**
+     * Set attribute value by its JSON representation
+     * @param {Object} json
+     */
+    this.setValueFromJSON = function (json) {
+      _value.setValueFromJSON(json.value);
+    };
+
+    _$node.find(".name").text(this.getName());
+    _$node.find(".value").append(_value.get$node());
   }
 }
 
