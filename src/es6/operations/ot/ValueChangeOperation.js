@@ -36,6 +36,7 @@ class ValueChangeOperation extends EntityOperation {
     jabberId = null,
     fromView = null
   ) {
+    if (!entityId) throw new Error("Entity id is required");
     super(
       EntityOperation.TYPES.ValueChangeOperation,
       entityId,

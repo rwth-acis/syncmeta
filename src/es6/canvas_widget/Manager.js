@@ -1644,7 +1644,7 @@ export class AbstractNode extends AbstractEntity {
     var _$node = $(_.template(abstractNodeHtml)({ id: id }));
     this._$node = _$node;
     const resizeHandle = $(
-      `<div class="resize-handle p-1"><i class="bi bi-aspect-ratio" style="font-size:3em;"></i></div>`
+      `<div class="resize-handle"><i class="bi bi-aspect-ratio" style="font-size:2rem;"></i></div>`
     );
     resizeHandle.css({
       position: "absolute",
@@ -7730,12 +7730,15 @@ export class SelectionValue extends AbstractValue {
         .observe(function (event) {
           const array = Array.from(event.changes.keys.entries());
           array.forEach(([key, change]) => {
+            const updated = event.currentTarget.get(key);
+            if (change.action !== "update" || updated?.type !== "update")
+              return;
             var operation = new ValueChangeOperation(
-              event.entityId,
-              event.value,
-              event.type,
-              event.position,
-              event.jabberId
+              updated.entityId,
+              updated.value,
+              updated.type,
+              updated.position,
+              updated.jabberId
             );
             _iwcw.sendLocalOTOperation(
               CONFIG.WIDGET.NAME.GUIDANCE,
@@ -7775,7 +7778,7 @@ export class SelectionValue extends AbstractValue {
               );
 
               //its a view type and create a reference to the origin
-              if (event.entityId.indexOf("[target]") != -1) {
+              if (updated.entityId.indexOf("[target]") != -1) {
                 ViewTypesUtil.createReferenceToOrigin(
                   that.getRootSubjectEntity()
                 );

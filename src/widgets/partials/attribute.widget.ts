@@ -385,12 +385,7 @@ function JSONToGraph(json, wrapper) {
       if (!node) {
         throw new Error("Node could not be created from JSON");
       }
-      if ("registerYMap" in node) {
-        // this fixes #93. For some reason, the attributes of EnumNode are not initialized
-        // when calling registerYType. Since registerYMap also internally call registerYType this
-        // fix should not break anything.
-        node.registerYMap();
-      } else {
+      if ("registerYType" in node) {
         node.registerYType();
       }
       node.addToWrapper(wrapper);
