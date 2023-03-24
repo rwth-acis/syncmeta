@@ -9,7 +9,7 @@ import SelectionValue from "./SelectionValue";
 import loadHTML from "../html.template.loader";
 import { CONFIG } from "../config";
 import { AttributeDeleteOperation } from "../operations/ot/EntityOperation";
-import { EntityManagerInstance } from "../canvas_widget/Manager";
+
 const keySelectionValueAttributeHtml = await loadHTML(
   "../../templates/attribute_widget/key_value_attribute.html",
   import.meta.url
@@ -89,7 +89,6 @@ class KeySelectionValueAttribute extends AbstractAttribute {
         CONFIG.WIDGET.NAME.MAIN,
         operation.getOTOperation()
       );
-      EntityManagerInstance.storeDataYjs();
     };
 
     /**

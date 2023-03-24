@@ -3,7 +3,7 @@ import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"
 import _ from "lodash-es";
 import { SingleSelectionAttribute } from "../Manager";
 import { RenamingListAttribute } from "../Manager";
-import ConditionListAttribute from "./ConditionListAttribute";
+import { ConditionListAttribute } from "../Manager";
 import ViewTypesUtil from "./ViewTypesUtil";
 import LogicalOperator from "./LogicalOperator";
 import LogicalConjunctions from "./LogicalConjunctions";
