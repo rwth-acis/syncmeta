@@ -7,7 +7,6 @@ import "https://cdnjs.cloudflare.com/ajax/libs/graphlib/2.1.8/graphlib.min.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.9.2/jquery.contextMenu.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
-import "../lib/jquery/jquery.autoGrowInput";
 import interact from "interactjs";
 import { default as _ } from "lodash-es";
 import { Map as YMap, Text as YText } from "yjs";
@@ -15,6 +14,7 @@ import { CONFIG } from "../config";
 import { getQuerySelectorFromNode } from "../getQuerySelectorFromNode";
 import { default as loadHTML } from "../html.template.loader";
 import { default as IWCW } from "../lib/IWCWrapper";
+import "../lib/jquery/jquery.autoGrowInput";
 import { OpenAppProvider } from "../lib/openapp";
 import { default as ActivityOperation } from "../operations/non_ot/ActivityOperation";
 import {
@@ -34,7 +34,6 @@ import { default as AbstractValue } from "./AbstractValue";
 import Arrows from "./Arrows";
 import { default as BooleanAttribute } from "./BooleanAttribute";
 import { default as FileAttribute } from "./FileAttribute";
-import { default as IntegerAttribute } from "./IntegerAttribute";
 import { default as KeySelectionValueListAttribute } from "./KeySelectionValueListAttribute";
 import KeySelectionValueSelectionValueListAttribute from "./KeySelectionValueSelectionValueListAttribute";
 import QuizAttribute from "./QuizAttribute";
@@ -50,6 +49,11 @@ import LogicalConjunctions from "./viewpoint/LogicalConjunctions";
 import LogicalOperator from "./viewpoint/LogicalOperator";
 import RenamingListAttribute from "./viewpoint/RenamingListAttribute";
 import ViewTypesUtil from "./viewpoint/ViewTypesUtil";
+
+const integerAttributeHtml = await loadHTML(
+  "../../templates/attribute_widget/integer_attribute.html",
+  import.meta.url
+);
 
 let integerValueHtml = await loadHTML(
   "../../templates/canvas_widget/integer_value.html",
@@ -7745,6 +7749,88 @@ export class SelectionValue extends AbstractValue {
           });
         });
     };
+  }
+}
+
+/**
+ * IntegerAttribute
+ * @class attribute_widget.IntegerAttribute
+ * @memberof attribute_widget
+ * @extends attribute_widget.AbstractAttribute
+ * @constructor
+ * @param {string} id Entity id
+ * @param {string} name Name of attribute
+ * @param {attribute_widget.AbstractEntity} subjectEntity Entity the attribute is assigned to
+ * @param {Object} options Selection options as key value object
+ */
+export class IntegerAttribute extends AbstractAttribute {
+  constructor(id, name, subjectEntity, options) {
+    super(id, name, subjectEntity);
+
+    /***
+     * Value object of value
+     * @type {attribute_widget.IntegerValue}
+     * @private
+     */
+    var _value = new IntegerValue(
+      id,
+      name,
+      this,
+      this.getRootSubjectEntity(),
+      options
+    );
+
+    /**
+     * jQuery object of DOM node representing the node
+     * @type {jQuery}
+     * @private
+     */
+    var _$node = $(_.template(integerAttributeHtml)());
+
+    /**
+     * Set Value object of value
+     * @param {attribute_widget.IntegerValue} value
+     */
+    this.setValue = function (value) {
+      _value = value;
+    };
+
+    /**
+     * Get Value object of value
+     * @return {attribute_widget.IntegerValue} value
+     */
+    this.getValue = function () {
+      return _value;
+    };
+
+    /**
+     * jQuery object of DOM node representing the attribute
+     * @type {jQuery}
+     * @private
+     */
+    this.get$node = function () {
+      return _$node;
+    };
+
+    /**
+     * Set attribute value by its JSON representation
+     * @param {Object} json
+     */
+    this.setValueFromJSON = function (json) {
+      _value.setValueFromJSON(json.value);
+    };
+
+    _$node.find(".attribute_name").text(this.getName());
+    _$node.find(".attribute_value").append(_value.get$node());
+
+    // check if view only mode is enabled for the property browser
+    // because then the input fields should be disabled
+    if (window.hasOwnProperty("y")) {
+      const widgetConfigMap = y.getMap("widgetConfig");
+      if (widgetConfigMap.get("view_only_property_browser")) {
+        _$node.find(".val").attr("disabled", "true");
+      }
+    }
   }
 }
 
