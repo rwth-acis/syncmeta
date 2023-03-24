@@ -5,7 +5,7 @@ import _ from "lodash-es";
 import IWCW from "../../lib/IWCWrapper";
 
 import AbstractAttribute from "../AbstractAttribute";
-import RenamingAttribute from "./RenamingAttribute";
+import { RenamingAttribute } from "../Manager";
 import loadHTML from "../../html.template.loader";
 import {
   AttributeAddOperation,
