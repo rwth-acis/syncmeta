@@ -2,7 +2,7 @@ import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import _ from "lodash-es";
 import AbstractAttribute from "./AbstractAttribute";
-import Value from "./Value";
+import { Value } from "./Manager";
 import loadHTML from "../html.template.loader";
 const singleQuizAttributeHtml = await loadHTML(
   "../../templates/canvas_widget/single_quiz_attribute.html",
