@@ -3,7 +3,7 @@ import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"
 import _ from "lodash-es";
 import SingleValueAttribute from "../SingleValueAttribute";
 import SingleSelectionAttribute from "../SingleSelectionAttribute";
-import IntegerAttribute from "../IntegerAttribute";
+import { IntegerAttribute } from "../Manager";
 import BooleanAttribute from "../BooleanAttribute";
 import FileAttribute from "../FileAttribute";
 import loadHTML from "../../html.template.loader";
