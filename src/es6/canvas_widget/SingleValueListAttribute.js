@@ -5,7 +5,7 @@ import _ from "lodash-es";
 import IWCW from "../lib/IWCWrapper";
 
 import AbstractAttribute from "./AbstractAttribute";
-import SingleValueAttribute from "./SingleValueAttribute";
+import { SingleValueAttribute } from "./Manager";
 import loadHTML from "../html.template.loader";
 import {
   AttributeAddOperation,
