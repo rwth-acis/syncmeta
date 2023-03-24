@@ -154,7 +154,7 @@ class IntegerValue extends AbstractValue {
     };
 
     this.setValueFromJSON = function (json) {
-      this.setValue(json.value);
+      this.setValue(json?.value);
     };
 
     init();

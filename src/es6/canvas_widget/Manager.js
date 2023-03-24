@@ -8092,7 +8092,7 @@ export class IntegerValue extends AbstractValue {
      * @param json
      */
     this.setValueFromJSON = function (json) {
-      this.setValue(json.value);
+      this.setValue(json?.value);
     };
 
     this.registerYType = function () {
