@@ -5,6 +5,8 @@ import commonjs from "@rollup/plugin-commonjs";
 import { replaceHtml } from "./replace.html.js";
 import css from "rollup-plugin-import-css";
 import terser from "@rollup/plugin-terser";
+import url from "postcss-url";
+import postcss from "rollup-plugin-postcss";
 
 // dependencies which are not bundled
 const externalDependencies = [
@@ -218,13 +220,18 @@ export default [
     plugins: [
       replaceHtml(),
       typescript(),
-      css(),
+      postcss({
+        plugins: [
+          url({
+            url: "inline", // enable inline assets using base64 encoding
+          }),
+        ],
+      }),
       nodeResolve({ browser: true }),
       commonjs({
         include: [/node_modules/, "./src/main.widget.ts"],
         extensions: [".js", ".ts"],
       }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
-      // css(),
     ],
     watch: {
       include: "src/**",

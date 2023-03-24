@@ -7,6 +7,8 @@ import commonjs from "@rollup/plugin-commonjs";
 import { replaceHtml } from "./replace.html.js";
 import css from "rollup-plugin-import-css";
 import terser from "@rollup/plugin-terser";
+import url from "postcss-url";
+import postcss from "rollup-plugin-postcss";
 
 // dependencies which are not bundled
 const externalDependencies = [
@@ -35,6 +37,13 @@ export default [
       replaceHtml(),
       typescript(),
       css(),
+      postcss({
+        plugins: [
+          url({
+            url: "inline", // enable inline assets using base64 encoding
+          }),
+        ],
+      }),
       nodeResolve({ browser: true }),
       commonjs({
         include: [/node_modules/],
