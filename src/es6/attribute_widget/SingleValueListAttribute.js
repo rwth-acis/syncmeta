@@ -226,15 +226,6 @@ class SingleValueListAttribute extends AbstractAttribute {
         if (key.indexOf("[value]") != -1) {
           switch (change.action) {
             case "add": {
-              const jabberId = event.currentTarget.get("jabberId");
-              if (
-                jabberId ===
-                IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE).getUser()[
-                  CONFIG.NS.PERSON.JABBERID
-                ]
-              ) {
-                return;
-              }
               const operation = new AttributeAddOperation(
                 key.replace(/\[\w*\]/g, ""),
                 that.getEntityId(),
