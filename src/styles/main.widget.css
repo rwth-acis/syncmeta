@@ -120,6 +120,7 @@ div.simple_node div.label {
     width: 100%;
     height: 100%;
     position: relative;
+    background-color: #afafaf;
 }
 
 #canvas {
@@ -131,7 +132,10 @@ div.simple_node div.label {
     position: relative !important;
     /*important because jsplumb will position according to this*/
     background-image: url(../images/grid.png);
+    background-repeat: round;
     opacity: 1 !important;
+    border-radius: 20px;
+        border: 10px solid #000000;
 }
 
 #canvas.tool-move {
