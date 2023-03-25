@@ -9639,6 +9639,7 @@ export class KeySelectionValueSelectionValueListAttribute extends AbstractAttrib
       that.addAttribute(attribute);
       if (_$node.find(".list").find("#" + attribute.getEntityId()).length == 0)
         _$node.find(".list").append(attribute.get$node());
+      EntityManagerInstance.storeDataYjs();
     };
 
     /**
@@ -9651,6 +9652,7 @@ export class KeySelectionValueSelectionValueListAttribute extends AbstractAttrib
         that.deleteAttribute(attribute.getEntityId());
         attribute.get$node().remove();
       }
+      EntityManagerInstance.storeDataYjs();
     };
 
     /**
