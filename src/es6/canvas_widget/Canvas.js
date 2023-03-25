@@ -130,6 +130,7 @@ export default class Canvas extends AbstractCanvas {
       connectionsDetachable: false,
       dragOptions: {
         filter: ".resizing",
+        containment: "parentEnclosed",
       },
     });
 
