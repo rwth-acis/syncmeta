@@ -1,5 +1,5 @@
 import { LitElement, html } from "lit";
-import { customElement, property } from "lit/decorators";
+import { customElement, property } from "lit/decorators.js";
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
 import { Router } from "@vaadin/router";
@@ -11,7 +11,7 @@ import { Common } from "./common";
 import Static from "./static";
 import * as IWC from "../../src/es6/lib/iwc";
 
-import "../../index";
+import "../../index.js";
 
 const routes = [
   {
