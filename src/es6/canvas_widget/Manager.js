@@ -7727,11 +7727,15 @@ export class SelectionValue extends AbstractValue {
       that
         .getRootSubjectEntity()
         .getYMap()
-        .observe(function (event) {
+        .observeDeep(function ([event]) {
           const array = Array.from(event.changes.keys.entries());
           array.forEach(([key, change]) => {
             const updated = event.currentTarget.get(key);
-            if (change.action !== "update" || updated?.type !== "update")
+            if (
+              change.action !== "update" ||
+              updated?.type !== "update" ||
+              !(updated?.entityId === that.getEntityId())
+            )
               return;
             var operation = new ValueChangeOperation(
               updated.entityId,
@@ -9566,7 +9570,6 @@ export class RenamingAttribute extends AbstractAttribute {
   }
 }
 
-
 /**
  * KeySelectionValueSelectionValueListAttribute
  * @class canvas_widget.KeySelectionValueSelectionValueListAttribute
@@ -9902,7 +9905,6 @@ export class KeySelectionValueSelectionValueListAttribute extends AbstractAttrib
     };
   }
 }
-
 
 /**
  * RenamingListAttribute
@@ -10910,12 +10912,10 @@ export class KeySelectionValueListAttribute extends AbstractAttribute {
       }
 
       ymap.observe(function (event) {
-        const changedKeys = event.keysChanged;
         const array = Array.from(event.changes.keys.entries());
         array.forEach(([key, change]) => {
           if (key.indexOf("[key]") != -1) {
             var operation;
-            var data = event.currentTarget.get(key);
             switch (change.action) {
               case "add": {
                 //  var yUserId = event.object.map[key][0];
