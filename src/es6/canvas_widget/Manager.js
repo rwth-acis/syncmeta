@@ -8538,9 +8538,9 @@ export class SingleValueListAttribute extends AbstractAttribute {
           if (key.indexOf("[value]") != -1) {
             switch (change.action) {
               case "add": {
-                const jabberId = event.target.get("jabberId");
-                if (jabberId === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
+                if (event.currentTarget.get("modifiedBy") === window.y.clientID)
                   return;
+
                 operation = new AttributeAddOperation(
                   key.replace(/\[\w*\]/g, ""),
                   that.getEntityId(),
@@ -8599,6 +8599,7 @@ export class Value extends AbstractValue {
         _ytext = new YText();
         rootSubjectEntity.getYMap().set(id, _ytext);
       }
+      rootSubjectEntity.getYMap().set("modifiedBy", window.y.clientID);
     }
     super(id, name, subjectEntity, rootSubjectEntity);
     var that = this;
@@ -8676,71 +8677,38 @@ export class Value extends AbstractValue {
     };
 
     this.registerYType = function () {
-      _$node.on("input", function () {
-        if (_ytext) {
-          if (_$node.val() !== _ytext.toString()) {
-            if (_ytext.toString().length > 0)
-              _ytext.delete(0, _ytext.toString().length);
-            _ytext.insert(0, _$node.val());
-          }
-        }
-      });
-      // _ytext.bind(_$node[0]);
-      if (that.getValue() !== _ytext.toString()) {
-        if (_ytext.toString().length > 0)
-          _ytext.delete(0, _ytext.toString().length - 1);
-        _ytext.insert(0, that.getValue());
-      }
-      _ytext.observe(function (event) {
-        _value = _ytext.toString().replace(/\n/g, "");
-        that.setValue(_value);
-      });
-
       _ytext.observe(
         _.debounce(function (event) {
-          event.keysChanged.forEach((key) => {
-            if (key !== "delete") {
-              const userMap = y.getMap("users");
-              var jabberId = userMap.get(
-                event.object._content[event.index].id[0]
-              );
-              if (jabberId === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]) {
-                EntityManagerInstance.storeDataYjs();
+          _value = _ytext.toString().replace(/\n/g, "");
+          that.setValue(_value);
+          if (event.currentTarget.get("modifiedBy") === window.y.clientID) {
+            EntityManagerInstance.storeDataYjs();
+            const userMap = y.getMap("users");
+            const jabberId = userMap.get(event.currentTarget.doc.clientID);
 
-                const activityMap = y.getMap("activity");
-                activityMap.set(
-                  ActivityOperation.TYPE,
-                  new ActivityOperation(
-                    "ValueChangeActivity",
-                    that.getEntityId(),
-                    jabberId,
-                    ValueChangeOperation.getOperationDescription(
-                      that.getSubjectEntity().getName(),
-                      that.getRootSubjectEntity().getType(),
-                      that
-                        .getRootSubjectEntity()
-                        .getLabel()
-                        .getValue()
-                        .getValue()
-                    ),
-                    {
-                      value: _value,
-                      subjectEntityName: that.getSubjectEntity().getName(),
-                      rootSubjectEntityType: that
-                        .getRootSubjectEntity()
-                        .getType(),
-                      rootSubjectEntityId: that
-                        .getRootSubjectEntity()
-                        .getEntityId(),
-                    }
-                  ).toJSON()
-                );
-              } else {
-                //I don't know who deleted here, so everyone saves  the current state for now
-                EntityManagerInstance.storeDataYjs();
-              }
-            }
-          });
+            const activityMap = y.getMap("activity");
+            activityMap.set(
+              ActivityOperation.TYPE,
+              new ActivityOperation(
+                "ValueChangeActivity",
+                that.getEntityId(),
+                jabberId,
+                ValueChangeOperation.getOperationDescription(
+                  that.getSubjectEntity().getName(),
+                  that.getRootSubjectEntity().getType(),
+                  that.getRootSubjectEntity().getLabel().getValue().getValue()
+                ),
+                {
+                  value: _value,
+                  subjectEntityName: that.getSubjectEntity().getName(),
+                  rootSubjectEntityType: that.getRootSubjectEntity().getType(),
+                  rootSubjectEntityId: that
+                    .getRootSubjectEntity()
+                    .getEntityId(),
+                }
+              ).toJSON()
+            );
+          }
         }, 500)
       );
     };
