@@ -227,112 +227,90 @@ class AttributeWrapper {
     if (y) {
       const nodesMap = y.getMap("nodes");
       nodesMap.observe(function (event) {
-        const array = Array.from(event.changes.keys.entries());
-        array.forEach(function (entry) {
+        Array.from(event.changes.keys.entries()).forEach(function (entry) {
           const key = entry[0];
           const action = entry[1].action;
+          if (action !== "add") return;
+          const newNode = event.currentTarget.get(key);
 
-          switch (action) {
-            case "add": {
-              nodesMap.get(key).observe(function (nodeEvent) {
-                nodeEvent.keysChanged.forEach(function (nodeKey) {
-                  const map = nodeEvent.currentTarget;
-                  const action = nodeEvent.changes.keys.get(nodeKey).action;
-                  if (action !== "add") return;
-                  if (nodeKey.search(/\w*\[(\w|\s)*\]/g) == -1) return;
-                  if (!map.has("jabberId")) return;
+          if (!newNode.has("jabberId")) return;
 
-                  nodeAddCallback(
-                    new NodeAddOperation(
-                      map.get("id"),
-                      map.get("type"),
-                      map.get("left"),
-                      map.get("top"),
-                      map.get("width"),
-                      map.get("height"),
-                      map.get("zIndex"),
-                      map.get("containment"),
-                      map.get("json"),
-                      null,
-                      null,
-                      nodeKey
-                    )
-                  );
+          nodeAddCallback(
+            new NodeAddOperation(
+              newNode.get("id"),
+              newNode.get("type"),
+              newNode.get("left"),
+              newNode.get("top"),
+              newNode.get("width"),
+              newNode.get("height"),
+              newNode.get("zIndex"),
+              newNode.get("containment"),
+              newNode.get("json"),
+              null,
+              null,
+              key
+            )
+          );
 
-                  var node = EntityManager.findNode(
-                    nodeEvent.currentTarget.get("id")
-                  );
-                  if (!node) {
-                    throw new Error("node is null");
-                  }
+          var node = EntityManager.findNode(newNode.get("id"));
+          if (!node) {
+            throw new Error("node is null");
+          }
 
-                  //Check for label
-                  if (node && node.getLabel().getEntityId() === nodeKey)
-                    node
-                      .getLabel()
+          //Check for label
+          if (node && node.getLabel().getEntityId() === key)
+            node
+              .getLabel()
+              .getValue()
+              .registerYType(newNode.get(key));
+          else {
+            var attrs = null;
+
+            if (EntityManager.getLayer() === CONFIG.LAYER.META) {
+              attrs = node.getAttribute("[attributes]");
+              if (!attrs) attrs = node.getAttributes();
+              else attrs = attrs.getAttributes();
+              var attrId = key.replace(/\[\w*\]/g, "");
+              if (attrs.hasOwnProperty(attrId)) {
+                var attr = attrs[attrId];
+                if (attr.hasOwnProperty("getKey")) {
+                  if (key.indexOf("ref") != -1)
+                    attr.getRef().registerYType(event.currentTarget.get(key));
+                  else if (
+                    attr.getKey().hasOwnProperty("registerYType") &&
+                    key.indexOf("value") === -1
+                  )
+                    attr
+                      .getKey()
+                      .registerYType(nodeEvent.currentTarget.get(key));
+                } else if (attr.hasOwnProperty("getValue")) {
+                  if (attr.getValue().hasOwnProperty("registerYType"))
+                    attr
                       .getValue()
-                      .registerYType(nodeEvent.currentTarget.get(nodeKey));
-                  else {
-                    var attrs = null;
-
-                    if (EntityManager.getLayer() === CONFIG.LAYER.META) {
-                      attrs = node.getAttribute("[attributes]");
-                      if (!attrs) attrs = node.getAttributes();
-                      else attrs = attrs.getAttributes();
-                      var attrId = nodeKey.replace(/\[\w*\]/g, "");
-                      if (attrs.hasOwnProperty(attrId)) {
-                        var attr = attrs[attrId];
-                        if (attr.hasOwnProperty("getKey")) {
-                          if (nodeKey.indexOf("ref") != -1)
-                            attr.getRef().registerYType(nodeEvent.value);
-                          else if (
-                            attr.getKey().hasOwnProperty("registerYType") &&
-                            nodeKey.indexOf("value") === -1
-                          )
-                            attr
-                              .getKey()
-                              .registerYType(
-                                nodeEvent.currentTarget.get(nodeKey)
-                              );
-                        } else if (attr.hasOwnProperty("getValue")) {
-                          if (attr.getValue().hasOwnProperty("registerYType"))
-                            attr
-                              .getValue()
-                              .registerYType(
-                                nodeEvent.currentTarget.get(nodeKey)
-                              );
-                        }
-                      } else if (attrs.hasOwnProperty(nodeKey)) {
-                        var attr = attrs[nodeKey];
-                        if (attr.getValue().hasOwnProperty("registerYType"))
-                          attr
-                            .getValue()
-                            .registerYType(
-                              nodeEvent.currentTarget.get(nodeKey)
-                            );
-                      }
-                    } else {
-                      attrs = node.getAttributes();
-                      for (var attrKey in attrs) {
-                        if (attrs.hasOwnProperty(attrKey)) {
-                          var attr = attrs[attrKey];
-                          if (
-                            attr.getEntityId() === nodeKey &&
-                            attr.getValue().hasOwnProperty("registerYType")
-                          ) {
-                            attr
-                              .getValue()
-                              .registerYType(
-                                nodeEvent.currentTarget.get(nodeKey)
-                              );
-                          }
-                        }
-                      }
-                    }
+                      .registerYType(nodeEvent.currentTarget.get(key));
+                }
+              } else if (attrs.hasOwnProperty(key)) {
+                var attr = attrs[key];
+                if (attr.getValue().hasOwnProperty("registerYType"))
+                  attr
+                    .getValue()
+                    .registerYType(nodeEvent.currentTarget.get(key));
+              }
+            } else {
+              attrs = node.getAttributes();
+              for (var attrKey in attrs) {
+                if (attrs.hasOwnProperty(attrKey)) {
+                  var attr = attrs[attrKey];
+                  if (
+                    attr.getEntityId() === key &&
+                    attr.getValue().hasOwnProperty("registerYType")
+                  ) {
+                    attr
+                      .getValue()
+                      .registerYType(nodeEvent.currentTarget.get(key));
                   }
-                });
-              });
-              break;
+                }
+              }
             }
           }
         });
