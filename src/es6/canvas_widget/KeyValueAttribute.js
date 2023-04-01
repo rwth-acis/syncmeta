@@ -7,7 +7,7 @@ import AbstractAttribute from "canvas_widget/AbstractAttribute";
 import Value from "canvas_widget/Value";
 
 const keyValueAttributeHtml = await loadHTML(
-  "text!templates/canvas_widget/key_value_attribute.html",
+  "../../templates/canvas_widget/key_value_attribute.html",
   import.meta.url
 );
 
