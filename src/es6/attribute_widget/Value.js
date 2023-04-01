@@ -36,7 +36,7 @@ class Value extends AbstractValue {
      */
     var _value = "";
 
-    let editorId = sanitizeValue("editor-" + rootSubjectEntity.getEntityId());
+    let editorId = sanitizeValue("editor-" + id);
     editorId = editorId.toLowerCase();
     /**
      * jQuery object of DOM node representing the node
@@ -45,7 +45,8 @@ class Value extends AbstractValue {
      */
     var _$node = $(_.template(quillEditorHtml)({ id: editorId }));
 
-    const _$editorRef = new Quill(_$node.get(0), {
+    var _$editorRef;
+    _$editorRef = new Quill(_$node.get(0), {
       theme: "snow",
       modules: {
         toolbar: false, // Snow includes toolbar by default
@@ -61,7 +62,7 @@ class Value extends AbstractValue {
     this.setValue = function (value) {
       _value = value;
       if (_$editorRef) {
-        _$editorRef.setContents(_$editorRef.clipboard.convert(value));
+        _$editorRef.insertText(0, value);
       } else {
         console.error("Quill editor not initialized");
       }
