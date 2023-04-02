@@ -7727,7 +7727,6 @@ export class SelectionValue extends AbstractValue {
           array.forEach(([key, change]) => {
             const updated = event.currentTarget.get(key);
             if (
-              change.action !== "update" ||
               updated?.type !== "update" ||
               !(updated?.entityId === that.getEntityId())
             )
