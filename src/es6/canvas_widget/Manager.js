@@ -3516,6 +3516,7 @@ class EntityManager {
         if (_nodes.hasOwnProperty(id)) {
           delete _nodes[id];
         }
+        EntityManagerInstance.storeDataYjs();
       },
       /**
        * Get all nodes
@@ -3573,6 +3574,7 @@ class EntityManager {
         source.addOutgoingEdge(edge);
         target?.addIngoingEdge(edge);
         _edges[id] = edge;
+        EntityManagerInstance.storeDataYjs();
         return edge;
       },
       /**
@@ -3596,6 +3598,7 @@ class EntityManager {
         if (_edges.hasOwnProperty(id)) {
           delete _edges[id];
         }
+        EntityManagerInstance.storeDataYjs();
       },
       /**
        * Get all edges
