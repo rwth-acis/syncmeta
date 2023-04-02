@@ -9378,9 +9378,9 @@ export class ConditionListAttribute extends AbstractAttribute {
 
 /**
  * RenamingAttribute
- * @class attribute_widget.ConditionPredicateAttribute
- * @memberof attribute_widget
- * @extends attribute_widget.AbstractAttribute
+ * @class canvas_widget.ConditionPredicateAttribute
+ * @memberof canvas_widget
+ * @extends canvas_widget.AbstractAttribute
  * @param {string} id Entity id
  * @param {string} name Name of attribute
  * @param {AbstractEntity} subjectEntity Entity the attribute is assigned to
@@ -9402,7 +9402,7 @@ export class RenamingAttribute extends AbstractAttribute {
 
     /**
      * Value object of key
-     * @type {attribute_widget.Value}
+     * @type {canvas_widget.Value}
      * @private
      */
     var _key = new Value(
@@ -9414,7 +9414,7 @@ export class RenamingAttribute extends AbstractAttribute {
 
     /***
      * Value object of ref
-     * @type {attribute_widget.Value}
+     * @type {canvas_widget.Value}
      * @private
      */
     var _ref = new Value(
@@ -9426,7 +9426,7 @@ export class RenamingAttribute extends AbstractAttribute {
 
     /***
      * Value object of vis
-     * @type {attribute_widget.Value}
+     * @type {canvas_widget.Value}
      * @private
      */
     var _vis = new SelectionValue(
@@ -9447,7 +9447,7 @@ export class RenamingAttribute extends AbstractAttribute {
     //noinspection JSUnusedGlobalSymbols
     /**
      * Set Value object of key
-     * @param {attribute_widget.Value} key
+     * @param {canvas_widget.Value} key
      */
     this.setKey = function (key) {
       _key = key;
@@ -9455,7 +9455,7 @@ export class RenamingAttribute extends AbstractAttribute {
 
     /**
      * Get Value object of key
-     * @returns {attribute_widget.Value}
+     * @returns {canvas_widget.Value}
      */
     this.getKey = function () {
       return _key;
@@ -9463,7 +9463,7 @@ export class RenamingAttribute extends AbstractAttribute {
 
     /**
      * Get Value object of value
-     * @returns {attribute_widget.Value}
+     * @returns {canvas_widget.Value}
      */
     this.getRef = function () {
       return _ref;
@@ -9471,7 +9471,7 @@ export class RenamingAttribute extends AbstractAttribute {
 
     /**
      * Get Visibility object of value
-     * @returns {attribute_widget.Value}
+     * @returns {canvas_widget.Value}
      */
     this.getVis = function () {
       return _vis;
@@ -9480,7 +9480,7 @@ export class RenamingAttribute extends AbstractAttribute {
     //noinspection JSUnusedGlobalSymbols
     /**
      * Set Value object of value
-     * @param {attribute_widget.Value} value
+     * @param {canvas_widget.Value} value
      */
     this.setVis = function (value) {
       _vis = value;
