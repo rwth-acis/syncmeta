@@ -9121,6 +9121,7 @@ export class ConditionListAttribute extends AbstractAttribute {
      */
     var propagateAttributeAddOperation = function (operation) {
       processAttributeAddOperation(operation);
+      EntityManagerInstance.storeDataYjs();
     };
 
     /**
@@ -9133,6 +9134,7 @@ export class ConditionListAttribute extends AbstractAttribute {
         that.deleteAttribute(attribute.getEntityId());
         attribute.get$node().remove();
       }
+      EntityManagerInstance.storeDataYjs();
     };
 
     /**
@@ -9928,6 +9930,7 @@ export class RenamingListAttribute extends AbstractAttribute {
       that.addAttribute(attribute);
       attribute.registerYMap();
       _$node.find(".list").append(attribute.get$node());
+      EntityManagerInstance.storeDataYjs();
       return attribute;
     };
 
@@ -9959,6 +9962,7 @@ export class RenamingListAttribute extends AbstractAttribute {
       processAttributeDeleteOperation(operation);
       var ymap = that.getRootSubjectEntity().getYMap();
       ymap.delete(operation.getEntityId() + "[val]");
+      EntityManagerInstance.storeDataYjs();
     };
 
     /**
@@ -10674,6 +10678,7 @@ export class KeySelectionValueListAttribute extends AbstractAttribute {
      */
     var propagateAttributeAddOperation = function (operation) {
       processAttributeAddOperation(operation);
+      EntityManagerInstance.storeDataYjs();
     };
 
     /**
@@ -10684,6 +10689,7 @@ export class KeySelectionValueListAttribute extends AbstractAttribute {
       processAttributeDeleteOperation(operation);
       var ymap = that.getRootSubjectEntity().getYMap();
       ymap.delete(operation.getEntityId() + "[key]");
+      EntityManagerInstance.storeDataYjs();
     };
 
     /**
