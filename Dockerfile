@@ -11,7 +11,8 @@ WORKDIR /usr/src/app
 RUN npm install
 RUN npx rollup -c rollup.config.reduced.js --bundleConfigAsCjs
 
-WORKDIR /usr/src/app/app
+WORKDIR /usr/src/app/example-app
+
 RUN npm install
 RUN npm run build
 
@@ -20,4 +21,4 @@ WORKDIR /usr/src/app
 EXPOSE 8000
 
 # Run the app 
-CMD cd /usr/src/app/app && npm run start:prod
+CMD cd /usr/src/app/example-app && npm run start:prod
