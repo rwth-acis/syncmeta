@@ -2949,6 +2949,7 @@ export class AbstractNode extends AbstractEntity {
     };
 
     jsPlumbInstance.manage(this._$node.get(0));
+    EntityManagerInstance.storeDataYjs();
   }
   nodeSelector;
   jsPlumbManagedElement;
@@ -3430,6 +3431,8 @@ class EntityManager {
           );
         }
         _nodes[id] = node;
+
+        EntityManagerInstance.storeDataYjs();
         return node;
       },
       findObjectNodeByLabel(searchLabel) {
