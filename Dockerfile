@@ -8,12 +8,12 @@ WORKDIR /usr/src/app
 COPY . .
 
 WORKDIR /usr/src/app
-RUN npm install
-RUN npx rollup -c rollup.config.reduced.js --bundleConfigAsCjs
+RUN npm ci
+RUN npx rollup -c rollup.config.dev.js --bundleConfigAsCjs
 
 WORKDIR /usr/src/app/example-app
 
-RUN npm install
+RUN npm ci
 RUN npm run build
 
 WORKDIR /usr/src/app
