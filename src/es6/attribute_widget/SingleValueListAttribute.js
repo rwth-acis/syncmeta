@@ -208,13 +208,11 @@ class SingleValueListAttribute extends AbstractAttribute {
     }
     _$node.find(".btn-success").click(function () {
       var id = Util.generateRandomId();
-      const userMap = y.getMap("users");
       var operation = new AttributeAddOperation(
         id,
         that.getEntityId(),
         that.getRootSubjectEntity().getEntityId(),
-        SingleValueAttribute.TYPE,
-        userMap.get(y.clientID)
+        SingleValueAttribute.TYPE
       );
       propagateAttributeAddOperation(operation);
     });

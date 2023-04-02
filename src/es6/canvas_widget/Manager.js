@@ -99,7 +99,7 @@ const keySelectionValueAttributeHtml = await loadHTML(
   import.meta.url
 );
 const integerAttributeHtml = await loadHTML(
-  "../../templates/attribute_widget/integer_attribute.html",
+  "../../templates/canvas_widget/integer_attribute.html",
   import.meta.url
 );
 
@@ -1344,7 +1344,6 @@ export class AbstractEdge extends AbstractEntity {
           }
         }
       }
-      EntityManagerInstance.storeDataYjs();
     };
 
     /**
@@ -2908,12 +2907,7 @@ export class AbstractNode extends AbstractEntity {
       _ymap.observe(function (event) {
         const array = Array.from(event.changes.keys.entries());
         array.forEach(([key, change]) => {
-          var yUserId = event.currentTarget.doc.clientID;
-
-          if (
-            y.clientID !== yUserId ||
-            (event.value && event.value.historyFlag)
-          ) {
+          if (event.value && event.value.historyFlag) {
             var operation;
             var data = event.value;
             const userMap = y.getMap("users");
@@ -2955,6 +2949,7 @@ export class AbstractNode extends AbstractEntity {
     };
 
     jsPlumbInstance.manage(this._$node.get(0));
+    EntityManagerInstance.storeDataYjs();
   }
   nodeSelector;
   jsPlumbManagedElement;
@@ -3436,6 +3431,8 @@ class EntityManager {
           );
         }
         _nodes[id] = node;
+
+        EntityManagerInstance.storeDataYjs();
         return node;
       },
       findObjectNodeByLabel(searchLabel) {
@@ -3519,6 +3516,7 @@ class EntityManager {
         if (_nodes.hasOwnProperty(id)) {
           delete _nodes[id];
         }
+        EntityManagerInstance.storeDataYjs();
       },
       /**
        * Get all nodes
@@ -3576,6 +3574,7 @@ class EntityManager {
         source.addOutgoingEdge(edge);
         target?.addIngoingEdge(edge);
         _edges[id] = edge;
+        EntityManagerInstance.storeDataYjs();
         return edge;
       },
       /**
@@ -3599,6 +3598,7 @@ class EntityManager {
         if (_edges.hasOwnProperty(id)) {
           delete _edges[id];
         }
+        EntityManagerInstance.storeDataYjs();
       },
       /**
        * Get all edges
@@ -7732,7 +7732,6 @@ export class SelectionValue extends AbstractValue {
           array.forEach(([key, change]) => {
             const updated = event.currentTarget.get(key);
             if (
-              change.action !== "update" ||
               updated?.type !== "update" ||
               !(updated?.entityId === that.getEntityId())
             )
@@ -7809,22 +7808,23 @@ export class SelectionValue extends AbstractValue {
 
 /**
  * IntegerAttribute
- * @class attribute_widget.IntegerAttribute
- * @memberof attribute_widget
- * @extends attribute_widget.AbstractAttribute
+ * @class canvas_widget.IntegerAttribute
+ * @extends canvas_widget.AbstractAttribute
+ * @memberof canvas_widget
  * @constructor
  * @param {string} id Entity id
  * @param {string} name Name of attribute
- * @param {attribute_widget.AbstractEntity} subjectEntity Entity the attribute is assigned to
- * @param {Object} options Selection options as key value object
+ * @param {canvas_widget.AbstractEntity} subjectEntity Entity the attribute is assigned to
  */
 export class IntegerAttribute extends AbstractAttribute {
-  constructor(id, name, subjectEntity, options) {
+  constructor(id, name, subjectEntity, useAttributeHtml) {
     super(id, name, subjectEntity);
+    useAttributeHtml =
+      typeof useAttributeHtml !== "undefined" ? useAttributeHtml : false;
 
     /***
      * Value object of value
-     * @type {attribute_widget.IntegerValue}
+     * @type {canvas_widget.IntegerValue}
      * @private
      */
     var _value = new IntegerValue(
@@ -7832,7 +7832,7 @@ export class IntegerAttribute extends AbstractAttribute {
       name,
       this,
       this.getRootSubjectEntity(),
-      options
+      useAttributeHtml
     );
 
     /**
@@ -7844,15 +7844,16 @@ export class IntegerAttribute extends AbstractAttribute {
 
     /**
      * Set Value object of value
-     * @param {attribute_widget.IntegerValue} value
+     * @param {canvas_widget.IntegerValue} value
      */
     this.setValue = function (value) {
       _value = value;
+      _$node.val(value);
     };
 
     /**
      * Get Value object of value
-     * @return {attribute_widget.IntegerValue} value
+     * @return {canvas_widget.IntegerValue} value
      */
     this.getValue = function () {
       return _value;
@@ -7868,6 +7869,16 @@ export class IntegerAttribute extends AbstractAttribute {
     };
 
     /**
+     * Get JSON representation of the attribute
+     * @returns {Object}
+     */
+    this.toJSON = function () {
+      var json = AbstractAttribute.prototype.toJSON.call(this);
+      json.value = _value.toJSON();
+      return json;
+    };
+
+    /**
      * Set attribute value by its JSON representation
      * @param {Object} json
      */
@@ -7875,17 +7886,8 @@ export class IntegerAttribute extends AbstractAttribute {
       _value.setValueFromJSON(json.value);
     };
 
-    _$node.find(".attribute_name").text(this.getName());
-    _$node.find(".attribute_value").append(_value.get$node());
-
-    // check if view only mode is enabled for the property browser
-    // because then the input fields should be disabled
-    if (window.hasOwnProperty("y")) {
-      const widgetConfigMap = y.getMap("widgetConfig");
-      if (widgetConfigMap.get("view_only_property_browser")) {
-        _$node.find(".val").attr("disabled", "true");
-      }
-    }
+    _$node.find(".name").text(this.getName());
+    _$node.find(".value").append(_value.get$node());
   }
 }
 
@@ -8110,12 +8112,16 @@ export class IntegerValue extends AbstractValue {
         .observe(function (event) {
           const array = Array.from(event.changes.keys.entries());
           array.forEach(([key, change]) => {
+            if (change.action !== "update") return;
+            // check if key is the entity id
+            if (key !== that.getEntityId()) return;
+            const data = event.target.get(key);
             var operation = new ValueChangeOperation(
-              event.entityId,
-              event.value,
-              event.type,
-              event.position,
-              event.jabberId
+              data.entityId,
+              data.value,
+              data.type,
+              data.position,
+              data.jabberId
             );
             _iwcw.sendLocalOTOperation(
               CONFIG.WIDGET.NAME.GUIDANCE,
@@ -8128,6 +8134,7 @@ export class IntegerValue extends AbstractValue {
               _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] ===
               operation.getJabberId()
             ) {
+              EntityManagerInstance.storeDataYjs();
               const activityMap = y.getMap("activity");
 
               activityMap.set(
@@ -8163,20 +8170,6 @@ export class IntegerValue extends AbstractValue {
             }
           });
         });
-
-      //Debounce the save function
-      that
-        .getRootSubjectEntity()
-        .getYMap()
-        .observe(
-          _.debounce(function (event) {
-            if (
-              event &&
-              event.jabberId === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]
-            )
-              EntityManagerInstance.storeDataYjs();
-          }, 500)
-        );
     };
 
     init();
@@ -8339,6 +8332,7 @@ export class SingleValueListAttribute extends AbstractAttribute {
      */
     var propagateAttributeAddOperation = function (operation) {
       processAttributeAddOperation(operation);
+      EntityManagerInstance.storeDataYjs();
     };
 
     /**
@@ -8349,6 +8343,7 @@ export class SingleValueListAttribute extends AbstractAttribute {
       processAttributeDeleteOperation(operation);
       var ynode = that.getRootSubjectEntity().getYMap();
       ynode.delete(operation.getEntityId());
+      EntityManagerInstance.storeDataYjs();
     };
 
     /**
@@ -8538,9 +8533,9 @@ export class SingleValueListAttribute extends AbstractAttribute {
           if (key.indexOf("[value]") != -1) {
             switch (change.action) {
               case "add": {
-                const jabberId = event.target.get("jabberId");
-                if (jabberId === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
+                if (event.currentTarget.get("modifiedBy") === window.y.clientID)
                   return;
+
                 operation = new AttributeAddOperation(
                   key.replace(/\[\w*\]/g, ""),
                   that.getEntityId(),
@@ -8581,14 +8576,17 @@ export class SingleValueListAttribute extends AbstractAttribute {
 export class Value extends AbstractValue {
   value = "";
   constructor(id, name, subjectEntity, rootSubjectEntity, y) {
+    super(id, name, subjectEntity, rootSubjectEntity);
+    y = y || window.y;
+    if (!y) throw new Error("y is undefined");
     var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN, y);
     var _ytext = null;
-    y = y || window.y;
-    if (y && id.indexOf("undefined") == -1) {
-      const yMap = rootSubjectEntity.getYMap();
-      if (!yMap) {
-        throw new Error("yMap is undefined");
-      }
+
+    const yMap = rootSubjectEntity.getYMap();
+    if (!yMap) {
+      throw new Error("yMap is undefined");
+    }
+    y.transact(() => {
       if (yMap?.has(id)) {
         _ytext = rootSubjectEntity.getYMap().get(id);
         if (!(_ytext instanceof YText)) {
@@ -8599,8 +8597,9 @@ export class Value extends AbstractValue {
         _ytext = new YText();
         rootSubjectEntity.getYMap().set(id, _ytext);
       }
-    }
-    super(id, name, subjectEntity, rootSubjectEntity);
+      rootSubjectEntity.getYMap().set("modifiedBy", window.y.clientID);
+    });
+
     var that = this;
     /**
      * Value
@@ -8676,71 +8675,38 @@ export class Value extends AbstractValue {
     };
 
     this.registerYType = function () {
-      _$node.on("input", function () {
-        if (_ytext) {
-          if (_$node.val() !== _ytext.toString()) {
-            if (_ytext.toString().length > 0)
-              _ytext.delete(0, _ytext.toString().length);
-            _ytext.insert(0, _$node.val());
-          }
-        }
-      });
-      // _ytext.bind(_$node[0]);
-      if (that.getValue() !== _ytext.toString()) {
-        if (_ytext.toString().length > 0)
-          _ytext.delete(0, _ytext.toString().length - 1);
-        _ytext.insert(0, that.getValue());
-      }
-      _ytext.observe(function (event) {
-        _value = _ytext.toString().replace(/\n/g, "");
-        that.setValue(_value);
-      });
-
       _ytext.observe(
         _.debounce(function (event) {
-          event.keysChanged.forEach((key) => {
-            if (key !== "delete") {
-              const userMap = y.getMap("users");
-              var jabberId = userMap.get(
-                event.object._content[event.index].id[0]
-              );
-              if (jabberId === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]) {
-                EntityManagerInstance.storeDataYjs();
+          _value = _ytext.toString().replace(/\n/g, "");
+          that.setValue(_value);
+          if (event.currentTarget.get("modifiedBy") === window.y.clientID) {
+            EntityManagerInstance.storeDataYjs();
+            const userMap = y.getMap("users");
+            const jabberId = userMap.get(event.currentTarget.doc.clientID);
 
-                const activityMap = y.getMap("activity");
-                activityMap.set(
-                  ActivityOperation.TYPE,
-                  new ActivityOperation(
-                    "ValueChangeActivity",
-                    that.getEntityId(),
-                    jabberId,
-                    ValueChangeOperation.getOperationDescription(
-                      that.getSubjectEntity().getName(),
-                      that.getRootSubjectEntity().getType(),
-                      that
-                        .getRootSubjectEntity()
-                        .getLabel()
-                        .getValue()
-                        .getValue()
-                    ),
-                    {
-                      value: _value,
-                      subjectEntityName: that.getSubjectEntity().getName(),
-                      rootSubjectEntityType: that
-                        .getRootSubjectEntity()
-                        .getType(),
-                      rootSubjectEntityId: that
-                        .getRootSubjectEntity()
-                        .getEntityId(),
-                    }
-                  ).toJSON()
-                );
-              } else {
-                //I don't know who deleted here, so everyone saves  the current state for now
-                EntityManagerInstance.storeDataYjs();
-              }
-            }
-          });
+            const activityMap = y.getMap("activity");
+            activityMap.set(
+              ActivityOperation.TYPE,
+              new ActivityOperation(
+                "ValueChangeActivity",
+                that.getEntityId(),
+                jabberId,
+                ValueChangeOperation.getOperationDescription(
+                  that.getSubjectEntity().getName(),
+                  that.getRootSubjectEntity().getType(),
+                  that.getRootSubjectEntity().getLabel().getValue().getValue()
+                ),
+                {
+                  value: _value,
+                  subjectEntityName: that.getSubjectEntity().getName(),
+                  rootSubjectEntityType: that.getRootSubjectEntity().getType(),
+                  rootSubjectEntityId: that
+                    .getRootSubjectEntity()
+                    .getEntityId(),
+                }
+              ).toJSON()
+            );
+          }
         }, 500)
       );
     };
@@ -9161,6 +9127,7 @@ export class ConditionListAttribute extends AbstractAttribute {
      */
     var propagateAttributeAddOperation = function (operation) {
       processAttributeAddOperation(operation);
+      EntityManagerInstance.storeDataYjs();
     };
 
     /**
@@ -9173,6 +9140,7 @@ export class ConditionListAttribute extends AbstractAttribute {
         that.deleteAttribute(attribute.getEntityId());
         attribute.get$node().remove();
       }
+      EntityManagerInstance.storeDataYjs();
     };
 
     /**
@@ -9421,9 +9389,9 @@ export class ConditionListAttribute extends AbstractAttribute {
 
 /**
  * RenamingAttribute
- * @class attribute_widget.ConditionPredicateAttribute
- * @memberof attribute_widget
- * @extends attribute_widget.AbstractAttribute
+ * @class canvas_widget.ConditionPredicateAttribute
+ * @memberof canvas_widget
+ * @extends canvas_widget.AbstractAttribute
  * @param {string} id Entity id
  * @param {string} name Name of attribute
  * @param {AbstractEntity} subjectEntity Entity the attribute is assigned to
@@ -9445,7 +9413,7 @@ export class RenamingAttribute extends AbstractAttribute {
 
     /**
      * Value object of key
-     * @type {attribute_widget.Value}
+     * @type {canvas_widget.Value}
      * @private
      */
     var _key = new Value(
@@ -9457,7 +9425,7 @@ export class RenamingAttribute extends AbstractAttribute {
 
     /***
      * Value object of ref
-     * @type {attribute_widget.Value}
+     * @type {canvas_widget.Value}
      * @private
      */
     var _ref = new Value(
@@ -9469,7 +9437,7 @@ export class RenamingAttribute extends AbstractAttribute {
 
     /***
      * Value object of vis
-     * @type {attribute_widget.Value}
+     * @type {canvas_widget.Value}
      * @private
      */
     var _vis = new SelectionValue(
@@ -9490,7 +9458,7 @@ export class RenamingAttribute extends AbstractAttribute {
     //noinspection JSUnusedGlobalSymbols
     /**
      * Set Value object of key
-     * @param {attribute_widget.Value} key
+     * @param {canvas_widget.Value} key
      */
     this.setKey = function (key) {
       _key = key;
@@ -9498,7 +9466,7 @@ export class RenamingAttribute extends AbstractAttribute {
 
     /**
      * Get Value object of key
-     * @returns {attribute_widget.Value}
+     * @returns {canvas_widget.Value}
      */
     this.getKey = function () {
       return _key;
@@ -9506,7 +9474,7 @@ export class RenamingAttribute extends AbstractAttribute {
 
     /**
      * Get Value object of value
-     * @returns {attribute_widget.Value}
+     * @returns {canvas_widget.Value}
      */
     this.getRef = function () {
       return _ref;
@@ -9514,7 +9482,7 @@ export class RenamingAttribute extends AbstractAttribute {
 
     /**
      * Get Visibility object of value
-     * @returns {attribute_widget.Value}
+     * @returns {canvas_widget.Value}
      */
     this.getVis = function () {
       return _vis;
@@ -9523,7 +9491,7 @@ export class RenamingAttribute extends AbstractAttribute {
     //noinspection JSUnusedGlobalSymbols
     /**
      * Set Value object of value
-     * @param {attribute_widget.Value} value
+     * @param {canvas_widget.Value} value
      */
     this.setVis = function (value) {
       _vis = value;
@@ -9642,6 +9610,7 @@ export class KeySelectionValueSelectionValueListAttribute extends AbstractAttrib
       that.addAttribute(attribute);
       if (_$node.find(".list").find("#" + attribute.getEntityId()).length == 0)
         _$node.find(".list").append(attribute.get$node());
+      EntityManagerInstance.storeDataYjs();
     };
 
     /**
@@ -9654,6 +9623,7 @@ export class KeySelectionValueSelectionValueListAttribute extends AbstractAttrib
         that.deleteAttribute(attribute.getEntityId());
         attribute.get$node().remove();
       }
+      EntityManagerInstance.storeDataYjs();
     };
 
     /**
@@ -9966,6 +9936,7 @@ export class RenamingListAttribute extends AbstractAttribute {
       that.addAttribute(attribute);
       attribute.registerYMap();
       _$node.find(".list").append(attribute.get$node());
+      EntityManagerInstance.storeDataYjs();
       return attribute;
     };
 
@@ -9997,6 +9968,7 @@ export class RenamingListAttribute extends AbstractAttribute {
       processAttributeDeleteOperation(operation);
       var ymap = that.getRootSubjectEntity().getYMap();
       ymap.delete(operation.getEntityId() + "[val]");
+      EntityManagerInstance.storeDataYjs();
     };
 
     /**
@@ -10712,6 +10684,7 @@ export class KeySelectionValueListAttribute extends AbstractAttribute {
      */
     var propagateAttributeAddOperation = function (operation) {
       processAttributeAddOperation(operation);
+      EntityManagerInstance.storeDataYjs();
     };
 
     /**
@@ -10722,6 +10695,7 @@ export class KeySelectionValueListAttribute extends AbstractAttribute {
       processAttributeDeleteOperation(operation);
       var ymap = that.getRootSubjectEntity().getYMap();
       ymap.delete(operation.getEntityId() + "[key]");
+      EntityManagerInstance.storeDataYjs();
     };
 
     /**

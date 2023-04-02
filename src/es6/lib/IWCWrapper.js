@@ -333,7 +333,7 @@ class IWCWrapper {
      * @param {string} receiver Component name of receiving component, empty string for broadcast
      * @param {object} data Data to send
      */
-    (this.sendLocalMessage = function (receiver, data) {
+    this.sendLocalMessage = function (receiver, data) {
       var intent;
 
       if (!receiver || receiver === "") return;
@@ -360,88 +360,88 @@ class IWCWrapper {
           this._iwc.publish(intent);
         }
       }
-    }),
-      /**
-       * Send OTOperation locally to an other component
-       * @memberof IWCWrapper#
-       * @param {string} receiver Component name of receiving component, empty string for broadcast
-       * @param {operations.ot.OTOperation} operation Operation to send
-       */
-      (this.sendLocalOTOperation = function (receiver, operation) {
-        this.sendLocalMessage(receiver, {
-          type: PAYLOAD_DATA_TYPE.OT_OPERATION,
-          data: operation.getOperationObject(),
-          sender: operation.getSender(),
-        });
-      }),
-      /**
-       * Send NonOTOperation locally to an other component
-       * @memberof IWCWrapper#
-       * @param {string} receiver Component name of receiving component, empty string for broadcast
-       * @param {operations.non_ot.NonOTOperation} operation Operation to send
-       */
-      (this.sendLocalNonOTOperation = function (receiver, operation) {
-        this.sendLocalMessage(receiver, {
-          type: PAYLOAD_DATA_TYPE.NON_OT_OPERATION,
-          data: operation.getOperationObject(),
-          sender: operation.getSender(),
-        });
-      }),
-      (this.getUserColor = function (jabberId) {
-        return Util.getColor(this.Space.members[jabberId].globalId);
-      }),
-      /**
-       * Register callback for local data receive events
-       * @memberof IWCWrapper#
-       * @param {function} callback
-       */
-      (this.registerOnDataReceivedCallback = function (callback, caller) {
-        if (typeof callback === "function") {
-          this.unregisterOnDataReceivedCallback(callback);
-          this._onDataReceivedCallbacks.push(callback);
-          this._onDataReceivedCallers.push(caller);
-        }
-      }),
-      /**
-       * Unregister callback for local data receive events
-       * @memberof IWCWrapper#
-       * @param {function} callback
-       */
-      (this.unregisterOnDataReceivedCallback = function (callback) {
-        var i, numOfCallbacks;
+    };
+    /**
+     * Send OTOperation locally to an other component
+     * @memberof IWCWrapper#
+     * @param {string} receiver Component name of receiving component, empty string for broadcast
+     * @param {operations.ot.OTOperation} operation Operation to send
+     */
+    this.sendLocalOTOperation = function (receiver, operation) {
+      this.sendLocalMessage(receiver, {
+        type: PAYLOAD_DATA_TYPE.OT_OPERATION,
+        data: operation.getOperationObject(),
+        sender: operation.getSender(),
+      });
+    };
+    /**
+     * Send NonOTOperation locally to an other component
+     * @memberof IWCWrapper#
+     * @param {string} receiver Component name of receiving component, empty string for broadcast
+     * @param {operations.non_ot.NonOTOperation} operation Operation to send
+     */
+    this.sendLocalNonOTOperation = function (receiver, operation) {
+      this.sendLocalMessage(receiver, {
+        type: PAYLOAD_DATA_TYPE.NON_OT_OPERATION,
+        data: operation.getOperationObject(),
+        sender: operation.getSender(),
+      });
+    };
+    this.getUserColor = function (jabberId) {
+      return Util.getColor(this.Space.members[jabberId].globalId);
+    };
+    /**
+     * Register callback for local data receive events
+     * @memberof IWCWrapper#
+     * @param {function} callback
+     */
+    this.registerOnDataReceivedCallback = function (callback, caller) {
+      if (typeof callback === "function") {
+        this.unregisterOnDataReceivedCallback(callback);
+        this._onDataReceivedCallbacks.push(callback);
+        this._onDataReceivedCallers.push(caller);
+      }
+    };
+    /**
+     * Unregister callback for local data receive events
+     * @memberof IWCWrapper#
+     * @param {function} callback
+     */
+    this.unregisterOnDataReceivedCallback = function (callback) {
+      var i, numOfCallbacks;
 
-        if (typeof callback === "function") {
-          for (
-            i = 0, numOfCallbacks = this._onDataReceivedCallbacks.length;
-            i < numOfCallbacks;
-            i++
-          ) {
-            if (callback === this._onDataReceivedCallbacks[i]) {
-              this._onDataReceivedCallbacks.splice(i, 1);
-              this._onDataReceivedCallers.splice(i, 1);
-            }
+      if (typeof callback === "function") {
+        for (
+          i = 0, numOfCallbacks = this._onDataReceivedCallbacks.length;
+          i < numOfCallbacks;
+          i++
+        ) {
+          if (callback === this._onDataReceivedCallbacks[i]) {
+            this._onDataReceivedCallbacks.splice(i, 1);
+            this._onDataReceivedCallers.splice(i, 1);
           }
         }
-      }),
-      (this.getUser = function () {
-        if (!this.Space) {
-          console.error("Space is null");
-          this.Space = {user:{}}
-        } else if (!this.Space.user) {
-          console.error("User in space is null, generating new anonymous user");
-          this.Space.user = Util.generateAnonymousUser();
-        }
-        return this.Space.user;
-      }),
-      (this.getMembers = function () {
-        return this.Space.members;
-      }),
-      (this.getSpaceTitle = function () {
-        return this.Space.title;
-      }),
-      (this.setSpace = function (s) {
-        this.Space = s;
-      });
+      }
+    };
+    this.getUser = function () {
+      if (!this.Space) {
+        console.error("Space is null");
+        this.Space = { user: {} };
+      } else if (!this.Space.user) {
+        console.error("User in space is null, generating new anonymous user");
+        this.Space.user = Util.generateAnonymousUser();
+      }
+      return this.Space.user;
+    };
+    this.getMembers = function () {
+      return this.Space.members;
+    };
+    this.getSpaceTitle = function () {
+      return this.Space.title;
+    };
+    this.setSpace = function (s) {
+      this.Space = s;
+    };
 
     return this;
   }

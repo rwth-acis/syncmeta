@@ -36,7 +36,7 @@ class Value extends AbstractValue {
      */
     var _value = "";
 
-    let editorId = sanitizeValue("editor-" + rootSubjectEntity.getEntityId());
+    let editorId = sanitizeValue("editor-" + id);
     editorId = editorId.toLowerCase();
     /**
      * jQuery object of DOM node representing the node
@@ -46,6 +46,14 @@ class Value extends AbstractValue {
     var _$node = $(_.template(quillEditorHtml)({ id: editorId }));
 
     var _$editorRef;
+    _$editorRef = new Quill(_$node.get(0), {
+      theme: "snow",
+      modules: {
+        toolbar: false, // Snow includes toolbar by default
+      },
+      cursors: false,
+      placeholder: name,
+    });
 
     /**
      * Set value
@@ -53,7 +61,11 @@ class Value extends AbstractValue {
      */
     this.setValue = function (value) {
       _value = value;
-      _$node.val(value);
+      if (_$editorRef) {
+        _$editorRef.insertText(0, value);
+      } else {
+        console.error("Quill editor not initialized");
+      }
     };
 
     /**
@@ -86,16 +98,6 @@ class Value extends AbstractValue {
 
     this.registerYType = function (ytext) {
       _ytext = ytext;
-
-      const domElem = _$node.get(0);
-      _$editorRef = new Quill(domElem, {
-        theme: "snow",
-        modules: {
-          toolbar: false, // Snow includes toolbar by default
-        },
-        cursors: false,
-        placeholder: name,
-      });
 
       if (!_ytext) {
         throw new Error("YText not found");

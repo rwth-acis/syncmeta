@@ -4,8 +4,8 @@ import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"
 import _ from "lodash-es";
 import IWCW from "../lib/IWCWrapper";
 
-import AbstractAttribute from "canvas_widget/AbstractAttribute";
-import KeyValueAttribute from "canvas_widget/KeyValueAttribute";
+import { AbstractAttribute } from "./Manager";
+import KeyValueAttribute from "./KeyValueAttribute";
 import loadHTML from "../html.template.loader";
 import {
   AttributeAddOperation,

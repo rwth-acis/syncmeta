@@ -130,6 +130,7 @@ export default class Canvas extends AbstractCanvas {
       connectionsDetachable: false,
       dragOptions: {
         filter: ".resizing",
+        containment: "parentEnclosed",
       },
     });
 
@@ -1824,8 +1825,6 @@ export default class Canvas extends AbstractCanvas {
       });
       const nodesMap = y.getMap("nodes");
       nodesMap.observe(function (event) {
-        if (eventWasTriggeredByMe(event)) return;
-
         const array = Array.from(event.changes.keys.entries());
         array.forEach(([key, change]) => {
           switch (change.action) {

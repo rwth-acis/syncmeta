@@ -2262,7 +2262,7 @@ export class EnumNode extends AbstractNode {
 
     _$node.find(".label").append(this.getLabel().get$node());
 
-    this.registerYMap = function () {
+    this.registerYType = function () {
       AbstractNode.prototype.registerYType.call(this);
       const nodesMap = y.getMap("nodes");
       var ymap = nodesMap.get(that.getEntityId());

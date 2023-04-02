@@ -133,7 +133,6 @@ class ActivityList {
      */
     this.addUser = function (jabberId, isLocalUser = false) {
       if (!jabberId) {
-        console.error("jabberid not valid", jabberId, "aborting");
         return;
       }
       var user;
@@ -560,7 +559,7 @@ class ActivityList {
               );
               that.addActivity(activity);
               const nodesMap = y.getMap("nodes");
-               if (nodesMap.size > 0) break;
+              if (nodesMap.size > 0) break;
             }
             case ValueChangeActivity.TYPE: {
               activity = new ValueChangeActivity(

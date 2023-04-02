@@ -129,7 +129,7 @@ export class AttributeWidget extends SyncMetaWidget(
                 });
               });
             })
-            .catch(function (e) {
+            .catch((e) => {
               console.error(e);
               this.showErrorAlert("Cannot connect to Canvas widget.");
             })
@@ -359,7 +359,6 @@ export class AttributeWidget extends SyncMetaWidget(
 
 function JSONToGraph(json, wrapper) {
   var modelAttributesNode;
-  var nodeId, edgeId;
 
   if (json.attributes && Object.keys(json.attributes).length > 0) {
     modelAttributesNode = EntityManager.createModelAttributesNodeFromJSON(
@@ -370,7 +369,7 @@ function JSONToGraph(json, wrapper) {
     modelAttributesNode.addToWrapper(wrapper);
     wrapper.select(modelAttributesNode);
   }
-  for (nodeId in json.nodes) {
+  for (const nodeId in json.nodes) {
     if (json.nodes.hasOwnProperty(nodeId)) {
       var node = EntityManager.createNodeFromJSON(
         json.nodes[nodeId].type,
@@ -391,7 +390,7 @@ function JSONToGraph(json, wrapper) {
       node.addToWrapper(wrapper);
     }
   }
-  for (edgeId in json.edges) {
+  for (const edgeId in json.edges) {
     if (json.edges.hasOwnProperty(edgeId)) {
       var edge = EntityManager.createEdgeFromJSON(
         json.edges[edgeId].type,
