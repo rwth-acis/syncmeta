@@ -1344,7 +1344,6 @@ export class AbstractEdge extends AbstractEntity {
           }
         }
       }
-      EntityManagerInstance.storeDataYjs();
     };
 
     /**
@@ -8327,6 +8326,7 @@ export class SingleValueListAttribute extends AbstractAttribute {
      */
     var propagateAttributeAddOperation = function (operation) {
       processAttributeAddOperation(operation);
+      EntityManagerInstance.storeDataYjs();
     };
 
     /**
@@ -8337,6 +8337,7 @@ export class SingleValueListAttribute extends AbstractAttribute {
       processAttributeDeleteOperation(operation);
       var ynode = that.getRootSubjectEntity().getYMap();
       ynode.delete(operation.getEntityId());
+      EntityManagerInstance.storeDataYjs();
     };
 
     /**
@@ -8569,14 +8570,17 @@ export class SingleValueListAttribute extends AbstractAttribute {
 export class Value extends AbstractValue {
   value = "";
   constructor(id, name, subjectEntity, rootSubjectEntity, y) {
+    super(id, name, subjectEntity, rootSubjectEntity);
+    y = y || window.y;
+    if (!y) throw new Error("y is undefined");
     var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN, y);
     var _ytext = null;
-    y = y || window.y;
-    if (y && id.indexOf("undefined") == -1) {
-      const yMap = rootSubjectEntity.getYMap();
-      if (!yMap) {
-        throw new Error("yMap is undefined");
-      }
+
+    const yMap = rootSubjectEntity.getYMap();
+    if (!yMap) {
+      throw new Error("yMap is undefined");
+    }
+    y.transact(() => {
       if (yMap?.has(id)) {
         _ytext = rootSubjectEntity.getYMap().get(id);
         if (!(_ytext instanceof YText)) {
@@ -8588,8 +8592,8 @@ export class Value extends AbstractValue {
         rootSubjectEntity.getYMap().set(id, _ytext);
       }
       rootSubjectEntity.getYMap().set("modifiedBy", window.y.clientID);
-    }
-    super(id, name, subjectEntity, rootSubjectEntity);
+    });
+
     var that = this;
     /**
      * Value
