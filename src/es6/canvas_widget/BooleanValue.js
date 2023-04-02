@@ -133,7 +133,10 @@ class BooleanValue extends AbstractValue {
         .getYMap()
         .observe(function (event) {
           const array = Array.from(event.changes.keys.entries());
-          array.forEach(function ([key, value]) {
+          array.forEach(function ([key, change]) {
+            if (change.action !== "update" || key !== that.getEntityId()) {
+              return;
+            }
             const map = event.currentTarget.get(key);
             const json = map;
 
