@@ -24,7 +24,26 @@ const externalDependencies = [
   "y-quill",
   "quill",
 ];
-
+// rollup-plugins
+const plugins = [
+  replaceHtml(), // replace html imports with the content of the file as string
+  typescript(), // transpile typescript to es6
+  postcss({
+    // handles css imports in js files
+    plugins: [
+      url({
+        url: "inline", // replaces external css urls with the base64 encoded image
+      }),
+    ],
+  }),
+  nodeResolve({ browser: true }), // makes sure that rollup can find node_modules
+  commonjs({
+    // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required
+    include: [/node_modules/],
+    extensions: [".js", ".ts"],
+  })
+];
+// globals for external dependencies
 const globals = {
   yjs: "Y",
   "y-quill": "QuillBinding",
@@ -38,12 +57,7 @@ const globals = {
 export default [
   // palette.widget
   {
-    plugins: [
-      replaceHtml(),
-      typescript(),
-      nodeResolve({ browser: true }),
-      commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
-    ],
+    plugins,
     watch: {
       include: "src/**",
     },
@@ -59,12 +73,7 @@ export default [
   },
   // activity widget
   {
-    plugins: [
-      replaceHtml(),
-      typescript(),
-      nodeResolve({ browser: true }),
-      commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
-    ],
+    plugins,
     watch: {
       include: "src/**",
     },
@@ -81,16 +90,7 @@ export default [
   },
   // attribute.widget
   {
-    plugins: [
-      css(),
-      replaceHtml(),
-      typescript(),
-      nodeResolve({ browser: true }),
-      commonjs({
-        extensions: [".js", ".ts"],
-        include: [/node_modules/, "./src/attribute.widget.ts"],
-      }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
-    ],
+    plugins,
     watch: {
       include: "src/**",
     },
@@ -107,12 +107,7 @@ export default [
   },
   // debug.widget
   {
-    plugins: [
-      replaceHtml(),
-      typescript(),
-      nodeResolve({ browser: true }),
-      commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
-    ],
+    plugins,
     watch: {
       include: "src/**",
     },
@@ -129,12 +124,7 @@ export default [
   },
   // guidance.widget
   {
-    plugins: [
-      replaceHtml(),
-      nodeResolve({ browser: true }),
-      typescript(),
-      commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
-    ],
+    plugins,
     watch: {
       include: "src/**",
     },
@@ -151,12 +141,7 @@ export default [
   },
   // heatmap.widget
   {
-    plugins: [
-      replaceHtml(),
-      typescript(),
-      nodeResolve({ browser: true }),
-      commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
-    ],
+    plugins,
     watch: {
       include: "src/**",
     },
@@ -173,12 +158,7 @@ export default [
   },
   // imsld.export.widget
   {
-    plugins: [
-      replaceHtml(),
-      typescript(),
-      nodeResolve({ browser: true }),
-      commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
-    ],
+    plugins,
     watch: {
       include: "src/**",
     },
@@ -195,12 +175,7 @@ export default [
   },
   // json.export.widget
   {
-    plugins: [
-      replaceHtml(),
-      typescript(),
-      nodeResolve({ browser: true }),
-      commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
-    ],
+    plugins,
     watch: {
       include: "src/**",
     },
@@ -217,22 +192,7 @@ export default [
   },
   // main.widget
   {
-    plugins: [
-      replaceHtml(),
-      typescript(),
-      postcss({
-        plugins: [
-          url({
-            url: "inline", // enable inline assets using base64 encoding
-          }),
-        ],
-      }),
-      nodeResolve({ browser: true }),
-      commonjs({
-        include: [/node_modules/, "./src/main.widget.ts"],
-        extensions: [".js", ".ts"],
-      }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
-    ],
+    plugins,
     watch: {
       include: "src/**",
     },
@@ -250,12 +210,7 @@ export default [
 
   // test.widget
   {
-    plugins: [
-      replaceHtml(),
-      typescript(),
-      nodeResolve({ browser: true }),
-      commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
-    ],
+    plugins,
     watch: {
       include: "src/**",
     },
@@ -272,12 +227,7 @@ export default [
   },
   // viewcontrol.widget
   {
-    plugins: [
-      replaceHtml(),
-      typescript(),
-      nodeResolve({ browser: true }),
-      commonjs({ extensions: [".js", ".ts"] }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
-    ],
+    plugins,
     watch: {
       include: "src/**",
     },
@@ -294,16 +244,7 @@ export default [
   },
   // widget container
   {
-    plugins: [
-      replaceHtml(),
-      typescript(),
-      css(),
-      nodeResolve({ browser: true }),
-      commonjs({
-        include: [/node_modules/],
-        extensions: [".js", ".ts"],
-      }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
-    ],
+    plugins,
     watch: {
       include: "src/**",
     },
@@ -320,18 +261,7 @@ export default [
   },
   // minified widget container
   {
-    plugins: [
-      replaceHtml(),
-      typescript(),
-      css(),
-      nodeResolve({ browser: true }),
-      commonjs({
-        include: [/node_modules/],
-        extensions: [".js", ".ts"],
-      }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
-      // css(),
-      terser(),
-    ],
+    plugins: plugins.concat([terser()]),
     watch: {
       include: "src/**",
     },
