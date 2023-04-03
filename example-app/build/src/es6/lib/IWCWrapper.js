@@ -25,7 +25,7 @@ class IWCWrapper {
             setInterval(this.sendBufferedMessages, this.INTERVAL_SEND);
         this.connect = () => this._iwc.connect((intent) => this.onIntentReceivedCallback(this, intent));
         this.disconnect = () => this._iwc.disconnect;
-        (this.sendLocalMessage = function (receiver, data) {
+        this.sendLocalMessage = function (receiver, data) {
             var intent;
             if (!receiver || receiver === "")
                 return;
@@ -43,62 +43,62 @@ class IWCWrapper {
                     this._iwc.publish(intent);
                 }
             }
-        }),
-            (this.sendLocalOTOperation = function (receiver, operation) {
-                this.sendLocalMessage(receiver, {
-                    type: PAYLOAD_DATA_TYPE.OT_OPERATION,
-                    data: operation.getOperationObject(),
-                    sender: operation.getSender(),
-                });
-            }),
-            (this.sendLocalNonOTOperation = function (receiver, operation) {
-                this.sendLocalMessage(receiver, {
-                    type: PAYLOAD_DATA_TYPE.NON_OT_OPERATION,
-                    data: operation.getOperationObject(),
-                    sender: operation.getSender(),
-                });
-            }),
-            (this.getUserColor = function (jabberId) {
-                return Util.getColor(this.Space.members[jabberId].globalId);
-            }),
-            (this.registerOnDataReceivedCallback = function (callback, caller) {
-                if (typeof callback === "function") {
-                    this.unregisterOnDataReceivedCallback(callback);
-                    this._onDataReceivedCallbacks.push(callback);
-                    this._onDataReceivedCallers.push(caller);
-                }
-            }),
-            (this.unregisterOnDataReceivedCallback = function (callback) {
-                var i, numOfCallbacks;
-                if (typeof callback === "function") {
-                    for (i = 0, numOfCallbacks = this._onDataReceivedCallbacks.length; i < numOfCallbacks; i++) {
-                        if (callback === this._onDataReceivedCallbacks[i]) {
-                            this._onDataReceivedCallbacks.splice(i, 1);
-                            this._onDataReceivedCallers.splice(i, 1);
-                        }
+        };
+        this.sendLocalOTOperation = function (receiver, operation) {
+            this.sendLocalMessage(receiver, {
+                type: PAYLOAD_DATA_TYPE.OT_OPERATION,
+                data: operation.getOperationObject(),
+                sender: operation.getSender(),
+            });
+        };
+        this.sendLocalNonOTOperation = function (receiver, operation) {
+            this.sendLocalMessage(receiver, {
+                type: PAYLOAD_DATA_TYPE.NON_OT_OPERATION,
+                data: operation.getOperationObject(),
+                sender: operation.getSender(),
+            });
+        };
+        this.getUserColor = function (jabberId) {
+            return Util.getColor(this.Space.members[jabberId].globalId);
+        };
+        this.registerOnDataReceivedCallback = function (callback, caller) {
+            if (typeof callback === "function") {
+                this.unregisterOnDataReceivedCallback(callback);
+                this._onDataReceivedCallbacks.push(callback);
+                this._onDataReceivedCallers.push(caller);
+            }
+        };
+        this.unregisterOnDataReceivedCallback = function (callback) {
+            var i, numOfCallbacks;
+            if (typeof callback === "function") {
+                for (i = 0, numOfCallbacks = this._onDataReceivedCallbacks.length; i < numOfCallbacks; i++) {
+                    if (callback === this._onDataReceivedCallbacks[i]) {
+                        this._onDataReceivedCallbacks.splice(i, 1);
+                        this._onDataReceivedCallers.splice(i, 1);
                     }
                 }
-            }),
-            (this.getUser = function () {
-                if (!this.Space) {
-                    console.error("Space is null");
-                    this.Space = { user: {} };
-                }
-                else if (!this.Space.user) {
-                    console.error("User in space is null, generating new anonymous user");
-                    this.Space.user = Util.generateAnonymousUser();
-                }
-                return this.Space.user;
-            }),
-            (this.getMembers = function () {
-                return this.Space.members;
-            }),
-            (this.getSpaceTitle = function () {
-                return this.Space.title;
-            }),
-            (this.setSpace = function (s) {
-                this.Space = s;
-            });
+            }
+        };
+        this.getUser = function () {
+            if (!this.Space) {
+                console.error("Space is null");
+                this.Space = { user: {} };
+            }
+            else if (!this.Space.user) {
+                console.error("User in space is null, generating new anonymous user");
+                this.Space.user = Util.generateAnonymousUser();
+            }
+            return this.Space.user;
+        };
+        this.getMembers = function () {
+            return this.Space.members;
+        };
+        this.getSpaceTitle = function () {
+            return this.Space.title;
+        };
+        this.setSpace = function (s) {
+            this.Space = s;
+        };
         return this;
     }
     encapsulateMessage(receiver, flags, action, payload) {

@@ -25032,7 +25032,7 @@ class IWCWrapper {
             setInterval(this.sendBufferedMessages, this.INTERVAL_SEND);
         this.connect = () => this._iwc.connect((intent) => this.onIntentReceivedCallback(this, intent));
         this.disconnect = () => this._iwc.disconnect;
-        (this.sendLocalMessage = function (receiver, data) {
+        this.sendLocalMessage = function (receiver, data) {
             var intent;
             if (!receiver || receiver === "")
                 return;
@@ -25050,62 +25050,62 @@ class IWCWrapper {
                     this._iwc.publish(intent);
                 }
             }
-        }),
-            (this.sendLocalOTOperation = function (receiver, operation) {
-                this.sendLocalMessage(receiver, {
-                    type: PAYLOAD_DATA_TYPE.OT_OPERATION,
-                    data: operation.getOperationObject(),
-                    sender: operation.getSender(),
-                });
-            }),
-            (this.sendLocalNonOTOperation = function (receiver, operation) {
-                this.sendLocalMessage(receiver, {
-                    type: PAYLOAD_DATA_TYPE.NON_OT_OPERATION,
-                    data: operation.getOperationObject(),
-                    sender: operation.getSender(),
-                });
-            }),
-            (this.getUserColor = function (jabberId) {
-                return Util.getColor(this.Space.members[jabberId].globalId);
-            }),
-            (this.registerOnDataReceivedCallback = function (callback, caller) {
-                if (typeof callback === "function") {
-                    this.unregisterOnDataReceivedCallback(callback);
-                    this._onDataReceivedCallbacks.push(callback);
-                    this._onDataReceivedCallers.push(caller);
-                }
-            }),
-            (this.unregisterOnDataReceivedCallback = function (callback) {
-                var i, numOfCallbacks;
-                if (typeof callback === "function") {
-                    for (i = 0, numOfCallbacks = this._onDataReceivedCallbacks.length; i < numOfCallbacks; i++) {
-                        if (callback === this._onDataReceivedCallbacks[i]) {
-                            this._onDataReceivedCallbacks.splice(i, 1);
-                            this._onDataReceivedCallers.splice(i, 1);
-                        }
+        };
+        this.sendLocalOTOperation = function (receiver, operation) {
+            this.sendLocalMessage(receiver, {
+                type: PAYLOAD_DATA_TYPE.OT_OPERATION,
+                data: operation.getOperationObject(),
+                sender: operation.getSender(),
+            });
+        };
+        this.sendLocalNonOTOperation = function (receiver, operation) {
+            this.sendLocalMessage(receiver, {
+                type: PAYLOAD_DATA_TYPE.NON_OT_OPERATION,
+                data: operation.getOperationObject(),
+                sender: operation.getSender(),
+            });
+        };
+        this.getUserColor = function (jabberId) {
+            return Util.getColor(this.Space.members[jabberId].globalId);
+        };
+        this.registerOnDataReceivedCallback = function (callback, caller) {
+            if (typeof callback === "function") {
+                this.unregisterOnDataReceivedCallback(callback);
+                this._onDataReceivedCallbacks.push(callback);
+                this._onDataReceivedCallers.push(caller);
+            }
+        };
+        this.unregisterOnDataReceivedCallback = function (callback) {
+            var i, numOfCallbacks;
+            if (typeof callback === "function") {
+                for (i = 0, numOfCallbacks = this._onDataReceivedCallbacks.length; i < numOfCallbacks; i++) {
+                    if (callback === this._onDataReceivedCallbacks[i]) {
+                        this._onDataReceivedCallbacks.splice(i, 1);
+                        this._onDataReceivedCallers.splice(i, 1);
                     }
                 }
-            }),
-            (this.getUser = function () {
-                if (!this.Space) {
-                    console.error("Space is null");
-                    this.Space = { user: {} };
-                }
-                else if (!this.Space.user) {
-                    console.error("User in space is null, generating new anonymous user");
-                    this.Space.user = Util.generateAnonymousUser();
-                }
-                return this.Space.user;
-            }),
-            (this.getMembers = function () {
-                return this.Space.members;
-            }),
-            (this.getSpaceTitle = function () {
-                return this.Space.title;
-            }),
-            (this.setSpace = function (s) {
-                this.Space = s;
-            });
+            }
+        };
+        this.getUser = function () {
+            if (!this.Space) {
+                console.error("Space is null");
+                this.Space = { user: {} };
+            }
+            else if (!this.Space.user) {
+                console.error("User in space is null, generating new anonymous user");
+                this.Space.user = Util.generateAnonymousUser();
+            }
+            return this.Space.user;
+        };
+        this.getMembers = function () {
+            return this.Space.members;
+        };
+        this.getSpaceTitle = function () {
+            return this.Space.title;
+        };
+        this.setSpace = function (s) {
+            this.Space = s;
+        };
         return this;
     }
     encapsulateMessage(receiver, flags, action, payload) {
@@ -25491,7 +25491,10 @@ let BooleanValue$1 = class BooleanValue extends AbstractValue$1 {
                 .getYMap()
                 .observe(function (event) {
                 const array = Array.from(event.changes.keys.entries());
-                array.forEach(function ([key, value]) {
+                array.forEach(function ([key, change]) {
+                    if (change.action !== "update" || key !== that.getEntityId()) {
+                        return;
+                    }
                     const map = event.currentTarget.get(key);
                     const json = map;
                     var operation = new ValueChangeOperation(json.entityId, json.value, json.type, json.position, json.jabberId);
@@ -26023,7 +26026,7 @@ const singleColorValueAttributeHtml$1 = "<div class=\"single_value_attribute\">\
 const keySelectionValueSelectionValueAttributeHtml$1 = "<li class=\"key_value_attribute\" id=\"<%= id %>\">\r\n    <div class=\"key\"></div>\r\n    <div class=\"value\"></div>\r\n</li>";
 const keySelectionValueListAttributeHtml$1 = "<div class=\"list_attribute\">\r\n    <div class=\"name\"></div>\r\n    <ul class=\"list\"></ul>\r\n</div>";
 const keySelectionValueAttributeHtml$1 = "<li class=\"key_value_attribute\" id=\"<%= id %>\">\r\n    <div class=\"key\"></div>\r\n    <div class=\"value\"></div>\r\n</li>";
-const integerAttributeHtml$1 = "<div class=\"attribute_single_value_attribute input-group mb-3 flex-nowrap\">\r\n  <div\r\n    class=\"attribute_name input-group-text overflow-auto\"\r\n    style=\"max-width: 50%\"\r\n  ></div>\r\n  <div class=\"attribute_value flex-fill\"></div>\r\n</div>\r\n";
+const integerAttributeHtml$1 = "<div class=\"integer_attribute\">\r\n    <div class=\"name\"></div>\r\n    <div class=\"value\"></div>\r\n</div>";
 let integerValueHtml$1 = "<div class=\"val\"><%= value %></div>";
 const attributeIntegerValueHtml = "<input\r\n  class=\"form-control h-100 val\"\r\n  type=\"number\"\r\n  name=\"<%= name %>\"\r\n  value=\"0\"\r\n/>\r\n";
 const valueHtml = "<input\r\n  class=\"form-control val\"\r\n  type=\"text\"\r\n  name=\"<%= name %>\"\r\n  disabled=\"disabled\"\r\n/>\r\n";
@@ -26684,7 +26687,6 @@ let AbstractEdge$1 = class AbstractEdge extends AbstractEntity$1 {
                     }
                 }
             }
-            EntityManagerInstance$1.storeDataYjs();
         };
         this.highlight = function (color) {
             var paintStyle = lodash.clone(_defaultPaintStyle);
@@ -27542,9 +27544,7 @@ let AbstractNode$1 = class AbstractNode extends AbstractEntity$1 {
             _ymap.observe(function (event) {
                 const array = Array.from(event.changes.keys.entries());
                 array.forEach(([key, change]) => {
-                    var yUserId = event.currentTarget.doc.clientID;
-                    if (y.clientID !== yUserId ||
-                        (event.value && event.value.historyFlag)) {
+                    if (event.value && event.value.historyFlag) {
                         var operation;
                         var data = event.value;
                         const userMap = y.getMap("users");
@@ -27571,6 +27571,7 @@ let AbstractNode$1 = class AbstractNode extends AbstractEntity$1 {
             });
         };
         jsPlumbInstance.manage(this._$node.get(0));
+        EntityManagerInstance$1.storeDataYjs();
     }
     repaint() {
         window.jsPlumbInstance.repaint(this._$node.get(0));
@@ -27795,6 +27796,7 @@ let EntityManager$2 = class EntityManager {
                     node = new nodeTypes[type](id, left, top, width, height, zIndex, containment, json, y);
                 }
                 _nodes[id] = node;
+                EntityManagerInstance$1.storeDataYjs();
                 return node;
             },
             findObjectNodeByLabel(searchLabel) {
@@ -27842,6 +27844,7 @@ let EntityManager$2 = class EntityManager {
                 if (_nodes.hasOwnProperty(id)) {
                     delete _nodes[id];
                 }
+                EntityManagerInstance$1.storeDataYjs();
             },
             getNodes: function () {
                 return _nodes;
@@ -27875,6 +27878,7 @@ let EntityManager$2 = class EntityManager {
                 source.addOutgoingEdge(edge);
                 target?.addIngoingEdge(edge);
                 _edges[id] = edge;
+                EntityManagerInstance$1.storeDataYjs();
                 return edge;
             },
             findEdge: function (id) {
@@ -27887,6 +27891,7 @@ let EntityManager$2 = class EntityManager {
                 if (_edges.hasOwnProperty(id)) {
                     delete _edges[id];
                 }
+                EntityManagerInstance$1.storeDataYjs();
             },
             getEdges: function () {
                 return _edges;
@@ -30482,11 +30487,12 @@ let SelectionValue$1 = class SelectionValue extends AbstractValue$1 {
             that
                 .getRootSubjectEntity()
                 .getYMap()
-                .observe(function (event) {
+                .observeDeep(function ([event]) {
                 const array = Array.from(event.changes.keys.entries());
                 array.forEach(([key, change]) => {
                     const updated = event.currentTarget.get(key);
-                    if (change.action !== "update" || updated?.type !== "update")
+                    if (updated?.type !== "update" ||
+                        !(updated?.entityId === that.getEntityId()))
                         return;
                     var operation = new ValueChangeOperation(updated.entityId, updated.value, updated.type, updated.position, updated.jabberId);
                     _iwcw.sendLocalOTOperation(CONFIG$1.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
@@ -30521,12 +30527,15 @@ let SelectionValue$1 = class SelectionValue extends AbstractValue$1 {
     }
 };
 let IntegerAttribute$1 = class IntegerAttribute extends AbstractAttribute$1 {
-    constructor(id, name, subjectEntity, options) {
+    constructor(id, name, subjectEntity, useAttributeHtml) {
         super(id, name, subjectEntity);
-        var _value = new IntegerValue$1(id, name, this, this.getRootSubjectEntity(), options);
+        useAttributeHtml =
+            typeof useAttributeHtml !== "undefined" ? useAttributeHtml : false;
+        var _value = new IntegerValue$1(id, name, this, this.getRootSubjectEntity(), useAttributeHtml);
         var _$node = $(lodash.template(integerAttributeHtml$1)());
         this.setValue = function (value) {
             _value = value;
+            _$node.val(value);
         };
         this.getValue = function () {
             return _value;
@@ -30534,17 +30543,16 @@ let IntegerAttribute$1 = class IntegerAttribute extends AbstractAttribute$1 {
         this.get$node = function () {
             return _$node;
         };
+        this.toJSON = function () {
+            var json = AbstractAttribute$1.prototype.toJSON.call(this);
+            json.value = _value.toJSON();
+            return json;
+        };
         this.setValueFromJSON = function (json) {
             _value.setValueFromJSON(json.value);
         };
-        _$node.find(".attribute_name").text(this.getName());
-        _$node.find(".attribute_value").append(_value.get$node());
-        if (window.hasOwnProperty("y")) {
-            const widgetConfigMap = y.getMap("widgetConfig");
-            if (widgetConfigMap.get("view_only_property_browser")) {
-                _$node.find(".val").attr("disabled", "true");
-            }
-        }
+        _$node.find(".name").text(this.getName());
+        _$node.find(".value").append(_value.get$node());
     }
 };
 let SingleSelectionAttribute$1 = class SingleSelectionAttribute extends AbstractAttribute$1 {
@@ -30630,11 +30638,17 @@ let IntegerValue$1 = class IntegerValue extends AbstractValue$1 {
                 .observe(function (event) {
                 const array = Array.from(event.changes.keys.entries());
                 array.forEach(([key, change]) => {
-                    var operation = new ValueChangeOperation(event.entityId, event.value, event.type, event.position, event.jabberId);
+                    if (change.action !== "update")
+                        return;
+                    if (key !== that.getEntityId())
+                        return;
+                    const data = event.target.get(key);
+                    var operation = new ValueChangeOperation(data.entityId, data.value, data.type, data.position, data.jabberId);
                     _iwcw.sendLocalOTOperation(CONFIG$1.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
                     processValueChangeOperation(operation);
                     if (_iwcw.getUser()[CONFIG$1.NS.PERSON.JABBERID] ===
                         operation.getJabberId()) {
+                        EntityManagerInstance$1.storeDataYjs();
                         const activityMap = y.getMap("activity");
                         activityMap.set(ActivityOperation.TYPE, new ActivityOperation("ValueChangeActivity", that.getEntityId(), _iwcw.getUser()[CONFIG$1.NS.PERSON.JABBERID], ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(), that.getRootSubjectEntity().getType(), that.getRootSubjectEntity().getLabel().getValue().getValue()), {
                             value: operation.getValue(),
@@ -30652,14 +30666,6 @@ let IntegerValue$1 = class IntegerValue extends AbstractValue$1 {
                     }
                 });
             });
-            that
-                .getRootSubjectEntity()
-                .getYMap()
-                .observe(lodash.debounce(function (event) {
-                if (event &&
-                    event.jabberId === _iwcw.getUser()[CONFIG$1.NS.PERSON.JABBERID])
-                    EntityManagerInstance$1.storeDataYjs();
-            }, 500));
         };
         init();
     }
@@ -30722,11 +30728,13 @@ let SingleValueListAttribute$1 = class SingleValueListAttribute extends Abstract
         };
         var propagateAttributeAddOperation = function (operation) {
             processAttributeAddOperation(operation);
+            EntityManagerInstance$1.storeDataYjs();
         };
         var propagateAttributeDeleteOperation = function (operation) {
             processAttributeDeleteOperation(operation);
             var ynode = that.getRootSubjectEntity().getYMap();
             ynode.delete(operation.getEntityId());
+            EntityManagerInstance$1.storeDataYjs();
         };
         var remoteAttributeAddCallback = function (operation) {
             if (operation instanceof AttributeAddOperation &&
@@ -30837,8 +30845,7 @@ let SingleValueListAttribute$1 = class SingleValueListAttribute extends Abstract
                     if (key.indexOf("[value]") != -1) {
                         switch (change.action) {
                             case "add": {
-                                const jabberId = event.target.get("jabberId");
-                                if (jabberId === _iwcw.getUser()[CONFIG$1.NS.PERSON.JABBERID])
+                                if (event.currentTarget.get("modifiedBy") === window.y.clientID)
                                     return;
                                 operation = new AttributeAddOperation(key.replace(/\[\w*\]/g, ""), that.getEntityId(), that.getRootSubjectEntity().getEntityId(), that.constructor.name);
                                 remoteAttributeAddCallback(operation);
@@ -30858,14 +30865,18 @@ let SingleValueListAttribute$1 = class SingleValueListAttribute extends Abstract
 };
 let Value$1 = class Value extends AbstractValue$1 {
     constructor(id, name, subjectEntity, rootSubjectEntity, y) {
-        var _iwcw = IWCW.getInstance(CONFIG$1.WIDGET.NAME.MAIN, y);
-        var _ytext = null;
+        super(id, name, subjectEntity, rootSubjectEntity);
+        this.value = "";
         y = y || window.y;
-        if (y && id.indexOf("undefined") == -1) {
-            const yMap = rootSubjectEntity.getYMap();
-            if (!yMap) {
-                throw new Error("yMap is undefined");
-            }
+        if (!y)
+            throw new Error("y is undefined");
+        IWCW.getInstance(CONFIG$1.WIDGET.NAME.MAIN, y);
+        var _ytext = null;
+        const yMap = rootSubjectEntity.getYMap();
+        if (!yMap) {
+            throw new Error("yMap is undefined");
+        }
+        y.transact(() => {
             if (yMap?.has(id)) {
                 _ytext = rootSubjectEntity.getYMap().get(id);
                 if (!(_ytext instanceof Text$1)) {
@@ -30877,9 +30888,8 @@ let Value$1 = class Value extends AbstractValue$1 {
                 _ytext = new Text$1();
                 rootSubjectEntity.getYMap().set(id, _ytext);
             }
-        }
-        super(id, name, subjectEntity, rootSubjectEntity);
-        this.value = "";
+            rootSubjectEntity.getYMap().set("modifiedBy", window.y.clientID);
+        });
         var that = this;
         var _value = "";
         this.value = _value;
@@ -30904,52 +30914,23 @@ let Value$1 = class Value extends AbstractValue$1 {
             this.setValue(json.value);
         };
         this.registerYType = function () {
-            _$node.on("input", function () {
-                if (_ytext) {
-                    if (_$node.val() !== _ytext.toString()) {
-                        if (_ytext.toString().length > 0)
-                            _ytext.delete(0, _ytext.toString().length);
-                        _ytext.insert(0, _$node.val());
-                    }
-                }
-            });
-            if (that.getValue() !== _ytext.toString()) {
-                if (_ytext.toString().length > 0)
-                    _ytext.delete(0, _ytext.toString().length - 1);
-                _ytext.insert(0, that.getValue());
-            }
-            _ytext.observe(function (event) {
+            _ytext.observe(lodash.debounce(function (event) {
                 _value = _ytext.toString().replace(/\n/g, "");
                 that.setValue(_value);
-            });
-            _ytext.observe(lodash.debounce(function (event) {
-                event.keysChanged.forEach((key) => {
-                    if (key !== "delete") {
-                        const userMap = y.getMap("users");
-                        var jabberId = userMap.get(event.object._content[event.index].id[0]);
-                        if (jabberId === _iwcw.getUser()[CONFIG$1.NS.PERSON.JABBERID]) {
-                            EntityManagerInstance$1.storeDataYjs();
-                            const activityMap = y.getMap("activity");
-                            activityMap.set(ActivityOperation.TYPE, new ActivityOperation("ValueChangeActivity", that.getEntityId(), jabberId, ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(), that.getRootSubjectEntity().getType(), that
-                                .getRootSubjectEntity()
-                                .getLabel()
-                                .getValue()
-                                .getValue()), {
-                                value: _value,
-                                subjectEntityName: that.getSubjectEntity().getName(),
-                                rootSubjectEntityType: that
-                                    .getRootSubjectEntity()
-                                    .getType(),
-                                rootSubjectEntityId: that
-                                    .getRootSubjectEntity()
-                                    .getEntityId(),
-                            }).toJSON());
-                        }
-                        else {
-                            EntityManagerInstance$1.storeDataYjs();
-                        }
-                    }
-                });
+                if (event.currentTarget.get("modifiedBy") === window.y.clientID) {
+                    EntityManagerInstance$1.storeDataYjs();
+                    const userMap = y.getMap("users");
+                    const jabberId = userMap.get(event.currentTarget.doc.clientID);
+                    const activityMap = y.getMap("activity");
+                    activityMap.set(ActivityOperation.TYPE, new ActivityOperation("ValueChangeActivity", that.getEntityId(), jabberId, ValueChangeOperation.getOperationDescription(that.getSubjectEntity().getName(), that.getRootSubjectEntity().getType(), that.getRootSubjectEntity().getLabel().getValue().getValue()), {
+                        value: _value,
+                        subjectEntityName: that.getSubjectEntity().getName(),
+                        rootSubjectEntityType: that.getRootSubjectEntity().getType(),
+                        rootSubjectEntityId: that
+                            .getRootSubjectEntity()
+                            .getEntityId(),
+                    }).toJSON());
+                }
             }, 500));
         };
         this.getYText = function () {
@@ -31160,6 +31141,7 @@ let ConditionListAttribute$1 = class ConditionListAttribute extends AbstractAttr
         };
         var propagateAttributeAddOperation = function (operation) {
             processAttributeAddOperation(operation);
+            EntityManagerInstance$1.storeDataYjs();
         };
         var processAttributeDeleteOperation = function (operation) {
             var attribute = that.getAttribute(operation.getEntityId());
@@ -31167,6 +31149,7 @@ let ConditionListAttribute$1 = class ConditionListAttribute extends AbstractAttr
                 that.deleteAttribute(attribute.getEntityId());
                 attribute.get$node().remove();
             }
+            EntityManagerInstance$1.storeDataYjs();
         };
         var propagateAttributeDeleteOperation = function (operation) {
             processAttributeDeleteOperation(operation);
@@ -31540,6 +31523,7 @@ let RenamingListAttribute$1 = class RenamingListAttribute extends AbstractAttrib
             that.addAttribute(attribute);
             attribute.registerYMap();
             _$node.find(".list").append(attribute.get$node());
+            EntityManagerInstance$1.storeDataYjs();
             return attribute;
         };
         this.propagateAttributeAddOperation = function (operation) {
@@ -31556,6 +31540,7 @@ let RenamingListAttribute$1 = class RenamingListAttribute extends AbstractAttrib
             processAttributeDeleteOperation(operation);
             var ymap = that.getRootSubjectEntity().getYMap();
             ymap.delete(operation.getEntityId() + "[val]");
+            EntityManagerInstance$1.storeDataYjs();
         };
         var remoteAttributeAddCallback = function (operation) {
             if (operation instanceof AttributeAddOperation &&
@@ -31842,11 +31827,13 @@ let KeySelectionValueListAttribute$1 = class KeySelectionValueListAttribute exte
         };
         var propagateAttributeAddOperation = function (operation) {
             processAttributeAddOperation(operation);
+            EntityManagerInstance$1.storeDataYjs();
         };
         var propagateAttributeDeleteOperation = function (operation) {
             processAttributeDeleteOperation(operation);
             var ymap = that.getRootSubjectEntity().getYMap();
             ymap.delete(operation.getEntityId() + "[key]");
+            EntityManagerInstance$1.storeDataYjs();
         };
         var remoteAttributeAddCallback = function (operation) {
             if (operation instanceof AttributeAddOperation &&
@@ -31953,12 +31940,10 @@ let KeySelectionValueListAttribute$1 = class KeySelectionValueListAttribute exte
                 }
             }
             ymap.observe(function (event) {
-                event.keysChanged;
                 const array = Array.from(event.changes.keys.entries());
                 array.forEach(([key, change]) => {
                     if (key.indexOf("[key]") != -1) {
                         var operation;
-                        event.currentTarget.get(key);
                         switch (change.action) {
                             case "add": {
                                 operation = new AttributeAddOperation(key.replace(/\[\w*\]/g, ""), that.getEntityId(), that.getRootSubjectEntity().getEntityId(), that.constructor.name);
@@ -47623,13 +47608,26 @@ class Value extends AbstractValue {
         super(id, name, subjectEntity, rootSubjectEntity);
         var _ytext = null;
         var _value = "";
-        let editorId = sanitizeValue("editor-" + rootSubjectEntity.getEntityId());
+        let editorId = sanitizeValue("editor-" + id);
         editorId = editorId.toLowerCase();
         var _$node = $(lodash.template(quillEditorHtml$1)({ id: editorId }));
         var _$editorRef;
+        _$editorRef = new Quill(_$node.get(0), {
+            theme: "snow",
+            modules: {
+                toolbar: false,
+            },
+            cursors: false,
+            placeholder: name,
+        });
         this.setValue = function (value) {
             _value = value;
-            _$node.val(value);
+            if (_$editorRef) {
+                _$editorRef.insertText(0, value);
+            }
+            else {
+                console.error("Quill editor not initialized");
+            }
         };
         this.getValue = function () {
             return _value;
@@ -47645,15 +47643,6 @@ class Value extends AbstractValue {
         };
         this.registerYType = function (ytext) {
             _ytext = ytext;
-            const domElem = _$node.get(0);
-            _$editorRef = new Quill(domElem, {
-                theme: "snow",
-                modules: {
-                    toolbar: false,
-                },
-                cursors: false,
-                placeholder: name,
-            });
             if (!_ytext) {
                 throw new Error("YText not found");
             }
@@ -48830,8 +48819,7 @@ class SingleValueListAttribute extends AbstractAttribute {
         }
         _$node.find(".btn-success").click(function () {
             var id = Util.generateRandomId();
-            const userMap = y.getMap("users");
-            var operation = new AttributeAddOperation(id, that.getEntityId(), that.getRootSubjectEntity().getEntityId(), ListSingleValueAttribute.TYPE, userMap.get(y.clientID));
+            var operation = new AttributeAddOperation(id, that.getEntityId(), that.getRootSubjectEntity().getEntityId(), ListSingleValueAttribute.TYPE);
             propagateAttributeAddOperation(operation);
         });
         const nodesMap = y.getMap("nodes");
@@ -50332,7 +50320,7 @@ class EnumNode extends AbstractNode {
         var _attributes = this.getAttributes();
         this.addAttribute(new SingleValueListAttribute("[attributes]", "Attributes", this));
         _$node.find(".label").append(this.getLabel().get$node());
-        this.registerYMap = function () {
+        this.registerYType = function () {
             AbstractNode.prototype.registerYType.call(this);
             const nodesMap = y.getMap("nodes");
             var ymap = nodesMap.get(that.getEntityId());
@@ -51355,7 +51343,7 @@ let AttributeWidget = class AttributeWidget extends SyncMetaWidget(LitElement, g
                         });
                     });
                 })
-                    .catch(function (e) {
+                    .catch((e) => {
                     console.error(e);
                     this.showErrorAlert("Cannot connect to Canvas widget.");
                 })
@@ -51584,7 +51572,6 @@ AttributeWidget = __decorate([
 ], AttributeWidget);
 function JSONToGraph(json, wrapper) {
     var modelAttributesNode;
-    var nodeId, edgeId;
     if (json.attributes && Object.keys(json.attributes).length > 0) {
         modelAttributesNode = EntityManagerInstance.createModelAttributesNodeFromJSON(json.attributes);
         wrapper.setModelAttributesNode(modelAttributesNode);
@@ -51592,7 +51579,7 @@ function JSONToGraph(json, wrapper) {
         modelAttributesNode.addToWrapper(wrapper);
         wrapper.select(modelAttributesNode);
     }
-    for (nodeId in json.nodes) {
+    for (const nodeId in json.nodes) {
         if (json.nodes.hasOwnProperty(nodeId)) {
             var node = EntityManagerInstance.createNodeFromJSON(json.nodes[nodeId].type, nodeId, json.nodes[nodeId].left, json.nodes[nodeId].top, json.nodes[nodeId].width, json.nodes[nodeId].height, json.nodes[nodeId].zIndex, json.nodes[nodeId]);
             if (!node) {
@@ -51604,7 +51591,7 @@ function JSONToGraph(json, wrapper) {
             node.addToWrapper(wrapper);
         }
     }
-    for (edgeId in json.edges) {
+    for (const edgeId in json.edges) {
         if (json.edges.hasOwnProperty(edgeId)) {
             var edge = EntityManagerInstance.createEdgeFromJSON(json.edges[edgeId].type, edgeId, json.edges[edgeId].source, json.edges[edgeId].target, json.edges[edgeId]);
             edge.registerYType();
@@ -52999,7 +52986,6 @@ class ActivityList {
         var activityList = [];
         this.addUser = function (jabberId, isLocalUser = false) {
             if (!jabberId) {
-                console.error("jabberid not valid", jabberId, "aborting");
                 return;
             }
             var user;
