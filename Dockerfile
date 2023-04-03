@@ -7,12 +7,13 @@ WORKDIR /usr/src/app
 
 COPY . .
 
-WORKDIR /usr/src/app/widgets
-RUN npm install
-RUN npm run bundle
+WORKDIR /usr/src/app
+RUN npm ci
+RUN npx rollup -c rollup.config.dev.js --bundleConfigAsCjs
 
-WORKDIR /usr/src/app/app
-RUN npm install
+WORKDIR /usr/src/app/example-app
+
+RUN npm ci
 RUN npm run build
 
 WORKDIR /usr/src/app
@@ -20,4 +21,4 @@ WORKDIR /usr/src/app
 EXPOSE 8000
 
 # Run the app 
-CMD cd /usr/src/app/app && npm run start:prod
+CMD cd /usr/src/app/example-app && npm run start:prod
