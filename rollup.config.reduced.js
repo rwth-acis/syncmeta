@@ -46,8 +46,7 @@ export default [
       commonjs({
         include: [/node_modules/],
         extensions: [".js", ".ts"],
-      }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required      css(),
-      // css(),
+      }), // makes sure that any commonjs modules are transformed to es6 to be bundled the ".ts" extension is required
       terser(),
     ],
     watch: {
