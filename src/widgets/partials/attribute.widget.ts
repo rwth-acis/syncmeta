@@ -154,7 +154,7 @@ export class AttributeWidget extends SyncMetaWidget(
   }
   showErrorAlert(message: string) {
     $(this.widgetName).find("#alert-message").text(message);
-    $(this.widgetName).find("error-alert").hide();
+    $(this.widgetName).find("error-alert").show();
   }
 
   render() {
