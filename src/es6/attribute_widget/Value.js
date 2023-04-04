@@ -61,7 +61,7 @@ class Value extends AbstractValue {
      */
     this.setValue = function (value) {
       _value = value;
-      if (_$editorRef) {
+      if (_$editorRef && value?.trim() !== _$editorRef.getText().trim()) {
         _$editorRef.insertText(0, value);
       } else {
         console.error("Quill editor not initialized");
