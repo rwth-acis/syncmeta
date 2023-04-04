@@ -27799,15 +27799,16 @@ let EntityManager$2 = class EntityManager {
                 EntityManagerInstance$1.storeDataYjs();
                 return node;
             },
-            findObjectNodeByLabel(searchLabel) {
-                const re = new RegExp(searchLabel, "gi");
-                for (const [id, node] of Object.entries(_nodes)) {
-                    const currentNode = y.getMap("nodes").get(id).toJSON();
-                    for (const [key, property] of Object.entries(currentNode)) {
-                        if (key.match(id)) {
-                            if (property.match(re)) {
-                                return node;
-                            }
+            findObjectNodeByLabel(searchTerm) {
+                const re = new RegExp(searchTerm, "gi");
+                const { attributes, nodes, edges } = EntityManagerInstance$1.graphToJSON();
+                for (const [nodeId, node] of Object.entries(nodes)) {
+                    if (node?.type.match(re)) {
+                        return EntityManagerInstance$1.find(nodeId);
+                    }
+                    for (const attr of Object.values(node?.attributes)) {
+                        if (attr?.value.value.match(re)) {
+                            return EntityManagerInstance$1.find(nodeId);
                         }
                     }
                 }
@@ -27913,13 +27914,13 @@ let EntityManager$2 = class EntityManager {
                 var nodesJSON = {};
                 var edgesJSON = {};
                 attributesJSON = _modelAttributesNode
-                    ? _modelAttributesNode.toJSON()
+                    ? _modelAttributesNode?.toJSON()
                     : {};
                 lodash.forEach(_nodes, function (val, key) {
-                    nodesJSON[key] = val.toJSON();
+                    nodesJSON[key] = val?.toJSON();
                 });
                 lodash.forEach(_edges, function (val, key) {
-                    edgesJSON[key] = val.toJSON();
+                    edgesJSON[key] = val?.toJSON();
                 });
                 return {
                     attributes: attributesJSON,
@@ -33998,7 +33999,7 @@ class Canvas extends AbstractCanvas {
             ctx.rect(0, 0, _canvasWidth, _canvasHeight);
             ctx.fillStyle = _$node.css("backgroundColor");
             ctx.fill();
-            _.each(_.sortBy($.makeArray(_$node.children()), function (e) {
+            lodash.each(lodash.sortBy($.makeArray(_$node.children()), function (e) {
                 return $(e).css("zIndex");
             }), function (e) {
                 var $this = $(e);
@@ -51368,7 +51369,7 @@ let AttributeWidget = class AttributeWidget extends SyncMetaWidget(LitElement, g
     }
     showErrorAlert(message) {
         $(this.widgetName).find("#alert-message").text(message);
-        $(this.widgetName).find("error-alert").hide();
+        $(this.widgetName).find("error-alert").show();
     }
     render() {
         return html `
@@ -53468,6 +53469,10 @@ Spinner = __decorate([
     e("loading-spinner")
 ], Spinner);
 let ActivityWidget = class ActivityWidget extends SyncMetaWidget(LitElement, getWidgetTagName(CONFIG$1.WIDGET.NAME.ACTIVITY)) {
+    constructor() {
+        super(...arguments);
+        this.widgetName = getWidgetTagName(CONFIG$1.WIDGET.NAME.ACTIVITY);
+    }
     firstUpdated(_changedProperties) {
         super.firstUpdated(_changedProperties);
         yjsSync()
@@ -53512,10 +53517,18 @@ let ActivityWidget = class ActivityWidget extends SyncMetaWidget(LitElement, get
                 console.error("ACTIVITY: Error while waiting for CANVAS: ", err);
             });
         })
-            .catch(function (err) {
+            .catch((err) => {
             console.error("ACTIVITY: Error while initializing Yjs: " + err);
             this.showErrorAlert("Cannot connect to Yjs server.");
         });
+    }
+    hideErrorAlert() {
+        $(this.widgetName).find("#alert-message").text("");
+        $(this.widgetName).find("error-alert").hide();
+    }
+    showErrorAlert(message) {
+        $(this.widgetName).find("#alert-message").text(message);
+        $(this.widgetName).find("error-alert").show();
     }
     render() {
         return html `
