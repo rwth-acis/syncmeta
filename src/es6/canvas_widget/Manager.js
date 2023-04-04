@@ -3435,15 +3435,19 @@ class EntityManager {
         EntityManagerInstance.storeDataYjs();
         return node;
       },
-      findObjectNodeByLabel(searchLabel) {
-        const re = new RegExp(searchLabel, "gi");
-        for (const [id, node] of Object.entries(_nodes)) {
-          const currentNode = y.getMap("nodes").get(id).toJSON();
-          for (const [key, property] of Object.entries(currentNode)) {
-            if (key.match(id)) {
-              if (property.match(re)) {
-                return node;
-              }
+      findObjectNodeByLabel(searchTerm) {
+        const re = new RegExp(searchTerm, "gi");
+        const { attributes, nodes, edges } =
+          EntityManagerInstance.graphToJSON();
+        for (const [nodeId, node] of Object.entries(nodes)) {
+          if (node?.type.match(re)) {
+            // type matches searchTerm
+            return EntityManagerInstance.find(nodeId);
+          }
+          for (const attr of Object.values(node?.attributes)) {
+            if (attr?.value.value.match(re)) {
+              // attribute value matches searchTerm
+              return EntityManagerInstance.find(nodeId);
             }
           }
         }
@@ -3639,13 +3643,13 @@ class EntityManager {
         var nodesJSON = {};
         var edgesJSON = {};
         attributesJSON = _modelAttributesNode
-          ? _modelAttributesNode.toJSON()
+          ? _modelAttributesNode?.toJSON()
           : {};
         _.forEach(_nodes, function (val, key) {
-          nodesJSON[key] = val.toJSON();
+          nodesJSON[key] = val?.toJSON();
         });
         _.forEach(_edges, function (val, key) {
-          edgesJSON[key] = val.toJSON();
+          edgesJSON[key] = val?.toJSON();
         });
         return {
           attributes: attributesJSON,
