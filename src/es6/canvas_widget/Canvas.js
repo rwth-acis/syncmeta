@@ -40,7 +40,7 @@ import {
   HistoryManagerInstance as HistoryManager,
 } from "./Manager";
 import { newInstance } from "@jsplumb/browser-ui";
-import { eventWasTriggeredByMe } from "../yeventChecker";
+import { default as _ } from "lodash-es";
 
 /**
  * Canvas
