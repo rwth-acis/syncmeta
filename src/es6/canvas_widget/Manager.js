@@ -480,6 +480,7 @@ function HistoryManager() {
 }
 
 export const HistoryManagerInstance = new HistoryManager();
+Object.freeze(HistoryManagerInstance);
 
 const openapp = new OpenAppProvider().openapp;
 
@@ -3435,6 +3436,15 @@ class EntityManager {
         EntityManagerInstance.storeDataYjs();
         return node;
       },
+      saveState: function () {
+        // if metamodel
+        const viewId = ViewManager.getCurrentView();
+        if (viewId && !metamodel) {
+          ViewManager.updateViewContent(viewId);
+        } else {
+          EntityManager.storeDataYjs();
+        }
+      },
       findObjectNodeByLabel(searchTerm) {
         const re = new RegExp(searchTerm, "gi");
         const { attributes, nodes, edges } =
@@ -5587,6 +5597,7 @@ class EntityManager {
 }
 
 export const EntityManagerInstance = new EntityManager();
+Object.freeze(EntityManagerInstance);
 
 /**
  * Node
