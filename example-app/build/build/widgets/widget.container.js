@@ -25526,7 +25526,7 @@ let BooleanValue$1 = class BooleanValue extends AbstractValue$1 {
                 event.keysChanged.forEach(function (key) {
                     if (key == "jabberId" &&
                         key === _iwcw.getUser()[CONFIG$1.NS.PERSON.JABBERID])
-                        EntityManager.storeDataYjs();
+                        EntityManager.saveState();
                 });
             }, 500));
         };
@@ -26243,6 +26243,7 @@ function HistoryManager() {
     };
 }
 const HistoryManagerInstance = new HistoryManager();
+Object.freeze(HistoryManagerInstance);
 const openapp$1 = new OpenAppProvider().openapp;
 var nodeShapeTypes = {
     circle: circleNodeHtml$1,
@@ -27799,6 +27800,15 @@ let EntityManager$2 = class EntityManager {
                 EntityManagerInstance$1.storeDataYjs();
                 return node;
             },
+            saveState: function () {
+                const viewId = ViewManager.getCurrentView();
+                if (viewId && !metamodel) {
+                    ViewManager.updateViewContent(viewId);
+                }
+                else {
+                    EntityManager.storeDataYjs();
+                }
+            },
             findObjectNodeByLabel(searchTerm) {
                 const re = new RegExp(searchTerm, "gi");
                 const { attributes, nodes, edges } = EntityManagerInstance$1.graphToJSON();
@@ -28334,6 +28344,7 @@ let EntityManager$2 = class EntityManager {
                                 customAnchors: "",
                             },
                         };
+                        guidanceMetamodel.nodes[id];
                         var entityLabel = guidancemodel.getEntityNodeLabelForType(node.label);
                         createObjectNodeToEntityNodeRelation.targetTypes.push(label);
                         id = Util.generateRandomId();
@@ -28378,6 +28389,7 @@ let EntityManager$2 = class EntityManager {
                             value: "Value",
                             options: options,
                         };
+                        guidanceMetamodel.nodes[id];
                         dataFlowEdgeRelations.push({
                             sourceTypes: [label],
                             targetTypes: [entityLabel],
@@ -28428,6 +28440,7 @@ let EntityManager$2 = class EntityManager {
                                 customAnchors: "",
                             },
                         };
+                        guidanceMetamodel.nodes[id];
                         var entityLabel = guidancemodel.getEntityNodeLabelForType(edge.label);
                         var id = Util.generateRandomId();
                         guidanceMetamodel.nodes[id] = {
@@ -28446,6 +28459,7 @@ let EntityManager$2 = class EntityManager {
                                 customAnchors: "",
                             },
                         };
+                        guidanceMetamodel.nodes[id];
                         if (Object.keys(edge.attributes).length > 0) {
                             var setPropertyLabel = guidancemodel.getSetPropertyNodeLabelForType(edge.label);
                             actionNodeLabels.push(setPropertyLabel);
@@ -29377,6 +29391,7 @@ let EntityManager$2 = class EntityManager {
     }
 };
 const EntityManagerInstance$1 = new EntityManager$2();
+Object.freeze(EntityManagerInstance$1);
 function makeNode$1(type, $shape, anchors, attributes) {
     class Node extends AbstractNode$1 {
         constructor(id, left, top, width, height, zIndex, containment) {
@@ -30871,7 +30886,6 @@ let Value$1 = class Value extends AbstractValue$1 {
         y = y || window.y;
         if (!y)
             throw new Error("y is undefined");
-        IWCW.getInstance(CONFIG$1.WIDGET.NAME.MAIN, y);
         var _ytext = null;
         const yMap = rootSubjectEntity.getYMap();
         if (!yMap) {
@@ -30918,8 +30932,8 @@ let Value$1 = class Value extends AbstractValue$1 {
             _ytext.observe(lodash.debounce(function (event) {
                 _value = _ytext.toString().replace(/\n/g, "");
                 that.setValue(_value);
+                EntityManagerInstance$1.storeDataYjs();
                 if (event.currentTarget.get("modifiedBy") === window.y.clientID) {
-                    EntityManagerInstance$1.storeDataYjs();
                     const userMap = y.getMap("users");
                     const jabberId = userMap.get(event.currentTarget.doc.clientID);
                     const activityMap = y.getMap("activity");
@@ -33409,7 +33423,7 @@ class Canvas extends AbstractCanvas {
             var sourceNode = EntityManagerInstance$1.findNode(operation.getSource());
             var targetNode = EntityManagerInstance$1.findNode(operation.getTarget());
             processEdgeAddOperation(operation);
-            EntityManagerInstance$1.storeDataYjs();
+            EntityManagerInstance$1.saveState();
             _iwcw.sendLocalOTOperation(CONFIG$1.WIDGET.NAME.GUIDANCE, operation.getOTOperation());
             const activityMap = y.getMap("activity");
             activityMap.set(ActivityOperation.TYPE, new ActivityOperation("EdgeAddActivity", operation.getEntityId(), _iwcw.getUser()[CONFIG$1.NS.PERSON.JABBERID], EdgeAddOperation.getOperationDescription(operation.getType(), "", sourceNode.getLabel().getValue().getValue(), sourceNode.getType(), targetNode.getType(), targetNode.getLabel().getValue().getValue()), {
@@ -34295,7 +34309,7 @@ class Canvas extends AbstractCanvas {
                             }
                             case "triggerSave": {
                                 if (data.value === _iwcw.getUser()[CONFIG$1.NS.PERSON.JABBERID])
-                                    EntityManagerInstance$1.storeDataYjs();
+                                    EntityManagerInstance$1.saveState();
                                 break;
                             }
                             case "applyLayout": {
@@ -34341,7 +34355,7 @@ class Canvas extends AbstractCanvas {
                                 if (event.value.jabberId === userId)
                                     nodesMap.delete(event.value.entityId);
                                 setTimeout(function () {
-                                    EntityManagerInstance$1.storeDataYjs();
+                                    EntityManagerInstance$1.saveState();
                                 }, 300);
                                 break;
                             }
@@ -34352,7 +34366,7 @@ class Canvas extends AbstractCanvas {
                     }
                     else if (key === "applyLayout") {
                         DagreLayout$1.apply();
-                        EntityManagerInstance$1.storeDataYjs();
+                        EntityManagerInstance$1.saveState();
                     }
                 });
             });
@@ -35333,68 +35347,77 @@ ViewGenerator$1.reset = function (vls) {
     });
 };
 const optionHtml = "<option id=\"<%= id %>\"><%= id %></option>";
-function ViewManager() {
-    var _$selection = $("#ddmViewSelection");
-    var optionTpl = lodash.template(optionHtml);
-    return {
-        GetViewpointList: function () {
-            y = window.y;
-            const viewsMap = y.getMap("views");
-            _$selection.empty();
-            var viewpointList = viewsMap.keys();
-            for (var i = 0; i < viewpointList.length; i++) {
-                var viewpoint = viewsMap.get(viewpointList[i]);
-                if (viewpoint) {
-                    _$selection.append($(optionTpl({
-                        id: viewpointList[i],
-                    })));
+let ViewManager$1 = class ViewManager {
+    constructor() {
+        let currentView = null;
+        var _$selection = $("#ddmViewSelection");
+        var optionTpl = lodash.template(optionHtml);
+        return {
+            setCurrentView: function (viewId) {
+                currentView = viewId;
+            },
+            getCurrentView: function () {
+                return currentView;
+            },
+            GetViewpointList: function () {
+                y = window.y;
+                const viewsMap = y.getMap("views");
+                _$selection.empty();
+                var viewpointList = viewsMap.keys();
+                for (var i = 0; i < viewpointList.length; i++) {
+                    var viewpoint = viewsMap.get(viewpointList[i]);
+                    if (viewpoint) {
+                        _$selection.append($(optionTpl({
+                            id: viewpointList[i],
+                        })));
+                    }
+                    else
+                        viewsMap.delete(viewpointList[i]);
+                }
+            },
+            existsView: function (viewId) {
+                const viewsMap = y.getMap("views");
+                return viewsMap.has(viewId);
+            },
+            getViewIdOfSelected: function () {
+                return this.getSelected$node().attr("id");
+            },
+            getSelected$node: function () {
+                return _$selection.find("option:selected");
+            },
+            addView: function (viewId) {
+                const viewsMap = y.getMap("views");
+                if (viewsMap.has(viewId)) {
+                    viewsMap.set(viewId, {
+                        viewId: viewId,
+                        attributes: {},
+                        nodes: {},
+                        edges: {},
+                    });
+                    return true;
                 }
                 else
-                    viewsMap.delete(viewpointList[i]);
-            }
-        },
-        existsView: function (viewId) {
-            const viewsMap = y.getMap("views");
-            return viewsMap.has(viewId);
-        },
-        getViewIdOfSelected: function () {
-            return this.getSelected$node().attr("id");
-        },
-        getSelected$node: function () {
-            return _$selection.find("option:selected");
-        },
-        addView: function (viewId) {
-            const viewsMap = y.getMap("views");
-            if (viewsMap.has(viewId)) {
-                viewsMap.set(viewId, {
-                    viewId: viewId,
-                    attributes: {},
-                    nodes: {},
-                    edges: {},
-                });
-                return true;
-            }
-            else
-                return false;
-        },
-        deleteView: function (viewId) {
-            const viewsMap = y.getMap("views");
-            viewsMap.delete(viewId);
-            _$selection.find("#" + viewId).remove();
-        },
-        updateViewContent: function (viewId) {
-            const viewsMap = y.getMap("views");
-            var data = this.viewToJSON(viewId);
-            viewsMap.set(viewId, data);
-        },
-        viewToJSON: function (viewId) {
-            var vls = EntityManagerInstance$1.graphToJSON();
-            vls["id"] = viewId;
-            return vls;
-        },
-    };
-}
-var ViewManager$1 = new ViewManager();
+                    return false;
+            },
+            deleteView: function (viewId) {
+                const viewsMap = y.getMap("views");
+                viewsMap.delete(viewId);
+                _$selection.find("#" + viewId).remove();
+            },
+            updateViewContent: function (viewId) {
+                const viewsMap = y.getMap("views");
+                var data = this.viewToJSON(viewId);
+                viewsMap.set(viewId, data);
+            },
+            viewToJSON: function (viewId) {
+                var vls = EntityManagerInstance$1.graphToJSON();
+                vls["id"] = viewId;
+                return vls;
+            },
+        };
+    }
+};
+var ViewManager$2 = new ViewManager$1();
 let ViewObjectNodeTool$1 = class ViewObjectNodeTool extends NodeTool$1 {
     constructor() {
         super(ViewObjectNode$1.TYPE, null, null, null, ViewObjectNode$1.DEFAULT_WIDTH, ViewObjectNode$1.DEFAULT_HEIGHT);
@@ -36066,7 +36089,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
                 var _a;
                 switch (key) {
                     case UpdateViewListOperation.TYPE: {
-                        ViewManager$1.GetViewpointList();
+                        ViewManager$2.GetViewpointList();
                         break;
                     }
                     case "ReloadWidgetOperation": {
@@ -36137,7 +36160,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
                 }
             }
         }
-        ViewManager$1.GetViewpointList();
+        ViewManager$2.GetViewpointList();
         $("#btnCreateViewpoint").hide();
         $("#btnDelViewPoint").hide();
         var initTools = function (vvs) {
@@ -36161,7 +36184,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
             }
         };
         $("#btnShowView").click(function () {
-            var viewId = ViewManager$1.getViewIdOfSelected();
+            var viewId = ViewManager$2.getViewIdOfSelected();
             var $currentViewIdLabel = $("#lblCurrentViewId");
             if (viewId === $currentViewIdLabel.text())
                 return;
@@ -36241,7 +36264,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
             HideCreateMenu();
         });
         $("#btnShowView").click(function () {
-            var viewId = ViewManager$1.getViewIdOfSelected();
+            var viewId = ViewManager$2.getViewIdOfSelected();
             if (viewId === $("#lblCurrentViewId").text())
                 return;
             $("#loading").show();
@@ -36251,25 +36274,25 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
         });
         $("#btnDelViewPoint").click(function () {
             const viewsMap = y.getMap("views");
-            var viewId = ViewManager$1.getViewIdOfSelected();
+            var viewId = ViewManager$2.getViewIdOfSelected();
             if (viewId && viewId !== $("#lblCurrentViewId").text()) {
                 viewsMap.delete(viewId);
                 _iwcw.sendLocalNonOTOperation(CONFIG$1.WIDGET.NAME.ATTRIBUTE, new DeleteViewOperation(viewId).toNonOTOperation());
-                ViewManager$1.deleteView(viewId);
+                ViewManager$2.deleteView(viewId);
             }
             else {
                 viewsMap.set(viewId, null);
-                ViewManager$1.deleteView(viewId);
+                ViewManager$2.deleteView(viewId);
                 $("#viewsHide").click();
             }
         });
         $("#btnAddViewpoint").click(function () {
             var viewId = $("#txtNameViewpoint").val();
-            if (ViewManager$1.existsView(viewId)) {
+            if (ViewManager$2.existsView(viewId)) {
                 alert("View already exists");
                 return;
             }
-            ViewManager$1.addView(viewId);
+            ViewManager$2.addView(viewId);
             HideCreateMenu();
             const canvasMap = y.getMap("canvas");
             canvasMap.set(UpdateViewListOperation.TYPE, true);
@@ -36411,7 +36434,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
         $feedback.text("Saving...");
         var viewId = $("#lblCurrentViewId").text();
         if (viewId.length > 0 && !metamodel) {
-            ViewManager$1.updateViewContent(viewId);
+            ViewManager$2.updateViewContent(viewId);
             $feedback.text("Saved!");
             setTimeout(function () {
                 $feedback.text("");
@@ -36530,7 +36553,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
     const userId = _iwcw.getUser()[CONFIG$1.NS.PERSON.JABBERID];
     if (!joinMap.has(_iwcw.getUser()[CONFIG$1.NS.PERSON.JABBERID]))
         joinMap.set(userId.toString(), false);
-    ViewManager$1.GetViewpointList();
+    ViewManager$2.GetViewpointList();
     $spinner.hide();
 }
 class AbstractEntity {
@@ -47623,12 +47646,6 @@ class Value extends AbstractValue {
         });
         this.setValue = function (value) {
             _value = value;
-            if (_$editorRef && value?.trim() !== _$editorRef.getText().trim()) {
-                _$editorRef.insertText(0, value);
-            }
-            else {
-                console.error("Quill editor not initialized");
-            }
         };
         this.getValue = function () {
             return _value;
@@ -49635,6 +49652,7 @@ let EntityManager$1 = class EntityManager {
     }
 };
 const EntityManagerInstance = new EntityManager$1();
+Object.freeze(EntityManagerInstance);
 function makeNode(type, shapeType, customShape, customAnchors, color, attributes) {
     class Node extends AbstractNode {
         constructor(id, left, top, width, height) {
@@ -51836,6 +51854,7 @@ let DebugWidget = class DebugWidget extends SyncMetaWidget(LitElement, getWidget
                         else {
                             dataMap.set("metamodel", vls);
                         }
+                        dataMap.set("model", null);
                         feedback("Imported Meta Model, the page will reload now");
                         setTimeout(() => {
                             location.reload();

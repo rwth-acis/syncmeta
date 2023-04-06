@@ -40163,7 +40163,7 @@ let BooleanValue$1 = class BooleanValue extends AbstractValue$1 {
                 key == "jabberId" &&
                 key === _iwcw.getUser()[CONFIG$1.NS.PERSON.JABBERID]
               )
-                EntityManager.storeDataYjs();
+                EntityManager.saveState();
             });
           }, 500)
         );
@@ -41454,6 +41454,7 @@ function HistoryManager() {
 }
 
 const HistoryManagerInstance = new HistoryManager();
+Object.freeze(HistoryManagerInstance);
 
 const openapp$1 = new OpenAppProvider().openapp;
 
@@ -44377,6 +44378,15 @@ let EntityManager$2 = class EntityManager {
         EntityManagerInstance$1.storeDataYjs();
         return node;
       },
+      saveState: function () {
+        // if metamodel
+        const viewId = ViewManager.getCurrentView();
+        if (viewId && !metamodel) {
+          ViewManager.updateViewContent(viewId);
+        } else {
+          EntityManager.storeDataYjs();
+        }
+      },
       findObjectNodeByLabel(searchTerm) {
         const re = new RegExp(searchTerm, "gi");
         const { attributes, nodes, edges } =
@@ -45180,6 +45190,8 @@ let EntityManager$2 = class EntityManager {
               },
             };
 
+            guidanceMetamodel.nodes[id];
+
             //Generate the 'entity node'
             var entityLabel = guidancemodel.getEntityNodeLabelForType(
               node.label
@@ -45233,6 +45245,8 @@ let EntityManager$2 = class EntityManager {
               value: "Value",
               options: options,
             };
+
+            guidanceMetamodel.nodes[id];
 
             //Define the 'create object node' to 'entity node' relation
             dataFlowEdgeRelations.push({
@@ -45300,6 +45314,8 @@ let EntityManager$2 = class EntityManager {
               },
             };
 
+            guidanceMetamodel.nodes[id];
+
             //Generate 'entity node'
             var entityLabel = guidancemodel.getEntityNodeLabelForType(
               edge.label
@@ -45322,6 +45338,8 @@ let EntityManager$2 = class EntityManager {
                 customAnchors: "",
               },
             };
+
+            guidanceMetamodel.nodes[id];
 
             //Generate the 'set property node'
             if (Object.keys(edge.attributes).length > 0) {
@@ -46508,6 +46526,7 @@ let EntityManager$2 = class EntityManager {
 };
 
 const EntityManagerInstance$1 = new EntityManager$2();
+Object.freeze(EntityManagerInstance$1);
 
 /**
  * Node
@@ -49471,7 +49490,6 @@ let Value$1 = class Value extends AbstractValue$1 {
     super(id, name, subjectEntity, rootSubjectEntity);
     y = y || window.y;
     if (!y) throw new Error("y is undefined");
-    IWCW.getInstance(CONFIG$1.WIDGET.NAME.MAIN, y);
     var _ytext = null;
 
     const yMap = rootSubjectEntity.getYMap();
@@ -49557,8 +49575,8 @@ let Value$1 = class Value extends AbstractValue$1 {
         lodash.debounce(function (event) {
           _value = _ytext.toString().replace(/\n/g, "");
           that.setValue(_value);
+          EntityManagerInstance$1.storeDataYjs();
           if (event.currentTarget.get("modifiedBy") === window.y.clientID) {
-            EntityManagerInstance$1.storeDataYjs();
             const userMap = y.getMap("users");
             const jabberId = userMap.get(event.currentTarget.doc.clientID);
 
@@ -54234,7 +54252,7 @@ class Canvas extends AbstractCanvas {
       var targetNode = EntityManagerInstance$1.findNode(operation.getTarget());
 
       processEdgeAddOperation(operation);
-      EntityManagerInstance$1.storeDataYjs();
+      EntityManagerInstance$1.saveState();
 
       _iwcw.sendLocalOTOperation(
         CONFIG$1.WIDGET.NAME.GUIDANCE,
@@ -55670,8 +55688,7 @@ class Canvas extends AbstractCanvas {
               }
               case "triggerSave": {
                 if (data.value === _iwcw.getUser()[CONFIG$1.NS.PERSON.JABBERID])
-                  EntityManagerInstance$1.storeDataYjs();
-
+                  EntityManagerInstance$1.saveState();
                 break;
               }
               case "applyLayout": {
@@ -55732,7 +55749,7 @@ class Canvas extends AbstractCanvas {
                 if (event.value.jabberId === userId)
                   nodesMap.delete(event.value.entityId);
                 setTimeout(function () {
-                  EntityManagerInstance$1.storeDataYjs();
+                  EntityManagerInstance$1.saveState();
                 }, 300);
                 break;
               }
@@ -55744,7 +55761,7 @@ class Canvas extends AbstractCanvas {
             //local user. todo ugly coding style
           } else if (key === "applyLayout") {
             DagreLayout$1.apply();
-            EntityManagerInstance$1.storeDataYjs();
+            EntityManagerInstance$1.saveState();
           }
         });
       });
@@ -57204,115 +57221,125 @@ const optionHtml = "<option id=\"<%= id %>\"><%= id %></option>"; // replaced by
  * @returns {{GetViewpointList: Function, existsView: Function, getViewIdOfSelected: Function, getViewUri: Function, getViewpointUri: Function, getSelected$node: Function, getResource: Function, addView: Function, deleteView: Function, initViewList: Function}}
  * @constructor
  */
-function ViewManager() {
-  /**
-   * represent a reference to the view selection html element
-   * @type {jQuery}
-   * @private
-   */
-  var _$selection = $("#ddmViewSelection");
+let ViewManager$1 = class ViewManager {
+  constructor() {
+    let currentView = null;
+    /**
+     * represent a reference to the view selection html element
+     * @type {jQuery}
+     * @private
+     */
+    var _$selection = $("#ddmViewSelection");
 
-  /**
-   * html option element template
-   * @type {function}
-   */
-  var optionTpl = lodash.template(optionHtml);
+    /**
+     * html option element template
+     * @type {function}
+     */
+    var optionTpl = lodash.template(optionHtml);
 
-  return {
-    /**
-     * initialize the viewpoint selection list of the generic editor instance
-     */
-    GetViewpointList: function () {
-      y = window.y;
-      const viewsMap = y.getMap("views");
-      _$selection.empty();
-      var viewpointList = viewsMap.keys();
-      for (var i = 0; i < viewpointList.length; i++) {
-        var viewpoint = viewsMap.get(viewpointList[i]);
-        if (viewpoint) {
-          _$selection.append(
-            $(
-              optionTpl({
-                id: viewpointList[i],
-              })
-            )
-          );
-        } else viewsMap.delete(viewpointList[i]);
-      }
-    },
-    /**
-     * checks if a view exists
-     * @param viewId the viewId of the vie
-     * @returns {boolean} true if the view already exits false if not
-     */
-    existsView: function (viewId) {
-      const viewsMap = y.getMap("views");
-      return viewsMap.has(viewId);
-    },
-    /**
-     * returns the view identifier of  currently selected html selection element
-     * @returns {string} the identifier of the view
-     */
-    getViewIdOfSelected: function () {
-      return this.getSelected$node().attr("id");
-    },
-    /**
-     * returns the currently selected option node of the html selection element
-     * @returns {object} jquery object
-     */
-    getSelected$node: function () {
-      return _$selection.find("option:selected");
-    },
-    /**
-     * adds a view to the ViewManager
-     * @param {string} viewId the view identifier
-     */
-    addView: function (viewId) {
-      const viewsMap = y.getMap("views");
-      if (viewsMap.has(viewId)) {
-        viewsMap.set(viewId, {
-          viewId: viewId,
-          attributes: {},
-          nodes: {},
-          edges: {},
-        });
-        return true;
-      } else return false;
-    },
-    /**
-     * deletes a view from the view manager
-     * @param {string} viewId the identifier of the view
-     */
-    deleteView: function (viewId) {
-      const viewsMap = y.getMap("views");
-      viewsMap.delete(viewId);
-      _$selection.find("#" + viewId).remove();
-    },
-    /**
-     * Update a view representation in the ROLE Space
-     * @param {string} viewId The view identifier
-     * @param {string} viewId The Identifier of the view
-     * @param {object} resource openapp.oo.resource of the the view
-     * @returns {object} jquery promise
-     */
-    updateViewContent: function (viewId) {
-      const viewsMap = y.getMap("views");
-      var data = this.viewToJSON(viewId);
-      viewsMap.set(viewId, data);
-    },
-    /**
-     * generates the json representation of a view
-     * @param viewId the unique name of the view
-     * @returns {Object}
-     */
-    viewToJSON: function (viewId) {
-      var vls = EntityManagerInstance$1.graphToJSON();
-      vls["id"] = viewId;
-      return vls;
-    },
-  };
-}
-var ViewManager$1 = new ViewManager();
+    return {
+      setCurrentView: function (viewId) {
+        currentView = viewId;
+      },
+
+      getCurrentView: function () {
+        return currentView;
+      },
+      /**
+       * initialize the viewpoint selection list of the generic editor instance
+       */
+      GetViewpointList: function () {
+        y = window.y;
+        const viewsMap = y.getMap("views");
+        _$selection.empty();
+        var viewpointList = viewsMap.keys();
+        for (var i = 0; i < viewpointList.length; i++) {
+          var viewpoint = viewsMap.get(viewpointList[i]);
+          if (viewpoint) {
+            _$selection.append(
+              $(
+                optionTpl({
+                  id: viewpointList[i],
+                })
+              )
+            );
+          } else viewsMap.delete(viewpointList[i]);
+        }
+      },
+      /**
+       * checks if a view exists
+       * @param viewId the viewId of the vie
+       * @returns {boolean} true if the view already exits false if not
+       */
+      existsView: function (viewId) {
+        const viewsMap = y.getMap("views");
+        return viewsMap.has(viewId);
+      },
+      /**
+       * returns the view identifier of  currently selected html selection element
+       * @returns {string} the identifier of the view
+       */
+      getViewIdOfSelected: function () {
+        return this.getSelected$node().attr("id");
+      },
+      /**
+       * returns the currently selected option node of the html selection element
+       * @returns {object} jquery object
+       */
+      getSelected$node: function () {
+        return _$selection.find("option:selected");
+      },
+      /**
+       * adds a view to the ViewManager
+       * @param {string} viewId the view identifier
+       */
+      addView: function (viewId) {
+        const viewsMap = y.getMap("views");
+        if (viewsMap.has(viewId)) {
+          viewsMap.set(viewId, {
+            viewId: viewId,
+            attributes: {},
+            nodes: {},
+            edges: {},
+          });
+          return true;
+        } else return false;
+      },
+      /**
+       * deletes a view from the view manager
+       * @param {string} viewId the identifier of the view
+       */
+      deleteView: function (viewId) {
+        const viewsMap = y.getMap("views");
+        viewsMap.delete(viewId);
+        _$selection.find("#" + viewId).remove();
+      },
+      /**
+       * Update a view representation in the ROLE Space
+       * @param {string} viewId The view identifier
+       * @param {string} viewId The Identifier of the view
+       * @param {object} resource openapp.oo.resource of the the view
+       * @returns {object} jquery promise
+       */
+      updateViewContent: function (viewId) {
+        const viewsMap = y.getMap("views");
+        var data = this.viewToJSON(viewId);
+        viewsMap.set(viewId, data);
+      },
+      /**
+       * generates the json representation of a view
+       * @param viewId the unique name of the view
+       * @returns {Object}
+       */
+      viewToJSON: function (viewId) {
+        var vls = EntityManagerInstance$1.graphToJSON();
+        vls["id"] = viewId;
+        return vls;
+      },
+    };
+  }
+};
+var ViewManager$2 = new ViewManager$1();
 
 /**
  * ViewObjectNodeTool
@@ -58066,7 +58093,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
                 var _a;
                 switch (key) {
                     case UpdateViewListOperation.TYPE: {
-                        ViewManager$1.GetViewpointList();
+                        ViewManager$2.GetViewpointList();
                         break;
                     }
                     case "ReloadWidgetOperation": {
@@ -58137,7 +58164,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
                 }
             }
         }
-        ViewManager$1.GetViewpointList();
+        ViewManager$2.GetViewpointList();
         $("#btnCreateViewpoint").hide();
         $("#btnDelViewPoint").hide();
         var initTools = function (vvs) {
@@ -58161,7 +58188,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
             }
         };
         $("#btnShowView").click(function () {
-            var viewId = ViewManager$1.getViewIdOfSelected();
+            var viewId = ViewManager$2.getViewIdOfSelected();
             var $currentViewIdLabel = $("#lblCurrentViewId");
             if (viewId === $currentViewIdLabel.text())
                 return;
@@ -58241,7 +58268,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
             HideCreateMenu();
         });
         $("#btnShowView").click(function () {
-            var viewId = ViewManager$1.getViewIdOfSelected();
+            var viewId = ViewManager$2.getViewIdOfSelected();
             if (viewId === $("#lblCurrentViewId").text())
                 return;
             $("#loading").show();
@@ -58251,25 +58278,25 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
         });
         $("#btnDelViewPoint").click(function () {
             const viewsMap = y.getMap("views");
-            var viewId = ViewManager$1.getViewIdOfSelected();
+            var viewId = ViewManager$2.getViewIdOfSelected();
             if (viewId && viewId !== $("#lblCurrentViewId").text()) {
                 viewsMap.delete(viewId);
                 _iwcw.sendLocalNonOTOperation(CONFIG$1.WIDGET.NAME.ATTRIBUTE, new DeleteViewOperation(viewId).toNonOTOperation());
-                ViewManager$1.deleteView(viewId);
+                ViewManager$2.deleteView(viewId);
             }
             else {
                 viewsMap.set(viewId, null);
-                ViewManager$1.deleteView(viewId);
+                ViewManager$2.deleteView(viewId);
                 $("#viewsHide").click();
             }
         });
         $("#btnAddViewpoint").click(function () {
             var viewId = $("#txtNameViewpoint").val();
-            if (ViewManager$1.existsView(viewId)) {
+            if (ViewManager$2.existsView(viewId)) {
                 alert("View already exists");
                 return;
             }
-            ViewManager$1.addView(viewId);
+            ViewManager$2.addView(viewId);
             HideCreateMenu();
             const canvasMap = y.getMap("canvas");
             canvasMap.set(UpdateViewListOperation.TYPE, true);
@@ -58411,7 +58438,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
         $feedback.text("Saving...");
         var viewId = $("#lblCurrentViewId").text();
         if (viewId.length > 0 && !metamodel) {
-            ViewManager$1.updateViewContent(viewId);
+            ViewManager$2.updateViewContent(viewId);
             $feedback.text("Saved!");
             setTimeout(function () {
                 $feedback.text("");
@@ -58530,7 +58557,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
     const userId = _iwcw.getUser()[CONFIG$1.NS.PERSON.JABBERID];
     if (!joinMap.has(_iwcw.getUser()[CONFIG$1.NS.PERSON.JABBERID]))
         joinMap.set(userId.toString(), false);
-    ViewManager$1.GetViewpointList();
+    ViewManager$2.GetViewpointList();
     $spinner.hide();
 }
 
@@ -70990,11 +71017,6 @@ class Value extends AbstractValue {
      */
     this.setValue = function (value) {
       _value = value;
-      if (_$editorRef && value?.trim() !== _$editorRef.getText().trim()) {
-        _$editorRef.insertText(0, value);
-      } else {
-        console.error("Quill editor not initialized");
-      }
     };
 
     /**
@@ -75296,7 +75318,7 @@ let EntityManager$1 = class EntityManager {
 };
 
 const EntityManagerInstance = new EntityManager$1();
-
+Object.freeze(EntityManagerInstance);
 //noinspection JSUnusedLocalSymbols
 /**
  * makeNode
@@ -79032,6 +79054,7 @@ let DebugWidget = class DebugWidget extends SyncMetaWidget(LitElement, getWidget
                         else {
                             dataMap.set("metamodel", vls);
                         }
+                        dataMap.set("model", null);
                         feedback("Imported Meta Model, the page will reload now");
                         setTimeout(() => {
                             location.reload();
