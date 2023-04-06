@@ -779,7 +779,7 @@ class EntityManager {
 }
 
 export const EntityManagerInstance = new EntityManager();
-
+Object.freeze(EntityManagerInstance);
 //noinspection JSUnusedLocalSymbols
 /**
  * makeNode
