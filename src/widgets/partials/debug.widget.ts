@@ -309,6 +309,7 @@ export class DebugWidget extends SyncMetaWidget(
                 } else {
                   dataMap.set("metamodel", vls);
                 }
+                dataMap.set("model", null);
                 feedback("Imported Meta Model, the page will reload now");
                 setTimeout(() => {
                   location.reload();

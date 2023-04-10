@@ -204,7 +204,7 @@ class BooleanValue extends AbstractValue {
                 key == "jabberId" &&
                 key === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]
               )
-                EntityManager.storeDataYjs();
+                EntityManager.saveState();
             });
           }, 500)
         );

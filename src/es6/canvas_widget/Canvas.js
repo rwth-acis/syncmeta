@@ -40,7 +40,7 @@ import {
   HistoryManagerInstance as HistoryManager,
 } from "./Manager";
 import { newInstance } from "@jsplumb/browser-ui";
-import { eventWasTriggeredByMe } from "../yeventChecker";
+import { default as _ } from "lodash-es";
 
 /**
  * Canvas
@@ -282,7 +282,7 @@ export default class Canvas extends AbstractCanvas {
       var targetNode = EntityManager.findNode(operation.getTarget());
 
       processEdgeAddOperation(operation);
-      EntityManagerInstance.storeDataYjs();
+      EntityManagerInstance.saveState();
 
       _iwcw.sendLocalOTOperation(
         CONFIG.WIDGET.NAME.GUIDANCE,
@@ -1721,8 +1721,7 @@ export default class Canvas extends AbstractCanvas {
               }
               case "triggerSave": {
                 if (data.value === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID])
-                  EntityManagerInstance.storeDataYjs();
-
+                  EntityManagerInstance.saveState();
                 break;
               }
               case "applyLayout": {
@@ -1783,7 +1782,7 @@ export default class Canvas extends AbstractCanvas {
                 if (event.value.jabberId === userId)
                   nodesMap.delete(event.value.entityId);
                 setTimeout(function () {
-                  EntityManagerInstance.storeDataYjs();
+                  EntityManagerInstance.saveState();
                 }, 300);
                 break;
               }
@@ -1795,7 +1794,7 @@ export default class Canvas extends AbstractCanvas {
             //local user. todo ugly coding style
           } else if (key === "applyLayout") {
             DagreLayout.apply();
-            EntityManagerInstance.storeDataYjs();
+            EntityManagerInstance.saveState();
           }
         });
       });

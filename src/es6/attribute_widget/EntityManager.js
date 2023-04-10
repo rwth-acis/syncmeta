@@ -779,7 +779,7 @@ class EntityManager {
 }
 
 export const EntityManagerInstance = new EntityManager();
-
+Object.freeze(EntityManagerInstance);
 //noinspection JSUnusedLocalSymbols
 /**
  * makeNode
@@ -886,13 +886,6 @@ export function makeNode(
                   attribute.key,
                   that
                 );
-                if (
-                  attribute.key.toLowerCase() === "label" ||
-                  attribute.key.toLowerCase() === "title" ||
-                  attribute.key.toLowerCase() === "name"
-                ) {
-                  that.setLabel(attrObj[attributeId]);
-                }
               default:
                 if (attribute.options) {
                   attrObj[attributeId] = new SingleSelectionAttribute(
@@ -925,11 +918,13 @@ export function makeNode(
     registerYType() {
       AbstractNode.prototype.registerYType.call(this);
       const nodesMap = y.getMap("nodes");
-      var ymap = nodesMap.get(this.getEntityId());
-      var attr = this.getAttributes();
-      for (var key in attr) {
-        if (attr.hasOwnProperty(key)) {
-          var val = attr[key].getValue();
+      const ymap = nodesMap.get(this.getEntityId());
+      const nodeAttributes = this.getAttributes();
+      for (var key in nodeAttributes) {
+        // skip loop if the property is the label since it is already registered when calling the prototype
+        if (nodeAttributes[key].getValue().getEntityId() === this.getLabel().getEntityId()) continue;
+        if (nodeAttributes.hasOwnProperty(key)) {
+          var val = nodeAttributes[key].getValue();
           var ytext = ymap.get(val.getEntityId());
           if (val.hasOwnProperty("registerYType")) {
             val.registerYType(ytext);

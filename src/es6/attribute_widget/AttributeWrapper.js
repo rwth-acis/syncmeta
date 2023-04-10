@@ -7,6 +7,7 @@ import {
   EdgeDeleteOperation,
 } from "../operations/ot/EntityOperation";
 import { NodeAddOperation } from "../operations/ot/EntityOperation";
+import { Map as YMap } from "yjs";
 /**
  * AttributeWrapper
  * @class attribute_widget.AttributeWrapper
@@ -226,43 +227,43 @@ class AttributeWrapper {
 
     if (y) {
       const nodesMap = y.getMap("nodes");
-      nodesMap.observe(function (event) {
+      nodesMap.observeDeep(([event]) => {
         Array.from(event.changes.keys.entries()).forEach(function (entry) {
           const key = entry[0];
           const action = entry[1].action;
           if (action !== "add") return;
-          const newNode = event.currentTarget.get(key);
+          let nodeId;
+          if (event.target.get(key) instanceof YMap && event.target.get(key).has("jabberId")) {
+            nodeId = nodesMap.get(key).get("id");
+             const newNode = event.target.get(key);
+            nodeAddCallback(
+              new NodeAddOperation(
+                newNode.get("id"),
+                newNode.get("type"),
+                newNode.get("left"),
+                newNode.get("top"),
+                newNode.get("width"),
+                newNode.get("height"),
+                newNode.get("zIndex"),
+                newNode.get("containment"),
+                newNode.get("json"),
+                null,
+                null,
+                newNode.has("jabberId")
+              )
+            );
+          } else {
+            nodeId = event.target.get("id");
+          }
 
-          if (!newNode.has("jabberId")) return;
-
-          nodeAddCallback(
-            new NodeAddOperation(
-              newNode.get("id"),
-              newNode.get("type"),
-              newNode.get("left"),
-              newNode.get("top"),
-              newNode.get("width"),
-              newNode.get("height"),
-              newNode.get("zIndex"),
-              newNode.get("containment"),
-              newNode.get("json"),
-              null,
-              null,
-              key
-            )
-          );
-
-          var node = EntityManager.findNode(newNode.get("id"));
+          var node = EntityManager.findNode(nodeId);
           if (!node) {
             throw new Error("node is null");
           }
 
           //Check for label
           if (node && node.getLabel().getEntityId() === key)
-            node
-              .getLabel()
-              .getValue()
-              .registerYType(newNode.get(key));
+            node.getLabel().getValue().registerYType(event.target.get(key));
           else {
             var attrs = null;
 
@@ -275,26 +276,20 @@ class AttributeWrapper {
                 var attr = attrs[attrId];
                 if (attr.hasOwnProperty("getKey")) {
                   if (key.indexOf("ref") != -1)
-                    attr.getRef().registerYType(event.currentTarget.get(key));
+                    attr.getRef().registerYType(event.target.get(key));
                   else if (
                     attr.getKey().hasOwnProperty("registerYType") &&
                     key.indexOf("value") === -1
                   )
-                    attr
-                      .getKey()
-                      .registerYType(nodeEvent.currentTarget.get(key));
+                    attr.getKey().registerYType(event.target.get(key));
                 } else if (attr.hasOwnProperty("getValue")) {
                   if (attr.getValue().hasOwnProperty("registerYType"))
-                    attr
-                      .getValue()
-                      .registerYType(nodeEvent.currentTarget.get(key));
+                    attr.getValue().registerYType(event.target.get(key));
                 }
               } else if (attrs.hasOwnProperty(key)) {
                 var attr = attrs[key];
                 if (attr.getValue().hasOwnProperty("registerYType"))
-                  attr
-                    .getValue()
-                    .registerYType(nodeEvent.currentTarget.get(key));
+                  attr.getValue().registerYType(event.target.get(key));
               }
             } else {
               attrs = node.getAttributes();
@@ -305,9 +300,7 @@ class AttributeWrapper {
                     attr.getEntityId() === key &&
                     attr.getValue().hasOwnProperty("registerYType")
                   ) {
-                    attr
-                      .getValue()
-                      .registerYType(nodeEvent.currentTarget.get(key));
+                    attr.getValue().registerYType(event.target.get(key));
                   }
                 }
               }

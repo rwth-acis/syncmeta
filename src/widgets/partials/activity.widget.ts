@@ -18,6 +18,7 @@ export class ActivityWidget extends SyncMetaWidget(
   LitElement,
   getWidgetTagName(CONFIG.WIDGET.NAME.ACTIVITY)
 ) {
+  widgetName = getWidgetTagName(CONFIG.WIDGET.NAME.ACTIVITY);
   protected firstUpdated(
     _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
   ): void {
@@ -76,10 +77,19 @@ export class ActivityWidget extends SyncMetaWidget(
 
         // if (CONFIG.TEST.ACTIVITY) test;
       })
-      .catch(function (err) {
+      .catch((err) => {
         console.error("ACTIVITY: Error while initializing Yjs: " + err);
         this.showErrorAlert("Cannot connect to Yjs server.");
       });
+  }
+
+  hideErrorAlert() {
+    $(this.widgetName).find("#alert-message").text("");
+    $(this.widgetName).find("error-alert").hide();
+  }
+  showErrorAlert(message: string) {
+    $(this.widgetName).find("#alert-message").text(message);
+    $(this.widgetName).find("error-alert").show();
   }
 
   render() {

@@ -480,6 +480,7 @@ function HistoryManager() {
 }
 
 export const HistoryManagerInstance = new HistoryManager();
+Object.freeze(HistoryManagerInstance);
 
 const openapp = new OpenAppProvider().openapp;
 
@@ -1643,12 +1644,12 @@ export class AbstractNode extends AbstractEntity {
     var _$node = $(_.template(abstractNodeHtml)({ id: id }));
     this._$node = _$node;
     const resizeHandle = $(
-      `<div class="resize-handle"><i class="bi bi-aspect-ratio" style="font-size:2rem;"></i></div>`
+      `<div class="resize-handle"><i class="bi bi-aspect-ratio" style="font-size:1.5rem;"></i></div>`
     );
     resizeHandle.css({
       position: "absolute",
-      bottom: "0",
-      right: "0",
+      bottom: "-15px",
+      right: "-15px",
       cursor: "nwse-resize",
       zIndex: 100000,
     });
@@ -3435,15 +3436,28 @@ class EntityManager {
         EntityManagerInstance.storeDataYjs();
         return node;
       },
-      findObjectNodeByLabel(searchLabel) {
-        const re = new RegExp(searchLabel, "gi");
-        for (const [id, node] of Object.entries(_nodes)) {
-          const currentNode = y.getMap("nodes").get(id).toJSON();
-          for (const [key, property] of Object.entries(currentNode)) {
-            if (key.match(id)) {
-              if (property.match(re)) {
-                return node;
-              }
+      saveState: function () {
+        // if metamodel
+        const viewId = ViewManager.getCurrentView();
+        if (viewId && !metamodel) {
+          ViewManager.updateViewContent(viewId);
+        } else {
+          EntityManager.storeDataYjs();
+        }
+      },
+      findObjectNodeByLabel(searchTerm) {
+        const re = new RegExp(searchTerm, "gi");
+        const { attributes, nodes, edges } =
+          EntityManagerInstance.graphToJSON();
+        for (const [nodeId, node] of Object.entries(nodes)) {
+          if (node?.type.match(re)) {
+            // type matches searchTerm
+            return EntityManagerInstance.find(nodeId);
+          }
+          for (const attr of Object.values(node?.attributes)) {
+            if (attr?.value.value.match(re)) {
+              // attribute value matches searchTerm
+              return EntityManagerInstance.find(nodeId);
             }
           }
         }
@@ -3639,13 +3653,13 @@ class EntityManager {
         var nodesJSON = {};
         var edgesJSON = {};
         attributesJSON = _modelAttributesNode
-          ? _modelAttributesNode.toJSON()
+          ? _modelAttributesNode?.toJSON()
           : {};
         _.forEach(_nodes, function (val, key) {
-          nodesJSON[key] = val.toJSON();
+          nodesJSON[key] = val?.toJSON();
         });
         _.forEach(_edges, function (val, key) {
-          edgesJSON[key] = val.toJSON();
+          edgesJSON[key] = val?.toJSON();
         });
         return {
           attributes: attributesJSON,
@@ -5583,6 +5597,7 @@ class EntityManager {
 }
 
 export const EntityManagerInstance = new EntityManager();
+Object.freeze(EntityManagerInstance);
 
 /**
  * Node
@@ -8579,7 +8594,6 @@ export class Value extends AbstractValue {
     super(id, name, subjectEntity, rootSubjectEntity);
     y = y || window.y;
     if (!y) throw new Error("y is undefined");
-    var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN, y);
     var _ytext = null;
 
     const yMap = rootSubjectEntity.getYMap();
@@ -8635,7 +8649,7 @@ export class Value extends AbstractValue {
      */
     this.setValue = function (value) {
       _value = value;
-      _$node.val(value).trigger("blur");
+      _$node.text(value);
 
       this.value = _ytext.toString();
     };
@@ -8675,6 +8689,8 @@ export class Value extends AbstractValue {
     };
 
     this.registerYType = function () {
+      that.setValue(_ytext.toString().replace(/\n/g, ""));
+      EntityManagerInstance.storeDataYjs();
       _ytext.observe(
         _.debounce(function (event) {
           _value = _ytext.toString().replace(/\n/g, "");
@@ -8718,7 +8734,7 @@ export class Value extends AbstractValue {
     //automatically determines the size of input
     _$node
       .autoGrowInput({
-        comfortZone: 10,
+        comfortZone: 15,
         minWidth: 40,
         maxWidth: 1000,
       })
