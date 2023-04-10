@@ -1644,12 +1644,12 @@ export class AbstractNode extends AbstractEntity {
     var _$node = $(_.template(abstractNodeHtml)({ id: id }));
     this._$node = _$node;
     const resizeHandle = $(
-      `<div class="resize-handle"><i class="bi bi-aspect-ratio" style="font-size:2rem;"></i></div>`
+      `<div class="resize-handle"><i class="bi bi-aspect-ratio" style="font-size:1.5rem;"></i></div>`
     );
     resizeHandle.css({
       position: "absolute",
-      bottom: "0",
-      right: "0",
+      bottom: "-15px",
+      right: "-15px",
       cursor: "nwse-resize",
       zIndex: 100000,
     });
@@ -8649,7 +8649,7 @@ export class Value extends AbstractValue {
      */
     this.setValue = function (value) {
       _value = value;
-      _$node.val(value).trigger("blur");
+      _$node.text(value);
 
       this.value = _ytext.toString();
     };
@@ -8689,6 +8689,8 @@ export class Value extends AbstractValue {
     };
 
     this.registerYType = function () {
+      that.setValue(_ytext.toString().replace(/\n/g, ""));
+      EntityManagerInstance.storeDataYjs();
       _ytext.observe(
         _.debounce(function (event) {
           _value = _ytext.toString().replace(/\n/g, "");
@@ -8732,7 +8734,7 @@ export class Value extends AbstractValue {
     //automatically determines the size of input
     _$node
       .autoGrowInput({
-        comfortZone: 10,
+        comfortZone: 15,
         minWidth: 40,
         maxWidth: 1000,
       })

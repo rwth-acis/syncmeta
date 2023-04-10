@@ -26029,7 +26029,7 @@ const keySelectionValueAttributeHtml$1 = "<li class=\"key_value_attribute\" id=\
 const integerAttributeHtml$1 = "<div class=\"integer_attribute\">\r\n    <div class=\"name\"></div>\r\n    <div class=\"value\"></div>\r\n</div>";
 let integerValueHtml$1 = "<div class=\"val\"><%= value %></div>";
 const attributeIntegerValueHtml = "<input\r\n  class=\"form-control h-100 val\"\r\n  type=\"number\"\r\n  name=\"<%= name %>\"\r\n  value=\"0\"\r\n/>\r\n";
-const valueHtml = "<input\r\n  class=\"form-control val\"\r\n  type=\"text\"\r\n  name=\"<%= name %>\"\r\n  disabled=\"disabled\"\r\n/>\r\n";
+const valueHtml = "<span name=\"<%= name %>\" class=\"fw-bold\"> </span>\r\n";
 let selectionValueHtml$1 = "<div class=\"val\"><%= options[_.keys(options)[0]] %></div>";
 const attributeSelectionValueHtml = "<select class=\"val form-select mb-3 h-100\">\r\n  <% _.each(options,function(option,key){ %>\r\n  <option value=\"<%= key %>\"><%= option %></option>\r\n  <% }); %>\r\n</select>\r\n";
 const viewrelationshipNodeHtml$1 = "<div class=\"class_node\">\r\n    <div class=\"type\"><%= type %></div>\r\n    <div class=\"label\">&lt;&lt;ViewRelationship&gt;&gt;</div>\r\n    <div class=\"attributes\"></div>\r\n</div>";
@@ -26854,11 +26854,11 @@ let AbstractNode$1 = class AbstractNode extends AbstractEntity$1 {
         var _canvas = null;
         var _$node = $(lodash.template(abstractNodeHtml$2)({ id: id }));
         this._$node = _$node;
-        const resizeHandle = $(`<div class="resize-handle"><i class="bi bi-aspect-ratio" style="font-size:2rem;"></i></div>`);
+        const resizeHandle = $(`<div class="resize-handle"><i class="bi bi-aspect-ratio" style="font-size:1.5rem;"></i></div>`);
         resizeHandle.css({
             position: "absolute",
-            bottom: "0",
-            right: "0",
+            bottom: "-15px",
+            right: "-15px",
             cursor: "nwse-resize",
             zIndex: 100000,
         });
@@ -30911,7 +30911,7 @@ let Value$1 = class Value extends AbstractValue$1 {
         var _$node = $(lodash.template(valueHtml)({ name: name }));
         this.setValue = function (value) {
             _value = value;
-            _$node.val(value).trigger("blur");
+            _$node.text(value);
             this.value = _ytext.toString();
         };
         this.getValue = function () {
@@ -30929,6 +30929,8 @@ let Value$1 = class Value extends AbstractValue$1 {
             this.setValue(json.value);
         };
         this.registerYType = function () {
+            that.setValue(_ytext.toString().replace(/\n/g, ""));
+            EntityManagerInstance$1.storeDataYjs();
             _ytext.observe(lodash.debounce(function (event) {
                 _value = _ytext.toString().replace(/\n/g, "");
                 that.setValue(_value);
@@ -30953,7 +30955,7 @@ let Value$1 = class Value extends AbstractValue$1 {
         };
         _$node
             .autoGrowInput({
-            comfortZone: 10,
+            comfortZone: 15,
             minWidth: 40,
             maxWidth: 1000,
         })
@@ -49688,11 +49690,6 @@ function makeNode(type, shapeType, customShape, customAnchors, color, attributes
                                 break;
                             case "quiz":
                                 attrObj[attributeId] = new QuizAttribute(id + "[" + attribute.key.toLowerCase() + "]", attribute.key, that);
-                                if (attribute.key.toLowerCase() === "label" ||
-                                    attribute.key.toLowerCase() === "title" ||
-                                    attribute.key.toLowerCase() === "name") {
-                                    that.setLabel(attrObj[attributeId]);
-                                }
                             default:
                                 if (attribute.options) {
                                     attrObj[attributeId] = new SingleSelectionAttribute(id + "[" + attribute.key.toLowerCase() + "]", attribute.key, that, attribute.options);
@@ -49719,11 +49716,13 @@ function makeNode(type, shapeType, customShape, customAnchors, color, attributes
         registerYType() {
             AbstractNode.prototype.registerYType.call(this);
             const nodesMap = y.getMap("nodes");
-            var ymap = nodesMap.get(this.getEntityId());
-            var attr = this.getAttributes();
-            for (var key in attr) {
-                if (attr.hasOwnProperty(key)) {
-                    var val = attr[key].getValue();
+            const ymap = nodesMap.get(this.getEntityId());
+            const nodeAttributes = this.getAttributes();
+            for (var key in nodeAttributes) {
+                if (nodeAttributes[key].getValue().getEntityId() === this.getLabel().getEntityId())
+                    continue;
+                if (nodeAttributes.hasOwnProperty(key)) {
+                    var val = nodeAttributes[key].getValue();
                     var ytext = ymap.get(val.getEntityId());
                     if (val.hasOwnProperty("registerYType")) {
                         val.registerYType(ytext);

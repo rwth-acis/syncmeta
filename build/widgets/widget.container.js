@@ -41167,7 +41167,7 @@ const integerAttributeHtml$1 = "<div class=\"integer_attribute\">\r\n    <div cl
 let integerValueHtml$1 = "<div class=\"val\"><%= value %></div>"; // replaced by importmap.plugin.js
 const attributeIntegerValueHtml = "<input\r\n  class=\"form-control h-100 val\"\r\n  type=\"number\"\r\n  name=\"<%= name %>\"\r\n  value=\"0\"\r\n/>\r\n"; // replaced by importmap.plugin.js
 
-const valueHtml = "<input\r\n  class=\"form-control val\"\r\n  type=\"text\"\r\n  name=\"<%= name %>\"\r\n  disabled=\"disabled\"\r\n/>\r\n"; // replaced by importmap.plugin.js
+const valueHtml = "<span name=\"<%= name %>\" class=\"fw-bold\"> </span>\r\n"; // replaced by importmap.plugin.js
 
 let selectionValueHtml$1 = "<div class=\"val\"><%= options[_.keys(options)[0]] %></div>"; // replaced by importmap.plugin.js
 const attributeSelectionValueHtml = "<select class=\"val form-select mb-3 h-100\">\r\n  <% _.each(options,function(option,key){ %>\r\n  <option value=\"<%= key %>\"><%= option %></option>\r\n  <% }); %>\r\n</select>\r\n"; // replaced by importmap.plugin.js
@@ -42596,12 +42596,12 @@ let AbstractNode$1 = class AbstractNode extends AbstractEntity$1 {
     var _$node = $(lodash.template(abstractNodeHtml$2)({ id: id }));
     this._$node = _$node;
     const resizeHandle = $(
-      `<div class="resize-handle"><i class="bi bi-aspect-ratio" style="font-size:2rem;"></i></div>`
+      `<div class="resize-handle"><i class="bi bi-aspect-ratio" style="font-size:1.5rem;"></i></div>`
     );
     resizeHandle.css({
       position: "absolute",
-      bottom: "0",
-      right: "0",
+      bottom: "-15px",
+      right: "-15px",
       cursor: "nwse-resize",
       zIndex: 100000,
     });
@@ -49531,7 +49531,7 @@ let Value$1 = class Value extends AbstractValue$1 {
      */
     this.setValue = function (value) {
       _value = value;
-      _$node.val(value).trigger("blur");
+      _$node.text(value);
 
       this.value = _ytext.toString();
     };
@@ -49571,6 +49571,8 @@ let Value$1 = class Value extends AbstractValue$1 {
     };
 
     this.registerYType = function () {
+      that.setValue(_ytext.toString().replace(/\n/g, ""));
+      EntityManagerInstance$1.storeDataYjs();
       _ytext.observe(
         lodash.debounce(function (event) {
           _value = _ytext.toString().replace(/\n/g, "");
@@ -49614,7 +49616,7 @@ let Value$1 = class Value extends AbstractValue$1 {
     //automatically determines the size of input
     _$node
       .autoGrowInput({
-        comfortZone: 10,
+        comfortZone: 15,
         minWidth: 40,
         maxWidth: 1000,
       })
@@ -75425,13 +75427,6 @@ function makeNode(
                   attribute.key,
                   that
                 );
-                if (
-                  attribute.key.toLowerCase() === "label" ||
-                  attribute.key.toLowerCase() === "title" ||
-                  attribute.key.toLowerCase() === "name"
-                ) {
-                  that.setLabel(attrObj[attributeId]);
-                }
               default:
                 if (attribute.options) {
                   attrObj[attributeId] = new SingleSelectionAttribute(
@@ -75464,11 +75459,13 @@ function makeNode(
     registerYType() {
       AbstractNode.prototype.registerYType.call(this);
       const nodesMap = y.getMap("nodes");
-      var ymap = nodesMap.get(this.getEntityId());
-      var attr = this.getAttributes();
-      for (var key in attr) {
-        if (attr.hasOwnProperty(key)) {
-          var val = attr[key].getValue();
+      const ymap = nodesMap.get(this.getEntityId());
+      const nodeAttributes = this.getAttributes();
+      for (var key in nodeAttributes) {
+        // skip loop if the property is the label since it is already registered when calling the prototype
+        if (nodeAttributes[key].getValue().getEntityId() === this.getLabel().getEntityId()) continue;
+        if (nodeAttributes.hasOwnProperty(key)) {
+          var val = nodeAttributes[key].getValue();
           var ytext = ymap.get(val.getEntityId());
           if (val.hasOwnProperty("registerYType")) {
             val.registerYType(ytext);
