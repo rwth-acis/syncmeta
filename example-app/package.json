@@ -9,7 +9,7 @@
     "start": "web-dev-server --open --node-resolve",
     "start:prod": "web-dev-server  --node-resolve",
     "start:watch": "web-dev-server  --node-resolve --watch",
-    "dev": "concurrently --kill-others \"npm run start:watch\" \"cd .. && npx rollup -c rollup.config.dev.js --bundleConfigAsCjs --watch\" \"npm run build:watch\" "
+    "dev": "concurrently --kill-others \"npm run start:watch\" \"cd .. && npx rollup -c rollup.config.dev.js --bundleConfigAsCjs --watch\" \"npm run build:watch\" \"npx y-websocket\" "
   },
   "dependencies": {
     "@open-wc/testing": "^3.1.6",
