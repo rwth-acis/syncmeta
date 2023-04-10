@@ -8594,7 +8594,6 @@ export class Value extends AbstractValue {
     super(id, name, subjectEntity, rootSubjectEntity);
     y = y || window.y;
     if (!y) throw new Error("y is undefined");
-    var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN, y);
     var _ytext = null;
 
     const yMap = rootSubjectEntity.getYMap();
