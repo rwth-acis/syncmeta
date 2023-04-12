@@ -12,6 +12,8 @@ import init from "../../es6/shared";
 import { SyncMetaWidget } from "../../widget";
 import { Text as YText, Map as YMap } from "yjs";
 // widget body used by all syncmeta widgets
+const guidance = getGuidanceModeling();
+
 @customElement(getWidgetTagName(CONFIG.WIDGET.NAME.DEBUG))
 export class DebugWidget extends SyncMetaWidget(
   LitElement,
@@ -19,6 +21,7 @@ export class DebugWidget extends SyncMetaWidget(
 ) {
   widgetName = getWidgetTagName(CONFIG.WIDGET.NAME.DEBUG);
   $spinner: JQuery<HTMLElement>;
+  $fileObject: any;
 
   protected firstUpdated(
     _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
@@ -28,7 +31,6 @@ export class DebugWidget extends SyncMetaWidget(
       "loading-spinner"
     );
 
-    const guidance = getGuidanceModeling();
     yjsSync()
       .then((y) => {
         const dataMap = y.getMap("data");
@@ -92,27 +94,6 @@ export class DebugWidget extends SyncMetaWidget(
             );
           }
         };
-
-        $deleteMetamodel.click(() => {
-          const retVal = confirm(
-            "Are you sure you want to delete the Metamodel ?"
-          );
-          if (retVal) {
-            this.$spinner.show();
-            $exportMetamodel.prop("disabled", true);
-            $deleteMetamodel.prop("disabled", true);
-            const dataMap = y.getMap("data");
-            //this does not work ??????
-            //dataMap.delete('metamodel');
-            dataMap.set("metamodel", null);
-            const canvasMap = y.getMap("canvas");
-            canvasMap.set("ReloadWidgetOperation", "meta_delete");
-            this.feedback(
-              "The meta model was deleted. The page will be reloaded."
-            );
-            location.reload();
-          }
-        });
 
         $deleteGuidancemodel.click(() => {
           const retVal = confirm(
@@ -195,84 +176,6 @@ export class DebugWidget extends SyncMetaWidget(
             encodeURI(JSON.stringify(activityMap.get("log"), null, 4));
           link.click();
           this.$spinner.hide();
-        });
-
-        $importModel.click(() => {
-          this.$spinner.show();
-          getFileContent()
-            .then(function (data) {
-              var initAttributes = function (attrs, map) {
-                if (attrs.hasOwnProperty("[attributes]")) {
-                  var attr = attrs["[attributes]"].list;
-                  for (var key in attr) {
-                    if (attr.hasOwnProperty(key)) {
-                      if (attr[key].hasOwnProperty("key")) {
-                        var ytext = map.set(attr[key].key.id, new YText());
-                        ytext.insert(0, attr[key].key.value);
-                      } else {
-                        var ytext = map.set(attr[key].value.id, new YText());
-                        ytext.insert(0, attr[key].value.value);
-                      }
-                    }
-                  }
-                } else {
-                  for (var key in attrs) {
-                    if (attrs.hasOwnProperty(key)) {
-                      var value = attrs[key].value;
-                      if (!value.hasOwnProperty("option")) {
-                        if (value.value instanceof String) {
-                          var ytext = map.set(value.id, new YText());
-                          ytext.insert(0, value.value);
-                        }
-                      }
-                    }
-                  }
-                }
-              };
-              const dataMap = y.getMap("data");
-              if (guidance.isGuidanceEditor()) {
-                dataMap.set("guidancemodel", data);
-              } else dataMap.set("model", data);
-              for (var key in data.nodes) {
-                if (data.nodes.hasOwnProperty(key)) {
-                  var entity = data.nodes[key];
-                  const nodesMap = y.getMap("nodes");
-                  nodesMap.set(key, new YMap());
-                  var attrs = entity.attributes;
-                  if (entity.hasOwnProperty("label")) {
-                    var ytext = new YText(entity.label.value.id);
-                    nodesMap.set(entity.label.value.id, ytext);
-                    ytext.insert(0, entity.label.value.value);
-                  }
-                  initAttributes(attrs, nodesMap);
-                }
-              }
-              for (var key in data.edges) {
-                if (data.edges.hasOwnProperty(key)) {
-                  var entity = data.edges[key];
-                  const edgeMap = y.getMap("edges");
-                  var map = edgeMap.set(key, new YMap());
-                  var attrs = entity.attributes;
-                  if (entity.hasOwnProperty("label")) {
-                    const ytext = new YText();
-                    map.set(entity.label.value.id, ytext);
-                    ytext.insert(0, entity.label.value.value);
-                  }
-                  initAttributes(attrs, map);
-                }
-              }
-              const canvasMap = y.getMap("canvas");
-              canvasMap.set("ReloadWidgetOperation", "import");
-              this.feedback(
-                "Imported model successfully! The page will be reloaded."
-              );
-              location.reload();
-            })
-            .catch((err) => {
-              console.error(err);
-              this.feedback("Error: " + err);
-              this.$spinner.hide();
-            });
         });
 
         $importMetamodel.click(() => {
@@ -435,6 +338,7 @@ export class DebugWidget extends SyncMetaWidget(
                       id="import-model"
                       class="btn btn-primary"
                       title="Import a model to the canvas"
+                      @click="${this.importModel}"
                     >
                       Import
                     </button>
@@ -475,6 +379,7 @@ export class DebugWidget extends SyncMetaWidget(
                       id="delete-meta-model"
                       title="Refresh the role space and delete the current modeling language"
                       class="btn btn-danger"
+                      @click="${this.deleteMetamodel}"
                     >
                       Delete
                     </button>
@@ -516,19 +421,108 @@ export class DebugWidget extends SyncMetaWidget(
     `;
   }
 
-  deleteModel() {
-    const retVal = confirm("Are you sure you want to delete the model ?");
-    if (retVal) {
-      this.$spinner.show();
+  importModel() {
+    this.$spinner.show();
+    getFileContent()
+      .then((data) => {
+        var initAttributes = function (attrs, map) {
+          if (attrs.hasOwnProperty("[attributes]")) {
+            var attr = attrs["[attributes]"].list;
+            for (var key in attr) {
+              if (attr.hasOwnProperty(key)) {
+                if (attr[key].hasOwnProperty("key")) {
+                  var ytext = map.set(attr[key].key.id, new YText());
+                  ytext.insert(0, attr[key].key.value);
+                } else {
+                  var ytext = map.set(attr[key].value.id, new YText());
+                  ytext.insert(0, attr[key].value.value);
+                }
+              }
+            }
+          } else {
+            for (var key in attrs) {
+              if (attrs.hasOwnProperty(key)) {
+                var value = attrs[key].value;
+                if (!value.hasOwnProperty("option")) {
+                  if (value.value instanceof String) {
+                    var ytext = map.set(value.id, new YText());
+                    ytext.insert(0, value.value);
+                  }
+                }
+              }
+            }
+          }
+        };
+        const dataMap = window.y.getMap("data");
+        if (guidance.isGuidanceEditor()) {
+          dataMap.set("guidancemodel", data);
+        } else dataMap.set("model", data);
+        for (var key in data.nodes) {
+          if (data.nodes.hasOwnProperty(key)) {
+            var entity = data.nodes[key];
+            const nodesMap = window.y.getMap("nodes");
+            nodesMap.set(key, new YMap());
+            var attrs = entity.attributes;
+            if (entity.hasOwnProperty("label")) {
+              var ytext = new YText(entity.label.value.id);
+              nodesMap.set(entity.label.value.id, ytext);
+              ytext.insert(0, entity.label.value.value);
+            }
+            initAttributes(attrs, nodesMap);
+          }
+        }
+        for (var key in data.edges) {
+          if (data.edges.hasOwnProperty(key)) {
+            var entity = data.edges[key];
+            const edgeMap = window.y.getMap("edges");
+            const map = new YMap();
+            edgeMap.set(key, map);
+            var attrs = entity.attributes;
+            if (entity.hasOwnProperty("label")) {
+              const ytext = new YText();
+              map.set(entity.label.value.id, ytext);
+              ytext.insert(0, entity.label.value.value);
+            }
+            initAttributes(attrs, map);
+          }
+        }
+        const canvasMap = window.y.getMap("canvas");
+        canvasMap.set("ReloadWidgetOperation", "import");
+        this.feedback(
+          "Imported model successfully! The page will be reloaded."
+        );
+        location.reload();
+      })
+      .catch((err) => {
+        console.error(err);
+        this.feedback("Error: " + err);
+        this.$spinner.hide();
+      });
+  }
 
-      const dataMap = window.y.getMap("data");
-      //dataMap.delete('model');
-      dataMap.set("model", null);
-      const canvasMap = window.y.getMap("canvas");
-      canvasMap.set("ReloadWidgetOperation", "delete");
-      this.feedback("The model was deleted. The page will be reloaded.");
-      location.reload();
-    }
+  deleteModel() {
+    if (!confirm("Are you sure you want to delete the model ?")) return;
+
+    this.$spinner.show();
+    const dataMap = window.y.getMap("data");
+    //dataMap.delete('model');
+    dataMap.set("model", null);
+    const canvasMap = window.y.getMap("canvas");
+    canvasMap.set("ReloadWidgetOperation", "delete");
+    this.feedback("The model was deleted. The page will be reloaded.");
+    location.reload();
+  }
+
+  deleteMetamodel() {
+    if (!confirm("Are you sure you want to delete the Metamodel ?")) return;
+
+    this.$spinner.show();
+    const dataMap = window.y.getMap("data");
+    dataMap.delete("metamodel");
+    const canvasMap = window.y.getMap("canvas");
+    canvasMap.set("ReloadWidgetOperation", "meta_delete");
+    this.feedback("The meta model was deleted. The page will be reloaded.");
+    location.reload();
   }
 
   feedback(msg: string) {
@@ -543,5 +537,36 @@ export class DebugWidget extends SyncMetaWidget(
 
   disconnectedCallback() {
     super.disconnectedCallback();
+  }
+}
+
+function getFileContent() {
+  var fileReader: FileReader,
+    files = ($("#file-object").get(0) as HTMLInputElement).files,
+    file: Blob,
+    deferred = $.Deferred();
+
+  if (!files || files.length === 0) deferred.reject("No files selected");
+  file = files[0];
+
+  fileReader = new FileReader();
+  fileReader.onload = function (e) {
+    var data = e.target.result.toString();
+    try {
+      data = JSON.parse(data);
+    } catch (e) {
+      deferred.reject(
+        "Incorrect file type. Please make sure that your file is in JSON format"
+      );
+    }
+    deferred.resolve(data);
+  };
+  try {
+    fileReader.readAsText(file);
+    return deferred.promise();
+  } catch (error) {
+    return deferred.reject(
+      "Incorrect file type. Please make sure that your file is in JSON format"
+    );
   }
 }
