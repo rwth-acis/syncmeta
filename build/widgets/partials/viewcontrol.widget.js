@@ -39940,7 +39940,7 @@ function Arrows(color){
     }
 
 let booleanValueHtml = "<div class=\"val\"><%= value %></div>"; // replaced by importmap.plugin.js
-const attributeBooleanValueHtml = "<input\r\n  class=\"form-check-input val\"\r\n  type=\"checkbox\"\r\n  name=\"<%= name %>\"\r\n  <% if (value) { %> checked=\"checked\" <% } %> />\r\n"; // replaced by importmap.plugin.js
+const attributeBooleanValueHtml = "<input\n  class=\"form-check-input val\"\n  type=\"checkbox\"\n  name=\"<%= name %>\"\n  <% if (value) { %> checked=\"checked\" <% } %> />\n"; // replaced by importmap.plugin.js
 
 /**
  * BooleanValue
@@ -40114,7 +40114,7 @@ class BooleanValue extends AbstractValue {
                 key == "jabberId" &&
                 key === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]
               )
-                EntityManager.storeDataYjs();
+                EntityManager.saveState();
             });
           }, 500)
         );
@@ -40124,7 +40124,7 @@ class BooleanValue extends AbstractValue {
   }
 }
 
-const booleanAttributeHtml = "<div class=\"single_value_attribute\">\r\n    <div class=\"name\"></div>\r\n    <div class=\"value\"></div>\r\n</div>"; // replaced by importmap.plugin.js
+const booleanAttributeHtml = "<div class=\"single_value_attribute\">\n    <div class=\"name\"></div>\n    <div class=\"value\"></div>\n</div>"; // replaced by importmap.plugin.js
 
 /**
  * BooleanAttribute
@@ -40214,7 +40214,7 @@ class BooleanAttribute extends AbstractAttribute {
 const openapp$1 = new OpenAppProvider().openapp;
 
 let fileValueHtml = "<div class=\"val\"><%= value %></div>"; // replaced by importmap.plugin.js
-const attributeFileValueHtml = "<div class=\"file\">\r\n  <div class=\"select_file\">\r\n    <input class=\"form-control\" type=\"file\" id=\"file_object\" />\r\n    <input class=\"form-control\" type=\"button\" id=\"file_submit\" value=\"Submit\" />\r\n  </div>\r\n  <div class=\"manage_file\">\r\n    <span id=\"file_name\"></span>\r\n    <button id=\"file_preview\">Preview</button>\r\n    <button>\r\n      <a\r\n        id=\"file_download\"\r\n        href=\"#\"\r\n        target=\"_blank\"\r\n        style=\"color: #000; text-decoration: none\"\r\n        >Download</a\r\n      >\r\n    </button>\r\n    <button id=\"file_delete\">Delete</button>\r\n  </div>\r\n</div>\r\n"; // replaced by importmap.plugin.js
+const attributeFileValueHtml = "<div class=\"file\">\n  <div class=\"select_file\">\n    <input class=\"form-control\" type=\"file\" id=\"file_object\" />\n    <input class=\"form-control\" type=\"button\" id=\"file_submit\" value=\"Submit\" />\n  </div>\n  <div class=\"manage_file\">\n    <span id=\"file_name\"></span>\n    <button id=\"file_preview\">Preview</button>\n    <button>\n      <a\n        id=\"file_download\"\n        href=\"#\"\n        target=\"_blank\"\n        style=\"color: #000; text-decoration: none\"\n        >Download</a\n      >\n    </button>\n    <button id=\"file_delete\">Delete</button>\n  </div>\n</div>\n"; // replaced by importmap.plugin.js
 
 FileValue.prototype = new AbstractValue();
 FileValue.prototype.constructor = FileValue;
@@ -40487,7 +40487,7 @@ function FileValue(
   init();
 }
 
-const fileAttributeHtml = "<div class=\"file_attribute\">\r\n    <div class=\"name\"></div>\r\n    <div class=\"value\"></div>\r\n</div>"; // replaced by importmap.plugin.js
+const fileAttributeHtml = "<div class=\"file_attribute\">\n    <div class=\"name\"></div>\n    <div class=\"value\"></div>\n</div>"; // replaced by importmap.plugin.js
 
 /**
  * FileAttribute
@@ -40802,7 +40802,7 @@ class MultiLineValue extends AbstractValue {
   }
 }
 
-const singleMultiLineValueAttributeHtml = "<div class=\"single_value_attribute\">\r\n    <div class=\"name\"></div>\r\n    <div class=\"value\"></div>\r\n</div>"; // replaced by importmap.plugin.js
+const singleMultiLineValueAttributeHtml = "<div class=\"single_value_attribute\">\n    <div class=\"name\"></div>\n    <div class=\"value\"></div>\n</div>"; // replaced by importmap.plugin.js
 
 /**
  * SingleMultiLineValueAttribute
@@ -41092,71 +41092,71 @@ ViewTypesUtil.createReferenceToOrigin = function (viewtype) {
   }
 };
 
-const keySelectionValueSelectionValueListAttributeHtml = "<div class=\"list_attribute\">\r\n    <div class=\"name\"></div>\r\n    <ul class=\"list\"></ul>\r\n</div>"; // replaced by importmap.plugin.js
+const keySelectionValueSelectionValueListAttributeHtml = "<div class=\"list_attribute\">\n    <div class=\"name\"></div>\n    <ul class=\"list\"></ul>\n</div>"; // replaced by importmap.plugin.js
 
-const singleQuizAttributeHtml = "<div class=\"single_quiz_attribute\">\r\n  <div class=\"name\"></div>\r\n  <div class=\"value\"></div>\r\n  <table id=\"table\" style=\"float: left; visibility: hidden\">\r\n    <tr>\r\n      <th>Assessment Name :</th>\r\n      <th><input class=\"form-control\" id=\"topic\" /></th>\r\n    </tr>\r\n    <tr>\r\n      <td>Nr</td>\r\n      <td>Question</td>\r\n      <td>Correct Intent</td>\r\n      <td>Optional Hint</td>\r\n    </tr>\r\n  </table>\r\n  <button\r\n    id=\"b\"\r\n    style=\"margin-left: 3px; float: left; width: 50%; visibility: hidden\"\r\n  >\r\n    +\r\n  </button>\r\n  <button\r\n    id=\"c\"\r\n    style=\"margin-left: 3px; float: left; width: 50%; visibility: hidden\"\r\n  >\r\n    -\r\n  </button>\r\n  <button\r\n    id=\"submit\"\r\n    style=\"margin-left: 3px; float: left; width: 50%; visibility: hidden\"\r\n  >\r\n    Submit\r\n  </button>\r\n  <button\r\n    id=\"display\"\r\n    style=\"margin-left: 3px; float: left; width: 50%; visibility: hidden\"\r\n  >\r\n    Display\r\n  </button>\r\n</div>\r\n"; // replaced by importmap.plugin.js
+const singleQuizAttributeHtml = "<div class=\"single_quiz_attribute\">\n  <div class=\"name\"></div>\n  <div class=\"value\"></div>\n  <table id=\"table\" style=\"float: left; visibility: hidden\">\n    <tr>\n      <th>Assessment Name :</th>\n      <th><input class=\"form-control\" id=\"topic\" /></th>\n    </tr>\n    <tr>\n      <td>Nr</td>\n      <td>Question</td>\n      <td>Correct Intent</td>\n      <td>Optional Hint</td>\n    </tr>\n  </table>\n  <button\n    id=\"b\"\n    style=\"margin-left: 3px; float: left; width: 50%; visibility: hidden\"\n  >\n    +\n  </button>\n  <button\n    id=\"c\"\n    style=\"margin-left: 3px; float: left; width: 50%; visibility: hidden\"\n  >\n    -\n  </button>\n  <button\n    id=\"submit\"\n    style=\"margin-left: 3px; float: left; width: 50%; visibility: hidden\"\n  >\n    Submit\n  </button>\n  <button\n    id=\"display\"\n    style=\"margin-left: 3px; float: left; width: 50%; visibility: hidden\"\n  >\n    Display\n  </button>\n</div>\n"; // replaced by importmap.plugin.js
 
-const singleValueListAttributeHtml = "<div class=\"list_attribute\">\r\n    <div class=\"name\"></div>\r\n    <ul class=\"list\"></ul>\r\n</div>"; // replaced by importmap.plugin.js
+const singleValueListAttributeHtml = "<div class=\"list_attribute\">\n    <div class=\"name\"></div>\n    <ul class=\"list\"></ul>\n</div>"; // replaced by importmap.plugin.js
 
-const canvasSingleValueAttributeHtml = "<div class=\"single_value_attribute\">\r\n    <div class=\"name\"></div>\r\n    <div class=\"value\"></div>\r\n</div>"; // replaced by importmap.plugin.js
+const canvasSingleValueAttributeHtml = "<div class=\"single_value_attribute\">\n    <div class=\"name\"></div>\n    <div class=\"value\"></div>\n</div>"; // replaced by importmap.plugin.js
 
-const listHtml = "<div class=\"list_attribute\">\r\n    <div class=\"name\"></div>\r\n    <ul class=\"list\"></ul>\r\n</div>"; // replaced by importmap.plugin.js
+const listHtml = "<div class=\"list_attribute\">\n    <div class=\"name\"></div>\n    <ul class=\"list\"></ul>\n</div>"; // replaced by importmap.plugin.js
 
-const renamingAttrHTML = "<li class=\"renaming_attr\">\r\n    <div class=\"val\"></div>\r\n    <div class=\"ref\" ></div>\r\n    <div class=\"vis\"></div>\r\n</li>"; // replaced by importmap.plugin.js
+const renamingAttrHTML = "<li class=\"renaming_attr\">\n    <div class=\"val\"></div>\n    <div class=\"ref\" ></div>\n    <div class=\"vis\"></div>\n</li>"; // replaced by importmap.plugin.js
 
-const singleSelectionAttributeHtml = "<div class=\"single_value_attribute\">\r\n    <div class=\"name\"></div>\r\n    <div class=\"value\"></div>\r\n</div>"; // replaced by importmap.plugin.js
+const singleSelectionAttributeHtml = "<div class=\"single_value_attribute\">\n    <div class=\"name\"></div>\n    <div class=\"value\"></div>\n</div>"; // replaced by importmap.plugin.js
 
-const singleColorValueAttributeHtml = "<div class=\"single_value_attribute\">\r\n    <div class=\"name\"></div>\r\n    <div class=\"value\"></div>\r\n</div>"; // replaced by importmap.plugin.js
+const singleColorValueAttributeHtml = "<div class=\"single_value_attribute\">\n    <div class=\"name\"></div>\n    <div class=\"value\"></div>\n</div>"; // replaced by importmap.plugin.js
 
-const keySelectionValueSelectionValueAttributeHtml = "<li class=\"key_value_attribute\" id=\"<%= id %>\">\r\n    <div class=\"key\"></div>\r\n    <div class=\"value\"></div>\r\n</li>"; // replaced by importmap.plugin.js
+const keySelectionValueSelectionValueAttributeHtml = "<li class=\"key_value_attribute\" id=\"<%= id %>\">\n    <div class=\"key\"></div>\n    <div class=\"value\"></div>\n</li>"; // replaced by importmap.plugin.js
 
-const keySelectionValueListAttributeHtml = "<div class=\"list_attribute\">\r\n    <div class=\"name\"></div>\r\n    <ul class=\"list\"></ul>\r\n</div>"; // replaced by importmap.plugin.js
+const keySelectionValueListAttributeHtml = "<div class=\"list_attribute\">\n    <div class=\"name\"></div>\n    <ul class=\"list\"></ul>\n</div>"; // replaced by importmap.plugin.js
 
-const keySelectionValueAttributeHtml = "<li class=\"key_value_attribute\" id=\"<%= id %>\">\r\n    <div class=\"key\"></div>\r\n    <div class=\"value\"></div>\r\n</li>"; // replaced by importmap.plugin.js
-const integerAttributeHtml = "<div class=\"integer_attribute\">\r\n    <div class=\"name\"></div>\r\n    <div class=\"value\"></div>\r\n</div>"; // replaced by importmap.plugin.js
+const keySelectionValueAttributeHtml = "<li class=\"key_value_attribute\" id=\"<%= id %>\">\n    <div class=\"key\"></div>\n    <div class=\"value\"></div>\n</li>"; // replaced by importmap.plugin.js
+const integerAttributeHtml = "<div class=\"integer_attribute\">\n    <div class=\"name\"></div>\n    <div class=\"value\"></div>\n</div>"; // replaced by importmap.plugin.js
 
 let integerValueHtml = "<div class=\"val\"><%= value %></div>"; // replaced by importmap.plugin.js
-const attributeIntegerValueHtml = "<input\r\n  class=\"form-control h-100 val\"\r\n  type=\"number\"\r\n  name=\"<%= name %>\"\r\n  value=\"0\"\r\n/>\r\n"; // replaced by importmap.plugin.js
+const attributeIntegerValueHtml = "<input\n  class=\"form-control h-100 val\"\n  type=\"number\"\n  name=\"<%= name %>\"\n  value=\"0\"\n/>\n"; // replaced by importmap.plugin.js
 
-const valueHtml = "<input\r\n  class=\"form-control val\"\r\n  type=\"text\"\r\n  name=\"<%= name %>\"\r\n  disabled=\"disabled\"\r\n/>\r\n"; // replaced by importmap.plugin.js
+const valueHtml = "<span name=\"<%= name %>\" class=\"fw-bold\"> </span>\n"; // replaced by importmap.plugin.js
 
 let selectionValueHtml = "<div class=\"val\"><%= options[_.keys(options)[0]] %></div>"; // replaced by importmap.plugin.js
-const attributeSelectionValueHtml = "<select class=\"val form-select mb-3 h-100\">\r\n  <% _.each(options,function(option,key){ %>\r\n  <option value=\"<%= key %>\"><%= option %></option>\r\n  <% }); %>\r\n</select>\r\n"; // replaced by importmap.plugin.js
+const attributeSelectionValueHtml = "<select class=\"val form-select mb-3 h-100\">\n  <% _.each(options,function(option,key){ %>\n  <option value=\"<%= key %>\"><%= option %></option>\n  <% }); %>\n</select>\n"; // replaced by importmap.plugin.js
 
-const viewrelationshipNodeHtml$1 = "<div class=\"class_node\">\r\n    <div class=\"type\"><%= type %></div>\r\n    <div class=\"label\">&lt;&lt;ViewRelationship&gt;&gt;</div>\r\n    <div class=\"attributes\"></div>\r\n</div>"; // replaced by importmap.plugin.js
+const viewrelationshipNodeHtml$1 = "<div class=\"class_node\">\n    <div class=\"type\"><%= type %></div>\n    <div class=\"label\">&lt;&lt;ViewRelationship&gt;&gt;</div>\n    <div class=\"attributes\"></div>\n</div>"; // replaced by importmap.plugin.js
 
-const viewobjectNodeHtml = "<div class=\"class_node\">\r\n    <div class=\"type\"><%= type %></div>\r\n    <div class=\"label\">&lt;&lt;ViewObject&gt;&gt;</div>\r\n    <div class=\"attributes\"></div>\r\n</div>"; // replaced by importmap.plugin.js
+const viewobjectNodeHtml = "<div class=\"class_node\">\n    <div class=\"type\"><%= type %></div>\n    <div class=\"label\">&lt;&lt;ViewObject&gt;&gt;</div>\n    <div class=\"attributes\"></div>\n</div>"; // replaced by importmap.plugin.js
 
-const nodeShapeNodeHtml = "<div class=\"class_node nodeshape\">\r\n    <div class=\"type\"><%= type %></div>\r\n    <div class=\"label\">&lt;&lt;NodeShape&gt;&gt;</div>\r\n    <div class=\"attributes\"></div>\r\n</div>"; // replaced by importmap.plugin.js
+const nodeShapeNodeHtml = "<div class=\"class_node nodeshape\">\n    <div class=\"type\"><%= type %></div>\n    <div class=\"label\">&lt;&lt;NodeShape&gt;&gt;</div>\n    <div class=\"attributes\"></div>\n</div>"; // replaced by importmap.plugin.js
 
-const modelAttributesNodeHtml = "<div class=\"abstract_class_node\">\r\n    <div class=\"label\"></div>\r\n    <div class=\"attributes\"></div>\r\n</div>"; // replaced by importmap.plugin.js
+const modelAttributesNodeHtml = "<div class=\"abstract_class_node\">\n    <div class=\"label\"></div>\n    <div class=\"attributes\"></div>\n</div>"; // replaced by importmap.plugin.js
 
-const relationshipGroupNodeHtml = "<div class=\"class_node relation\">\r\n    <div class=\"type\"><%= type %></div>\r\n    <div class=\"label\">&lt;&lt;Relation&gt;&gt;</div>\r\n    <div class=\"attributes\"></div>\r\n</div>"; // replaced by importmap.plugin.js
+const relationshipGroupNodeHtml = "<div class=\"class_node relation\">\n    <div class=\"type\"><%= type %></div>\n    <div class=\"label\">&lt;&lt;Relation&gt;&gt;</div>\n    <div class=\"attributes\"></div>\n</div>"; // replaced by importmap.plugin.js
 
-const enumNodeHtml = "<div class=\"class_node enum\">\r\n    <div class=\"type\"><%= type %></div>\r\n    <div class=\"label\">&lt;&lt;Enumeration&gt;&gt;</div>\r\n    <div class=\"attributes\"></div>\r\n</div>"; // replaced by importmap.plugin.js
+const enumNodeHtml = "<div class=\"class_node enum\">\n    <div class=\"type\"><%= type %></div>\n    <div class=\"label\">&lt;&lt;Enumeration&gt;&gt;</div>\n    <div class=\"attributes\"></div>\n</div>"; // replaced by importmap.plugin.js
 
-const abstractEdgeHtml = "<div>\r\n    <div class=\"type fixed\"><%= type %></div>\r\n    <div class=\"edge_label\"></div>\r\n</div>"; // replaced by importmap.plugin.js
+const abstractEdgeHtml = "<div>\n    <div class=\"type fixed\"><%= type %></div>\n    <div class=\"edge_label\"></div>\n</div>"; // replaced by importmap.plugin.js
 
-const edgeShapeNodeHtml = "<div class=\"class_node edgeshape\">\r\n    <div class=\"type\"><%= type %></div>\r\n    <div class=\"label\">&lt;&lt;EdgeShape&gt;&gt;</div>\r\n    <div class=\"attributes\"></div>\r\n</div>"; // replaced by importmap.plugin.js
+const edgeShapeNodeHtml = "<div class=\"class_node edgeshape\">\n    <div class=\"type\"><%= type %></div>\n    <div class=\"label\">&lt;&lt;EdgeShape&gt;&gt;</div>\n    <div class=\"attributes\"></div>\n</div>"; // replaced by importmap.plugin.js
 
-const abstractNodeHtml = "<div id=\"<%= id %>\" class=\"node\">\r\n</div>"; // replaced by importmap.plugin.js
-const awarenessTraceHtml = "<div id=\"<%= id %>\" class=\"trace_awareness\">\r\n<svg xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"none\" viewBox=\"0 0 100 100\" style=\"overflow: visible;\">\r\n        <circle cx=\"0\" cy=\"0\" r=\"50\" stroke=\"lightgray\" stroke-width=\"0\" />\r\n</svg>\r\n</div>"; // replaced by importmap.plugin.js
+const abstractNodeHtml = "<div id=\"<%= id %>\" class=\"node\">\n</div>"; // replaced by importmap.plugin.js
+const awarenessTraceHtml = "<div id=\"<%= id %>\" class=\"trace_awareness\">\n<svg xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"none\" viewBox=\"0 0 100 100\" style=\"overflow: visible;\">\n        <circle cx=\"0\" cy=\"0\" r=\"50\" stroke=\"lightgray\" stroke-width=\"0\" />\n</svg>\n</div>"; // replaced by importmap.plugin.js
 
-const abstractClassNodeHtml = "<div class=\"class_node abstractclass\">\r\n  <div class=\"type\"><%= type %></div>\r\n  <div class=\"label\">&lt;&lt;abstract&gt;&gt;</div>\r\n  <div class=\"attributes\"></div>\r\n</div>\r\n"; // replaced by importmap.plugin.js
+const abstractClassNodeHtml = "<div class=\"class_node abstractclass\">\n  <div class=\"type\"><%= type %></div>\n  <div class=\"label\">&lt;&lt;abstract&gt;&gt;</div>\n  <div class=\"attributes\"></div>\n</div>\n"; // replaced by importmap.plugin.js
 
-const relationshipNodeHtml = "<div class=\"class_node relationship\">\r\n    <div class=\"type\"><%= type %></div>\r\n    <div class=\"label\">&lt;&lt;Relationship&gt;&gt;</div>\r\n    <div class=\"attributes\"></div>\r\n</div>"; // replaced by importmap.plugin.js
-const actionNodeHtml = "<div class=\"custom_node\">\r\n    <div class=\"type\"><%= \"<\\%= type %\\>\" %></div>\r\n    <svg xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"none\" viewBox=\"0 0 100 100\" class=\"fill_parent\">\r\n        <rect x=\"0\" y=\"0\" rx=\"20\" ry=\"20\" width=\"100\" height=\"100\" fill=\"white\" stroke=\"lightgray\" stroke-width=\"2\" />\r\n    </svg>\r\n    <div class=\"fill_parent\" style=\"overflow:hidden;\">\r\n    \t<table style=\"width:100%; height:100%\">\r\n\t\t  <tr>\r\n\t\t    <td style=\"width:1px; white-space:nowrap; padding:10px;\"><i class=\"fa fa-<%= icon %> fa-2x\"></i></td>\r\n\t\t    <td style=\"text-align:center\"><%= label %></td>\t\t\r\n\t\t  </tr>\r\n\t\t</table>\r\n    </div>\r\n</div>"; // replaced by importmap.plugin.js
-const circleNodeHtml = "<div class=\"custom_node\">\r\n  <div class=\"type\"><%= type %></div>\r\n  <svg\r\n    xmlns=\"http://www.w3.org/2000/svg\"\r\n    preserveAspectRatio=\"none\"\r\n    viewBox=\"0 0 100 100\"\r\n    class=\"fill_parent\"\r\n  >\r\n    <circle\r\n      cx=\"50\"\r\n      cy=\"50\"\r\n      r=\"50\"\r\n      fill=\"<%= color %>\"\r\n      stroke=\"lightgray\"\r\n      stroke-width=\"2\"\r\n    />\r\n  </svg>\r\n  <div class=\"fill_parent\">\r\n    <div\r\n      style=\"\r\n        position: absolute;\r\n        left: 50%;\r\n        top: -10px;\r\n        -webkit-transform: translateY(-50%) translateX(-50%);\r\n      \"\r\n      class=\"label\"\r\n    ></div>\r\n  </div>\r\n</div>\r\n"; // replaced by importmap.plugin.js
-const diamondNodeHtml = "<div class=\"custom_node\">\r\n  <div class=\"type\"><%= type %></div>\r\n  <svg\r\n    xmlns=\"http://www.w3.org/2000/svg\"\r\n    preserveAspectRatio=\"none\"\r\n    viewBox=\"0 0 100 100\"\r\n    class=\"fill_parent\"\r\n  >\r\n    <rect\r\n      x=\"15\"\r\n      y=\"15\"\r\n      width=\"70\"\r\n      height=\"70\"\r\n      fill=\"<%= color %>\"\r\n      stroke=\"lightgray\"\r\n      stroke-width=\"2\"\r\n      transform=\"rotate(-45 50 50)\"\r\n    />\r\n  </svg>\r\n  <div class=\"fill_parent\">\r\n    <div\r\n      style=\"\r\n        position: absolute;\r\n        left: 50%;\r\n        top: -10px;\r\n        -webkit-transform: translateY(-50%) translateX(-50%);\r\n      \"\r\n      class=\"label\"\r\n    ></div>\r\n  </div>\r\n</div>\r\n"; // replaced by importmap.plugin.js
-const objectNodeHtml = "<div class=\"class_node object\">\r\n    <div class=\"type\"><%= type %></div>\r\n    <div class=\"label\">&lt;&lt;Object&gt;&gt;</div>\r\n    <div class=\"attributes\"></div>\r\n</div>"; // replaced by importmap.plugin.js
-const rectangleNodeHtml = "<div class=\"custom_node\">\r\n  <div class=\"type\"><%= type %></div>\r\n  <svg\r\n    xmlns=\"http://www.w3.org/2000/svg\"\r\n    preserveAspectRatio=\"none\"\r\n    viewBox=\"0 0 100 100\"\r\n    class=\"fill_parent\"\r\n  >\r\n    <rect\r\n      x=\"0\"\r\n      y=\"0\"\r\n      width=\"100\"\r\n      height=\"100\"\r\n      fill=\"<%= color %>\"\r\n      stroke=\"lightgray\"\r\n      stroke-width=\"2\"\r\n    />\r\n  </svg>\r\n  <div class=\"fill_parent\">\r\n    <div\r\n      style=\"\r\n        position: absolute;\r\n        left: 50%;\r\n        top: -10px;\r\n        -webkit-transform: translateY(-50%) translateX(-50%);\r\n      \"\r\n      class=\"label\"\r\n    ></div>\r\n  </div>\r\n</div>\r\n"; // replaced by importmap.plugin.js
-const roundedRectangleNodeHtml = "<div class=\"custom_node\">\r\n  <div class=\"type\"><%= type %></div>\r\n  <svg\r\n    xmlns=\"http://www.w3.org/2000/svg\"\r\n    preserveAspectRatio=\"none\"\r\n    viewBox=\"0 0 100 100\"\r\n    class=\"fill_parent\"\r\n  >\r\n    <rect\r\n      x=\"0\"\r\n      y=\"0\"\r\n      rx=\"20\"\r\n      ry=\"20\"\r\n      width=\"100\"\r\n      height=\"100\"\r\n      fill=\"<%= color %>\"\r\n      stroke=\"lightgray\"\r\n      stroke-width=\"2\"\r\n    />\r\n  </svg>\r\n  <div class=\"fill_parent\">\r\n    <div\r\n      style=\"\r\n        position: absolute;\r\n        left: 50%;\r\n        top: -10px;\r\n        -webkit-transform: translateY(-50%) translateX(-50%);\r\n      \"\r\n      class=\"label\"\r\n    ></div>\r\n  </div>\r\n</div>\r\n"; // replaced by importmap.plugin.js
-const startActivityNodeHtml = "<div class=\"custom_node\">\r\n    <div class=\"type\"><%= type %></div>\r\n    <svg xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"none\" viewBox=\"0 0 100 100\" class=\"fill_parent\">\r\n        <defs>\r\n            <linearGradient id=\"startActivityGrad\" x1=\"0%\" y1=\"0%\" x2=\"0%\" y2=\"100%\">\r\n              <stop offset=\"0%\" style=\"stop-color:#FFF2CC;stop-opacity:1\" />\r\n              <stop offset=\"100%\" style=\"stop-color:#FFD966;stop-opacity:1\" />\r\n            </linearGradient>\r\n          </defs>\r\n        <rect x=\"0\" y=\"0\" rx=\"20\" ry=\"20\" width=\"100\" height=\"100\" fill=\"url(#startActivityGrad)\" stroke=\"lightgray\" stroke-width=\"2\" />\r\n    </svg>\r\n    <div class=\"fill_parent\" style=\"overflow:hidden;\">\r\n    \t<table style=\"width:100%; height:100%\">\r\n\t\t  <tr>\r\n\t\t    <td style=\"width:1px; white-space:nowrap; padding:10px;\"><i class=\"fa fa-circle fa-2x\"></i></td>\r\n\t\t    <td style=\"text-align:center\" class=\"label\"></td>\t\t\r\n\t\t  </tr>\r\n\t\t</table>\r\n    </div>\r\n</div>"; // replaced by importmap.plugin.js
-const triangleNodeHtml = "<div class=\"custom_node\">\r\n  <div class=\"type\"><%= type %></div>\r\n  <svg\r\n    xmlns=\"http://www.w3.org/2000/svg\"\r\n    preserveAspectRatio=\"none\"\r\n    viewBox=\"0 0 100 100\"\r\n    class=\"fill_parent\"\r\n  >\r\n    <path\r\n      d=\"M0,100 L50,0 L100,100 L0,100\"\r\n      fill=\"<%= color %>\"\r\n      stroke=\"lightgray\"\r\n      stroke-width=\"2\"\r\n    />\r\n  </svg>\r\n  <div class=\"fill_parent\">\r\n    <div\r\n      style=\"\r\n        position: absolute;\r\n        left: 50%;\r\n        top: -10px;\r\n        -webkit-transform: translateY(-50%) translateX(-50%);\r\n      \"\r\n      class=\"label\"\r\n    ></div>\r\n  </div>\r\n</div>\r\n"; // replaced by importmap.plugin.js
-const activityFinalNodeHtml = "<div class=\"custom_node\">\r\n    <div class=\"type\"><%= type %></div>\r\n    <svg style=\"overflow:visible;\" viewBox=\"0 0 100 100\" preserveAspectRatio=\"none\" class=\"fill_parent\">\r\n  <circle cx=\"50\" cy=\"50\" r=\"50\" stroke=\"black\" stroke-width=\"5\" fill=\"transparent\" />\r\n<circle cx=\"50\" cy=\"50\" r=\"40\" stroke=\"black\" stroke-width=\"0\" fill=\"black\" /> \r\n</svg> \r\n    <div class=\"fill_parent\">\r\n    </div>\r\n</div>"; // replaced by importmap.plugin.js
-const callActivityNodeHtml = "<div class=\"custom_node\">\r\n    <div class=\"type\"><%= type %></div>\r\n    <svg xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"none\" viewBox=\"0 0 100 100\" class=\"fill_parent\">\r\n        <rect x=\"0\" y=\"0\" rx=\"20\" ry=\"20\" width=\"100\" height=\"100\" fill=\"white\" stroke=\"lightgray\" stroke-width=\"2\" />\r\n    </svg>\r\n    <div class=\"fill_parent\" style=\"overflow:hidden;\">\r\n      <table style=\"width:100%; height:100%\">\r\n      <tr>\r\n        <td style=\"width:1px; white-space:nowrap; padding:10px;\"><i class=\"fa fa-external-link fa-2x\"></i></td>\r\n        <td class=\"label\" style=\"text-align:center\"></td>   \r\n      </tr>\r\n    </table>\r\n    </div>\r\n</div>"; // replaced by importmap.plugin.js
-const entityNodeHtml = "<div class=\"custom_node\">\r\n    <div class=\"type\"><%= \"<\\%= type %\\>\" %></div>\r\n    <svg xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"none\" viewBox=\"0 0 100 100\" class=\"fill_parent\">\r\n        <defs>\r\n            <linearGradient id=\"entityGrad\" x1=\"0%\" y1=\"0%\" x2=\"0%\" y2=\"100%\">\r\n              <stop offset=\"0%\" style=\"stop-color:#DAE8FC;stop-opacity:1\" />\r\n              <stop offset=\"100%\" style=\"stop-color:#7EA6E0;stop-opacity:1\" />\r\n            </linearGradient>\r\n          </defs>\r\n        <rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"url(#entityGrad)\" stroke=\"lightgray\" stroke-width=\"2\" />\r\n    </svg>\r\n    <div class=\"fill_parent\" style=\"overflow:hidden;\">\r\n    \t<table style=\"width:100%; height:100%\">\r\n\t\t  <tr>\r\n\t\t    <td style=\"width:1px; white-space:nowrap; padding:10px;\"><i class=\"fa fa-<%= icon %> fa-2x\"></i></td>\r\n\t\t    <td style=\"text-align:center\"><%= label %></td>\t\t\r\n\t\t  </tr>\r\n\t\t</table>\r\n    </div>\r\n</div>"; // replaced by importmap.plugin.js
-const setPropertyNodeHtml = "<div class=\"custom_node\">\r\n    <div class=\"type\"><%= \"<\\%= type %\\>\" %></div>\r\n    <svg xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"none\" viewBox=\"0 0 100 100\" class=\"fill_parent\">\r\n        <rect x=\"0\" y=\"0\" rx=\"20\" ry=\"20\" width=\"100\" height=\"100\" fill=\"white\" stroke=\"lightgray\" stroke-width=\"2\" />\r\n    </svg>\r\n    <div class=\"fill_parent\" style=\"overflow:hidden\">\r\n    \t<table style=\"width:100%; height:100%\">\r\n\t\t  <tr>\r\n\t\t    <td style=\"width:1px; white-space:nowrap; padding:10px;\"><i class=\"fa fa-pencil-square-o fa-2x\"></i></td>\r\n\t\t    <td style=\"text-align:center\" class=\"property\"></td>\t\t\r\n\t\t  </tr>\r\n\t\t</table>\r\n    </div>\r\n</div>"; // replaced by importmap.plugin.js
+const relationshipNodeHtml = "<div class=\"class_node relationship\">\n    <div class=\"type\"><%= type %></div>\n    <div class=\"label\">&lt;&lt;Relationship&gt;&gt;</div>\n    <div class=\"attributes\"></div>\n</div>"; // replaced by importmap.plugin.js
+const actionNodeHtml = "<div class=\"custom_node\">\n    <div class=\"type\"><%= \"<\\%= type %\\>\" %></div>\n    <svg xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"none\" viewBox=\"0 0 100 100\" class=\"fill_parent\">\n        <rect x=\"0\" y=\"0\" rx=\"20\" ry=\"20\" width=\"100\" height=\"100\" fill=\"white\" stroke=\"lightgray\" stroke-width=\"2\" />\n    </svg>\n    <div class=\"fill_parent\" style=\"overflow:hidden;\">\n    \t<table style=\"width:100%; height:100%\">\n\t\t  <tr>\n\t\t    <td style=\"width:1px; white-space:nowrap; padding:10px;\"><i class=\"fa fa-<%= icon %> fa-2x\"></i></td>\n\t\t    <td style=\"text-align:center\"><%= label %></td>\t\t\n\t\t  </tr>\n\t\t</table>\n    </div>\n</div>"; // replaced by importmap.plugin.js
+const circleNodeHtml = "<div class=\"custom_node\">\n  <div class=\"type\"><%= type %></div>\n  <svg\n    xmlns=\"http://www.w3.org/2000/svg\"\n    preserveAspectRatio=\"none\"\n    viewBox=\"0 0 100 100\"\n    class=\"fill_parent\"\n  >\n    <circle\n      cx=\"50\"\n      cy=\"50\"\n      r=\"50\"\n      fill=\"<%= color %>\"\n      stroke=\"lightgray\"\n      stroke-width=\"2\"\n    />\n  </svg>\n  <div class=\"fill_parent\">\n    <div\n      style=\"\n        position: absolute;\n        left: 50%;\n        top: -10px;\n        -webkit-transform: translateY(-50%) translateX(-50%);\n      \"\n      class=\"label\"\n    ></div>\n  </div>\n</div>\n"; // replaced by importmap.plugin.js
+const diamondNodeHtml = "<div class=\"custom_node\">\n  <div class=\"type\"><%= type %></div>\n  <svg\n    xmlns=\"http://www.w3.org/2000/svg\"\n    preserveAspectRatio=\"none\"\n    viewBox=\"0 0 100 100\"\n    class=\"fill_parent\"\n  >\n    <rect\n      x=\"15\"\n      y=\"15\"\n      width=\"70\"\n      height=\"70\"\n      fill=\"<%= color %>\"\n      stroke=\"lightgray\"\n      stroke-width=\"2\"\n      transform=\"rotate(-45 50 50)\"\n    />\n  </svg>\n  <div class=\"fill_parent\">\n    <div\n      style=\"\n        position: absolute;\n        left: 50%;\n        top: -10px;\n        -webkit-transform: translateY(-50%) translateX(-50%);\n      \"\n      class=\"label\"\n    ></div>\n  </div>\n</div>\n"; // replaced by importmap.plugin.js
+const objectNodeHtml = "<div class=\"class_node object\">\n    <div class=\"type\"><%= type %></div>\n    <div class=\"label\">&lt;&lt;Object&gt;&gt;</div>\n    <div class=\"attributes\"></div>\n</div>"; // replaced by importmap.plugin.js
+const rectangleNodeHtml = "<div class=\"custom_node\">\n  <div class=\"type\"><%= type %></div>\n  <svg\n    xmlns=\"http://www.w3.org/2000/svg\"\n    preserveAspectRatio=\"none\"\n    viewBox=\"0 0 100 100\"\n    class=\"fill_parent\"\n  >\n    <rect\n      x=\"0\"\n      y=\"0\"\n      width=\"100\"\n      height=\"100\"\n      fill=\"<%= color %>\"\n      stroke=\"lightgray\"\n      stroke-width=\"2\"\n    />\n  </svg>\n  <div class=\"fill_parent\">\n    <div\n      style=\"\n        position: absolute;\n        left: 50%;\n        top: -10px;\n        -webkit-transform: translateY(-50%) translateX(-50%);\n      \"\n      class=\"label\"\n    ></div>\n  </div>\n</div>\n"; // replaced by importmap.plugin.js
+const roundedRectangleNodeHtml = "<div class=\"custom_node\">\n  <div class=\"type\"><%= type %></div>\n  <svg\n    xmlns=\"http://www.w3.org/2000/svg\"\n    preserveAspectRatio=\"none\"\n    viewBox=\"0 0 100 100\"\n    class=\"fill_parent\"\n  >\n    <rect\n      x=\"0\"\n      y=\"0\"\n      rx=\"20\"\n      ry=\"20\"\n      width=\"100\"\n      height=\"100\"\n      fill=\"<%= color %>\"\n      stroke=\"lightgray\"\n      stroke-width=\"2\"\n    />\n  </svg>\n  <div class=\"fill_parent\">\n    <div\n      style=\"\n        position: absolute;\n        left: 50%;\n        top: -10px;\n        -webkit-transform: translateY(-50%) translateX(-50%);\n      \"\n      class=\"label\"\n    ></div>\n  </div>\n</div>\n"; // replaced by importmap.plugin.js
+const startActivityNodeHtml = "<div class=\"custom_node\">\n    <div class=\"type\"><%= type %></div>\n    <svg xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"none\" viewBox=\"0 0 100 100\" class=\"fill_parent\">\n        <defs>\n            <linearGradient id=\"startActivityGrad\" x1=\"0%\" y1=\"0%\" x2=\"0%\" y2=\"100%\">\n              <stop offset=\"0%\" style=\"stop-color:#FFF2CC;stop-opacity:1\" />\n              <stop offset=\"100%\" style=\"stop-color:#FFD966;stop-opacity:1\" />\n            </linearGradient>\n          </defs>\n        <rect x=\"0\" y=\"0\" rx=\"20\" ry=\"20\" width=\"100\" height=\"100\" fill=\"url(#startActivityGrad)\" stroke=\"lightgray\" stroke-width=\"2\" />\n    </svg>\n    <div class=\"fill_parent\" style=\"overflow:hidden;\">\n    \t<table style=\"width:100%; height:100%\">\n\t\t  <tr>\n\t\t    <td style=\"width:1px; white-space:nowrap; padding:10px;\"><i class=\"fa fa-circle fa-2x\"></i></td>\n\t\t    <td style=\"text-align:center\" class=\"label\"></td>\t\t\n\t\t  </tr>\n\t\t</table>\n    </div>\n</div>"; // replaced by importmap.plugin.js
+const triangleNodeHtml = "<div class=\"custom_node\">\n  <div class=\"type\"><%= type %></div>\n  <svg\n    xmlns=\"http://www.w3.org/2000/svg\"\n    preserveAspectRatio=\"none\"\n    viewBox=\"0 0 100 100\"\n    class=\"fill_parent\"\n  >\n    <path\n      d=\"M0,100 L50,0 L100,100 L0,100\"\n      fill=\"<%= color %>\"\n      stroke=\"lightgray\"\n      stroke-width=\"2\"\n    />\n  </svg>\n  <div class=\"fill_parent\">\n    <div\n      style=\"\n        position: absolute;\n        left: 50%;\n        top: -10px;\n        -webkit-transform: translateY(-50%) translateX(-50%);\n      \"\n      class=\"label\"\n    ></div>\n  </div>\n</div>\n"; // replaced by importmap.plugin.js
+const activityFinalNodeHtml = "<div class=\"custom_node\">\n    <div class=\"type\"><%= type %></div>\n    <svg style=\"overflow:visible;\" viewBox=\"0 0 100 100\" preserveAspectRatio=\"none\" class=\"fill_parent\">\n  <circle cx=\"50\" cy=\"50\" r=\"50\" stroke=\"black\" stroke-width=\"5\" fill=\"transparent\" />\n<circle cx=\"50\" cy=\"50\" r=\"40\" stroke=\"black\" stroke-width=\"0\" fill=\"black\" /> \n</svg> \n    <div class=\"fill_parent\">\n    </div>\n</div>"; // replaced by importmap.plugin.js
+const callActivityNodeHtml = "<div class=\"custom_node\">\n    <div class=\"type\"><%= type %></div>\n    <svg xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"none\" viewBox=\"0 0 100 100\" class=\"fill_parent\">\n        <rect x=\"0\" y=\"0\" rx=\"20\" ry=\"20\" width=\"100\" height=\"100\" fill=\"white\" stroke=\"lightgray\" stroke-width=\"2\" />\n    </svg>\n    <div class=\"fill_parent\" style=\"overflow:hidden;\">\n      <table style=\"width:100%; height:100%\">\n      <tr>\n        <td style=\"width:1px; white-space:nowrap; padding:10px;\"><i class=\"fa fa-external-link fa-2x\"></i></td>\n        <td class=\"label\" style=\"text-align:center\"></td>   \n      </tr>\n    </table>\n    </div>\n</div>"; // replaced by importmap.plugin.js
+const entityNodeHtml = "<div class=\"custom_node\">\n    <div class=\"type\"><%= \"<\\%= type %\\>\" %></div>\n    <svg xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"none\" viewBox=\"0 0 100 100\" class=\"fill_parent\">\n        <defs>\n            <linearGradient id=\"entityGrad\" x1=\"0%\" y1=\"0%\" x2=\"0%\" y2=\"100%\">\n              <stop offset=\"0%\" style=\"stop-color:#DAE8FC;stop-opacity:1\" />\n              <stop offset=\"100%\" style=\"stop-color:#7EA6E0;stop-opacity:1\" />\n            </linearGradient>\n          </defs>\n        <rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"url(#entityGrad)\" stroke=\"lightgray\" stroke-width=\"2\" />\n    </svg>\n    <div class=\"fill_parent\" style=\"overflow:hidden;\">\n    \t<table style=\"width:100%; height:100%\">\n\t\t  <tr>\n\t\t    <td style=\"width:1px; white-space:nowrap; padding:10px;\"><i class=\"fa fa-<%= icon %> fa-2x\"></i></td>\n\t\t    <td style=\"text-align:center\"><%= label %></td>\t\t\n\t\t  </tr>\n\t\t</table>\n    </div>\n</div>"; // replaced by importmap.plugin.js
+const setPropertyNodeHtml = "<div class=\"custom_node\">\n    <div class=\"type\"><%= \"<\\%= type %\\>\" %></div>\n    <svg xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"none\" viewBox=\"0 0 100 100\" class=\"fill_parent\">\n        <rect x=\"0\" y=\"0\" rx=\"20\" ry=\"20\" width=\"100\" height=\"100\" fill=\"white\" stroke=\"lightgray\" stroke-width=\"2\" />\n    </svg>\n    <div class=\"fill_parent\" style=\"overflow:hidden\">\n    \t<table style=\"width:100%; height:100%\">\n\t\t  <tr>\n\t\t    <td style=\"width:1px; white-space:nowrap; padding:10px;\"><i class=\"fa fa-pencil-square-o fa-2x\"></i></td>\n\t\t    <td style=\"text-align:center\" class=\"property\"></td>\t\t\n\t\t  </tr>\n\t\t</table>\n    </div>\n</div>"; // replaced by importmap.plugin.js
 
 var shapes = {
   straight: {
@@ -41379,7 +41379,7 @@ function HistoryManager() {
       }
     },
     clean: function (entityId) {
-      var entityIdFilter = function (value, idx) {
+      var entityIdFilter = function (value) {
         if (value.id === entityId) return false;
         else return true;
       };
@@ -41405,6 +41405,7 @@ function HistoryManager() {
 }
 
 const HistoryManagerInstance = new HistoryManager();
+Object.freeze(HistoryManagerInstance);
 
 const openapp = new OpenAppProvider().openapp;
 
@@ -41791,7 +41792,7 @@ class AbstractEdge extends AbstractEntity {
      * Apply an Edge Delete Operation
      * @param {operations.ot.EdgeDeleteOperation} operation
      */
-    var processEdgeDeleteOperation = function (operation) {
+    var processEdgeDeleteOperation = function () {
       that.remove();
     };
 
@@ -42312,7 +42313,7 @@ class AbstractEdge extends AbstractEntity {
     this.bindMoveToolEvents = function () {
       if (_jsPlumbConnection) {
         //Enable Edge Select
-        $("." + id).on("click", function (e) {
+        $("." + id).on("click", function () {
           _canvas.select(that);
         });
 
@@ -42546,12 +42547,12 @@ class AbstractNode extends AbstractEntity {
     var _$node = $(lodash.template(abstractNodeHtml)({ id: id }));
     this._$node = _$node;
     const resizeHandle = $(
-      `<div class="resize-handle"><i class="bi bi-aspect-ratio" style="font-size:2rem;"></i></div>`
+      `<div class="resize-handle"><i class="bi bi-aspect-ratio" style="font-size:1.5rem;"></i></div>`
     );
     resizeHandle.css({
       position: "absolute",
-      bottom: "0",
-      right: "0",
+      bottom: "-15px",
+      right: "-15px",
       cursor: "nwse-resize",
       zIndex: 100000,
     });
@@ -42582,12 +42583,12 @@ class AbstractNode extends AbstractEntity {
       });
     }, 3000);
 
-    this._$node.on("mousedown", function (e) {
+    this._$node.on("mousedown", function () {
       _canvas.select(that);
       _canvas.unbindMoveToolEvents();
     });
 
-    this._$node.on("mouseup", function (e) {
+    this._$node.on("mouseup", function () {
       _canvas.bindMoveToolEvents();
     });
 
@@ -42787,7 +42788,7 @@ class AbstractNode extends AbstractEntity {
      * Apply a Node Delete Operation
      * @param {operations.ot.NodeDeleteOperation} operation
      */
-    var processNodeDeleteOperation = function (operation) {
+    var processNodeDeleteOperation = function () {
       var edges = that.getEdges(),
         edgeId,
         edge;
@@ -43291,7 +43292,7 @@ class AbstractNode extends AbstractEntity {
      * @param {number} offsetY Offset in y-direction
      * @param {number} offsetZ Offset in z-direction
      */
-    this.move = function (offsetX, offsetY, offsetZ) {
+    this.move = function (offsetX, offsetY) {
       const x = _appearance.left + offsetX;
       const y = _appearance.top + offsetY;
       if (
@@ -43538,8 +43539,6 @@ class AbstractNode extends AbstractEntity {
       //this.highlight(_highlightColor,_highlightUsername);
       this._$node.removeClass("selected");
       //trigger save when unselecting an entity
-      EntityManagerInstance.storeDataYjs();
-
       Util.delay(100).then(function () {
         lodash.each(EntityManagerInstance.getEdges(), function (e) {
           e.setZIndex();
@@ -43800,7 +43799,7 @@ class AbstractNode extends AbstractEntity {
     this._registerYMap = function () {
       _ymap.observe(function (event) {
         const array = Array.from(event.changes.keys.entries());
-        array.forEach(([key, change]) => {
+        array.forEach(([key]) => {
           if (event.value && event.value.historyFlag) {
             var operation;
             var data = event.value;
@@ -43843,7 +43842,7 @@ class AbstractNode extends AbstractEntity {
     };
 
     jsPlumbInstance.manage(this._$node.get(0));
-    EntityManagerInstance.storeDataYjs();
+    // EntityManagerInstance.storeDataYjs();
   }
   nodeSelector;
   jsPlumbManagedElement;
@@ -43914,7 +43913,7 @@ class AbstractNode extends AbstractEntity {
         ],
         inertia: { enabled: false },
       })
-      .on(["resizestart"], (event) => {
+      .on(["resizestart"], () => {
         // add resizing class
         that._$node.addClass("resizing");
         that.disableDraggable();
@@ -44280,6 +44279,8 @@ let EntityManager$1 = class EntityManager {
        * @param {number} height Height of node
        * @param {number} zIndex Position of node on z-axis
        * @param {object} json the json representation
+       * @param {number} y the yjs map
+       * @param {boolean} store if the node should be stored in the meta model
        * @returns {canvas_widget.AbstractNode}
        */
       createNode: function (
@@ -44292,7 +44293,8 @@ let EntityManager$1 = class EntityManager {
         zIndex,
         containment,
         json,
-        y
+        y,
+        store = true
       ) {
         var node;
         AbstractEntity.maxZIndex = Math.max(AbstractEntity.maxZIndex, zIndex);
@@ -44324,19 +44326,38 @@ let EntityManager$1 = class EntityManager {
           );
         }
         _nodes[id] = node;
-
-        EntityManagerInstance.storeDataYjs();
+        if (store) EntityManagerInstance.storeDataYjs();
         return node;
       },
-      findObjectNodeByLabel(searchLabel) {
-        const re = new RegExp(searchLabel, "gi");
-        for (const [id, node] of Object.entries(_nodes)) {
-          const currentNode = y.getMap("nodes").get(id).toJSON();
-          for (const [key, property] of Object.entries(currentNode)) {
-            if (key.match(id)) {
-              if (property.match(re)) {
-                return node;
-              }
+      saveState: function () {
+        // if metamodel
+        const viewId = ViewManager.getCurrentView();
+        if (viewId && !metamodel) {
+          ViewManager.updateViewContent(viewId);
+        } else {
+          EntityManager.storeDataYjs();
+        }
+      },
+      findObjectNodeByLabel(searchTerm) {
+        const re = new RegExp(searchTerm, "gi");
+        const { nodes } = EntityManagerInstance.graphToJSON();
+        for (const [nodeId, node] of Object.entries(nodes)) {
+          if (node?.type.match(re)) {
+            // type matches searchTerm
+            return EntityManagerInstance.find(nodeId);
+          }
+          if (node?.label?.value?.value.match(re)) {
+            // label matches searchTerm
+            return EntityManagerInstance.find(nodeId);
+          }
+          for (const attr of Object.values(node?.attributes)) {
+            // search attributes
+            if (typeof attr?.value?.value !== "string") {
+              continue;
+            }
+            if (attr?.value?.value.match(re)) {
+              // attribute value matches searchTerm
+              return EntityManagerInstance.find(nodeId);
             }
           }
         }
@@ -44454,7 +44475,7 @@ let EntityManager$1 = class EntityManager {
        * @returns {canvas_widget.AbstractEdge}
        */
       //TODO: switch id and type
-      createEdge: function (type, id, source, target) {
+      createEdge: function (type, id, source, target, store = true) {
         var edge;
 
         if (_viewId && viewEdgeTypes.hasOwnProperty(type)) {
@@ -44467,7 +44488,7 @@ let EntityManager$1 = class EntityManager {
         source.addOutgoingEdge(edge);
         target?.addIngoingEdge(edge);
         _edges[id] = edge;
-        EntityManagerInstance.storeDataYjs();
+        if (store) EntityManagerInstance.storeDataYjs();
         return edge;
       },
       /**
@@ -44532,13 +44553,13 @@ let EntityManager$1 = class EntityManager {
         var nodesJSON = {};
         var edgesJSON = {};
         attributesJSON = _modelAttributesNode
-          ? _modelAttributesNode.toJSON()
+          ? _modelAttributesNode?.toJSON()
           : {};
         lodash.forEach(_nodes, function (val, key) {
-          nodesJSON[key] = val.toJSON();
+          nodesJSON[key] = val?.toJSON();
         });
         lodash.forEach(_edges, function (val, key) {
-          edgesJSON[key] = val.toJSON();
+          edgesJSON[key] = val?.toJSON();
         });
         return {
           attributes: attributesJSON,
@@ -44602,7 +44623,8 @@ let EntityManager$1 = class EntityManager {
           zIndex,
           containment,
           json,
-          y
+          y,
+          false
         );
         if (node) {
           node.getLabel().getValue().setValue(json.label.value.value);
@@ -44636,7 +44658,7 @@ let EntityManager$1 = class EntityManager {
       createEdgeFromJSON: function (type, id, source, target, json) {
         const sourceNode = this.findNode(source);
         const targetNode = this.findNode(target);
-        var edge = this.createEdge(type, id, sourceNode, targetNode);
+        var edge = this.createEdge(type, id, sourceNode, targetNode, false);
         if (edge) {
           edge.getLabel().getValue().setValue(json.label.value.value);
           for (var attrId in json.attributes) {
@@ -45127,6 +45149,8 @@ let EntityManager$1 = class EntityManager {
               },
             };
 
+            guidanceMetamodel.nodes[id];
+
             //Generate the 'entity node'
             var entityLabel = guidancemodel.getEntityNodeLabelForType(
               node.label
@@ -45180,6 +45204,8 @@ let EntityManager$1 = class EntityManager {
               value: "Value",
               options: options,
             };
+
+            guidanceMetamodel.nodes[id];
 
             //Define the 'create object node' to 'entity node' relation
             dataFlowEdgeRelations.push({
@@ -45247,6 +45273,8 @@ let EntityManager$1 = class EntityManager {
               },
             };
 
+            guidanceMetamodel.nodes[id];
+
             //Generate 'entity node'
             var entityLabel = guidancemodel.getEntityNodeLabelForType(
               edge.label
@@ -45269,6 +45297,8 @@ let EntityManager$1 = class EntityManager {
                 customAnchors: "",
               },
             };
+
+            guidanceMetamodel.nodes[id];
 
             //Generate the 'set property node'
             if (Object.keys(edge.attributes).length > 0) {
@@ -46240,15 +46270,17 @@ let EntityManager$1 = class EntityManager {
       storeDataYjs: function () {
         var data = this.graphToJSON();
         const dataMap = y.getMap("data");
-        if (guidancemodel.isGuidanceEditor()) {
-          dataMap.set("guidancemodel", data);
-        } else if (!metamodel) {
-          dataMap.set("metamodelpreview", this.generateMetaModel());
-          dataMap.set("guidancemetamodel", this.generateGuidanceMetamodel());
-          dataMap.set("model", data);
-        } else {
-          dataMap.set("model", data);
-        }
+        window.y.transact(() => {
+          if (guidancemodel.isGuidanceEditor()) {
+            dataMap.set("guidancemodel", data);
+          } else if (!metamodel) {
+            dataMap.set("metamodelpreview", this.generateMetaModel());
+            dataMap.set("guidancemetamodel", this.generateGuidanceMetamodel());
+            dataMap.set("model", data);
+          } else {
+            dataMap.set("model", data);
+          }
+        });
       },
       /**
        * Delete the Model Attribute Node
@@ -46455,6 +46487,7 @@ let EntityManager$1 = class EntityManager {
 };
 
 const EntityManagerInstance = new EntityManager$1();
+Object.freeze(EntityManagerInstance);
 
 /**
  * Node
@@ -46898,7 +46931,7 @@ class ObjectNode extends AbstractNode {
           name: "Add Node Shape",
           callback: function () {
             var canvas = that.getCanvas(),
-              appearance = that.getAppearance();
+              appearance = that.getAppearance();
 
             //noinspection JSAccessibilityCheck
             const id = canvas.createNode(
@@ -47477,7 +47510,7 @@ class RelationshipNode extends AbstractNode {
           name: "Add Edge Shape",
           callback: function () {
             var canvas = that.getCanvas(),
-              appearance = that.getAppearance();
+              appearance = that.getAppearance();
 
             //noinspection JSAccessibilityCheck
             canvas
@@ -47797,7 +47830,7 @@ class EdgeShapeNode extends AbstractNode {
     this.addAttribute(attrOverlayPos);
     this.addAttribute(attrOverlayRotate);
 
-    this.registerYMap = function (map, disableYText) {
+    this.registerYMap = function (map) {
       AbstractNode.prototype.registerYMap.call(this, map);
       attrArrow.getValue().registerYType();
       attrShape.getValue().registerYType();
@@ -48583,7 +48616,7 @@ class SelectionValue extends AbstractValue {
         .getYMap()
         .observeDeep(function ([event]) {
           const array = Array.from(event.changes.keys.entries());
-          array.forEach(([key, change]) => {
+          array.forEach(([key]) => {
             const updated = event.currentTarget.get(key);
             if (
               updated?.type !== "update" ||
@@ -49353,7 +49386,7 @@ class SingleValueListAttribute extends AbstractAttribute {
     if (_iwcw) {
       that.registerCallbacks();
     }
-    this.registerYMap = function (disableYText) {
+    this.registerYMap = function () {
       var ymap = that.getRootSubjectEntity().getYMap();
 
       var attrs = that.getAttributes();
@@ -49418,7 +49451,6 @@ class Value extends AbstractValue {
     super(id, name, subjectEntity, rootSubjectEntity);
     y = y || window.y;
     if (!y) throw new Error("y is undefined");
-    IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN, y);
     var _ytext = null;
 
     const yMap = rootSubjectEntity.getYMap();
@@ -49460,7 +49492,7 @@ class Value extends AbstractValue {
      */
     this.setValue = function (value) {
       _value = value;
-      _$node.val(value).trigger("blur");
+      _$node.text(value);
 
       this.value = _ytext.toString();
     };
@@ -49543,7 +49575,7 @@ class Value extends AbstractValue {
     //automatically determines the size of input
     _$node
       .autoGrowInput({
-        comfortZone: 10,
+        comfortZone: 15,
         minWidth: 40,
         maxWidth: 1000,
       })
@@ -50168,7 +50200,6 @@ class ConditionListAttribute extends AbstractAttribute {
         array.forEach(([key, change]) => {
           if (key.indexOf("[value]") != -1) {
             var operation;
-            event.currentTarget.get(key);
             switch (change.action) {
               case "add": {
                 if (eventWasTriggeredByMe(event)) return;
@@ -50555,8 +50586,6 @@ class KeySelectionValueSelectionValueListAttribute extends AbstractAttribute {
      */
     this.deleteAttribute = function (id) {
       if (_list.hasOwnProperty(id)) {
-        _list[id];
-
         delete _list[id];
       }
     };
@@ -50665,7 +50694,6 @@ class KeySelectionValueSelectionValueListAttribute extends AbstractAttribute {
         array.forEach(([key, change]) => {
           if (key.indexOf("[key]") != -1) {
             var operation;
-            event.currentTarget.get(key);
             switch (change.action) {
               case "add": {
                 const jabberId = event.currentTarget.get("jabberId");
@@ -50984,7 +51012,6 @@ class RenamingListAttribute extends AbstractAttribute {
         const array = Array.from(event.changes.keys.entries());
         array.forEach(([key, change]) => {
           if (key.indexOf("[val]") != -1) {
-            event.currentTarget.get(key);
             switch (change.action) {
               case "add": {
                 //  var yUserId = event.object.map[key][0];
@@ -51762,6 +51789,7 @@ class ModelAttributesNode extends AbstractNode {
     if (!y) {
       throw new Error("y is not defined");
     }
+
     /**
      * jQuery object of node template
      * @type {jQuery}
@@ -51972,13 +52000,6 @@ class ViewObjectNode extends AbstractNode {
     var _$attributeNode = _$node.find(".attributes");
 
     /**
-     * Attributes of node
-     * @type {Object}
-     * @private
-     */
-    this.getAttributes();
-
-    /**
      * Get JSON representation of the node
      * @returns {Object}
      */
@@ -52092,7 +52113,7 @@ class ViewObjectNode extends AbstractNode {
           name: "Add Node Shape",
           callback: function () {
             var canvas = that.getCanvas(),
-              appearance = that.getAppearance();
+              appearance = that.getAppearance();
 
             //noinspection JSAccessibilityCheck
             canvas
@@ -52194,13 +52215,6 @@ let ViewRelationshipNode$1 = class ViewRelationshipNode extends AbstractNode {
      * @private
      */
     var _$attributeNode = _$node.find(".attributes");
-
-    /**
-     * Attributes of node
-     * @type {Object}
-     * @private
-     */
-    this.getAttributes();
 
     /**
      * Get JSON representation of the node
@@ -52775,7 +52789,7 @@ class BiDirAssociationEdge extends AbstractEdge {
   }
 }
 
-const viewrelationshipNodeHtml = "<div class=\"class_node\">\r\n    <div class=\"type\"><%= type %></div>\r\n    <div class=\"label\">&lt;&lt;ViewRelationship&gt;&gt;</div>\r\n    <div class=\"attributes\"></div>\r\n</div>"; // replaced by importmap.plugin.js
+const viewrelationshipNodeHtml = "<div class=\"class_node\">\n    <div class=\"type\"><%= type %></div>\n    <div class=\"label\">&lt;&lt;ViewRelationship&gt;&gt;</div>\n    <div class=\"attributes\"></div>\n</div>"; // replaced by importmap.plugin.js
 
 /**
          * ViewRelationshipNode

@@ -6291,7 +6291,7 @@ class IWCW {
   }
 }
 
-const heatspotHtml = "<div style=\"position:absolute; border-style:solid; border-width:1px;\">\r\n\t<div class=\"background\" style=\"opacity:0; width: 100%; height: 100%; background-color: white;\">\r\n\t</div>\r\n</div>"; // replaced by importmap.plugin.js
+const heatspotHtml = "<div style=\"position:absolute; border-style:solid; border-width:1px;\">\n\t<div class=\"background\" style=\"opacity:0; width: 100%; height: 100%; background-color: white;\">\n\t</div>\n</div>"; // replaced by importmap.plugin.js
 
 class Heatspot {
   constructor(id, x, y, width, height, scaleFactor, color) {

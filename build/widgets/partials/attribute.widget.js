@@ -3,7 +3,7 @@ import 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js'
 import 'https://unpkg.com/jquery@3.6.0/dist/jquery.js';
 import { css, html, LitElement } from 'lit';
 import { QuillBinding } from 'y-quill';
-import { Doc } from 'yjs';
+import { Map as Map$2, Doc } from 'yjs';
 import { WebsocketProvider } from 'y-websocket';
 
 /******************************************************************************
@@ -24419,7 +24419,7 @@ class AbstractAttribute extends AbstractEntity {
       }
     }
 
-const booleanValueHtml = "<input\r\n  class=\"form-check-input val\"\r\n  type=\"checkbox\"\r\n  name=\"<%= name %>\"\r\n  <% if (value) { %> checked=\"checked\" <% } %> />\r\n"; // replaced by importmap.plugin.js
+const booleanValueHtml = "<input\n  class=\"form-check-input val\"\n  type=\"checkbox\"\n  name=\"<%= name %>\"\n  <% if (value) { %> checked=\"checked\" <% } %> />\n"; // replaced by importmap.plugin.js
 
 
 /**
@@ -24576,7 +24576,7 @@ class BooleanValue extends AbstractValue {
   }
 }
 
-const booleanAttributeHtml = "<div class=\"attribute_single_value_attribute input-group mb-3\">\r\n  <div class=\"attribute_name\"></div>\r\n  <div class=\"attribute_value\"></div>\r\n</div>\r\n"; // replaced by importmap.plugin.js
+const booleanAttributeHtml = "<div class=\"attribute_single_value_attribute input-group mb-3\">\n  <div class=\"attribute_name\"></div>\n  <div class=\"attribute_value\"></div>\n</div>\n"; // replaced by importmap.plugin.js
 
 /**
  * BooleanAttribute
@@ -24662,7 +24662,7 @@ class BooleanAttribute extends AbstractAttribute {
 
 const openapp = new OpenAppProvider().openapp;
 
-const fileValueHtml = "<div class=\"file\">\r\n  <div class=\"select_file\">\r\n    <input class=\"form-control\" type=\"file\" id=\"file_object\" />\r\n    <input class=\"form-control\" type=\"button\" id=\"file_submit\" value=\"Submit\" />\r\n  </div>\r\n  <div class=\"manage_file\">\r\n    <span id=\"file_name\"></span>\r\n    <button id=\"file_preview\">Preview</button>\r\n    <button>\r\n      <a\r\n        id=\"file_download\"\r\n        href=\"#\"\r\n        target=\"_blank\"\r\n        style=\"color: #000; text-decoration: none\"\r\n        >Download</a\r\n      >\r\n    </button>\r\n    <button id=\"file_delete\">Delete</button>\r\n  </div>\r\n</div>\r\n"; // replaced by importmap.plugin.js
+const fileValueHtml = "<div class=\"file\">\n  <div class=\"select_file\">\n    <input class=\"form-control\" type=\"file\" id=\"file_object\" />\n    <input class=\"form-control\" type=\"button\" id=\"file_submit\" value=\"Submit\" />\n  </div>\n  <div class=\"manage_file\">\n    <span id=\"file_name\"></span>\n    <button id=\"file_preview\">Preview</button>\n    <button>\n      <a\n        id=\"file_download\"\n        href=\"#\"\n        target=\"_blank\"\n        style=\"color: #000; text-decoration: none\"\n        >Download</a\n      >\n    </button>\n    <button id=\"file_delete\">Delete</button>\n  </div>\n</div>\n"; // replaced by importmap.plugin.js
 
 
 /**
@@ -24903,7 +24903,7 @@ class FileValue extends AbstractValue{
   }
 }
 
-const fileAttributeHtml = "<div class=\"attribute_single_value_attribute input-group mb-3\">\r\n  <div class=\"attribute_name\"></div>\r\n  <div class=\"attribute_value\"></div>\r\n</div>\r\n"; // replaced by importmap.plugin.js
+const fileAttributeHtml = "<div class=\"attribute_single_value_attribute input-group mb-3\">\n  <div class=\"attribute_name\"></div>\n  <div class=\"attribute_value\"></div>\n</div>\n"; // replaced by importmap.plugin.js
 
 /**
  * FileAttribute
@@ -24978,7 +24978,7 @@ class FileAttribute extends AbstractAttribute {
   }
 }
 
-const integerValueHtml = "<input\r\n  class=\"form-control h-100 val\"\r\n  type=\"number\"\r\n  name=\"<%= name %>\"\r\n  value=\"0\"\r\n/>\r\n"; // replaced by importmap.plugin.js
+const integerValueHtml = "<input\n  class=\"form-control h-100 val\"\n  type=\"number\"\n  name=\"<%= name %>\"\n  value=\"0\"\n/>\n"; // replaced by importmap.plugin.js
 
 
 /**
@@ -25133,7 +25133,7 @@ class IntegerValue extends AbstractValue {
   }
 }
 
-const integerAttributeHtml = "<div class=\"attribute_single_value_attribute input-group mb-3 flex-nowrap\">\r\n  <div\r\n    class=\"attribute_name input-group-text overflow-auto\"\r\n    style=\"max-width: 50%\"\r\n  ></div>\r\n  <div class=\"attribute_value flex-fill\"></div>\r\n</div>\r\n"; // replaced by importmap.plugin.js
+const integerAttributeHtml = "<div class=\"attribute_single_value_attribute input-group mb-3 flex-nowrap\">\n  <div\n    class=\"attribute_name input-group-text overflow-auto\"\n    style=\"max-width: 50%\"\n  ></div>\n  <div class=\"attribute_value flex-fill\"></div>\n</div>\n"; // replaced by importmap.plugin.js
 
 /**
  * IntegerAttribute
@@ -36636,7 +36636,7 @@ var quill = {
 
 var Quill = /*@__PURE__*/getDefaultExportFromCjs(quillExports);
 
-const quillEditorHtml$1 = "<div id=\"<%= id %>\"></div>\r\n"; // replaced by importmap.plugin.js
+const quillEditorHtml$1 = "<div id=\"<%= id %>\"></div>\n"; // replaced by importmap.plugin.js
 
 /**
  * Value
@@ -36687,11 +36687,7 @@ class Value extends AbstractValue {
      */
     this.setValue = function (value) {
       _value = value;
-      // if (_$editorRef) {
-      //   _$editorRef.insertText(0, value);
-      // } else {
-      //   console.error("Quill editor not initialized");
-      // }
+      _$editorRef.setText(value);
     };
 
     /**
@@ -36732,6 +36728,7 @@ class Value extends AbstractValue {
       _ytext?.observe(function () {
         _value = _ytext.toString();
       });
+      _$editorRef.setText(_value);
       //loging
       window.syncmetaLog.initializedYTexts += 1;
       if (window.syncmetaLog.hasOwnProperty(this.getEntityId()))
@@ -36755,7 +36752,7 @@ function sanitizeValue(value) {
     .replace("]", ")");
 }
 
-const singleQuizAttributeHtml = "<div class=\"attribute_single_quiz_attribute\">\r\n  <span class=\"attribute_name\" for=\"<%= id %>-value\"></span>\r\n  <div class=\"value\" id=\"<%= id %>-value\"></div>\r\n  <table id=\"table\" style=\"float: left; visibility: hidden\">\r\n    <tr>\r\n      <th>Assessment Name :</th>\r\n      <th><input class=\"form-control\" id=\"topic\" /></th>\r\n    </tr>\r\n    <tr>\r\n      <td>Nr</td>\r\n      <td>Question</td>\r\n      <td>Correct Intent</td>\r\n      <td>Optional Hint</td>\r\n    </tr>\r\n  </table>\r\n  <button\r\n    id=\"b\"\r\n    style=\"margin-left: 3px; float: left; width: 50%; visibility: hidden\"\r\n  >\r\n    +\r\n  </button>\r\n  <button\r\n    id=\"c\"\r\n    style=\"margin-left: 3px; float: left; width: 50%; visibility: hidden\"\r\n  >\r\n    -\r\n  </button>\r\n  <button\r\n    id=\"submit\"\r\n    style=\"margin-left: 3px; float: left; width: 50%; visibility: hidden\"\r\n  >\r\n    Submit\r\n  </button>\r\n  <button\r\n    id=\"display\"\r\n    style=\"margin-left: 3px; float: left; width: 50%; visibility: hidden\"\r\n  >\r\n    Display\r\n  </button>\r\n</div>\r\n"; // replaced by importmap.plugin.js
+const singleQuizAttributeHtml = "<div class=\"attribute_single_quiz_attribute\">\n  <span class=\"attribute_name\" for=\"<%= id %>-value\"></span>\n  <div class=\"value\" id=\"<%= id %>-value\"></div>\n  <table id=\"table\" style=\"float: left; visibility: hidden\">\n    <tr>\n      <th>Assessment Name :</th>\n      <th><input class=\"form-control\" id=\"topic\" /></th>\n    </tr>\n    <tr>\n      <td>Nr</td>\n      <td>Question</td>\n      <td>Correct Intent</td>\n      <td>Optional Hint</td>\n    </tr>\n  </table>\n  <button\n    id=\"b\"\n    style=\"margin-left: 3px; float: left; width: 50%; visibility: hidden\"\n  >\n    +\n  </button>\n  <button\n    id=\"c\"\n    style=\"margin-left: 3px; float: left; width: 50%; visibility: hidden\"\n  >\n    -\n  </button>\n  <button\n    id=\"submit\"\n    style=\"margin-left: 3px; float: left; width: 50%; visibility: hidden\"\n  >\n    Submit\n  </button>\n  <button\n    id=\"display\"\n    style=\"margin-left: 3px; float: left; width: 50%; visibility: hidden\"\n  >\n    Display\n  </button>\n</div>\n"; // replaced by importmap.plugin.js
 
 /**
  * SingleValueAttribute
@@ -36936,7 +36933,7 @@ class QuizAttribute extends AbstractAttribute {
   }
 }
 
-const selectionValueHtml = "<select class=\"val form-select mb-3 h-100\">\r\n  <% _.each(options,function(option,key){ %>\r\n  <option value=\"<%= key %>\"><%= option %></option>\r\n  <% }); %>\r\n</select>\r\n"; // replaced by importmap.plugin.js
+const selectionValueHtml = "<select class=\"val form-select mb-3 h-100\">\n  <% _.each(options,function(option,key){ %>\n  <option value=\"<%= key %>\"><%= option %></option>\n  <% }); %>\n</select>\n"; // replaced by importmap.plugin.js
 
 /**
  * SelectionValue
@@ -37112,7 +37109,7 @@ class SelectionValue extends AbstractValue {
   }
 }
 
-const keySelectionValueAttributeHtml = "<li class=\"attribute_key_value_attribute input-group mb-3\">\r\n  <div class=\"key flex-fill\"></div>\r\n  <div class=\"attribute_value\"></div>\r\n  <button type=\"button\" class=\"btn btn-danger\">\r\n    <i class=\"bi bi-trash-fill\"></i>\r\n  </button>\r\n</li>\r\n<hr />\r\n"; // replaced by importmap.plugin.js
+const keySelectionValueAttributeHtml = "<li class=\"attribute_key_value_attribute input-group mb-3\">\n  <div class=\"key flex-fill\"></div>\n  <div class=\"attribute_value\"></div>\n  <button type=\"button\" class=\"btn btn-danger\">\n    <i class=\"bi bi-trash-fill\"></i>\n  </button>\n</li>\n<hr />\n"; // replaced by importmap.plugin.js
 
 /**
  * KeySelectionValueAttribute
@@ -37296,7 +37293,7 @@ class KeySelectionValueAttribute extends AbstractAttribute {
   }
 }
 
-const keySelectionValueListAttributeHtml = "<div class=\"list_attribute\">\r\n  <div class=\"attribute_name\"></div>\r\n  <ul class=\"list\"></ul>\r\n  <button type=\"button\" class=\"btn btn-success\">\r\n    <i class=\"bi bi-plus-circle-fill\"></i>\r\n  </button>\r\n</div>\r\n"; // replaced by importmap.plugin.js
+const keySelectionValueListAttributeHtml = "<div class=\"list_attribute\">\n  <div class=\"attribute_name\"></div>\n  <ul class=\"list\"></ul>\n  <button type=\"button\" class=\"btn btn-success\">\n    <i class=\"bi bi-plus-circle-fill\"></i>\n  </button>\n</div>\n"; // replaced by importmap.plugin.js
 
 /**
  * Abstract Attribute
@@ -37557,7 +37554,7 @@ class KeySelectionValueListAttribute extends AbstractAttribute {
   }
 }
 
-const keySelectionValueSelectionValueAttributeHtml = "<li class=\"attribute_key_value_attribute input-group mb-3\">\r\n  <div class=\"attribute_key flex-fill\"></div>\r\n  <div class=\"attribute_value\"></div>\r\n  <div class=\"attribute_value2\"></div>\r\n  <button type=\"button\" class=\"btn btn-danger\">\r\n    <i class=\"bi bi-trash-fill\"></i>\r\n  </button>\r\n</li>\r\n<hr />\r\n"; // replaced by importmap.plugin.js
+const keySelectionValueSelectionValueAttributeHtml = "<li class=\"attribute_key_value_attribute input-group mb-3\">\n  <div class=\"attribute_key flex-fill\"></div>\n  <div class=\"attribute_value\"></div>\n  <div class=\"attribute_value2\"></div>\n  <button type=\"button\" class=\"btn btn-danger\">\n    <i class=\"bi bi-trash-fill\"></i>\n  </button>\n</li>\n<hr />\n"; // replaced by importmap.plugin.js
 
 /**
  * KeySelectionValueSelectionValueAttribute
@@ -37784,7 +37781,7 @@ class KeySelectionValueSelectionValueAttribute extends AbstractAttribute {
   }
 }
 
-const keySelectionValueSelectionValueListAttributeHtml = "<div class=\"list_attribute\">\r\n  <div class=\"attribute_name\"></div>\r\n  <ul class=\"list\"></ul>\r\n  <button type=\"button\" class=\"btn btn-success\">\r\n    <i class=\"bi bi-plus-circle-fill\"></i>\r\n  </button>\r\n</div>\r\n"; // replaced by importmap.plugin.js
+const keySelectionValueSelectionValueListAttributeHtml = "<div class=\"list_attribute\">\n  <div class=\"attribute_name\"></div>\n  <ul class=\"list\"></ul>\n  <button type=\"button\" class=\"btn btn-success\">\n    <i class=\"bi bi-plus-circle-fill\"></i>\n  </button>\n</div>\n"; // replaced by importmap.plugin.js
 
 
 /**
@@ -38065,9 +38062,9 @@ class KeySelectionValueSelectionValueListAttribute extends AbstractAttribute {
   }
 }
 
-const quillEditorModalHtml = "<div\r\n  class=\"modal\"\r\n  tabindex=\"-1\"\r\n  id=\"editor-modal\"\r\n  style=\"z-index: 3000000000 !important\"\r\n>\r\n  <div class=\"modal-dialog modal-dialog-scrollable\">\r\n    <div class=\"modal-content\">\r\n      <div class=\"modal-header\">\r\n        <h5 class=\"modal-title\"><%= title %></h5>\r\n        <button\r\n          type=\"button\"\r\n          class=\"btn-close\"\r\n          data-bs-dismiss=\"modal\"\r\n          aria-label=\"Close\"\r\n        ></button>\r\n      </div>\r\n      <div class=\"modal-body\">\r\n        <div id=\"<%= id %>\"></div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n</div>\r\n"; // replaced by importmap.plugin.js
+const quillEditorModalHtml = "<div\n  class=\"modal\"\n  tabindex=\"-1\"\n  id=\"editor-modal\"\n  style=\"z-index: 3000000000 !important\"\n>\n  <div class=\"modal-dialog modal-dialog-scrollable\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <h5 class=\"modal-title\"><%= title %></h5>\n        <button\n          type=\"button\"\n          class=\"btn-close\"\n          data-bs-dismiss=\"modal\"\n          aria-label=\"Close\"\n        ></button>\n      </div>\n      <div class=\"modal-body\">\n        <div id=\"<%= id %>\"></div>\n      </div>\n    </div>\n  </div>\n</div>\n"; // replaced by importmap.plugin.js
 
-const codeEditorValueHtml = "<button\r\n  class=\"btn btn-outline-secondary\"\r\n  data-bs-toggle=\"modal\"\r\n  data-bs-target=\"#editor-modal\"\r\n>\r\n  Open Code Editor\r\n</button>\r\n"; // replaced by importmap.plugin.js
+const codeEditorValueHtml = "<button\n  class=\"btn btn-outline-secondary\"\n  data-bs-toggle=\"modal\"\n  data-bs-target=\"#editor-modal\"\n>\n  Open Code Editor\n</button>\n"; // replaced by importmap.plugin.js
 // import "ace-builds/src-min/ace";
 
 /**
@@ -38220,7 +38217,7 @@ class CodeEditorValue extends AbstractValue {
   }
 }
 
-const SingleCodeEditorValueAttributeHtml = "<div class=\"attribute_single_value_attribute form-floating mb-3\">\r\n  <span class=\"attribute_name\"></span>\r\n  <div class=\"attribute_value\"></div>\r\n</div>\r\n"; // replaced by importmap.plugin.js
+const SingleCodeEditorValueAttributeHtml = "<div class=\"attribute_single_value_attribute form-floating mb-3\">\n  <span class=\"attribute_name\"></span>\n  <div class=\"attribute_value\"></div>\n</div>\n"; // replaced by importmap.plugin.js
 
 /**
  * SingleCodeEditorValueAttribute
@@ -38293,7 +38290,7 @@ class SingleCodeEditorValueAttribute extends AbstractAttribute {
   }
 }
 
-const colorValueHtml = "<input\r\n  class=\"form-control val color\"\r\n  type=\"color\"\r\n  placeholder=\"<%= name %>\"\r\n/><span class=\"color_preview\"></span>\r\n"; // replaced by importmap.plugin.js
+const colorValueHtml = "<input\n  class=\"form-control val color\"\n  type=\"color\"\n  placeholder=\"<%= name %>\"\n/><span class=\"color_preview\"></span>\n"; // replaced by importmap.plugin.js
 
 /**
  * ColorValue
@@ -38510,7 +38507,7 @@ class ColorValue extends AbstractValue{
   }
 }
 
-const singleColorValueAttributeHtml = "<div class=\"attribute_single_value_attribute form-floating mb-3\">\r\n  <span class=\"attribute_name\"></span>\r\n  <div class=\"attribute_value\"></div>\r\n</div>\r\n"; // replaced by importmap.plugin.js
+const singleColorValueAttributeHtml = "<div class=\"attribute_single_value_attribute form-floating mb-3\">\n  <span class=\"attribute_name\"></span>\n  <div class=\"attribute_value\"></div>\n</div>\n"; // replaced by importmap.plugin.js
 
 /**
  * SingleColorValueAttribute
@@ -38578,7 +38575,7 @@ class SingleColorValueAttribute extends AbstractAttribute {
   }
 }
 
-const quillEditorHtml = "<div id=\"<%= id %>\"></div>\r\n"; // replaced by importmap.plugin.js
+const quillEditorHtml = "<div id=\"<%= id %>\"></div>\n"; // replaced by importmap.plugin.js
 
 /**
  * MultiLineValue
@@ -38708,7 +38705,7 @@ class MultiLineValue extends AbstractValue {
   }
 }
 
-const singleMultiLineValueAttributeHtml = "<div class=\"attribute_single_value_attribute form-floating mb-3\">\r\n  <span class=\"attribute_name\"></span>\r\n  <div class=\"attribute_value\"></div>\r\n</div>\r\n"; // replaced by importmap.plugin.js
+const singleMultiLineValueAttributeHtml = "<div class=\"attribute_single_value_attribute form-floating mb-3\">\n  <span class=\"attribute_name\"></span>\n  <div class=\"attribute_value\"></div>\n</div>\n"; // replaced by importmap.plugin.js
 
 /**
  * SingleMultiLineValueAttribute
@@ -38781,7 +38778,7 @@ class SingleMultiLineValueAttribute extends AbstractAttribute {
   }
 }
 
-const singleSelectionAttributeHtml = "<div class=\"attribute_single_value_attribute\">\r\n  <div class=\"attribute_name\"></div>\r\n  <div class=\"attribute_value\"></div>\r\n</div>\r\n"; // replaced by importmap.plugin.js
+const singleSelectionAttributeHtml = "<div class=\"attribute_single_value_attribute\">\n  <div class=\"attribute_name\"></div>\n  <div class=\"attribute_value\"></div>\n</div>\n"; // replaced by importmap.plugin.js
 
 /**
  * SingleSelectionAttribute
@@ -38875,7 +38872,7 @@ class SingleSelectionAttribute extends AbstractAttribute {
   }
 }
 
-const singleValueAttributeHtml = "<div class=\"attribute_single_value_attribute form-floating mb-3\">\r\n  <span class=\"attribute_name\"></span>\r\n  <div class=\"attribute_value\"></div>\r\n</div>\r\n"; // replaced by importmap.plugin.js
+const singleValueAttributeHtml = "<div class=\"attribute_single_value_attribute form-floating mb-3\">\n  <span class=\"attribute_name\"></span>\n  <div class=\"attribute_value\"></div>\n</div>\n"; // replaced by importmap.plugin.js
 
 /**
  * SingleValueAttribute
@@ -38952,7 +38949,7 @@ class SingleValueAttribute extends AbstractAttribute {
   }
 }
 
-const listSingleValueAttributeHtml = "<div class=\"attribute_single_value_attribute input-group mb-3\">\r\n  <div\r\n    class=\"attribute_name input-group-text overflow-auto\"\r\n    style=\"max-width: 40%\"\r\n  ></div>\r\n  <div class=\"attribute_value flex-fill\"></div>\r\n  <button type=\"button\" class=\"btn btn-danger\">\r\n    <i class=\"bi bi-trash-fill\"></i>\r\n  </button>\r\n</div>\r\n"; // replaced by importmap.plugin.js
+const listSingleValueAttributeHtml = "<div class=\"attribute_single_value_attribute input-group mb-3\">\n  <div\n    class=\"attribute_name input-group-text overflow-auto\"\n    style=\"max-width: 40%\"\n  ></div>\n  <div class=\"attribute_value flex-fill\"></div>\n  <button type=\"button\" class=\"btn btn-danger\">\n    <i class=\"bi bi-trash-fill\"></i>\n  </button>\n</div>\n"; // replaced by importmap.plugin.js
 
 /**
  * ListSingleValueAttribute
@@ -39090,7 +39087,7 @@ class ListSingleValueAttribute extends AbstractAttribute {
   }
 }
 
-const singleValueListAttributeHtml = "<div class=\"list_attribute\">\r\n  <div class=\"attribute_name\"></div>\r\n  <ul class=\"list\"></ul>\r\n  <button type=\"button\" class=\"btn btn-success\">\r\n    <i class=\"bi bi-plus-circle-fill\"></i>\r\n  </button>\r\n</div>\r\n"; // replaced by importmap.plugin.js
+const singleValueListAttributeHtml = "<div class=\"list_attribute\">\n  <div class=\"attribute_name\"></div>\n  <ul class=\"list\"></ul>\n  <button type=\"button\" class=\"btn btn-success\">\n    <i class=\"bi bi-plus-circle-fill\"></i>\n  </button>\n</div>\n"; // replaced by importmap.plugin.js
 
 /**
  * Abstract Attribute
@@ -39362,7 +39359,7 @@ function makeViewNode(type, attributes, nodeType) {
             return ViewNode;
         }
 
-const condition_predicateHtml = "<li class=\"condition_predicate\">\r\n  <div class=\"property\"></div>\r\n  <div class=\"operator\"></div>\r\n  <div class=\"val\"></div>\r\n  <div class=\"operator2\" style=\"display: none\"></div>\r\n  <button type=\"button\" class=\"btn btn-danger\">\r\n    <i class=\"bi bi-trash-fill\"></i>\r\n  </button>\r\n</li>\r\n"; // replaced by importmap.plugin.js
+const condition_predicateHtml = "<li class=\"condition_predicate\">\n  <div class=\"property\"></div>\n  <div class=\"operator\"></div>\n  <div class=\"val\"></div>\n  <div class=\"operator2\" style=\"display: none\"></div>\n  <button type=\"button\" class=\"btn btn-danger\">\n    <i class=\"bi bi-trash-fill\"></i>\n  </button>\n</li>\n"; // replaced by importmap.plugin.js
 
 /**
  * ConditionPredicateAttribute
@@ -39588,7 +39585,7 @@ class ConditionPredicateAttribute extends AbstractAttribute {
   }
 }
 
-const listAttributeHtml$1 = "<div class=\"list_attribute\">\r\n  <div class=\"attribute_name\"></div>\r\n  <ul class=\"list\"></ul>\r\n  <button type=\"button\" class=\"btn btn-success\">\r\n    <i class=\"bi bi-plus-circle-fill\"></i>\r\n  </button>\r\n</div>\r\n"; // replaced by importmap.plugin.js
+const listAttributeHtml$1 = "<div class=\"list_attribute\">\n  <div class=\"attribute_name\"></div>\n  <ul class=\"list\"></ul>\n  <button type=\"button\" class=\"btn btn-success\">\n    <i class=\"bi bi-plus-circle-fill\"></i>\n  </button>\n</div>\n"; // replaced by importmap.plugin.js
 
 /**
  * Abstract Attribute
@@ -39856,7 +39853,7 @@ class ConditionListAttribute extends AbstractAttribute {
   }
 }
 
-const renamingAttrHTML = "<li class=\"renaming_attr\">\r\n    <div class=\"val\"></div>\r\n    <div class=\"ref\" ></div>\r\n    <div class=\"vis\"></div>\r\n</li>"; // replaced by importmap.plugin.js
+const renamingAttrHTML = "<li class=\"renaming_attr\">\n    <div class=\"val\"></div>\n    <div class=\"ref\" ></div>\n    <div class=\"vis\"></div>\n</li>"; // replaced by importmap.plugin.js
 
 /**
  * RenamingAttribute
@@ -40048,7 +40045,7 @@ class RenamingAttribute extends AbstractAttribute {
   }
 }
 
-const listAttributeHtml = "<div class=\"list_attribute\">\r\n  <div class=\"attribute_name\"></div>\r\n  <ul class=\"list\"></ul>\r\n  <button type=\"button\" class=\"btn btn-success\">\r\n    <i class=\"bi bi-plus-circle-fill\"></i>\r\n  </button>\r\n</div>\r\n"; // replaced by importmap.plugin.js
+const listAttributeHtml = "<div class=\"list_attribute\">\n  <div class=\"attribute_name\"></div>\n  <ul class=\"list\"></ul>\n  <button type=\"button\" class=\"btn btn-success\">\n    <i class=\"bi bi-plus-circle-fill\"></i>\n  </button>\n</div>\n"; // replaced by importmap.plugin.js
 
 /**
  * Abstract Attribute
@@ -40294,25 +40291,25 @@ class RenamingListAttribute extends AbstractAttribute {
   }
 }
 
-const relationshipNodeHtml = "<div class=\"attribute_default_node\">\r\n  <h4 class=\"attribute_type text-center\"><%=type%></h4>\r\n  <div class=\"label\"></div>\r\n  <div class=\"attributes\"></div>\r\n  <p class=\"show_hint\"><a href=\"#\">Show list of possible connections</a></p>\r\n  <p class=\"hint\"></p>\r\n</div>\r\n"; // replaced by importmap.plugin.js
+const relationshipNodeHtml = "<div class=\"attribute_default_node\">\n  <h4 class=\"attribute_type text-center\"><%=type%></h4>\n  <div class=\"label\"></div>\n  <div class=\"attributes\"></div>\n  <p class=\"show_hint\"><a href=\"#\">Show list of possible connections</a></p>\n  <p class=\"hint\"></p>\n</div>\n"; // replaced by importmap.plugin.js
 
-const relationshipGroupNodeHtml = "<div class=\"attribute_default_node\">\r\n  <div class=\"attribute_type\">Relation</div>\r\n  <div class=\"label\"></div>\r\n  <div class=\"attributes\"></div>\r\n  <p class=\"show_hint\"><a href=\"#\">Show list of possible connections</a></p>\r\n  <p class=\"hint\"></p>\r\n</div>\r\n"; // replaced by importmap.plugin.js
-const objectNodeHtml = "<div class=\"attribute_default_node\">\r\n  <h4 class=\"attribute_type text-center\"><%=type%></h4>\r\n  <div class=\"label\"></div>\r\n  <div class=\"attributes\"></div>\r\n  <p class=\"show_hint\"><a href=\"#\">Show list of possible connections</a></p>\r\n  <p class=\"hint\"></p>\r\n</div>\r\n"; // replaced by importmap.plugin.js
+const relationshipGroupNodeHtml = "<div class=\"attribute_default_node\">\n  <div class=\"attribute_type\">Relation</div>\n  <div class=\"label\"></div>\n  <div class=\"attributes\"></div>\n  <p class=\"show_hint\"><a href=\"#\">Show list of possible connections</a></p>\n  <p class=\"hint\"></p>\n</div>\n"; // replaced by importmap.plugin.js
+const objectNodeHtml = "<div class=\"attribute_default_node\">\n  <h4 class=\"attribute_type text-center\"><%=type%></h4>\n  <div class=\"label\"></div>\n  <div class=\"attributes\"></div>\n  <p class=\"show_hint\"><a href=\"#\">Show list of possible connections</a></p>\n  <p class=\"hint\"></p>\n</div>\n"; // replaced by importmap.plugin.js
 
-const nodeShapeNodeHtml = "<div class=\"attribute_default_node\">\r\n  <h4 class=\"attribute_type text-center\">Node Shape</h4>\r\n  <div class=\"label\"></div>\r\n  <div class=\"attributes\"></div>\r\n  <p class=\"show_hint\"><a href=\"#\">Show list of possible connections</a></p>\r\n  <p class=\"hint\"></p>\r\n</div>\r\n"; // replaced by importmap.plugin.js
+const nodeShapeNodeHtml = "<div class=\"attribute_default_node\">\n  <h4 class=\"attribute_type text-center\">Node Shape</h4>\n  <div class=\"label\"></div>\n  <div class=\"attributes\"></div>\n  <p class=\"show_hint\"><a href=\"#\">Show list of possible connections</a></p>\n  <p class=\"hint\"></p>\n</div>\n"; // replaced by importmap.plugin.js
 
-const modelAttributesNodeHtml = "<div class=\"attribute_default_node\">\r\n  <div class=\"attribute_type\">Model Attributes</div>\r\n  <div class=\"label\"></div>\r\n  <div class=\"attributes\"></div>\r\n</div>\r\n"; // replaced by importmap.plugin.js
+const modelAttributesNodeHtml = "<div class=\"attribute_default_node\">\n  <div class=\"attribute_type\">Model Attributes</div>\n  <div class=\"label\"></div>\n  <div class=\"attributes\"></div>\n</div>\n"; // replaced by importmap.plugin.js
 
-const enumNodeHtml = "<div class=\"attribute_default_node\">\r\n  <div class=\"attribute_type\">Enumeration</div>\r\n  <div class=\"label\"></div>\r\n  <div class=\"attributes\"></div>\r\n  <p class=\"show_hint\"><a href=\"#\">Show list of possible connections</a></p>\r\n  <p class=\"hint\"></p>\r\n</div>\r\n"; // replaced by importmap.plugin.js
+const enumNodeHtml = "<div class=\"attribute_default_node\">\n  <div class=\"attribute_type\">Enumeration</div>\n  <div class=\"label\"></div>\n  <div class=\"attributes\"></div>\n  <p class=\"show_hint\"><a href=\"#\">Show list of possible connections</a></p>\n  <p class=\"hint\"></p>\n</div>\n"; // replaced by importmap.plugin.js
 
-const edgeShapeNodeHtml = "<div class=\"attribute_default_node\">\r\n  <div class=\"attribute_type\">Edge Shape</div>\r\n  <div class=\"label\"></div>\r\n  <div class=\"attributes\"></div>\r\n  <p class=\"show_hint\"><a href=\"#\">Show list of possible connections</a></p>\r\n  <p class=\"hint\"></p>\r\n</div>\r\n"; // replaced by importmap.plugin.js
-const abstractEdgeHtml = "<div class=\"abstract-edge\">\r\n  <div class=\"attribute_default_node\">\r\n    <h4 class=\"attribute_type text-center\"><%= type %></h4>\r\n    <div class=\"label\"></div>\r\n    <div class=\"attributes\"></div>\r\n  </div>\r\n</div>\r\n"; // replaced by importmap.plugin.js
+const edgeShapeNodeHtml = "<div class=\"attribute_default_node\">\n  <div class=\"attribute_type\">Edge Shape</div>\n  <div class=\"label\"></div>\n  <div class=\"attributes\"></div>\n  <p class=\"show_hint\"><a href=\"#\">Show list of possible connections</a></p>\n  <p class=\"hint\"></p>\n</div>\n"; // replaced by importmap.plugin.js
+const abstractEdgeHtml = "<div class=\"abstract-edge\">\n  <div class=\"attribute_default_node\">\n    <h4 class=\"attribute_type text-center\"><%= type %></h4>\n    <div class=\"label\"></div>\n    <div class=\"attributes\"></div>\n  </div>\n</div>\n"; // replaced by importmap.plugin.js
 
-const abstractClassNodeHtml = "<div class=\"default_node\">\r\n  <div class=\"attribute_attribute_type\">Abstract Class</div>\r\n  <div class=\"label\"></div>\r\n  <div class=\"attributes\"></div>\r\n  <p class=\"show_hint\"><a href=\"#\">Show list of possible connections</a></p>\r\n  <p class=\"hint\"></p>\r\n</div>\r\n"; // replaced by importmap.plugin.js
+const abstractClassNodeHtml = "<div class=\"default_node\">\n  <div class=\"attribute_attribute_type\">Abstract Class</div>\n  <div class=\"label\"></div>\n  <div class=\"attributes\"></div>\n  <p class=\"show_hint\"><a href=\"#\">Show list of possible connections</a></p>\n  <p class=\"hint\"></p>\n</div>\n"; // replaced by importmap.plugin.js
 
-const abstractNodeHtml = "<div class=\"attribute_abstract-node\"></div>\r\n"; // replaced by importmap.plugin.js
+const abstractNodeHtml = "<div class=\"attribute_abstract-node\"></div>\n"; // replaced by importmap.plugin.js
 
-const nodeHtml = "<div class=\"attribute_default_node\">\r\n  <h4 class=\"attribute_type text-center\"><%= type %></h4>\r\n  <div class=\"label\"></div>\r\n  <div class=\"attributes\"></div>\r\n  <p class=\"show_hint\"><a href=\"#\">Show list of possible connections</a></p>\r\n  <p class=\"hint\"></p>\r\n</div>\r\n"; // replaced by importmap.plugin.js
+const nodeHtml = "<div class=\"attribute_default_node\">\n  <h4 class=\"attribute_type text-center\"><%= type %></h4>\n  <div class=\"label\"></div>\n  <div class=\"attributes\"></div>\n  <p class=\"show_hint\"><a href=\"#\">Show list of possible connections</a></p>\n  <p class=\"hint\"></p>\n</div>\n"; // replaced by importmap.plugin.js
 
 /**
  * EntityManager
@@ -40993,7 +40990,7 @@ class EntityManager {
 }
 
 const EntityManagerInstance = new EntityManager();
-
+Object.freeze(EntityManagerInstance);
 //noinspection JSUnusedLocalSymbols
 /**
  * makeNode
@@ -41100,13 +41097,6 @@ function makeNode(
                   attribute.key,
                   that
                 );
-                if (
-                  attribute.key.toLowerCase() === "label" ||
-                  attribute.key.toLowerCase() === "title" ||
-                  attribute.key.toLowerCase() === "name"
-                ) {
-                  that.setLabel(attrObj[attributeId]);
-                }
               default:
                 if (attribute.options) {
                   attrObj[attributeId] = new SingleSelectionAttribute(
@@ -41139,11 +41129,13 @@ function makeNode(
     registerYType() {
       AbstractNode.prototype.registerYType.call(this);
       const nodesMap = y.getMap("nodes");
-      var ymap = nodesMap.get(this.getEntityId());
-      var attr = this.getAttributes();
-      for (var key in attr) {
-        if (attr.hasOwnProperty(key)) {
-          var val = attr[key].getValue();
+      const ymap = nodesMap.get(this.getEntityId());
+      const nodeAttributes = this.getAttributes();
+      for (var key in nodeAttributes) {
+        // skip loop if the property is the label since it is already registered when calling the prototype
+        if (nodeAttributes[key].getValue().getEntityId() === this.getLabel().getEntityId()) continue;
+        if (nodeAttributes.hasOwnProperty(key)) {
+          var val = nodeAttributes[key].getValue();
           var ytext = ymap.get(val.getEntityId());
           if (val.hasOwnProperty("registerYType")) {
             val.registerYType(ytext);
@@ -43813,43 +43805,44 @@ class AttributeWrapper {
 
     if (y) {
       const nodesMap = y.getMap("nodes");
-      nodesMap.observe(function (event) {
+      nodesMap.observeDeep(([event]) => {
         Array.from(event.changes.keys.entries()).forEach(function (entry) {
           const key = entry[0];
           const action = entry[1].action;
           if (action !== "add") return;
-          const newNode = event.currentTarget.get(key);
-
-          if (!newNode.has("jabberId")) return;
-
-          nodeAddCallback(
-            new NodeAddOperation(
-              newNode.get("id"),
-              newNode.get("type"),
-              newNode.get("left"),
-              newNode.get("top"),
-              newNode.get("width"),
-              newNode.get("height"),
-              newNode.get("zIndex"),
-              newNode.get("containment"),
-              newNode.get("json"),
-              null,
-              null,
-              key
-            )
-          );
-
-          var node = EntityManagerInstance.findNode(newNode.get("id"));
-          if (!node) {
-            throw new Error("node is null");
+          let nodeId;
+          if (
+            event.target.get(key) instanceof Map$2 &&
+            event.target.get(key).has("jabberId")
+          ) {
+            nodeId = nodesMap.get(key).get("id");
+            const newNode = event.target.get(key);
+            nodeAddCallback(
+              new NodeAddOperation(
+                newNode.get("id"),
+                newNode.get("type"),
+                newNode.get("left"),
+                newNode.get("top"),
+                newNode.get("width"),
+                newNode.get("height"),
+                newNode.get("zIndex"),
+                newNode.get("containment"),
+                newNode.get("json"),
+                null,
+                null,
+                newNode.has("jabberId")
+              )
+            );
+          } else {
+            nodeId = event.target.get("id");
           }
+
+          var node = EntityManagerInstance.findNode(nodeId);
+          if (!node) return;
 
           //Check for label
           if (node && node.getLabel().getEntityId() === key)
-            node
-              .getLabel()
-              .getValue()
-              .registerYType(newNode.get(key));
+            node.getLabel().getValue().registerYType(event.target.get(key));
           else {
             var attrs = null;
 
@@ -43862,26 +43855,20 @@ class AttributeWrapper {
                 var attr = attrs[attrId];
                 if (attr.hasOwnProperty("getKey")) {
                   if (key.indexOf("ref") != -1)
-                    attr.getRef().registerYType(event.currentTarget.get(key));
+                    attr.getRef().registerYType(event.target.get(key));
                   else if (
                     attr.getKey().hasOwnProperty("registerYType") &&
                     key.indexOf("value") === -1
                   )
-                    attr
-                      .getKey()
-                      .registerYType(nodeEvent.currentTarget.get(key));
+                    attr.getKey().registerYType(event.target.get(key));
                 } else if (attr.hasOwnProperty("getValue")) {
                   if (attr.getValue().hasOwnProperty("registerYType"))
-                    attr
-                      .getValue()
-                      .registerYType(nodeEvent.currentTarget.get(key));
+                    attr.getValue().registerYType(event.target.get(key));
                 }
               } else if (attrs.hasOwnProperty(key)) {
                 var attr = attrs[key];
                 if (attr.getValue().hasOwnProperty("registerYType"))
-                  attr
-                    .getValue()
-                    .registerYType(nodeEvent.currentTarget.get(key));
+                  attr.getValue().registerYType(event.target.get(key));
               }
             } else {
               attrs = node.getAttributes();
@@ -43892,9 +43879,7 @@ class AttributeWrapper {
                     attr.getEntityId() === key &&
                     attr.getValue().hasOwnProperty("registerYType")
                   ) {
-                    attr
-                      .getValue()
-                      .registerYType(nodeEvent.currentTarget.get(key));
+                    attr.getValue().registerYType(event.target.get(key));
                   }
                 }
               }
@@ -44543,7 +44528,7 @@ let AttributeWidget = class AttributeWidget extends SyncMetaWidget(LitElement, g
     }
     showErrorAlert(message) {
         $(this.widgetName).find("#alert-message").text(message);
-        $(this.widgetName).find("error-alert").hide();
+        $(this.widgetName).find("error-alert").show();
     }
     render() {
         return html `
