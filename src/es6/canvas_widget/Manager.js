@@ -454,7 +454,7 @@ function HistoryManager() {
       }
     },
     clean: function (entityId) {
-      var entityIdFilter = function (value, idx) {
+      var entityIdFilter = function (value) {
         if (value.id === entityId) return false;
         else return true;
       };
@@ -650,17 +650,6 @@ var _initNodeTypes = function (vls) {
   }
   return _nodeTypes;
 };
-
-/**
- * Guidance modeling specific objects
- * Unused
- */
-
-var objectContextTypes = {};
-var relationshipContextTypes = {};
-var objectToolTypes = {};
-var edgesByLabel = {};
-var objectToolNodeTypes = {};
 
 var _initEdgeTypes = function (vls) {
   var _edgeTypes = {};
@@ -885,7 +874,7 @@ export class AbstractEdge extends AbstractEntity {
      * Apply an Edge Delete Operation
      * @param {operations.ot.EdgeDeleteOperation} operation
      */
-    var processEdgeDeleteOperation = function (operation) {
+    var processEdgeDeleteOperation = function () {
       that.remove();
     };
 
@@ -1410,7 +1399,7 @@ export class AbstractEdge extends AbstractEntity {
     this.bindMoveToolEvents = function () {
       if (_jsPlumbConnection) {
         //Enable Edge Select
-        $("." + id).on("click", function (e) {
+        $("." + id).on("click", function () {
           _canvas.select(that);
         });
 
@@ -1680,12 +1669,12 @@ export class AbstractNode extends AbstractEntity {
       });
     }, 3000);
 
-    this._$node.on("mousedown", function (e) {
+    this._$node.on("mousedown", function () {
       _canvas.select(that);
       _canvas.unbindMoveToolEvents();
     });
 
-    this._$node.on("mouseup", function (e) {
+    this._$node.on("mouseup", function () {
       _canvas.bindMoveToolEvents();
     });
 
@@ -1892,7 +1881,7 @@ export class AbstractNode extends AbstractEntity {
      * Apply a Node Delete Operation
      * @param {operations.ot.NodeDeleteOperation} operation
      */
-    var processNodeDeleteOperation = function (operation) {
+    var processNodeDeleteOperation = function () {
       var edges = that.getEdges(),
         edgeId,
         edge;
@@ -2396,7 +2385,7 @@ export class AbstractNode extends AbstractEntity {
      * @param {number} offsetY Offset in y-direction
      * @param {number} offsetZ Offset in z-direction
      */
-    this.move = function (offsetX, offsetY, offsetZ) {
+    this.move = function (offsetX, offsetY) {
       const x = _appearance.left + offsetX;
       const y = _appearance.top + offsetY;
       if (
@@ -2645,8 +2634,6 @@ export class AbstractNode extends AbstractEntity {
       //this.highlight(_highlightColor,_highlightUsername);
       this._$node.removeClass("selected");
       //trigger save when unselecting an entity
-      EntityManagerInstance.storeDataYjs();
-
       Util.delay(100).then(function () {
         _.each(EntityManagerInstance.getEdges(), function (e) {
           e.setZIndex();
@@ -2907,7 +2894,7 @@ export class AbstractNode extends AbstractEntity {
     this._registerYMap = function () {
       _ymap.observe(function (event) {
         const array = Array.from(event.changes.keys.entries());
-        array.forEach(([key, change]) => {
+        array.forEach(([key]) => {
           if (event.value && event.value.historyFlag) {
             var operation;
             var data = event.value;
@@ -2950,7 +2937,7 @@ export class AbstractNode extends AbstractEntity {
     };
 
     jsPlumbInstance.manage(this._$node.get(0));
-    EntityManagerInstance.storeDataYjs();
+    // EntityManagerInstance.storeDataYjs();
   }
   nodeSelector;
   jsPlumbManagedElement;
@@ -3021,7 +3008,7 @@ export class AbstractNode extends AbstractEntity {
         ],
         inertia: { enabled: false },
       })
-      .on(["resizestart"], (event) => {
+      .on(["resizestart"], () => {
         // add resizing class
         that._$node.addClass("resizing");
         that.disableDraggable();
@@ -3342,7 +3329,6 @@ class EntityManager {
   _edges;
 
   constructor() {
-    var that = this;
     /**
      * the view id indicates if the EntityManager should use View types for modeling or node types
      * @type {string}
@@ -3388,6 +3374,8 @@ class EntityManager {
        * @param {number} height Height of node
        * @param {number} zIndex Position of node on z-axis
        * @param {object} json the json representation
+       * @param {number} y the yjs map
+       * @param {boolean} store if the node should be stored in the meta model
        * @returns {canvas_widget.AbstractNode}
        */
       createNode: function (
@@ -3400,7 +3388,8 @@ class EntityManager {
         zIndex,
         containment,
         json,
-        y
+        y,
+        store = true
       ) {
         var node;
         AbstractEntity.maxZIndex = Math.max(AbstractEntity.maxZIndex, zIndex);
@@ -3432,8 +3421,7 @@ class EntityManager {
           );
         }
         _nodes[id] = node;
-
-        EntityManagerInstance.storeDataYjs();
+        if (store) EntityManagerInstance.storeDataYjs();
         return node;
       },
       saveState: function () {
@@ -3582,7 +3570,7 @@ class EntityManager {
        * @returns {canvas_widget.AbstractEdge}
        */
       //TODO: switch id and type
-      createEdge: function (type, id, source, target) {
+      createEdge: function (type, id, source, target, store = true) {
         var edge;
 
         if (_viewId && viewEdgeTypes.hasOwnProperty(type)) {
@@ -3595,7 +3583,7 @@ class EntityManager {
         source.addOutgoingEdge(edge);
         target?.addIngoingEdge(edge);
         _edges[id] = edge;
-        EntityManagerInstance.storeDataYjs();
+        if (store) EntityManagerInstance.storeDataYjs();
         return edge;
       },
       /**
@@ -3730,7 +3718,8 @@ class EntityManager {
           zIndex,
           containment,
           json,
-          y
+          y,
+          false
         );
         if (node) {
           node.getLabel().getValue().setValue(json.label.value.value);
@@ -3764,7 +3753,7 @@ class EntityManager {
       createEdgeFromJSON: function (type, id, source, target, json) {
         const sourceNode = this.findNode(source);
         const targetNode = this.findNode(target);
-        var edge = this.createEdge(type, id, sourceNode, targetNode);
+        var edge = this.createEdge(type, id, sourceNode, targetNode, false);
         if (edge) {
           edge.getLabel().getValue().setValue(json.label.value.value);
           for (var attrId in json.attributes) {
@@ -4112,7 +4101,6 @@ class EntityManager {
       },
       generateGuidanceMetamodel: function () {
         var metamodel = this.generateMetaModel();
-        var actionNodes = [];
         var actionNodeLabels = [];
         var createEntityNodeLabels = [];
         //Create guidance metamodel
@@ -4601,7 +4589,6 @@ class EntityManager {
         };
 
         var getEntitySuccessor = function (nodeId) {
-          var targets = [];
           for (var edgeId in edges) {
             var edge = edges[edgeId];
             if (edge.source == nodeId) {
@@ -5389,15 +5376,17 @@ class EntityManager {
       storeDataYjs: function () {
         var data = this.graphToJSON();
         const dataMap = y.getMap("data");
-        if (guidancemodel.isGuidanceEditor()) {
-          dataMap.set("guidancemodel", data);
-        } else if (!metamodel) {
-          dataMap.set("metamodelpreview", this.generateMetaModel());
-          dataMap.set("guidancemetamodel", this.generateGuidanceMetamodel());
-          dataMap.set("model", data);
-        } else {
-          dataMap.set("model", data);
-        }
+        window.y.transact(() => {
+          if (guidancemodel.isGuidanceEditor()) {
+            dataMap.set("guidancemodel", data);
+          } else if (!metamodel) {
+            dataMap.set("metamodelpreview", this.generateMetaModel());
+            dataMap.set("guidancemetamodel", this.generateGuidanceMetamodel());
+            dataMap.set("model", data);
+          } else {
+            dataMap.set("model", data);
+          }
+        });
       },
       /**
        * Delete the Model Attribute Node
@@ -6048,8 +6037,7 @@ export class ObjectNode extends AbstractNode {
           name: "Add Node Shape",
           callback: function () {
             var canvas = that.getCanvas(),
-              appearance = that.getAppearance(),
-              nodeId;
+              appearance = that.getAppearance();
 
             //noinspection JSAccessibilityCheck
             const id = canvas.createNode(
@@ -6628,8 +6616,7 @@ export class RelationshipNode extends AbstractNode {
           name: "Add Edge Shape",
           callback: function () {
             var canvas = that.getCanvas(),
-              appearance = that.getAppearance(),
-              nodeId;
+              appearance = that.getAppearance();
 
             //noinspection JSAccessibilityCheck
             canvas
@@ -6949,7 +6936,7 @@ export class EdgeShapeNode extends AbstractNode {
     this.addAttribute(attrOverlayPos);
     this.addAttribute(attrOverlayRotate);
 
-    this.registerYMap = function (map, disableYText) {
+    this.registerYMap = function (map) {
       AbstractNode.prototype.registerYMap.call(this, map);
       attrArrow.getValue().registerYType();
       attrShape.getValue().registerYType();
@@ -7666,20 +7653,6 @@ export class SelectionValue extends AbstractValue {
     var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN, y);
 
     /**
-     * Get chain of entities the attribute is assigned to
-     * @returns {string[]}
-     */
-    var getEntityIdChain = function () {
-      var chain = [that.getEntityId()],
-        entity = that;
-      while (entity instanceof AbstractAttribute) {
-        chain.unshift(entity.getSubjectEntity().getEntityId());
-        entity = entity.getSubjectEntity();
-      }
-      return chain;
-    };
-
-    /**
      * Apply a Value Change Operation
      * @param {operations.ot.ValueChangeOperation} operation
      */
@@ -7751,7 +7724,7 @@ export class SelectionValue extends AbstractValue {
         .getYMap()
         .observeDeep(function ([event]) {
           const array = Array.from(event.changes.keys.entries());
-          array.forEach(([key, change]) => {
+          array.forEach(([key]) => {
             const updated = event.currentTarget.get(key);
             if (
               updated?.type !== "update" ||
@@ -8057,20 +8030,6 @@ export class IntegerValue extends AbstractValue {
     var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN, y);
 
     /**
-     * Get chain of entities the attribute is assigned to
-     * @returns {string[]}
-     */
-    var getEntityIdChain = function () {
-      var chain = [that.getEntityId()],
-        entity = that;
-      while (entity instanceof AbstractAttribute) {
-        chain.unshift(entity.getSubjectEntity().getEntityId());
-        entity = entity.getSubjectEntity();
-      }
-      return chain;
-    };
-
-    /**
      * Apply a Value Change Operation
      * @param {operations.ot.ValueChangeOperation} operation
      */
@@ -8216,7 +8175,6 @@ export class SingleValueAttribute extends AbstractAttribute {
       throw new Error("y is undefined");
     }
     super(id, name, subjectEntity);
-    var that = this;
 
     /***
      * Value object of value
@@ -8536,7 +8494,7 @@ export class SingleValueListAttribute extends AbstractAttribute {
     if (_iwcw) {
       that.registerCallbacks();
     }
-    this.registerYMap = function (disableYText) {
+    this.registerYMap = function () {
       var ymap = that.getRootSubjectEntity().getYMap();
 
       var attrs = that.getAttributes();
@@ -8637,20 +8595,6 @@ export class Value extends AbstractValue {
     var _$node = $(_.template(valueHtml)({ name: name }));
 
     /**
-     * Get chain of entities the attribute is assigned to
-     * @returns {string[]}
-     */
-    var getEntityIdChain = function () {
-      var chain = [that.getEntityId()],
-        entity = that;
-      while (entity instanceof AbstractAttribute) {
-        chain.unshift(entity.getSubjectEntity().getEntityId());
-        entity = entity.getSubjectEntity();
-      }
-      return chain;
-    };
-
-    /**
      * Set value
      * @param {string} value
      */
@@ -8696,8 +8640,6 @@ export class Value extends AbstractValue {
     };
 
     this.registerYType = function () {
-      that.setValue(_ytext.toString().replace(/\n/g, ""));
-      EntityManagerInstance.storeDataYjs();
       _ytext.observe(
         _.debounce(function (event) {
           _value = _ytext.toString().replace(/\n/g, "");
@@ -8762,7 +8704,6 @@ export class Value extends AbstractValue {
 export class QuizAttribute extends AbstractAttribute {
   constructor(id, name, subjectEntity) {
     super(id, name, subjectEntity);
-    var that = this;
     /***
      * Value object of value
      * @type {attribute_widget.Value}
@@ -8889,7 +8830,6 @@ export class QuizAttribute extends AbstractAttribute {
       var Intents = [];
       var Hints = [];
       var row = table.rows.length;
-      var currID = "";
       for (var i = 2; i < row; i++) {
         if (
           _$node.find("#" + i.toString() + "1")[0].value == "" ||
@@ -8959,7 +8899,6 @@ export class QuizAttribute extends AbstractAttribute {
 export class KeySelectionValueAttribute extends AbstractAttribute {
   constructor(id, name, subjectEntity, options) {
     super(id, name, subjectEntity);
-    var that = this;
 
     var _ymap = null;
 
@@ -9369,7 +9308,6 @@ export class ConditionListAttribute extends AbstractAttribute {
         array.forEach(([key, change]) => {
           if (key.indexOf("[value]") != -1) {
             var operation;
-            var data = event.currentTarget.get(key);
             switch (change.action) {
               case "add": {
                 if (eventWasTriggeredByMe(event)) return;
@@ -9756,8 +9694,6 @@ export class KeySelectionValueSelectionValueListAttribute extends AbstractAttrib
      */
     this.deleteAttribute = function (id) {
       if (_list.hasOwnProperty(id)) {
-        var attr = _list[id];
-
         delete _list[id];
       }
     };
@@ -9866,7 +9802,6 @@ export class KeySelectionValueSelectionValueListAttribute extends AbstractAttrib
         array.forEach(([key, change]) => {
           if (key.indexOf("[key]") != -1) {
             var operation;
-            var data = event.currentTarget.get(key);
             switch (change.action) {
               case "add": {
                 const jabberId = event.currentTarget.get("jabberId");
@@ -10185,7 +10120,6 @@ export class RenamingListAttribute extends AbstractAttribute {
         const array = Array.from(event.changes.keys.entries());
         array.forEach(([key, change]) => {
           if (key.indexOf("[val]") != -1) {
-            var data = event.currentTarget.get(key);
             switch (change.action) {
               case "add": {
                 //  var yUserId = event.object.map[key][0];
@@ -10964,7 +10898,6 @@ export class ModelAttributesNode extends AbstractNode {
       throw new Error("y is not defined");
     }
 
-    var that = this;
     /**
      * jQuery object of node template
      * @type {jQuery}
@@ -11175,13 +11108,6 @@ export class ViewObjectNode extends AbstractNode {
     var _$attributeNode = _$node.find(".attributes");
 
     /**
-     * Attributes of node
-     * @type {Object}
-     * @private
-     */
-    var _attributes = this.getAttributes();
-
-    /**
      * Get JSON representation of the node
      * @returns {Object}
      */
@@ -11295,8 +11221,7 @@ export class ViewObjectNode extends AbstractNode {
           name: "Add Node Shape",
           callback: function () {
             var canvas = that.getCanvas(),
-              appearance = that.getAppearance(),
-              nodeId;
+              appearance = that.getAppearance();
 
             //noinspection JSAccessibilityCheck
             canvas
@@ -11398,13 +11323,6 @@ export class ViewRelationshipNode extends AbstractNode {
      * @private
      */
     var _$attributeNode = _$node.find(".attributes");
-
-    /**
-     * Attributes of node
-     * @type {Object}
-     * @private
-     */
-    var _attributes = this.getAttributes();
 
     /**
      * Get JSON representation of the node
