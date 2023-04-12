@@ -3447,15 +3447,22 @@ class EntityManager {
       },
       findObjectNodeByLabel(searchTerm) {
         const re = new RegExp(searchTerm, "gi");
-        const { attributes, nodes, edges } =
-          EntityManagerInstance.graphToJSON();
+        const { nodes } = EntityManagerInstance.graphToJSON();
         for (const [nodeId, node] of Object.entries(nodes)) {
           if (node?.type.match(re)) {
             // type matches searchTerm
             return EntityManagerInstance.find(nodeId);
           }
+          if (node?.label?.value?.value.match(re)) {
+            // label matches searchTerm
+            return EntityManagerInstance.find(nodeId);
+          }
           for (const attr of Object.values(node?.attributes)) {
-            if (attr?.value.value.match(re)) {
+            // search attributes
+            if (typeof attr?.value?.value !== "string") {
+              continue;
+            }
+            if (attr?.value?.value.match(re)) {
               // attribute value matches searchTerm
               return EntityManagerInstance.find(nodeId);
             }
