@@ -24149,7 +24149,7 @@ class IWCW {
   }
 }
 
-const activityBoxHtml = "<div\r\n  class=\"toast w-100 d-block me-2 mb-3\"\r\n  role=\"alert\"\r\n  aria-live=\"assertive\"\r\n  aria-atomic=\"true\"\r\n  style=\"border: 3px; border-style: solid; border-color: <%= color %>\"\r\n>\r\n  <div class=\"toast-header\">\r\n    <svg\r\n      class=\"bd-placeholder-img rounded me-2\"\r\n      width=\"20\"\r\n      height=\"20\"\r\n      xmlns=\"http://www.w3.org/2000/svg\"\r\n      aria-hidden=\"true\"\r\n      preserveAspectRatio=\"xMidYMid slice\"\r\n      focusable=\"false\"\r\n    >\r\n      <rect width=\"100%\" height=\"100%\" fill=\"<%= color %>\"></rect>\r\n    </svg>\r\n    <strong class=\"me-1\"><%= heading %></strong>\r\n    <small style=\"font-size: 0.7em; text-align: end; margin-left: auto\"\r\n      ><%= timestamp %></small\r\n    >\r\n  </div>\r\n  <div class=\"toast-body\"><%= text %></div>\r\n</div>\r\n"; // replaced by importmap.plugin.js
+const activityBoxHtml = "<div\n  class=\"toast w-100 d-block me-2 mb-3\"\n  role=\"alert\"\n  aria-live=\"assertive\"\n  aria-atomic=\"true\"\n  style=\"border: 3px; border-style: solid; border-color: <%= color %>\"\n>\n  <div class=\"toast-header\">\n    <svg\n      class=\"bd-placeholder-img rounded me-2\"\n      width=\"20\"\n      height=\"20\"\n      xmlns=\"http://www.w3.org/2000/svg\"\n      aria-hidden=\"true\"\n      preserveAspectRatio=\"xMidYMid slice\"\n      focusable=\"false\"\n    >\n      <rect width=\"100%\" height=\"100%\" fill=\"<%= color %>\"></rect>\n    </svg>\n    <strong class=\"me-1\"><%= heading %></strong>\n    <small style=\"font-size: 0.7em; text-align: end; margin-left: auto\"\n      ><%= timestamp %></small\n    >\n  </div>\n  <div class=\"toast-body\"><%= text %></div>\n</div>\n"; // replaced by importmap.plugin.js
 /**
  * An abstract user activity issued by one of the users
  * @class activity_widget.Activity
@@ -24892,7 +24892,7 @@ class ReloadWidgetActivity extends Activity {
   }
 }
 
-const userBoxHtml = "<div\r\n  class=\"item card card-body rounded mb-2\"\r\n  style=\"background-color: <%= color %>\"\r\n>\r\n  <div class=\"d-flex\">\r\n    <h6 class=\"me-1\"><%= heading %></h6>\r\n    <span class=\"text ms-auto align-bottom\"><%= text %> ago</span>\r\n  </div>\r\n  <!-- <h3 class=\"lblViewId\"><%=view%></h3> -->\r\n</div>\r\n"; // replaced by importmap.plugin.js
+const userBoxHtml = "<div\n  class=\"item card card-body rounded mb-2\"\n  style=\"background-color: <%= color %>\"\n>\n  <div class=\"d-flex\">\n    <h6 class=\"me-1\"><%= heading %></h6>\n    <span class=\"text ms-auto align-bottom\"><%= text %> ago</span>\n  </div>\n  <!-- <h3 class=\"lblViewId\"><%=view%></h3> -->\n</div>\n"; // replaced by importmap.plugin.js
 
 /**
  * A user working on the model
@@ -26089,6 +26089,10 @@ const SyncMetaWidget = (superClass, widgetName) => {
 };
 
 let ActivityWidget = class ActivityWidget extends SyncMetaWidget(LitElement, getWidgetTagName(CONFIG.WIDGET.NAME.ACTIVITY)) {
+    constructor() {
+        super(...arguments);
+        this.widgetName = getWidgetTagName(CONFIG.WIDGET.NAME.ACTIVITY);
+    }
     firstUpdated(_changedProperties) {
         super.firstUpdated(_changedProperties);
         yjsSync()
@@ -26133,10 +26137,18 @@ let ActivityWidget = class ActivityWidget extends SyncMetaWidget(LitElement, get
                 console.error("ACTIVITY: Error while waiting for CANVAS: ", err);
             });
         })
-            .catch(function (err) {
+            .catch((err) => {
             console.error("ACTIVITY: Error while initializing Yjs: " + err);
             this.showErrorAlert("Cannot connect to Yjs server.");
         });
+    }
+    hideErrorAlert() {
+        $(this.widgetName).find("#alert-message").text("");
+        $(this.widgetName).find("error-alert").hide();
+    }
+    showErrorAlert(message) {
+        $(this.widgetName).find("#alert-message").text(message);
+        $(this.widgetName).find("error-alert").show();
     }
     render() {
         return html `
