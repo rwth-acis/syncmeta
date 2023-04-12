@@ -61,6 +61,7 @@ class Value extends AbstractValue {
      */
     this.setValue = function (value) {
       _value = value;
+      _$editorRef.setText(value);
     };
 
     /**
@@ -101,6 +102,7 @@ class Value extends AbstractValue {
       _ytext?.observe(function () {
         _value = _ytext.toString();
       });
+      _$editorRef.setText(_value);
       //loging
       window.syncmetaLog.initializedYTexts += 1;
       if (window.syncmetaLog.hasOwnProperty(this.getEntityId()))
