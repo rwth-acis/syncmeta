@@ -233,9 +233,12 @@ class AttributeWrapper {
           const action = entry[1].action;
           if (action !== "add") return;
           let nodeId;
-          if (event.target.get(key) instanceof YMap && event.target.get(key).has("jabberId")) {
+          if (
+            event.target.get(key) instanceof YMap &&
+            event.target.get(key).has("jabberId")
+          ) {
             nodeId = nodesMap.get(key).get("id");
-             const newNode = event.target.get(key);
+            const newNode = event.target.get(key);
             nodeAddCallback(
               new NodeAddOperation(
                 newNode.get("id"),
@@ -257,9 +260,7 @@ class AttributeWrapper {
           }
 
           var node = EntityManager.findNode(nodeId);
-          if (!node) {
-            throw new Error("node is null");
-          }
+          if (!node) return;
 
           //Check for label
           if (node && node.getLabel().getEntityId() === key)
