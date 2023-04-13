@@ -4,6 +4,7 @@ import _ from "lodash-es";
 import AbstractAttribute from "./AbstractAttribute";
 import Value from "./Value";
 import loadHTML from "../html.template.loader";
+import { MultiValue } from "./MultiValue";
 
 const multiValueAttributeHtml = await loadHTML(
   "../../templates/attribute_widget/multi_value_attribute.html",
@@ -36,7 +37,7 @@ export class MultiValueAttribute extends AbstractAttribute {
   constructor(id, name, subjectEntity) {
     super(id, name, subjectEntity);
 
-    this._value = new Value(id, name, this, this.getRootSubjectEntity()); // should be replaced by multivalue once implemented (see #128)
+    this._value = new MultiValue(id, name, this, this.getRootSubjectEntity());
 
     this._$node = $(_.template(multiValueAttributeHtml)({ id: id }));
 
