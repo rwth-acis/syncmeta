@@ -23,10 +23,10 @@ const multiValueAttributeHtml = await loadHTML(
 export class MultiValueAttribute extends AbstractAttribute {
   /***
    * Value object of value
-   * @type {canvas_widget.Value}
+   * @type {canvas_widget.MultiValue}
    * @private
    */
-  _value = [];
+  _value = null;
   /**
    * jQuery object of DOM node representing the node
    * @type {jQuery}
@@ -86,5 +86,14 @@ export class MultiValueAttribute extends AbstractAttribute {
    */
   setValueFromJSON(json) {
     this._value.setValueFromJSON(json?.value);
+  }
+
+  /**
+   * Get attribute value as JSON
+   */
+  toJSON() {
+    const json = AbstractAttribute.prototype.toJSON.call(this);
+    json.value = this._value.toJSON();
+    return json;
   }
 }

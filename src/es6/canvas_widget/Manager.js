@@ -43,7 +43,7 @@ import ViewNode from "./view/ViewNode";
 import LogicalConjunctions from "./viewpoint/LogicalConjunctions";
 import LogicalOperator from "./viewpoint/LogicalOperator";
 import ViewTypesUtil from "./viewpoint/ViewTypesUtil";
-import { MultiValueAttribute } from "../attribute_widget/MultiValueAttribute";
+import { MultiValueAttribute } from "./MultiValueAttribute";
 
 const keySelectionValueSelectionValueListAttributeHtml = await loadHTML(
   "../../templates/canvas_widget/list_attribute.html",

@@ -97,15 +97,16 @@ export class MultiValue extends AbstractValue {
       this.setValue(editorContents);
     });
   }
-  serialize() {
-    const quillContents = {};
-    for (const _editor of this._$editorRefs) {
-      const text = _editor.getText();
-      quillContents[_editor.id] = text;
-    }
-    return JSON.stringify(quillContents);
-  }
+
   deserialize(jsonString) {
+    if (!jsonString || jsonString === "") {
+      return {};
+    }
     return JSON.parse(jsonString);
+  }
+  toJSON() {
+    const json = AbstractValue.prototype.toJSON.call(this);
+    json.value = this._ytext?.toString().trim() || "";
+    return json;
   }
 }

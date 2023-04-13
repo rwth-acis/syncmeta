@@ -113,6 +113,9 @@ export class MultiValue extends AbstractValue {
    */
   setValue(value) {
     this._value = value;
+    if (!this._ytext) {
+      return;
+    }
     this._ytext.delete(0, this._ytext.length);
     this._ytext.insert(0, this.serialize());
   }

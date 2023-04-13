@@ -26,7 +26,7 @@ export class MultiValueAttribute extends AbstractAttribute {
    * @type {attribute_widget.Value}
    * @private
    */
-  _value = [];
+  _value = null;
   /**
    * jQuery object of DOM node representing the node
    * @type {jQuery}
