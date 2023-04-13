@@ -74894,12 +74894,33 @@ class MultiValue extends AbstractValue {
     this._id = id;
     this._$node = $(
       lodash.template(
-        `<div><ul class="p-0"></ul>
-         <button type="button" class="btn btn-success"><i class="bi bi-plus-circle-fill"></i></button></div>`
+        `<div>
+          <ul class="p-0"></ul>
+          <div class="d-flex justify-content-between">
+            <button type="button" class="btn btn-success save">Save</button>
+            <button type="button" class="btn btn-primary add"><i class="bi bi-plus-circle-fill"></i></button>
+          </div>
+         </div>`
       )()
     );
-    this._$node.find("button").on("click", () => {
+    this._$node.find(".add").on("click", () => {
       this.createEditor();
+    });
+    this._$node.find(".save").on("click", () => {
+      // temporarily show a content saved message
+      this._$node.find(".save").text("Saved");
+      this._$node.find(".save").prop("disabled", true);
+      // adjust the class to btn-info
+      this._$node.find(".save").removeClass("btn-success");
+      this._$node.find(".save").addClass("btn-info");
+      setTimeout(() => {
+        this._$node.find(".save").text("Save");
+        this._$node.find(".save").prop("disabled", false);
+        this._$node.find(".save").removeClass("btn-info");
+        this._$node.find(".save").addClass("btn-success");
+      }, 1000);
+      const value = this.serialize();
+      this.setValue(value);
     });
   }
 
@@ -74920,7 +74941,6 @@ class MultiValue extends AbstractValue {
       },
       cursors: false,
       placeholder: this.name,
-      debounce: 2000,
     });
 
     const $editorNode = $(lodash.template(`<li class="input-group mb-3"></li>`)());
@@ -74933,14 +74953,6 @@ class MultiValue extends AbstractValue {
       this.deleteEditor(editorId);
     });
     this._$node.find("ul").append($editorNode);
-
-    _$editorRef.on("text-change", (delta, oldDelta, source) => {
-      if (source === "user") {
-        this._value = this.serialize();
-        this._ytext.delete(0, this._ytext.length);
-        this._ytext.insert(0, this._value);
-      }
-    });
 
     this._$editorRefs[editorId] = _$editorRef;
     this._ytext.delete(0, this._ytext.length);
