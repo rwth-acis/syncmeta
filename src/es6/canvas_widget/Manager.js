@@ -43,6 +43,7 @@ import ViewNode from "./view/ViewNode";
 import LogicalConjunctions from "./viewpoint/LogicalConjunctions";
 import LogicalOperator from "./viewpoint/LogicalOperator";
 import ViewTypesUtil from "./viewpoint/ViewTypesUtil";
+import { MultiValueAttribute } from "../attribute_widget/MultiValueAttribute";
 
 const keySelectionValueSelectionValueListAttributeHtml = await loadHTML(
   "../../templates/canvas_widget/list_attribute.html",
@@ -5715,6 +5716,12 @@ export function makeNode(type, $shape, anchors, attributes) {
                 ) {
                   that.setLabel(attrObj[attributeId]);
                 }
+              case "list":
+                attrObj[attributeId] = new MultiValueAttribute(
+                  id + "[" + attribute.key.toLowerCase() + "]",
+                  attribute.key,
+                  that
+                );
               default:
                 if (attribute.options) {
                   attrObj[attributeId] = new SingleSelectionAttribute(
@@ -6009,6 +6016,7 @@ export class ObjectNode extends AbstractNode {
         integer: "Integer",
         file: "File",
         quiz: "Questions",
+        list: "List",
       }
     );
     this.addAttribute(attr);
@@ -8636,7 +8644,10 @@ export class Value extends AbstractValue {
      * @param json
      */
     this.setValueFromJSON = function (json) {
-      this.setValue(json.value);
+      if (!json?.value) {
+        return;
+      }
+      this.setValue(json?.value);
     };
 
     this.registerYType = function () {
