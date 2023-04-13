@@ -85,7 +85,10 @@ class Value extends AbstractValue {
      * @param json
      */
     this.setValueFromJSON = function (json) {
-      this.setValue(json.value);
+      if (json === null || json === undefined) {
+        return;
+      }
+      this.setValue(json?.value);
     };
 
     this.getYText = function () {
