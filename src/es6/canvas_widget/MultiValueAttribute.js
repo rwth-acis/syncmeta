@@ -25,7 +25,7 @@ export class MultiValueAttribute extends AbstractAttribute {
    * @type {canvas_widget.Value}
    * @private
    */
-  _values = [];
+  _value = [];
   /**
    * jQuery object of DOM node representing the node
    * @type {jQuery}
@@ -36,14 +36,13 @@ export class MultiValueAttribute extends AbstractAttribute {
   constructor(id, name, subjectEntity) {
     super(id, name, subjectEntity);
 
-    this._values.push(new Value(id, name, this, this.getRootSubjectEntity()));
+    this._value = new Value(id, name, this, this.getRootSubjectEntity()); // should be replaced by multivalue once implemented (see #128)
 
     this._$node = $(_.template(multiValueAttributeHtml)({ id: id }));
 
     this._$node.find(".name").text(this.getName());
-    this._values.forEach((value) => {
-      this._$node.find(".canvas_value_list").append(value.get$node());
-    });
+
+    this._$node.find(".value").append(this._value.get$node());
 
     // check if view only mode is enabled for the property browser
     // because then the input fields should be disabled
@@ -60,7 +59,7 @@ export class MultiValueAttribute extends AbstractAttribute {
    * @param {canvas_widget.Value} value
    */
   setValue(value) {
-    this._values = value;
+    this._value = value;
   }
 
   /**
@@ -68,7 +67,7 @@ export class MultiValueAttribute extends AbstractAttribute {
    * @returns {canvas_widget.Value}
    */
   getValue() {
-    return null;
+    return this._value;
   }
 
   /**
@@ -85,8 +84,6 @@ export class MultiValueAttribute extends AbstractAttribute {
    * @param json
    */
   setValueFromJSON(json) {
-    this._values.forEach((value) => {
-      value.setValueFromJSON(json?.value);
-    });
+    this._value.setValueFromJSON(json?.value);
   }
 }

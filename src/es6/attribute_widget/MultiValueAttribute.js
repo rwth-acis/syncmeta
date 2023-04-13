@@ -5,7 +5,7 @@ import AbstractAttribute from "./AbstractAttribute";
 import Value from "./Value";
 import loadHTML from "../html.template.loader";
 
-const singleValueAttributeHtml = await loadHTML(
+const multiValueAttributeHtml = await loadHTML(
   "../../templates/attribute_widget/multi_value_attribute.html",
   import.meta.url
 );
@@ -25,7 +25,7 @@ export class MultiValueAttribute extends AbstractAttribute {
    * @type {attribute_widget.Value}
    * @private
    */
-  _values = [];
+  _value = [];
   /**
    * jQuery object of DOM node representing the node
    * @type {jQuery}
@@ -36,27 +36,12 @@ export class MultiValueAttribute extends AbstractAttribute {
   constructor(id, name, subjectEntity) {
     super(id, name, subjectEntity);
 
-    this._values.push(new Value(id, name, this, this.getRootSubjectEntity()));
+    this._value = new Value(id, name, this, this.getRootSubjectEntity()); // should be replaced by multivalue once implemented (see #128)
 
-    this._$node = $(_.template(singleValueAttributeHtml)({ id: id }));
+    this._$node = $(_.template(multiValueAttributeHtml)({ id: id }));
 
-    this._$node.find("attribute_name").text(this.getName());
-    this._values.forEach((value) => {
-      const newEntry = $(
-        _.template(`
-                    <li class="attribute_key_value_attribute input-group mb-3">
-                      <div class="attribute_value">
-                      </div>
-                      <button type="button" class="btn btn-danger">
-                        <i class="bi bi-trash-fill"></i>
-                      </button>
-                    </li>
-                    <hr />
-                  `)()
-      );
-      newEntry.find(".attribute_value").append(value.get$node());
-      this._$node.find(".attribute_value_list").append(newEntry);
-    });
+    this._$node.find(".attribute_name").text(this.getName());
+    this._$node.find(".attribute_value").append(this._value.get$node());
 
     // check if view only mode is enabled for the property browser
     // because then the input fields should be disabled
@@ -72,16 +57,16 @@ export class MultiValueAttribute extends AbstractAttribute {
    * Set Value object of value
    * @param {attribute_widget.Value} value
    */
-  setValues(value) {
-    this._values = value;
+  setValue(value) {
+    this._value = value;
   }
 
   /**
    * Get Value object of value
    * @returns {attribute_widget.Value}
    */
-  getValues() {
-    return this._values;
+  getValue() {
+    return this._value;
   }
 
   /**
@@ -98,8 +83,6 @@ export class MultiValueAttribute extends AbstractAttribute {
    * @param json
    */
   setValueFromJSON(json) {
-    this._values.forEach((value) => {
-      value.setValueFromJSON(json?.value);
-    });
+    this._value.setValueFromJSON(json.value);
   }
 }
