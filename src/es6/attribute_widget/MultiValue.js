@@ -21,7 +21,7 @@ const quillEditorHtml = await loadHTML(
  * @param {attribute_widget.AbstractEntity} subjectEntity Entity the attribute is assigned to
  * @param {attribute_widget.AbstractNode|attribute_widget.AbstractEdge} rootSubjectEntity Topmost entity in the chain of entity the attribute is assigned to
  */
-export class Value extends AbstractValue {
+export class MultiValue extends AbstractValue {
   /**
    * YText
    * @type {YText}
