@@ -49423,7 +49423,7 @@ class MultiValue extends AbstractValue {
     }
     createEditor() {
         const editorCount = Object.keys(this._$editorRefs).length;
-        const editorId = sanitizeValue("editor-" + this._id + editorCount).toLowerCase();
+        const editorId = sanitizeValue("editor" + this._id + editorCount).toLowerCase();
         const editorContainer = $(lodash.template(quillEditorHtml)({ id: editorId })).get(0);
         editorContainer.classList.add("flex-fill");
         const _$editorRef = new Quill(editorContainer, {
@@ -49433,6 +49433,7 @@ class MultiValue extends AbstractValue {
             },
             cursors: false,
             placeholder: this.name,
+            debounce: 2000,
         });
         const $editorNode = $(lodash.template(`<li class="input-group mb-3"></li>`)());
         $editorNode
@@ -49443,7 +49444,6 @@ class MultiValue extends AbstractValue {
         });
         this._$node.find("ul").append($editorNode);
         _$editorRef.on("text-change", (delta, oldDelta, source) => {
-            console.log(delta, oldDelta, source);
             if (source === "user") {
                 this._value = this.serialize();
                 this._ytext.delete(0, this._ytext.length);
@@ -49523,9 +49523,9 @@ function sanitizeValue(value) {
     return value
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
-        .replace(/ /g, "-")
-        .replace("[", "-")
-        .replace("]", "-");
+        .replace(/ /g, "")
+        .replace("[", "")
+        .replace("]", "");
 }
 const multiValueAttributeHtml = "<div>\n  <div class=\"attribute_single_value_attribute form-floating mb-3\">\n    <span class=\"attribute_name\"></span>\n    <div class=\"attribute_value\"></div>\n  </div>\n</div>\n";
 class MultiValueAttribute extends AbstractAttribute {

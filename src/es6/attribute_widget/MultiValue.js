@@ -67,7 +67,7 @@ export class MultiValue extends AbstractValue {
   createEditor() {
     const editorCount = Object.keys(this._$editorRefs).length;
     const editorId = sanitizeValue(
-      "editor-" + this._id + editorCount
+      "editor" + this._id + editorCount
     ).toLowerCase();
     const editorContainer = $(
       _.template(quillEditorHtml)({ id: editorId })
@@ -95,7 +95,6 @@ export class MultiValue extends AbstractValue {
     this._$node.find("ul").append($editorNode);
 
     _$editorRef.on("text-change", (delta, oldDelta, source) => {
-      console.log(delta, oldDelta, source);
       if (source === "user") {
         this._value = this.serialize();
         this._ytext.delete(0, this._ytext.length);
@@ -209,7 +208,7 @@ function sanitizeValue(value) {
   return value
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
-    .replace(/ /g, "-")
-    .replace("[", "-")
-    .replace("]", "-");
+    .replace(/ /g, "")
+    .replace("[", "")
+    .replace("]", "");
 }
