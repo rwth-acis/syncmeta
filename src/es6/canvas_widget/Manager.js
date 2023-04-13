@@ -6016,7 +6016,7 @@ export class ObjectNode extends AbstractNode {
         integer: "Integer",
         file: "File",
         quiz: "Questions",
-        list: "List",
+        list: "Multiple Texts",
       }
     );
     this.addAttribute(attr);
@@ -6329,6 +6329,7 @@ export class AbstractClassNode extends AbstractNode {
         integer: "Integer",
         file: "File",
         quiz: "Questions",
+        list: "Multiple Texts",
       }
     );
     this.addAttribute(attr);
