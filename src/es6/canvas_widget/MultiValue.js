@@ -2,6 +2,7 @@ import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import _ from "lodash-es";
 import AbstractValue from "./AbstractValue";
+import { Text as YText } from "yjs";
 
 /**
  * Value
@@ -36,10 +37,30 @@ export class MultiValue extends AbstractValue {
 
   _id = null;
 
-  constructor(id, name, subjectEntity, rootSubjectEntity) {
+  constructor(id, name, subjectEntity, rootSubjectEntity, y = null) {
     super(id, name, subjectEntity, rootSubjectEntity);
     this._id = id;
     this._$node = $(_.template(`<ul></ul>`)());
+    y = y || window.y;
+    if (!y) throw new Error("y is undefined");
+
+    const yMap = rootSubjectEntity.getYMap();
+    if (!yMap) {
+      throw new Error("yMap is undefined");
+    }
+    y.transact(() => {
+      if (yMap?.has(id)) {
+        this._ytext = rootSubjectEntity.getYMap().get(id);
+        if (!(this._ytext instanceof YText)) {
+          this._ytext = new YText();
+          rootSubjectEntity.getYMap().set(id, this._ytext);
+        }
+      } else {
+        this._ytext = new YText();
+        rootSubjectEntity.getYMap().set(id, this._ytext);
+      }
+      rootSubjectEntity.getYMap().set("modifiedBy", window.y.clientID);
+    });
   }
 
   /**

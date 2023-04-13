@@ -55,8 +55,8 @@ export class MultiValue extends AbstractValue {
     this._id = id;
     this._$node = $(
       _.template(
-        `<ul></ul> <br/>
-         <button type="button" class="btn btn-success"><i class="bi bi-plus-circle-fill"></i></button>`
+        `<div><ul class="p-0"></ul>
+         <button type="button" class="btn btn-success"><i class="bi bi-plus-circle-fill"></i></button></div>`
       )()
     );
     this._$node.find("button").on("click", () => {
@@ -67,11 +67,12 @@ export class MultiValue extends AbstractValue {
   createEditor() {
     const editorCount = Object.keys(this._$editorRefs).length;
     const editorId = sanitizeValue(
-      "editor-" + this._id + "-" + editorCount
+      "editor-" + this._id + editorCount
     ).toLowerCase();
     const editorContainer = $(
       _.template(quillEditorHtml)({ id: editorId })
     ).get(0);
+    editorContainer.classList.add("flex-fill");
 
     const _$editorRef = new Quill(editorContainer, {
       theme: "snow",
@@ -81,28 +82,35 @@ export class MultiValue extends AbstractValue {
       cursors: false,
       placeholder: this.name,
     });
-    this._$editorRefs.push(_$editorRef);
-    this._ytext.delete(0, this._ytext.length);
-    this._ytext.insert(0, this.serialize());
 
-    const $editorNode = $(
-      _.template(
-        `<li class="input-group">  <button class="btn btn-danger"> <i class="bi bi-trash"></i> </button></li>`
-      )()
-    );
-    $editorNode.find(".input-group").prepend(editorContainer);
-
+    const $editorNode = $(_.template(`<li class="input-group mb-3"></li>`)());
+    $editorNode
+      .append(editorContainer)
+      .append(
+        `<button class="btn btn-danger"> <i class="bi bi-trash"></i> </button>`
+      );
     $editorNode.find("button").on("click", () => {
       this.deleteEditor(editorId);
     });
-    this._$node.find("ul").append(editorContainer);
+    this._$node.find("ul").append($editorNode);
+
+    _$editorRef.on("text-change", (delta, oldDelta, source) => {
+      console.log(delta, oldDelta, source);
+      if (source === "user") {
+        this._value = this.serialize();
+        this._ytext.delete(0, this._ytext.length);
+        this._ytext.insert(0, this._value);
+      }
+    });
+
+    this._$editorRefs[editorId] = _$editorRef;
+    this._ytext.delete(0, this._ytext.length);
+    this._ytext.insert(0, this.serialize());
   }
 
   deleteEditor(editorId) {
-    this._$editorRefs = this._$editorRefs.filter(
-      (editorRef) => editorRef.id !== editorId
-    );
-    this._$node.find(`#${editorId}`).remove();
+    delete this._$editorRefs[editorId];
+    this._$node.find(`#${editorId}`).parent().remove();
     this._ytext.delete(0, this._ytext.length);
     this._ytext.insert(0, this.serialize());
   }
@@ -156,35 +164,38 @@ export class MultiValue extends AbstractValue {
       throw new Error("YText is null");
     }
     this._ytext = ytext;
-
-    this._ytext.observe((event) => {
-      this._value = _ytext.toString().trim();
-      const editorContents = this.deserialize(this._value); // { "editor-1": "Hello", "editor-2": "World" }
-      Object.entries(editorContents).forEach(([key, value]) => {
-        this._$editorRefs[key].setText(value);
-      });
+    this._value = this._ytext.toString().trim();
+    const editors = this.deserialize(this._value);
+    Object.entries(editors).forEach(([key, value]) => {
+      if (!(key in this._$editorRefs)) {
+        this.createEditor();
+      }
+      this._$editorRefs[key].setText(value);
     });
 
-    this._$editorRefs.forEach((editorRef) => {
-      // observe changes to the editor (user input) and update the YText
-      editorRef.on("text-change", (delta, oldDelta, source) => {
-        if (source === "user") {
-          this._value = this.serialize();
-          this._ytext.delete(0, this._ytext.length);
-          this._ytext.insert(0, this._value);
+    this._ytext.observe((event) => {
+      this._value = this._ytext.toString().trim();
+      const editorContents = this.deserialize(this._value); // { "editor-1": "Hello", "editor-2": "World" }
+      Object.entries(editorContents).forEach(([key, value]) => {
+        if (!(key in this._$editorRefs)) {
+          this.createEditor();
         }
+        this._$editorRefs[key].setText(value);
       });
     });
   }
   serialize() {
     const quillContents = {};
-    for (const _editor of this._$editorRefs) {
-      const text = _editor.getText();
-      quillContents[_editor.id] = text;
+    for (const [key, _editor] of Object.entries(this._$editorRefs)) {
+      const text = _editor.getText().trim();
+      quillContents[key] = text;
     }
     return JSON.stringify(quillContents);
   }
   deserialize(jsonString) {
+    if (jsonString === "" || jsonString === null || jsonString === undefined) {
+      return {};
+    }
     return JSON.parse(jsonString);
   }
 }
@@ -199,6 +210,6 @@ function sanitizeValue(value) {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/ /g, "-")
-    .replace("[", "(")
-    .replace("]", ")");
+    .replace("[", "-")
+    .replace("]", "-");
 }

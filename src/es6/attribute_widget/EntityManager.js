@@ -941,7 +941,7 @@ export function makeNode(
         if (nodeAttributes.hasOwnProperty(key)) {
           var val = nodeAttributes[key].getValue();
           var ytext = ymap.get(val.getEntityId());
-          if (val.hasOwnProperty("registerYType")) {
+          if (val.registerYType) {
             val.registerYType(ytext);
           }
         }

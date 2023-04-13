@@ -96,4 +96,7 @@ export class MultiValueAttribute extends AbstractAttribute {
     json.value = this._value.toJSON();
     return json;
   }
+  registerYType() {
+    _value.registerYType();
+  }
 }
