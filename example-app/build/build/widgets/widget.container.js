@@ -26070,7 +26070,6 @@ let MultiValue$1 = class MultiValue extends AbstractValue$1 {
         }
         this._ymap.observeDeep(([event]) => {
             if (event instanceof YTextEvent) {
-                console.log(event);
                 const editorId = event.path[0];
                 const value = event.target.toString().trim();
                 this._value[editorId] = value;
@@ -26109,44 +26108,6 @@ let MultiValue$1 = class MultiValue extends AbstractValue$1 {
             json.value[key] = ytext.toString().trim();
         }
         return json;
-    }
-};
-const multiValueAttributeHtml$1 = "<div>\n  <div class=\"name\"></div>\n  <div class=\"value\"></div>\n</div>\n";
-let MultiValueAttribute$1 = class MultiValueAttribute extends AbstractAttribute$1 {
-    constructor(id, name, subjectEntity) {
-        super(id, name, subjectEntity);
-        this._value = null;
-        this._$node = null;
-        this._value = new MultiValue$1(id, name, this, this.getRootSubjectEntity());
-        this._$node = $(lodash.template(multiValueAttributeHtml$1)({ id: id }));
-        this._$node.find(".name").text(this.getName());
-        this._$node.find(".value").append(this._value.get$node());
-        if (window.hasOwnProperty("y")) {
-            const widgetConfigMap = y.getMap("widgetConfig");
-            if (widgetConfigMap.get("view_only_property_browser")) {
-                this._$node.find(".val").attr("disabled", "true");
-            }
-        }
-    }
-    setValue(value) {
-        this._value = value;
-    }
-    getValue() {
-        return this._value;
-    }
-    get$node() {
-        return this._$node;
-    }
-    setValueFromJSON(json) {
-        this._value.setValueFromJSON(json?.value);
-    }
-    toJSON() {
-        const json = AbstractAttribute$1.prototype.toJSON.call(this);
-        json.value = this._value.toJSON();
-        return json;
-    }
-    registerYType() {
-        _value.registerYType();
     }
 };
 const keySelectionValueSelectionValueListAttributeHtml$1 = "<div class=\"list_attribute\">\n    <div class=\"name\"></div>\n    <ul class=\"list\"></ul>\n</div>";
@@ -26190,6 +26151,7 @@ const activityFinalNodeHtml = "<div class=\"custom_node\">\n    <div class=\"typ
 const callActivityNodeHtml = "<div class=\"custom_node\">\n    <div class=\"type\"><%= type %></div>\n    <svg xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"none\" viewBox=\"0 0 100 100\" class=\"fill_parent\">\n        <rect x=\"0\" y=\"0\" rx=\"20\" ry=\"20\" width=\"100\" height=\"100\" fill=\"white\" stroke=\"lightgray\" stroke-width=\"2\" />\n    </svg>\n    <div class=\"fill_parent\" style=\"overflow:hidden;\">\n      <table style=\"width:100%; height:100%\">\n      <tr>\n        <td style=\"width:1px; white-space:nowrap; padding:10px;\"><i class=\"fa fa-external-link fa-2x\"></i></td>\n        <td class=\"label\" style=\"text-align:center\"></td>   \n      </tr>\n    </table>\n    </div>\n</div>";
 const entityNodeHtml = "<div class=\"custom_node\">\n    <div class=\"type\"><%= \"<\\%= type %\\>\" %></div>\n    <svg xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"none\" viewBox=\"0 0 100 100\" class=\"fill_parent\">\n        <defs>\n            <linearGradient id=\"entityGrad\" x1=\"0%\" y1=\"0%\" x2=\"0%\" y2=\"100%\">\n              <stop offset=\"0%\" style=\"stop-color:#DAE8FC;stop-opacity:1\" />\n              <stop offset=\"100%\" style=\"stop-color:#7EA6E0;stop-opacity:1\" />\n            </linearGradient>\n          </defs>\n        <rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"url(#entityGrad)\" stroke=\"lightgray\" stroke-width=\"2\" />\n    </svg>\n    <div class=\"fill_parent\" style=\"overflow:hidden;\">\n    \t<table style=\"width:100%; height:100%\">\n\t\t  <tr>\n\t\t    <td style=\"width:1px; white-space:nowrap; padding:10px;\"><i class=\"fa fa-<%= icon %> fa-2x\"></i></td>\n\t\t    <td style=\"text-align:center\"><%= label %></td>\t\t\n\t\t  </tr>\n\t\t</table>\n    </div>\n</div>";
 const setPropertyNodeHtml = "<div class=\"custom_node\">\n    <div class=\"type\"><%= \"<\\%= type %\\>\" %></div>\n    <svg xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"none\" viewBox=\"0 0 100 100\" class=\"fill_parent\">\n        <rect x=\"0\" y=\"0\" rx=\"20\" ry=\"20\" width=\"100\" height=\"100\" fill=\"white\" stroke=\"lightgray\" stroke-width=\"2\" />\n    </svg>\n    <div class=\"fill_parent\" style=\"overflow:hidden\">\n    \t<table style=\"width:100%; height:100%\">\n\t\t  <tr>\n\t\t    <td style=\"width:1px; white-space:nowrap; padding:10px;\"><i class=\"fa fa-pencil-square-o fa-2x\"></i></td>\n\t\t    <td style=\"text-align:center\" class=\"property\"></td>\t\t\n\t\t  </tr>\n\t\t</table>\n    </div>\n</div>";
+const multiValueAttributeHtml$1 = "<div>\n  <div class=\"name\"></div>\n  <div class=\"value\"></div>\n</div>\n";
 var shapes = {
     straight: {
         type: StraightConnector.type,
@@ -31110,6 +31072,43 @@ let Value$1 = class Value extends AbstractValue$1 {
             maxWidth: 1000,
         })
             .trigger("blur");
+    }
+};
+let MultiValueAttribute$1 = class MultiValueAttribute extends AbstractAttribute$1 {
+    constructor(id, name, subjectEntity) {
+        super(id, name, subjectEntity);
+        this._value = null;
+        this._$node = null;
+        this._value = new MultiValue$1(id, name, this, this.getRootSubjectEntity());
+        this._$node = $(lodash.template(multiValueAttributeHtml$1)({ id: id }));
+        this._$node.find(".name").text(this.getName());
+        this._$node.find(".value").append(this._value.get$node());
+        if (window.hasOwnProperty("y")) {
+            const widgetConfigMap = y.getMap("widgetConfig");
+            if (widgetConfigMap.get("view_only_property_browser")) {
+                this._$node.find(".val").attr("disabled", "true");
+            }
+        }
+    }
+    setValue(value) {
+        this._value = value;
+    }
+    getValue() {
+        return this._value;
+    }
+    get$node() {
+        return this._$node;
+    }
+    setValueFromJSON(json) {
+        this._value.setValueFromJSON(json?.value);
+    }
+    toJSON() {
+        const json = AbstractAttribute$1.prototype.toJSON.call(this);
+        json.value = this._value.toJSON();
+        return json;
+    }
+    registerYType() {
+        _value.registerYType();
     }
 };
 let QuizAttribute$1 = class QuizAttribute extends AbstractAttribute$1 {
