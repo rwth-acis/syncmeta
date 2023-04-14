@@ -2,7 +2,7 @@ import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import _ from "lodash-es";
 import AbstractValue from "./AbstractValue";
-import { Text as YText } from "yjs";
+import { Map as YMap } from "yjs";
 
 /**
  * Value
@@ -17,17 +17,17 @@ import { Text as YText } from "yjs";
  */
 export class MultiValue extends AbstractValue {
   /**
-   * YText
-   * @type {YText}
+   * YMap
+   * @type {YMap}
    * @private
    */
-  _ytext = null;
+  _ymap = null;
   /**
    * Value
    * @type {string}
    * @private
    */
-  _value = "";
+  _value = {};
   /**
    * jQuery object of DOM node representing the node
    * @type {jQuery}
@@ -46,20 +46,16 @@ export class MultiValue extends AbstractValue {
 
     const yMap = rootSubjectEntity.getYMap();
     if (!yMap) {
-      throw new Error("yMap is undefined");
+      throw new Error("yMap of rootSubjectEntity is undefined");
     }
     y.transact(() => {
-      if (yMap?.has(id)) {
-        this._ytext = rootSubjectEntity.getYMap().get(id);
-        if (!(this._ytext instanceof YText)) {
-          this._ytext = new YText();
-          rootSubjectEntity.getYMap().set(id, this._ytext);
-        }
+      if (!yMap?.has(id) || !(yMap.get(id) instanceof YMap)) {
+        this._ymap = new YMap();
+        yMap.set(id, this._ymap);
       } else {
-        this._ytext = new YText();
-        rootSubjectEntity.getYMap().set(id, this._ytext);
+        this._ymap = yMap.get(id);
       }
-      rootSubjectEntity.getYMap().set("modifiedBy", window.y.clientID);
+      yMap.set("modifiedBy", window.y.clientID);
     });
   }
 
@@ -68,10 +64,17 @@ export class MultiValue extends AbstractValue {
    * @param {string} value
    */
   setValue(value) {
+    if (!value) {
+      return;
+    }
     this._value = value;
-    const json = this.deserialize(this._value);
-    for (const value of Object.values(json)) {
-      this._$node.append($(`<li>${value}</li>`));
+    for (const [key, val] of Object.entries(value)) {
+      // clear the list
+      this._$node.empty();
+      // reconstruct the list
+      this._$node.append(
+        $(_.template(`<li><%= key %>: <%= value %></li>`)({ key, value: val }))
+      );
     }
   }
 
@@ -102,32 +105,31 @@ export class MultiValue extends AbstractValue {
     this.setValue(json?.value);
   }
 
-  getYText = function () {
-    return this._ytext;
-  };
-
-  registerYType(ytext) {
-    if (!ytext) {
-      throw new Error("YText is null");
+  registerYType() {
+    if (!this._ymap) {
+      throw new Error("YMap is null");
     }
-    this._ytext = ytext;
 
-    this._ytext.observe((event) => {
-      this._value = _ytext.toString().trim();
-      const editorContents = this.deserialize(this._value); // { "editor-1": "Hello", "editor-2": "World" }
-      this.setValue(editorContents);
+    this._ymap.observeDeep(([event]) => {
+      console.log(event);
+      event.keysChanged.forEach((key) => {
+        const value = event.target.get(key);
+        // update the value
+        this._value[key] = value;
+        // find the corresponding list item
+        const $li = this._$node.find(`li:contains(${key})`);
+        // update the value
+        $li.text(`${key}: ${value}`);
+      });
     });
   }
 
-  deserialize(jsonString) {
-    if (!jsonString || jsonString === "") {
-      return {};
-    }
-    return JSON.parse(jsonString);
-  }
   toJSON() {
     const json = AbstractValue.prototype.toJSON.call(this);
-    json.value = this._ytext?.toString().trim() || "";
+    json.value = {};
+    for (const [key, ytext] of this._ymap) {
+      json.value[key] = ytext.toString().trim();
+    }
     return json;
   }
 }

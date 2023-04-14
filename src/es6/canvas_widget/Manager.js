@@ -2769,16 +2769,18 @@ export class AbstractNode extends AbstractEntity {
           console.error(" offset bigger than canvas size");
           return;
         }
-
-        var operation = new NodeMoveOperation(
-          that.getEntityId(),
-          offsetX,
-          offsetY
-        );
-        that.propagateNodeMoveOperation(operation);
-
         //Avoid node selection on drag stop
         _canvas.showGuidanceBox();
+
+        setTimeout(() => {
+          var operation = new NodeMoveOperation(
+            that.getEntityId(),
+            offsetX,
+            offsetY
+          );
+          that.propagateNodeMoveOperation(operation);
+        });
+        return;
       });
 
       // view_only is used by the CAE and allows to show a model in the Canvas which is not editable
@@ -5899,7 +5901,7 @@ export function makeNode(type, $shape, anchors, attributes) {
         for (var key in attr) {
           if (attr.hasOwnProperty(key)) {
             var val = attr[key].getValue();
-            if (val.hasOwnProperty("registerYType")) {
+            if (val.registerYType) {
               val.registerYType();
             }
           }
