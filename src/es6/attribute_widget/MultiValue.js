@@ -4,6 +4,8 @@ import _ from "lodash-es";
 import AbstractValue from "./AbstractValue";
 import loadHTML from "../html.template.loader";
 import Quill from "quill/dist/quill";
+import { QuillBinding } from "y-quill";
+import { Text as YText } from "yjs";
 
 const quillEditorHtml = await loadHTML(
   "../../templates/attribute_widget/quill_editor.html",
@@ -23,17 +25,17 @@ const quillEditorHtml = await loadHTML(
  */
 export class MultiValue extends AbstractValue {
   /**
-   * YText
-   * @type {YText}
+   * YMap
+   * @type {YMap}
    * @private
    */
-  _ytext = null;
+  _ymap = null;
   /**
    * Value
    * @type {string}
    * @private
    */
-  _value = "";
+  _value = {};
   /**
    * jQuery object of DOM node representing the node
    * @type {jQuery}
@@ -48,6 +50,8 @@ export class MultiValue extends AbstractValue {
    */
   _$editorRefs = {};
 
+  _quillBindings = {};
+
   _id = null;
 
   constructor(id, name, subjectEntity, rootSubjectEntity) {
@@ -57,52 +61,36 @@ export class MultiValue extends AbstractValue {
       _.template(
         `<div>
           <ul class="p-0"></ul>
-          <div class="d-flex justify-content-between">
-            <button type="button" class="btn btn-success save">Save</button>
-            <button type="button" class="btn btn-primary add"><i class="bi bi-plus-circle-fill"></i></button>
+          <div class="d-flex ms-auto">
+            <button type="button" class="btn btn-success add"><i class="bi bi-plus-circle-fill"></i></button>
           </div>
          </div>`
       )()
     );
     this._$node.find(".add").on("click", () => {
-      this.createEditor();
-    });
-    this._$node.find(".save").on("click", () => {
-      // temporarily show a content saved message
-      this._$node.find(".save").text("Saved");
-      this._$node.find(".save").prop("disabled", true);
-      // adjust the class to btn-info
-      this._$node.find(".save").removeClass("btn-success");
-      this._$node.find(".save").addClass("btn-info");
-      setTimeout(() => {
-        this._$node.find(".save").text("Save");
-        this._$node.find(".save").prop("disabled", false);
-        this._$node.find(".save").removeClass("btn-info");
-        this._$node.find(".save").addClass("btn-success");
-      }, 1000);
-      const value = this.serialize();
-      this.setValue(value);
+      const { editor, id } = this.createEditor();
+      let ytext = this._ymap.get(id);
+      if (!ytext || !(ytext instanceof YText)) {
+        ytext = new YText();
+        this._ymap.set(id, ytext);
+      }
+      if (!this._quillBindings.hasOwnProperty(id)) {
+        const binding = new QuillBinding(ytext, editor);
+
+        this._quillBindings[id] = binding;
+      }
     });
   }
 
-  createEditor() {
+  createEditor(key = null) {
     const editorCount = Object.keys(this._$editorRefs).length;
-    const editorId = sanitizeValue(
-      "editor" + this._id + editorCount
-    ).toLowerCase();
+    const editorId = key
+      ? key
+      : sanitizeValue("editor" + this._id + editorCount).toLowerCase();
     const editorContainer = $(
       _.template(quillEditorHtml)({ id: editorId })
     ).get(0);
     editorContainer.classList.add("flex-fill");
-
-    const _$editorRef = new Quill(editorContainer, {
-      theme: "snow",
-      modules: {
-        toolbar: false, // Snow includes toolbar by default
-      },
-      cursors: false,
-      placeholder: this.name,
-    });
 
     const $editorNode = $(_.template(`<li class="input-group mb-3"></li>`)());
     $editorNode
@@ -113,18 +101,29 @@ export class MultiValue extends AbstractValue {
     $editorNode.find("button").on("click", () => {
       this.deleteEditor(editorId);
     });
+    // append
     this._$node.find("ul").append($editorNode);
 
+    const _$editorRef = new Quill(editorContainer, {
+      theme: "snow",
+      modules: {
+        toolbar: false, // Snow includes toolbar by default
+      },
+      cursors: false,
+      placeholder: this.name,
+    });
+
     this._$editorRefs[editorId] = _$editorRef;
-    this._ytext.delete(0, this._ytext.length);
-    this._ytext.insert(0, this.serialize());
+
+    return { editor: _$editorRef, id: editorId };
   }
 
   deleteEditor(editorId) {
     delete this._$editorRefs[editorId];
     this._$node.find(`#${editorId}`).parent().remove();
-    this._ytext.delete(0, this._ytext.length);
-    this._ytext.insert(0, this.serialize());
+    this._ymap.delete(editorId);
+    this._quillBindings[editorId].destroy();
+    delete this._quillBindings[editorId];
   }
 
   /**
@@ -133,11 +132,6 @@ export class MultiValue extends AbstractValue {
    */
   setValue(value) {
     this._value = value;
-    if (!this._ytext) {
-      return;
-    }
-    this._ytext.delete(0, this._ytext.length);
-    this._ytext.insert(0, this.serialize());
   }
 
   /**
@@ -167,48 +161,27 @@ export class MultiValue extends AbstractValue {
     this.setValue(json?.value);
   }
 
-  getYText = function () {
-    return this._ytext;
-  };
-
-  registerYType(ytext) {
-    if (!ytext) {
-      throw new Error("YText is null");
+  registerYType(ymap) {
+    if (!ymap) {
+      throw new Error("YMap is null");
     }
-    this._ytext = ytext;
-    this._value = this._ytext.toString().trim();
-    const editors = this.deserialize(this._value);
-    Object.entries(editors).forEach(([key, value]) => {
+    this._ymap = ymap;
+    this.setValue(this._ymap.toJSON());
+
+    for (const [key, ytext] of ymap) {
       if (!(key in this._$editorRefs)) {
-        this.createEditor();
+        this.createEditor(key);
       }
-      this._$editorRefs[key].setText(value);
-    });
 
-    this._ytext.observe((event) => {
-      this._value = this._ytext.toString().trim();
-      const editorContents = this.deserialize(this._value); // { "editor-1": "Hello", "editor-2": "World" }
-      Object.entries(editorContents).forEach(([key, value]) => {
-        if (!(key in this._$editorRefs)) {
-          this.createEditor();
-        }
-        this._$editorRefs[key].setText(value);
-      });
-    });
-  }
-  serialize() {
-    const quillContents = {};
-    for (const [key, _editor] of Object.entries(this._$editorRefs)) {
-      const text = _editor.getText().trim();
-      quillContents[key] = text;
+      const editorRef = this._$editorRefs[key];
+
+      this._quillBindings[key] = new QuillBinding(ytext, editorRef);
+
+      window.syncmetaLog.initializedYTexts += 1;
+      if (window.syncmetaLog.hasOwnProperty(this.getEntityId()))
+        window.syncmetaLog.objects[this.getEntityId()] += 1;
+      else window.syncmetaLog.objects[this.getEntityId()] = 0;
     }
-    return JSON.stringify(quillContents);
-  }
-  deserialize(jsonString) {
-    if (jsonString === "" || jsonString === null || jsonString === undefined) {
-      return {};
-    }
-    return JSON.parse(jsonString);
   }
 }
 

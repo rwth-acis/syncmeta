@@ -1,5 +1,7 @@
 import path from "path";
 import { readFileSync } from "fs";
+import MagicString from "magic-string";
+import { install } from "source-map-support";
 /**
  * @typedef {import('rollup').Plugin} Plugin
  * Used to replace html template imports with the contents of the file as template string.
@@ -14,6 +16,7 @@ export function replaceHtml() {
   const re = /await\s+loadHTML\(\s+"([^,]+)",\s+.+\s+\);*/g;
 
   return {
+    name: "replace-html-import",
     // replaces the import with the contents of the file
     transform(code, id) {
       function replacer(match, relativeUrl) {
@@ -22,8 +25,27 @@ export function replaceHtml() {
 
         return JSON.stringify(html) + "; // replaced by importmap.plugin.js";
       }
-      const replaced = code.replace(re, replacer);
-      return replaced;
+      // Create a new MagicString object to manipulate the code
+      const magicString = new MagicString(code);
+      let match;
+      while ((match = re.exec(code)) !== null) {
+        const start = match.index;
+        const end = start + match[0].length;
+        magicString.overwrite(start, end, replacer(match[0], match[1]));
+      }
+
+      // Generate a new source map
+      const map = magicString.generateMap({
+        source: id,
+        includeContent: true,
+      });
+      // Add the source map to the code using source-map-support
+      install();
+
+      // Return the modified code and source map
+      const annotatedCode = magicString.toString();
+
+      return { code: annotatedCode, map };
     },
   };
 }
