@@ -43,6 +43,7 @@ import ViewNode from "./view/ViewNode";
 import LogicalConjunctions from "./viewpoint/LogicalConjunctions";
 import LogicalOperator from "./viewpoint/LogicalOperator";
 import ViewTypesUtil from "./viewpoint/ViewTypesUtil";
+import { MultiValue } from "./MultiValue";
 
 const keySelectionValueSelectionValueListAttributeHtml = await loadHTML(
   "../../templates/canvas_widget/list_attribute.html",
@@ -230,6 +231,11 @@ const entityNodeHtml = await loadHTML(
 );
 const setPropertyNodeHtml = await loadHTML(
   "../../templates/guidance_modeling/set_property_node.html",
+  import.meta.url
+);
+
+const multiValueAttributeHtml = await loadHTML(
+  "../../templates/canvas_widget/multi_value_attribute.html",
   import.meta.url
 );
 
@@ -2768,16 +2774,18 @@ export class AbstractNode extends AbstractEntity {
           console.error(" offset bigger than canvas size");
           return;
         }
-
-        var operation = new NodeMoveOperation(
-          that.getEntityId(),
-          offsetX,
-          offsetY
-        );
-        that.propagateNodeMoveOperation(operation);
-
         //Avoid node selection on drag stop
         _canvas.showGuidanceBox();
+
+        setTimeout(() => {
+          var operation = new NodeMoveOperation(
+            that.getEntityId(),
+            offsetX,
+            offsetY
+          );
+          that.propagateNodeMoveOperation(operation);
+        });
+        return;
       });
 
       // view_only is used by the CAE and allows to show a model in the Canvas which is not editable
@@ -5715,6 +5723,12 @@ export function makeNode(type, $shape, anchors, attributes) {
                 ) {
                   that.setLabel(attrObj[attributeId]);
                 }
+              case "list":
+                attrObj[attributeId] = new MultiValueAttribute(
+                  id + "[" + attribute.key.toLowerCase() + "]",
+                  attribute.key,
+                  that
+                );
               default:
                 if (attribute.options) {
                   attrObj[attributeId] = new SingleSelectionAttribute(
@@ -5892,7 +5906,7 @@ export function makeNode(type, $shape, anchors, attributes) {
         for (var key in attr) {
           if (attr.hasOwnProperty(key)) {
             var val = attr[key].getValue();
-            if (val.hasOwnProperty("registerYType")) {
+            if (val.registerYType) {
               val.registerYType();
             }
           }
@@ -6009,6 +6023,7 @@ export class ObjectNode extends AbstractNode {
         integer: "Integer",
         file: "File",
         quiz: "Questions",
+        list: "Multiple Texts",
       }
     );
     this.addAttribute(attr);
@@ -6321,6 +6336,7 @@ export class AbstractClassNode extends AbstractNode {
         integer: "Integer",
         file: "File",
         quiz: "Questions",
+        list: "Multiple Texts",
       }
     );
     this.addAttribute(attr);
@@ -8636,7 +8652,10 @@ export class Value extends AbstractValue {
      * @param json
      */
     this.setValueFromJSON = function (json) {
-      this.setValue(json.value);
+      if (!json?.value) {
+        return;
+      }
+      this.setValue(json?.value);
     };
 
     this.registerYType = function () {
@@ -8690,6 +8709,97 @@ export class Value extends AbstractValue {
       .trigger("blur");
   }
 }
+
+/**
+ * MultiValueAttribute
+ * @memberof canvas_widget
+ * @extends canvas_widget.AbstractAttribute
+ * @constructor
+ * @param {string} id Entity id
+ * @param {string} name Name of attribute
+ * @param {canvas_widget.AbstractEntity} subjectEntity Entity the attribute is assigned to
+ */
+export class MultiValueAttribute extends AbstractAttribute {
+  /***
+   * Value object of value
+   * @type {canvas_widget.MultiValue}
+   * @private
+   */
+  _value = null;
+  /**
+   * jQuery object of DOM node representing the node
+   * @type {jQuery}
+   * @private
+   */
+  _$node = null;
+
+  constructor(id, name, subjectEntity) {
+    super(id, name, subjectEntity);
+
+    this._value = new MultiValue(id, name, this, this.getRootSubjectEntity());
+
+    this._$node = $(_.template(multiValueAttributeHtml)({ id: id }));
+
+    this._$node.find(".name").text(this.getName());
+
+    this._$node.find(".value").append(this._value.get$node());
+
+    // check if view only mode is enabled for the property browser
+    // because then the input fields should be disabled
+    if (window.hasOwnProperty("y")) {
+      const widgetConfigMap = y.getMap("widgetConfig");
+      if (widgetConfigMap.get("view_only_property_browser")) {
+        this._$node.find(".val").attr("disabled", "true");
+      }
+    }
+  }
+
+  /**
+   * Set Value object of value
+   * @param {canvas_widget.Value} value
+   */
+  setValue(value) {
+    this._value = value;
+  }
+
+  /**
+   * Get Value object of value
+   * @returns {canvas_widget.Value}
+   */
+  getValue() {
+    return this._value;
+  }
+
+  /**
+   * jQuery object of DOM node representing the attribute
+   * @type {jQuery}
+   * @public
+   */
+  get$node() {
+    return this._$node;
+  }
+
+  /**
+   * Set attribute value by its JSON representation
+   * @param json
+   */
+  setValueFromJSON(json) {
+    this._value.setValueFromJSON(json?.value);
+  }
+
+  /**
+   * Get attribute value as JSON
+   */
+  toJSON() {
+    const json = AbstractAttribute.prototype.toJSON.call(this);
+    json.value = this._value.toJSON();
+    return json;
+  }
+  registerYType() {
+    _value.registerYType();
+  }
+}
+
 
 /**
  * QuizAttribute

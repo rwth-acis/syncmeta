@@ -299,7 +299,7 @@ class AttributeWrapper {
                   var attr = attrs[attrKey];
                   if (
                     attr.getEntityId() === key &&
-                    attr.getValue().hasOwnProperty("registerYType")
+                    attr.getValue().registerYType
                   ) {
                     attr.getValue().registerYType(event.target.get(key));
                   }

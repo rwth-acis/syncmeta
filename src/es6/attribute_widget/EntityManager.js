@@ -30,6 +30,7 @@ import ViewEdge from "./view/ViewEdge";
 import ViewNode from "./view/ViewNode";
 import ConditionListAttribute from "./viewpoint/ConditionListAttribute";
 import RenamingListAttribute from "./viewpoint/RenamingListAttribute";
+import { MultiValueAttribute } from "./MultiValueAttribute";
 
 const relationshipNodeHtml = await loadHTML(
   "../../templates/attribute_widget/relationship_node.html",
@@ -886,6 +887,16 @@ export function makeNode(
                   attribute.key,
                   that
                 );
+                break;
+
+              case "list":
+                attrObj[attributeId] = new MultiValueAttribute(
+                  id + "[" + attribute.key.toLowerCase() + "]",
+                  attribute.key,
+                  that
+                );
+                break;
+
               default:
                 if (attribute.options) {
                   attrObj[attributeId] = new SingleSelectionAttribute(
@@ -922,11 +933,15 @@ export function makeNode(
       const nodeAttributes = this.getAttributes();
       for (var key in nodeAttributes) {
         // skip loop if the property is the label since it is already registered when calling the prototype
-        if (nodeAttributes[key].getValue().getEntityId() === this.getLabel().getEntityId()) continue;
+        if (
+          nodeAttributes[key].getValue().getEntityId() ===
+          this.getLabel().getEntityId()
+        )
+          continue;
         if (nodeAttributes.hasOwnProperty(key)) {
           var val = nodeAttributes[key].getValue();
           var ytext = ymap.get(val.getEntityId());
-          if (val.hasOwnProperty("registerYType")) {
+          if (val.registerYType) {
             val.registerYType(ytext);
           }
         }
@@ -1891,6 +1906,7 @@ export class AbstractClassNode extends AbstractNode {
         integer: "Integer",
         file: "File",
         quiz: "Questions",
+        list: "Multiple Texts",
       })
     );
 
@@ -2658,6 +2674,7 @@ export class ObjectNode extends AbstractNode {
         integer: "Integer",
         file: "File",
         quiz: "Questions",
+        list: "Multiple Texts",
       })
     );
 

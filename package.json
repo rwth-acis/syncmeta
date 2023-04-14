@@ -1,7 +1,7 @@
 {
   "name": "@rwth-acis/syncmeta-widgets",
   "description": "SyncMeta is a near real-time collaborative modeling framework. This package only contains the used widgets. If you want to use the SyncMeta app in a docker container, see https://github.com/rwth-acis/syncmeta.",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "author": {
     "name": "ACIS Group, RWTH Aachen",
     "email": "acis@dbis.rwth-aachen.de"
@@ -50,8 +50,10 @@
     "@web/rollup-plugin-copy": "^0.3.0",
     "@web/rollup-plugin-html": "^1.11.0",
     "chai": "^4.3.6",
+    "magic-string": "^0.30.0",
     "mocha": "^10.0.0",
     "rollup": "^3.2.3",
-    "rollup-plugin-import-css": "^3.1.0"
+    "rollup-plugin-import-css": "^3.1.0",
+    "source-map-support": "^0.5.21"
   }
 }

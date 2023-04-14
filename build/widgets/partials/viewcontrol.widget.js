@@ -1,7 +1,7 @@
 import 'https://unpkg.com/jquery@3.6.0/dist/jquery.js';
 import 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js';
 import { css, html, LitElement } from 'lit';
-import { Text, Map as Map$2, Doc } from 'yjs';
+import { Text, Map as Map$2, YTextEvent, YMapEvent, Doc } from 'yjs';
 import { WebsocketProvider } from 'y-websocket';
 import 'https://cdnjs.cloudflare.com/ajax/libs/graphlib/2.1.8/graphlib.min.js';
 import 'https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.9.2/jquery.contextMenu.js';
@@ -41092,6 +41092,168 @@ ViewTypesUtil.createReferenceToOrigin = function (viewtype) {
   }
 };
 
+/**
+ * Value
+ * @class attribute_widget.Value
+ * @extends attribute_widget.AbstractValue
+ * @memberof attribute_widget
+ * @constructor
+ * @param {string} id Entity identifier
+ * @param {string} name Name of attribute
+ * @param {attribute_widget.AbstractEntity} subjectEntity Entity the attribute is assigned to
+ * @param {attribute_widget.AbstractNode|attribute_widget.AbstractEdge} rootSubjectEntity Topmost entity in the chain of entity the attribute is assigned to
+ */
+class MultiValue extends AbstractValue {
+  /**
+   * YMap
+   * @type {YMap}
+   * @private
+   */
+  _ymap = null;
+  /**
+   * Value
+   * @type {string}
+   * @private
+   */
+  _value = {};
+  /**
+   * jQuery object of DOM node representing the node
+   * @type {jQuery}
+   * @private
+   */
+  _$node = null;
+
+  _id = null;
+
+  constructor(id, name, subjectEntity, rootSubjectEntity, y = null) {
+    super(id, name, subjectEntity, rootSubjectEntity);
+    this._id = id;
+    this._$node = $(lodash.template(`<ul></ul>`)());
+    y = y || window.y;
+    if (!y) throw new Error("y is undefined");
+
+    const yMap = rootSubjectEntity.getYMap();
+    if (!yMap) {
+      throw new Error("yMap of rootSubjectEntity is undefined");
+    }
+    y.transact(() => {
+      if (!yMap?.has(id) || !(yMap.get(id) instanceof Map$2)) {
+        this._ymap = new Map$2();
+        yMap.set(id, this._ymap);
+      } else {
+        this._ymap = yMap.get(id);
+      }
+      yMap.set("modifiedBy", window.y.clientID);
+    });
+  }
+
+  /**
+   * Set value
+   * @param {string} value
+   */
+  setValue(value) {
+    if (!value) {
+      return;
+    }
+    this._value = value;
+    for (const [key, val] of Object.entries(value)) {
+      // clear the list
+      this._$node.empty();
+      // reconstruct the list
+      this._$node.append(
+        $(lodash.template(`<li><%= key %>: <%= value %></li>`)({ key, value: val }))
+      );
+    }
+  }
+
+  /**
+   * Get value
+   * @returns {string}
+   */
+  getValue() {
+    return this._value;
+  }
+
+  /**
+   * Get jQuery object of DOM node representing the value
+   * @returns {jQuery}
+   */
+  get$node() {
+    return this._$node;
+  }
+
+  /**
+   * Set value by its JSON representation
+   * @param json
+   */
+  setValueFromJSON(json) {
+    if (json === null || json === undefined) {
+      return;
+    }
+    this.setValue(json?.value);
+  }
+
+  registerYType() {
+    if (!this._ymap) {
+      throw new Error("YMap is null");
+    }
+
+    this._ymap.observeDeep(([event]) => {
+      if (event instanceof YTextEvent) {
+        // case where a value in one of the YText is updated
+        const editorId = event.path[0];
+        const value = event.target.toString().trim();
+        // update the value
+        this._value[editorId] = value;
+        // update the list item
+        this._$node
+          .find(`li:contains(${editorId})`)
+          .text(`${editorId}: ${value}`);
+      } else if (event instanceof YMapEvent) {
+        // case where a value is added, deleted or updated
+        Array.from(event.changes.keys.entries()).forEach(
+          ([key, { action }]) => {
+            const value = event.target.get(key);
+            // update the value
+            this._value[key] = value;
+            switch (action) {
+              case "add":
+                // add the new list item
+                this._$node.append(
+                  $(
+                    lodash.template(`<li><%= key %>: <%= value %></li>`)({
+                      key,
+                      value,
+                    })
+                  )
+                );
+                break;
+              case "delete":
+                this._$node.find(`li:contains(${key})`).remove();
+                break;
+
+              case "update":
+                this._$node
+                  .find(`li:contains(${key})`)
+                  .text(`${key}: ${value}`);
+                break;
+            }
+          }
+        );
+      }
+    });
+  }
+
+  toJSON() {
+    const json = AbstractValue.prototype.toJSON.call(this);
+    json.value = {};
+    for (const [key, ytext] of this._ymap) {
+      json.value[key] = ytext.toString().trim();
+    }
+    return json;
+  }
+}
+
 const keySelectionValueSelectionValueListAttributeHtml = "<div class=\"list_attribute\">\n    <div class=\"name\"></div>\n    <ul class=\"list\"></ul>\n</div>"; // replaced by importmap.plugin.js
 
 const singleQuizAttributeHtml = "<div class=\"single_quiz_attribute\">\n  <div class=\"name\"></div>\n  <div class=\"value\"></div>\n  <table id=\"table\" style=\"float: left; visibility: hidden\">\n    <tr>\n      <th>Assessment Name :</th>\n      <th><input class=\"form-control\" id=\"topic\" /></th>\n    </tr>\n    <tr>\n      <td>Nr</td>\n      <td>Question</td>\n      <td>Correct Intent</td>\n      <td>Optional Hint</td>\n    </tr>\n  </table>\n  <button\n    id=\"b\"\n    style=\"margin-left: 3px; float: left; width: 50%; visibility: hidden\"\n  >\n    +\n  </button>\n  <button\n    id=\"c\"\n    style=\"margin-left: 3px; float: left; width: 50%; visibility: hidden\"\n  >\n    -\n  </button>\n  <button\n    id=\"submit\"\n    style=\"margin-left: 3px; float: left; width: 50%; visibility: hidden\"\n  >\n    Submit\n  </button>\n  <button\n    id=\"display\"\n    style=\"margin-left: 3px; float: left; width: 50%; visibility: hidden\"\n  >\n    Display\n  </button>\n</div>\n"; // replaced by importmap.plugin.js
@@ -41157,6 +41319,8 @@ const activityFinalNodeHtml = "<div class=\"custom_node\">\n    <div class=\"typ
 const callActivityNodeHtml = "<div class=\"custom_node\">\n    <div class=\"type\"><%= type %></div>\n    <svg xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"none\" viewBox=\"0 0 100 100\" class=\"fill_parent\">\n        <rect x=\"0\" y=\"0\" rx=\"20\" ry=\"20\" width=\"100\" height=\"100\" fill=\"white\" stroke=\"lightgray\" stroke-width=\"2\" />\n    </svg>\n    <div class=\"fill_parent\" style=\"overflow:hidden;\">\n      <table style=\"width:100%; height:100%\">\n      <tr>\n        <td style=\"width:1px; white-space:nowrap; padding:10px;\"><i class=\"fa fa-external-link fa-2x\"></i></td>\n        <td class=\"label\" style=\"text-align:center\"></td>   \n      </tr>\n    </table>\n    </div>\n</div>"; // replaced by importmap.plugin.js
 const entityNodeHtml = "<div class=\"custom_node\">\n    <div class=\"type\"><%= \"<\\%= type %\\>\" %></div>\n    <svg xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"none\" viewBox=\"0 0 100 100\" class=\"fill_parent\">\n        <defs>\n            <linearGradient id=\"entityGrad\" x1=\"0%\" y1=\"0%\" x2=\"0%\" y2=\"100%\">\n              <stop offset=\"0%\" style=\"stop-color:#DAE8FC;stop-opacity:1\" />\n              <stop offset=\"100%\" style=\"stop-color:#7EA6E0;stop-opacity:1\" />\n            </linearGradient>\n          </defs>\n        <rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"url(#entityGrad)\" stroke=\"lightgray\" stroke-width=\"2\" />\n    </svg>\n    <div class=\"fill_parent\" style=\"overflow:hidden;\">\n    \t<table style=\"width:100%; height:100%\">\n\t\t  <tr>\n\t\t    <td style=\"width:1px; white-space:nowrap; padding:10px;\"><i class=\"fa fa-<%= icon %> fa-2x\"></i></td>\n\t\t    <td style=\"text-align:center\"><%= label %></td>\t\t\n\t\t  </tr>\n\t\t</table>\n    </div>\n</div>"; // replaced by importmap.plugin.js
 const setPropertyNodeHtml = "<div class=\"custom_node\">\n    <div class=\"type\"><%= \"<\\%= type %\\>\" %></div>\n    <svg xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"none\" viewBox=\"0 0 100 100\" class=\"fill_parent\">\n        <rect x=\"0\" y=\"0\" rx=\"20\" ry=\"20\" width=\"100\" height=\"100\" fill=\"white\" stroke=\"lightgray\" stroke-width=\"2\" />\n    </svg>\n    <div class=\"fill_parent\" style=\"overflow:hidden\">\n    \t<table style=\"width:100%; height:100%\">\n\t\t  <tr>\n\t\t    <td style=\"width:1px; white-space:nowrap; padding:10px;\"><i class=\"fa fa-pencil-square-o fa-2x\"></i></td>\n\t\t    <td style=\"text-align:center\" class=\"property\"></td>\t\t\n\t\t  </tr>\n\t\t</table>\n    </div>\n</div>"; // replaced by importmap.plugin.js
+
+const multiValueAttributeHtml = "<div>\n  <div class=\"name\"></div>\n  <div class=\"value\"></div>\n</div>\n"; // replaced by importmap.plugin.js
 
 var shapes = {
   straight: {
@@ -43673,16 +43837,18 @@ class AbstractNode extends AbstractEntity {
           console.error(" offset bigger than canvas size");
           return;
         }
-
-        var operation = new NodeMoveOperation(
-          that.getEntityId(),
-          offsetX,
-          offsetY
-        );
-        that.propagateNodeMoveOperation(operation);
-
         //Avoid node selection on drag stop
         _canvas.showGuidanceBox();
+
+        setTimeout(() => {
+          var operation = new NodeMoveOperation(
+            that.getEntityId(),
+            offsetX,
+            offsetY
+          );
+          that.propagateNodeMoveOperation(operation);
+        });
+        return;
       });
 
       // view_only is used by the CAE and allows to show a model in the Canvas which is not editable
@@ -46609,6 +46775,12 @@ function makeNode(type, $shape, anchors, attributes) {
                 ) {
                   that.setLabel(attrObj[attributeId]);
                 }
+              case "list":
+                attrObj[attributeId] = new MultiValueAttribute(
+                  id + "[" + attribute.key.toLowerCase() + "]",
+                  attribute.key,
+                  that
+                );
               default:
                 if (attribute.options) {
                   attrObj[attributeId] = new SingleSelectionAttribute(
@@ -46786,7 +46958,7 @@ function makeNode(type, $shape, anchors, attributes) {
         for (var key in attr) {
           if (attr.hasOwnProperty(key)) {
             var val = attr[key].getValue();
-            if (val.hasOwnProperty("registerYType")) {
+            if (val.registerYType) {
               val.registerYType();
             }
           }
@@ -46903,6 +47075,7 @@ class ObjectNode extends AbstractNode {
         integer: "Integer",
         file: "File",
         quiz: "Questions",
+        list: "Multiple Texts",
       }
     );
     this.addAttribute(attr);
@@ -47215,6 +47388,7 @@ class AbstractClassNode extends AbstractNode {
         integer: "Integer",
         file: "File",
         quiz: "Questions",
+        list: "Multiple Texts",
       }
     );
     this.addAttribute(attr);
@@ -49528,7 +49702,10 @@ class Value extends AbstractValue {
      * @param json
      */
     this.setValueFromJSON = function (json) {
-      this.setValue(json.value);
+      if (!json?.value) {
+        return;
+      }
+      this.setValue(json?.value);
     };
 
     this.registerYType = function () {
@@ -49582,6 +49759,97 @@ class Value extends AbstractValue {
       .trigger("blur");
   }
 }
+
+/**
+ * MultiValueAttribute
+ * @memberof canvas_widget
+ * @extends canvas_widget.AbstractAttribute
+ * @constructor
+ * @param {string} id Entity id
+ * @param {string} name Name of attribute
+ * @param {canvas_widget.AbstractEntity} subjectEntity Entity the attribute is assigned to
+ */
+class MultiValueAttribute extends AbstractAttribute {
+  /***
+   * Value object of value
+   * @type {canvas_widget.MultiValue}
+   * @private
+   */
+  _value = null;
+  /**
+   * jQuery object of DOM node representing the node
+   * @type {jQuery}
+   * @private
+   */
+  _$node = null;
+
+  constructor(id, name, subjectEntity) {
+    super(id, name, subjectEntity);
+
+    this._value = new MultiValue(id, name, this, this.getRootSubjectEntity());
+
+    this._$node = $(lodash.template(multiValueAttributeHtml)({ id: id }));
+
+    this._$node.find(".name").text(this.getName());
+
+    this._$node.find(".value").append(this._value.get$node());
+
+    // check if view only mode is enabled for the property browser
+    // because then the input fields should be disabled
+    if (window.hasOwnProperty("y")) {
+      const widgetConfigMap = y.getMap("widgetConfig");
+      if (widgetConfigMap.get("view_only_property_browser")) {
+        this._$node.find(".val").attr("disabled", "true");
+      }
+    }
+  }
+
+  /**
+   * Set Value object of value
+   * @param {canvas_widget.Value} value
+   */
+  setValue(value) {
+    this._value = value;
+  }
+
+  /**
+   * Get Value object of value
+   * @returns {canvas_widget.Value}
+   */
+  getValue() {
+    return this._value;
+  }
+
+  /**
+   * jQuery object of DOM node representing the attribute
+   * @type {jQuery}
+   * @public
+   */
+  get$node() {
+    return this._$node;
+  }
+
+  /**
+   * Set attribute value by its JSON representation
+   * @param json
+   */
+  setValueFromJSON(json) {
+    this._value.setValueFromJSON(json?.value);
+  }
+
+  /**
+   * Get attribute value as JSON
+   */
+  toJSON() {
+    const json = AbstractAttribute.prototype.toJSON.call(this);
+    json.value = this._value.toJSON();
+    return json;
+  }
+  registerYType() {
+    _value.registerYType();
+  }
+}
+
 
 /**
  * QuizAttribute
