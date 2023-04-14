@@ -50,6 +50,8 @@ export class MultiValue extends AbstractValue {
    */
   _$editorRefs = {};
 
+  _quillBindings = {};
+
   _id = null;
 
   constructor(id, name, subjectEntity, rootSubjectEntity) {
@@ -60,13 +62,23 @@ export class MultiValue extends AbstractValue {
         `<div>
           <ul class="p-0"></ul>
           <div class="d-flex ms-auto">
-            <button type="button" class="btn btn-primary add"><i class="bi bi-plus-circle-fill"></i></button>
+            <button type="button" class="btn btn-success add"><i class="bi bi-plus-circle-fill"></i></button>
           </div>
          </div>`
       )()
     );
     this._$node.find(".add").on("click", () => {
-      this.createEditor();
+      const { editor, id } = this.createEditor();
+      let ytext = this._ymap.get(id);
+      if (!ytext || !(ytext instanceof YText)) {
+        ytext = new YText();
+        this._ymap.set(id, ytext);
+      }
+      if (!this._quillBindings.hasOwnProperty(id)) {
+        const binding = new QuillBinding(ytext, editor);
+
+        this._quillBindings[id] = binding;
+      }
     });
   }
 
@@ -80,15 +92,6 @@ export class MultiValue extends AbstractValue {
     ).get(0);
     editorContainer.classList.add("flex-fill");
 
-    const _$editorRef = new Quill(editorContainer, {
-      theme: "snow",
-      modules: {
-        toolbar: false, // Snow includes toolbar by default
-      },
-      cursors: false,
-      placeholder: this.name,
-    });
-
     const $editorNode = $(_.template(`<li class="input-group mb-3"></li>`)());
     $editorNode
       .append(editorContainer)
@@ -98,22 +101,29 @@ export class MultiValue extends AbstractValue {
     $editorNode.find("button").on("click", () => {
       this.deleteEditor(editorId);
     });
+    // append
     this._$node.find("ul").append($editorNode);
+
+    const _$editorRef = new Quill(editorContainer, {
+      theme: "snow",
+      modules: {
+        toolbar: false, // Snow includes toolbar by default
+      },
+      cursors: false,
+      placeholder: this.name,
+    });
 
     this._$editorRefs[editorId] = _$editorRef;
 
-    let ytext = this._ymap.get(editorId);
-    if (!ytext || !(ytext instanceof YText)) {
-      ytext = new YText();
-      this._ymap.set(editorId, ytext);
-    }
-    new QuillBinding(ytext, _$editorRef);
+    return { editor: _$editorRef, id: editorId };
   }
 
   deleteEditor(editorId) {
     delete this._$editorRefs[editorId];
     this._$node.find(`#${editorId}`).parent().remove();
     this._ymap.delete(editorId);
+    this._quillBindings[editorId].destroy();
+    delete this._quillBindings[editorId];
   }
 
   /**
@@ -122,12 +132,6 @@ export class MultiValue extends AbstractValue {
    */
   setValue(value) {
     this._value = value;
-    for (const [key, val] of Object.entries(value)) {
-      if (!(key in this._$editorRefs)) {
-        this.createEditor(key);
-      }
-      this._$editorRefs[key].setText(val);
-    }
   }
 
   /**
@@ -162,21 +166,22 @@ export class MultiValue extends AbstractValue {
       throw new Error("YMap is null");
     }
     this._ymap = ymap;
+    this.setValue(this._ymap.toJSON());
 
-    ymap.forEach((ytext, key) => {
+    for (const [key, ytext] of ymap) {
       if (!(key in this._$editorRefs)) {
         this.createEditor(key);
       }
+
       const editorRef = this._$editorRefs[key];
-      new QuillBinding(ytext, editorRef);
-      if (this._value[key]) {
-        editorRef.setText();
-      }
+
+      this._quillBindings[key] = new QuillBinding(ytext, editorRef);
+
       window.syncmetaLog.initializedYTexts += 1;
       if (window.syncmetaLog.hasOwnProperty(this.getEntityId()))
         window.syncmetaLog.objects[this.getEntityId()] += 1;
       else window.syncmetaLog.objects[this.getEntityId()] = 0;
-    });
+    }
   }
 }
 
