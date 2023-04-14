@@ -113,7 +113,6 @@ export class MultiValue extends AbstractValue {
     this._ymap.observeDeep(([event]) => {
       if (event instanceof YTextEvent) {
         // case where a value in one of the YText is updated
-        console.log(event);
         const editorId = event.path[0];
         const value = event.target.toString().trim();
         // update the value
