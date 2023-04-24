@@ -3,6 +3,7 @@ import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"
 import _ from "lodash-es";
 import AbstractValue from "./AbstractValue";
 import { Map as YMap, YMapEvent, YTextEvent } from "yjs";
+import { EntityManagerInstance } from "./Manager";
 
 /**
  * Value
