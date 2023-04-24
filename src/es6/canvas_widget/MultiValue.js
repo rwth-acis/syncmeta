@@ -3,17 +3,18 @@ import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"
 import _ from "lodash-es";
 import AbstractValue from "./AbstractValue";
 import { Map as YMap, YMapEvent, YTextEvent } from "yjs";
+import { EntityManagerInstance } from "./Manager";
 
 /**
  * Value
  * @class attribute_widget.Value
- * @extends attribute_widget.AbstractValue
- * @memberof attribute_widget
+ * @extends canvas_widget.AbstractValue
+ * @memberof canvas_widget
  * @constructor
  * @param {string} id Entity identifier
  * @param {string} name Name of attribute
- * @param {attribute_widget.AbstractEntity} subjectEntity Entity the attribute is assigned to
- * @param {attribute_widget.AbstractNode|attribute_widget.AbstractEdge} rootSubjectEntity Topmost entity in the chain of entity the attribute is assigned to
+ * @param {canvas_widget.AbstractEntity} subjectEntity Entity the attribute is assigned to
+ * @param {canvas_widget.AbstractNode|canvas_widget.AbstractEdge} rootSubjectEntity Topmost entity in the chain of entity the attribute is assigned to
  */
 export class MultiValue extends AbstractValue {
   /**
@@ -102,7 +103,11 @@ export class MultiValue extends AbstractValue {
     if (json === null || json === undefined) {
       return;
     }
-    this.setValue(json?.value);
+    let value = json.value;
+    if (typeof json.value === "string") {
+      value = JSON.parse(json.value);
+    }
+    this.setValue(value);
   }
 
   registerYType() {
@@ -155,6 +160,7 @@ export class MultiValue extends AbstractValue {
           }
         );
       }
+      EntityManagerInstance.storeDataYjs();
     });
   }
 
@@ -164,6 +170,7 @@ export class MultiValue extends AbstractValue {
     for (const [key, ytext] of this._ymap) {
       json.value[key] = ytext.toString().trim();
     }
+    json.value = JSON.stringify(json.value);
     return json;
   }
 }

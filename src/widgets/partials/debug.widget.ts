@@ -11,6 +11,7 @@ import { yjsSync } from "../../es6/lib/yjs-sync";
 import init from "../../es6/shared";
 import { SyncMetaWidget } from "../../widget";
 import { Text as YText, Map as YMap } from "yjs";
+import { EntityManagerInstance } from "../../es6/canvas_widget/Manager";
 // widget body used by all syncmeta widgets
 const guidance = getGuidanceModeling();
 
@@ -125,32 +126,6 @@ export class DebugWidget extends SyncMetaWidget(
             );
             location.reload();
           }
-        });
-
-        $exportModel.click(() => {
-          this.$spinner.show();
-          const dataMap = y.getMap("data");
-          var link = document.createElement("a");
-          link.download = "model.json";
-          link.href =
-            "data:," +
-            encodeURIComponent(JSON.stringify(dataMap.get("model"), null, 4));
-          link.click();
-          this.$spinner.hide();
-        });
-
-        $exportMetamodel.click(() => {
-          this.$spinner.show();
-          const dataMap = y.getMap("data");
-          var link = document.createElement("a");
-          link.download = "vls.json";
-          link.href =
-            "data:," +
-            encodeURIComponent(
-              JSON.stringify(dataMap.get("metamodel"), null, 4)
-            );
-          link.click();
-          this.$spinner.hide();
         });
 
         $exportGuidancemodel.click(() => {
@@ -346,6 +321,7 @@ export class DebugWidget extends SyncMetaWidget(
                       id="export-model"
                       class="btn btn-secondary"
                       title="export the model as JSON"
+                      @click="${this.exportModel}"
                     >
                       Export
                     </button>
@@ -372,6 +348,7 @@ export class DebugWidget extends SyncMetaWidget(
                       id="export-meta-model"
                       title="Download the VLS as JSON"
                       class="btn btn-secondary"
+                      @click="${this.exportMetamodel}"
                     >
                       Export
                     </button>
@@ -500,6 +477,19 @@ export class DebugWidget extends SyncMetaWidget(
       });
   }
 
+  exportModel() {
+    this.$spinner.show();
+    const dataMap = window.y.getMap("data");
+    var link = document.createElement("a");
+    EntityManagerInstance.storeDataYjs();
+    link.download = "model.json";
+    link.href =
+      "data:," +
+      encodeURIComponent(JSON.stringify(dataMap.get("model"), null, 4));
+    link.click();
+    this.$spinner.hide();
+  }
+
   deleteModel() {
     if (!confirm("Are you sure you want to delete the model ?")) return;
 
@@ -523,6 +513,18 @@ export class DebugWidget extends SyncMetaWidget(
     canvasMap.set("ReloadWidgetOperation", "meta_delete");
     this.feedback("The meta model was deleted. The page will be reloaded.");
     location.reload();
+  }
+
+  exportMetamodel() {
+    this.$spinner.show();
+    const dataMap = window.y.getMap("data");
+    var link = document.createElement("a");
+    link.download = "vls.json";
+    link.href =
+      "data:," +
+      encodeURIComponent(JSON.stringify(dataMap.get("metamodel"), null, 4));
+    link.click();
+    this.$spinner.hide();
   }
 
   feedback(msg: string) {

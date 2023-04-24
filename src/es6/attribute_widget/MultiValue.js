@@ -158,7 +158,11 @@ export class MultiValue extends AbstractValue {
     if (json === null || json === undefined) {
       return;
     }
-    this.setValue(json?.value);
+    let value = json.value;
+    if (typeof json.value === "string") {
+      value = JSON.parse(json.value);
+    }
+    this.setValue(value);
   }
 
   registerYType(ymap) {
