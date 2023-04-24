@@ -159,6 +159,7 @@ export class MultiValue extends AbstractValue {
           }
         );
       }
+      EntityManagerInstance.storeDataYjs();
     });
   }
 
