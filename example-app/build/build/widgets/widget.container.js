@@ -26103,6 +26103,7 @@ let MultiValue$1 = class MultiValue extends AbstractValue$1 {
                     }
                 });
             }
+            EntityManagerInstance$1.storeDataYjs();
         });
     }
     toJSON() {
@@ -51980,28 +51981,6 @@ let DebugWidget = class DebugWidget extends SyncMetaWidget(LitElement, getWidget
                     location.reload();
                 }
             });
-            $exportModel.click(() => {
-                this.$spinner.show();
-                const dataMap = y.getMap("data");
-                var link = document.createElement("a");
-                link.download = "model.json";
-                link.href =
-                    "data:," +
-                        encodeURIComponent(JSON.stringify(dataMap.get("model"), null, 4));
-                link.click();
-                this.$spinner.hide();
-            });
-            $exportMetamodel.click(() => {
-                this.$spinner.show();
-                const dataMap = y.getMap("data");
-                var link = document.createElement("a");
-                link.download = "vls.json";
-                link.href =
-                    "data:," +
-                        encodeURIComponent(JSON.stringify(dataMap.get("metamodel"), null, 4));
-                link.click();
-                this.$spinner.hide();
-            });
             $exportGuidancemodel.click(() => {
                 this.$spinner.show();
                 const dataMap = y.getMap("data");
@@ -52183,6 +52162,7 @@ let DebugWidget = class DebugWidget extends SyncMetaWidget(LitElement, getWidget
                       id="export-model"
                       class="btn btn-secondary"
                       title="export the model as JSON"
+                      @click="${this.exportModel}"
                     >
                       Export
                     </button>
@@ -52209,6 +52189,7 @@ let DebugWidget = class DebugWidget extends SyncMetaWidget(LitElement, getWidget
                       id="export-meta-model"
                       title="Download the VLS as JSON"
                       class="btn btn-secondary"
+                      @click="${this.exportMetamodel}"
                     >
                       Export
                     </button>
@@ -52337,6 +52318,18 @@ let DebugWidget = class DebugWidget extends SyncMetaWidget(LitElement, getWidget
             this.$spinner.hide();
         });
     }
+    exportModel() {
+        this.$spinner.show();
+        const dataMap = window.y.getMap("data");
+        var link = document.createElement("a");
+        EntityManagerInstance$1.storeDataYjs();
+        link.download = "model.json";
+        link.href =
+            "data:," +
+                encodeURIComponent(JSON.stringify(dataMap.get("model"), null, 4));
+        link.click();
+        this.$spinner.hide();
+    }
     deleteModel() {
         if (!confirm("Are you sure you want to delete the model ?"))
             return;
@@ -52358,6 +52351,17 @@ let DebugWidget = class DebugWidget extends SyncMetaWidget(LitElement, getWidget
         canvasMap.set("ReloadWidgetOperation", "meta_delete");
         this.feedback("The meta model was deleted. The page will be reloaded.");
         location.reload();
+    }
+    exportMetamodel() {
+        this.$spinner.show();
+        const dataMap = window.y.getMap("data");
+        var link = document.createElement("a");
+        link.download = "vls.json";
+        link.href =
+            "data:," +
+                encodeURIComponent(JSON.stringify(dataMap.get("metamodel"), null, 4));
+        link.click();
+        this.$spinner.hide();
     }
     feedback(msg) {
         alert(msg);
