@@ -11,8 +11,10 @@ export declare class DebugWidget extends DebugWidget_base {
     showErrorAlert(message: string): void;
     render(): import("lit-html").TemplateResult<1>;
     importModel(): void;
+    exportModel(): void;
     deleteModel(): void;
     deleteMetamodel(): void;
+    exportMetamodel(): void;
     feedback(msg: string): void;
     connectedCallback(): void;
     disconnectedCallback(): void;
