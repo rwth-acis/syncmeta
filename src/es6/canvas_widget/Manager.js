@@ -44,6 +44,7 @@ import LogicalConjunctions from "./viewpoint/LogicalConjunctions";
 import LogicalOperator from "./viewpoint/LogicalOperator";
 import ViewTypesUtil from "./viewpoint/ViewTypesUtil";
 import { MultiValue } from "./MultiValue";
+import ViewManager from "./viewpoint/ViewManager";
 
 const keySelectionValueSelectionValueListAttributeHtml = await loadHTML(
   "../../templates/canvas_widget/list_attribute.html",
@@ -1306,9 +1307,10 @@ export class AbstractEdge extends AbstractEntity {
       }
 
       _isSelected = true;
-      this.unhighlight();
+
       if (_jsPlumbConnection) {
-        paintStyle.lineWidth = 4;
+        paintStyle.lineWidth = 8;
+        paintStyle.stroke = "#52eb69";
         _jsPlumbConnection.setPaintStyle(paintStyle);
         overlays = _jsPlumbConnection.getOverlays();
         for (i = 0, numOfOverlays = overlays.length; i < numOfOverlays; i++) {
@@ -1330,7 +1332,7 @@ export class AbstractEdge extends AbstractEntity {
       }
 
       _isSelected = false;
-      this.highlight(_highlightColor);
+      this.unhighlight();
       if (_jsPlumbConnection) {
         _jsPlumbConnection.setPaintStyle(_defaultPaintStyle);
         overlays = _jsPlumbConnection.getOverlays();
@@ -1346,12 +1348,12 @@ export class AbstractEdge extends AbstractEntity {
      * Highlight the edge
      * @param {String} color
      */
-    this.highlight = function (color) {
+    this.highlight = function (color = "green") {
       var paintStyle = _.clone(_defaultPaintStyle);
 
       if (color) {
         paintStyle.strokeStyle = color;
-        paintStyle.lineWidth = 4;
+        paintStyle.lineWidth = 8;
         if (_jsPlumbConnection) _jsPlumbConnection.setPaintStyle(paintStyle);
         else throw new Error("jsPlumbConnection is null");
       }
@@ -3438,7 +3440,7 @@ class EntityManager {
         if (viewId && !metamodel) {
           ViewManager.updateViewContent(viewId);
         } else {
-          EntityManager.storeDataYjs();
+          EntityManagerInstance.storeDataYjs();
         }
       },
       findObjectNodeByLabel(searchTerm) {

@@ -41309,6 +41309,133 @@ let MultiValue$1 = class MultiValue extends AbstractValue$1 {
   }
 };
 
+const optionHtml = "<option id=\"<%= id %>\"><%= id %></option>"; // replaced by importmap.plugin.js
+
+/**
+ * the view manager manges a arbitrary number of views
+ * @returns {{GetViewpointList: Function, existsView: Function, getViewIdOfSelected: Function, getViewUri: Function, getViewpointUri: Function, getSelected$node: Function, getResource: Function, addView: Function, deleteView: Function, initViewList: Function}}
+ * @constructor
+ */
+class ViewManager {
+  constructor() {
+    let currentView = null;
+    /**
+     * represent a reference to the view selection html element
+     * @type {jQuery}
+     * @private
+     */
+    var _$selection = $("#ddmViewSelection");
+
+    /**
+     * html option element template
+     * @type {function}
+     */
+    var optionTpl = lodash.template(optionHtml);
+
+    return {
+      setCurrentView: function (viewId) {
+        currentView = viewId;
+      },
+
+      getCurrentView: function () {
+        return currentView;
+      },
+      /**
+       * initialize the viewpoint selection list of the generic editor instance
+       */
+      GetViewpointList: function () {
+        y = window.y;
+        const viewsMap = y.getMap("views");
+        _$selection.empty();
+        var viewpointList = viewsMap.keys();
+        for (var i = 0; i < viewpointList.length; i++) {
+          var viewpoint = viewsMap.get(viewpointList[i]);
+          if (viewpoint) {
+            _$selection.append(
+              $(
+                optionTpl({
+                  id: viewpointList[i],
+                })
+              )
+            );
+          } else viewsMap.delete(viewpointList[i]);
+        }
+      },
+      /**
+       * checks if a view exists
+       * @param viewId the viewId of the vie
+       * @returns {boolean} true if the view already exits false if not
+       */
+      existsView: function (viewId) {
+        const viewsMap = y.getMap("views");
+        return viewsMap.has(viewId);
+      },
+      /**
+       * returns the view identifier of  currently selected html selection element
+       * @returns {string} the identifier of the view
+       */
+      getViewIdOfSelected: function () {
+        return this.getSelected$node().attr("id");
+      },
+      /**
+       * returns the currently selected option node of the html selection element
+       * @returns {object} jquery object
+       */
+      getSelected$node: function () {
+        return _$selection.find("option:selected");
+      },
+      /**
+       * adds a view to the ViewManager
+       * @param {string} viewId the view identifier
+       */
+      addView: function (viewId) {
+        const viewsMap = y.getMap("views");
+        if (viewsMap.has(viewId)) {
+          viewsMap.set(viewId, {
+            viewId: viewId,
+            attributes: {},
+            nodes: {},
+            edges: {},
+          });
+          return true;
+        } else return false;
+      },
+      /**
+       * deletes a view from the view manager
+       * @param {string} viewId the identifier of the view
+       */
+      deleteView: function (viewId) {
+        const viewsMap = y.getMap("views");
+        viewsMap.delete(viewId);
+        _$selection.find("#" + viewId).remove();
+      },
+      /**
+       * Update a view representation in the ROLE Space
+       * @param {string} viewId The view identifier
+       * @param {string} viewId The Identifier of the view
+       * @param {object} resource openapp.oo.resource of the the view
+       * @returns {object} jquery promise
+       */
+      updateViewContent: function (viewId) {
+        const viewsMap = y.getMap("views");
+        var data = this.viewToJSON(viewId);
+        viewsMap.set(viewId, data);
+      },
+      /**
+       * generates the json representation of a view
+       * @param viewId the unique name of the view
+       * @returns {Object}
+       */
+      viewToJSON: function (viewId) {
+        var vls = EntityManagerInstance$1.graphToJSON();
+        vls["id"] = viewId;
+        return vls;
+      },
+    };
+  }
+}
+var ViewManager$1 = new ViewManager();
+
 const keySelectionValueSelectionValueListAttributeHtml$1 = "<div class=\"list_attribute\">\r\n    <div class=\"name\"></div>\r\n    <ul class=\"list\"></ul>\r\n</div>"; // replaced by importmap.plugin.js
 
 const singleQuizAttributeHtml$1 = "<div class=\"single_quiz_attribute\">\r\n  <div class=\"name\"></div>\r\n  <div class=\"value\"></div>\r\n  <table id=\"table\" style=\"float: left; visibility: hidden\">\r\n    <tr>\r\n      <th>Assessment Name :</th>\r\n      <th><input class=\"form-control\" id=\"topic\" /></th>\r\n    </tr>\r\n    <tr>\r\n      <td>Nr</td>\r\n      <td>Question</td>\r\n      <td>Correct Intent</td>\r\n      <td>Optional Hint</td>\r\n    </tr>\r\n  </table>\r\n  <button\r\n    id=\"b\"\r\n    style=\"margin-left: 3px; float: left; width: 50%; visibility: hidden\"\r\n  >\r\n    +\r\n  </button>\r\n  <button\r\n    id=\"c\"\r\n    style=\"margin-left: 3px; float: left; width: 50%; visibility: hidden\"\r\n  >\r\n    -\r\n  </button>\r\n  <button\r\n    id=\"submit\"\r\n    style=\"margin-left: 3px; float: left; width: 50%; visibility: hidden\"\r\n  >\r\n    Submit\r\n  </button>\r\n  <button\r\n    id=\"display\"\r\n    style=\"margin-left: 3px; float: left; width: 50%; visibility: hidden\"\r\n  >\r\n    Display\r\n  </button>\r\n</div>\r\n"; // replaced by importmap.plugin.js
@@ -41992,13 +42119,6 @@ let AbstractEdge$1 = class AbstractEdge extends AbstractEntity$1 {
     var _attributes = {};
 
     /**
-     * Stores current highlighting color
-     * @type {string}
-     * @private
-     */
-    var _highlightColor = null;
-
-    /**
      * Callback to generate list of context menu items
      * @type {function}
      */
@@ -42435,9 +42555,10 @@ let AbstractEdge$1 = class AbstractEdge extends AbstractEntity$1 {
       function makeBold() {
         $(this).css("fontWeight", "bold");
       }
-      this.unhighlight();
+
       if (_jsPlumbConnection) {
-        paintStyle.lineWidth = 4;
+        paintStyle.lineWidth = 8;
+        paintStyle.stroke = "#52eb69";
         _jsPlumbConnection.setPaintStyle(paintStyle);
         overlays = _jsPlumbConnection.getOverlays();
         for (i = 0, numOfOverlays = overlays.length; i < numOfOverlays; i++) {
@@ -42457,7 +42578,7 @@ let AbstractEdge$1 = class AbstractEdge extends AbstractEntity$1 {
       function unmakeBold() {
         $(this).css("fontWeight", "");
       }
-      this.highlight(_highlightColor);
+      this.unhighlight();
       if (_jsPlumbConnection) {
         _jsPlumbConnection.setPaintStyle(_defaultPaintStyle);
         overlays = _jsPlumbConnection.getOverlays();
@@ -42473,12 +42594,12 @@ let AbstractEdge$1 = class AbstractEdge extends AbstractEntity$1 {
      * Highlight the edge
      * @param {String} color
      */
-    this.highlight = function (color) {
+    this.highlight = function (color = "green") {
       var paintStyle = lodash.clone(_defaultPaintStyle);
 
       if (color) {
         paintStyle.strokeStyle = color;
-        paintStyle.lineWidth = 4;
+        paintStyle.lineWidth = 8;
         if (_jsPlumbConnection) _jsPlumbConnection.setPaintStyle(paintStyle);
         else throw new Error("jsPlumbConnection is null");
       }
@@ -44552,11 +44673,11 @@ let EntityManager$2 = class EntityManager {
       },
       saveState: function () {
         // if metamodel
-        const viewId = ViewManager.getCurrentView();
+        const viewId = ViewManager$1.getCurrentView();
         if (viewId && !metamodel) {
-          ViewManager.updateViewContent(viewId);
+          ViewManager$1.updateViewContent(viewId);
         } else {
-          EntityManager.storeDataYjs();
+          EntityManagerInstance$1.storeDataYjs();
         }
       },
       findObjectNodeByLabel(searchTerm) {
@@ -45370,8 +45491,6 @@ let EntityManager$2 = class EntityManager {
               },
             };
 
-            guidanceMetamodel.nodes[id];
-
             //Generate the 'entity node'
             var entityLabel = guidancemodel.getEntityNodeLabelForType(
               node.label
@@ -45425,8 +45544,6 @@ let EntityManager$2 = class EntityManager {
               value: "Value",
               options: options,
             };
-
-            guidanceMetamodel.nodes[id];
 
             //Define the 'create object node' to 'entity node' relation
             dataFlowEdgeRelations.push({
@@ -45494,8 +45611,6 @@ let EntityManager$2 = class EntityManager {
               },
             };
 
-            guidanceMetamodel.nodes[id];
-
             //Generate 'entity node'
             var entityLabel = guidancemodel.getEntityNodeLabelForType(
               edge.label
@@ -45518,8 +45633,6 @@ let EntityManager$2 = class EntityManager {
                 customAnchors: "",
               },
             };
-
-            guidanceMetamodel.nodes[id];
 
             //Generate the 'set property node'
             if (Object.keys(edge.attributes).length > 0) {
@@ -57480,133 +57593,6 @@ ViewGenerator$1.reset = function (vls) {
   });
 };
 
-const optionHtml = "<option id=\"<%= id %>\"><%= id %></option>"; // replaced by importmap.plugin.js
-
-/**
- * the view manager manges a arbitrary number of views
- * @returns {{GetViewpointList: Function, existsView: Function, getViewIdOfSelected: Function, getViewUri: Function, getViewpointUri: Function, getSelected$node: Function, getResource: Function, addView: Function, deleteView: Function, initViewList: Function}}
- * @constructor
- */
-let ViewManager$1 = class ViewManager {
-  constructor() {
-    let currentView = null;
-    /**
-     * represent a reference to the view selection html element
-     * @type {jQuery}
-     * @private
-     */
-    var _$selection = $("#ddmViewSelection");
-
-    /**
-     * html option element template
-     * @type {function}
-     */
-    var optionTpl = lodash.template(optionHtml);
-
-    return {
-      setCurrentView: function (viewId) {
-        currentView = viewId;
-      },
-
-      getCurrentView: function () {
-        return currentView;
-      },
-      /**
-       * initialize the viewpoint selection list of the generic editor instance
-       */
-      GetViewpointList: function () {
-        y = window.y;
-        const viewsMap = y.getMap("views");
-        _$selection.empty();
-        var viewpointList = viewsMap.keys();
-        for (var i = 0; i < viewpointList.length; i++) {
-          var viewpoint = viewsMap.get(viewpointList[i]);
-          if (viewpoint) {
-            _$selection.append(
-              $(
-                optionTpl({
-                  id: viewpointList[i],
-                })
-              )
-            );
-          } else viewsMap.delete(viewpointList[i]);
-        }
-      },
-      /**
-       * checks if a view exists
-       * @param viewId the viewId of the vie
-       * @returns {boolean} true if the view already exits false if not
-       */
-      existsView: function (viewId) {
-        const viewsMap = y.getMap("views");
-        return viewsMap.has(viewId);
-      },
-      /**
-       * returns the view identifier of  currently selected html selection element
-       * @returns {string} the identifier of the view
-       */
-      getViewIdOfSelected: function () {
-        return this.getSelected$node().attr("id");
-      },
-      /**
-       * returns the currently selected option node of the html selection element
-       * @returns {object} jquery object
-       */
-      getSelected$node: function () {
-        return _$selection.find("option:selected");
-      },
-      /**
-       * adds a view to the ViewManager
-       * @param {string} viewId the view identifier
-       */
-      addView: function (viewId) {
-        const viewsMap = y.getMap("views");
-        if (viewsMap.has(viewId)) {
-          viewsMap.set(viewId, {
-            viewId: viewId,
-            attributes: {},
-            nodes: {},
-            edges: {},
-          });
-          return true;
-        } else return false;
-      },
-      /**
-       * deletes a view from the view manager
-       * @param {string} viewId the identifier of the view
-       */
-      deleteView: function (viewId) {
-        const viewsMap = y.getMap("views");
-        viewsMap.delete(viewId);
-        _$selection.find("#" + viewId).remove();
-      },
-      /**
-       * Update a view representation in the ROLE Space
-       * @param {string} viewId The view identifier
-       * @param {string} viewId The Identifier of the view
-       * @param {object} resource openapp.oo.resource of the the view
-       * @returns {object} jquery promise
-       */
-      updateViewContent: function (viewId) {
-        const viewsMap = y.getMap("views");
-        var data = this.viewToJSON(viewId);
-        viewsMap.set(viewId, data);
-      },
-      /**
-       * generates the json representation of a view
-       * @param viewId the unique name of the view
-       * @returns {Object}
-       */
-      viewToJSON: function (viewId) {
-        var vls = EntityManagerInstance$1.graphToJSON();
-        vls["id"] = viewId;
-        return vls;
-      },
-    };
-  }
-};
-var ViewManager$2 = new ViewManager$1();
-
 /**
  * ViewObjectNodeTool
  * @class canvas_widget.ViewObjectNodeTool
@@ -58359,7 +58345,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
                 var _a;
                 switch (key) {
                     case UpdateViewListOperation.TYPE: {
-                        ViewManager$2.GetViewpointList();
+                        ViewManager$1.GetViewpointList();
                         break;
                     }
                     case "ReloadWidgetOperation": {
@@ -58430,7 +58416,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
                 }
             }
         }
-        ViewManager$2.GetViewpointList();
+        ViewManager$1.GetViewpointList();
         $("#btnCreateViewpoint").hide();
         $("#btnDelViewPoint").hide();
         var initTools = function (vvs) {
@@ -58454,7 +58440,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
             }
         };
         $("#btnShowView").click(function () {
-            var viewId = ViewManager$2.getViewIdOfSelected();
+            var viewId = ViewManager$1.getViewIdOfSelected();
             var $currentViewIdLabel = $("#lblCurrentViewId");
             if (viewId === $currentViewIdLabel.text())
                 return;
@@ -58534,7 +58520,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
             HideCreateMenu();
         });
         $("#btnShowView").click(function () {
-            var viewId = ViewManager$2.getViewIdOfSelected();
+            var viewId = ViewManager$1.getViewIdOfSelected();
             if (viewId === $("#lblCurrentViewId").text())
                 return;
             $("#loading").show();
@@ -58544,25 +58530,25 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
         });
         $("#btnDelViewPoint").click(function () {
             const viewsMap = y.getMap("views");
-            var viewId = ViewManager$2.getViewIdOfSelected();
+            var viewId = ViewManager$1.getViewIdOfSelected();
             if (viewId && viewId !== $("#lblCurrentViewId").text()) {
                 viewsMap.delete(viewId);
                 _iwcw.sendLocalNonOTOperation(CONFIG$1.WIDGET.NAME.ATTRIBUTE, new DeleteViewOperation(viewId).toNonOTOperation());
-                ViewManager$2.deleteView(viewId);
+                ViewManager$1.deleteView(viewId);
             }
             else {
                 viewsMap.set(viewId, null);
-                ViewManager$2.deleteView(viewId);
+                ViewManager$1.deleteView(viewId);
                 $("#viewsHide").click();
             }
         });
         $("#btnAddViewpoint").click(function () {
             var viewId = $("#txtNameViewpoint").val();
-            if (ViewManager$2.existsView(viewId)) {
+            if (ViewManager$1.existsView(viewId)) {
                 alert("View already exists");
                 return;
             }
-            ViewManager$2.addView(viewId);
+            ViewManager$1.addView(viewId);
             HideCreateMenu();
             const canvasMap = y.getMap("canvas");
             canvasMap.set(UpdateViewListOperation.TYPE, true);
@@ -58704,7 +58690,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
         $feedback.text("Saving...");
         var viewId = $("#lblCurrentViewId").text();
         if (viewId.length > 0 && !metamodel) {
-            ViewManager$2.updateViewContent(viewId);
+            ViewManager$1.updateViewContent(viewId);
             $feedback.text("Saved!");
             setTimeout(function () {
                 $feedback.text("");
@@ -58823,7 +58809,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
     const userId = _iwcw.getUser()[CONFIG$1.NS.PERSON.JABBERID];
     if (!joinMap.has(_iwcw.getUser()[CONFIG$1.NS.PERSON.JABBERID]))
         joinMap.set(userId.toString(), false);
-    ViewManager$2.GetViewpointList();
+    ViewManager$1.GetViewpointList();
     $spinner.hide();
 }
 
