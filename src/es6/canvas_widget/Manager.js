@@ -2,7 +2,7 @@ import { EVENT_DRAG_START, EVENT_DRAG_STOP } from "@jsplumb/browser-ui";
 import { AnchorLocations } from "@jsplumb/common";
 import { BezierConnector } from "@jsplumb/connector-bezier";
 import { FlowchartConnector } from "@jsplumb/connector-flowchart";
-import { StraightConnector } from "@jsplumb/core";
+import { StraightConnector, isCustomOverlay } from "@jsplumb/core";
 import "https://cdnjs.cloudflare.com/ajax/libs/graphlib/2.1.8/graphlib.min.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.9.2/jquery.contextMenu.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
@@ -1218,14 +1218,15 @@ export class AbstractEdge extends AbstractEntity {
           angle += Math.PI;
         }
         overlays = _jsPlumbConnection.getOverlays();
-        for (i = 0, numOfOverlays = overlays.length; i < numOfOverlays; i++) {
-          if (overlays[i] instanceof jsPlumb.Overlays.Custom) {
-            $(overlays[i].getElement())
+
+        for (const overlay of Object.values(overlays)) {
+          if (isCustomOverlay(overlay)) {
+            $(overlay.canvas)
               .find(".fixed")
               .not(".segmented")
               .each(makeRotateOverlayCallback(angle));
             //Always flip type overlay
-            $(overlays[i].getElement())
+            $(overlay.canvas)
               .find(".fixed.type")
               .not(".segmented")
               .each(
@@ -1312,9 +1313,9 @@ export class AbstractEdge extends AbstractEntity {
       if (_jsPlumbConnection) {
         _jsPlumbConnection.setPaintStyle(this._selectedPaintStyle);
         overlays = _jsPlumbConnection.getOverlays();
-        for (i = 0, numOfOverlays = overlays.length; i < numOfOverlays; i++) {
-          if (overlays[i] instanceof jsPlumb.Overlays.Custom) {
-            $(overlays[i].getElement()).find(".fixed").each(makeBold);
+        for (const overlay of Object.values(overlays)) {
+          if (isCustomOverlay(overlay)) {
+            $(overlay.canvas).find(".fixed").each(makeBold);
           }
         }
       } else throw new Error("jsPlumbConnection is null");
@@ -1335,9 +1336,9 @@ export class AbstractEdge extends AbstractEntity {
       if (_jsPlumbConnection) {
         _jsPlumbConnection.setPaintStyle(_defaultPaintStyle);
         overlays = _jsPlumbConnection.getOverlays();
-        for (i = 0, numOfOverlays = overlays.length; i < numOfOverlays; i++) {
-          if (overlays[i] instanceof jsPlumb.Overlays.Custom) {
-            $(overlays[i].getElement()).find(".fixed").each(unmakeBold);
+        for (const overlay of Object.values(overlays)) {
+          if (isCustomOverlay(overlay)) {
+            $(overlay.canvas).find(".fixed").each(unmakeBold);
           }
         }
       }
