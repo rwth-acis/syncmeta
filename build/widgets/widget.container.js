@@ -42021,6 +42021,9 @@ var relations = {};
  * @param {boolean} [overlayRotate] Flag if edge overlay should be flipped automatically to avoid being upside down
  */
 let AbstractEdge$1 = class AbstractEdge extends AbstractEntity$1 {
+  _selectedPaintStyle = { strokeWidth: 6, stroke: "black" };
+  _hoverPaintStyle = { strokeWidth: 6, stroke: "black" };
+
   constructor(id, type, source, target, overlayRotate, y) {
     super(id);
     y = y || window.y;
@@ -42419,6 +42422,7 @@ let AbstractEdge$1 = class AbstractEdge extends AbstractEntity$1 {
     this.setJsPlumbConnection = function (jsPlumbConnection) {
       _jsPlumbConnection = jsPlumbConnection;
       _defaultPaintStyle = jsPlumbConnection.getPaintStyle();
+      jsPlumbConnection.setHoverPaintStyle(this._hoverPaintStyle);
     };
 
     //noinspection JSUnusedGlobalSymbols
@@ -42505,7 +42509,7 @@ let AbstractEdge$1 = class AbstractEdge extends AbstractEntity$1 {
       _jsPlumbConnection = window.jsPlumbInstance.connect({
         source: _appearance.source.get$node().get(0),
         target: _appearance.target.get$node().get(0),
-        paintStyle: { stroke: "black", outlineWidth: 4 },
+        paintStyle: { stroke: "#7c7c7d", outlineWidth: 4 },
         endpoint: "Dot",
         connector: { type: FlowchartConnector.type },
         anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
@@ -42546,9 +42550,9 @@ let AbstractEdge$1 = class AbstractEdge extends AbstractEntity$1 {
     /**
      * Select the edge
      */
-    this.select = function () {
-      var paintStyle = lodash.clone(_defaultPaintStyle),
-        overlays,
+    this.select = ()=> {
+      lodash.clone(_defaultPaintStyle);
+        var overlays,
         i,
         numOfOverlays;
 
@@ -42557,9 +42561,7 @@ let AbstractEdge$1 = class AbstractEdge extends AbstractEntity$1 {
       }
 
       if (_jsPlumbConnection) {
-        paintStyle.lineWidth = 8;
-        paintStyle.stroke = "#52eb69";
-        _jsPlumbConnection.setPaintStyle(paintStyle);
+        _jsPlumbConnection.setPaintStyle(this._selectedPaintStyle);
         overlays = _jsPlumbConnection.getOverlays();
         for (i = 0, numOfOverlays = overlays.length; i < numOfOverlays; i++) {
           if (overlays[i] instanceof jsPlumb.Overlays.Custom) {
@@ -43876,7 +43878,7 @@ let AbstractNode$1 = class AbstractNode extends AbstractEntity$1 {
      * Unselect the node
      */
     this.unselect = function () {
-      this.highlight(_highlightColor, _highlightUsername);
+      // this.highlight(_highlightColor, _highlightUsername);
       this._$node.removeClass("selected");
       //trigger save when unselecting an entity
       Util.delay(100).then(function () {

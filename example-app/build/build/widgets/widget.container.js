@@ -26575,6 +26575,8 @@ var relations = {};
 let AbstractEdge$1 = class AbstractEdge extends AbstractEntity$1 {
     constructor(id, type, source, target, overlayRotate, y) {
         super(id);
+        this._selectedPaintStyle = { strokeWidth: 6, stroke: "black" };
+        this._hoverPaintStyle = { strokeWidth: 6, stroke: "black" };
         y = y || window.y;
         var that = this;
         var _iwcw = IWCW.getInstance(CONFIG$1.WIDGET.NAME.MAIN, y);
@@ -26742,6 +26744,7 @@ let AbstractEdge$1 = class AbstractEdge extends AbstractEntity$1 {
         this.setJsPlumbConnection = function (jsPlumbConnection) {
             _jsPlumbConnection = jsPlumbConnection;
             _defaultPaintStyle = jsPlumbConnection.getPaintStyle();
+            jsPlumbConnection.setHoverPaintStyle(this._hoverPaintStyle);
         };
         this.getJsPlumbConnection = function () {
             return _jsPlumbConnection;
@@ -26798,7 +26801,7 @@ let AbstractEdge$1 = class AbstractEdge extends AbstractEntity$1 {
             _jsPlumbConnection = window.jsPlumbInstance.connect({
                 source: _appearance.source.get$node().get(0),
                 target: _appearance.target.get$node().get(0),
-                paintStyle: { stroke: "black", outlineWidth: 4 },
+                paintStyle: { stroke: "#7c7c7d", outlineWidth: 4 },
                 endpoint: "Dot",
                 connector: { type: FlowchartConnector.type },
                 anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
@@ -26827,15 +26830,14 @@ let AbstractEdge$1 = class AbstractEdge extends AbstractEntity$1 {
         this.unlowlight = function () {
             $("." + id).removeClass("lowlighted");
         };
-        this.select = function () {
-            var paintStyle = lodash.clone(_defaultPaintStyle), overlays, i, numOfOverlays;
+        this.select = () => {
+            lodash.clone(_defaultPaintStyle);
+            var overlays, i, numOfOverlays;
             function makeBold() {
                 $(this).css("fontWeight", "bold");
             }
             if (_jsPlumbConnection) {
-                paintStyle.lineWidth = 8;
-                paintStyle.stroke = "#52eb69";
-                _jsPlumbConnection.setPaintStyle(paintStyle);
+                _jsPlumbConnection.setPaintStyle(this._selectedPaintStyle);
                 overlays = _jsPlumbConnection.getOverlays();
                 for (i = 0, numOfOverlays = overlays.length; i < numOfOverlays; i++) {
                     if (overlays[i] instanceof jsPlumb.Overlays.Custom) {
@@ -27542,7 +27544,6 @@ let AbstractNode$1 = class AbstractNode extends AbstractEntity$1 {
             });
         };
         this.unselect = function () {
-            this.highlight(_highlightColor, _highlightUsername);
             this._$node.removeClass("selected");
             Util.delay(100).then(function () {
                 lodash.each(EntityManagerInstance$1.getEdges(), function (e) {
