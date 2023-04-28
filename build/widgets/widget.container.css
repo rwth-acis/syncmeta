@@ -709,7 +709,6 @@ button:disabled {
 }
 
 .edge_label {
-    width: 200px;
     cursor: pointer;
 }
 
@@ -731,6 +730,8 @@ button:disabled {
     outline: none;
     margin: 2px auto;
     display: block;
+    display: flex;
+        justify-content: center;
 }
 
 .edge_label .single_value_attribute .value div.val {

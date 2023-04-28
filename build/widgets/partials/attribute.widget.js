@@ -36722,6 +36722,10 @@ class Value extends AbstractValue {
     };
 
     this.registerYType = function (ytext) {
+      if (_ytext) {
+        console.log("ytext already registered");
+        return;
+      }
       _ytext = ytext;
 
       if (!_ytext) {
@@ -40442,7 +40446,11 @@ class MultiValue extends AbstractValue {
     if (json === null || json === undefined) {
       return;
     }
-    this.setValue(json?.value);
+    let value = json.value;
+    if (typeof json.value === "string") {
+      value = JSON.parse(json.value);
+    }
+    this.setValue(value);
   }
 
   registerYType(ymap) {
@@ -44879,7 +44887,6 @@ let AttributeWidget = class AttributeWidget extends SyncMetaWidget(LitElement, g
 
         .single_value_attribute div {
           float: left;
-          margin-right: 10px;
         }
 
         .single_quiz_attribute div {
