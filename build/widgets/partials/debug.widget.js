@@ -41095,13 +41095,13 @@ ViewTypesUtil.createReferenceToOrigin = function (viewtype) {
 /**
  * Value
  * @class attribute_widget.Value
- * @extends attribute_widget.AbstractValue
- * @memberof attribute_widget
+ * @extends canvas_widget.AbstractValue
+ * @memberof canvas_widget
  * @constructor
  * @param {string} id Entity identifier
  * @param {string} name Name of attribute
- * @param {attribute_widget.AbstractEntity} subjectEntity Entity the attribute is assigned to
- * @param {attribute_widget.AbstractNode|attribute_widget.AbstractEdge} rootSubjectEntity Topmost entity in the chain of entity the attribute is assigned to
+ * @param {canvas_widget.AbstractEntity} subjectEntity Entity the attribute is assigned to
+ * @param {canvas_widget.AbstractNode|canvas_widget.AbstractEdge} rootSubjectEntity Topmost entity in the chain of entity the attribute is assigned to
  */
 class MultiValue extends AbstractValue {
   /**
@@ -41190,7 +41190,11 @@ class MultiValue extends AbstractValue {
     if (json === null || json === undefined) {
       return;
     }
-    this.setValue(json?.value);
+    let value = json.value;
+    if (typeof json.value === "string") {
+      value = JSON.parse(json.value);
+    }
+    this.setValue(value);
   }
 
   registerYType() {
@@ -41241,6 +41245,7 @@ class MultiValue extends AbstractValue {
           }
         );
       }
+      EntityManagerInstance.storeDataYjs();
     });
   }
 
@@ -41250,9 +41255,137 @@ class MultiValue extends AbstractValue {
     for (const [key, ytext] of this._ymap) {
       json.value[key] = ytext.toString().trim();
     }
+    json.value = JSON.stringify(json.value);
     return json;
   }
 }
+
+const optionHtml = "<option id=\"<%= id %>\"><%= id %></option>"; // replaced by importmap.plugin.js
+
+/**
+ * the view manager manges a arbitrary number of views
+ * @returns {{GetViewpointList: Function, existsView: Function, getViewIdOfSelected: Function, getViewUri: Function, getViewpointUri: Function, getSelected$node: Function, getResource: Function, addView: Function, deleteView: Function, initViewList: Function}}
+ * @constructor
+ */
+class ViewManager {
+  constructor() {
+    let currentView = null;
+    /**
+     * represent a reference to the view selection html element
+     * @type {jQuery}
+     * @private
+     */
+    var _$selection = $("#ddmViewSelection");
+
+    /**
+     * html option element template
+     * @type {function}
+     */
+    var optionTpl = lodash.template(optionHtml);
+
+    return {
+      setCurrentView: function (viewId) {
+        currentView = viewId;
+      },
+
+      getCurrentView: function () {
+        return currentView;
+      },
+      /**
+       * initialize the viewpoint selection list of the generic editor instance
+       */
+      GetViewpointList: function () {
+        y = window.y;
+        const viewsMap = y.getMap("views");
+        _$selection.empty();
+        var viewpointList = viewsMap.keys();
+        for (var i = 0; i < viewpointList.length; i++) {
+          var viewpoint = viewsMap.get(viewpointList[i]);
+          if (viewpoint) {
+            _$selection.append(
+              $(
+                optionTpl({
+                  id: viewpointList[i],
+                })
+              )
+            );
+          } else viewsMap.delete(viewpointList[i]);
+        }
+      },
+      /**
+       * checks if a view exists
+       * @param viewId the viewId of the vie
+       * @returns {boolean} true if the view already exits false if not
+       */
+      existsView: function (viewId) {
+        const viewsMap = y.getMap("views");
+        return viewsMap.has(viewId);
+      },
+      /**
+       * returns the view identifier of  currently selected html selection element
+       * @returns {string} the identifier of the view
+       */
+      getViewIdOfSelected: function () {
+        return this.getSelected$node().attr("id");
+      },
+      /**
+       * returns the currently selected option node of the html selection element
+       * @returns {object} jquery object
+       */
+      getSelected$node: function () {
+        return _$selection.find("option:selected");
+      },
+      /**
+       * adds a view to the ViewManager
+       * @param {string} viewId the view identifier
+       */
+      addView: function (viewId) {
+        const viewsMap = y.getMap("views");
+        if (viewsMap.has(viewId)) {
+          viewsMap.set(viewId, {
+            viewId: viewId,
+            attributes: {},
+            nodes: {},
+            edges: {},
+          });
+          return true;
+        } else return false;
+      },
+      /**
+       * deletes a view from the view manager
+       * @param {string} viewId the identifier of the view
+       */
+      deleteView: function (viewId) {
+        const viewsMap = y.getMap("views");
+        viewsMap.delete(viewId);
+        _$selection.find("#" + viewId).remove();
+      },
+      /**
+       * Update a view representation in the ROLE Space
+       * @param {string} viewId The view identifier
+       * @param {string} viewId The Identifier of the view
+       * @param {object} resource openapp.oo.resource of the the view
+       * @returns {object} jquery promise
+       */
+      updateViewContent: function (viewId) {
+        const viewsMap = y.getMap("views");
+        var data = this.viewToJSON(viewId);
+        viewsMap.set(viewId, data);
+      },
+      /**
+       * generates the json representation of a view
+       * @param viewId the unique name of the view
+       * @returns {Object}
+       */
+      viewToJSON: function (viewId) {
+        var vls = EntityManagerInstance.graphToJSON();
+        vls["id"] = viewId;
+        return vls;
+      },
+    };
+  }
+}
+var ViewManager$1 = new ViewManager();
 
 const keySelectionValueSelectionValueListAttributeHtml = "<div class=\"list_attribute\">\n    <div class=\"name\"></div>\n    <ul class=\"list\"></ul>\n</div>"; // replaced by importmap.plugin.js
 
@@ -41260,7 +41393,7 @@ const singleQuizAttributeHtml = "<div class=\"single_quiz_attribute\">\n  <div c
 
 const singleValueListAttributeHtml = "<div class=\"list_attribute\">\n    <div class=\"name\"></div>\n    <ul class=\"list\"></ul>\n</div>"; // replaced by importmap.plugin.js
 
-const canvasSingleValueAttributeHtml = "<div class=\"single_value_attribute\">\n    <div class=\"name\"></div>\n    <div class=\"value\"></div>\n</div>"; // replaced by importmap.plugin.js
+const canvasSingleValueAttributeHtml = "<div class=\"single_value_attribute d-flex justify-content-center\">\n  <div class=\"name\"></div>\n  <div class=\"value overflow-hidden\"></div>\n</div>\n"; // replaced by importmap.plugin.js
 
 const listHtml = "<div class=\"list_attribute\">\n    <div class=\"name\"></div>\n    <ul class=\"list\"></ul>\n</div>"; // replaced by importmap.plugin.js
 
@@ -41268,7 +41401,7 @@ const renamingAttrHTML = "<li class=\"renaming_attr\">\n    <div class=\"val\"><
 
 const singleSelectionAttributeHtml = "<div class=\"single_value_attribute\">\n    <div class=\"name\"></div>\n    <div class=\"value\"></div>\n</div>"; // replaced by importmap.plugin.js
 
-const singleColorValueAttributeHtml = "<div class=\"single_value_attribute\">\n    <div class=\"name\"></div>\n    <div class=\"value\"></div>\n</div>"; // replaced by importmap.plugin.js
+const singleColorValueAttributeHtml = "<div class=\"single_value_attribute d-flex justify-content-center\">\n  <div class=\"name\"></div>\n  <div class=\"value overflow-hidden\"></div>\n</div>\n"; // replaced by importmap.plugin.js
 
 const keySelectionValueSelectionValueAttributeHtml = "<li class=\"key_value_attribute\" id=\"<%= id %>\">\n    <div class=\"key\"></div>\n    <div class=\"value\"></div>\n</li>"; // replaced by importmap.plugin.js
 
@@ -41280,7 +41413,7 @@ const integerAttributeHtml = "<div class=\"integer_attribute\">\n    <div class=
 let integerValueHtml = "<div class=\"val\"><%= value %></div>"; // replaced by importmap.plugin.js
 const attributeIntegerValueHtml = "<input\n  class=\"form-control h-100 val\"\n  type=\"number\"\n  name=\"<%= name %>\"\n  value=\"0\"\n/>\n"; // replaced by importmap.plugin.js
 
-const valueHtml = "<span name=\"<%= name %>\" class=\"fw-bold\"> </span>\n"; // replaced by importmap.plugin.js
+const valueHtml = "<span name=\"<%= name %>\" class=\"fw-bold bg-white p-1\"> </span>\n"; // replaced by importmap.plugin.js
 
 let selectionValueHtml = "<div class=\"val\"><%= options[_.keys(options)[0]] %></div>"; // replaced by importmap.plugin.js
 const attributeSelectionValueHtml = "<select class=\"val form-select mb-3 h-100\">\n  <% _.each(options,function(option,key){ %>\n  <option value=\"<%= key %>\"><%= option %></option>\n  <% }); %>\n</select>\n"; // replaced by importmap.plugin.js
@@ -41839,6 +41972,9 @@ var relations = {};
  * @param {boolean} [overlayRotate] Flag if edge overlay should be flipped automatically to avoid being upside down
  */
 class AbstractEdge extends AbstractEntity {
+  _selectedPaintStyle = { strokeWidth: 6, stroke: "black" };
+  _hoverPaintStyle = { strokeWidth: 6, stroke: "black" };
+
   constructor(id, type, source, target, overlayRotate, y) {
     super(id);
     y = y || window.y;
@@ -41935,13 +42071,6 @@ class AbstractEdge extends AbstractEntity {
      * @private
      */
     var _attributes = {};
-
-    /**
-     * Stores current highlighting color
-     * @type {string}
-     * @private
-     */
-    var _highlightColor = null;
 
     /**
      * Callback to generate list of context menu items
@@ -42244,6 +42373,7 @@ class AbstractEdge extends AbstractEntity {
     this.setJsPlumbConnection = function (jsPlumbConnection) {
       _jsPlumbConnection = jsPlumbConnection;
       _defaultPaintStyle = jsPlumbConnection.getPaintStyle();
+      jsPlumbConnection.setHoverPaintStyle(this._hoverPaintStyle);
     };
 
     //noinspection JSUnusedGlobalSymbols
@@ -42276,7 +42406,7 @@ class AbstractEdge extends AbstractEntity {
         };
       }
 
-      var i, numOfOverlays, overlays, sourceEndpoint, targetEndpoint, angle;
+      var overlays, sourceEndpoint, targetEndpoint, angle;
 
       if (_jsPlumbConnection) {
         sourceEndpoint = _jsPlumbConnection.endpoints[0].endpoint;
@@ -42289,14 +42419,15 @@ class AbstractEdge extends AbstractEntity {
           angle += Math.PI;
         }
         overlays = _jsPlumbConnection.getOverlays();
-        for (i = 0, numOfOverlays = overlays.length; i < numOfOverlays; i++) {
-          if (overlays[i] instanceof jsPlumb.Overlays.Custom) {
-            $(overlays[i].getElement())
+
+        for (const overlay of Object.values(overlays)) {
+          if (isCustomOverlay(overlay)) {
+            $(overlay.canvas)
               .find(".fixed")
               .not(".segmented")
               .each(makeRotateOverlayCallback(angle));
             //Always flip type overlay
-            $(overlays[i].getElement())
+            $(overlay.canvas)
               .find(".fixed.type")
               .not(".segmented")
               .each(
@@ -42330,7 +42461,7 @@ class AbstractEdge extends AbstractEntity {
       _jsPlumbConnection = window.jsPlumbInstance.connect({
         source: _appearance.source.get$node().get(0),
         target: _appearance.target.get$node().get(0),
-        paintStyle: { stroke: "black", outlineWidth: 4 },
+        paintStyle: { stroke: "#7c7c7d", outlineWidth: 4 },
         endpoint: "Dot",
         connector: { type: FlowchartConnector.type },
         anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
@@ -42371,23 +42502,19 @@ class AbstractEdge extends AbstractEntity {
     /**
      * Select the edge
      */
-    this.select = function () {
-      var paintStyle = lodash.clone(_defaultPaintStyle),
-        overlays,
-        i,
-        numOfOverlays;
+    this.select = () => {
+      var overlays;
 
       function makeBold() {
         $(this).css("fontWeight", "bold");
       }
-      this.unhighlight();
+
       if (_jsPlumbConnection) {
-        paintStyle.lineWidth = 4;
-        _jsPlumbConnection.setPaintStyle(paintStyle);
+        _jsPlumbConnection.setPaintStyle(this._selectedPaintStyle);
         overlays = _jsPlumbConnection.getOverlays();
-        for (i = 0, numOfOverlays = overlays.length; i < numOfOverlays; i++) {
-          if (overlays[i] instanceof jsPlumb.Overlays.Custom) {
-            $(overlays[i].getElement()).find(".fixed").each(makeBold);
+        for (const overlay of Object.values(overlays)) {
+          if (isCustomOverlay(overlay)) {
+            $(overlay.canvas).find(".fixed").each(makeBold);
           }
         }
       } else throw new Error("jsPlumbConnection is null");
@@ -42397,18 +42524,18 @@ class AbstractEdge extends AbstractEntity {
      * Unselect the edge
      */
     this.unselect = function () {
-      var overlays, i, numOfOverlays;
+      var overlays;
 
       function unmakeBold() {
         $(this).css("fontWeight", "");
       }
-      this.highlight(_highlightColor);
+      this.unhighlight();
       if (_jsPlumbConnection) {
         _jsPlumbConnection.setPaintStyle(_defaultPaintStyle);
         overlays = _jsPlumbConnection.getOverlays();
-        for (i = 0, numOfOverlays = overlays.length; i < numOfOverlays; i++) {
-          if (overlays[i] instanceof jsPlumb.Overlays.Custom) {
-            $(overlays[i].getElement()).find(".fixed").each(unmakeBold);
+        for (const overlay of Object.values(overlays)) {
+          if (isCustomOverlay(overlay)) {
+            $(overlay.canvas).find(".fixed").each(unmakeBold);
           }
         }
       }
@@ -42418,12 +42545,12 @@ class AbstractEdge extends AbstractEntity {
      * Highlight the edge
      * @param {String} color
      */
-    this.highlight = function (color) {
+    this.highlight = function (color = "green") {
       var paintStyle = lodash.clone(_defaultPaintStyle);
 
       if (color) {
         paintStyle.strokeStyle = color;
-        paintStyle.lineWidth = 4;
+        paintStyle.lineWidth = 8;
         if (_jsPlumbConnection) _jsPlumbConnection.setPaintStyle(paintStyle);
         else throw new Error("jsPlumbConnection is null");
       }
@@ -42474,10 +42601,11 @@ class AbstractEdge extends AbstractEntity {
     /**
      * Bind events for move tool
      */
-    this.bindMoveToolEvents = function () {
+    this.bindMoveToolEvents = () => {
       if (_jsPlumbConnection) {
         //Enable Edge Select
-        $("." + id).on("click", function () {
+        $("." + id).on("click", function (e) {
+          e.stopPropagation();
           _canvas.select(that);
         });
 
@@ -42535,7 +42663,7 @@ class AbstractEdge extends AbstractEntity {
     this.unbindMoveToolEvents = function () {
       if (_jsPlumbConnection) {
         //Disable Edge Select
-        _jsPlumbConnection.unbind("click");
+        $("." + id).off("click");
 
         $(_jsPlumbConnection.getOverlay("label").canvas)
           .find("input")
@@ -43700,7 +43828,7 @@ class AbstractNode extends AbstractEntity {
      * Unselect the node
      */
     this.unselect = function () {
-      //this.highlight(_highlightColor,_highlightUsername);
+      // this.highlight(_highlightColor, _highlightUsername);
       this._$node.removeClass("selected");
       //trigger save when unselecting an entity
       Util.delay(100).then(function () {
@@ -44497,11 +44625,11 @@ let EntityManager$1 = class EntityManager {
       },
       saveState: function () {
         // if metamodel
-        const viewId = ViewManager.getCurrentView();
+        const viewId = ViewManager$1.getCurrentView();
         if (viewId && !metamodel) {
-          ViewManager.updateViewContent(viewId);
+          ViewManager$1.updateViewContent(viewId);
         } else {
-          EntityManager.storeDataYjs();
+          EntityManagerInstance.storeDataYjs();
         }
       },
       findObjectNodeByLabel(searchTerm) {
@@ -45315,8 +45443,6 @@ let EntityManager$1 = class EntityManager {
               },
             };
 
-            guidanceMetamodel.nodes[id];
-
             //Generate the 'entity node'
             var entityLabel = guidancemodel.getEntityNodeLabelForType(
               node.label
@@ -45370,8 +45496,6 @@ let EntityManager$1 = class EntityManager {
               value: "Value",
               options: options,
             };
-
-            guidanceMetamodel.nodes[id];
 
             //Define the 'create object node' to 'entity node' relation
             dataFlowEdgeRelations.push({
@@ -45439,8 +45563,6 @@ let EntityManager$1 = class EntityManager {
               },
             };
 
-            guidanceMetamodel.nodes[id];
-
             //Generate 'entity node'
             var entityLabel = guidancemodel.getEntityNodeLabelForType(
               edge.label
@@ -45463,8 +45585,6 @@ let EntityManager$1 = class EntityManager {
                 customAnchors: "",
               },
             };
-
-            guidanceMetamodel.nodes[id];
 
             //Generate the 'set property node'
             if (Object.keys(edge.attributes).length > 0) {
@@ -48253,7 +48373,7 @@ function makeEdge(
           type: "Custom",
           options: {
             create: function () {
-              that.get$overlay().hide().find(".type").addClass(shapeType);
+              that.get$overlay().find(".type").addClass(shapeType);
               return that.get$overlay().get(0);
             },
             location: 0.5,
@@ -48391,7 +48511,7 @@ function makeEdge(
           type: "Custom",
           options: {
             create: function () {
-              that.get$overlay().hide().find(".type").addClass(shapeType);
+              that.get$overlay().find(".type").addClass(shapeType);
               return that.get$overlay().get(0);
             },
             location: 0.5,
@@ -49579,9 +49699,6 @@ class SingleValueListAttribute extends AbstractAttribute {
           if (key.indexOf("[value]") != -1) {
             switch (change.action) {
               case "add": {
-                if (event.currentTarget.get("modifiedBy") === window.y.clientID)
-                  return;
-
                 operation = new AttributeAddOperation(
                   key.replace(/\[\w*\]/g, ""),
                   that.getEntityId(),
@@ -49713,34 +49830,30 @@ class Value extends AbstractValue {
         lodash.debounce(function (event) {
           _value = _ytext.toString().replace(/\n/g, "");
           that.setValue(_value);
-          if (event.currentTarget.get("modifiedBy") === window.y.clientID) {
-            EntityManagerInstance.storeDataYjs();
-            const userMap = y.getMap("users");
-            const jabberId = userMap.get(event.currentTarget.doc.clientID);
+          EntityManagerInstance.storeDataYjs();
+          const userMap = y.getMap("users");
+          const jabberId = userMap.get(event.currentTarget.doc.clientID);
 
-            const activityMap = y.getMap("activity");
-            activityMap.set(
-              ActivityOperation.TYPE,
-              new ActivityOperation(
-                "ValueChangeActivity",
-                that.getEntityId(),
-                jabberId,
-                ValueChangeOperation.getOperationDescription(
-                  that.getSubjectEntity().getName(),
-                  that.getRootSubjectEntity().getType(),
-                  that.getRootSubjectEntity().getLabel().getValue().getValue()
-                ),
-                {
-                  value: _value,
-                  subjectEntityName: that.getSubjectEntity().getName(),
-                  rootSubjectEntityType: that.getRootSubjectEntity().getType(),
-                  rootSubjectEntityId: that
-                    .getRootSubjectEntity()
-                    .getEntityId(),
-                }
-              ).toJSON()
-            );
-          }
+          const activityMap = y.getMap("activity");
+          activityMap.set(
+            ActivityOperation.TYPE,
+            new ActivityOperation(
+              "ValueChangeActivity",
+              that.getEntityId(),
+              jabberId,
+              ValueChangeOperation.getOperationDescription(
+                that.getSubjectEntity().getName(),
+                that.getRootSubjectEntity().getType(),
+                that.getRootSubjectEntity().getLabel().getValue().getValue()
+              ),
+              {
+                value: _value,
+                subjectEntityName: that.getSubjectEntity().getName(),
+                rootSubjectEntityType: that.getRootSubjectEntity().getType(),
+                rootSubjectEntityId: that.getRootSubjectEntity().getEntityId(),
+              }
+            ).toJSON()
+          );
         }, 500)
       );
     };
@@ -49849,7 +49962,6 @@ class MultiValueAttribute extends AbstractAttribute {
     _value.registerYType();
   }
 }
-
 
 /**
  * QuizAttribute
@@ -54233,28 +54345,6 @@ let DebugWidget = class DebugWidget extends SyncMetaWidget(LitElement, getWidget
                     location.reload();
                 }
             });
-            $exportModel.click(() => {
-                this.$spinner.show();
-                const dataMap = y.getMap("data");
-                var link = document.createElement("a");
-                link.download = "model.json";
-                link.href =
-                    "data:," +
-                        encodeURIComponent(JSON.stringify(dataMap.get("model"), null, 4));
-                link.click();
-                this.$spinner.hide();
-            });
-            $exportMetamodel.click(() => {
-                this.$spinner.show();
-                const dataMap = y.getMap("data");
-                var link = document.createElement("a");
-                link.download = "vls.json";
-                link.href =
-                    "data:," +
-                        encodeURIComponent(JSON.stringify(dataMap.get("metamodel"), null, 4));
-                link.click();
-                this.$spinner.hide();
-            });
             $exportGuidancemodel.click(() => {
                 this.$spinner.show();
                 const dataMap = y.getMap("data");
@@ -54436,6 +54526,7 @@ let DebugWidget = class DebugWidget extends SyncMetaWidget(LitElement, getWidget
                       id="export-model"
                       class="btn btn-secondary"
                       title="export the model as JSON"
+                      @click="${this.exportModel}"
                     >
                       Export
                     </button>
@@ -54462,6 +54553,7 @@ let DebugWidget = class DebugWidget extends SyncMetaWidget(LitElement, getWidget
                       id="export-meta-model"
                       title="Download the VLS as JSON"
                       class="btn btn-secondary"
+                      @click="${this.exportMetamodel}"
                     >
                       Export
                     </button>
@@ -54590,6 +54682,18 @@ let DebugWidget = class DebugWidget extends SyncMetaWidget(LitElement, getWidget
             this.$spinner.hide();
         });
     }
+    exportModel() {
+        this.$spinner.show();
+        const dataMap = window.y.getMap("data");
+        var link = document.createElement("a");
+        EntityManagerInstance.storeDataYjs();
+        link.download = "model.json";
+        link.href =
+            "data:," +
+                encodeURIComponent(JSON.stringify(dataMap.get("model"), null, 4));
+        link.click();
+        this.$spinner.hide();
+    }
     deleteModel() {
         if (!confirm("Are you sure you want to delete the model ?"))
             return;
@@ -54611,6 +54715,17 @@ let DebugWidget = class DebugWidget extends SyncMetaWidget(LitElement, getWidget
         canvasMap.set("ReloadWidgetOperation", "meta_delete");
         this.feedback("The meta model was deleted. The page will be reloaded.");
         location.reload();
+    }
+    exportMetamodel() {
+        this.$spinner.show();
+        const dataMap = window.y.getMap("data");
+        var link = document.createElement("a");
+        link.download = "vls.json";
+        link.href =
+            "data:," +
+                encodeURIComponent(JSON.stringify(dataMap.get("metamodel"), null, 4));
+        link.click();
+        this.$spinner.hide();
     }
     feedback(msg) {
         alert(msg);

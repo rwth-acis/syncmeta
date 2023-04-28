@@ -219,7 +219,6 @@ export class AttributeWidget extends SyncMetaWidget(
 
         .single_value_attribute div {
           float: left;
-          margin-right: 10px;
         }
 
         .single_quiz_attribute div {

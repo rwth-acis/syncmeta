@@ -2,7 +2,7 @@ import { EVENT_DRAG_START, EVENT_DRAG_STOP } from "@jsplumb/browser-ui";
 import { AnchorLocations } from "@jsplumb/common";
 import { BezierConnector } from "@jsplumb/connector-bezier";
 import { FlowchartConnector } from "@jsplumb/connector-flowchart";
-import { StraightConnector } from "@jsplumb/core";
+import { StraightConnector, isCustomOverlay } from "@jsplumb/core";
 import "https://cdnjs.cloudflare.com/ajax/libs/graphlib/2.1.8/graphlib.min.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.9.2/jquery.contextMenu.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
@@ -44,6 +44,7 @@ import LogicalConjunctions from "./viewpoint/LogicalConjunctions";
 import LogicalOperator from "./viewpoint/LogicalOperator";
 import ViewTypesUtil from "./viewpoint/ViewTypesUtil";
 import { MultiValue } from "./MultiValue";
+import ViewManager from "./viewpoint/ViewManager";
 
 const keySelectionValueSelectionValueListAttributeHtml = await loadHTML(
   "../../templates/canvas_widget/list_attribute.html",
@@ -756,6 +757,9 @@ var relations = {};
  * @param {boolean} [overlayRotate] Flag if edge overlay should be flipped automatically to avoid being upside down
  */
 export class AbstractEdge extends AbstractEntity {
+  _selectedPaintStyle = { strokeWidth: 6, stroke: "black" };
+  _hoverPaintStyle = { strokeWidth: 6, stroke: "black" };
+
   constructor(id, type, source, target, overlayRotate, y) {
     super(id);
     y = y || window.y;
@@ -1168,6 +1172,7 @@ export class AbstractEdge extends AbstractEntity {
     this.setJsPlumbConnection = function (jsPlumbConnection) {
       _jsPlumbConnection = jsPlumbConnection;
       _defaultPaintStyle = jsPlumbConnection.getPaintStyle();
+      jsPlumbConnection.setHoverPaintStyle(this._hoverPaintStyle);
     };
 
     //noinspection JSUnusedGlobalSymbols
@@ -1213,14 +1218,15 @@ export class AbstractEdge extends AbstractEntity {
           angle += Math.PI;
         }
         overlays = _jsPlumbConnection.getOverlays();
-        for (i = 0, numOfOverlays = overlays.length; i < numOfOverlays; i++) {
-          if (overlays[i] instanceof jsPlumb.Overlays.Custom) {
-            $(overlays[i].getElement())
+
+        for (const overlay of Object.values(overlays)) {
+          if (isCustomOverlay(overlay)) {
+            $(overlay.canvas)
               .find(".fixed")
               .not(".segmented")
               .each(makeRotateOverlayCallback(angle));
             //Always flip type overlay
-            $(overlays[i].getElement())
+            $(overlay.canvas)
               .find(".fixed.type")
               .not(".segmented")
               .each(
@@ -1254,7 +1260,7 @@ export class AbstractEdge extends AbstractEntity {
       _jsPlumbConnection = window.jsPlumbInstance.connect({
         source: _appearance.source.get$node().get(0),
         target: _appearance.target.get$node().get(0),
-        paintStyle: { stroke: "black", outlineWidth: 4 },
+        paintStyle: { stroke: "#7c7c7d", outlineWidth: 4 },
         endpoint: "Dot",
         connector: { type: FlowchartConnector.type },
         anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
@@ -1295,25 +1301,21 @@ export class AbstractEdge extends AbstractEntity {
     /**
      * Select the edge
      */
-    this.select = function () {
-      var paintStyle = _.clone(_defaultPaintStyle),
-        overlays,
-        i,
-        numOfOverlays;
+    this.select = () => {
+      var overlays, i, numOfOverlays;
 
       function makeBold() {
         $(this).css("fontWeight", "bold");
       }
 
       _isSelected = true;
-      this.unhighlight();
+
       if (_jsPlumbConnection) {
-        paintStyle.lineWidth = 4;
-        _jsPlumbConnection.setPaintStyle(paintStyle);
+        _jsPlumbConnection.setPaintStyle(this._selectedPaintStyle);
         overlays = _jsPlumbConnection.getOverlays();
-        for (i = 0, numOfOverlays = overlays.length; i < numOfOverlays; i++) {
-          if (overlays[i] instanceof jsPlumb.Overlays.Custom) {
-            $(overlays[i].getElement()).find(".fixed").each(makeBold);
+        for (const overlay of Object.values(overlays)) {
+          if (isCustomOverlay(overlay)) {
+            $(overlay.canvas).find(".fixed").each(makeBold);
           }
         }
       } else throw new Error("jsPlumbConnection is null");
@@ -1330,13 +1332,13 @@ export class AbstractEdge extends AbstractEntity {
       }
 
       _isSelected = false;
-      this.highlight(_highlightColor);
+      this.unhighlight();
       if (_jsPlumbConnection) {
         _jsPlumbConnection.setPaintStyle(_defaultPaintStyle);
         overlays = _jsPlumbConnection.getOverlays();
-        for (i = 0, numOfOverlays = overlays.length; i < numOfOverlays; i++) {
-          if (overlays[i] instanceof jsPlumb.Overlays.Custom) {
-            $(overlays[i].getElement()).find(".fixed").each(unmakeBold);
+        for (const overlay of Object.values(overlays)) {
+          if (isCustomOverlay(overlay)) {
+            $(overlay.canvas).find(".fixed").each(unmakeBold);
           }
         }
       }
@@ -1346,12 +1348,12 @@ export class AbstractEdge extends AbstractEntity {
      * Highlight the edge
      * @param {String} color
      */
-    this.highlight = function (color) {
+    this.highlight = function (color = "green") {
       var paintStyle = _.clone(_defaultPaintStyle);
 
       if (color) {
         paintStyle.strokeStyle = color;
-        paintStyle.lineWidth = 4;
+        paintStyle.lineWidth = 8;
         if (_jsPlumbConnection) _jsPlumbConnection.setPaintStyle(paintStyle);
         else throw new Error("jsPlumbConnection is null");
       }
@@ -1402,10 +1404,11 @@ export class AbstractEdge extends AbstractEntity {
     /**
      * Bind events for move tool
      */
-    this.bindMoveToolEvents = function () {
+    this.bindMoveToolEvents = () => {
       if (_jsPlumbConnection) {
         //Enable Edge Select
-        $("." + id).on("click", function () {
+        $("." + id).on("click", function (e) {
+          e.stopPropagation();
           _canvas.select(that);
         });
 
@@ -1463,7 +1466,7 @@ export class AbstractEdge extends AbstractEntity {
     this.unbindMoveToolEvents = function () {
       if (_jsPlumbConnection) {
         //Disable Edge Select
-        _jsPlumbConnection.unbind("click");
+        $("." + id).off("click");
 
         $(_jsPlumbConnection.getOverlay("label").canvas)
           .find("input")
@@ -2637,7 +2640,7 @@ export class AbstractNode extends AbstractEntity {
      */
     this.unselect = function () {
       _isSelected = false;
-      //this.highlight(_highlightColor,_highlightUsername);
+      // this.highlight(_highlightColor, _highlightUsername);
       this._$node.removeClass("selected");
       //trigger save when unselecting an entity
       Util.delay(100).then(function () {
@@ -3438,7 +3441,7 @@ class EntityManager {
         if (viewId && !metamodel) {
           ViewManager.updateViewContent(viewId);
         } else {
-          EntityManager.storeDataYjs();
+          EntityManagerInstance.storeDataYjs();
         }
       },
       findObjectNodeByLabel(searchTerm) {
@@ -7203,7 +7206,7 @@ export function makeEdge(
           type: "Custom",
           options: {
             create: function () {
-              that.get$overlay().hide().find(".type").addClass(shapeType);
+              that.get$overlay().find(".type").addClass(shapeType);
               return that.get$overlay().get(0);
             },
             location: 0.5,
@@ -7341,7 +7344,7 @@ export function makeEdge(
           type: "Custom",
           options: {
             create: function () {
-              that.get$overlay().hide().find(".type").addClass(shapeType);
+              that.get$overlay().find(".type").addClass(shapeType);
               return that.get$overlay().get(0);
             },
             location: 0.5,
@@ -8529,9 +8532,6 @@ export class SingleValueListAttribute extends AbstractAttribute {
           if (key.indexOf("[value]") != -1) {
             switch (change.action) {
               case "add": {
-                if (event.currentTarget.get("modifiedBy") === window.y.clientID)
-                  return;
-
                 operation = new AttributeAddOperation(
                   key.replace(/\[\w*\]/g, ""),
                   that.getEntityId(),
@@ -8663,34 +8663,30 @@ export class Value extends AbstractValue {
         _.debounce(function (event) {
           _value = _ytext.toString().replace(/\n/g, "");
           that.setValue(_value);
-          if (event.currentTarget.get("modifiedBy") === window.y.clientID) {
-            EntityManagerInstance.storeDataYjs();
-            const userMap = y.getMap("users");
-            const jabberId = userMap.get(event.currentTarget.doc.clientID);
+          EntityManagerInstance.storeDataYjs();
+          const userMap = y.getMap("users");
+          const jabberId = userMap.get(event.currentTarget.doc.clientID);
 
-            const activityMap = y.getMap("activity");
-            activityMap.set(
-              ActivityOperation.TYPE,
-              new ActivityOperation(
-                "ValueChangeActivity",
-                that.getEntityId(),
-                jabberId,
-                ValueChangeOperation.getOperationDescription(
-                  that.getSubjectEntity().getName(),
-                  that.getRootSubjectEntity().getType(),
-                  that.getRootSubjectEntity().getLabel().getValue().getValue()
-                ),
-                {
-                  value: _value,
-                  subjectEntityName: that.getSubjectEntity().getName(),
-                  rootSubjectEntityType: that.getRootSubjectEntity().getType(),
-                  rootSubjectEntityId: that
-                    .getRootSubjectEntity()
-                    .getEntityId(),
-                }
-              ).toJSON()
-            );
-          }
+          const activityMap = y.getMap("activity");
+          activityMap.set(
+            ActivityOperation.TYPE,
+            new ActivityOperation(
+              "ValueChangeActivity",
+              that.getEntityId(),
+              jabberId,
+              ValueChangeOperation.getOperationDescription(
+                that.getSubjectEntity().getName(),
+                that.getRootSubjectEntity().getType(),
+                that.getRootSubjectEntity().getLabel().getValue().getValue()
+              ),
+              {
+                value: _value,
+                subjectEntityName: that.getSubjectEntity().getName(),
+                rootSubjectEntityType: that.getRootSubjectEntity().getType(),
+                rootSubjectEntityId: that.getRootSubjectEntity().getEntityId(),
+              }
+            ).toJSON()
+          );
         }, 500)
       );
     };
@@ -8799,7 +8795,6 @@ export class MultiValueAttribute extends AbstractAttribute {
     _value.registerYType();
   }
 }
-
 
 /**
  * QuizAttribute
