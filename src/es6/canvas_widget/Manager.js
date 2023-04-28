@@ -8531,9 +8531,6 @@ export class SingleValueListAttribute extends AbstractAttribute {
           if (key.indexOf("[value]") != -1) {
             switch (change.action) {
               case "add": {
-                if (event.currentTarget.get("modifiedBy") === window.y.clientID)
-                  return;
-
                 operation = new AttributeAddOperation(
                   key.replace(/\[\w*\]/g, ""),
                   that.getEntityId(),
@@ -8665,34 +8662,30 @@ export class Value extends AbstractValue {
         _.debounce(function (event) {
           _value = _ytext.toString().replace(/\n/g, "");
           that.setValue(_value);
-          if (event.currentTarget.get("modifiedBy") === window.y.clientID) {
-            EntityManagerInstance.storeDataYjs();
-            const userMap = y.getMap("users");
-            const jabberId = userMap.get(event.currentTarget.doc.clientID);
+          EntityManagerInstance.storeDataYjs();
+          const userMap = y.getMap("users");
+          const jabberId = userMap.get(event.currentTarget.doc.clientID);
 
-            const activityMap = y.getMap("activity");
-            activityMap.set(
-              ActivityOperation.TYPE,
-              new ActivityOperation(
-                "ValueChangeActivity",
-                that.getEntityId(),
-                jabberId,
-                ValueChangeOperation.getOperationDescription(
-                  that.getSubjectEntity().getName(),
-                  that.getRootSubjectEntity().getType(),
-                  that.getRootSubjectEntity().getLabel().getValue().getValue()
-                ),
-                {
-                  value: _value,
-                  subjectEntityName: that.getSubjectEntity().getName(),
-                  rootSubjectEntityType: that.getRootSubjectEntity().getType(),
-                  rootSubjectEntityId: that
-                    .getRootSubjectEntity()
-                    .getEntityId(),
-                }
-              ).toJSON()
-            );
-          }
+          const activityMap = y.getMap("activity");
+          activityMap.set(
+            ActivityOperation.TYPE,
+            new ActivityOperation(
+              "ValueChangeActivity",
+              that.getEntityId(),
+              jabberId,
+              ValueChangeOperation.getOperationDescription(
+                that.getSubjectEntity().getName(),
+                that.getRootSubjectEntity().getType(),
+                that.getRootSubjectEntity().getLabel().getValue().getValue()
+              ),
+              {
+                value: _value,
+                subjectEntityName: that.getSubjectEntity().getName(),
+                rootSubjectEntityType: that.getRootSubjectEntity().getType(),
+                rootSubjectEntityId: that.getRootSubjectEntity().getEntityId(),
+              }
+            ).toJSON()
+          );
         }, 500)
       );
     };
@@ -8801,7 +8794,6 @@ export class MultiValueAttribute extends AbstractAttribute {
     _value.registerYType();
   }
 }
-
 
 /**
  * QuizAttribute
