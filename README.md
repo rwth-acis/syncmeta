@@ -18,11 +18,6 @@ After container started to run, application will be accessible via <http://127.0
 
 There is also the possibility to launch a local dev server.
 On first usage, you need to install the dependencies for the `app` and the `widgets`. Navigate to the respective folders and run `npm i`.
-Install the following dependencies globally:
-
-```sh
-npm i -g y-websocket yjs concurrently
-```
 
 Now, navigate back to the root folder of the repository and run
 
