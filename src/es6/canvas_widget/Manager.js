@@ -7205,7 +7205,7 @@ export function makeEdge(
           type: "Custom",
           options: {
             create: function () {
-              that.get$overlay().hide().find(".type").addClass(shapeType);
+              that.get$overlay().find(".type").addClass(shapeType);
               return that.get$overlay().get(0);
             },
             location: 0.5,
@@ -7343,7 +7343,7 @@ export function makeEdge(
           type: "Custom",
           options: {
             create: function () {
-              that.get$overlay().hide().find(".type").addClass(shapeType);
+              that.get$overlay().find(".type").addClass(shapeType);
               return that.get$overlay().get(0);
             },
             location: 0.5,
