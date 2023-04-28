@@ -42550,11 +42550,8 @@ let AbstractEdge$1 = class AbstractEdge extends AbstractEntity$1 {
     /**
      * Select the edge
      */
-    this.select = ()=> {
-      lodash.clone(_defaultPaintStyle);
-        var overlays,
-        i,
-        numOfOverlays;
+    this.select = () => {
+      var overlays, i, numOfOverlays;
 
       function makeBold() {
         $(this).css("fontWeight", "bold");
@@ -42652,10 +42649,11 @@ let AbstractEdge$1 = class AbstractEdge extends AbstractEntity$1 {
     /**
      * Bind events for move tool
      */
-    this.bindMoveToolEvents = function () {
+    this.bindMoveToolEvents = () => {
       if (_jsPlumbConnection) {
         //Enable Edge Select
-        $("." + id).on("click", function () {
+        $("." + id).on("click", function (e) {
+          e.stopPropagation();
           _canvas.select(that);
         });
 
@@ -42713,7 +42711,7 @@ let AbstractEdge$1 = class AbstractEdge extends AbstractEntity$1 {
     this.unbindMoveToolEvents = function () {
       if (_jsPlumbConnection) {
         //Disable Edge Select
-        _jsPlumbConnection.unbind("click");
+        $("." + id).off("click");
 
         $(_jsPlumbConnection.getOverlay("label").canvas)
           .find("input")
