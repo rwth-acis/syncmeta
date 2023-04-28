@@ -2639,7 +2639,7 @@ export class AbstractNode extends AbstractEntity {
      */
     this.unselect = function () {
       _isSelected = false;
-      //this.highlight(_highlightColor,_highlightUsername);
+      this.highlight(_highlightColor, _highlightUsername);
       this._$node.removeClass("selected");
       //trigger save when unselecting an entity
       Util.delay(100).then(function () {

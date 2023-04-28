@@ -27542,6 +27542,7 @@ let AbstractNode$1 = class AbstractNode extends AbstractEntity$1 {
             });
         };
         this.unselect = function () {
+            this.highlight(_highlightColor, _highlightUsername);
             this._$node.removeClass("selected");
             Util.delay(100).then(function () {
                 lodash.each(EntityManagerInstance$1.getEdges(), function (e) {

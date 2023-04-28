@@ -43876,7 +43876,7 @@ let AbstractNode$1 = class AbstractNode extends AbstractEntity$1 {
      * Unselect the node
      */
     this.unselect = function () {
-      //this.highlight(_highlightColor,_highlightUsername);
+      this.highlight(_highlightColor, _highlightUsername);
       this._$node.removeClass("selected");
       //trigger save when unselecting an entity
       Util.delay(100).then(function () {
