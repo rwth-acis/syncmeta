@@ -5,6 +5,7 @@ import AbstractValue from "./AbstractValue";
 import loadHTML from "../html.template.loader";
 import { QuillBinding } from "y-quill";
 import Quill from "quill/dist/quill";
+import { Text as YText } from "yjs";
 
 const quillEditorHtml = await loadHTML(
   "../../templates/attribute_widget/quill_editor.html",
@@ -96,15 +97,18 @@ class Value extends AbstractValue {
     };
 
     this.registerYType = function (ytext) {
+      if (!ytext) {
+        throw new Error("YText not found");
+      }
+      if (!(ytext instanceof YText)) {
+        throw new Error("YText is not a Yjs YText");
+      }
       if (_ytext) {
-        console.log("ytext already registered");
+        console.warn("ytext already registered");
         return;
       }
       _ytext = ytext;
 
-      if (!_ytext) {
-        throw new Error("YText not found");
-      }
       new QuillBinding(_ytext, _$editorRef);
       _ytext?.observe(function () {
         _value = _ytext.toString();
