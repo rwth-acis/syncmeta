@@ -26613,11 +26613,12 @@ let AbstractEdge$1 = class AbstractEdge extends AbstractEntity$1 {
             .find(".edge_label")
             .append(_label.get$node())
             .parent();
-        _$overlay
-            .find(".edge_label")
-            .css({
+        const maxZIndex = Math.max(_appearance.source.getZIndex(), _appearance.target.getZIndex());
+        _$overlay.find(".edge_label").parent().css({
             position: "absolute",
             top: "105%",
+            background: "white",
+            zIndex: maxZIndex + 1,
         });
         var _canvas = null;
         var _jsPlumbConnection = null;
@@ -27421,7 +27422,6 @@ let AbstractNode$1 = class AbstractNode extends AbstractEntity$1 {
                 }
             }
             this._draw();
-            this.repaint();
         };
         this.moveAbs = function (left, top, zIndex) {
             if (left < 0 || top < 0) {
