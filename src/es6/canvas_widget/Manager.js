@@ -8590,17 +8590,12 @@ export class Value extends AbstractValue {
       throw new Error("yMap is undefined");
     }
     y.transact(() => {
-      if (yMap?.has(id)) {
-        _ytext = rootSubjectEntity.getYMap().get(id);
-        if (!(_ytext instanceof YText)) {
-          _ytext = new YText();
-          rootSubjectEntity.getYMap().set(id, _ytext);
-        }
-      } else {
+      if(!yMap.has(id) || !(yMap.get(id) instanceof YText)) {
         _ytext = new YText();
-        rootSubjectEntity.getYMap().set(id, _ytext);
+        yMap.set(id, _ytext);
+      } else {
+        _ytext = yMap.get(id);
       }
-      rootSubjectEntity.getYMap().set("modifiedBy", window.y.clientID);
     });
 
     var that = this;
