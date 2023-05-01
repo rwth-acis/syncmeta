@@ -24570,7 +24570,7 @@ class ActivityStatus extends ConcurrentRegion {
   }
 }
 
-const guidanceStrategyUiHtml = "<div class=\"bs-panel bs-panel-success\">\n\t<div class=\"bs-panel-heading\"><h3 class=\"bs-panel-title\"><i style=\"margin-right:5px;\" class=\"fa fa-bars\"></i>Available Guidance</h3></div>\n\t<div class=\"bs-panel-body\">\n\t\t<ul class=\"bs-list-group guidance-list\">\n\t\t</ul>\n\t</div>\n</div>\n<div class=\"bs-panel bs-panel-success\">\n\t<div class=\"bs-panel-heading\"><h3 class=\"bs-panel-title\"><i style=\"margin-right:5px;\" class=\"fa fa-history\"></i>Activity History</h3></div>\n\t<div class=\"bs-panel-body\">\n\t\t<ul class=\"bs-list-group history-list\">\n\t\t</ul>\n\t</div>\n</div>"; // replaced by importmap.plugin.js
+const guidanceStrategyUiHtml = "<div class=\"bs-panel bs-panel-success\">\r\n\t<div class=\"bs-panel-heading\"><h3 class=\"bs-panel-title\"><i style=\"margin-right:5px;\" class=\"fa fa-bars\"></i>Available Guidance</h3></div>\r\n\t<div class=\"bs-panel-body\">\r\n\t\t<ul class=\"bs-list-group guidance-list\">\r\n\t\t</ul>\r\n\t</div>\r\n</div>\r\n<div class=\"bs-panel bs-panel-success\">\r\n\t<div class=\"bs-panel-heading\"><h3 class=\"bs-panel-title\"><i style=\"margin-right:5px;\" class=\"fa fa-history\"></i>Activity History</h3></div>\r\n\t<div class=\"bs-panel-body\">\r\n\t\t<ul class=\"bs-list-group history-list\">\r\n\t\t</ul>\r\n\t</div>\r\n</div>"; // replaced by importmap.plugin.js
 
 
 class CollaborationStrategy extends GuidanceStrategy {

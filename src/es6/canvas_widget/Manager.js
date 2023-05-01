@@ -836,6 +836,18 @@ export class AbstractEdge extends AbstractEntity {
       .append(_label.get$node())
       .parent();
 
+    // make label position absolute and shift down 105%
+    const maxZIndex = Math.max(
+      _appearance.source.getZIndex(),
+      _appearance.target.getZIndex()
+    );
+    _$overlay.find(".edge_label").parent().css({
+      position: "absolute",
+      top: "105%",
+      background: "white",
+      zIndex: maxZIndex + 1,
+    });
+
     /**
      * Canvas the edge is drawn on
      * @type {canvas_widget.AbstractCanvas}
@@ -2426,7 +2438,7 @@ export class AbstractNode extends AbstractEntity {
         }
       }
       this._draw();
-      this.repaint();
+      
     };
 
     this.moveAbs = function (left, top, zIndex) {
@@ -8582,17 +8594,12 @@ export class Value extends AbstractValue {
       throw new Error("yMap is undefined");
     }
     y.transact(() => {
-      if (yMap?.has(id)) {
-        _ytext = rootSubjectEntity.getYMap().get(id);
-        if (!(_ytext instanceof YText)) {
-          _ytext = new YText();
-          rootSubjectEntity.getYMap().set(id, _ytext);
-        }
-      } else {
+      if(!yMap.has(id) || !(yMap.get(id) instanceof YText)) {
         _ytext = new YText();
-        rootSubjectEntity.getYMap().set(id, _ytext);
+        yMap.set(id, _ytext);
+      } else {
+        _ytext = yMap.get(id);
       }
-      rootSubjectEntity.getYMap().set("modifiedBy", window.y.clientID);
     });
 
     var that = this;
