@@ -36723,7 +36723,7 @@ class Value extends AbstractValue {
 
     this.registerYType = function (ytext) {
       if (_ytext) {
-        console.log("ytext already registered");
+        console.warn("ytext already registered");
         return;
       }
       _ytext = ytext;

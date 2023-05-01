@@ -31082,18 +31082,13 @@ let Value$1 = class Value extends AbstractValue$1 {
             throw new Error("yMap is undefined");
         }
         y.transact(() => {
-            if (yMap?.has(id)) {
-                _ytext = rootSubjectEntity.getYMap().get(id);
-                if (!(_ytext instanceof Text$1)) {
-                    _ytext = new Text$1();
-                    rootSubjectEntity.getYMap().set(id, _ytext);
-                }
+            if (!yMap.has(id) || !(yMap.get(id) instanceof Text$1)) {
+                _ytext = new Text$1();
+                yMap.set(id, _ytext);
             }
             else {
-                _ytext = new Text$1();
-                rootSubjectEntity.getYMap().set(id, _ytext);
+                _ytext = yMap.get(id);
             }
-            rootSubjectEntity.getYMap().set("modifiedBy", window.y.clientID);
         });
         var that = this;
         var _value = "";
@@ -47812,14 +47807,17 @@ class Value extends AbstractValue {
             return _ytext;
         };
         this.registerYType = function (ytext) {
+            if (!ytext) {
+                throw new Error("YText not found");
+            }
+            if (!(ytext instanceof Text$1)) {
+                throw new Error("YText is not a Yjs YText");
+            }
             if (_ytext) {
-                console.log("ytext already registered");
+                console.warn("ytext already registered");
                 return;
             }
             _ytext = ytext;
-            if (!_ytext) {
-                throw new Error("YText not found");
-            }
             new QuillBinding(_ytext, _$editorRef);
             _ytext?.observe(function () {
                 _value = _ytext.toString();
@@ -50023,6 +50021,10 @@ function makeNode(type, shapeType, customShape, customAnchors, color, attributes
                 if (nodeAttributes.hasOwnProperty(key)) {
                     var val = nodeAttributes[key].getValue();
                     var ytext = ymap.get(val.getEntityId());
+                    if (val instanceof Value && !(ytext instanceof Text$1)) {
+                        ytext = new Text$1();
+                        ymap.set(val.getEntityId(), ytext);
+                    }
                     if (val.registerYType) {
                         val.registerYType(ytext);
                     }
