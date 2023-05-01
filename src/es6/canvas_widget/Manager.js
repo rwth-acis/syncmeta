@@ -836,6 +836,14 @@ export class AbstractEdge extends AbstractEntity {
       .append(_label.get$node())
       .parent();
 
+    // make label position absolute and shift down 105%
+    _$overlay
+      .find(".edge_label")
+      .css({
+        position: "absolute",
+        top: "105%",
+      });
+
     /**
      * Canvas the edge is drawn on
      * @type {canvas_widget.AbstractCanvas}
