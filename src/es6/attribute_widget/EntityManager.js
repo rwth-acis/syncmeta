@@ -31,6 +31,8 @@ import ViewNode from "./view/ViewNode";
 import ConditionListAttribute from "./viewpoint/ConditionListAttribute";
 import RenamingListAttribute from "./viewpoint/RenamingListAttribute";
 import { MultiValueAttribute } from "./MultiValueAttribute";
+import { Text as YText } from "yjs";
+import Value from "./Value";
 
 const relationshipNodeHtml = await loadHTML(
   "../../templates/attribute_widget/relationship_node.html",
@@ -941,6 +943,10 @@ export function makeNode(
         if (nodeAttributes.hasOwnProperty(key)) {
           var val = nodeAttributes[key].getValue();
           var ytext = ymap.get(val.getEntityId());
+          if (val instanceof Value && !(ytext instanceof YText)) {
+            ytext = new YText();
+            ymap.set(val.getEntityId(), ytext);
+          }
           if (val.registerYType) {
             val.registerYType(ytext);
           }
