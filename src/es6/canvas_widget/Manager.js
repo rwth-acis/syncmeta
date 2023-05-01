@@ -837,12 +837,16 @@ export class AbstractEdge extends AbstractEntity {
       .parent();
 
     // make label position absolute and shift down 105%
-    _$overlay
-      .find(".edge_label")
-      .css({
-        position: "absolute",
-        top: "105%",
-      });
+    const maxZIndex = Math.max(
+      _appearance.source.getZIndex(),
+      _appearance.target.getZIndex()
+    );
+    _$overlay.find(".edge_label").parent().css({
+      position: "absolute",
+      top: "105%",
+      background: "white",
+      zIndex: maxZIndex + 1,
+    });
 
     /**
      * Canvas the edge is drawn on
@@ -2434,7 +2438,7 @@ export class AbstractNode extends AbstractEntity {
         }
       }
       this._draw();
-      this.repaint();
+      
     };
 
     this.moveAbs = function (left, top, zIndex) {
