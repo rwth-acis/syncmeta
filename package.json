@@ -16,10 +16,7 @@
   },
   "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
-    "@jsplumb/browser-ui": "^5.13.2",
-    "@jsplumb/connector-bezier": "^5.13.2",
-    "@jsplumb/connector-flowchart": "^5.13.2",
-    "@jsplumb/core": "^5.13.2",
+    "@jsplumb/browser-ui": "^6.0.5",
     "dagre": "^0.8.5",
     "graphlib": "^2.1.8",
     "highlight.js": "^11.7.0",

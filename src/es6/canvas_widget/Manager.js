@@ -1,8 +1,8 @@
 import { EVENT_DRAG_START, EVENT_DRAG_STOP } from "@jsplumb/browser-ui";
-import { AnchorLocations } from "@jsplumb/common";
-import { BezierConnector } from "@jsplumb/connector-bezier";
-import { FlowchartConnector } from "@jsplumb/connector-flowchart";
-import { StraightConnector, isCustomOverlay } from "@jsplumb/core";
+import { AnchorLocations } from "@jsplumb/browser-ui";
+import { BezierConnector } from "@jsplumb/browser-ui";
+import { FlowchartConnector } from "@jsplumb/browser-ui";
+import { StraightConnector, isCustomOverlay } from "@jsplumb/browser-ui";
 import "https://cdnjs.cloudflare.com/ajax/libs/graphlib/2.1.8/graphlib.min.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.9.2/jquery.contextMenu.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
