@@ -1537,6 +1537,7 @@ export class AbstractEdge extends AbstractEntity {
 export class AbstractNode extends AbstractEntity {
   nodeSelector;
   _$node;
+  _isBeingDragged = false;
   constructor(
     id,
     type,
@@ -2759,6 +2760,8 @@ export class AbstractNode extends AbstractEntity {
       jsPlumbInstance.bind(EVENT_DRAG_START, (params) => {
         if (params.el.id !== this._$node.attr("id")) return true;
 
+        this._isBeingDragged = true;
+
         originalPos.top = params.el.offsetTop;
         originalPos.left = params.el.offsetLeft;
 
@@ -2771,7 +2774,9 @@ export class AbstractNode extends AbstractEntity {
       jsPlumbInstance.bind(EVENT_DRAG_STOP, (params) => {
         if (params.el.id !== this._$node.attr("id")) return true;
 
-        _$node.css({ opacity: "" });
+        if (this._isBeingDragged === false) return; // for some reason, dragstop is called multiple times, see #139. This is a workaround to prevent the second call from doing anything
+
+        this._isBeingDragged = false;
         _canvas.bindMoveToolEvents();
         var offsetX = Math.round(params.el.offsetLeft - originalPos.left);
         var offsetY = Math.round(params.el.offsetTop - originalPos.top);
