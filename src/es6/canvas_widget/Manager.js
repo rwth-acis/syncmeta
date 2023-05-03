@@ -2756,8 +2756,6 @@ export class AbstractNode extends AbstractEntity {
         .prop("disabled", false)
         .css("pointerEvents", "");
 
-      this.jsPlumbManagedElement = jsPlumbInstance.manage(this._$node.get(0));
-
       jsPlumbInstance.bind(EVENT_DRAG_START, (params) => {
         if (params.el.id !== this._$node.attr("id")) return true;
 
@@ -2959,7 +2957,8 @@ export class AbstractNode extends AbstractEntity {
       });
     };
 
-    jsPlumbInstance.manage(this._$node.get(0));
+    this.jsPlumbManagedElement = jsPlumbInstance.manage(this._$node.get(0));
+
     // EntityManagerInstance.storeDataYjs();
   }
   nodeSelector;
