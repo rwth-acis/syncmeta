@@ -1,8 +1,8 @@
 import { EVENT_DRAG_START, EVENT_DRAG_STOP } from "@jsplumb/browser-ui";
-import { AnchorLocations } from "@jsplumb/common";
-import { BezierConnector } from "@jsplumb/connector-bezier";
-import { FlowchartConnector } from "@jsplumb/connector-flowchart";
-import { StraightConnector, isCustomOverlay } from "@jsplumb/core";
+import { AnchorLocations } from "@jsplumb/browser-ui";
+import { BezierConnector } from "@jsplumb/browser-ui";
+import { FlowchartConnector } from "@jsplumb/browser-ui";
+import { StraightConnector, isCustomOverlay } from "@jsplumb/browser-ui";
 import "https://cdnjs.cloudflare.com/ajax/libs/graphlib/2.1.8/graphlib.min.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.9.2/jquery.contextMenu.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
@@ -841,12 +841,15 @@ export class AbstractEdge extends AbstractEntity {
       _appearance.source.getZIndex(),
       _appearance.target.getZIndex()
     );
-    _$overlay.find(".edge_label").parent().css({
-      position: "absolute",
-      top: "105%",
-      background: "white",
-      zIndex: maxZIndex + 1,
-    });
+    _$overlay
+      .find(".edge_label")
+      .parent()
+      .css({
+        position: "absolute",
+        top: "105%",
+        background: "white",
+        zIndex: maxZIndex + 1,
+      });
 
     /**
      * Canvas the edge is drawn on
@@ -1537,6 +1540,7 @@ export class AbstractEdge extends AbstractEntity {
 export class AbstractNode extends AbstractEntity {
   nodeSelector;
   _$node;
+  _isBeingDragged = false;
   constructor(
     id,
     type,
@@ -2438,7 +2442,6 @@ export class AbstractNode extends AbstractEntity {
         }
       }
       this._draw();
-      
     };
 
     this.moveAbs = function (left, top, zIndex) {
@@ -2756,29 +2759,32 @@ export class AbstractNode extends AbstractEntity {
         .prop("disabled", false)
         .css("pointerEvents", "");
 
-      this.jsPlumbManagedElement = jsPlumbInstance.manage(this._$node.get(0));
-
       jsPlumbInstance.bind(EVENT_DRAG_START, (params) => {
         if (params.el.id !== this._$node.attr("id")) return true;
+
+        this._isBeingDragged = true;
 
         originalPos.top = params.el.offsetTop;
         originalPos.left = params.el.offsetLeft;
 
         _canvas.hideGuidanceBox();
+        _canvas.unbindMoveToolEvents();
         _$node.css({ opacity: 0.5 });
-
-        return true;
       });
 
       jsPlumbInstance.bind(EVENT_DRAG_STOP, (params) => {
         if (params.el.id !== this._$node.attr("id")) return true;
 
-        _$node.css({ opacity: "" });
+        if (this._isBeingDragged === false) return; // for some reason, dragstop is called multiple times, see #139. This is a workaround to prevent the second call from doing anything
+
+        this._isBeingDragged = false;
+
+        //Avoid node selection on drag stop
+        _canvas.showGuidanceBox();
         _canvas.bindMoveToolEvents();
-        var offsetX = Math.round(params.el.offsetLeft - originalPos.left);
-        var offsetY = Math.round(params.el.offsetTop - originalPos.top);
-        // if offset is 0, no need to send the operation
-        if (offsetX === 0 && offsetY === 0) return;
+        _$node.css({ opacity: "" });
+
+        
         // if offset bigger than canvas size, no need to send the operation
         if (
           params.el.offsetLeft < 0 ||
@@ -2786,21 +2792,22 @@ export class AbstractNode extends AbstractEntity {
           params.el.offsetLeft > _canvas.width ||
           params.el.offsetTop > _canvas.height
         ) {
-          console.error(" offset bigger than canvas size");
+          console.warn(" offset bigger than canvas size");
           return;
         }
-        //Avoid node selection on drag stop
-        _canvas.showGuidanceBox();
 
-        setTimeout(() => {
-          var operation = new NodeMoveOperation(
-            that.getEntityId(),
-            offsetX,
-            offsetY
-          );
-          that.propagateNodeMoveOperation(operation);
-        });
-        return;
+        var offsetX = Math.round(params.el.offsetLeft - originalPos.left);
+        var offsetY = Math.round(params.el.offsetTop - originalPos.top);
+        
+        // if offset is 0, no need to send the operation
+        if (offsetX === 0 && offsetY === 0) return;
+
+        var operation = new NodeMoveOperation(
+          that.getEntityId(),
+          offsetX,
+          offsetY
+        );
+        that.propagateNodeMoveOperation(operation);
       });
 
       // view_only is used by the CAE and allows to show a model in the Canvas which is not editable
@@ -2959,7 +2966,8 @@ export class AbstractNode extends AbstractEntity {
       });
     };
 
-    jsPlumbInstance.manage(this._$node.get(0));
+    this.jsPlumbManagedElement = jsPlumbInstance.manage(this._$node.get(0));
+
     // EntityManagerInstance.storeDataYjs();
   }
   nodeSelector;
@@ -8594,7 +8602,7 @@ export class Value extends AbstractValue {
       throw new Error("yMap is undefined");
     }
     y.transact(() => {
-      if(!yMap.has(id) || !(yMap.get(id) instanceof YText)) {
+      if (!yMap.has(id) || !(yMap.get(id) instanceof YText)) {
         _ytext = new YText();
         yMap.set(id, _ytext);
       } else {
@@ -8960,7 +8968,6 @@ export class QuizAttribute extends AbstractAttribute {
       Json["Sequence"] = Sequence;
       Json["Intents"] = Intents;
       Json["Hints"] = Hints;
-      console.log(JSON.stringify(Json));
       _$node.find(".val")[0].value = JSON.stringify(Json);
       var field = _$node.find(".val")[0];
       field.dispatchEvent(new Event("input"));
@@ -8970,13 +8977,13 @@ export class QuizAttribute extends AbstractAttribute {
     _$node.find("#display").click(function () {
       var table = _$node.find("#table")[0];
       var Json = _$node.find(".val")[0].value;
-      console.log(Json);
+
       var content = JSON.parse(Json);
       _$node.find("#topic")[0].value = content.topic;
       var rowNumb = content.Questions.length;
-      console.log(rowNumb);
+
       var currRows = table.rows.length - 2;
-      console.log(currRows);
+
       if (currRows < rowNumb) {
         for (currRows; currRows < rowNumb; currRows++) {
           addRow();

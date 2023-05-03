@@ -435,6 +435,7 @@ export class NodeDeleteOperation extends EntityOperation {
       zIndex: this.getZIndex(),
       containment: this.getContainment(),
       json: this.getJSON(),
+      triggeredBy: this.triggeredBy,
     };
   };
 }
@@ -937,6 +938,7 @@ export class EdgeDeleteOperation extends EntityOperation {
       source: this.getSource(),
       target: this.getTarget(),
       json: this.getJSON(),
+      triggeredBy: this.triggeredBy,
     };
   };
 }
@@ -1195,6 +1197,7 @@ export class EdgeAddOperation extends EntityOperation {
       viewId: this.getViewId(),
       oType: this.getOriginType(),
       jabberId: this.getJabberId(),
+      triggeredBy: this.triggeredBy,
     };
   };
 }
@@ -1346,6 +1349,7 @@ export class AttributeAddOperation extends EntityOperation {
         subjectEntityId: this.getSubjectEntityId(),
         rootSubjectEntityId: this.getRootSubjectEntityId(),
         data: this.getData(),
+        triggeredBy: this.triggeredBy,
       };
     };
   }
@@ -1498,6 +1502,7 @@ export class AttributeDeleteOperation extends EntityOperation {
         type: this.getType(),
         subjectEntityId: this.getSubjectEntityId(),
         rootSubjectEntityId: this.getRootSubjectEntityId(),
+        triggeredBy: this.triggeredBy,
       };
     };
   }
