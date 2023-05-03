@@ -8968,7 +8968,6 @@ export class QuizAttribute extends AbstractAttribute {
       Json["Sequence"] = Sequence;
       Json["Intents"] = Intents;
       Json["Hints"] = Hints;
-      console.log(JSON.stringify(Json));
       _$node.find(".val")[0].value = JSON.stringify(Json);
       var field = _$node.find(".val")[0];
       field.dispatchEvent(new Event("input"));
@@ -8978,13 +8977,13 @@ export class QuizAttribute extends AbstractAttribute {
     _$node.find("#display").click(function () {
       var table = _$node.find("#table")[0];
       var Json = _$node.find(".val")[0].value;
-      console.log(Json);
+
       var content = JSON.parse(Json);
       _$node.find("#topic")[0].value = content.topic;
       var rowNumb = content.Questions.length;
-      console.log(rowNumb);
+
       var currRows = table.rows.length - 2;
-      console.log(currRows);
+
       if (currRows < rowNumb) {
         for (currRows; currRows < rowNumb; currRows++) {
           addRow();
