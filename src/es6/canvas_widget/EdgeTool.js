@@ -9,7 +9,10 @@ import {
   EVENT_ENDPOINT_MOUSEOVER,
 } from "@jsplumb/browser-ui";
 import { getQuerySelectorFromNode } from "../getQuerySelectorFromNode";
-import { EVENT_CONNECTION, EVENT_CONNECTION_DETACHED } from "@jsplumb/core";
+import {
+  EVENT_CONNECTION,
+  EVENT_CONNECTION_DETACHED,
+} from "@jsplumb/browser-ui";
 
 /**
  * EdgeTool
