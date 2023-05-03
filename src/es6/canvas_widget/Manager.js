@@ -841,12 +841,15 @@ export class AbstractEdge extends AbstractEntity {
       _appearance.source.getZIndex(),
       _appearance.target.getZIndex()
     );
-    _$overlay.find(".edge_label").parent().css({
-      position: "absolute",
-      top: "105%",
-      background: "white",
-      zIndex: maxZIndex + 1,
-    });
+    _$overlay
+      .find(".edge_label")
+      .parent()
+      .css({
+        position: "absolute",
+        top: "105%",
+        background: "white",
+        zIndex: maxZIndex + 1,
+      });
 
     /**
      * Canvas the edge is drawn on
@@ -2439,7 +2442,6 @@ export class AbstractNode extends AbstractEntity {
         }
       }
       this._draw();
-      
     };
 
     this.moveAbs = function (left, top, zIndex) {
@@ -2766,9 +2768,8 @@ export class AbstractNode extends AbstractEntity {
         originalPos.left = params.el.offsetLeft;
 
         _canvas.hideGuidanceBox();
+        _canvas.unbindMoveToolEvents();
         _$node.css({ opacity: 0.5 });
-
-        return true;
       });
 
       jsPlumbInstance.bind(EVENT_DRAG_STOP, (params) => {
@@ -2777,11 +2778,13 @@ export class AbstractNode extends AbstractEntity {
         if (this._isBeingDragged === false) return; // for some reason, dragstop is called multiple times, see #139. This is a workaround to prevent the second call from doing anything
 
         this._isBeingDragged = false;
+
+        //Avoid node selection on drag stop
+        _canvas.showGuidanceBox();
         _canvas.bindMoveToolEvents();
-        var offsetX = Math.round(params.el.offsetLeft - originalPos.left);
-        var offsetY = Math.round(params.el.offsetTop - originalPos.top);
-        // if offset is 0, no need to send the operation
-        if (offsetX === 0 && offsetY === 0) return;
+        _$node.css({ opacity: "" });
+
+        
         // if offset bigger than canvas size, no need to send the operation
         if (
           params.el.offsetLeft < 0 ||
@@ -2789,21 +2792,22 @@ export class AbstractNode extends AbstractEntity {
           params.el.offsetLeft > _canvas.width ||
           params.el.offsetTop > _canvas.height
         ) {
-          console.error(" offset bigger than canvas size");
+          console.warn(" offset bigger than canvas size");
           return;
         }
-        //Avoid node selection on drag stop
-        _canvas.showGuidanceBox();
 
-        setTimeout(() => {
-          var operation = new NodeMoveOperation(
-            that.getEntityId(),
-            offsetX,
-            offsetY
-          );
-          that.propagateNodeMoveOperation(operation);
-        });
-        return;
+        var offsetX = Math.round(params.el.offsetLeft - originalPos.left);
+        var offsetY = Math.round(params.el.offsetTop - originalPos.top);
+        
+        // if offset is 0, no need to send the operation
+        if (offsetX === 0 && offsetY === 0) return;
+
+        var operation = new NodeMoveOperation(
+          that.getEntityId(),
+          offsetX,
+          offsetY
+        );
+        that.propagateNodeMoveOperation(operation);
       });
 
       // view_only is used by the CAE and allows to show a model in the Canvas which is not editable
@@ -8598,7 +8602,7 @@ export class Value extends AbstractValue {
       throw new Error("yMap is undefined");
     }
     y.transact(() => {
-      if(!yMap.has(id) || !(yMap.get(id) instanceof YText)) {
+      if (!yMap.has(id) || !(yMap.get(id) instanceof YText)) {
         _ytext = new YText();
         yMap.set(id, _ytext);
       } else {
