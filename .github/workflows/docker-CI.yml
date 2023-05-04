@@ -1,0 +1,34 @@
+name: Docker Build and Push
+
+on:
+  push:
+    branches: [master, develop]
+
+jobs:
+  test-widget-build:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: npm install
+      - name: Run Rollup Bundle
+        run: npx rollup -c rollup.config.reduced.js --bundleConfigAsCjs
+  build:
+    runs-on: ubuntu-latest
+    needs: test-widget-build
+    steps:
+      - uses: actions/checkout@v2
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+      - name: Build the Docker image
+        run: |
+          docker build -t registry.tech4comp.dbis.rwth-aachen.de/rwthacis/syncmeta:${{ steps.extract_branch.outputs.branch }} .
+      - name: Push to registry
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PW: ${{ secrets.DOCKER_PW }}
+        run: |
+          docker login -u $DOCKER_USERNAME -p $DOCKER_PW registry.tech4comp.dbis.rwth-aachen.de
+          docker push registry.tech4comp.dbis.rwth-aachen.de/rwthacis/syncmeta:${{ steps.extract_branch.outputs.branch }}
