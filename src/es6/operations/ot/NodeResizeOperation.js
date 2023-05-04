@@ -139,6 +139,7 @@ class NodeResizeOperation extends EntityOperation {
       offsetX: this.getOffsetX(),
       offsetY: this.getOffsetY(),
       jabberId: this.getJabberId(),
+      triggeredBy: this.triggeredBy,
     };
   }
 }
