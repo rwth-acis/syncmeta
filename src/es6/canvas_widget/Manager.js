@@ -2925,11 +2925,12 @@ export class AbstractNode extends AbstractEntity {
       _ymap.observe(function (event) {
         const array = Array.from(event.changes.keys.entries());
         array.forEach(([key]) => {
-          if (event.value && event.value.historyFlag) {
+          const data = event.currentTarget.get(key);
+          if (data.id && data.triggeredBy !== window.y.clientID) {
             var operation;
-            var data = event.value;
+
             const userMap = y.getMap("users");
-            var jabberId = userMap.get(yUserId);
+            var jabberId = userMap.get(window.y.clientID);
             switch (key) {
               case NodeMoveOperation.TYPE: {
                 operation = new NodeMoveOperation(

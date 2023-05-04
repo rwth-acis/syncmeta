@@ -9,6 +9,7 @@ class NodeMoveZOperation extends EntityOperation {
                 id: this.getEntityId(),
                 offsetZ: this.getOffsetZ(),
                 jabberId: this.getJabberId(),
+                triggeredBy: this.triggeredBy,
             };
         };
         var that = this;
