@@ -2,7 +2,7 @@
 name: npm-publish
 on:
   release:
-    types: [published, edited]
+    types: [published]
 jobs:
   publish:
     runs-on: ubuntu-latest
