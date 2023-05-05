@@ -16,7 +16,14 @@
   },
   "license": "SEE LICENSE IN LICENSE",
   "files": [
-    "build/**/*"
+    "build/**/*",
+    "src/**/*",
+    "LICENSE",
+    "README.md",
+    "index.js",
+    "package.json",
+    "package-lock.json",
+    "AUTHORS.md"
   ],
   "dependencies": {
     "@jsplumb/browser-ui": "^6.0.5",

@@ -6,3 +6,4 @@ Andre Tebart <tebart@dbis.rwth-aachen.de>
 Petru Nicolaescu <nicolaescu@dbis.rwth-aachen.de>
 Kevin Jahns <kevin.jahns@rwth-aachen.de>
 Peter de Lange <lange@dbis.rwth-aachen.de>
+Ben Lakhoune <ben.lakhoune@rwth-aachen.de>
