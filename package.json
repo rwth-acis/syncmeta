@@ -15,6 +15,9 @@
     "bundle:watch": "npx rollup -c --bundleConfigAsCjs --watch"
   },
   "license": "SEE LICENSE IN LICENSE",
+  "files": [
+    "build/**/*"
+  ],
   "dependencies": {
     "@jsplumb/browser-ui": "^6.0.5",
     "dagre": "^0.8.5",
