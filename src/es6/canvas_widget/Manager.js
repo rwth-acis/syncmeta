@@ -1,8 +1,8 @@
 import { EVENT_DRAG_START, EVENT_DRAG_STOP } from "@jsplumb/browser-ui";
-import { AnchorLocations } from "@jsplumb/common";
-import { BezierConnector } from "@jsplumb/connector-bezier";
-import { FlowchartConnector } from "@jsplumb/connector-flowchart";
-import { StraightConnector } from "@jsplumb/core";
+import { AnchorLocations } from "@jsplumb/browser-ui";
+import { BezierConnector } from "@jsplumb/browser-ui";
+import { FlowchartConnector } from "@jsplumb/browser-ui";
+import { StraightConnector, isCustomOverlay } from "@jsplumb/browser-ui";
 import "https://cdnjs.cloudflare.com/ajax/libs/graphlib/2.1.8/graphlib.min.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.9.2/jquery.contextMenu.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
@@ -43,6 +43,8 @@ import ViewNode from "./view/ViewNode";
 import LogicalConjunctions from "./viewpoint/LogicalConjunctions";
 import LogicalOperator from "./viewpoint/LogicalOperator";
 import ViewTypesUtil from "./viewpoint/ViewTypesUtil";
+import { MultiValue } from "./MultiValue";
+import ViewManager from "./viewpoint/ViewManager";
 
 const keySelectionValueSelectionValueListAttributeHtml = await loadHTML(
   "../../templates/canvas_widget/list_attribute.html",
@@ -230,6 +232,11 @@ const entityNodeHtml = await loadHTML(
 );
 const setPropertyNodeHtml = await loadHTML(
   "../../templates/guidance_modeling/set_property_node.html",
+  import.meta.url
+);
+
+const multiValueAttributeHtml = await loadHTML(
+  "../../templates/canvas_widget/multi_value_attribute.html",
   import.meta.url
 );
 
@@ -454,7 +461,7 @@ function HistoryManager() {
       }
     },
     clean: function (entityId) {
-      var entityIdFilter = function (value, idx) {
+      var entityIdFilter = function (value) {
         if (value.id === entityId) return false;
         else return true;
       };
@@ -651,17 +658,6 @@ var _initNodeTypes = function (vls) {
   return _nodeTypes;
 };
 
-/**
- * Guidance modeling specific objects
- * Unused
- */
-
-var objectContextTypes = {};
-var relationshipContextTypes = {};
-var objectToolTypes = {};
-var edgesByLabel = {};
-var objectToolNodeTypes = {};
-
 var _initEdgeTypes = function (vls) {
   var _edgeTypes = {};
   var _relations = {};
@@ -761,6 +757,9 @@ var relations = {};
  * @param {boolean} [overlayRotate] Flag if edge overlay should be flipped automatically to avoid being upside down
  */
 export class AbstractEdge extends AbstractEntity {
+  _selectedPaintStyle = { strokeWidth: 6, stroke: "black" };
+  _hoverPaintStyle = { strokeWidth: 6, stroke: "black" };
+
   constructor(id, type, source, target, overlayRotate, y) {
     super(id);
     y = y || window.y;
@@ -837,6 +836,21 @@ export class AbstractEdge extends AbstractEntity {
       .append(_label.get$node())
       .parent();
 
+    // make label position absolute and shift down 105%
+    const maxZIndex = Math.max(
+      _appearance.source.getZIndex(),
+      _appearance.target.getZIndex()
+    );
+    _$overlay
+      .find(".edge_label")
+      .parent()
+      .css({
+        position: "absolute",
+        top: "105%",
+        background: "white",
+        zIndex: maxZIndex + 1,
+      });
+
     /**
      * Canvas the edge is drawn on
      * @type {canvas_widget.AbstractCanvas}
@@ -885,7 +899,7 @@ export class AbstractEdge extends AbstractEntity {
      * Apply an Edge Delete Operation
      * @param {operations.ot.EdgeDeleteOperation} operation
      */
-    var processEdgeDeleteOperation = function (operation) {
+    var processEdgeDeleteOperation = function () {
       that.remove();
     };
 
@@ -1173,6 +1187,7 @@ export class AbstractEdge extends AbstractEntity {
     this.setJsPlumbConnection = function (jsPlumbConnection) {
       _jsPlumbConnection = jsPlumbConnection;
       _defaultPaintStyle = jsPlumbConnection.getPaintStyle();
+      jsPlumbConnection.setHoverPaintStyle(this._hoverPaintStyle);
     };
 
     //noinspection JSUnusedGlobalSymbols
@@ -1218,14 +1233,15 @@ export class AbstractEdge extends AbstractEntity {
           angle += Math.PI;
         }
         overlays = _jsPlumbConnection.getOverlays();
-        for (i = 0, numOfOverlays = overlays.length; i < numOfOverlays; i++) {
-          if (overlays[i] instanceof jsPlumb.Overlays.Custom) {
-            $(overlays[i].getElement())
+
+        for (const overlay of Object.values(overlays)) {
+          if (isCustomOverlay(overlay)) {
+            $(overlay.canvas)
               .find(".fixed")
               .not(".segmented")
               .each(makeRotateOverlayCallback(angle));
             //Always flip type overlay
-            $(overlays[i].getElement())
+            $(overlay.canvas)
               .find(".fixed.type")
               .not(".segmented")
               .each(
@@ -1259,7 +1275,7 @@ export class AbstractEdge extends AbstractEntity {
       _jsPlumbConnection = window.jsPlumbInstance.connect({
         source: _appearance.source.get$node().get(0),
         target: _appearance.target.get$node().get(0),
-        paintStyle: { stroke: "black", outlineWidth: 4 },
+        paintStyle: { stroke: "#7c7c7d", outlineWidth: 4 },
         endpoint: "Dot",
         connector: { type: FlowchartConnector.type },
         anchors: [source.getAnchorOptions(), target.getAnchorOptions()],
@@ -1300,25 +1316,21 @@ export class AbstractEdge extends AbstractEntity {
     /**
      * Select the edge
      */
-    this.select = function () {
-      var paintStyle = _.clone(_defaultPaintStyle),
-        overlays,
-        i,
-        numOfOverlays;
+    this.select = () => {
+      var overlays, i, numOfOverlays;
 
       function makeBold() {
         $(this).css("fontWeight", "bold");
       }
 
       _isSelected = true;
-      this.unhighlight();
+
       if (_jsPlumbConnection) {
-        paintStyle.lineWidth = 4;
-        _jsPlumbConnection.setPaintStyle(paintStyle);
+        _jsPlumbConnection.setPaintStyle(this._selectedPaintStyle);
         overlays = _jsPlumbConnection.getOverlays();
-        for (i = 0, numOfOverlays = overlays.length; i < numOfOverlays; i++) {
-          if (overlays[i] instanceof jsPlumb.Overlays.Custom) {
-            $(overlays[i].getElement()).find(".fixed").each(makeBold);
+        for (const overlay of Object.values(overlays)) {
+          if (isCustomOverlay(overlay)) {
+            $(overlay.canvas).find(".fixed").each(makeBold);
           }
         }
       } else throw new Error("jsPlumbConnection is null");
@@ -1335,13 +1347,13 @@ export class AbstractEdge extends AbstractEntity {
       }
 
       _isSelected = false;
-      this.highlight(_highlightColor);
+      this.unhighlight();
       if (_jsPlumbConnection) {
         _jsPlumbConnection.setPaintStyle(_defaultPaintStyle);
         overlays = _jsPlumbConnection.getOverlays();
-        for (i = 0, numOfOverlays = overlays.length; i < numOfOverlays; i++) {
-          if (overlays[i] instanceof jsPlumb.Overlays.Custom) {
-            $(overlays[i].getElement()).find(".fixed").each(unmakeBold);
+        for (const overlay of Object.values(overlays)) {
+          if (isCustomOverlay(overlay)) {
+            $(overlay.canvas).find(".fixed").each(unmakeBold);
           }
         }
       }
@@ -1351,12 +1363,12 @@ export class AbstractEdge extends AbstractEntity {
      * Highlight the edge
      * @param {String} color
      */
-    this.highlight = function (color) {
+    this.highlight = function (color = "green") {
       var paintStyle = _.clone(_defaultPaintStyle);
 
       if (color) {
         paintStyle.strokeStyle = color;
-        paintStyle.lineWidth = 4;
+        paintStyle.lineWidth = 8;
         if (_jsPlumbConnection) _jsPlumbConnection.setPaintStyle(paintStyle);
         else throw new Error("jsPlumbConnection is null");
       }
@@ -1407,10 +1419,11 @@ export class AbstractEdge extends AbstractEntity {
     /**
      * Bind events for move tool
      */
-    this.bindMoveToolEvents = function () {
+    this.bindMoveToolEvents = () => {
       if (_jsPlumbConnection) {
         //Enable Edge Select
         $("." + id).on("click", function (e) {
+          e.stopPropagation();
           _canvas.select(that);
         });
 
@@ -1468,7 +1481,7 @@ export class AbstractEdge extends AbstractEntity {
     this.unbindMoveToolEvents = function () {
       if (_jsPlumbConnection) {
         //Disable Edge Select
-        _jsPlumbConnection.unbind("click");
+        $("." + id).off("click");
 
         $(_jsPlumbConnection.getOverlay("label").canvas)
           .find("input")
@@ -1527,6 +1540,7 @@ export class AbstractEdge extends AbstractEntity {
 export class AbstractNode extends AbstractEntity {
   nodeSelector;
   _$node;
+  _isBeingDragged = false;
   constructor(
     id,
     type,
@@ -1680,12 +1694,12 @@ export class AbstractNode extends AbstractEntity {
       });
     }, 3000);
 
-    this._$node.on("mousedown", function (e) {
+    this._$node.on("mousedown", function () {
       _canvas.select(that);
       _canvas.unbindMoveToolEvents();
     });
 
-    this._$node.on("mouseup", function (e) {
+    this._$node.on("mouseup", function () {
       _canvas.bindMoveToolEvents();
     });
 
@@ -1892,7 +1906,7 @@ export class AbstractNode extends AbstractEntity {
      * Apply a Node Delete Operation
      * @param {operations.ot.NodeDeleteOperation} operation
      */
-    var processNodeDeleteOperation = function (operation) {
+    var processNodeDeleteOperation = function () {
       var edges = that.getEdges(),
         edgeId,
         edge;
@@ -2396,7 +2410,7 @@ export class AbstractNode extends AbstractEntity {
      * @param {number} offsetY Offset in y-direction
      * @param {number} offsetZ Offset in z-direction
      */
-    this.move = function (offsetX, offsetY, offsetZ) {
+    this.move = function (offsetX, offsetY) {
       const x = _appearance.left + offsetX;
       const y = _appearance.top + offsetY;
       if (
@@ -2428,7 +2442,6 @@ export class AbstractNode extends AbstractEntity {
         }
       }
       this._draw();
-      this.repaint();
     };
 
     this.moveAbs = function (left, top, zIndex) {
@@ -2642,11 +2655,9 @@ export class AbstractNode extends AbstractEntity {
      */
     this.unselect = function () {
       _isSelected = false;
-      //this.highlight(_highlightColor,_highlightUsername);
+      // this.highlight(_highlightColor, _highlightUsername);
       this._$node.removeClass("selected");
       //trigger save when unselecting an entity
-      EntityManagerInstance.storeDataYjs();
-
       Util.delay(100).then(function () {
         _.each(EntityManagerInstance.getEdges(), function (e) {
           e.setZIndex();
@@ -2748,29 +2759,32 @@ export class AbstractNode extends AbstractEntity {
         .prop("disabled", false)
         .css("pointerEvents", "");
 
-      this.jsPlumbManagedElement = jsPlumbInstance.manage(this._$node.get(0));
-
       jsPlumbInstance.bind(EVENT_DRAG_START, (params) => {
         if (params.el.id !== this._$node.attr("id")) return true;
+
+        this._isBeingDragged = true;
 
         originalPos.top = params.el.offsetTop;
         originalPos.left = params.el.offsetLeft;
 
         _canvas.hideGuidanceBox();
+        _canvas.unbindMoveToolEvents();
         _$node.css({ opacity: 0.5 });
-
-        return true;
       });
 
       jsPlumbInstance.bind(EVENT_DRAG_STOP, (params) => {
         if (params.el.id !== this._$node.attr("id")) return true;
 
-        _$node.css({ opacity: "" });
+        if (this._isBeingDragged === false) return; // for some reason, dragstop is called multiple times, see #139. This is a workaround to prevent the second call from doing anything
+
+        this._isBeingDragged = false;
+
+        //Avoid node selection on drag stop
+        _canvas.showGuidanceBox();
         _canvas.bindMoveToolEvents();
-        var offsetX = Math.round(params.el.offsetLeft - originalPos.left);
-        var offsetY = Math.round(params.el.offsetTop - originalPos.top);
-        // if offset is 0, no need to send the operation
-        if (offsetX === 0 && offsetY === 0) return;
+        _$node.css({ opacity: "" });
+
+        
         // if offset bigger than canvas size, no need to send the operation
         if (
           params.el.offsetLeft < 0 ||
@@ -2778,9 +2792,15 @@ export class AbstractNode extends AbstractEntity {
           params.el.offsetLeft > _canvas.width ||
           params.el.offsetTop > _canvas.height
         ) {
-          console.error(" offset bigger than canvas size");
+          console.warn(" offset bigger than canvas size");
           return;
         }
+
+        var offsetX = Math.round(params.el.offsetLeft - originalPos.left);
+        var offsetY = Math.round(params.el.offsetTop - originalPos.top);
+        
+        // if offset is 0, no need to send the operation
+        if (offsetX === 0 && offsetY === 0) return;
 
         var operation = new NodeMoveOperation(
           that.getEntityId(),
@@ -2788,9 +2808,6 @@ export class AbstractNode extends AbstractEntity {
           offsetY
         );
         that.propagateNodeMoveOperation(operation);
-
-        //Avoid node selection on drag stop
-        _canvas.showGuidanceBox();
       });
 
       // view_only is used by the CAE and allows to show a model in the Canvas which is not editable
@@ -2907,12 +2924,13 @@ export class AbstractNode extends AbstractEntity {
     this._registerYMap = function () {
       _ymap.observe(function (event) {
         const array = Array.from(event.changes.keys.entries());
-        array.forEach(([key, change]) => {
-          if (event.value && event.value.historyFlag) {
+        array.forEach(([key]) => {
+          const data = event.currentTarget.get(key);
+          if (data.id && data.triggeredBy !== window.y.clientID) {
             var operation;
-            var data = event.value;
+
             const userMap = y.getMap("users");
-            var jabberId = userMap.get(yUserId);
+            var jabberId = userMap.get(window.y.clientID);
             switch (key) {
               case NodeMoveOperation.TYPE: {
                 operation = new NodeMoveOperation(
@@ -2949,8 +2967,9 @@ export class AbstractNode extends AbstractEntity {
       });
     };
 
-    jsPlumbInstance.manage(this._$node.get(0));
-    EntityManagerInstance.storeDataYjs();
+    this.jsPlumbManagedElement = jsPlumbInstance.manage(this._$node.get(0));
+
+    // EntityManagerInstance.storeDataYjs();
   }
   nodeSelector;
   jsPlumbManagedElement;
@@ -3021,7 +3040,7 @@ export class AbstractNode extends AbstractEntity {
         ],
         inertia: { enabled: false },
       })
-      .on(["resizestart"], (event) => {
+      .on(["resizestart"], () => {
         // add resizing class
         that._$node.addClass("resizing");
         that.disableDraggable();
@@ -3342,7 +3361,6 @@ class EntityManager {
   _edges;
 
   constructor() {
-    var that = this;
     /**
      * the view id indicates if the EntityManager should use View types for modeling or node types
      * @type {string}
@@ -3388,6 +3406,8 @@ class EntityManager {
        * @param {number} height Height of node
        * @param {number} zIndex Position of node on z-axis
        * @param {object} json the json representation
+       * @param {number} y the yjs map
+       * @param {boolean} store if the node should be stored in the meta model
        * @returns {canvas_widget.AbstractNode}
        */
       createNode: function (
@@ -3400,7 +3420,8 @@ class EntityManager {
         zIndex,
         containment,
         json,
-        y
+        y,
+        store = true
       ) {
         var node;
         AbstractEntity.maxZIndex = Math.max(AbstractEntity.maxZIndex, zIndex);
@@ -3432,8 +3453,7 @@ class EntityManager {
           );
         }
         _nodes[id] = node;
-
-        EntityManagerInstance.storeDataYjs();
+        if (store) EntityManagerInstance.storeDataYjs();
         return node;
       },
       saveState: function () {
@@ -3442,20 +3462,27 @@ class EntityManager {
         if (viewId && !metamodel) {
           ViewManager.updateViewContent(viewId);
         } else {
-          EntityManager.storeDataYjs();
+          EntityManagerInstance.storeDataYjs();
         }
       },
       findObjectNodeByLabel(searchTerm) {
         const re = new RegExp(searchTerm, "gi");
-        const { attributes, nodes, edges } =
-          EntityManagerInstance.graphToJSON();
+        const { nodes } = EntityManagerInstance.graphToJSON();
         for (const [nodeId, node] of Object.entries(nodes)) {
           if (node?.type.match(re)) {
             // type matches searchTerm
             return EntityManagerInstance.find(nodeId);
           }
+          if (node?.label?.value?.value.match(re)) {
+            // label matches searchTerm
+            return EntityManagerInstance.find(nodeId);
+          }
           for (const attr of Object.values(node?.attributes)) {
-            if (attr?.value.value.match(re)) {
+            // search attributes
+            if (typeof attr?.value?.value !== "string") {
+              continue;
+            }
+            if (attr?.value?.value.match(re)) {
               // attribute value matches searchTerm
               return EntityManagerInstance.find(nodeId);
             }
@@ -3575,7 +3602,7 @@ class EntityManager {
        * @returns {canvas_widget.AbstractEdge}
        */
       //TODO: switch id and type
-      createEdge: function (type, id, source, target) {
+      createEdge: function (type, id, source, target, store = true) {
         var edge;
 
         if (_viewId && viewEdgeTypes.hasOwnProperty(type)) {
@@ -3588,7 +3615,7 @@ class EntityManager {
         source.addOutgoingEdge(edge);
         target?.addIngoingEdge(edge);
         _edges[id] = edge;
-        EntityManagerInstance.storeDataYjs();
+        if (store) EntityManagerInstance.storeDataYjs();
         return edge;
       },
       /**
@@ -3723,7 +3750,8 @@ class EntityManager {
           zIndex,
           containment,
           json,
-          y
+          y,
+          false
         );
         if (node) {
           node.getLabel().getValue().setValue(json.label.value.value);
@@ -3757,7 +3785,7 @@ class EntityManager {
       createEdgeFromJSON: function (type, id, source, target, json) {
         const sourceNode = this.findNode(source);
         const targetNode = this.findNode(target);
-        var edge = this.createEdge(type, id, sourceNode, targetNode);
+        var edge = this.createEdge(type, id, sourceNode, targetNode, false);
         if (edge) {
           edge.getLabel().getValue().setValue(json.label.value.value);
           for (var attrId in json.attributes) {
@@ -4105,7 +4133,6 @@ class EntityManager {
       },
       generateGuidanceMetamodel: function () {
         var metamodel = this.generateMetaModel();
-        var actionNodes = [];
         var actionNodeLabels = [];
         var createEntityNodeLabels = [];
         //Create guidance metamodel
@@ -4594,7 +4621,6 @@ class EntityManager {
         };
 
         var getEntitySuccessor = function (nodeId) {
-          var targets = [];
           for (var edgeId in edges) {
             var edge = edges[edgeId];
             if (edge.source == nodeId) {
@@ -5382,15 +5408,17 @@ class EntityManager {
       storeDataYjs: function () {
         var data = this.graphToJSON();
         const dataMap = y.getMap("data");
-        if (guidancemodel.isGuidanceEditor()) {
-          dataMap.set("guidancemodel", data);
-        } else if (!metamodel) {
-          dataMap.set("metamodelpreview", this.generateMetaModel());
-          dataMap.set("guidancemetamodel", this.generateGuidanceMetamodel());
-          dataMap.set("model", data);
-        } else {
-          dataMap.set("model", data);
-        }
+        window.y.transact(() => {
+          if (guidancemodel.isGuidanceEditor()) {
+            dataMap.set("guidancemodel", data);
+          } else if (!metamodel) {
+            dataMap.set("metamodelpreview", this.generateMetaModel());
+            dataMap.set("guidancemetamodel", this.generateGuidanceMetamodel());
+            dataMap.set("model", data);
+          } else {
+            dataMap.set("model", data);
+          }
+        });
       },
       /**
        * Delete the Model Attribute Node
@@ -5719,6 +5747,12 @@ export function makeNode(type, $shape, anchors, attributes) {
                 ) {
                   that.setLabel(attrObj[attributeId]);
                 }
+              case "list":
+                attrObj[attributeId] = new MultiValueAttribute(
+                  id + "[" + attribute.key.toLowerCase() + "]",
+                  attribute.key,
+                  that
+                );
               default:
                 if (attribute.options) {
                   attrObj[attributeId] = new SingleSelectionAttribute(
@@ -5896,7 +5930,7 @@ export function makeNode(type, $shape, anchors, attributes) {
         for (var key in attr) {
           if (attr.hasOwnProperty(key)) {
             var val = attr[key].getValue();
-            if (val.hasOwnProperty("registerYType")) {
+            if (val.registerYType) {
               val.registerYType();
             }
           }
@@ -6013,6 +6047,7 @@ export class ObjectNode extends AbstractNode {
         integer: "Integer",
         file: "File",
         quiz: "Questions",
+        list: "Multiple Texts",
       }
     );
     this.addAttribute(attr);
@@ -6041,8 +6076,7 @@ export class ObjectNode extends AbstractNode {
           name: "Add Node Shape",
           callback: function () {
             var canvas = that.getCanvas(),
-              appearance = that.getAppearance(),
-              nodeId;
+              appearance = that.getAppearance();
 
             //noinspection JSAccessibilityCheck
             const id = canvas.createNode(
@@ -6326,6 +6360,7 @@ export class AbstractClassNode extends AbstractNode {
         integer: "Integer",
         file: "File",
         quiz: "Questions",
+        list: "Multiple Texts",
       }
     );
     this.addAttribute(attr);
@@ -6621,8 +6656,7 @@ export class RelationshipNode extends AbstractNode {
           name: "Add Edge Shape",
           callback: function () {
             var canvas = that.getCanvas(),
-              appearance = that.getAppearance(),
-              nodeId;
+              appearance = that.getAppearance();
 
             //noinspection JSAccessibilityCheck
             canvas
@@ -6942,7 +6976,7 @@ export class EdgeShapeNode extends AbstractNode {
     this.addAttribute(attrOverlayPos);
     this.addAttribute(attrOverlayRotate);
 
-    this.registerYMap = function (map, disableYText) {
+    this.registerYMap = function (map) {
       AbstractNode.prototype.registerYMap.call(this, map);
       attrArrow.getValue().registerYType();
       attrShape.getValue().registerYType();
@@ -7193,7 +7227,7 @@ export function makeEdge(
           type: "Custom",
           options: {
             create: function () {
-              that.get$overlay().hide().find(".type").addClass(shapeType);
+              that.get$overlay().find(".type").addClass(shapeType);
               return that.get$overlay().get(0);
             },
             location: 0.5,
@@ -7331,7 +7365,7 @@ export function makeEdge(
           type: "Custom",
           options: {
             create: function () {
-              that.get$overlay().hide().find(".type").addClass(shapeType);
+              that.get$overlay().find(".type").addClass(shapeType);
               return that.get$overlay().get(0);
             },
             location: 0.5,
@@ -7659,20 +7693,6 @@ export class SelectionValue extends AbstractValue {
     var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN, y);
 
     /**
-     * Get chain of entities the attribute is assigned to
-     * @returns {string[]}
-     */
-    var getEntityIdChain = function () {
-      var chain = [that.getEntityId()],
-        entity = that;
-      while (entity instanceof AbstractAttribute) {
-        chain.unshift(entity.getSubjectEntity().getEntityId());
-        entity = entity.getSubjectEntity();
-      }
-      return chain;
-    };
-
-    /**
      * Apply a Value Change Operation
      * @param {operations.ot.ValueChangeOperation} operation
      */
@@ -7744,7 +7764,7 @@ export class SelectionValue extends AbstractValue {
         .getYMap()
         .observeDeep(function ([event]) {
           const array = Array.from(event.changes.keys.entries());
-          array.forEach(([key, change]) => {
+          array.forEach(([key]) => {
             const updated = event.currentTarget.get(key);
             if (
               updated?.type !== "update" ||
@@ -8050,20 +8070,6 @@ export class IntegerValue extends AbstractValue {
     var _iwcw = IWCW.getInstance(CONFIG.WIDGET.NAME.MAIN, y);
 
     /**
-     * Get chain of entities the attribute is assigned to
-     * @returns {string[]}
-     */
-    var getEntityIdChain = function () {
-      var chain = [that.getEntityId()],
-        entity = that;
-      while (entity instanceof AbstractAttribute) {
-        chain.unshift(entity.getSubjectEntity().getEntityId());
-        entity = entity.getSubjectEntity();
-      }
-      return chain;
-    };
-
-    /**
      * Apply a Value Change Operation
      * @param {operations.ot.ValueChangeOperation} operation
      */
@@ -8209,7 +8215,6 @@ export class SingleValueAttribute extends AbstractAttribute {
       throw new Error("y is undefined");
     }
     super(id, name, subjectEntity);
-    var that = this;
 
     /***
      * Value object of value
@@ -8529,7 +8534,7 @@ export class SingleValueListAttribute extends AbstractAttribute {
     if (_iwcw) {
       that.registerCallbacks();
     }
-    this.registerYMap = function (disableYText) {
+    this.registerYMap = function () {
       var ymap = that.getRootSubjectEntity().getYMap();
 
       var attrs = that.getAttributes();
@@ -8548,9 +8553,6 @@ export class SingleValueListAttribute extends AbstractAttribute {
           if (key.indexOf("[value]") != -1) {
             switch (change.action) {
               case "add": {
-                if (event.currentTarget.get("modifiedBy") === window.y.clientID)
-                  return;
-
                 operation = new AttributeAddOperation(
                   key.replace(/\[\w*\]/g, ""),
                   that.getEntityId(),
@@ -8601,17 +8603,12 @@ export class Value extends AbstractValue {
       throw new Error("yMap is undefined");
     }
     y.transact(() => {
-      if (yMap?.has(id)) {
-        _ytext = rootSubjectEntity.getYMap().get(id);
-        if (!(_ytext instanceof YText)) {
-          _ytext = new YText();
-          rootSubjectEntity.getYMap().set(id, _ytext);
-        }
-      } else {
+      if (!yMap.has(id) || !(yMap.get(id) instanceof YText)) {
         _ytext = new YText();
-        rootSubjectEntity.getYMap().set(id, _ytext);
+        yMap.set(id, _ytext);
+      } else {
+        _ytext = yMap.get(id);
       }
-      rootSubjectEntity.getYMap().set("modifiedBy", window.y.clientID);
     });
 
     var that = this;
@@ -8628,20 +8625,6 @@ export class Value extends AbstractValue {
      * @private
      */
     var _$node = $(_.template(valueHtml)({ name: name }));
-
-    /**
-     * Get chain of entities the attribute is assigned to
-     * @returns {string[]}
-     */
-    var getEntityIdChain = function () {
-      var chain = [that.getEntityId()],
-        entity = that;
-      while (entity instanceof AbstractAttribute) {
-        chain.unshift(entity.getSubjectEntity().getEntityId());
-        entity = entity.getSubjectEntity();
-      }
-      return chain;
-    };
 
     /**
      * Set value
@@ -8685,44 +8668,41 @@ export class Value extends AbstractValue {
      * @param json
      */
     this.setValueFromJSON = function (json) {
-      this.setValue(json.value);
+      if (!json?.value) {
+        return;
+      }
+      this.setValue(json?.value);
     };
 
     this.registerYType = function () {
-      that.setValue(_ytext.toString().replace(/\n/g, ""));
-      EntityManagerInstance.storeDataYjs();
       _ytext.observe(
         _.debounce(function (event) {
           _value = _ytext.toString().replace(/\n/g, "");
           that.setValue(_value);
-          if (event.currentTarget.get("modifiedBy") === window.y.clientID) {
-            EntityManagerInstance.storeDataYjs();
-            const userMap = y.getMap("users");
-            const jabberId = userMap.get(event.currentTarget.doc.clientID);
+          EntityManagerInstance.storeDataYjs();
+          const userMap = y.getMap("users");
+          const jabberId = userMap.get(event.currentTarget.doc.clientID);
 
-            const activityMap = y.getMap("activity");
-            activityMap.set(
-              ActivityOperation.TYPE,
-              new ActivityOperation(
-                "ValueChangeActivity",
-                that.getEntityId(),
-                jabberId,
-                ValueChangeOperation.getOperationDescription(
-                  that.getSubjectEntity().getName(),
-                  that.getRootSubjectEntity().getType(),
-                  that.getRootSubjectEntity().getLabel().getValue().getValue()
-                ),
-                {
-                  value: _value,
-                  subjectEntityName: that.getSubjectEntity().getName(),
-                  rootSubjectEntityType: that.getRootSubjectEntity().getType(),
-                  rootSubjectEntityId: that
-                    .getRootSubjectEntity()
-                    .getEntityId(),
-                }
-              ).toJSON()
-            );
-          }
+          const activityMap = y.getMap("activity");
+          activityMap.set(
+            ActivityOperation.TYPE,
+            new ActivityOperation(
+              "ValueChangeActivity",
+              that.getEntityId(),
+              jabberId,
+              ValueChangeOperation.getOperationDescription(
+                that.getSubjectEntity().getName(),
+                that.getRootSubjectEntity().getType(),
+                that.getRootSubjectEntity().getLabel().getValue().getValue()
+              ),
+              {
+                value: _value,
+                subjectEntityName: that.getSubjectEntity().getName(),
+                rootSubjectEntityType: that.getRootSubjectEntity().getType(),
+                rootSubjectEntityId: that.getRootSubjectEntity().getEntityId(),
+              }
+            ).toJSON()
+          );
         }, 500)
       );
     };
@@ -8743,6 +8723,96 @@ export class Value extends AbstractValue {
 }
 
 /**
+ * MultiValueAttribute
+ * @memberof canvas_widget
+ * @extends canvas_widget.AbstractAttribute
+ * @constructor
+ * @param {string} id Entity id
+ * @param {string} name Name of attribute
+ * @param {canvas_widget.AbstractEntity} subjectEntity Entity the attribute is assigned to
+ */
+export class MultiValueAttribute extends AbstractAttribute {
+  /***
+   * Value object of value
+   * @type {canvas_widget.MultiValue}
+   * @private
+   */
+  _value = null;
+  /**
+   * jQuery object of DOM node representing the node
+   * @type {jQuery}
+   * @private
+   */
+  _$node = null;
+
+  constructor(id, name, subjectEntity) {
+    super(id, name, subjectEntity);
+
+    this._value = new MultiValue(id, name, this, this.getRootSubjectEntity());
+
+    this._$node = $(_.template(multiValueAttributeHtml)({ id: id }));
+
+    this._$node.find(".name").text(this.getName());
+
+    this._$node.find(".value").append(this._value.get$node());
+
+    // check if view only mode is enabled for the property browser
+    // because then the input fields should be disabled
+    if (window.hasOwnProperty("y")) {
+      const widgetConfigMap = y.getMap("widgetConfig");
+      if (widgetConfigMap.get("view_only_property_browser")) {
+        this._$node.find(".val").attr("disabled", "true");
+      }
+    }
+  }
+
+  /**
+   * Set Value object of value
+   * @param {canvas_widget.Value} value
+   */
+  setValue(value) {
+    this._value = value;
+  }
+
+  /**
+   * Get Value object of value
+   * @returns {canvas_widget.Value}
+   */
+  getValue() {
+    return this._value;
+  }
+
+  /**
+   * jQuery object of DOM node representing the attribute
+   * @type {jQuery}
+   * @public
+   */
+  get$node() {
+    return this._$node;
+  }
+
+  /**
+   * Set attribute value by its JSON representation
+   * @param json
+   */
+  setValueFromJSON(json) {
+    this._value.setValueFromJSON(json?.value);
+  }
+
+  /**
+   * Get attribute value as JSON
+   */
+  toJSON() {
+    const json = AbstractAttribute.prototype.toJSON.call(this);
+    json.value = this._value.toJSON();
+    return json;
+  }
+  registerYType() {
+    _value.registerYType();
+  }
+}
+
+/**
  * QuizAttribute
  * @class attribute_widget.SingleValueAttribute
  * @memberof attribute_widget
@@ -8755,7 +8825,6 @@ export class Value extends AbstractValue {
 export class QuizAttribute extends AbstractAttribute {
   constructor(id, name, subjectEntity) {
     super(id, name, subjectEntity);
-    var that = this;
     /***
      * Value object of value
      * @type {attribute_widget.Value}
@@ -8882,7 +8951,6 @@ export class QuizAttribute extends AbstractAttribute {
       var Intents = [];
       var Hints = [];
       var row = table.rows.length;
-      var currID = "";
       for (var i = 2; i < row; i++) {
         if (
           _$node.find("#" + i.toString() + "1")[0].value == "" ||
@@ -8901,7 +8969,6 @@ export class QuizAttribute extends AbstractAttribute {
       Json["Sequence"] = Sequence;
       Json["Intents"] = Intents;
       Json["Hints"] = Hints;
-      console.log(JSON.stringify(Json));
       _$node.find(".val")[0].value = JSON.stringify(Json);
       var field = _$node.find(".val")[0];
       field.dispatchEvent(new Event("input"));
@@ -8911,13 +8978,13 @@ export class QuizAttribute extends AbstractAttribute {
     _$node.find("#display").click(function () {
       var table = _$node.find("#table")[0];
       var Json = _$node.find(".val")[0].value;
-      console.log(Json);
+
       var content = JSON.parse(Json);
       _$node.find("#topic")[0].value = content.topic;
       var rowNumb = content.Questions.length;
-      console.log(rowNumb);
+
       var currRows = table.rows.length - 2;
-      console.log(currRows);
+
       if (currRows < rowNumb) {
         for (currRows; currRows < rowNumb; currRows++) {
           addRow();
@@ -8952,7 +9019,6 @@ export class QuizAttribute extends AbstractAttribute {
 export class KeySelectionValueAttribute extends AbstractAttribute {
   constructor(id, name, subjectEntity, options) {
     super(id, name, subjectEntity);
-    var that = this;
 
     var _ymap = null;
 
@@ -9362,7 +9428,6 @@ export class ConditionListAttribute extends AbstractAttribute {
         array.forEach(([key, change]) => {
           if (key.indexOf("[value]") != -1) {
             var operation;
-            var data = event.currentTarget.get(key);
             switch (change.action) {
               case "add": {
                 if (eventWasTriggeredByMe(event)) return;
@@ -9749,8 +9814,6 @@ export class KeySelectionValueSelectionValueListAttribute extends AbstractAttrib
      */
     this.deleteAttribute = function (id) {
       if (_list.hasOwnProperty(id)) {
-        var attr = _list[id];
-
         delete _list[id];
       }
     };
@@ -9859,7 +9922,6 @@ export class KeySelectionValueSelectionValueListAttribute extends AbstractAttrib
         array.forEach(([key, change]) => {
           if (key.indexOf("[key]") != -1) {
             var operation;
-            var data = event.currentTarget.get(key);
             switch (change.action) {
               case "add": {
                 const jabberId = event.currentTarget.get("jabberId");
@@ -10178,7 +10240,6 @@ export class RenamingListAttribute extends AbstractAttribute {
         const array = Array.from(event.changes.keys.entries());
         array.forEach(([key, change]) => {
           if (key.indexOf("[val]") != -1) {
-            var data = event.currentTarget.get(key);
             switch (change.action) {
               case "add": {
                 //  var yUserId = event.object.map[key][0];
@@ -10957,7 +11018,6 @@ export class ModelAttributesNode extends AbstractNode {
       throw new Error("y is not defined");
     }
 
-    var that = this;
     /**
      * jQuery object of node template
      * @type {jQuery}
@@ -11168,13 +11228,6 @@ export class ViewObjectNode extends AbstractNode {
     var _$attributeNode = _$node.find(".attributes");
 
     /**
-     * Attributes of node
-     * @type {Object}
-     * @private
-     */
-    var _attributes = this.getAttributes();
-
-    /**
      * Get JSON representation of the node
      * @returns {Object}
      */
@@ -11288,8 +11341,7 @@ export class ViewObjectNode extends AbstractNode {
           name: "Add Node Shape",
           callback: function () {
             var canvas = that.getCanvas(),
-              appearance = that.getAppearance(),
-              nodeId;
+              appearance = that.getAppearance();
 
             //noinspection JSAccessibilityCheck
             canvas
@@ -11391,13 +11443,6 @@ export class ViewRelationshipNode extends AbstractNode {
      * @private
      */
     var _$attributeNode = _$node.find(".attributes");
-
-    /**
-     * Attributes of node
-     * @type {Object}
-     * @private
-     */
-    var _attributes = this.getAttributes();
 
     /**
      * Get JSON representation of the node

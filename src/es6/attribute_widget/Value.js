@@ -5,6 +5,7 @@ import AbstractValue from "./AbstractValue";
 import loadHTML from "../html.template.loader";
 import { QuillBinding } from "y-quill";
 import Quill from "quill/dist/quill";
+import { Text as YText } from "yjs";
 
 const quillEditorHtml = await loadHTML(
   "../../templates/attribute_widget/quill_editor.html",
@@ -61,6 +62,7 @@ class Value extends AbstractValue {
      */
     this.setValue = function (value) {
       _value = value;
+      _$editorRef.setText(value);
     };
 
     /**
@@ -84,7 +86,10 @@ class Value extends AbstractValue {
      * @param json
      */
     this.setValueFromJSON = function (json) {
-      this.setValue(json.value);
+      if (json === null || json === undefined) {
+        return;
+      }
+      this.setValue(json?.value);
     };
 
     this.getYText = function () {
@@ -92,15 +97,23 @@ class Value extends AbstractValue {
     };
 
     this.registerYType = function (ytext) {
-      _ytext = ytext;
-
-      if (!_ytext) {
+      if (!ytext) {
         throw new Error("YText not found");
       }
+      if (!(ytext instanceof YText)) {
+        throw new Error("YText is not a Yjs YText");
+      }
+      if (_ytext) {
+        console.warn("ytext already registered");
+        return;
+      }
+      _ytext = ytext;
+
       new QuillBinding(_ytext, _$editorRef);
       _ytext?.observe(function () {
         _value = _ytext.toString();
       });
+      _$editorRef.setText(_value);
       //loging
       window.syncmetaLog.initializedYTexts += 1;
       if (window.syncmetaLog.hasOwnProperty(this.getEntityId()))

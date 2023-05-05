@@ -219,7 +219,6 @@ export class AttributeWidget extends SyncMetaWidget(
 
         .single_value_attribute div {
           float: left;
-          margin-right: 10px;
         }
 
         .single_quiz_attribute div {
@@ -365,8 +364,8 @@ function JSONToGraph(json, wrapper) {
       json.attributes
     );
     wrapper.setModelAttributesNode(modelAttributesNode);
-    modelAttributesNode.registerYType();
     modelAttributesNode.addToWrapper(wrapper);
+    modelAttributesNode.registerYType();
     wrapper.select(modelAttributesNode);
   }
   for (const nodeId in json.nodes) {
@@ -384,10 +383,10 @@ function JSONToGraph(json, wrapper) {
       if (!node) {
         throw new Error("Node could not be created from JSON");
       }
+      node.addToWrapper(wrapper); // This has to be done before registering the YType, because otherwise Quill will not be able to find the DOM element (for MultiValue.js)
       if ("registerYType" in node) {
         node.registerYType();
       }
-      node.addToWrapper(wrapper);
     }
   }
   for (const edgeId in json.edges) {

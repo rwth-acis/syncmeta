@@ -1654,7 +1654,7 @@ export default class Canvas extends AbstractCanvas {
 
         event.keysChanged.forEach(function (key) {
           const data = event.currentTarget.get(key);
-          const eventTriggeredLocally = window.y.clientID === data.triggeredBy;
+          const eventTriggeredLocally = window.y.clientID === data?.triggeredBy;
           if (!eventTriggeredLocally || data.historyFlagSet) {
             const userMap = y.getMap("users");
             var jabberId = userMap.get(yUserId);

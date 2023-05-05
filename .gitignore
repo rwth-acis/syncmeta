@@ -16,3 +16,5 @@ app/report*.json
 app/build
 widgets/build
 .DS_Store
+build
+example-app/build
