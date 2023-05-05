@@ -231,7 +231,8 @@ class AttributeWrapper {
         Array.from(event.changes.keys.entries()).forEach(function (entry) {
           const key = entry[0];
           const action = entry[1].action;
-          if (action !== "add") return;
+          if (action !== "add" || key.match(/\[(\w+?)\]/)) return;
+
           let nodeId;
           if (
             event.target.get(key) instanceof YMap &&
