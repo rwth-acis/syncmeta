@@ -2926,7 +2926,7 @@ export class AbstractNode extends AbstractEntity {
         const array = Array.from(event.changes.keys.entries());
         array.forEach(([key]) => {
           const data = event.currentTarget.get(key);
-          if (data.id && data.triggeredBy !== window.y.clientID) {
+          if (data?.id && data.triggeredBy !== window.y.clientID) {
             var operation;
 
             const userMap = y.getMap("users");
