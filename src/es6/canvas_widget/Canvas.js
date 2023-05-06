@@ -41,6 +41,7 @@ import {
 } from "./Manager";
 import { newInstance } from "@jsplumb/browser-ui";
 import { default as _ } from "lodash-es";
+import interact from "interactjs";
 
 /**
  * Canvas
@@ -630,20 +631,37 @@ export default class Canvas extends AbstractCanvas {
         top: (-_canvasHeight + $canvasFrame.height()) / 2,
       });
 
-      _$node.draggable({
-        stop: function () {
-          sendViewChangeOperation();
+      // _$node.draggable({
+      //   stop: function () {
+      //     sendViewChangeOperation();
+      //   },
+      // });
+      // use interact.js instead of jquery ui
+
+      interact(_$node.get(0)).draggable({
+        listeners: {
+          stop(event) {
+            sendViewChangeOperation();
+          },
+
+          move(event) {
+            var target = event.target;
+            var x = (parseFloat(target.getAttribute("data-x")) || 0) + event.dx;
+            var y = (parseFloat(target.getAttribute("data-y")) || 0) + event.dy;
+
+            const zoom = that.getZoom();
+
+            target.style.webkitTransform = target.style.transform =
+              "translate(" + x + "px, " + y + "px) scale(" + zoom + ")";
+
+            target.setAttribute("data-x", x);
+            target.setAttribute("data-y", y);
+          },
         },
+        inertia: true,
+        modifiers: [],
       });
 
-      if (_$node.transformable != null) {
-        // since recently, this method doesnt exist anymore.  BUGFIX
-        _$node.transformable({
-          rotatable: false,
-          skewable: false,
-          scalable: false,
-        });
-      }
       _$node.mousewheel(function (event) {
         that.setZoom(that.getZoom() + 0.1 * event.deltaY);
         event.preventDefault();
@@ -804,7 +822,29 @@ export default class Canvas extends AbstractCanvas {
      */
     this.bindMoveToolEvents = function () {
       //Enable Canvas Dragging
-      _$node.draggable("enable");
+      interact(_$node.get(0)).draggable({
+        listeners: {
+          stop(event) {
+            sendViewChangeOperation();
+          },
+
+          move(event) {
+            var target = event.target;
+            var x = (parseFloat(target.getAttribute("data-x")) || 0) + event.dx;
+            var y = (parseFloat(target.getAttribute("data-y")) || 0) + event.dy;
+
+            const zoom = that.getZoom();
+
+            target.style.webkitTransform = target.style.transform =
+              "translate(" + x + "px, " + y + "px) scale(" + zoom + ")";
+
+            target.setAttribute("data-x", x);
+            target.setAttribute("data-y", y);
+          },
+        },
+        inertia: true,
+        modifiers: [],
+      });
 
       // view_only is used by the CAE and allows to show a model in the Canvas which is not editable
       // therefore, the context menu in the Canvas must be disabled
@@ -879,7 +919,7 @@ export default class Canvas extends AbstractCanvas {
      */
     this.unbindMoveToolEvents = function () {
       //Disable Canvas Dragging
-      _$node.draggable("disable");
+      interact(_$node.get(0)).unset();
 
       if (_$node.transformable != null) {
         _$node.transformable("destroy");
