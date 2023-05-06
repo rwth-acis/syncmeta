@@ -619,7 +619,7 @@ export default class Canvas extends AbstractCanvas {
      * Callback for an undone resp. redone Node Add Operation
      * @param {operations.ot.NodeAddOperation} operation
      */
-    var init = function () {
+    var init = () => {
       var $canvasFrame = _$node.parent();
 
       that.addTool(MoveTool.TYPE, new MoveTool());
@@ -631,36 +631,7 @@ export default class Canvas extends AbstractCanvas {
         top: (-_canvasHeight + $canvasFrame.height()) / 2,
       });
 
-      // _$node.draggable({
-      //   stop: function () {
-      //     sendViewChangeOperation();
-      //   },
-      // });
-      // use interact.js instead of jquery ui
-
-      interact(_$node.get(0)).draggable({
-        listeners: {
-          stop(event) {
-            sendViewChangeOperation();
-          },
-
-          move(event) {
-            var target = event.target;
-            var x = (parseFloat(target.getAttribute("data-x")) || 0) + event.dx;
-            var y = (parseFloat(target.getAttribute("data-y")) || 0) + event.dy;
-
-            const zoom = that.getZoom();
-
-            target.style.webkitTransform = target.style.transform =
-              "translate(" + x + "px, " + y + "px) scale(" + zoom + ")";
-
-            target.setAttribute("data-x", x);
-            target.setAttribute("data-y", y);
-          },
-        },
-        inertia: true,
-        modifiers: [],
-      });
+      that.bindMoveToolEvents();
 
       _$node.mousewheel(function (event) {
         that.setZoom(that.getZoom() + 0.1 * event.deltaY);
