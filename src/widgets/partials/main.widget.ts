@@ -418,14 +418,19 @@ function registerOnDataReceivedCallback(_iwcw, y, userList, user) {
       var model = dataMap.get("model");
       var vls = GenerateViewpointModel(model);
       yjsSync(operation.getModelingRoomName())
-        .then(function (y) {
+        .then((y) => {
           const dataMap = y.getMap("data");
           dataMap.set("metamodel", vls);
 
           const metaModelStatus = y.getMap("metaModelStatus");
           metaModelStatus.set("uploaded", true);
+          setTimeout(() => {
+            alert("Metamodel uploaded successfully, the page will reload.");
+            dataMap.set("model", null);
+            location.reload();
+          }, 400);
         })
-        .fail(() => {
+        .catch(() => {
           const metaModelStatus = y.getMap("metaModelStatus");
           metaModelStatus.set("error", true);
         });

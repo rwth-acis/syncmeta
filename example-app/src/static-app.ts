@@ -12,6 +12,7 @@ import Static from "./static";
 import * as IWC from "../../src/es6/lib/iwc";
 
 import "../../index.js";
+import { yjsSync } from "../../index.js";
 
 const routes = [
   {
@@ -226,8 +227,7 @@ class StaticApp extends LitElement {
   _onGenerateMetamodelClicked() {
     this.publishUpdateMetamodelOperation();
     this.changeVisibility("#generateModelLoader", true);
-
-    this.initY((y: Y.Doc) => {
+    yjsSync().then((y: Y.Doc) => {
       const metaModelStatus = y.getMap("metaModelStatus");
       metaModelStatus.observe((event: Y.YMapEvent<any>) => {
         let message;

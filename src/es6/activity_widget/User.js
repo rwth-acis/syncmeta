@@ -90,7 +90,6 @@ class User {
      */
     var _$textNode = _$node.find(".text"); // te xt node
 
-    //noinspection JSUnusedGlobalSymbols - used by jquery ui draggable
     /**
      * Get the entity id of t he entity this user works onActivity
      * @returns {string}
