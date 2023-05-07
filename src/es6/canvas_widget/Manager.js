@@ -3064,8 +3064,7 @@ export class AbstractNode extends AbstractEntity {
         var operation = new NodeResizeOperation(id, offsetX, offsetY);
         that.propagateNodeResizeOperation(operation);
         _canvas.bindMoveToolEvents();
-      })
-      .draggable();
+      });
   }
 
   disableResizable() {
