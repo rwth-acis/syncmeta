@@ -65,6 +65,8 @@ export class CanvasWidget extends SyncMetaWidget(
   LitElement,
   getWidgetTagName(CONFIG.WIDGET.NAME.MAIN)
 ) {
+  canvas: Canvas;
+
   render() {
     return html`
       <link
@@ -481,6 +483,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
   const userList = [];
   const canvasElement = $("#canvas");
   const canvas = new Canvas(canvasElement);
+  window.canvas = canvas;
   const joinMap = y.getMap("join");
 
   HistoryManager.init(canvas);
@@ -1173,7 +1176,17 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
   });
 
   if (model) {
-    var report = JSONtoGraph(model, canvas);
+    try {
+      var report = JSONtoGraph(model, canvas);
+    } catch (error) {
+      var $errorMsg = $("#errorMsg");
+      $("#loading").hide();
+      $("#canvas-frame").hide();
+      $errorMsg.parent().css("display", "inline-table");
+      $errorMsg.text(
+        "SYNCMETA: Model is not compatible to the current Metamodel! Delete the current model or change the metamodel. For more information see the console."
+      );
+    }
     console.info("CANVAS: Initialization of model completed ", report);
     //initialize guidance model's if we are in metamodeling layer
     const dataMap = y.getMap("data");

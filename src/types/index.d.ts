@@ -1,4 +1,4 @@
-import { JsPlumbInstance } from "@jsplumb/core";
+import { JsPlumbInstance } from "@jsplumb/browser-ui";
 import { Doc as YDoc } from "yjs";
 
 export {};
@@ -11,6 +11,7 @@ declare global {
     y: YDoc;
     caeFrames: any;
     _iwc_instance_: any;
+    canvas: any;
     _addIwcIntentListener: (f: any) => void;
     _reloadThisFuckingInstance: () => void;
     jsPlumbInstance: JsPlumbInstance;
