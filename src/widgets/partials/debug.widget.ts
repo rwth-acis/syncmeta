@@ -160,6 +160,10 @@ export class DebugWidget extends SyncMetaWidget(
         });
 
         $importMetamodel.click(() => {
+          const deleteModel = confirm(
+            "Importing a new metamodel will delete the current model. Are you sure you want to continue ?"
+          );
+          if (!deleteModel) return;
           this.$spinner.show();
           $importMetamodel.prop("disabled", true);
           getFileContent()
