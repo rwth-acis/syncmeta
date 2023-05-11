@@ -444,9 +444,12 @@ export class DebugWidget extends SyncMetaWidget(
           try {
             JSONtoGraph(data);
           } catch (error) {
-            const deleteMetamodel =  confirm("The imported model will not be compatible. Do you want to delete the current metamodel?");
+            const deleteMetamodel = confirm(
+              "The imported model will not be compatible. Do you want to delete the current metamodel?"
+            );
             if (deleteMetamodel) {
               window.y.getMap("data").set("metamodel", null);
+            }
           }
           var initAttributes = function (attrs, map) {
             if (attrs.hasOwnProperty("[attributes]")) {

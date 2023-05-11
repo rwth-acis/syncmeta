@@ -8590,9 +8590,10 @@ export class SingleValueListAttribute extends AbstractAttribute {
  * @param {canvas_widget.AbstractNode|canvas_widget.AbstractEdge} rootSubjectEntity Topmost entity in the chain of entity the attribute is assigned to
  */
 export class Value extends AbstractValue {
-  value = "";
+  value;
   constructor(id, name, subjectEntity, rootSubjectEntity, y) {
     super(id, name, subjectEntity, rootSubjectEntity);
+    this.value = "";
     y = y || window.y;
     if (!y) throw new Error("y is undefined");
     var _ytext = null;
