@@ -11,7 +11,7 @@ import { Common } from "./common";
 import Static from "./static";
 import * as IWC from "../../src/es6/lib/iwc";
 
-import "../../index.js";
+import "../../build/widgets/widget.container.js";
 import { yjsSync } from "../../index.js";
 
 const routes = [
