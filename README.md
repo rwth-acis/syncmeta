@@ -56,7 +56,7 @@ The CI checks if the tag matches the version number in the `package.json` file a
 
 ### Inter-Widget Communication(IWC)
 
-For the __local__ communication between the various widgets of the SyncMeta the new [the IWC library](https://github.com/rwth-acis/InterwidgetCommunication) from the chair is used.
+For the __local__ communication between the various widgets of the SyncMeta the [new IWC library](https://github.com/rwth-acis/syncmeta/blob/main/src/es6/lib/IWCWrapper.js) from the chair is used.
 
 ### Versions
 
