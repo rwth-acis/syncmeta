@@ -163,14 +163,14 @@ export class CanvasWidget extends SyncMetaWidget(
                 <i class="bi bi-camera"></i>
               </button>
               <button
-                id="undo"
+                id="undo-btn"
                 class="btn btn-light"
                 title="Undo your latest changes"
               >
                 <i class="bi bi-arrow-counterclockwise"></i>
               </button>
               <button
-                id="redo"
+                id="redo-btn"
                 class="btn btn-light"
                 title="Redo your latest changes"
               >
@@ -1037,16 +1037,14 @@ function InitMainWidget(metamodel, model, _iwcw, user, y = window.y) {
 
   //-------------------------------------------------------------
 
-  var $undo = $("#undo");
-  $undo.prop("disabled", true);
-  var $redo = $("#redo");
-  $redo.prop("disabled", true);
+  var $undo = $("#undo-btn");
 
-  $undo.click(function () {
+  var $redo = $("#redo-btn");
+
+  $undo.on("click", function () {
     HistoryManager.undo();
   });
-
-  $redo.click(function () {
+  $redo.on("click", function () {
     HistoryManager.redo();
   });
 
