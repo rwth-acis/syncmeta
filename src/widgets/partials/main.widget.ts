@@ -103,7 +103,7 @@ export class CanvasWidget extends SyncMetaWidget(
         <error-alert></error-alert>
         <div class="row" id="main-widget-utilities-container">
           <div class="col-9 d-flex justify-content-between">
-            <div class="layout-buttons">
+            <div class="layout-buttons btn-group">
               <button
                 id="viewsHide"
                 class="btn btn-light"
@@ -149,14 +149,15 @@ export class CanvasWidget extends SyncMetaWidget(
                 <i class="bi bi-zoom-out"></i>
               </button>
             </div>
-            <div class="operation-buttons">
-              <button
+            <button
                 id="save"
                 class="btn btn-light"
                 title="Save the current state of the model"
               >
                 <i class="bi bi-cloud-arrow-up"></i>
               </button>
+            <div class="operation-buttons btn-group">
+              
               <!-- Uncommented the below line for Export as PNG! -->
               <button id="save_image" class="btn btn-light">
                 <i class="bi bi-camera"></i>
