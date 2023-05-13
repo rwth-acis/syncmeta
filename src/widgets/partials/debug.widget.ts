@@ -1,5 +1,6 @@
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
+import "../../styles/debug.widget.css";
 import { html, LitElement, PropertyValueMap } from "lit";
 import { customElement } from "lit/decorators.js";
 import _ from "lodash-es";
@@ -289,9 +290,6 @@ export class DebugWidget extends SyncMetaWidget(
         crossorigin="anonymous"
       />
       <style>
-        #debug-container {
-          position: relative;
-        }
         ${getWidgetTagName(CONFIG.WIDGET.NAME.DEBUG)} {
           position: relative;
           overflow-y: auto;

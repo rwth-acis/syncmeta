@@ -1,5 +1,5 @@
 import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
-
+import "../../styles/palette.widget.css";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 
 import { html, LitElement, PropertyValueMap } from "lit";
@@ -117,23 +117,6 @@ export class PaletteWidget extends SyncMetaWidget(
         ${getWidgetTagName(CONFIG.WIDGET.NAME.PALETTE)} {
           height: 100%;
           position: relative;
-        }
-
-        button .icon div.fill_parent {
-          display: none;
-        }
-
-        button span {
-          padding-left: 10px;
-        }
-
-        hr {
-          border-width: 0 0 1px 0;
-          border-color: #cccccc;
-          margin: 0.2em 0;
-        }
-        p#info {
-          font-size: 0.6em;
         }
       </style>
       <link

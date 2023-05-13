@@ -1,0 +1,17 @@
+ button .icon div.fill_parent {
+     display: none;
+ }
+
+ button span {
+     padding-left: 10px;
+ }
+
+ hr {
+     border-width: 0 0 1px 0;
+     border-color: #cccccc;
+     margin: 0.2em 0;
+ }
+
+ p#info {
+     font-size: 0.6em;
+ }
