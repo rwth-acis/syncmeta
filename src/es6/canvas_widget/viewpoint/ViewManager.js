@@ -44,19 +44,13 @@ class ViewManager {
         y = window.y;
         const viewsMap = y.getMap("views");
         _$selection.empty();
-        var viewpointList = viewsMap.keys();
-        for (var i = 0; i < viewpointList.length; i++) {
-          var viewpoint = viewsMap.get(viewpointList[i]);
-          if (viewpoint) {
-            _$selection.append(
-              $(
-                optionTpl({
-                  id: viewpointList[i],
-                })
-              )
-            );
-          } else viewsMap.delete(viewpointList[i]);
+        if (viewsMap.size == 0) {
+          $("#viewpoint-list-input-group").hide();
         }
+        for (const key of viewsMap.keys()) {
+          _$selection.append($(optionTpl({ id: viewsMap.get(key) })));
+        }
+        return viewsMap;
       },
       /**
        * checks if a view exists
