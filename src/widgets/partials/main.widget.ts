@@ -292,9 +292,9 @@ export class CanvasWidget extends SyncMetaWidget(
           id="canvas-frame"
         >
           <div id="canvas"></div>
+          <loading-spinner></loading-spinner>
         </div>
         <div id="q"></div>
-        <loading-spinner></loading-spinner>
       </div>
     `;
   }
