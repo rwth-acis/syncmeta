@@ -232,97 +232,100 @@ export class CanvasWidget extends SyncMetaWidget(
             </p>
           </div>
         </div>
-        <div id="ViewCtrlContainer" class="d-flex mt-1">
-          <button
-            id="btnCreateViewpoint"
-            class="btn btn-success me-1"
-            title="Create a viewpoint"
-          >
-            <i class="bi bi-plus-circle"></i>
-          </button>
+        <div id="ViewCtrlContainer"  style="display:none">
+          <div class="d-flex mt-1">
+            <button
+              id="btnCreateViewpoint"
+              class="btn btn-success me-1"
+              title="Create a viewpoint"
+            >
+              <i class="bi bi-plus-circle"></i>
+            </button>
 
+            <div
+              class="input-group"
+              id="create-view-input-group"
+              style="display: none;"
+            >
+              <button
+                class="btn btn-danger"
+                id="btnCancelCreateViewpoint"
+                title="Cancel"
+              >
+                <i class="bi bi-x-circle"></i>
+              </button>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Viewpoint name"
+                id="txtNameViewpoint"
+                aria-label="Viewpoint name input"
+                aria-describedby="button-addon1"
+              />
+              <!-- <select id="ddmViewpointSelection"></select> -->
+              <button
+                class="btn btn-success"
+                id="btnAddViewpoint"
+                title="Create an empty viewpoint"
+              >
+                <i class="bi bi-check"></i>
+              </button>
+            </div>
+
+            <div class="input-group" id="viewpoint-list-input-group">
+              <select
+                class="form-select"
+                id="ddmViewSelection"
+                aria-label="Select a view"
+              ></select>
+              <button
+                id="btnShowView"
+                class="btn btn-outline-secondary"
+                type="button"
+                title="Apply a viewpoint to the current model or visualize the viewpoint"
+              >
+                Show
+              </button>
+              <button
+                class="btn btn-danger"
+                id="btnDelViewPoint"
+                title="Delete current viewpoint in the list"
+              >
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+            <button
+              class="btn btn-light"
+              id="btnRefreshView"
+              title="Refresh viewpoint list"
+              style="display: none;"
+            >
+              Refresh
+            </button>
+          </div>
+          </div>
+          <div class="my-1"></div>
           <div
-            class="input-group"
-            id="create-view-input-group"
-            style="display: none;"
+            class="ui-state-error ui-corner-all"
+            style="margin-top: 20px; padding: 0 .7em; display:none"
           >
-            <button
-              class="btn btn-danger"
-              id="btnCancelCreateViewpoint"
-              title="Cancel"
-            >
-              <i class="bi bi-x-circle"></i>
-            </button>
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Viewpoint name"
-              id="txtNameViewpoint"
-              aria-label="Viewpoint name input"
-              aria-describedby="button-addon1"
-            />
-            <!-- <select id="ddmViewpointSelection"></select> -->
-            <button
-              class="btn btn-success"
-              id="btnAddViewpoint"
-              title="Create an empty viewpoint"
-            >
-              <i class="bi bi-check"></i>
-            </button>
+            <p id="errorMsg">
+              <span
+                class="ui-icon ui-icon-alert"
+                style="float: left; margin-right: .3em;"
+              ></span>
+              <strong>SYNCMETA!</strong>
+            </p>
           </div>
-
-          <div class="input-group" id="viewpoint-list-input-group">
-            <select
-              class="form-select"
-              id="ddmViewSelection"
-              aria-label="Select a view"
-            ></select>
-            <button
-              id="btnShowView"
-              class="btn btn-outline-secondary"
-              type="button"
-              title="Apply a viewpoint to the current model or visualize the viewpoint"
-            >
-              Show
-            </button>
-            <button
-              class="btn btn-danger"
-              id="btnDelViewPoint"
-              title="Delete current viewpoint in the list"
-            >
-              <i class="bi bi-trash"></i>
-            </button>
-          </div>
-          <button
-            class="btn btn-light"
-            id="btnRefreshView"
-            title="Refresh viewpoint list"
-            style="display: none;"
+          <div
+            class="row mx-auto border border-dark border-2 rounded"
+            id="canvas-frame"
           >
-            Refresh
-          </button>
+            <div id="canvas"></div>
+            <loading-spinner></loading-spinner>
+          </div>
+          <div id="q"></div>
         </div>
-        <div class="my-1"></div>
-        <div
-          class="ui-state-error ui-corner-all"
-          style="margin-top: 20px; padding: 0 .7em; display:none"
-        >
-          <p id="errorMsg">
-            <span
-              class="ui-icon ui-icon-alert"
-              style="float: left; margin-right: .3em;"
-            ></span>
-            <strong>SYNCMETA!</strong>
-          </p>
-        </div>
-        <div
-          class="row mx-auto border border-dark border-2 rounded"
-          id="canvas-frame"
-        >
-          <div id="canvas"></div>
-          <loading-spinner></loading-spinner>
-        </div>
-        <div id="q"></div>
       </div>
     `;
   }
@@ -950,18 +953,14 @@ function InitMainWidget(metamodel, model, _iwcw, user, y = window.y) {
   //Functions and Callbacks for the view-based modeling approach
   var ShowViewCreateMenu = function () {
     $("#btnCreateViewpoint").hide();
-    $("#ddmViewSelection").hide();
-    $("#btnShowView").hide();
-    $("#btnDelViewPoint").hide();
 
+    $("#viewpoint-list-input-group").hide();
     $("#create-view-input-group").show();
   };
   var HideCreateMenu = function () {
     $("#btnCreateViewpoint").show();
-    $("#ddmViewSelection").show();
-    $("#btnDelViewPoint").show();
-    $("#btnShowView").show();
-
+    $("#viewpoint-list-input-group").show();
+    ViewManager.GetViewpointList();
     $("#create-view-input-group").hide();
   };
 
