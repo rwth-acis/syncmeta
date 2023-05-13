@@ -12,7 +12,7 @@ import Static from "./static";
 import * as IWC from "../../src/es6/lib/iwc";
 
 import "../../build/widgets/widget.container.js";
-import { yjsSync } from "../../index.js";
+import { yjsSync } from "../../src/es6/lib/yjs-sync";
 
 const routes = [
   {
