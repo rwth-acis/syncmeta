@@ -119,28 +119,6 @@ export class WidgetContainer extends LitElement {
     super.connectedCallback();
 
     setTimeout(() => {
-      const debugWidgetButton = `<button
-                type="button"
-                class="btn btn-outline-secondary "
-                data-bs-toggle="modal"
-                data-bs-target="#exportModal"
-                id="exportModel"
-                title="Export/Import Utilities"
-              >
-                <i class="bi bi-cloud-fill me-1"></i> Export/Import
-              </button>`;
-
-      const activityWidgetButton = ` <button
-        class="btn btn-outline-primary me-1"
-        type="button"
-        data-bs-toggle="offcanvas"
-        data-bs-target="#offcanvasRight"
-        aria-controls="offcanvasRight",
-        title="User Activities"
-      >
-        <i class="bi bi-people-fill me-1"></i> Activities 
-      </button>`;
-
       const rowContainer = document.querySelector(
         "#main-widget-utilities-container"
       );
@@ -154,12 +132,34 @@ export class WidgetContainer extends LitElement {
         );
         return;
       }
-      rowContainer.firstElementChild?.appendChild(
-        new DOMParser().parseFromString(activityWidgetButton, "text/html").body
-          .firstChild as Node
-      );
-      rowContainer.firstElementChild?.appendChild(
-        new DOMParser().parseFromString(debugWidgetButton, "text/html").body
+
+      const widgetButtons = `
+        <div class="widget-buttons">
+          <button
+            type="button"
+            class="btn btn-outline-secondary "
+            data-bs-toggle="modal"
+            data-bs-target="#exportModal"
+            id="exportModel"
+            title="Export/Import Utilities"
+          >
+            <i class="bi bi-cloud-fill me-1"></i> Export/Import
+          </button>
+          <button
+            class="btn btn-outline-primary"
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasRight"
+            aria-controls="offcanvasRight",
+            title="User Activities"
+          >
+            <i class="bi bi-people-fill me-1"></i> Activities 
+          </button>
+        </div>
+      `;
+
+      rowContainer.firstElementChild.appendChild(
+        new DOMParser().parseFromString(widgetButtons, "text/html").body
           .firstChild as Node
       );
     }, 100);
