@@ -269,13 +269,13 @@ function HistoryManager() {
   var $redo = $("#redo");
 
   var propagateHistoryOperationFromJson = function (json) {
-    var EntityManager = EntityManager;
+    
     var operation = null,
       data = null,
       entity;
     switch (json.TYPE) {
       case NodeDeleteOperation.TYPE: {
-        entity = EntityManager.findNode(json.id);
+        entity = EntityManagerInstance.findNode(json.id);
         if (entity) {
           entity.triggerDeletion(true);
           operation = new NodeDeleteOperation(
@@ -337,7 +337,7 @@ function HistoryManager() {
         break;
       }
       case EdgeDeleteOperation.TYPE: {
-        entity = EntityManager.findEdge(json.id);
+        entity = EntityManagerInstance.findEdge(json.id);
         if (entity) {
           entity.triggerDeletion(true);
           operation = new EdgeDeleteOperation(
@@ -351,7 +351,7 @@ function HistoryManager() {
         break;
       }
       case NodeMoveOperation.TYPE: {
-        entity = EntityManager.findNode(json.id);
+        entity = EntityManagerInstance.findNode(json.id);
         if (entity) {
           const nodesMap = y.getMap("nodes");
           operation = new NodeMoveOperation(
@@ -367,7 +367,7 @@ function HistoryManager() {
         break;
       }
       case NodeMoveZOperation.TYPE: {
-        entity = EntityManager.findNode(json.id);
+        entity = EntityManagerInstance.findNode(json.id);
         if (entity) {
           operation = new NodeMoveZOperation(json.id, json.offsetZ);
           const nodesMap = y.getMap("nodes");
@@ -379,7 +379,7 @@ function HistoryManager() {
         break;
       }
       case NodeResizeOperation.TYPE: {
-        entity = EntityManager.findNode(json.id);
+        entity = EntityManagerInstance.findNode(json.id);
         if (entity) {
           operation = new NodeResizeOperation(
             json.id,
@@ -2115,7 +2115,7 @@ export class AbstractNode extends AbstractEntity {
             _canvas.getSelectedEntity() === that
           ) {
             menuItems = _.extend(_contextMenuItemCallback(), {
-              connectTo: EntityManager.generateConnectToMenu(that),
+              connectTo: EntityManagerInstance.generateConnectToMenu(that),
               sepMove: "---------",
               moveToForeground: {
                 name: "Move to Foreground",
