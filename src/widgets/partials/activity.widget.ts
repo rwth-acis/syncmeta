@@ -2,12 +2,12 @@ import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"
 import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "../../styles/activity.widget.css";
 import { html, LitElement, PropertyValueMap } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import "../../error-alert";
 import ActivityList from "../../es6/activity_widget/ActivityList";
 import WidgetTracker from "../../es6/activity_widget/WidgetTracker";
 import { CONFIG, getWidgetTagName } from "../../es6/config";
-import { yjsSync } from "../../es6/lib/yjs-sync";
+import { getInstance } from "../../es6/lib/yjs-sync";
 import init from "../../es6/shared";
 import Util from "../../es6/Util";
 import { WaitForCanvas } from "../../es6/WaitForCanvas";
@@ -19,12 +19,25 @@ export class ActivityWidget extends SyncMetaWidget(
   LitElement,
   getWidgetTagName(CONFIG.WIDGET.NAME.ACTIVITY)
 ) {
+  @property({ type: String }) yjsHost = "localhost";
+  @property({ type: Number }) yjsPort = 1234;
+  @property({ type: String }) yjsProtocol = "ws";
+  @property({ type: String }) yjsSpaceTitle = window.spaceTitle;
   widgetName = getWidgetTagName(CONFIG.WIDGET.NAME.ACTIVITY);
   protected firstUpdated(
     _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
   ): void {
     super.firstUpdated(_changedProperties);
-    yjsSync()
+
+    const yjsInstance = getInstance({
+      host: this.yjsHost,
+      port: this.yjsPort,
+      protocol: this.yjsProtocol,
+      spaceTitle: this.yjsSpaceTitle,
+    });
+
+    yjsInstance
+      .connect()
       .then((y) => {
         window.y = y;
 
@@ -130,7 +143,6 @@ export class ActivityWidget extends SyncMetaWidget(
 
   connectedCallback() {
     super.connectedCallback();
-    init();
   }
 
   disconnectedCallback() {

@@ -11,21 +11,24 @@ import { Common } from "./common";
 import Static from "./static";
 import * as IWC from "../../src/es6/lib/iwc";
 
-import "../../build/widgets/widget.container.js";
-import { yjsSync } from "../../src/es6/lib/yjs-sync";
+import { getInstance } from "../../src/es6/lib/yjs-sync";
+import "./main";
+
+import { APP_CONFIG } from "../config";
+import { Doc } from "yjs";
 
 const routes = [
   {
     path: "/",
-    component: "widget-container",
+    component: "main-app",
   },
   {
     path: "/meta-modeling-space",
-    component: "widget-container",
+    component: "main-app",
   },
   {
     path: "/modeling-space",
-    component: "widget-container",
+    component: "main-app",
   },
 ];
 @customElement("static-app")
@@ -227,7 +230,13 @@ class StaticApp extends LitElement {
   _onGenerateMetamodelClicked() {
     this.publishUpdateMetamodelOperation();
     this.changeVisibility("#generateModelLoader", true);
-    yjsSync().then((y: Y.Doc) => {
+    const yjsInsance = getInstance({
+      host: APP_CONFIG.yjsHost,
+      port: APP_CONFIG.yjsPort,
+      protocol: APP_CONFIG.yjsProtocol,
+      spaceTitle: window.spaceTitle,
+    });
+    yjsInsance.connect().then((y: Y.Doc) => {
       const metaModelStatus = y.getMap("metaModelStatus");
       metaModelStatus.observe((event: Y.YMapEvent<any>) => {
         let message;
@@ -280,17 +289,6 @@ class StaticApp extends LitElement {
    * @param callback callback function that is called when the connection is established. returns the shared document
    * @returns
    */
-  initY(callback: (doc: Y.Doc) => void) {
-    if (parent.syncmetaRoom) {
-      const doc = new Y.Doc();
-      const provider = new WebsocketProvider(
-        "{YJS_ADDRESS}",
-        parent.syncmetaRoom,
-        doc
-      );
-      callback(doc);
-    }
-  }
 
   handleLogin(event: any) {
     var cached_access_token = localStorage.getItem("access_token");

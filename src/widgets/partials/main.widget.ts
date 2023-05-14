@@ -5,7 +5,7 @@ import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jquery-migrate/1.4.1/jquery-migrate.min.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import { html, LitElement } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import AbstractClassNodeTool from "../../es6/canvas_widget/AbstractClassNodeTool";
 import BiDirAssociationEdgeTool from "../../es6/canvas_widget/BiDirAssociationEdgeTool";
 import Canvas from "../../es6/canvas_widget/Canvas";
@@ -45,7 +45,7 @@ import ViewRelationshipNodeTool from "../../es6/canvas_widget/viewpoint/ViewRela
 import { CONFIG, getWidgetTagName } from "../../es6/config";
 import { getGuidanceModeling } from "../../es6/Guidancemodel";
 import IWCW from "../../es6/lib/IWCWrapper";
-import { yjsSync } from "../../es6/lib/yjs-sync";
+import { getInstance } from "../../es6/lib/yjs-sync";
 import ActivityOperation from "../../es6/operations/non_ot/ActivityOperation";
 import InitModelTypesOperation from "../../es6/operations/non_ot/InitModelTypesOperation";
 import NonOTOperation from "../../es6/operations/non_ot/NonOTOperation";
@@ -65,6 +65,11 @@ export class CanvasWidget extends SyncMetaWidget(
   LitElement,
   getWidgetTagName(CONFIG.WIDGET.NAME.MAIN)
 ) {
+  @property({ type: String }) yjsHost = "localhost";
+  @property({ type: Number }) yjsPort = 1234;
+  @property({ type: String }) yjsProtocol = "ws";
+  @property({ type: String }) yjsSpaceTitle = window.spaceTitle;
+
   canvas: Canvas;
   metamodel: any;
   model: any;
@@ -439,7 +444,14 @@ export class CanvasWidget extends SyncMetaWidget(
     if (!user) {
       console.error("user is undefined");
     }
-    yjsSync()
+    const yjsInstance = getInstance({
+      host: this.yjsHost,
+      port: this.yjsPort,
+      protocol: this.yjsProtocol,
+      spaceTitle: this.yjsSpaceTitle,
+    });
+    yjsInstance
+      .connect()
       .then((y: YDoc) => {
         console.info(
           "CANVAS: Yjs Initialized successfully in room " +

@@ -61,12 +61,6 @@ export const SyncMetaWidget = <T extends Constructor<LitElement>>(
 
     connectedCallback() {
       super.connectedCallback();
-      createReloadHandler();
-      if (!window.hasOwnProperty("y")) {
-        yjsSync().then((y: YDoc) => {
-          if (!window.hasOwnProperty("y")) window.y = y;
-        });
-      }
     }
 
     disconnectedCallback() {

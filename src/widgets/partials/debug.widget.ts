@@ -2,13 +2,13 @@ import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"
 import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "../../styles/debug.widget.css";
 import { html, LitElement, PropertyValueMap } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import _ from "lodash-es";
 import GenerateViewpointModel from "../../es6/canvas_widget/GenerateViewpointModel";
 import { EntityManagerInstance as EntityManager } from "../../es6/canvas_widget/Manager";
 import { CONFIG, getWidgetTagName } from "../../es6/config";
 import { getGuidanceModeling } from "../../es6/Guidancemodel";
-import { yjsSync } from "../../es6/lib/yjs-sync";
+import { getInstance } from "../../es6/lib/yjs-sync";
 import init from "../../es6/shared";
 import { SyncMetaWidget } from "../../widget";
 import { Text as YText, Map as YMap } from "yjs";
@@ -22,6 +22,10 @@ export class DebugWidget extends SyncMetaWidget(
   LitElement,
   getWidgetTagName(CONFIG.WIDGET.NAME.DEBUG)
 ) {
+  @property({ type: String }) yjsHost = "localhost";
+  @property({ type: Number }) yjsPort = 1234;
+  @property({ type: String }) yjsProtocol = "ws";
+  @property({ type: String }) yjsSpaceTitle = window.spaceTitle;
   widgetName = getWidgetTagName(CONFIG.WIDGET.NAME.DEBUG);
   $spinner: JQuery<HTMLElement>;
   $fileObject: any;
@@ -39,7 +43,14 @@ export class DebugWidget extends SyncMetaWidget(
       "loading-spinner"
     );
 
-    yjsSync()
+    const yjsInstance = getInstance({
+      host: this.yjsHost,
+      port: this.yjsPort,
+      protocol: this.yjsProtocol,
+      spaceTitle: this.yjsSpaceTitle,
+    });
+    yjsInstance
+      .connect()
       .then((y) => {
         const dataMap = y.getMap("data");
         console.info(

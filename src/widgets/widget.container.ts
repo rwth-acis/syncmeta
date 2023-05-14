@@ -1,5 +1,5 @@
 import { LitElement, html } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 
 // Syncmeta Widgets
 import "./partials/main.widget";
@@ -10,6 +10,10 @@ import "./partials/activity.widget";
 
 @customElement("widget-container")
 export class WidgetContainer extends LitElement {
+  @property({ type: String }) yjsHost = "localhost";
+  @property({ type: Number }) yjsPort = 1234;
+  @property({ type: String }) yjsProtocol = "ws";
+  @property({ type: String }) yjsSpaceTitle = window.spaceTitle;
   createRenderRoot() {
     return this;
   }
@@ -58,15 +62,31 @@ export class WidgetContainer extends LitElement {
         <div class="col-9 innercontainer">
           <div class="row h-100">
             <div class="col-9 px-1 border-end h-100">
-              <canvas-widget></canvas-widget>
+              <canvas-widget
+                yjsHost="${this.yjsHost}"
+                yjsPort="${this.yjsPort}"
+                yjsProtocol="${this.yjsProtocol}"
+                yjsSpaceTitle="${this.yjsSpaceTitle}"
+              ></canvas-widget>
             </div>
             <div class="col-3  h-100">
-              <palette-widget> </palette-widget>
+              <palette-widget
+                yjsHost="${this.yjsHost}"
+                yjsPort="${this.yjsPort}"
+                yjsProtocol="${this.yjsProtocol}"
+                yjsSpaceTitle="${this.yjsSpaceTitle}"
+              >
+              </palette-widget>
             </div>
           </div>
         </div>
         <div class="col-3 innercontainer ">
-          <property-browser-widget></property-browser-widget>
+          <property-browser-widget
+            yjsHost="${this.yjsHost}"
+            yjsPort="${this.yjsPort}"
+            yjsProtocol="${this.yjsProtocol}"
+            yjsSpaceTitle="${this.yjsSpaceTitle}"
+          ></property-browser-widget>
         </div>
 
         <div
@@ -88,7 +108,12 @@ export class WidgetContainer extends LitElement {
                 ></button>
               </div>
               <div class="modal-body">
-                <debug-widget></debug-widget>
+                <debug-widget
+                  yjsHost="${this.yjsHost}"
+                  yjsPort="${this.yjsPort}"
+                  yjsProtocol="${this.yjsProtocol}"
+                  yjsSpaceTitle="${this.yjsSpaceTitle}"
+                ></debug-widget>
               </div>
             </div>
           </div>
@@ -110,14 +135,26 @@ export class WidgetContainer extends LitElement {
           ></button>
         </div>
         <div class="offcanvas-body">
-          <user-activity-widget></user-activity-widget>
+          <user-activity-widget
+            yjsHost="${this.yjsHost}"
+            yjsPort="${this.yjsPort}"
+            yjsProtocol="${this.yjsProtocol}"
+            yjsSpaceTitle="${this.yjsSpaceTitle}"
+          ></user-activity-widget>
         </div>
       </div>
     `;
   }
   connectedCallback(): void {
     super.connectedCallback();
+    this.addWidgetButtons();
+  }
 
+  /**
+   * Adds the widget buttons to the main widget container.
+   * One button for the export/import modal and one button for the user activities.
+   */
+  addWidgetButtons() {
     setTimeout(() => {
       const rowContainer = document.querySelector(
         "#main-widget-utilities-container"

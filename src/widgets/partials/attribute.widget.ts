@@ -3,7 +3,7 @@ import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"
 import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "../../styles/attribute.widget.css";
 import { html, LitElement } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import Quill from "quill/dist/quill";
 import AttributeWrapper from "../../es6/attribute_widget/AttributeWrapper";
 import { EntityManagerInstance as EntityManager } from "../../es6/attribute_widget/EntityManager";
@@ -11,7 +11,7 @@ import ViewGenerator from "../../es6/attribute_widget/view/ViewGenerator";
 import { CONFIG, getWidgetTagName } from "../../es6/config";
 import { getGuidanceModeling } from "../../es6/Guidancemodel";
 import IWCW from "../../es6/lib/IWCWrapper";
-import { yjsSync } from "../../es6/lib/yjs-sync";
+import { getInstance } from "../../es6/lib/yjs-sync";
 import InitModelTypesOperation from "../../es6/operations/non_ot/InitModelTypesOperation";
 import SetModelAttributeNodeOperation from "../../es6/operations/non_ot/SetModelAttributeNodeOperation";
 import { WaitForCanvas } from "../../es6/WaitForCanvas";
@@ -23,12 +23,23 @@ export class AttributeWidget extends SyncMetaWidget(
   LitElement,
   getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE)
 ) {
+  @property({ type: String }) yjsHost = "localhost";
+  @property({ type: Number }) yjsPort = 1234;
+  @property({ type: String }) yjsProtocol = "ws";
+  @property({ type: String }) yjsSpaceTitle = window.spaceTitle;
   widgetName = getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE);
   firstUpdated(e: any) {
     super.firstUpdated(e);
     const guidancemodel = getGuidanceModeling();
     try {
-      yjsSync()
+      const yjsInstance = getInstance({
+        host: this.yjsHost,
+        port: this.yjsPort,
+        protocol: this.yjsProtocol,
+        spaceTitle: this.yjsSpaceTitle,
+      });
+      yjsInstance
+        .connect()
         .then((y) => {
           WaitForCanvas(CONFIG.WIDGET.NAME.ATTRIBUTE, y)
             .then((user) => {
