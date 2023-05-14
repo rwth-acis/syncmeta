@@ -2,11 +2,20 @@ import { Doc as YDoc } from "yjs";
 import { WebsocketProvider } from "y-websocket";
 import Util from "../Util";
 
+/**
+ *
+ * @param {*} spaceTitle
+ * @param {*} yjsServer
+ * @param {*} yjsProtocol
+ * @returns
+ * @deprecated use getInstance instead
+ */
 export async function yjsSync(
-  spaceTitle,
+  spaceTitle = null,
   yjsServer = "localhost:1234",
   yjsProtocol = "ws"
 ) {
+  console.warn("yjsSync is deprecated. Use getInstance instead");
   let title;
 
   if (!spaceTitle) {
