@@ -1,5 +1,5 @@
 export const APP_CONFIG = {
   yjsHost: "localhost",
-  yjsPort: 80,
+  yjsPort: 1234,
   yjsProtocol: "ws",
 };
