@@ -3,7 +3,7 @@ import "../../styles/palette.widget.css";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 
 import { html, LitElement, PropertyValueMap } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import { CONFIG, getWidgetTagName } from "../../es6/config";
 import { getInstance } from "../../es6/lib/yjs-sync";
 import AbstractClassNodeTool from "../../es6/palette_widget/AbstractClassNodeTool";
@@ -31,14 +31,23 @@ export class PaletteWidget extends SyncMetaWidget(
   getWidgetTagName(CONFIG.WIDGET.NAME.PALETTE)
 ) {
   widgetName = getWidgetTagName(CONFIG.WIDGET.NAME.PALETTE);
+  @property({ type: String }) yjsHost = "localhost";
+  @property({ type: Number }) yjsPort = 1234;
+  @property({ type: String }) yjsProtocol = "ws";
+  @property({ type: String }) yjsSpaceTitle = window.spaceTitle;
 
   protected async firstUpdated(
     _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
   ) {
     super.firstUpdated(_changedProperties);
     this.hideErrorAlert();
-    const instance = getInstance({});
-    instance
+    const yjsInstance = getInstance({
+      host: this.yjsHost,
+      port: this.yjsPort,
+      protocol: this.yjsProtocol,
+      spaceTitle: this.yjsSpaceTitle,
+    });
+    yjsInstance
       .connect()
       .then((y) => {
         console.info(

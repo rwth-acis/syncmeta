@@ -11,21 +11,23 @@ import { Common } from "./common";
 import Static from "./static";
 import * as IWC from "../../src/es6/lib/iwc";
 
-import "../../build/widgets/widget.container.js";
-import { yjsSync } from "../../src/es6/lib/yjs-sync";
+import { getInstance } from "../../src/es6/lib/yjs-sync";
+import "./main";
+
+import { APP_CONFIG } from "../config";
 
 const routes = [
   {
     path: "/",
-    component: "widget-container",
+    component: "main-app",
   },
   {
     path: "/meta-modeling-space",
-    component: "widget-container",
+    component: "main-app",
   },
   {
     path: "/modeling-space",
-    component: "widget-container",
+    component: "main-app",
   },
 ];
 @customElement("static-app")
@@ -227,7 +229,13 @@ class StaticApp extends LitElement {
   _onGenerateMetamodelClicked() {
     this.publishUpdateMetamodelOperation();
     this.changeVisibility("#generateModelLoader", true);
-    yjsSync().then((y: Y.Doc) => {
+    const yjsInsance = getInstance({
+      host: APP_CONFIG.yjsHost,
+      port: APP_CONFIG.yjsPort,
+      protocol: APP_CONFIG.yjsProtocol,
+      spaceTitle: window.spaceTitle,
+    });
+    yjsInsance.connect().then((y: Y.Doc) => {
       const metaModelStatus = y.getMap("metaModelStatus");
       metaModelStatus.observe((event: Y.YMapEvent<any>) => {
         let message;

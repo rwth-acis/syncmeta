@@ -22,13 +22,22 @@ export class HeatMapWidget extends SyncMetaWidget(
   LitElement,
   CONFIG.WIDGET.NAME.HEATMAP
 ) {
+  @property({ type: String }) yjsHost = "localhost";
+  @property({ type: Number }) yjsPort = 1234;
+  @property({ type: String }) yjsProtocol = "ws";
+  @property({ type: String }) yjsSpaceTitle = window.spaceTitle;
   protected async firstUpdated(
     _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
   ) {
     super.firstUpdated(_changedProperties);
     try {
-      const instance = getInstance({});
-      const y = await instance.connect();
+      const yjsInstance = getInstance({
+        host: this.yjsHost,
+        port: this.yjsPort,
+        protocol: this.yjsProtocol,
+        spaceTitle: this.yjsSpaceTitle,
+      });
+      const y = await yjsInstance.connect();
       console.info(
         "HEATMAP: Yjs successfully initialized in room " +
           window.spaceTitle +

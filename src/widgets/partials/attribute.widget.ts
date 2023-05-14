@@ -3,7 +3,7 @@ import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"
 import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "../../styles/attribute.widget.css";
 import { html, LitElement } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import Quill from "quill/dist/quill";
 import AttributeWrapper from "../../es6/attribute_widget/AttributeWrapper";
 import { EntityManagerInstance as EntityManager } from "../../es6/attribute_widget/EntityManager";
@@ -23,17 +23,22 @@ export class AttributeWidget extends SyncMetaWidget(
   LitElement,
   getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE)
 ) {
+  @property({ type: String }) yjsHost = "localhost";
+  @property({ type: Number }) yjsPort = 1234;
+  @property({ type: String }) yjsProtocol = "ws";
+  @property({ type: String }) yjsSpaceTitle = window.spaceTitle;
   widgetName = getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE);
   firstUpdated(e: any) {
     super.firstUpdated(e);
     const guidancemodel = getGuidanceModeling();
     try {
-      const instance = getInstance({
-        host: "localhost",
-        port: 1234,
-        protocol: "ws",
+      const yjsInstance = getInstance({
+        host: this.yjsHost,
+        port: this.yjsPort,
+        protocol: this.yjsProtocol,
+        spaceTitle: this.yjsSpaceTitle,
       });
-      instance
+      yjsInstance
         .connect()
         .then((y) => {
           WaitForCanvas(CONFIG.WIDGET.NAME.ATTRIBUTE, y)

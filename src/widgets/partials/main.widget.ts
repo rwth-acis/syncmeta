@@ -5,7 +5,7 @@ import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jquery-migrate/1.4.1/jquery-migrate.min.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import { html, LitElement } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import AbstractClassNodeTool from "../../es6/canvas_widget/AbstractClassNodeTool";
 import BiDirAssociationEdgeTool from "../../es6/canvas_widget/BiDirAssociationEdgeTool";
 import Canvas from "../../es6/canvas_widget/Canvas";
@@ -65,6 +65,11 @@ export class CanvasWidget extends SyncMetaWidget(
   LitElement,
   getWidgetTagName(CONFIG.WIDGET.NAME.MAIN)
 ) {
+  @property({ type: String }) yjsHost = "localhost";
+  @property({ type: Number }) yjsPort = 1234;
+  @property({ type: String }) yjsProtocol = "ws";
+  @property({ type: String }) yjsSpaceTitle = window.spaceTitle;
+
   canvas: Canvas;
   metamodel: any;
   model: any;
@@ -440,10 +445,10 @@ export class CanvasWidget extends SyncMetaWidget(
       console.error("user is undefined");
     }
     const yjsInstance = getInstance({
-      spaceTitle: window.spaceTitle,
-      host: "localhost",
-      port: 1234,
-      protocol: "ws",
+      host: this.yjsHost,
+      port: this.yjsPort,
+      protocol: this.yjsProtocol,
+      spaceTitle: this.yjsSpaceTitle,
     });
     yjsInstance
       .connect()
