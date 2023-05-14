@@ -8,7 +8,7 @@ import GenerateViewpointModel from "../../es6/canvas_widget/GenerateViewpointMod
 import { EntityManagerInstance as EntityManager } from "../../es6/canvas_widget/Manager";
 import { CONFIG, getWidgetTagName } from "../../es6/config";
 import { getGuidanceModeling } from "../../es6/Guidancemodel";
-import { yjsSync } from "../../es6/lib/yjs-sync";
+import { getInstance } from "../../es6/lib/yjs-sync";
 import init from "../../es6/shared";
 import { SyncMetaWidget } from "../../widget";
 import { Text as YText, Map as YMap } from "yjs";
@@ -39,7 +39,9 @@ export class DebugWidget extends SyncMetaWidget(
       "loading-spinner"
     );
 
-    yjsSync()
+    const instance = getInstance({});
+    instance
+      .connect()
       .then((y) => {
         const dataMap = y.getMap("data");
         console.info(

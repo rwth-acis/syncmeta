@@ -8,7 +8,7 @@ import AvoidConflictsStrategy from "../../es6/guidance_widget/AvoidConflictsStra
 import CollaborationStrategy from "../../es6/guidance_widget/CollaborationStrategy";
 import NoStrategy from "../../es6/guidance_widget/NoStrategy";
 import IWCW from "../../es6/lib/IWCWrapper";
-import { yjsSync } from "../../es6/lib/yjs-sync";
+import { getInstance } from "../../es6/lib/yjs-sync";
 import EntitySelectOperation from "../../es6/operations/non_ot/EntitySelectOperation";
 import GuidanceStrategyOperation from "../../es6/operations/non_ot/GuidanceStrategyOperation";
 import {
@@ -35,7 +35,9 @@ export class GuidanceWidget extends SyncMetaWidget(
     _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
   ): void {
     super.firstUpdated(_changedProperties);
-    yjsSync()
+    const instance = getInstance({});
+    instance
+      .connect()
       .then((y) => {
         window.y = y;
         console.info(

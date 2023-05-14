@@ -5,7 +5,7 @@ import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"
 import { html, LitElement, PropertyValueMap } from "lit";
 import { customElement } from "lit/decorators.js";
 import { CONFIG, getWidgetTagName } from "../../es6/config";
-import { yjsSync } from "../../es6/lib/yjs-sync";
+import { getInstance } from "../../es6/lib/yjs-sync";
 import AbstractClassNodeTool from "../../es6/palette_widget/AbstractClassNodeTool";
 import BiDirAssociationEdgeTool from "../../es6/palette_widget/BiDirAssociationEdgeTool";
 import EdgeShapeNodeTool from "../../es6/palette_widget/EdgeShapeNodeTool";
@@ -37,7 +37,9 @@ export class PaletteWidget extends SyncMetaWidget(
   ) {
     super.firstUpdated(_changedProperties);
     this.hideErrorAlert();
-    yjsSync()
+    const instance = getInstance({});
+    instance
+      .connect()
       .then((y) => {
         console.info(
           "PALETTE: Yjs successfully initialized in room " +

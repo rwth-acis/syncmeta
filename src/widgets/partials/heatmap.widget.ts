@@ -1,13 +1,12 @@
 import { LitElement, html, PropertyValueMap } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { WebsocketProvider } from "y-websocket";
 import init from "../../es6/shared";
 import { SyncMetaWidget } from "../../widget"; // needed to prevent ts errors when bundling with rollup
 import { getWidgetTagName } from "../../es6/config";
 import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import IWCW from "../../es6/lib/IWCWrapper";
-import { yjsSync } from "../../es6/lib/yjs-sync";
+import { getInstance } from "../../es6/lib/yjs-sync";
 import Util from "../../es6/Util";
 import NodePreview from "../../es6/heatmap_widget/NodePreview";
 import { NodeAddOperation } from "../../es6/operations/ot/EntityOperation";
@@ -28,7 +27,8 @@ export class HeatMapWidget extends SyncMetaWidget(
   ) {
     super.firstUpdated(_changedProperties);
     try {
-      const y = await yjsSync();
+      const instance = getInstance({});
+      const y = await instance.connect();
       console.info(
         "HEATMAP: Yjs successfully initialized in room " +
           window.spaceTitle +

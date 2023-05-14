@@ -11,7 +11,7 @@ import ViewGenerator from "../../es6/attribute_widget/view/ViewGenerator";
 import { CONFIG, getWidgetTagName } from "../../es6/config";
 import { getGuidanceModeling } from "../../es6/Guidancemodel";
 import IWCW from "../../es6/lib/IWCWrapper";
-import { yjsSync } from "../../es6/lib/yjs-sync";
+import { getInstance } from "../../es6/lib/yjs-sync";
 import InitModelTypesOperation from "../../es6/operations/non_ot/InitModelTypesOperation";
 import SetModelAttributeNodeOperation from "../../es6/operations/non_ot/SetModelAttributeNodeOperation";
 import { WaitForCanvas } from "../../es6/WaitForCanvas";
@@ -28,7 +28,13 @@ export class AttributeWidget extends SyncMetaWidget(
     super.firstUpdated(e);
     const guidancemodel = getGuidanceModeling();
     try {
-      yjsSync()
+      const instance = getInstance({
+        host: "localhost",
+        port: 1234,
+        protocol: "ws",
+      });
+      instance
+        .connect()
         .then((y) => {
           WaitForCanvas(CONFIG.WIDGET.NAME.ATTRIBUTE, y)
             .then((user) => {

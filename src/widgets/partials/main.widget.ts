@@ -45,7 +45,7 @@ import ViewRelationshipNodeTool from "../../es6/canvas_widget/viewpoint/ViewRela
 import { CONFIG, getWidgetTagName } from "../../es6/config";
 import { getGuidanceModeling } from "../../es6/Guidancemodel";
 import IWCW from "../../es6/lib/IWCWrapper";
-import { yjsSync } from "../../es6/lib/yjs-sync";
+import { getInstance } from "../../es6/lib/yjs-sync";
 import ActivityOperation from "../../es6/operations/non_ot/ActivityOperation";
 import InitModelTypesOperation from "../../es6/operations/non_ot/InitModelTypesOperation";
 import NonOTOperation from "../../es6/operations/non_ot/NonOTOperation";
@@ -439,7 +439,14 @@ export class CanvasWidget extends SyncMetaWidget(
     if (!user) {
       console.error("user is undefined");
     }
-    yjsSync()
+    const yjsInstance = getInstance({
+      spaceTitle: window.spaceTitle,
+      host: "localhost",
+      port: 1234,
+      protocol: "ws",
+    });
+    yjsInstance
+      .connect()
       .then((y: YDoc) => {
         console.info(
           "CANVAS: Yjs Initialized successfully in room " +

@@ -7,7 +7,7 @@ import "../../error-alert";
 import ActivityList from "../../es6/activity_widget/ActivityList";
 import WidgetTracker from "../../es6/activity_widget/WidgetTracker";
 import { CONFIG, getWidgetTagName } from "../../es6/config";
-import { yjsSync } from "../../es6/lib/yjs-sync";
+import { getInstance } from "../../es6/lib/yjs-sync";
 import init from "../../es6/shared";
 import Util from "../../es6/Util";
 import { WaitForCanvas } from "../../es6/WaitForCanvas";
@@ -24,7 +24,16 @@ export class ActivityWidget extends SyncMetaWidget(
     _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
   ): void {
     super.firstUpdated(_changedProperties);
-    yjsSync()
+
+    const yjsInstance = getInstance({
+      host: "localhost",
+      port: 1234,
+      protocol: "ws",
+      spaceTitle: window.spaceTitle,
+    });
+
+    yjsInstance
+      .connect()
       .then((y) => {
         window.y = y;
 
