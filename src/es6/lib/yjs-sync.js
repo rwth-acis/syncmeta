@@ -97,7 +97,7 @@ class YJSConnector {
 
     this.doc = new YDoc();
     let connectionString = `${this.protocol}://${this.host}`;
-    if (this.port) {
+    if (this.port && this.port != 80) {
       connectionString += `:${this.port}`;
     }
     if (this.path) {
