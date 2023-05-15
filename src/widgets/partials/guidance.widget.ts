@@ -52,7 +52,7 @@ export class GuidanceWidget extends SyncMetaWidget(
         window.y = y;
         console.info(
           "GUIDANCE: Yjs Initialized successfully in room " +
-            window.spaceTitle +
+            this.yjsSpaceTitle +
             " with y-user-id: " +
             y.clientID
         );
