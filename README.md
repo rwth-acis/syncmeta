@@ -33,6 +33,14 @@ The application will be accessible via <http://127.0.0.1:8000>
 
 When application is up and running, you will see two option in the main page as meta modeling space and modeling space. As their names imply, you can create meta model in the meta modeling space and after creating the meta model, it can be uploaded to modeling space with 'Generate Metamodel' button. Created meta model can be tried instantly in the modeling space with this way.
 
+## Updating and Publishing
+
+We follow a SemVer-like versioning scheme, where new releases are tagged with a version number.
+If you want to publish a new release, you need to create a new tag and push it to the repository. Furthermore, you need to update the version number in the `package.json` file to match the tag you just created.
+The repository is configured to automatically bundle the widgets and publish them to NPM if you publish a new release.
+The CI is configured in `.github\workflows\npm-publish.yml`.
+The CI checks if the tag matches the version number in the `package.json` file and if so, it will publish the widgets to NPM.
+
 ## Library Documentation
 
 ### Widgets
@@ -48,7 +56,7 @@ When application is up and running, you will see two option in the main page as 
 
 ### Inter-Widget Communication(IWC)
 
-For the __local__ communication between the various widgets of the SyncMeta the new [the IWC library](https://github.com/rwth-acis/InterwidgetCommunication) from the chair is used.
+For the __local__ communication between the various widgets of the SyncMeta the [new IWC library](https://github.com/rwth-acis/syncmeta/blob/main/src/es6/lib/IWCWrapper.js) from the chair is used.
 
 ### Versions
 

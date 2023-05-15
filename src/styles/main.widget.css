@@ -137,8 +137,7 @@ div.simple_node div.label {
     border-radius: 6px;
     position: relative !important;
     /*important because jsplumb will position according to this*/
-    background-image: url(../images/grid.png);
-    background-repeat: round;
+    background: radial-gradient(#bebebe 2px, white 2px) 0 0 / 50px 50px;
     opacity: 1 !important;
     border-radius: 20px;
         border: 10px solid #000000;

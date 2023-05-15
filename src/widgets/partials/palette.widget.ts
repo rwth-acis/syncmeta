@@ -1,11 +1,11 @@
 import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
-
+import "../../styles/palette.widget.css";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 
 import { html, LitElement, PropertyValueMap } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import { CONFIG, getWidgetTagName } from "../../es6/config";
-import { yjsSync } from "../../es6/lib/yjs-sync";
+import { getInstance } from "../../es6/lib/yjs-sync";
 import AbstractClassNodeTool from "../../es6/palette_widget/AbstractClassNodeTool";
 import BiDirAssociationEdgeTool from "../../es6/palette_widget/BiDirAssociationEdgeTool";
 import EdgeShapeNodeTool from "../../es6/palette_widget/EdgeShapeNodeTool";
@@ -31,17 +31,28 @@ export class PaletteWidget extends SyncMetaWidget(
   getWidgetTagName(CONFIG.WIDGET.NAME.PALETTE)
 ) {
   widgetName = getWidgetTagName(CONFIG.WIDGET.NAME.PALETTE);
+  @property({ type: String }) yjsHost = "localhost";
+  @property({ type: Number }) yjsPort = 1234;
+  @property({ type: String }) yjsProtocol = "ws";
+  @property({ type: String }) yjsSpaceTitle = window.spaceTitle;
 
   protected async firstUpdated(
     _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
   ) {
     super.firstUpdated(_changedProperties);
     this.hideErrorAlert();
-    yjsSync()
+    const yjsInstance = getInstance({
+      host: this.yjsHost,
+      port: this.yjsPort,
+      protocol: this.yjsProtocol,
+      spaceTitle: this.yjsSpaceTitle,
+    });
+    yjsInstance
+      .connect()
       .then((y) => {
         console.info(
-          "PALETTE: Yjs successfully initialized in room " +
-            window.spaceTitle +
+          "PALETTE: Yjs successfully initialized in " +
+            this.yjsSpaceTitle +
             " with y-user-id: " +
             y.clientID
         );
@@ -117,23 +128,6 @@ export class PaletteWidget extends SyncMetaWidget(
         ${getWidgetTagName(CONFIG.WIDGET.NAME.PALETTE)} {
           height: 100%;
           position: relative;
-        }
-
-        button .icon div.fill_parent {
-          display: none;
-        }
-
-        button span {
-          padding-left: 10px;
-        }
-
-        hr {
-          border-width: 0 0 1px 0;
-          border-color: #cccccc;
-          margin: 0.2em 0;
-        }
-        p#info {
-          font-size: 0.6em;
         }
       </style>
       <link

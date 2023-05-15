@@ -1,6 +1,9 @@
 FROM node:16
 USER root
 
+ENV YJS_SOCKET_HOST="localhost:1234"
+ENV YJS_PROTOCOL="ws"
+
 RUN apt-get update
 
 WORKDIR /usr/src/app

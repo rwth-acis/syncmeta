@@ -1,14 +1,14 @@
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import { html, LitElement, PropertyValueMap } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import _ from "lodash-es";
 import { CONFIG, getWidgetTagName } from "../../es6/config";
 import AvoidConflictsStrategy from "../../es6/guidance_widget/AvoidConflictsStrategy";
 import CollaborationStrategy from "../../es6/guidance_widget/CollaborationStrategy";
 import NoStrategy from "../../es6/guidance_widget/NoStrategy";
 import IWCW from "../../es6/lib/IWCWrapper";
-import { yjsSync } from "../../es6/lib/yjs-sync";
+import { getInstance } from "../../es6/lib/yjs-sync";
 import EntitySelectOperation from "../../es6/operations/non_ot/EntitySelectOperation";
 import GuidanceStrategyOperation from "../../es6/operations/non_ot/GuidanceStrategyOperation";
 import {
@@ -31,16 +31,28 @@ export class GuidanceWidget extends SyncMetaWidget(
   LitElement,
   getWidgetTagName(CONFIG.WIDGET.NAME.GUIDANCE)
 ) {
+  @property({ type: String }) yjsHost = "localhost";
+  @property({ type: Number }) yjsPort = 1234;
+  @property({ type: String }) yjsProtocol = "ws";
+  @property({ type: String }) yjsSpaceTitle = window.spaceTitle;
+
   protected firstUpdated(
     _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
   ): void {
     super.firstUpdated(_changedProperties);
-    yjsSync()
+    const yjsInstance = getInstance({
+      host: this.yjsHost,
+      port: this.yjsPort,
+      protocol: this.yjsProtocol,
+      spaceTitle: this.yjsSpaceTitle,
+    });
+    yjsInstance
+      .connect()
       .then((y) => {
         window.y = y;
         console.info(
           "GUIDANCE: Yjs Initialized successfully in room " +
-            window.spaceTitle +
+            this.yjsSpaceTitle +
             " with y-user-id: " +
             y.clientID
         );

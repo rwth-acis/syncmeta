@@ -1,8 +1,9 @@
 import "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
+import "../../styles/attribute.widget.css";
 import { html, LitElement } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import Quill from "quill/dist/quill";
 import AttributeWrapper from "../../es6/attribute_widget/AttributeWrapper";
 import { EntityManagerInstance as EntityManager } from "../../es6/attribute_widget/EntityManager";
@@ -10,7 +11,7 @@ import ViewGenerator from "../../es6/attribute_widget/view/ViewGenerator";
 import { CONFIG, getWidgetTagName } from "../../es6/config";
 import { getGuidanceModeling } from "../../es6/Guidancemodel";
 import IWCW from "../../es6/lib/IWCWrapper";
-import { yjsSync } from "../../es6/lib/yjs-sync";
+import { getInstance } from "../../es6/lib/yjs-sync";
 import InitModelTypesOperation from "../../es6/operations/non_ot/InitModelTypesOperation";
 import SetModelAttributeNodeOperation from "../../es6/operations/non_ot/SetModelAttributeNodeOperation";
 import { WaitForCanvas } from "../../es6/WaitForCanvas";
@@ -22,13 +23,30 @@ export class AttributeWidget extends SyncMetaWidget(
   LitElement,
   getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE)
 ) {
+  @property({ type: String }) yjsHost = "localhost";
+  @property({ type: Number }) yjsPort = 1234;
+  @property({ type: String }) yjsProtocol = "ws";
+  @property({ type: String }) yjsSpaceTitle = window.spaceTitle;
   widgetName = getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE);
   firstUpdated(e: any) {
     super.firstUpdated(e);
     const guidancemodel = getGuidanceModeling();
     try {
-      yjsSync()
+      const yjsInstance = getInstance({
+        host: this.yjsHost,
+        port: this.yjsPort,
+        protocol: this.yjsProtocol,
+        spaceTitle: this.yjsSpaceTitle,
+      });
+      yjsInstance
+        .connect()
         .then((y) => {
+          console.info(
+            "ATTRIBUTE: Yjs successfully initialized in " +
+              this.yjsSpaceTitle +
+              " with y-user-id: " +
+              y.clientID
+          );
           WaitForCanvas(CONFIG.WIDGET.NAME.ATTRIBUTE, y)
             .then((user) => {
               var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE, y);
@@ -41,13 +59,6 @@ export class AttributeWidget extends SyncMetaWidget(
                 errors: {},
                 firstAttemptFail: {},
               };
-
-              console.info(
-                "ATTRIBUTE: Yjs successfully initialized in room " +
-                  undefined +
-                  " with y-user-id: " +
-                  y.clientID
-              );
               const userMap = y.getMap("users");
               userMap.set(y.clientID, iwc.getUser()[CONFIG.NS.PERSON.JABBERID]);
               const dataMap = y.getMap("data");
@@ -162,160 +173,6 @@ export class AttributeWidget extends SyncMetaWidget(
       <style>
         ${getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE)} {
           height: 100%;
-          position: relative;
-        }
-        .ql-container {
-          border-radius: 0.25rem;
-        }
-        #wrapper {
-          overflow: auto;
-          height: 100%;
-          position: relative;
-        }
-        .main-wrapper {
-          height: 100%;
-        }
-        .list_attribute ul.list {
-          list-style: none;
-          padding-left: 10px;
-          margin: 5px 0;
-        }
-
-        .list_attribute div span.ui-icon {
-          margin-left: 10px;
-        }
-
-        .key_value_attribute,
-        .condition_predicate,
-        .renaming_attr {
-          overflow: auto;
-        }
-
-        .key_value_attribute div,
-        .condition_predicate div,
-        .renaming_attr div {
-          width: 30%;
-          float: left;
-        }
-
-        .key_value_attribute div input,
-        .condition_predicate div input,
-        .renaming_attr div input {
-          border: 1px solid #aaaaaa;
-        }
-
-        .key_value_attribute span.ui-icon,
-        .condition_predicate span.ui-icon {
-          margin-top: 3px;
-        }
-
-        .single_value_attribute {
-          overflow: auto;
-        }
-
-        .single_quiz_attribute {
-          overflow: auto;
-        }
-
-        .single_value_attribute div {
-          float: left;
-        }
-
-        .single_quiz_attribute div {
-          float: left;
-          margin-right: 10px;
-        }
-
-        .list .single_value_attribute .name {
-          display: none;
-        }
-        .list .single_quiz_attribute .name {
-          display: none;
-        }
-
-        .single_value_attribute .name {
-          width: 120px;
-        }
-        .single_quiz_attribute .name {
-          width: 120px;
-        }
-
-        .single_value_attribute div.value span.color_preview {
-          width: 12px;
-          height: 18px;
-          background-color: #ffffff;
-          display: inline-block;
-          border: 1px solid #4a4a4a;
-          position: relative;
-          top: 5px;
-          left: -14px;
-        }
-
-        .single_quiz_attribute div.value span.color_preview {
-          width: 12px;
-          height: 18px;
-          background-color: #ffffff;
-          display: inline-block;
-          border: 1px solid #4a4a4a;
-          position: relative;
-          top: 5px;
-          left: -14px;
-        }
-
-        .single_value_attribute div.value textarea {
-          width: 400px;
-          height: 80px;
-        }
-
-        .single_quiz_attribute div.value textarea {
-          width: 400px;
-          height: 80px;
-        }
-
-        #modelAttributes .attribute_default_node .label {
-          font-weight: bold;
-        }
-
-        .label {
-          text-transform: capitalize;
-        }
-
-        .key_value_attribute input,
-        select {
-          width: 150px;
-        }
-        .condition_predicate input,
-        select {
-          width: 150px;
-        }
-
-        .renaming_attr input,
-        select {
-          width: 150px;
-        }
-
-        .type {
-          font-weight: bold;
-          margin: 0 0 3px;
-        }
-
-        .show_hint {
-          font-size: 12px;
-        }
-
-        .hint {
-          font-size: 12px;
-          overflow-y: auto;
-          max-height: 150px;
-        }
-
-        .codeEditorValue {
-          position: absolute;
-          width: 560px;
-          height: 200px;
-          overflow-y: auto;
-        }
-        .main-wrapper {
           position: relative;
         }
       </style>

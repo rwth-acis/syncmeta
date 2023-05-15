@@ -2,7 +2,7 @@ import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import { EntityManagerInstance as EntityManager } from "./Manager";
 import _ from "lodash-es";
 
-export default function (json, canvas) {
+export default function (json, canvas = window.canvas) {
   if (!canvas) return new Error("No canvas object defined!");
 
   function cleanUpYSpace(entity) {
@@ -78,14 +78,11 @@ export default function (json, canvas) {
           jsonNode.type +
           "  type is defined in the VLS"
       );
-      var $errorMsg = $("#errorMsg");
-      $("#loading").hide();
-      $("#canvas-frame").hide();
-      $errorMsg.parent().css("display", "inline-table");
-      $errorMsg.text(
-        "SYNCMETA: Model is not compatible to the current Metamodel! Delete the current model or change the metamodel."
+      throw new Error(
+        "SYNCMETA: Node undefined. Check if " +
+          jsonNode.type +
+          "  type is defined in the VLS"
       );
-      return;
     }
 
     node.registerYMap();
@@ -121,15 +118,11 @@ export default function (json, canvas) {
               edges[edgeId].type +
               "  type is defined in the VLS"
           );
-          var $errorMsg = $("#errorMsg");
-          $errorMsg.parent().show();
-          $("#canvas-frame").hide();
-          $("#loading").hide();
-          $errorMsg.parent().css("display", "inline-table");
-          $errorMsg.text(
-            "SYNCMETA: Model is not compatible to the current Metamodel! Delete the current model or change the metamodel."
+          throw new Error(
+            "SYNCMETA: Edge undefined. Check if " +
+              edges[edgeId].type +
+              "  type is defined in the VLS"
           );
-          continue;
         }
 
         //register it to Yjs and draw it to the canvas

@@ -3,12 +3,12 @@ import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 
 import { css, CSSResultGroup, html, LitElement, PropertyValueMap } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import _ from "lodash-es";
 import GenerateViewpointModel from "../../es6/canvas_widget/GenerateViewpointModel";
 import { CONFIG, getWidgetTagName } from "../../es6/config";
 import IWC from "../../es6/lib/IWCWrapper";
-import { yjsSync } from "../../es6/lib/yjs-sync";
+import { getInstance } from "../../es6/lib/yjs-sync";
 import UpdateViewListOperation from "../../es6/operations/non_ot/UpdateViewListOperation";
 import init from "../../es6/shared";
 import { SyncMetaWidget } from "../../widget";
@@ -18,15 +18,25 @@ export class ViewControlWidget extends SyncMetaWidget(
   LitElement,
   getWidgetTagName(CONFIG.WIDGET.NAME.VIEWCONTROL)
 ) {
+  @property({ type: String }) yjsHost = "localhost";
+  @property({ type: Number }) yjsPort = 1234;
+  @property({ type: String }) yjsProtocol = "ws";
+  @property({ type: String }) yjsSpaceTitle = window.spaceTitle;
   protected async firstUpdated(
     _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
   ) {
     super.firstUpdated(_changedProperties);
     try {
-      const y = await yjsSync();
+      const yjsInstance = getInstance({
+        host: this.yjsHost,
+        port: this.yjsPort,
+        protocol: this.yjsProtocol,
+        spaceTitle: this.yjsSpaceTitle,
+      });
+      const y = await yjsInstance.connect();
       console.info(
-        "VIEWCONTROL: Yjs successfully initialized in room " +
-          window.spaceTitle +
+        "VIEWCONTROL: Yjs successfully initialized in " +
+          this.yjsSpaceTitle +
           " with y-user-id: " +
           y.clientID
       );

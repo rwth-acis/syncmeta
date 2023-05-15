@@ -1,17 +1,19 @@
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
+import "../../styles/debug.widget.css";
 import { html, LitElement, PropertyValueMap } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import _ from "lodash-es";
 import GenerateViewpointModel from "../../es6/canvas_widget/GenerateViewpointModel";
 import { EntityManagerInstance as EntityManager } from "../../es6/canvas_widget/Manager";
 import { CONFIG, getWidgetTagName } from "../../es6/config";
 import { getGuidanceModeling } from "../../es6/Guidancemodel";
-import { yjsSync } from "../../es6/lib/yjs-sync";
+import { getInstance } from "../../es6/lib/yjs-sync";
 import init from "../../es6/shared";
 import { SyncMetaWidget } from "../../widget";
 import { Text as YText, Map as YMap } from "yjs";
 import { EntityManagerInstance } from "../../es6/canvas_widget/Manager";
+import JSONtoGraph from "../../es6/canvas_widget/JSONtoGraph";
 // widget body used by all syncmeta widgets
 const guidance = getGuidanceModeling();
 
@@ -20,9 +22,18 @@ export class DebugWidget extends SyncMetaWidget(
   LitElement,
   getWidgetTagName(CONFIG.WIDGET.NAME.DEBUG)
 ) {
+  @property({ type: String }) yjsHost = "localhost";
+  @property({ type: Number }) yjsPort = 1234;
+  @property({ type: String }) yjsProtocol = "ws";
+  @property({ type: String }) yjsSpaceTitle = window.spaceTitle;
   widgetName = getWidgetTagName(CONFIG.WIDGET.NAME.DEBUG);
   $spinner: JQuery<HTMLElement>;
   $fileObject: any;
+  $smallSpinner: JQuery<HTMLElement> = $(
+    `<div class="spinner-border text-light" role="status" style="height: 20px; width:20px">
+      <span class="visually-hidden">Loading...</span>
+     </div>`
+  );
 
   protected firstUpdated(
     _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
@@ -32,12 +43,19 @@ export class DebugWidget extends SyncMetaWidget(
       "loading-spinner"
     );
 
-    yjsSync()
+    const yjsInstance = getInstance({
+      host: this.yjsHost,
+      port: this.yjsPort,
+      protocol: this.yjsProtocol,
+      spaceTitle: this.yjsSpaceTitle,
+    });
+    yjsInstance
+      .connect()
       .then((y) => {
         const dataMap = y.getMap("data");
         console.info(
-          "DEBUG: Yjs successfully initialized in room " +
-            window.spaceTitle +
+          "DEBUG: Yjs successfully initialized in " +
+            this.yjsSpaceTitle +
             " with y-user-id: " +
             y.clientID
         );
@@ -154,6 +172,10 @@ export class DebugWidget extends SyncMetaWidget(
         });
 
         $importMetamodel.click(() => {
+          const deleteModel = confirm(
+            "Importing a new metamodel will delete the current model. Are you sure you want to continue ?"
+          );
+          if (!deleteModel) return;
           this.$spinner.show();
           $importMetamodel.prop("disabled", true);
           getFileContent()
@@ -279,9 +301,6 @@ export class DebugWidget extends SyncMetaWidget(
         crossorigin="anonymous"
       />
       <style>
-        #debug-container {
-          position: relative;
-        }
         ${getWidgetTagName(CONFIG.WIDGET.NAME.DEBUG)} {
           position: relative;
           overflow-y: auto;
@@ -311,7 +330,7 @@ export class DebugWidget extends SyncMetaWidget(
                     </h6>
                     <button
                       id="import-model"
-                      class="btn btn-primary"
+                      class="btn btn-primary flex items-center justify-center"
                       title="Import a model to the canvas"
                       @click="${this.importModel}"
                     >
@@ -398,83 +417,124 @@ export class DebugWidget extends SyncMetaWidget(
     `;
   }
 
+  disableAllButtons() {
+    $("#import-model").prop("disabled", true);
+    $("#export-model").prop("disabled", true);
+    $("#delete-model").prop("disabled", true);
+    $("#import-meta-model").prop("disabled", true);
+    $("#export-meta-model").prop("disabled", true);
+    $("#delete-meta-model").prop("disabled", true);
+    $("#import-guidance-model").prop("disabled", true);
+    $("#export-guidance-model").prop("disabled", true);
+    $("#delete-guidance-model").prop("disabled", true);
+    $("#export-activity-list").prop("disabled", true);
+    $("#delete-activity-list").prop("disabled", true);
+  }
+
+  enableAllButtons() {
+    $("#import-model").prop("disabled", false);
+    $("#export-model").prop("disabled", false);
+    $("#delete-model").prop("disabled", false);
+    $("#import-meta-model").prop("disabled", false);
+    $("#export-meta-model").prop("disabled", false);
+    $("#delete-meta-model").prop("disabled", false);
+    $("#import-guidance-model").prop("disabled", false);
+    $("#export-guidance-model").prop("disabled", false);
+    $("#delete-guidance-model").prop("disabled", false);
+    $("#export-activity-list").prop("disabled", false);
+    $("#delete-activity-list").prop("disabled", false);
+  }
+
   importModel() {
     this.$spinner.show();
-    getFileContent()
-      .then((data) => {
-        var initAttributes = function (attrs, map) {
-          if (attrs.hasOwnProperty("[attributes]")) {
-            var attr = attrs["[attributes]"].list;
-            for (var key in attr) {
-              if (attr.hasOwnProperty(key)) {
-                if (attr[key].hasOwnProperty("key")) {
-                  var ytext = map.set(attr[key].key.id, new YText());
-                  ytext.insert(0, attr[key].key.value);
-                } else {
-                  var ytext = map.set(attr[key].value.id, new YText());
-                  ytext.insert(0, attr[key].value.value);
+    setTimeout(() => {
+      getFileContent()
+        .then((data) => {
+          try {
+            JSONtoGraph(data);
+          } catch (error) {
+            const deleteMetamodel = confirm(
+              "The imported model will not be compatible. Do you want to delete the current metamodel?"
+            );
+            if (deleteMetamodel) {
+              window.y.getMap("data").set("metamodel", null);
+            }
+          }
+          var initAttributes = function (attrs, map) {
+            if (attrs.hasOwnProperty("[attributes]")) {
+              var attr = attrs["[attributes]"].list;
+              for (var key in attr) {
+                if (attr.hasOwnProperty(key)) {
+                  if (attr[key].hasOwnProperty("key")) {
+                    var ytext = map.set(attr[key].key.id, new YText());
+                    ytext.insert(0, attr[key].key.value);
+                  } else {
+                    var ytext = map.set(attr[key].value.id, new YText());
+                    ytext.insert(0, attr[key].value.value);
+                  }
                 }
               }
-            }
-          } else {
-            for (var key in attrs) {
-              if (attrs.hasOwnProperty(key)) {
-                var value = attrs[key].value;
-                if (!value.hasOwnProperty("option")) {
-                  if (value.value instanceof String) {
-                    var ytext = map.set(value.id, new YText());
-                    ytext.insert(0, value.value);
+            } else {
+              for (var key in attrs) {
+                if (attrs.hasOwnProperty(key)) {
+                  var value = attrs[key].value;
+                  if (!value.hasOwnProperty("option")) {
+                    if (value.value instanceof String) {
+                      var ytext = map.set(value.id, new YText());
+                      ytext.insert(0, value.value);
+                    }
                   }
                 }
               }
             }
-          }
-        };
-        const dataMap = window.y.getMap("data");
-        if (guidance.isGuidanceEditor()) {
-          dataMap.set("guidancemodel", data);
-        } else dataMap.set("model", data);
-        for (var key in data.nodes) {
-          if (data.nodes.hasOwnProperty(key)) {
-            var entity = data.nodes[key];
-            const nodesMap = window.y.getMap("nodes");
-            nodesMap.set(key, new YMap());
-            var attrs = entity.attributes;
-            if (entity.hasOwnProperty("label")) {
-              var ytext = new YText(entity.label.value.id);
-              nodesMap.set(entity.label.value.id, ytext);
-              ytext.insert(0, entity.label.value.value);
+          };
+          const dataMap = window.y.getMap("data");
+          if (guidance.isGuidanceEditor()) {
+            dataMap.set("guidancemodel", data);
+          } else dataMap.set("model", data);
+          for (var key in data.nodes) {
+            if (data.nodes.hasOwnProperty(key)) {
+              var entity = data.nodes[key];
+              const nodesMap = window.y.getMap("nodes");
+              nodesMap.set(key, new YMap());
+              var attrs = entity.attributes;
+              if (entity.hasOwnProperty("label")) {
+                var ytext = new YText(entity.label.value.id);
+                nodesMap.set(entity.label.value.id, ytext);
+                ytext.insert(0, entity.label.value.value);
+              }
+              initAttributes(attrs, nodesMap);
             }
-            initAttributes(attrs, nodesMap);
           }
-        }
-        for (var key in data.edges) {
-          if (data.edges.hasOwnProperty(key)) {
-            var entity = data.edges[key];
-            const edgeMap = window.y.getMap("edges");
-            const map = new YMap();
-            edgeMap.set(key, map);
-            var attrs = entity.attributes;
-            if (entity.hasOwnProperty("label")) {
-              const ytext = new YText();
-              map.set(entity.label.value.id, ytext);
-              ytext.insert(0, entity.label.value.value);
+          for (var key in data.edges) {
+            if (data.edges.hasOwnProperty(key)) {
+              var entity = data.edges[key];
+              const edgeMap = window.y.getMap("edges");
+              const map = new YMap();
+              edgeMap.set(key, map);
+              var attrs = entity.attributes;
+              if (entity.hasOwnProperty("label")) {
+                const ytext = new YText();
+                map.set(entity.label.value.id, ytext);
+                ytext.insert(0, entity.label.value.value);
+              }
+              initAttributes(attrs, map);
             }
-            initAttributes(attrs, map);
           }
-        }
-        const canvasMap = window.y.getMap("canvas");
-        canvasMap.set("ReloadWidgetOperation", "import");
-        this.feedback(
-          "Imported model successfully! The page will be reloaded."
-        );
-        location.reload();
-      })
-      .catch((err) => {
-        console.error(err);
-        this.feedback("Error: " + err);
-        this.$spinner.hide();
-      });
+          $("#import-model").remove(".spinner-border");
+          const canvasMap = window.y.getMap("canvas");
+          canvasMap.set("ReloadWidgetOperation", "import");
+          this.feedback(
+            "Imported model successfully! The page will be reloaded."
+          );
+          location.reload();
+        })
+        .catch((err) => {
+          console.error(err);
+          this.feedback("Error: " + err);
+          this.$spinner.hide();
+        });
+    });
   }
 
   exportModel() {

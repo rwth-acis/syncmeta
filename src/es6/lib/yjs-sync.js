@@ -1,13 +1,21 @@
-import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import { Doc as YDoc } from "yjs";
 import { WebsocketProvider } from "y-websocket";
 import Util from "../Util";
 
+/**
+ *
+ * @param {*} spaceTitle
+ * @param {*} yjsServer
+ * @param {*} yjsProtocol
+ * @returns
+ * @deprecated use getInstance instead
+ */
 export async function yjsSync(
-  spaceTitle,
+  spaceTitle = null,
   yjsServer = "localhost:1234",
   yjsProtocol = "ws"
 ) {
+  console.warn("yjsSync is deprecated. Use getInstance instead");
   let title;
 
   if (!spaceTitle) {
@@ -54,4 +62,93 @@ export async function yjsSync(
     return window.y;
   }
   return doc;
+}
+
+class YJSConnector {
+  doc;
+  websocketProvider;
+  spaceTitle;
+  host;
+  protocol;
+  port;
+  path;
+  connected = false;
+
+  constructor(props) {
+    if (!props?.host) {
+      props.host = "localhost";
+      console.warn("Host not specified. Using default: localhost:1234");
+    }
+    if (!props?.protocol) {
+      props.protocol = "ws";
+      console.warn("Protocol not specified. Using default: ws");
+    }
+    if (!props.port) {
+      props.port = 1234;
+      console.warn("Port not specified. Using default: 1234");
+    }
+
+    this.spaceTitle = props.spaceTitle;
+    this.host = props.host;
+    this.protocol = props.protocol;
+    this.port = props.port;
+    this.path = props.path;
+
+    this.doc = new YDoc();
+    let connectionString = `${this.protocol}://${this.host}`;
+    if (this.port && this.port != 80) {
+      connectionString += `:${this.port}`;
+    }
+    if (this.path) {
+      connectionString += `/${this.path}`;
+    }
+    console.log(`YJS connector set to connect to: ${connectionString}`);
+    // Sync clients with the y-websocket provider
+    this.websocketProvider = new WebsocketProvider(
+      connectionString,
+      this.spaceTitle,
+      this.doc,
+      {
+        connect: false,
+      }
+    );
+  }
+
+  connect() {
+    if (this.connected) {
+      return new Promise((resolve) => resolve(this.doc));
+    }
+    this.websocketProvider.connect();
+
+    return new Promise((resolve, reject) => {
+      this.websocketProvider.on("status", (event) => {
+        // console.log(event.status); // logs "connected" or "disconnected"
+        if (event.status == "connected") {
+          this.connected = true;
+          resolve(this.doc);
+        }
+      });
+      setTimeout(() => {
+        reject(
+          "YJS connection timed out. This means syncmeta widgets wont work"
+        );
+      }, 5000);
+    });
+  }
+}
+
+export function getInstance({ spaceTitle, host, protocol, port }) {
+  if (!window.yjsConnection) {
+    window.yjsConnection = new YJSConnector({
+      spaceTitle,
+      host,
+      protocol,
+      port,
+    });
+  }
+  window.onbeforeunload = function () {
+    window.yjsConnection.websocketProvider.destroy();
+    window.yjsConnection = null;
+  };
+  return window.yjsConnection;
 }

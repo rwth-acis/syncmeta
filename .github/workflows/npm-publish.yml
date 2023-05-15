@@ -4,8 +4,30 @@ on:
   release:
     types: [published]
 jobs:
+  check-tag:
+    runs-on: ubuntu-latest
+    # check if the tag is a valid semver and if it matches the version in package.json
+    steps:
+      - uses: actions/checkout@v3
+      - name: Check tag
+        id: check_tag
+        shell: bash
+        run: |
+          TAG=${{ github.event.release.tag_name }}
+          echo "##[set-output name=tag;]$(echo ${TAG})"
+          if [[ ! $TAG =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*)?$ ]]; then
+            echo "Tag $TAG is not a valid semver"
+            exit 1
+          fi
+          VERSION=$(node -p "require('./package.json').version")
+          # regex match
+          if [[ ! $VERSION =~ ^$TAG$ ]]; then
+            echo "Tag $TAG does not match version $VERSION in package.json"
+            exit 1
+          fi
   publish:
     runs-on: ubuntu-latest
+    needs: check-tag
     steps:
       - uses: actions/checkout@v3
       - name: Setup Node.js

@@ -8,23 +8,27 @@ import "las2peer-frontend-statusbar/las2peer-frontend-statusbar.js";
 import "@polymer/paper-button";
 
 import { Common } from "./common";
-import Static from "./static";
+import { Space } from "./static";
 import * as IWC from "../../src/es6/lib/iwc";
 
-import "../../index.js";
+import { getInstance } from "../../src/es6/lib/yjs-sync";
+import "./main";
+
+import { APP_CONFIG } from "../config";
+import { Doc } from "yjs";
 
 const routes = [
   {
     path: "/",
-    component: "widget-container",
+    component: "main-app",
   },
   {
     path: "/meta-modeling-space",
-    component: "widget-container",
+    component: "main-app",
   },
   {
     path: "/modeling-space",
-    component: "widget-container",
+    component: "main-app",
   },
 ];
 @customElement("static-app")
@@ -175,13 +179,13 @@ class StaticApp extends LitElement {
   _pageChanged(currentPage: string, oldPage: string) {
     switch (currentPage) {
       case "meta-modeling-space":
-        Common.setSpace(Static.MetaModelingSpaceId);
+        Common.setYjsRoom(Space.MetaModelingSpaceId);
         this.changeVisibility("#generateModelButton", true);
         location.reload();
         break;
       case "modeling-space":
         this.changeVisibility("#generateModelButton", false);
-        Common.setSpace(Static.ModelingSpaceId);
+        Common.setYjsRoom(Space.ModelingSpaceId);
         location.reload();
         break;
       default:
@@ -212,9 +216,11 @@ class StaticApp extends LitElement {
   }
 
   _onChangeButtonClicked() {
-    var roomName = (document.getElementById("roomNameInput") as any).value;
-    Common.setYjsRoomName(roomName);
-    Common.setSpace(this.page || "meta-modeling-space");
+    var roomName = (
+      document.getElementById("roomNameInput") as HTMLInputElement
+    ).value;
+    Common.setSyncmetaSpaceName(roomName);
+    Common.setYjsRoom(this.page || "meta-modeling-space");
     this.changeVisibility("#roomEnterLoader", true);
     location.reload();
     setTimeout(() => {
@@ -226,8 +232,13 @@ class StaticApp extends LitElement {
   _onGenerateMetamodelClicked() {
     this.publishUpdateMetamodelOperation();
     this.changeVisibility("#generateModelLoader", true);
-
-    this.initY((y: Y.Doc) => {
+    const yjsInsance = getInstance({
+      host: APP_CONFIG.yjsHost,
+      port: APP_CONFIG.yjsPort,
+      protocol: APP_CONFIG.yjsProtocol,
+      spaceTitle: window.spaceTitle,
+    });
+    yjsInsance.connect().then((y: Y.Doc) => {
       const metaModelStatus = y.getMap("metaModelStatus");
       metaModelStatus.observe((event: Y.YMapEvent<any>) => {
         let message;
@@ -252,9 +263,9 @@ class StaticApp extends LitElement {
   publishUpdateMetamodelOperation() {
     var time = new Date().getTime();
     var data = JSON.stringify({
-      metamodelingRoomName: parent.syncmetaRoom,
-      modelingRoomName: Common.createYjsRoomNameWithSpace(
-        Static.ModelingSpaceId
+      metamodelingRoomName: Common.getYjsRoom(),
+      modelingRoomName: Common.getYjsRoomNameForCurrentSpace(
+        Space.ModelingSpaceId
       ),
     });
     var intent = new IWC.Intent(
@@ -280,17 +291,6 @@ class StaticApp extends LitElement {
    * @param callback callback function that is called when the connection is established. returns the shared document
    * @returns
    */
-  initY(callback: (doc: Y.Doc) => void) {
-    if (parent.syncmetaRoom) {
-      const doc = new Y.Doc();
-      const provider = new WebsocketProvider(
-        "{YJS_ADDRESS}",
-        parent.syncmetaRoom,
-        doc
-      );
-      callback(doc);
-    }
-  }
 
   handleLogin(event: any) {
     var cached_access_token = localStorage.getItem("access_token");
@@ -315,7 +315,7 @@ class StaticApp extends LitElement {
 
   displayCurrentRoomName() {
     var spaceHTML = "";
-    let yjsRoomName = Common.getYjsRoomName();
+    let yjsRoomName = Common.getSyncmetaSpaceName();
 
     if (yjsRoomName && yjsRoomName !== "null") {
       spaceHTML = `<span style="font-weight: bold;">Current Space:</span> ${yjsRoomName}`;

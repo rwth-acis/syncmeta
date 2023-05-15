@@ -1,12 +1,13 @@
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
+import "../../styles/activity.widget.css";
 import { html, LitElement, PropertyValueMap } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import "../../error-alert";
 import ActivityList from "../../es6/activity_widget/ActivityList";
 import WidgetTracker from "../../es6/activity_widget/WidgetTracker";
 import { CONFIG, getWidgetTagName } from "../../es6/config";
-import { yjsSync } from "../../es6/lib/yjs-sync";
+import { getInstance } from "../../es6/lib/yjs-sync";
 import init from "../../es6/shared";
 import Util from "../../es6/Util";
 import { WaitForCanvas } from "../../es6/WaitForCanvas";
@@ -18,18 +19,31 @@ export class ActivityWidget extends SyncMetaWidget(
   LitElement,
   getWidgetTagName(CONFIG.WIDGET.NAME.ACTIVITY)
 ) {
+  @property({ type: String }) yjsHost = "localhost";
+  @property({ type: Number }) yjsPort = 1234;
+  @property({ type: String }) yjsProtocol = "ws";
+  @property({ type: String }) yjsSpaceTitle = window.spaceTitle;
   widgetName = getWidgetTagName(CONFIG.WIDGET.NAME.ACTIVITY);
   protected firstUpdated(
     _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
   ): void {
     super.firstUpdated(_changedProperties);
-    yjsSync()
+
+    const yjsInstance = getInstance({
+      host: this.yjsHost,
+      port: this.yjsPort,
+      protocol: this.yjsProtocol,
+      spaceTitle: this.yjsSpaceTitle,
+    });
+
+    yjsInstance
+      .connect()
       .then((y) => {
         window.y = y;
 
         console.info(
-          "ACTIVITY: Yjs successfully initialized in room " +
-            window.spaceTitle +
+          "ACTIVITY: Yjs successfully initialized in " +
+            this.yjsSpaceTitle +
             " with y-user-id: " +
             y.clientID
         );
@@ -99,107 +113,6 @@ export class ActivityWidget extends SyncMetaWidget(
           height: 100%;
           position: relative;
         }
-        h2 {
-          font-size: 0.8em;
-          margin: 1px 1px 3px;
-          color: #666666;
-        }
-
-        .list {
-          width: 100%;
-          height: auto;
-          overflow: hidden;
-        }
-        .fs-sm {
-          font-size: 50%;
-        }
-        .toast {
-          display: block;
-        }
-        #user_list .item {
-          background-color: rgb(138, 255, 200);
-          display: block;
-          border-radius: 3px;
-          border: 2px solid #ccc;
-          box-shadow: 2px 2px 2px #e3e3e3;
-          position: relative;
-          margin-top: 5px;
-          margin-bottom: 5px;
-        }
-
-        #user_list .item h3 {
-          white-space: nowrap;
-          text-overflow: ellipsis;
-          overflow: hidden;
-        }
-
-        #user_list .item span {
-          font-size: 0.8em;
-          text-align: end;
-        }
-
-        #activity_list {
-          width: auto;
-          box-sizing: border-box;
-          padding-bottom: 150%;
-          overflow-y: auto;
-        }
-
-        #activity_list .item {
-          border: 1px solid #ccc;
-          border-radius: 4px;
-          padding: 0.4em;
-          margin: 0 0.5em 0.5em 0;
-          background: #f3f3f3 linear-gradient(to bottom, #ffffff, #e3e3e3);
-          box-shadow: 2px 2px 2px #e3e3e3;
-        }
-        #activity_list .item h3 {
-          background: #d3d3d3
-            linear-gradient(
-              to bottom,
-              rgba(255, 255, 255, 0.7),
-              rgba(200, 200, 200, 0)
-            );
-          border: 1px solid #ccc;
-          border-radius: 2px;
-          margin: 0;
-          padding: 0.2em;
-          text-align: center;
-          font-size: 1.1em;
-          font-weight: bold;
-          overflow: hidden;
-          white-space: nowrap;
-          text-overflow: ellipsis;
-        }
-        #activity_list .item p {
-          margin: 0.4em 0.2em;
-        }
-
-        .timestamp {
-          border-radius: 8px;
-          border-style: solid;
-          border-width: 0.5px;
-          text-align: center;
-        }
-        /* custom scrollbar */
-        ::-webkit-scrollbar {
-          width: 20px;
-        }
-
-        ::-webkit-scrollbar-track {
-          background-color: transparent;
-        }
-
-        ::-webkit-scrollbar-thumb {
-          background-color: #d6dee1;
-          border-radius: 20px;
-          border: 6px solid transparent;
-          background-clip: content-box;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-          background-color: #a8bbbf;
-        }
       </style>
       <link
         rel="stylesheet"
@@ -230,7 +143,6 @@ export class ActivityWidget extends SyncMetaWidget(
 
   connectedCallback() {
     super.connectedCallback();
-    init();
   }
 
   disconnectedCallback() {

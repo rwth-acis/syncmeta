@@ -269,13 +269,13 @@ function HistoryManager() {
   var $redo = $("#redo");
 
   var propagateHistoryOperationFromJson = function (json) {
-    var EntityManager = EntityManager;
+    
     var operation = null,
       data = null,
       entity;
     switch (json.TYPE) {
       case NodeDeleteOperation.TYPE: {
-        entity = EntityManager.findNode(json.id);
+        entity = EntityManagerInstance.findNode(json.id);
         if (entity) {
           entity.triggerDeletion(true);
           operation = new NodeDeleteOperation(
@@ -337,7 +337,7 @@ function HistoryManager() {
         break;
       }
       case EdgeDeleteOperation.TYPE: {
-        entity = EntityManager.findEdge(json.id);
+        entity = EntityManagerInstance.findEdge(json.id);
         if (entity) {
           entity.triggerDeletion(true);
           operation = new EdgeDeleteOperation(
@@ -351,7 +351,7 @@ function HistoryManager() {
         break;
       }
       case NodeMoveOperation.TYPE: {
-        entity = EntityManager.findNode(json.id);
+        entity = EntityManagerInstance.findNode(json.id);
         if (entity) {
           const nodesMap = y.getMap("nodes");
           operation = new NodeMoveOperation(
@@ -367,7 +367,7 @@ function HistoryManager() {
         break;
       }
       case NodeMoveZOperation.TYPE: {
-        entity = EntityManager.findNode(json.id);
+        entity = EntityManagerInstance.findNode(json.id);
         if (entity) {
           operation = new NodeMoveZOperation(json.id, json.offsetZ);
           const nodesMap = y.getMap("nodes");
@@ -379,7 +379,7 @@ function HistoryManager() {
         break;
       }
       case NodeResizeOperation.TYPE: {
-        entity = EntityManager.findNode(json.id);
+        entity = EntityManagerInstance.findNode(json.id);
         if (entity) {
           operation = new NodeResizeOperation(
             json.id,
@@ -2115,7 +2115,7 @@ export class AbstractNode extends AbstractEntity {
             _canvas.getSelectedEntity() === that
           ) {
             menuItems = _.extend(_contextMenuItemCallback(), {
-              connectTo: EntityManager.generateConnectToMenu(that),
+              connectTo: EntityManagerInstance.generateConnectToMenu(that),
               sepMove: "---------",
               moveToForeground: {
                 name: "Move to Foreground",
@@ -2926,7 +2926,7 @@ export class AbstractNode extends AbstractEntity {
         const array = Array.from(event.changes.keys.entries());
         array.forEach(([key]) => {
           const data = event.currentTarget.get(key);
-          if (data.id && data.triggeredBy !== window.y.clientID) {
+          if (data?.id && data.triggeredBy !== window.y.clientID) {
             var operation;
 
             const userMap = y.getMap("users");
@@ -3064,8 +3064,7 @@ export class AbstractNode extends AbstractEntity {
         var operation = new NodeResizeOperation(id, offsetX, offsetY);
         that.propagateNodeResizeOperation(operation);
         _canvas.bindMoveToolEvents();
-      })
-      .draggable();
+      });
   }
 
   disableResizable() {
@@ -8591,9 +8590,10 @@ export class SingleValueListAttribute extends AbstractAttribute {
  * @param {canvas_widget.AbstractNode|canvas_widget.AbstractEdge} rootSubjectEntity Topmost entity in the chain of entity the attribute is assigned to
  */
 export class Value extends AbstractValue {
-  value = "";
+  value;
   constructor(id, name, subjectEntity, rootSubjectEntity, y) {
     super(id, name, subjectEntity, rootSubjectEntity);
+    this.value = "";
     y = y || window.y;
     if (!y) throw new Error("y is undefined");
     var _ytext = null;

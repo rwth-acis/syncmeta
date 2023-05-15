@@ -5,7 +5,7 @@ import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jquery-migrate/1.4.1/jquery-migrate.min.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import { html, LitElement } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import AbstractClassNodeTool from "../../es6/canvas_widget/AbstractClassNodeTool";
 import BiDirAssociationEdgeTool from "../../es6/canvas_widget/BiDirAssociationEdgeTool";
 import Canvas from "../../es6/canvas_widget/Canvas";
@@ -45,7 +45,7 @@ import ViewRelationshipNodeTool from "../../es6/canvas_widget/viewpoint/ViewRela
 import { CONFIG, getWidgetTagName } from "../../es6/config";
 import { getGuidanceModeling } from "../../es6/Guidancemodel";
 import IWCW from "../../es6/lib/IWCWrapper";
-import { yjsSync } from "../../es6/lib/yjs-sync";
+import { getInstance } from "../../es6/lib/yjs-sync";
 import ActivityOperation from "../../es6/operations/non_ot/ActivityOperation";
 import InitModelTypesOperation from "../../es6/operations/non_ot/InitModelTypesOperation";
 import NonOTOperation from "../../es6/operations/non_ot/NonOTOperation";
@@ -65,6 +65,18 @@ export class CanvasWidget extends SyncMetaWidget(
   LitElement,
   getWidgetTagName(CONFIG.WIDGET.NAME.MAIN)
 ) {
+  @property({ type: String }) yjsHost = "localhost";
+  @property({ type: Number }) yjsPort = 1234;
+  @property({ type: String }) yjsProtocol = "ws";
+  @property({ type: String }) yjsSpaceTitle = window.spaceTitle;
+
+  canvas: Canvas;
+  metamodel: any;
+  model: any;
+  _iwcw: any;
+  user: any;
+  yjsInstance: any;
+
   render() {
     return html`
       <link
@@ -95,79 +107,89 @@ export class CanvasWidget extends SyncMetaWidget(
 
       <div class="main-container p-2 d-flex flex-column h-100">
         <error-alert></error-alert>
-        <div id="loading" class="loading"></div>
-        <div class="row mb-2" id="main-widget-utilities-container">
-          <div class="col-9">
+        <div class="row" id="main-widget-utilities-container">
+          <div class="col-9 d-flex justify-content-between">
+            <div class="layout-buttons btn-group">
+              <button
+                id="viewsHide"
+                class="btn btn-light"
+                title="Close the View Panel"
+                @click=${this.hideViews}
+              >
+                <i class="bi bi-caret-up"></i>
+              </button>
+              <button
+                id="viewsShow"
+                class="btn btn-light"
+                title="Show the View Panel"
+                @click=${this.showViews}
+              >
+                <i class="bi bi-caret-down"></i>
+              </button>
+
+              <button
+                id="showtype"
+                class="btn btn-light"
+                title="Show the types of nodes and edges"
+              >
+                <i class="bi bi-tag"></i>
+              </button>
+              <button
+                id="hideType"
+                class="btn btn-light"
+                title="Hide types of nodes and edges"
+              >
+                <i class="bi bi-tag-fill"></i>
+              </button>
+              <button
+                id="applyLayout"
+                class="btn btn-light"
+                title="Apply Layout"
+              >
+                <i class="bi bi-layout-wtf"></i>
+              </button>
+              <button id="zoomIn" class="btn btn-light" title="Zoom in">
+                <i class="bi bi-zoom-in"></i>
+              </button>
+              <button id="zoomOut" class="btn btn-light" title="Zoom out">
+                <i class="bi bi-zoom-out"></i>
+              </button>
+            </div>
             <button
-              id="viewsHide"
-              class="btn btn-light"
-              title="Close the View Panel"
-            >
-              <i class="bi bi-caret-up"></i>
-            </button>
-            <button
-              id="viewsShow"
-              class="btn btn-light"
-              title="Show the View Panel"
-            >
-              <i class="bi bi-caret-down"></i>
-            </button>
-            <button
-              id="save"
-              class="btn btn-light"
-              title="Save the current state of the model"
-            >
-              <i class="bi bi-save"></i>
-            </button>
-            <!-- Uncommented the below line for Export as PNG! -->
-            <button id="save_image" class="btn btn-light">
-              <i class="bi bi-camera"></i>
-            </button>
-            <!--<button id="generate" style="display: none"><img width="20px" height="20px" src="<%= grunt.config('baseUrl') %>/img/generate.png" /></button>-->
-            <button
-              id="showtype"
-              class="btn btn-light"
-              title="Show the types of nodes and edges"
-            >
-              <i class="bi bi-tag"></i>
-            </button>
-            <button
-              id="hideType"
-              class="btn btn-light"
-              title="Hide types of nodes and edges"
-            >
-              <i class="bi bi-tag-fill"></i>
-            </button>
-            <button id="applyLayout" class="btn btn-light" title="Apply Layout">
-              <i class="bi bi-layout-wtf"></i>
-            </button>
-            <button id="zoomIn" class="btn btn-light" title="Zoom in">
-              <i class="bi bi-zoom-in"></i>
-            </button>
-            <button id="zoomOut" class="btn btn-light" title="Zoom out">
-              <i class="bi bi-zoom-out"></i>
-            </button>
-            <button
-              id="undo"
-              class="btn btn-light"
-              title="Undo your latest changes"
-            >
-              <i class="bi bi-arrow-counterclockwise"></i>
-            </button>
-            <button
-              id="redo"
-              class="btn btn-light"
-              title="Redo your latest changes"
-            >
-              <i class="bi bi-arrow-clockwise"></i>
-            </button>
+                id="save"
+                class="btn btn-light"
+                title="Save the current state of the model"
+              >
+                <i class="bi bi-cloud-arrow-up"></i>
+              </button>
+            <div class="operation-buttons btn-group">
+              
+              <!-- Uncommented the below line for Export as PNG! -->
+              <button id="save_image" class="btn btn-light">
+                <i class="bi bi-camera"></i>
+              </button>
+              <button
+                id="undo-btn"
+                class="btn btn-light"
+                title="Undo your latest changes"
+              >
+                <i class="bi bi-arrow-counterclockwise"></i>
+              </button>
+              <button
+                id="redo-btn"
+                class="btn btn-light"
+                title="Redo your latest changes"
+              >
+                <i class="bi bi-arrow-clockwise"></i>
+              </button>
+            </div>
             <span id="feedback"></span>
             <strong id="lblCurrentView"
               >View:<span id="lblCurrentViewId"></span
             ></strong>
           </div>
           <div class="col-3">
-            <div class="input-group mb-3">
+            <div class="input-group">
               <input
                 type="text"
                 class="form-control"
@@ -184,62 +206,6 @@ export class CanvasWidget extends SyncMetaWidget(
                 <i class="bi bi-search"></i>
               </button>
             </div>
-          </div>
-          <div id="ViewCtrlContainer" class="flex my-2" style="display:none">
-            <button
-              id="btnCreateViewpoint"
-              class="btn btn-light"
-              title="Create a viewpoint"
-            >
-              <i class="bi bi-plus-circle"></i>
-            </button>
-            <button
-              class="btn btn-light"
-              id="btnCancelCreateViewpoint"
-              title="Cancel"
-              style="display: none;"
-            >
-              <i class="bi bi-x-circle"></i>
-            </button>
-            <input
-              id="txtNameViewpoint"
-              type="text"
-              placeholder="name"
-              style="display: none;"
-            />
-            <select id="ddmViewpointSelection" style="display: none;"></select>
-            <button
-              class="btn btn-light"
-              id="btnAddViewpoint"
-              title="Create an empty viewpoint"
-              style="display: none;"
-            >
-              <i class="bi bi-check"></i>
-            </button>
-
-            <select id="ddmViewSelection"></select>
-            <button
-              id="btnShowView"
-              class="btn btn-light"
-              title="Apply a viewpoint to the current model or visualize the viewpoint"
-            >
-              Show
-            </button>
-            <button
-              class="btn btn-light"
-              id="btnRefreshView"
-              title="Refresh viewpoint list"
-              style="display: none;"
-            >
-              Refresh
-            </button>
-            <button
-              class="btn btn-light"
-              id="btnDelViewPoint"
-              title="Delete current viewpoint in the list"
-            >
-              <i class="bi bi-trash"></i>
-            </button>
           </div>
 
           <div
@@ -273,28 +239,192 @@ export class CanvasWidget extends SyncMetaWidget(
             </p>
           </div>
         </div>
-        <div
-          class="ui-state-error ui-corner-all"
-          style="margin-top: 20px; padding: 0 .7em; display:none"
-        >
-          <p id="errorMsg">
-            <span
-              class="ui-icon ui-icon-alert"
-              style="float: left; margin-right: .3em;"
-            ></span>
-            <strong>SYNCMETA!</strong>
-          </p>
+        <div id="ViewCtrlContainer"  style="display:none">
+          <div class="d-flex mt-1">
+            <button
+              id="btnCreateViewpoint"
+              class="btn btn-success me-1"
+              title="Create a viewpoint"
+            >
+              <i class="bi bi-plus-circle"></i>
+            </button>
+
+            <div
+              class="input-group"
+              id="create-view-input-group"
+              style="display: none;"
+            >
+              <button
+                class="btn btn-danger"
+                id="btnCancelCreateViewpoint"
+                title="Cancel"
+              >
+                <i class="bi bi-x-circle"></i>
+              </button>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Viewpoint name"
+                id="txtNameViewpoint"
+                aria-label="Viewpoint name input"
+                aria-describedby="button-addon1"
+              />
+              <!-- <select id="ddmViewpointSelection"></select> -->
+              <button
+                class="btn btn-success"
+                id="btnAddViewpoint"
+                title="Create an empty viewpoint"
+              >
+                <i class="bi bi-check"></i>
+              </button>
+            </div>
+
+            <div class="input-group" id="viewpoint-list-input-group">
+              <select
+                class="form-select"
+                id="ddmViewSelection"
+                aria-label="Select a view"
+              ></select>
+              <button
+                id="btnShowView"
+                class="btn btn-outline-secondary"
+                type="button"
+                title="Apply a viewpoint to the current model or visualize the viewpoint"
+              >
+                Show
+              </button>
+              <button
+                class="btn btn-danger"
+                id="btnDelViewPoint"
+                title="Delete current viewpoint in the list"
+              >
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+            <button
+              class="btn btn-light"
+              id="btnRefreshView"
+              title="Refresh viewpoint list"
+              style="display: none;"
+            >
+              Refresh
+            </button>
+          </div>
+          </div>
+          <div class="my-1"></div>
+          <div
+            class="ui-state-error ui-corner-all"
+            style="margin-top: 20px; padding: 0 .7em; display:none"
+          >
+            <p id="errorMsg">
+              <span
+                class="ui-icon ui-icon-alert"
+                style="float: left; margin-right: .3em;"
+              ></span>
+              <strong>SYNCMETA!</strong>
+            </p>
+          </div>
+          <div
+            class="row mx-auto border border-dark border-2 rounded"
+            id="canvas-frame"
+          >
+            <div id="canvas"></div>
+            <loading-spinner></loading-spinner>
+          </div>
+          <div id="q"></div>
         </div>
-        <div
-          class="row mx-auto border border-dark border-2 rounded"
-          id="canvas-frame"
-        >
-          <div id="canvas"></div>
-        </div>
-        <div id="q"></div>
-        <loading-spinner></loading-spinner>
       </div>
     `;
+  }
+
+  initTools(vvs) {
+    //canvas.removeTools();
+    //canvas.addTool(MoveTool.TYPE, new MoveTool());
+    if (vvs && vvs.hasOwnProperty("nodes")) {
+      var nodes = vvs.nodes,
+        node;
+      for (var nodeId in nodes) {
+        if (nodes.hasOwnProperty(nodeId)) {
+          node = nodes[nodeId];
+          this.canvas.addTool(
+            node.label,
+            new NodeTool(
+              node.label,
+              null,
+              null,
+              node.shape.containment,
+              node.shape.defaultWidth,
+              node.shape.defaultHeight
+            )
+          );
+        }
+      }
+    }
+
+    if (vvs && vvs.hasOwnProperty("edges")) {
+      var edges = vvs.edges,
+        edge;
+      for (var edgeId in edges) {
+        if (edges.hasOwnProperty(edgeId)) {
+          edge = edges[edgeId];
+          this.canvas.addTool(
+            edge.label,
+            new EdgeTool(edge.label, edge.relations)
+          );
+        }
+      }
+    }
+  }
+
+  hideViews() {
+    $("#viewsHide").hide();
+    $("#viewsShow").show();
+    $("#ViewCtrlContainer").hide();
+
+    var $lblCurrentViewId = $("#lblCurrentViewId");
+    var viewpointId = $lblCurrentViewId.text();
+    if (viewpointId.length > 0) {
+      //reset view
+      var operation = new InitModelTypesOperation(this.metamodel, true);
+      this._iwcw.sendLocalNonOTOperation(
+        CONFIG.WIDGET.NAME.PALETTE,
+        operation.toNonOTOperation()
+      );
+      this._iwcw.sendLocalNonOTOperation(
+        CONFIG.WIDGET.NAME.ATTRIBUTE,
+        operation.toNonOTOperation()
+      );
+
+      var activityOperation = new ActivityOperation(
+        "ViewApplyActivity",
+        "",
+        this._iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]
+      );
+      this._iwcw.sendLocalNonOTOperation(
+        CONFIG.WIDGET.NAME.ACTIVITY,
+        activityOperation.toNonOTOperation()
+      );
+      const canvasMap = window.y.getMap("canvas");
+      canvasMap.set("ViewApplyActivity", {
+        viewId: "",
+        jabberId: this._iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
+      });
+
+      EntityManager.setViewId(null);
+      EntityManager.initModelTypes(this.metamodel);
+      this.initTools(this.metamodel);
+
+      ViewGenerator.reset(this.metamodel);
+
+      $("#lblCurrentView").hide();
+      $lblCurrentViewId.text("");
+    }
+  }
+
+  showViews() {
+    $("#viewsShow").hide();
+    $("#viewsHide").show();
+    $("#ViewCtrlContainer").show("fast");
   }
 
   connectedCallback() {
@@ -315,11 +445,18 @@ export class CanvasWidget extends SyncMetaWidget(
     if (!user) {
       console.error("user is undefined");
     }
-    yjsSync()
+    this.yjsInstance = getInstance({
+      host: this.yjsHost,
+      port: this.yjsPort,
+      protocol: this.yjsProtocol,
+      spaceTitle: this.yjsSpaceTitle,
+    });
+    this.yjsInstance
+      .connect()
       .then((y: YDoc) => {
         console.info(
           "CANVAS: Yjs Initialized successfully in room " +
-            window.spaceTitle +
+            this.yjsSpaceTitle +
             " with y-user-id: " +
             y.clientID
         );
@@ -373,8 +510,12 @@ export class CanvasWidget extends SyncMetaWidget(
           }
           EntityManager.init(metamodel);
           EntityManager.setGuidance(guidancemodel);
+          this.metamodel = metamodel;
+          this.model = model;
+          this._iwcw = _iwcw;
+          this.user = user;
 
-          InitMainWidget(metamodel, model, _iwcw, user, y);
+          InitMainWidget(metamodel, model, _iwcw, user);
 
           window.onbeforeunload = function () {
             const userList = y.getMap("userList");
@@ -417,15 +558,28 @@ function registerOnDataReceivedCallback(_iwcw, y, userList, user) {
       const dataMap = y.getMap("data");
       var model = dataMap.get("model");
       var vls = GenerateViewpointModel(model);
-      yjsSync(operation.getModelingRoomName())
-        .then(function (y) {
+      this.yjsSpaceTitle = operation.getModelingRoomName();
+      this.yjsInstance = getInstance({
+        host: this.yjsHost,
+        port: this.yjsPort,
+        protocol: this.yjsProtocol,
+        spaceTitle: this.yjsSpaceTitle,
+      });
+      this.yjsInstance
+        .connect()
+        .then((y) => {
           const dataMap = y.getMap("data");
           dataMap.set("metamodel", vls);
 
           const metaModelStatus = y.getMap("metaModelStatus");
           metaModelStatus.set("uploaded", true);
+          setTimeout(() => {
+            alert("Metamodel uploaded successfully, the page will reload.");
+            dataMap.set("model", null);
+            location.reload();
+          }, 400);
         })
-        .fail(() => {
+        .catch(() => {
           const metaModelStatus = y.getMap("metaModelStatus");
           metaModelStatus.set("error", true);
         });
@@ -469,13 +623,14 @@ function registerOnDataReceivedCallback(_iwcw, y, userList, user) {
   });
 }
 
-function InitMainWidget(metamodel, model, _iwcw, user, y) {
+function InitMainWidget(metamodel, model, _iwcw, user, y = window.y) {
   const $mainWidgetRef = $(getWidgetTagName(CONFIG.WIDGET.NAME.MAIN));
   const $spinner = $mainWidgetRef.find("loading-spinner");
 
   const userList = [];
   const canvasElement = $("#canvas");
   const canvas = new Canvas(canvasElement);
+  window.canvas = canvas;
   const joinMap = y.getMap("join");
 
   HistoryManager.init(canvas);
@@ -549,7 +704,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
             // therefore, this is manually done here
             const dataMap = y.getMap("data");
             const nodesMap = y.getMap("nodes");
-            for (var key of nodesMap.keys()) {
+            for (const key of nodesMap.keys()) {
               // check if the node also exists in the updated model
 
               var nodeInModel = dataMap.get("model")?.nodes[key];
@@ -574,6 +729,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
         }
       });
     });
+    ViewManager.GetViewpointList();
   });
 
   registerOnDataReceivedCallback(_iwcw, y, userList, user);
@@ -696,54 +852,6 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
     });
 
     //Modelling layer implementation
-    $("#viewsHide").click(function () {
-      $(this).hide();
-      $("#viewsShow").show();
-      $("#ViewCtrlContainer").hide();
-
-      var $lblCurrentViewId = $("#lblCurrentViewId");
-      var viewpointId = $lblCurrentViewId.text();
-      if (viewpointId.length > 0) {
-        //var $loading = $("#loading");
-        //$loading.show();
-
-        //reset view
-        var operation = new InitModelTypesOperation(metamodel, true);
-        _iwcw.sendLocalNonOTOperation(
-          CONFIG.WIDGET.NAME.PALETTE,
-          operation.toNonOTOperation()
-        );
-        _iwcw.sendLocalNonOTOperation(
-          CONFIG.WIDGET.NAME.ATTRIBUTE,
-          operation.toNonOTOperation()
-        );
-
-        var activityOperation = new ActivityOperation(
-          "ViewApplyActivity",
-          "",
-          _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]
-        );
-        _iwcw.sendLocalNonOTOperation(
-          CONFIG.WIDGET.NAME.ACTIVITY,
-          activityOperation.toNonOTOperation()
-        );
-        const canvasMap = y.getMap("canvas");
-        canvasMap.set("ViewApplyActivity", {
-          viewId: "",
-          jabberId: _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID],
-        });
-
-        EntityManager.setViewId(null);
-        EntityManager.initModelTypes(metamodel);
-        initTools(metamodel);
-
-        ViewGenerator.reset(metamodel);
-
-        $("#lblCurrentView").hide();
-        $lblCurrentViewId.text("");
-        // $loading.hide();
-      }
-    });
 
     var $saveImage = $("#save_image");
     $saveImage.show();
@@ -756,6 +864,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
       });
     });
   } else {
+    $("#save_image").hide();
     //Add Node Tools
     canvas.addTool(ObjectNode.TYPE, new ObjectNodeTool());
     canvas.addTool(AbstractClassNode.TYPE, new AbstractClassNodeTool());
@@ -785,7 +894,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
     $("#btnShowView").click(function () {
       var viewId = ViewManager.getViewIdOfSelected();
       if (viewId === $("#lblCurrentViewId").text()) return;
-      $("#loading").show();
+
       $("#lblCurrentView").show();
       $("#lblCurrentViewId").text(viewId);
       visualizeView(viewId);
@@ -829,9 +938,6 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
       var $lblCurrentViewId = $("#lblCurrentViewId");
       const dataMap = y.getMap("data");
       if ($lblCurrentViewId.text().length > 0) {
-        var $loading = $("#loading");
-        $loading.show();
-
         var model = dataMap.get("model");
         //Disable the view types in the palette
         var operation = new SetViewTypesOperation(false);
@@ -857,7 +963,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
 
         resetCanvas();
         JSONtoGraph(model, canvas);
-        $("#loading").hide();
+
         canvas.resetTool();
 
         $("#lblCurrentView").hide();
@@ -869,21 +975,15 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
   //Functions and Callbacks for the view-based modeling approach
   var ShowViewCreateMenu = function () {
     $("#btnCreateViewpoint").hide();
-    $("#ddmViewSelection").hide();
-    $("#btnShowView").hide();
-    $("#btnDelViewPoint").hide();
-    $("#txtNameViewpoint").show();
-    $("#btnAddViewpoint").show();
-    $("#btnCancelCreateViewpoint").show();
+
+    $("#viewpoint-list-input-group").hide();
+    $("#create-view-input-group").show();
   };
   var HideCreateMenu = function () {
     $("#btnCreateViewpoint").show();
-    $("#ddmViewSelection").show();
-    $("#btnDelViewPoint").show();
-    $("#btnShowView").show();
-    $("#txtNameViewpoint").hide();
-    $("#btnAddViewpoint").hide();
-    $("#btnCancelCreateViewpoint").hide();
+    $("#viewpoint-list-input-group").show();
+    ViewManager.GetViewpointList();
+    $("#create-view-input-group").hide();
   };
 
   function resetCanvas() {
@@ -952,22 +1052,20 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
     });
 
     JSONtoGraph(json, canvas);
-    $("#loading").hide();
+
     canvas.resetTool();
   }
 
   //-------------------------------------------------------------
 
-  var $undo = $("#undo");
-  $undo.prop("disabled", true);
-  var $redo = $("#redo");
-  $redo.prop("disabled", true);
+  var $undo = $("#undo-btn");
 
-  $undo.click(function () {
+  var $redo = $("#redo-btn");
+
+  $undo.on("click", function () {
     HistoryManager.undo();
   });
-
-  $redo.click(function () {
+  $redo.on("click", function () {
     HistoryManager.redo();
   });
 
@@ -983,12 +1081,6 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
     canvas.get$node().addClass("hide_type");
     $(this).hide();
     $("#showtype").show();
-  });
-
-  $("#viewsShow").click(function () {
-    $(this).hide();
-    $("#viewsHide").show();
-    $("#ViewCtrlContainer").show("fast");
   });
 
   $("#zoomIn").click(function () {
@@ -1168,7 +1260,17 @@ function InitMainWidget(metamodel, model, _iwcw, user, y) {
   });
 
   if (model) {
-    var report = JSONtoGraph(model, canvas);
+    try {
+      var report = JSONtoGraph(model, canvas);
+    } catch (error) {
+      var $errorMsg = $("#errorMsg");
+
+      $("#canvas-frame").hide();
+      $errorMsg.parent().css("display", "inline-table");
+      $errorMsg.text(
+        "SYNCMETA: Model is not compatible to the current Metamodel! Delete the current model or change the metamodel. For more information see the console."
+      );
+    }
     console.info("CANVAS: Initialization of model completed ", report);
     //initialize guidance model's if we are in metamodeling layer
     const dataMap = y.getMap("data");

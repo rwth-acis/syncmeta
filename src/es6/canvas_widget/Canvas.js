@@ -1,20 +1,24 @@
 import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jquery-migrate/1.4.1/jquery-migrate.min.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
-import "https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js";
-// note that the version from the CDN  does not come with bezier connectors
 import "https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.9.2/jquery.contextMenu.js";
+import "https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js";
+import { newInstance } from "@jsplumb/browser-ui";
+import interact from "interactjs";
+import { default as _ } from "lodash-es";
+import { Map as YMap } from "yjs";
+
+import Util from "../Util";
 import AbstractEntity from "../canvas_widget/AbstractEntity";
 import DagreLayout from "../canvas_widget/DagreLayout";
+import MoveTool from "../canvas_widget/MoveTool";
 import CollaborationGuidance from "../canvas_widget/guidance_modeling/CollaborationGuidance";
 import GhostEdgeGuidance from "../canvas_widget/guidance_modeling/GhostEdgeGuidance";
 import GuidanceBox from "../canvas_widget/guidance_modeling/GuidanceBox";
 import SelectToolGuidance from "../canvas_widget/guidance_modeling/SelectToolGuidance";
 import SetPropertyGuidance from "../canvas_widget/guidance_modeling/SetPropertyGuidance";
-import MoveTool from "../canvas_widget/MoveTool";
 import { CONFIG } from "../config";
 import IWCW from "../lib/IWCWrapper";
-import { Map as YMap } from "yjs";
 import ActivityOperation from "../operations/non_ot/ActivityOperation";
 import CanvasViewChangeOperation from "../operations/non_ot/CanvasViewChangeOperation";
 import EntitySelectOperation from "../operations/non_ot/EntitySelectOperation";
@@ -32,15 +36,12 @@ import {
   NodeAddOperation,
   NodeDeleteOperation,
 } from "../operations/ot/EntityOperation";
-import Util from "../Util";
 import AbstractCanvas from "./AbstractCanvas";
 import {
   EntityManagerInstance as EntityManager,
   EntityManagerInstance,
   HistoryManagerInstance as HistoryManager,
 } from "./Manager";
-import { newInstance } from "@jsplumb/browser-ui";
-import { default as _ } from "lodash-es";
 
 /**
  * Canvas
@@ -618,7 +619,7 @@ export default class Canvas extends AbstractCanvas {
      * Callback for an undone resp. redone Node Add Operation
      * @param {operations.ot.NodeAddOperation} operation
      */
-    var init = function () {
+    var init = () => {
       var $canvasFrame = _$node.parent();
 
       that.addTool(MoveTool.TYPE, new MoveTool());
@@ -630,20 +631,8 @@ export default class Canvas extends AbstractCanvas {
         top: (-_canvasHeight + $canvasFrame.height()) / 2,
       });
 
-      _$node.draggable({
-        stop: function () {
-          sendViewChangeOperation();
-        },
-      });
+      that.bindMoveToolEvents();
 
-      if (_$node.transformable != null) {
-        // since recently, this method doesnt exist anymore.  BUGFIX
-        _$node.transformable({
-          rotatable: false,
-          skewable: false,
-          scalable: false,
-        });
-      }
       _$node.mousewheel(function (event) {
         that.setZoom(that.getZoom() + 0.1 * event.deltaY);
         event.preventDefault();
@@ -804,7 +793,29 @@ export default class Canvas extends AbstractCanvas {
      */
     this.bindMoveToolEvents = function () {
       //Enable Canvas Dragging
-      _$node.draggable("enable");
+      interact(_$node.get(0)).draggable({
+        listeners: {
+          stop(event) {
+            sendViewChangeOperation();
+          },
+
+          move(event) {
+            var target = event.target;
+            var x = (parseFloat(target.getAttribute("data-x")) || 0) + event.dx;
+            var y = (parseFloat(target.getAttribute("data-y")) || 0) + event.dy;
+
+            const zoom = that.getZoom();
+
+            target.style.webkitTransform = target.style.transform =
+              "translate(" + x + "px, " + y + "px) scale(" + zoom + ")";
+
+            target.setAttribute("data-x", x);
+            target.setAttribute("data-y", y);
+          },
+        },
+        inertia: false,
+        modifiers: [],
+      });
 
       // view_only is used by the CAE and allows to show a model in the Canvas which is not editable
       // therefore, the context menu in the Canvas must be disabled
@@ -879,7 +890,7 @@ export default class Canvas extends AbstractCanvas {
      */
     this.unbindMoveToolEvents = function () {
       //Disable Canvas Dragging
-      _$node.draggable("disable");
+      interact(_$node.get(0)).unset();
 
       if (_$node.transformable != null) {
         _$node.transformable("destroy");
@@ -951,9 +962,20 @@ export default class Canvas extends AbstractCanvas {
       }
       _zoom = zoom;
 
-      _$node.css("transform", `scaleX(${zoom}) scaleY(${zoom})`);
+      // get current x and y translation
+      const style = window.getComputedStyle(_$node.get(0));
+      const matrix = new DOMMatrixReadOnly(style.transform);
+      const x = matrix.m41;
+      const y = matrix.m42;
+
+      // set data-x and data-y attributes
+      _$node.attr("data-x", x);
+      _$node.attr("data-y", y);
+      // set scale and x and y position
+      _$node.css("transform", `scale(${zoom}) translate(${x}px, ${y}px)`);
+
       _$node.animate({
-        transform: `scaleX(${zoom}) scaleY(${zoom})`,
+        transform: `scale(${zoom}) translate(${x}px, ${y}px)`,
       });
 
       window.jsPlumbInstance.setZoom(zoom);
