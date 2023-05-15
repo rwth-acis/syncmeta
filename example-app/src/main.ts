@@ -5,6 +5,7 @@ import { customElement } from "lit/decorators.js";
 import "../../build/widgets/widget.container.js";
 
 import { APP_CONFIG } from "../config";
+import { Common } from "./common.js";
 
 @customElement("main-app")
 export class MainApp extends LitElement {
@@ -21,7 +22,7 @@ export class MainApp extends LitElement {
         yjsHost="${APP_CONFIG.yjsHost}"
         yjsPort="${APP_CONFIG.yjsPort}"
         yjsProtocol="${APP_CONFIG.yjsProtocol}"
-        yjsSpaceTitle="${APP_CONFIG.yjsSpaceTitle}"
+        yjsSpaceTitle="${Common.getYjsRoom()}"
       ></widget-container>
     `;
   }

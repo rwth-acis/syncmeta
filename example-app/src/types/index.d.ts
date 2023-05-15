@@ -4,7 +4,7 @@ declare global {
   interface Window {
     Y: any;
     WebsocketProvider: any;
-    syncmetaRoom: string;
+    yjsRoom: string;
     caeFrames: any;
     _iwc_instance_: any;
     _addIwcIntentListener: (f: any) => void;
