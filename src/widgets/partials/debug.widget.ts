@@ -54,8 +54,8 @@ export class DebugWidget extends SyncMetaWidget(
       .then((y) => {
         const dataMap = y.getMap("data");
         console.info(
-          "DEBUG: Yjs successfully initialized in room " +
-            window.spaceTitle +
+          "DEBUG: Yjs successfully initialized in " +
+            this.yjsSpaceTitle +
             " with y-user-id: " +
             y.clientID
         );

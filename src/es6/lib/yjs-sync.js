@@ -64,8 +64,6 @@ export async function yjsSync(
   return doc;
 }
 
-let yjsConnection;
-
 class YJSConnector {
   doc;
   websocketProvider;
@@ -74,6 +72,7 @@ class YJSConnector {
   protocol;
   port;
   path;
+  connected = false;
 
   constructor(props) {
     if (!props?.host) {
@@ -108,19 +107,24 @@ class YJSConnector {
     this.websocketProvider = new WebsocketProvider(
       connectionString,
       this.spaceTitle,
-      this.doc
+      this.doc,
+      {
+        connect: false,
+      }
     );
   }
 
   connect() {
-    if (this.doc) {
+    if (this.connected) {
       return new Promise((resolve) => resolve(this.doc));
     }
+    this.websocketProvider.connect();
 
     return new Promise((resolve, reject) => {
       this.websocketProvider.on("status", (event) => {
         // console.log(event.status); // logs "connected" or "disconnected"
         if (event.status == "connected") {
+          this.connected = true;
           resolve(this.doc);
         }
       });
@@ -134,9 +138,17 @@ class YJSConnector {
 }
 
 export function getInstance({ spaceTitle, host, protocol, port }) {
-  if (!yjsConnection) {
-    yjsConnection = new YJSConnector({ spaceTitle, host, protocol, port });
-    Object.freeze(yjsConnection); // make sure no one can change the connection
+  if (!window.yjsConnection) {
+    window.yjsConnection = new YJSConnector({
+      spaceTitle,
+      host,
+      protocol,
+      port,
+    });
   }
-  return yjsConnection;
+  window.onbeforeunload = function () {
+    window.yjsConnection.websocketProvider.destroy();
+    window.yjsConnection = null;
+  };
+  return window.yjsConnection;
 }

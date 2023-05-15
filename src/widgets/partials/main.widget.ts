@@ -75,6 +75,7 @@ export class CanvasWidget extends SyncMetaWidget(
   model: any;
   _iwcw: any;
   user: any;
+  yjsInstance: any;
 
   render() {
     return html`
@@ -444,18 +445,18 @@ export class CanvasWidget extends SyncMetaWidget(
     if (!user) {
       console.error("user is undefined");
     }
-    const yjsInstance = getInstance({
+    this.yjsInstance = getInstance({
       host: this.yjsHost,
       port: this.yjsPort,
       protocol: this.yjsProtocol,
       spaceTitle: this.yjsSpaceTitle,
     });
-    yjsInstance
+    this.yjsInstance
       .connect()
       .then((y: YDoc) => {
         console.info(
           "CANVAS: Yjs Initialized successfully in room " +
-            window.spaceTitle +
+            this.yjsSpaceTitle +
             " with y-user-id: " +
             y.clientID
         );
@@ -557,7 +558,15 @@ function registerOnDataReceivedCallback(_iwcw, y, userList, user) {
       const dataMap = y.getMap("data");
       var model = dataMap.get("model");
       var vls = GenerateViewpointModel(model);
-      yjsSync(operation.getModelingRoomName())
+      this.yjsSpaceTitle = operation.getModelingRoomName();
+      this.yjsInstance = getInstance({
+        host: this.yjsHost,
+        port: this.yjsPort,
+        protocol: this.yjsProtocol,
+        spaceTitle: this.yjsSpaceTitle,
+      });
+      this.yjsInstance
+        .connect()
         .then((y) => {
           const dataMap = y.getMap("data");
           dataMap.set("metamodel", vls);

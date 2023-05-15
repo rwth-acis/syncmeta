@@ -8,7 +8,7 @@ import "las2peer-frontend-statusbar/las2peer-frontend-statusbar.js";
 import "@polymer/paper-button";
 
 import { Common } from "./common";
-import Static from "./static";
+import { Space } from "./static";
 import * as IWC from "../../src/es6/lib/iwc";
 
 import { getInstance } from "../../src/es6/lib/yjs-sync";
@@ -179,13 +179,13 @@ class StaticApp extends LitElement {
   _pageChanged(currentPage: string, oldPage: string) {
     switch (currentPage) {
       case "meta-modeling-space":
-        Common.setSpace(Static.MetaModelingSpaceId);
+        Common.setYjsRoom(Space.MetaModelingSpaceId);
         this.changeVisibility("#generateModelButton", true);
         location.reload();
         break;
       case "modeling-space":
         this.changeVisibility("#generateModelButton", false);
-        Common.setSpace(Static.ModelingSpaceId);
+        Common.setYjsRoom(Space.ModelingSpaceId);
         location.reload();
         break;
       default:
@@ -216,9 +216,11 @@ class StaticApp extends LitElement {
   }
 
   _onChangeButtonClicked() {
-    var roomName = (document.getElementById("roomNameInput") as any).value;
-    Common.setYjsRoomName(roomName);
-    Common.setSpace(this.page || "meta-modeling-space");
+    var roomName = (
+      document.getElementById("roomNameInput") as HTMLInputElement
+    ).value;
+    Common.setSyncmetaSpaceName(roomName);
+    Common.setYjsRoom(this.page || "meta-modeling-space");
     this.changeVisibility("#roomEnterLoader", true);
     location.reload();
     setTimeout(() => {
@@ -261,9 +263,9 @@ class StaticApp extends LitElement {
   publishUpdateMetamodelOperation() {
     var time = new Date().getTime();
     var data = JSON.stringify({
-      metamodelingRoomName: parent.syncmetaRoom,
-      modelingRoomName: Common.createYjsRoomNameWithSpace(
-        Static.ModelingSpaceId
+      metamodelingRoomName: Common.getYjsRoom(),
+      modelingRoomName: Common.getYjsRoomNameForCurrentSpace(
+        Space.ModelingSpaceId
       ),
     });
     var intent = new IWC.Intent(
@@ -313,7 +315,7 @@ class StaticApp extends LitElement {
 
   displayCurrentRoomName() {
     var spaceHTML = "";
-    let yjsRoomName = Common.getYjsRoomName();
+    let yjsRoomName = Common.getSyncmetaSpaceName();
 
     if (yjsRoomName && yjsRoomName !== "null") {
       spaceHTML = `<span style="font-weight: bold;">Current Space:</span> ${yjsRoomName}`;

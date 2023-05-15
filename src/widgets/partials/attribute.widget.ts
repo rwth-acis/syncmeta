@@ -41,6 +41,12 @@ export class AttributeWidget extends SyncMetaWidget(
       yjsInstance
         .connect()
         .then((y) => {
+          console.info(
+            "ATTRIBUTE: Yjs successfully initialized in " +
+              this.yjsSpaceTitle +
+              " with y-user-id: " +
+              y.clientID
+          );
           WaitForCanvas(CONFIG.WIDGET.NAME.ATTRIBUTE, y)
             .then((user) => {
               var iwc = IWCW.getInstance(CONFIG.WIDGET.NAME.ATTRIBUTE, y);
@@ -53,13 +59,6 @@ export class AttributeWidget extends SyncMetaWidget(
                 errors: {},
                 firstAttemptFail: {},
               };
-
-              console.info(
-                "ATTRIBUTE: Yjs successfully initialized in room " +
-                  undefined +
-                  " with y-user-id: " +
-                  y.clientID
-              );
               const userMap = y.getMap("users");
               userMap.set(y.clientID, iwc.getUser()[CONFIG.NS.PERSON.JABBERID]);
               const dataMap = y.getMap("data");

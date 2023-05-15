@@ -51,8 +51,8 @@ export class PaletteWidget extends SyncMetaWidget(
       .connect()
       .then((y) => {
         console.info(
-          "PALETTE: Yjs successfully initialized in room " +
-            window.spaceTitle +
+          "PALETTE: Yjs successfully initialized in " +
+            this.yjsSpaceTitle +
             " with y-user-id: " +
             y.clientID
         );

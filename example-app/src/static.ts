@@ -1,4 +1,4 @@
-export default {
-  MetaModelingSpaceId: "meta-modeling",
-  ModelingSpaceId: "modeling",
-};
+export enum Space {
+  MetaModelingSpaceId = "meta-modeling-space",
+  ModelingSpaceId = "modeling-space",
+}

@@ -42,8 +42,8 @@ export class ActivityWidget extends SyncMetaWidget(
         window.y = y;
 
         console.info(
-          "ACTIVITY: Yjs successfully initialized in room " +
-            window.spaceTitle +
+          "ACTIVITY: Yjs successfully initialized in " +
+            this.yjsSpaceTitle +
             " with y-user-id: " +
             y.clientID
         );

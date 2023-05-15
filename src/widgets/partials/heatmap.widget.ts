@@ -39,8 +39,8 @@ export class HeatMapWidget extends SyncMetaWidget(
       });
       const y = await yjsInstance.connect();
       console.info(
-        "HEATMAP: Yjs successfully initialized in room " +
-          window.spaceTitle +
+        "HEATMAP: Yjs successfully initialized in " +
+          this.yjsSpaceTitle +
           " with y-user-id: " +
           y.clientID
       );
