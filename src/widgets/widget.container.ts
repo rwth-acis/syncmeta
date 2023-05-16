@@ -171,7 +171,7 @@ export class WidgetContainer extends LitElement {
       }
 
       const widgetButtons = `
-        <div class="widget-buttons">
+        <div class="widget-buttons col col-2">
           <button
             type="button"
             class="btn btn-outline-secondary "
@@ -180,7 +180,7 @@ export class WidgetContainer extends LitElement {
             id="exportModel"
             title="Export/Import Utilities"
           >
-            <i class="bi bi-cloud-fill me-1"></i> Export/Import
+            <i class="bi bi-cloud-fill"></i>
           </button>
           <button
             class="btn btn-outline-primary"
@@ -190,14 +190,15 @@ export class WidgetContainer extends LitElement {
             aria-controls="offcanvasRight",
             title="User Activities"
           >
-            <i class="bi bi-people-fill me-1"></i> Activities 
+            <i class="bi bi-people-fill"></i>
           </button>
         </div>
       `;
-
-      rowContainer.firstElementChild.appendChild(
+      // add buttons as the second child of the row container
+      rowContainer.insertBefore(
         new DOMParser().parseFromString(widgetButtons, "text/html").body
-          .firstChild as Node
+          .firstChild as Node,
+        rowContainer.firstChild?.nextSibling.nextSibling
       );
     }, 100);
   }
