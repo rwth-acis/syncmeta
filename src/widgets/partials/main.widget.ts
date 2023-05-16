@@ -57,7 +57,7 @@ import ViewInitOperation from "../../es6/operations/non_ot/ViewInitOperation";
 import { getUserInfo } from "../../es6/User";
 import Util from "../../es6/Util";
 import { SyncMetaWidget } from "../../widget";
-import { Doc as YDoc } from "yjs";
+import { Map as YMap, Doc as YDoc } from "yjs";
 
 // canvas widget
 @customElement(getWidgetTagName(CONFIG.WIDGET.NAME.MAIN))
@@ -108,7 +108,7 @@ export class CanvasWidget extends SyncMetaWidget(
       <div class="main-container p-2 d-flex flex-column h-100">
         <error-alert></error-alert>
         <div class="row" id="main-widget-utilities-container">
-          <div class="col-9 d-flex justify-content-between">
+          <div class="col-7 d-flex justify-content-between">
             <div class="layout-buttons btn-group">
               <button
                 id="viewsHide"
@@ -155,13 +155,6 @@ export class CanvasWidget extends SyncMetaWidget(
                 <i class="bi bi-zoom-out"></i>
               </button>
             </div>
-            <button
-                id="save"
-                class="btn btn-light"
-                title="Save the current state of the model"
-              >
-                <i class="bi bi-cloud-arrow-up"></i>
-              </button>
             <div class="operation-buttons btn-group">
               
               <!-- Uncommented the below line for Export as PNG! -->
@@ -667,11 +660,11 @@ function InitMainWidget(metamodel, model, _iwcw, user, y = window.y) {
           }
           case "ReloadWidgetOperation": {
             var text;
-            const value = event.currentTarget.get(key);
+            const value = (event.currentTarget as YMap<any>).get(key);
             switch (value) {
               case "import": {
                 const dataMap = y.getMap("data");
-                var model = dataMap.get("model");
+                var model = dataMap.get("model") as any;
                 text =
                   "ATTENTION! Imported new model containing <strong>" +
                   Object.keys(model.nodes).length +
@@ -707,11 +700,11 @@ function InitMainWidget(metamodel, model, _iwcw, user, y = window.y) {
             for (const key of nodesMap.keys()) {
               // check if the node also exists in the updated model
 
-              var nodeInModel = dataMap.get("model")?.nodes[key];
+              var nodeInModel = (dataMap.get("model") as any)?.nodes[key];
               if (nodeInModel) {
                 // update left and top position values
-                nodesMap.get(key).set("left", nodeInModel.left);
-                nodesMap.get(key).set("top", nodeInModel.top);
+                (nodesMap.get(key) as any).set("left", nodeInModel.left);
+                (nodesMap.get(key) as any).set("top", nodeInModel.top);
               }
             }
             const activityMap = y.getMap("activity");
@@ -830,7 +823,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y = window.y) {
 
       var activityOperation = new ActivityOperation(
         "ViewApplyActivity",
-        vvs.id,
+        (vvs as any).id,
         _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]
       );
       _iwcw.sendLocalNonOTOperation(
@@ -1009,7 +1002,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y = window.y) {
   var visualizeView = function (viewId) {
     const viewsMap = y.getMap("views");
     //ViewManager.getViewResource(viewId).getRepresentation('rdfjson', function (viewData) {
-    var viewData = viewsMap.get(viewId);
+    var viewData = viewsMap.get(viewId) as any;
     if (viewData) {
       resetCanvas();
       ViewToGraph(viewData);
