@@ -112,6 +112,11 @@ class AttributeWrapper {
             operation.getContainment()
           );
         }
+        if (!node) {
+          throw new Error(
+            "Node " + operation.getEntityId() + " could not be created"
+          );
+        }
         node.addToWrapper(that);
       }
     };
