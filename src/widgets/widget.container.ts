@@ -1,4 +1,4 @@
-import { LitElement, html } from "lit";
+import { LitElement, PropertyValueMap, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 
 // Syncmeta Widgets
@@ -7,6 +7,7 @@ import "./partials/attribute.widget";
 import "./partials/debug.widget";
 import "./partials/palette.widget";
 import "./partials/activity.widget";
+import interact from "interactjs";
 
 @customElement("widget-container")
 export class WidgetContainer extends LitElement {
@@ -36,32 +37,31 @@ export class WidgetContainer extends LitElement {
 
         .innercontainer {
           border-radius: 5px;
-          flex: 1;
-          height: 100%;
-          resize: horizontal;
           -webkit-box-shadow: 0px 0px 30px 3px rgba(158, 158, 158, 0.89);
           box-shadow: 0px 0px 30px 3px rgba(158, 158, 158, 0.59);
         }
-        .innercontainer:nth-of-type(1) {
-          flex: 4;
+        .main-widget {
           display: flex;
-          flex-flow: column;
         }
-        .innercontainer:nth-of-type(3) {
-          display: flex;
-          flex-flow: column;
+        .main-left {
+          overflow: auto;
+          width: 80%;
         }
-        .middle-container {
-          flex: 2;
-          display: flex;
-          justify-content: space-between;
-          flex-direction: column;
+
+        .main-right {
+          flex-grow: 1;
+          width: 20%;
+        }
+        .grid-container {
+          display: grid;
+          grid-template-columns: 75% 25%;
+          grid-template-rows: 100%;
         }
       </style>
-      <div class="container-fluid row w-100 px-0 mx-0" style="height:98vh">
-        <div class="col-9 innercontainer">
-          <div class="row h-100">
-            <div class="col-9 px-1 border-end h-100">
+      <div class="w-100 grid-container" style="height:98vh;">
+        <div class="innercontainer h-100">
+          <div class="main-widget h-100">
+            <div class="main-left me-2 border-end h-100">
               <canvas-widget
                 yjsHost="${this.yjsHost}"
                 yjsPort="${this.yjsPort}"
@@ -69,7 +69,7 @@ export class WidgetContainer extends LitElement {
                 yjsSpaceTitle="${this.yjsSpaceTitle}"
               ></canvas-widget>
             </div>
-            <div class="col-3  h-100">
+            <div class="main-right h-100">
               <palette-widget
                 yjsHost="${this.yjsHost}"
                 yjsPort="${this.yjsPort}"
@@ -80,7 +80,7 @@ export class WidgetContainer extends LitElement {
             </div>
           </div>
         </div>
-        <div class="col-3 innercontainer ">
+        <div class="innercontainer h-100">
           <property-browser-widget
             yjsHost="${this.yjsHost}"
             yjsPort="${this.yjsPort}"
@@ -147,7 +147,60 @@ export class WidgetContainer extends LitElement {
   }
   connectedCallback(): void {
     super.connectedCallback();
+  }
+
+  protected firstUpdated(
+    _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
+  ): void {
+    super.firstUpdated(_changedProperties);
     this.addWidgetButtons();
+
+    interact(".main-left").resizable({
+      // resize from all edges and corners
+      edges: {
+        right: true, // Resize if pointer target is the given Element
+      },
+
+      listeners: {
+        move(event) {
+          const target = event.target;
+          let x = parseFloat(target.getAttribute("data-x")) || 0;
+          let y = parseFloat(target.getAttribute("data-y")) || 0;
+
+          // update the element's style
+          target.style.width = event.rect.width + "px";
+          target.style.height = event.rect.height + "px";
+
+          // translate when resizing from top or left edges
+          x += event.deltaRect.left;
+          y += event.deltaRect.top;
+
+          target.style.webkitTransform = target.style.transform =
+            "translate(" + x + "px," + y + "px)";
+
+          target.setAttribute("data-x", x);
+          target.setAttribute("data-y", y);
+        },
+      },
+
+      // Width and height can be adjusted independently. When `true`, width and
+      // height are adjusted at a 1:1 ratio.
+      square: false,
+
+      // Width and height can be adjusted independently. When `true`, width and
+      // height maintain the aspect ratio they had when resizing started.
+      preserveAspectRatio: false,
+
+      invert: "none",
+      max: Infinity,
+      modifiers: [
+        // Minimum size
+        interact.modifiers.restrictSize({
+          min: { width: 100, height: 50 },
+        }),
+      ],
+      maxPerElement: 1,
+    });
   }
 
   /**
@@ -200,6 +253,6 @@ export class WidgetContainer extends LitElement {
           .firstChild as Node,
         rowContainer.firstChild?.nextSibling.nextSibling
       );
-    }, 100);
+    }, 1000);
   }
 }
