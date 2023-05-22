@@ -18,6 +18,7 @@ export class ViewControlWidget extends SyncMetaWidget(
   LitElement,
   getWidgetTagName(CONFIG.WIDGET.NAME.VIEWCONTROL)
 ) {
+  yjsInstance: any;
   @property({ type: String }) yjsHost = "localhost";
   @property({ type: Number }) yjsPort = 1234;
   @property({ type: String }) yjsProtocol = "ws";
@@ -27,13 +28,13 @@ export class ViewControlWidget extends SyncMetaWidget(
   ) {
     super.firstUpdated(_changedProperties);
     try {
-      const yjsInstance = getInstance({
+      this.yjsInstance = getInstance({
         host: this.yjsHost,
         port: this.yjsPort,
         protocol: this.yjsProtocol,
         spaceTitle: this.yjsSpaceTitle,
       });
-      const y = await yjsInstance.connect();
+      const y = await this.yjsInstance.connect();
       console.info(
         "VIEWCONTROL: Yjs successfully initialized in " +
           this.yjsSpaceTitle +
@@ -73,13 +74,16 @@ export class ViewControlWidget extends SyncMetaWidget(
               viewsMap.set(viewId, null);
               $("#btnRefresh").click();
             });
-            $viewEntry.find(".ToSpace").click(function (event) {
+            $viewEntry.find(".ToSpace").click((event) => {
               var viewId = $(event.target)
                 .parents("tr")
                 .find(".lblviewname")
                 .text();
               var viewpointmodel = GenerateViewpointModel(viewsMap.get(viewId));
-              addMetamodelToYjs($("#space_label_view").val(), viewpointmodel);
+              this.addMetamodelToYjs(
+                $("#space_label_view").val(),
+                viewpointmodel
+              );
             });
             $(appendTo).append($viewEntry);
           }
@@ -173,10 +177,7 @@ export class ViewControlWidget extends SyncMetaWidget(
           <strong>Editor space url:</strong>
           <br />
           <span id="space_link_input_view"
-            ><%= grunt.config('roleSandboxUrl') %>/<input
-              size="16"
-              type="text"
-              id="space_label_view"
+            ><input size="16" type="text" id="space_label_view"
           /></span>
           <br />
         </div>
@@ -225,10 +226,15 @@ export class ViewControlWidget extends SyncMetaWidget(
   disconnectedCallback() {
     super.disconnectedCallback();
   }
-}
-
-function addMetamodelToYjs(roomName, metamodel) {
-  yjsSync(roomName).then(function (yInstance) {
-    yInstance.getMap("data").set("metamodel", metamodel);
-  });
+  addMetamodelToYjs(roomName, metamodel) {
+    const yjsInstance = getInstance({
+      host: this.yjsHost,
+      spaceTitle: roomName,
+      protocol: this.yjsProtocol,
+      port: this.yjsPort,
+    });
+    yjsInstance.connect().then((yInstance) => {
+      yInstance.getMap("data").set("metamodel", metamodel);
+    });
+  }
 }
