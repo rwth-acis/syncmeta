@@ -2,7 +2,7 @@ import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
 import _ from "lodash-es";
 import AbstractValue from "./AbstractValue";
-import { Map as YMap, YMapEvent, YTextEvent } from "yjs";
+import { Text as YText, Map as YMap, YMapEvent, YTextEvent } from "yjs";
 import { EntityManagerInstance } from "./Manager";
 
 /**
@@ -162,6 +162,13 @@ export class MultiValue extends AbstractValue {
       }
       EntityManagerInstance.storeDataYjs();
     });
+    //initialize the map with the values
+    for (const [key, value] of Object.entries(this._value)) {
+      if (!this._ymap.has(key)) {
+        const ytext = new YText(value);
+        this._ymap.set(key, ytext);
+      }
+    }
   }
 
   toJSON() {
