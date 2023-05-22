@@ -84,10 +84,14 @@ export class MultiValue extends AbstractValue {
   }
 
   createEditor(key = null) {
-    const editorCount = Object.keys(this._$editorRefs).length;
+    const maxEditorId = Object.keys(this._$editorRefs).reduce((prev, curr) => {
+      const currId = parseInt(curr.split("-")[2]);
+      return currId > prev ? currId : prev;
+    }, 0); // get the max id of the editors
+
     const editorId = key
       ? key
-      : sanitizeValue("editor" + this._id + editorCount).toLowerCase();
+      : sanitizeValue(`editor-${this._id}-${maxEditorId + 1}`).toLowerCase();
     const editorContainer = $(
       _.template(quillEditorHtml)({ id: editorId })
     ).get(0);
