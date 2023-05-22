@@ -68,6 +68,7 @@ export class MultiValue extends AbstractValue {
       )()
     );
     this._$node.find(".add").on("click", () => {
+      if (!this._ymap) throw new Error("YMap is null");
       const { editor, id } = this.createEditor();
       let ytext = this._ymap.get(id);
       if (!ytext || !(ytext instanceof YText)) {
