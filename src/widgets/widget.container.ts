@@ -44,7 +44,7 @@ export class WidgetContainer extends LitElement {
           display: flex;
         }
         .main-left {
-          overflow: auto;
+          overflow: hidden;
           width: 80%;
         }
 
