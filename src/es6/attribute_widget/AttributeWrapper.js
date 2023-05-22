@@ -236,7 +236,7 @@ class AttributeWrapper {
         Array.from(event.changes.keys.entries()).forEach(function (entry) {
           const key = entry[0];
           const action = entry[1].action;
-          if (action !== "add" || key.match(/\[(\w+?)\]/)) return;
+          if (action !== "add") return;
 
           let nodeId;
           if (
@@ -364,6 +364,14 @@ class AttributeWrapper {
     }
     this.select(_modelAttributesNode);
   }
+}
+/**
+ * checks if key is from an attribute
+ * @param {*} key
+ * @returns
+ */
+function keyIsAttribute(key) {
+  return key.match(/\[(\w+?)\]/); // match [attribute]
 }
 
 export default AttributeWrapper;

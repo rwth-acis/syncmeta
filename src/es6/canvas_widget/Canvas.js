@@ -185,6 +185,8 @@ export default class Canvas extends AbstractCanvas {
         );
       }
 
+      if (!node) throw new Error("Node could not be created");
+
       if (operation.getDefaultLabel()) {
         node.getLabel().getValue().setValue(operation.getDefaultLabel());
       }
