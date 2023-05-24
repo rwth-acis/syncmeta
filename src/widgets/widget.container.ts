@@ -36,6 +36,8 @@ export class WidgetContainer extends LitElement {
         }
 
         .innercontainer {
+          padding: 5px;
+          margin: 5px;
           border-radius: 5px;
           -webkit-box-shadow: 0px 0px 30px 3px rgba(158, 158, 158, 0.89);
           box-shadow: 0px 0px 30px 3px rgba(158, 158, 158, 0.59);
@@ -52,6 +54,7 @@ export class WidgetContainer extends LitElement {
           flex-grow: 1;
           width: 20%;
         }
+
         .grid-container {
           display: grid;
           grid-template-columns: 75% 25%;
