@@ -194,6 +194,10 @@ class BooleanValue extends AbstractValue {
             }
           });
         });
+
+      window.onbeforeunload = function () {
+        that.getRootSubjectEntity().getYMap().unobserve();
+      };
     };
 
     init();

@@ -7836,6 +7836,9 @@ export class SelectionValue extends AbstractValue {
             }
           });
         });
+      window.onbeforeunload = () => {
+        that.getRootSubjectEntity().getYMap().unobserveDeep();
+      };
     };
   }
 }
@@ -8190,6 +8193,9 @@ export class IntegerValue extends AbstractValue {
             }
           });
         });
+      window.onbeforeunload = () => {
+        that.getRootSubjectEntity().getYMap().unobserve();
+      };
     };
 
     init();
@@ -8705,6 +8711,9 @@ export class Value extends AbstractValue {
           );
         }, 500)
       );
+      window.onbeforeunload = () => {
+       _ytext.unobserve()
+      };
     };
 
     this.getYText = function () {

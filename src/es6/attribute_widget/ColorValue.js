@@ -373,7 +373,6 @@ class ColorValue extends AbstractValue{
 
     this.registerYType = function (ytext) {
       _ytext = ytext;
-      // _ytext.bind(_$node[0]);
       initData(ytext);
     };
     //init();
