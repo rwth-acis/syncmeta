@@ -109,13 +109,13 @@ export class Client {
     } catch (error) {
       console.error(error);
     }
-    
 
     if (this._y) {
       // If yjs is available also connect a global listener
       const intents = this._y.getMap("intents");
       if (intents) intents.observe(handler);
     }
+    this._connected = true;
   }
 
   /**
@@ -214,7 +214,7 @@ export class util {
   static validateIntent(intent) {
     if (typeof intent.sender != "string") {
       throw new Error(
-        "Intent object must possess property 'component' of type 'String'"
+        "Intent object must possess property 'sender' of type 'String'"
       );
     }
     if (typeof intent.data != "string") {
