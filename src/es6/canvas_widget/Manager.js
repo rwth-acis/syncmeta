@@ -2442,6 +2442,7 @@ export class AbstractNode extends AbstractEntity {
         }
       }
       this._draw();
+      this.repaint();
     };
 
     this.moveAbs = function (left, top, zIndex) {
@@ -2978,8 +2979,9 @@ export class AbstractNode extends AbstractEntity {
   repaint() {
     window.jsPlumbInstance.repaint(this._$node.get(0));
 
-    _.each(EntityManagerInstance.getEdges(), function (e) {
-      e.setZIndex();
+    Object.values(EntityManagerInstance.getEdges()).forEach((edge) => {
+      edge.setZIndex();
+      // window.jsPlumbInstance.repaint(document.querySelector(`[class=".${edge.getJsPlumbConnection().cssClass.trim()}"]`));
     });
   }
 
