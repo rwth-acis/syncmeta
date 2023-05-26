@@ -42,7 +42,6 @@
     var iwcClient = window._iwc_instance_;
     var intent_listener = [];
     if (iwcClient) {
-      console.log("HII");
       var previous_iwc_onIntent = iwcClient.onIntent;
       iwcClient.onIntent = function (message) {
         if (message.action === "RELOAD") {
@@ -61,7 +60,7 @@
         console.log("Reloading Everything");
         var message = {
           action: "RELOAD",
-          component: "",
+          component: "syncmeta",
           data: "",
           dataType: "",
           flags: ["PUBLISH_GLOBAL"],

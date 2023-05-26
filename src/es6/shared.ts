@@ -42,7 +42,6 @@ export function createReloadHandler() {
   var iwcClient = window._iwc_instance_;
   var intent_listener: any[] = [];
   if (iwcClient) {
-    console.log("HII");
     var previous_iwc_onIntent = iwcClient.onIntent;
     iwcClient.onIntent = function (message: any) {
       if (message.action === "RELOAD") {
@@ -58,10 +57,9 @@ export function createReloadHandler() {
       intent_listener.push(f);
     };
     window._reloadPage = function () {
-      console.log("Reloading Everything");
       var message = {
         action: "RELOAD",
-        component: "",
+        component: "syncmeta",
         data: "",
         dataType: "",
         flags: ["PUBLISH_GLOBAL"],
