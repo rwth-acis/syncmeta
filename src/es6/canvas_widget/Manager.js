@@ -8610,14 +8610,7 @@ export class Value extends AbstractValue {
     if (!yMap) {
       throw new Error("yMap is undefined");
     }
-    y.transact(() => {
-      if (!yMap.has(id) || !(yMap.get(id) instanceof YText)) {
-        _ytext = new YText();
-        yMap.set(id, _ytext);
-      } else {
-        _ytext = yMap.get(id);
-      }
-    });
+    
 
     var that = this;
     /**
@@ -8641,8 +8634,6 @@ export class Value extends AbstractValue {
     this.setValue = function (value) {
       _value = value;
       _$node.text(value);
-
-      this.value = _ytext.toString();
     };
 
     /**
@@ -8683,6 +8674,14 @@ export class Value extends AbstractValue {
     };
 
     this.registerYType = function () {
+      y.transact(() => {
+        if (!yMap.has(id) || !(yMap.get(id) instanceof YText)) {
+          _ytext = new YText(_value);
+          yMap.set(id, _ytext);
+        } else {
+          _ytext = yMap.get(id);
+        }
+      });
       _ytext.observe(
         _.debounce(function (event) {
           _value = _ytext.toString().replace(/\n/g, "");
@@ -8713,8 +8712,9 @@ export class Value extends AbstractValue {
           );
         }, 500)
       );
+
       window.onbeforeunload = () => {
-       _ytext.unobserve()
+        _ytext.unobserve();
       };
     };
 
