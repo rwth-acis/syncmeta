@@ -110,8 +110,8 @@ export class CanvasWidget extends SyncMetaWidget(
       <div class="main-container p-2 d-flex flex-column h-100">
         <error-alert></error-alert>
         <div class="row" id="main-widget-utilities-container">
-          <div class="col col-md-9 d-flex justify-content-between">
-            <div class="layout-buttons btn-group"> 
+          <div class="col col-md-9 d-flex">
+            <div class="layout-buttons px-2 btn-group"> 
               ${
                 this.metamodelEmpty
                   ? html`<button
@@ -153,8 +153,11 @@ export class CanvasWidget extends SyncMetaWidget(
               >
                 <i class="bi bi-layout-wtf"></i>
               </button>
+              <button id="save_image" class="btn btn-light">
+                <i class="bi bi-camera"></i>
+              </button>
             </div>
-            <div class="zoom-buttons btn-group">
+            <div class="zoom-buttons px-2 btn-group">
               <button id="zoomIn" class="btn btn-light" title="Zoom in">
                 <i class="bi bi-zoom-in"></i>
               </button>
@@ -162,12 +165,7 @@ export class CanvasWidget extends SyncMetaWidget(
                 <i class="bi bi-zoom-out"></i>
               </button>
             </div>
-            <div class="operation-buttons btn-group">
-              
-              <!-- Uncommented the below line for Export as PNG! -->
-              <button id="save_image" class="btn btn-light">
-                <i class="bi bi-camera"></i>
-              </button>
+            <div class="operation-buttons px-2 btn-group">
               <button
                 id="undo-btn"
                 class="btn btn-light"

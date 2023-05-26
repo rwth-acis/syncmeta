@@ -227,7 +227,7 @@ export class WidgetContainer extends LitElement {
       }
 
       const widgetButtons = `
-        <div class="widget-buttons">
+        <div class="widget-buttons px-2 btn-group">
           <button
             type="button"
             class="btn btn-outline-secondary "
