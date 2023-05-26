@@ -4,8 +4,8 @@ import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 
 import "https://cdnjs.cloudflare.com/ajax/libs/jquery-migrate/1.4.1/jquery-migrate.min.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
-import { html, LitElement } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { html, LitElement, nothing } from "lit";
+import { customElement, property, state } from "lit/decorators.js";
 import AbstractClassNodeTool from "../../es6/canvas_widget/AbstractClassNodeTool";
 import BiDirAssociationEdgeTool from "../../es6/canvas_widget/BiDirAssociationEdgeTool";
 import Canvas from "../../es6/canvas_widget/Canvas";
@@ -70,6 +70,8 @@ export class CanvasWidget extends SyncMetaWidget(
   @property({ type: String }) yjsProtocol = "ws";
   @property({ type: String }) yjsSpaceTitle = window.spaceTitle;
 
+  @state() metamodelEmpty = true;
+
   canvas: Canvas;
   metamodel: any;
   model: any;
@@ -109,23 +111,28 @@ export class CanvasWidget extends SyncMetaWidget(
         <error-alert></error-alert>
         <div class="row" id="main-widget-utilities-container">
           <div class="col-7 d-flex justify-content-between">
-            <div class="layout-buttons btn-group">
-              <button
-                id="viewsHide"
-                class="btn btn-light"
-                title="Close the View Panel"
-                @click=${this.hideViews}
-              >
-                <i class="bi bi-caret-up"></i>
-              </button>
-              <button
-                id="viewsShow"
-                class="btn btn-light"
-                title="Show the View Panel"
-                @click=${this.showViews}
-              >
-                <i class="bi bi-caret-down"></i>
-              </button>
+            <div class="layout-buttons btn-group"> 
+              ${
+                this.metamodelEmpty
+                  ? html`<button
+                        id="viewsHide"
+                        class="btn btn-light"
+                        title="Close the View Panel"
+                        @click=${this.hideViews}
+                      >
+                        <i class="bi bi-caret-up"></i>
+                      </button>
+                      <button
+                        id="viewsShow"
+                        class="btn btn-light"
+                        title="Show the View Panel"
+                        @click=${this.showViews}
+                      >
+                        <i class="bi bi-caret-down"></i>
+                      </button>`
+                  : nothing
+              }
+              
 
               <button
                 id="showtype"
@@ -458,6 +465,10 @@ export class CanvasWidget extends SyncMetaWidget(
         const userMap = y.getMap("users");
         const dataMap = y.getMap("data");
 
+        dataMap.observe((event: any) => {
+          this.metamodelEmpty = !dataMap.get("metamodel");
+        });
+        this.metamodelEmpty = !dataMap.get("metamodel");
         // TODO: dataMap is empty as it seems to need some time to be initialized
         // This is a workaround to wait for the initialization
         setTimeout(() => {
