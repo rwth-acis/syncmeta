@@ -160,7 +160,6 @@ export class MultiValue extends AbstractValue {
           }
         );
       }
-      EntityManagerInstance.storeDataYjs();
     });
     //initialize the map with the values
     for (const [key, value] of Object.entries(this._value)) {
