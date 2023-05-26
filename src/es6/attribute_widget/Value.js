@@ -100,7 +100,7 @@ class Value extends AbstractValue {
     };
 
     this.registerYType = (ytext) => {
-      ytext.delete(0, ytext.length);
+      
       if (!ytext) {
         throw new Error("YText not found");
       }
@@ -112,7 +112,6 @@ class Value extends AbstractValue {
         return;
       }
       _ytext = ytext;
-
       this.quillBinding = new QuillBinding(
         _ytext,
         _$editorRef,
@@ -121,7 +120,7 @@ class Value extends AbstractValue {
       _ytext?.observe(function () {
         _value = _ytext.toString();
       });
-      this.setEditorValue(_value);
+      _value = _ytext.toString();
       //loging
       window.syncmetaLog.initializedYTexts += 1;
       if (window.syncmetaLog.hasOwnProperty(this.getEntityId()))
