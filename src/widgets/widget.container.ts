@@ -227,7 +227,7 @@ export class WidgetContainer extends LitElement {
       }
 
       const widgetButtons = `
-        <div class="widget-buttons col col-2">
+        <div class="widget-buttons">
           <button
             type="button"
             class="btn btn-outline-secondary "
@@ -251,10 +251,9 @@ export class WidgetContainer extends LitElement {
         </div>
       `;
       // add buttons as the second child of the row container
-      rowContainer.insertBefore(
+      rowContainer.firstElementChild.appendChild(
         new DOMParser().parseFromString(widgetButtons, "text/html").body
-          .firstChild as Node,
-        rowContainer.firstChild?.nextSibling.nextSibling
+          .firstChild as Node
       );
     }, 1000);
   }

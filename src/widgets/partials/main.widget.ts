@@ -110,7 +110,7 @@ export class CanvasWidget extends SyncMetaWidget(
       <div class="main-container p-2 d-flex flex-column h-100">
         <error-alert></error-alert>
         <div class="row" id="main-widget-utilities-container">
-          <div class="col-7 d-flex justify-content-between">
+          <div class="col col-md-9 d-flex justify-content-between">
             <div class="layout-buttons btn-group"> 
               ${
                 this.metamodelEmpty
@@ -132,8 +132,6 @@ export class CanvasWidget extends SyncMetaWidget(
                       </button>`
                   : nothing
               }
-              
-
               <button
                 id="showtype"
                 class="btn btn-light"
@@ -155,6 +153,8 @@ export class CanvasWidget extends SyncMetaWidget(
               >
                 <i class="bi bi-layout-wtf"></i>
               </button>
+            </div>
+            <div class="zoom-buttons btn-group">
               <button id="zoomIn" class="btn btn-light" title="Zoom in">
                 <i class="bi bi-zoom-in"></i>
               </button>
@@ -188,7 +188,7 @@ export class CanvasWidget extends SyncMetaWidget(
               >View:<span id="lblCurrentViewId"></span
             ></strong>
           </div>
-          <div class="col-3">
+          <div class="col col-md-3">
             <div class="input-group">
               <input
                 type="text"
