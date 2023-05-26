@@ -116,9 +116,6 @@ class Value extends AbstractValue {
         _$editorRef,
         window.yjsConnection.websocketProvider.awareness
       );
-      _ytext?.observe(function () {
-        _value = _ytext.toString();
-      });
       //loging
       window.syncmetaLog.initializedYTexts += 1;
       if (window.syncmetaLog.hasOwnProperty(this.getEntityId()))
