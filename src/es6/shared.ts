@@ -18,7 +18,6 @@ export default function () {
         intent_listener.push(f);
       };
       window._reloadPage = function () {
-        console.log("Reloading Everything");
         var message = {
           action: "RELOAD",
           component: "",
@@ -28,6 +27,7 @@ export default function () {
           extras: {
             reload: true,
           },
+          sender: "syncmeta",
         };
         iwcClient.publish(message);
       };

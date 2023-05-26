@@ -19,7 +19,6 @@
         intent_listener.push(f);
       };
       window._reloadPage = function () {
-        console.log("Reloading Everything");
         var message = {
           action: "RELOAD",
           component: "",
@@ -29,6 +28,7 @@
           extras: {
             reload: true,
           },
+          sender: "syncmeta",
         };
         iwcClient.publishGlobal(message);
       };
@@ -57,7 +57,6 @@
         intent_listener.push(f);
       };
       window._reloadPage = function () {
-        console.log("Reloading Everything");
         var message = {
           action: "RELOAD",
           component: "syncmeta",
