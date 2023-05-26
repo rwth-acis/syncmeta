@@ -191,6 +191,11 @@ export class MultiValue extends AbstractValue {
         window.syncmetaLog.objects[this.getEntityId()] += 1;
       else window.syncmetaLog.objects[this.getEntityId()] = 0;
     }
+    window.onbeforeunload = () => {
+      if (this._ymap) {
+        this._ymap.unobserve();
+      }
+    };
   }
 }
 

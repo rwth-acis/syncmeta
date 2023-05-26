@@ -169,6 +169,10 @@ export class MultiValue extends AbstractValue {
         this._ymap.set(key, ytext);
       }
     }
+
+     window.onbeforeunload = () => {
+       this._ymap.unobserve();
+     };
   }
 
   toJSON() {
