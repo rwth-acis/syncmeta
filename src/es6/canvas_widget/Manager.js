@@ -2447,7 +2447,7 @@ export class AbstractNode extends AbstractEntity {
         }
       }
       this._draw();
-      this.repaint();
+      jsPlumbInstance.repaintEverything();
     };
 
     this.moveAbs = function (left, top, zIndex) {
