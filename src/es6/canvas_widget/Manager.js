@@ -780,14 +780,14 @@ export class AbstractEdge extends AbstractEntity {
     if (edgeMap.has(id)) {
       _ymap = edgeMap.get(id);
     } else if (id && type && source && target) {
-      _ymap = new YMap();
-      edgeMap.set(id, new YMap());
       y.transact(() => {
+        _ymap = new YMap();
         _ymap.set("id", id);
         _ymap.set("type", type);
         _ymap.set("source", source.getEntityId());
         _ymap.set("target", target.getEntityId());
         _ymap.set("jabberId", _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+        edgeMap.set(id, _ymap);
       });
     }
 
