@@ -5946,6 +5946,7 @@ export function makeNode(type, $shape, anchors, attributes) {
         _$node.addClass("highlighted");
         // set the border of the svg element
         _$node.find("svg").css("border", "3px solid " + color);
+        _$node.find("svg").css("border-radius", "5px");
         // add div with the username of the user who is currently editing the node
         _$node.append(
           '<div class="highlighted-user"> <i class="bi bi-pencil-fill me-1"></i>' +
