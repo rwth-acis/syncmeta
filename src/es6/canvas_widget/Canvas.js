@@ -1843,7 +1843,7 @@ export default class Canvas extends AbstractCanvas {
               var selectedEntity = EntityManager.find(selection);
               if (selectedEntity)
                 selectedEntity.highlight(
-                  Util.getColor(userInfo.globalId),
+                  Util.getColor(userInfo?.globalId),
                   userInfo[CONFIG.NS.PERSON.TITLE]
                 );
             }
