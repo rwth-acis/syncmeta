@@ -1,4 +1,8 @@
-import { EVENT_DRAG_START, EVENT_DRAG_STOP } from "@jsplumb/browser-ui";
+import {
+  EVENT_DRAG_START,
+  EVENT_DRAG_STOP,
+  EVENT_CONNECTION_CLICK,
+} from "@jsplumb/browser-ui";
 import { AnchorLocations } from "@jsplumb/browser-ui";
 import { BezierConnector } from "@jsplumb/browser-ui";
 import { FlowchartConnector } from "@jsplumb/browser-ui";
@@ -269,7 +273,6 @@ function HistoryManager() {
   var $redo = $("#redo");
 
   var propagateHistoryOperationFromJson = function (json) {
-    
     var operation = null,
       data = null,
       entity;
@@ -780,14 +783,14 @@ export class AbstractEdge extends AbstractEntity {
     if (edgeMap.has(id)) {
       _ymap = edgeMap.get(id);
     } else if (id && type && source && target) {
-      _ymap = new YMap();
-      edgeMap.set(id, new YMap());
       y.transact(() => {
+        _ymap = new YMap();
         _ymap.set("id", id);
         _ymap.set("type", type);
         _ymap.set("source", source.getEntityId());
         _ymap.set("target", target.getEntityId());
         _ymap.set("jabberId", _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+        edgeMap.set(id, _ymap);
       });
     }
 
@@ -1367,8 +1370,13 @@ export class AbstractEdge extends AbstractEntity {
       var paintStyle = _.clone(_defaultPaintStyle);
 
       if (color) {
-        paintStyle.strokeStyle = color;
-        paintStyle.lineWidth = 8;
+        paintStyle = {
+          ...paintStyle,
+          stroke: color,
+          fill: color,
+          outlineStroke: "black",
+          strokeWidth: 8,
+        };
         if (_jsPlumbConnection) _jsPlumbConnection.setPaintStyle(paintStyle);
         else throw new Error("jsPlumbConnection is null");
       }
@@ -1422,8 +1430,11 @@ export class AbstractEdge extends AbstractEntity {
     this.bindMoveToolEvents = () => {
       if (_jsPlumbConnection) {
         //Enable Edge Select
-        $("." + id).on("click", function (e) {
-          e.stopPropagation();
+        //class contains id
+        jsPlumbInstance.bind(EVENT_CONNECTION_CLICK, (connection) => {
+          if (connection.cssClass.indexOf(id) === -1) return;
+          console.log(connection);
+
           _canvas.select(that);
         });
 
@@ -1431,12 +1442,6 @@ export class AbstractEdge extends AbstractEntity {
           .find("input")
           .prop("disabled", false)
           .css("pointerEvents", "");
-
-        /*$(_jsPlumbConnection.getOverlay("label").canvas).find("input[type=text]").autoGrowInput({
-                   comfortZone: 10,
-                   minWidth: 40,
-                   maxWidth: 100
-                   }).trigger("blur");*/
       } else throw new Error("jsPlumbConnection is null");
 
       if (id) {
@@ -2785,7 +2790,6 @@ export class AbstractNode extends AbstractEntity {
         _canvas.bindMoveToolEvents();
         _$node.css({ opacity: "" });
 
-        
         // if offset bigger than canvas size, no need to send the operation
         if (
           params.el.offsetLeft < 0 ||
@@ -2799,7 +2803,7 @@ export class AbstractNode extends AbstractEntity {
 
         var offsetX = Math.round(params.el.offsetLeft - originalPos.left);
         var offsetY = Math.round(params.el.offsetTop - originalPos.top);
-        
+
         // if offset is 0, no need to send the operation
         if (offsetX === 0 && offsetY === 0) return;
 
@@ -8610,7 +8614,6 @@ export class Value extends AbstractValue {
     if (!yMap) {
       throw new Error("yMap is undefined");
     }
-    
 
     var that = this;
     /**

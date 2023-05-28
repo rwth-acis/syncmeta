@@ -152,19 +152,20 @@ class EdgeTool extends AbstractCanvasTool {
       });
 
       jsPlumbInstance.bind("connection", function (info, originalEvent) {
-        if (typeof originalEvent !== "undefined") {
-          //Was the connection established using Drag'n Drop?
-          // If so we delete the connection and form it manually again
+        // fired when a new connection is created using drag and drop.
+        setTimeout(() => {
+          // timeout necessary to wait for jsplumb to finish checks on the connection. see https://github.com/rwth-acis/syncmeta/issues/159#issuecomment-1566111265
+          if (!originalEvent) return; // if the connection was created by the user, originalEvent is set. if it was created by the calling jsplumb.connect method, it is not set.
           if (info.connection) {
             jsPlumbInstance.deleteConnection(info.connection, {
               fireEvent: false,
             });
           }
-
           that
             .getCanvas()
             .createEdge(that.getName(), info.sourceId, info.targetId);
-        }
+        });
+
         return true;
       });
 
