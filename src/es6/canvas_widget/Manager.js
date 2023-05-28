@@ -5941,8 +5941,32 @@ export function makeNode(type, $shape, anchors, attributes) {
           }
         }
       };
+
+      this.highlight = function (color = "green", username = "Anonymous") {
+        _$node.addClass("highlighted");
+        // set the border of the svg element
+        _$node.find("svg").css("border", "3px solid " + color);
+        // add div with the username of the user who is currently editing the node
+        _$node.append(
+          '<div class="highlighted-user"> <i class="bi bi-pencil-fill me-1"></i>' +
+            username +
+            "</div>"
+        );
+        // set the color
+        _$node.find(".highlighted-user").css("color", color);
+        // set the size to small
+        _$node.find(".highlighted-user").css("font-size", "small");
+      };
+      this.unhighlight = function () {
+        _$node.removeClass("highlighted");
+        // remove the border of the svg element
+        _$node.find("svg").css("border", "none");
+        // remove the div with the username of the user who is currently editing the node
+        _$node.find(".highlighted-user").remove();
+      };
     }
     nodeSelector;
+
     /**
      * Get the jquery shape object from the node type
      * @static
