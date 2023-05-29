@@ -3055,7 +3055,7 @@ export class AbstractNode extends AbstractEntity {
           }),
           // minimum size
           interact.modifiers.restrictSize({
-            min: { width: 40, height: 40 },
+            min: { width: 50, height: 50 },
           }),
         ],
         inertia: { enabled: false },
