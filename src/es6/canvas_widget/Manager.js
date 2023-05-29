@@ -1543,6 +1543,9 @@ export class AbstractEdge extends AbstractEntity {
  * @param {number} zIndex Position of node on z-axis
  */
 export class AbstractNode extends AbstractEntity {
+  MIN_WIDTH = 50;
+  MIN_HEIGHT = 50;
+
   nodeSelector;
   _$node;
   _isBeingDragged = false;
@@ -1559,6 +1562,11 @@ export class AbstractNode extends AbstractEntity {
     y
   ) {
     super(id);
+    if (height < this.MIN_HEIGHT) height = this.MIN_HEIGHT;
+    if (width < this.MIN_WIDTH) width = this.MIN_WIDTH;
+    if (top < 0) top = 0;
+    if (left < 0) left = 0;
+
     var that = this;
     y = y || window.y;
     if (!y) {
@@ -2482,8 +2490,14 @@ export class AbstractNode extends AbstractEntity {
      * @param {number} offsetY Offset in y-direction
      */
     this.resize = function (offsetX, offsetY) {
-      _appearance.width += offsetX;
-      _appearance.height += offsetY;
+      _appearance.width =
+        _appearance.width + offsetX > this.MIN_WIDTH
+          ? _appearance.width + offsetX
+          : this.MIN_WIDTH;
+      _appearance.height =
+        _appearance.height + offsetY > this.MIN_HEIGHT
+          ? _appearance.height + offsetY
+          : this.MIN_HEIGHT;
       if (_ymap) {
         y.transact(() => {
           _ymap.set("width", _appearance.width);
