@@ -8728,7 +8728,7 @@ export class Value extends AbstractValue {
         _.debounce(function (event) {
           _value = _ytext.toString().replace(/\n/g, "");
           that.setValue(_value);
-          EntityManagerInstance.storeDataYjs();
+          EntityManagerInstance.saveState();
           const userMap = y.getMap("users");
           const jabberId = userMap.get(event.currentTarget.doc.clientID);
 
