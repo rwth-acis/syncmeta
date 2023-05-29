@@ -1,5 +1,5 @@
 ---
-name: Enhancement template
+name: Enhancement issue
 about: These issues deal with the addition of new features to the system.
 title: "[ENH] Title"
 labels: enhancement

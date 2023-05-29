@@ -1,6 +1,6 @@
 ---
-name: Documentation template
-about: Describe this issue template's purp.ose here
+name: Documentation issue
+about: The documentation is missing or needs to be updated.
 title: "[DOC] Title"
 labels: documentation
 assignees: ''
