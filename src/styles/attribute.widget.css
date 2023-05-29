@@ -115,9 +115,6 @@
      font-weight: bold;
  }
 
- .label {
-     text-transform: capitalize;
- }
 
  .key_value_attribute input,
  select {

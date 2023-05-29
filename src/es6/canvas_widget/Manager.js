@@ -3055,7 +3055,7 @@ export class AbstractNode extends AbstractEntity {
           }),
           // minimum size
           interact.modifiers.restrictSize({
-            min: { width: 40, height: 40 },
+            min: { width: 50, height: 50 },
           }),
         ],
         inertia: { enabled: false },
@@ -8728,7 +8728,7 @@ export class Value extends AbstractValue {
         _.debounce(function (event) {
           _value = _ytext.toString().replace(/\n/g, "");
           that.setValue(_value);
-          EntityManagerInstance.storeDataYjs();
+          EntityManagerInstance.saveState();
           const userMap = y.getMap("users");
           const jabberId = userMap.get(event.currentTarget.doc.clientID);
 
