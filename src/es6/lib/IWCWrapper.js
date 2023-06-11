@@ -60,18 +60,18 @@ class IWCWrapper {
 
   /**
    * Inter widget communication client
-   * @type {iwc.Client}
+   * @type {IWC.Client}
    * @private
    */
   _iwc;
   /**
    * Disconnect the iwc client
-   * @memberof IWCWrapper#
+   
    */
   disconnect;
   /**
    * Connect the iwc client
-   * @memberof IWCWrapper#
+   
    */
   connect;
   sendLocalMessage;
@@ -329,7 +329,7 @@ class IWCWrapper {
 
     /**
      * Send data locally to an other component
-     * @memberof IWCWrapper#
+     
      * @param {string} receiver Component name of receiving component, empty string for broadcast
      * @param {object} data Data to send
      */
@@ -363,9 +363,9 @@ class IWCWrapper {
     };
     /**
      * Send OTOperation locally to an other component
-     * @memberof IWCWrapper#
+     
      * @param {string} receiver Component name of receiving component, empty string for broadcast
-     * @param {operations.ot.OTOperation} operation Operation to send
+     * @param {OTOperation} operation Operation to send
      */
     this.sendLocalOTOperation = function (receiver, operation) {
       this.sendLocalMessage(receiver, {
@@ -376,9 +376,9 @@ class IWCWrapper {
     };
     /**
      * Send NonOTOperation locally to an other component
-     * @memberof IWCWrapper#
+     
      * @param {string} receiver Component name of receiving component, empty string for broadcast
-     * @param {operations.non_ot.NonOTOperation} operation Operation to send
+     * @param {NonOTOperation} operation Operation to send
      */
     this.sendLocalNonOTOperation = function (receiver, operation) {
       this.sendLocalMessage(receiver, {
@@ -392,19 +392,22 @@ class IWCWrapper {
     };
     /**
      * Register callback for local data receive events
-     * @memberof IWCWrapper#
+     
      * @param {function} callback
      */
-    this.registerOnDataReceivedCallback = function (callback, caller) {
+    this.registerOnDataReceivedCallback = function (
+      callback,
+      callerBackType = "function"
+    ) {
       if (typeof callback === "function") {
         this.unregisterOnDataReceivedCallback(callback);
         this._onDataReceivedCallbacks.push(callback);
-        this._onDataReceivedCallers.push(caller);
+        this._onDataReceivedCallers.push(callerBackType);
       }
     };
     /**
      * Unregister callback for local data receive events
-     * @memberof IWCWrapper#
+     
      * @param {function} callback
      */
     this.unregisterOnDataReceivedCallback = function (callback) {
