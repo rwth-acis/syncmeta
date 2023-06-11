@@ -1,5 +1,6 @@
 # SyncMeta - Near real-time collaborative modeling framework
 
+For the full documentation, please visit the [SyncMeta Documentation](https://github.com/rwth-acis/syncmeta/wiki).
 ## Build and Run
 
 The easiest way to build and run Syncmeta is to use Docker. If you don't have Docker installed, you can find the installation instructions [here](https://docs.docker.com/get-docker/).
