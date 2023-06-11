@@ -37,23 +37,7 @@ import { getWidgetTagName } from "../config";
  * @author Jonas K├Ânning (koenning@dbis.rwth-aachen.de)
  */
 
-export class Intent {
-  sender;
-  receiver;
-  data;
-  dataType = "text/xml";
-  action;
-  categories = ["", ""];
-  extras = {};
-  flags;
-  constructor(sender, receiver, action, data, global) {
-    this.sender = sender;
-    this.receiver = receiver;
-    this.data = data;
-    this.action = action;
-    this.flags = [global ? "PUBLISH_GLOBAL" : "PUBLISH_LOCAL"];
-  }
-}
+
 
 /**
  * Provides messaging functionality.
@@ -193,6 +177,24 @@ export class Client {
       console.log(intent);
       this._callback(intent);
     }
+  }
+}
+
+export class Intent {
+  sender;
+  receiver;
+  data;
+  dataType = "text/xml";
+  action;
+  categories = ["", ""];
+  extras = {};
+  flags;
+  constructor(sender, receiver, action, data, global) {
+    this.sender = sender;
+    this.receiver = receiver;
+    this.data = data;
+    this.action = action;
+    this.flags = [global ? "PUBLISH_GLOBAL" : "PUBLISH_LOCAL"];
   }
 }
 
