@@ -4,9 +4,7 @@
  */
 
 import Operation from "../Operation";
-
-    NonOTOperation.prototype = new Operation();
-    NonOTOperation.prototype.constructor = NonOTOperation;
+;
     /**
      * NonOTOperation
      * @class operations.non_ot.NonOTOperation
@@ -15,7 +13,10 @@ import Operation from "../Operation";
      * @param {string} type Type of Operation
      * @param {string} data Additional data for operation
      */
-    function NonOTOperation(type,data){
+    class NonOTOperation extends Operation {
+    
+    constructor(type, data) {
+        super()
         /**
          * JabberId of the user who issued this activity
          * @type {string}
@@ -37,7 +38,7 @@ import Operation from "../Operation";
          * Set JabberId of the user who issued this activity
          * @param sender
          */
-        this.setSender = function(sender){
+        this.setSender = function (sender) {
             _sender = sender;
         };
 
@@ -45,7 +46,7 @@ import Operation from "../Operation";
          * Get JabberId of the user who issued this activity
          * @returns {string}
          */
-        this.getSender = function(){
+        this.getSender = function () {
             return _sender;
         };
 
@@ -53,7 +54,7 @@ import Operation from "../Operation";
          * Get type of Operation
          * @returns {string}
          */
-        this.getType = function(){
+        this.getType = function () {
             //noinspection JSAccessibilityCheck
             return _operation.type;
         };
@@ -62,7 +63,7 @@ import Operation from "../Operation";
          * Get additional data for operation
          * @returns {string}
          */
-        this.getData = function(){
+        this.getData = function () {
             return _operation.data;
         };
 
@@ -70,10 +71,11 @@ import Operation from "../Operation";
          * Get JSON Representation of operation
          * @returns {{type: string, data: string}}
          */
-        this.getOperationObject = function(){
+        this.getOperationObject = function () {
             return _operation;
         };
     }
+}
 
     export default NonOTOperation;
 
