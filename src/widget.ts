@@ -13,6 +13,12 @@ export const SyncMetaWidget = <T extends Constructor<LitElement>>(
   if (!widgetName) {
     throw new Error("widgetName cannot be empty");
   }
+
+  if (!widgetName.endsWith("-widget")) {
+    throw new Error(
+      "widgetName must end with '-widget'. Otherwise widget communication will not work."
+    );
+  }
   // cannot use arrow function here, see https://lit.dev/docs/composition/mixins/#applying-decorators-in-mixins
   class SyncMetaWidgetElement extends superClass {
     widgetName = widgetName;
