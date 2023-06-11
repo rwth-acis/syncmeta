@@ -131,7 +131,7 @@ export class Client {
   }
 
   publishLocal(intent, origin) {
-    //Find iframe and post message
+    //Find widget and post message
     const widgets = [];
     for (const el of document.querySelectorAll("*")) {
       if (el.tagName.match(/-widget$/i)) {

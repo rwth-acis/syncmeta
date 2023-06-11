@@ -116,7 +116,7 @@ class KeySelectionValueSelectionValueAttribute extends AbstractAttribute {
 
     /**
      * Apply an Attribute Delete Operation
-     * @param {operations.ot.AttributeDeleteOperation} operation
+     * @param {AttributeDeleteOperation} operation
      */
     var processAttributeDeleteOperation = function (operation) {
       subjectEntity.deleteAttribute(operation.getEntityId());
@@ -125,7 +125,7 @@ class KeySelectionValueSelectionValueAttribute extends AbstractAttribute {
 
     /**
      * Callback for an Attribute Delete Operation
-     * @param {operations.ot.AttributeDeleteOperation} operation
+     * @param {AttributeDeleteOperation} operation
      */
     var attributeDeleteCallback = function (operation) {
       if (
