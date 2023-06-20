@@ -464,70 +464,97 @@ export class DebugWidget extends SyncMetaWidget(
               window.y.getMap("data").set("metamodel", null);
             }
           }
-          var initAttributes = function (attrs, map) {
-            if (attrs.hasOwnProperty("[attributes]")) {
-              var attr = attrs["[attributes]"].list;
-              for (var key in attr) {
-                if (attr.hasOwnProperty(key)) {
-                  if (attr[key].hasOwnProperty("key")) {
-                    var ytext = map.set(attr[key].key.id, new YText());
-                    ytext.insert(0, attr[key].key.value);
-                  } else {
-                    var ytext = map.set(attr[key].value.id, new YText());
-                    ytext.insert(0, attr[key].value.value);
+          const deleteModel = confirm(
+            "Do you want to delete the current model?"
+          );
+          if (deleteModel) {
+            var initAttributes = function (attrs, map) {
+              if (attrs.hasOwnProperty("[attributes]")) {
+                var attr = attrs["[attributes]"].list;
+                for (var key in attr) {
+                  if (attr.hasOwnProperty(key)) {
+                    if (attr[key].hasOwnProperty("key")) {
+                      var ytext = map.set(attr[key].key.id, new YText());
+                      ytext.insert(0, attr[key].key.value);
+                    } else {
+                      var ytext = map.set(attr[key].value.id, new YText());
+                      ytext.insert(0, attr[key].value.value);
+                    }
                   }
                 }
-              }
-            } else {
-              for (var key in attrs) {
-                if (attrs.hasOwnProperty(key)) {
-                  var value = attrs[key].value;
-                  if (!value.hasOwnProperty("option")) {
-                    if (value.value instanceof String) {
-                      var ytext = map.set(value.id, new YText());
-                      ytext.insert(0, value.value);
+              } else {
+                for (var key in attrs) {
+                  if (attrs.hasOwnProperty(key)) {
+                    var value = attrs[key].value;
+                    if (!value.hasOwnProperty("option")) {
+                      if (value.value instanceof String) {
+                        var ytext = map.set(value.id, new YText());
+                        ytext.insert(0, value.value);
+                      }
                     }
                   }
                 }
               }
-            }
-          };
-          const dataMap = window.y.getMap("data");
-          if (guidance.isGuidanceEditor()) {
-            dataMap.set("guidancemodel", data);
-          } else dataMap.set("model", data);
-          for (var key in data.nodes) {
-            if (data.nodes.hasOwnProperty(key)) {
-              var entity = data.nodes[key];
-              const nodesMap = window.y.getMap("nodes");
-              nodesMap.set(key, new YMap());
-              var attrs = entity.attributes;
-              if (entity.hasOwnProperty("label")) {
-                var ytext = new YText(entity.label.value.id);
-                nodesMap.set(entity.label.value.id, ytext);
-                ytext.insert(0, entity.label.value.value);
+            };
+            const dataMap = window.y.getMap("data");
+            if (guidance.isGuidanceEditor()) {
+              dataMap.set("guidancemodel", data);
+            } else dataMap.set("model", data);
+            for (var key in data.nodes) {
+              if (data.nodes.hasOwnProperty(key)) {
+                var entity = data.nodes[key];
+                const nodesMap = window.y.getMap("nodes");
+                nodesMap.set(key, new YMap());
+                var attrs = entity.attributes;
+                if (entity.hasOwnProperty("label")) {
+                  var ytext = new YText(entity.label.value.id);
+                  nodesMap.set(entity.label.value.id, ytext);
+                  ytext.insert(0, entity.label.value.value);
+                }
+                initAttributes(attrs, nodesMap);
               }
-              initAttributes(attrs, nodesMap);
             }
-          }
-          for (var key in data.edges) {
-            if (data.edges.hasOwnProperty(key)) {
-              var entity = data.edges[key];
-              const edgeMap = window.y.getMap("edges");
-              const map = new YMap();
-              edgeMap.set(key, map);
-              var attrs = entity.attributes;
-              if (entity.hasOwnProperty("label")) {
-                const ytext = new YText();
-                map.set(entity.label.value.id, ytext);
-                ytext.insert(0, entity.label.value.value);
+            for (var key in data.edges) {
+              if (data.edges.hasOwnProperty(key)) {
+                var entity = data.edges[key];
+                const edgeMap = window.y.getMap("edges");
+                const map = new YMap();
+                edgeMap.set(key, map);
+                var attrs = entity.attributes;
+                if (entity.hasOwnProperty("label")) {
+                  const ytext = new YText();
+                  map.set(entity.label.value.id, ytext);
+                  ytext.insert(0, entity.label.value.value);
+                }
+                initAttributes(attrs, map);
               }
-              initAttributes(attrs, map);
             }
+            $("#import-model").remove(".spinner-border");
+            const canvasMap = window.y.getMap("canvas");
+            canvasMap.set("ReloadWidgetOperation", "import");
+          } else {
+            const dataMap = window.y.getMap("data");
+            const model =  dataMap.get('model')
+                    for(let key in data.nodes){
+                      let oldKey = key;
+                      if(key in model.nodes){
+                        // adding +1 to avoid duplicates, but srsly, something better is needed here, i am not pround of this one here
+                        key+="1";
+                      }
+                        model.nodes[key] = data.nodes[oldKey]
+                    }
+                    for(var key in data.edges){
+                      let oldKey = key;
+                      if(key in model.edges){
+                        key+="1";
+                      }
+                      model.edges[key] = data.edges[oldKey]
+                    }
+                    dataMap.set('model',model)
+                    const canvasMap = window.y.getMap("canvas");
+                    canvasMap.set("ReloadWidgetOperation", "import");
           }
-          $("#import-model").remove(".spinner-border");
-          const canvasMap = window.y.getMap("canvas");
-          canvasMap.set("ReloadWidgetOperation", "import");
+         
           this.feedback(
             "Imported model successfully! The page will be reloaded."
           );
