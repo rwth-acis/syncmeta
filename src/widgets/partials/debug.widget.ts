@@ -532,17 +532,19 @@ export class DebugWidget extends SyncMetaWidget(
             const dataMap = window.y.getMap("data");
             const model =  dataMap.get('model')
                     for(let key in data.nodes){
+                      let oldKey = key;
                       if(key in model.nodes){
                         // adding +1 to avoid duplicates, but srsly, something better is needed here, i am not pround of this one here
-                        key+=1;
+                        key+="1";
                       }
-                        model.nodes[key] = data.nodes[key]
+                        model.nodes[key] = data.nodes[oldKey]
                     }
                     for(var key in data.edges){
+                      let oldKey = key;
                       if(key in model.edges){
-                        key+=1;
+                        key+="1";
                       }
-                      model.edges[key] = data.edges[key]
+                      model.edges[key] = data.edges[oldKey]
                     }
                     dataMap.set('model',model)
                     const canvasMap = window.y.getMap("canvas");
