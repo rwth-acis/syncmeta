@@ -4,8 +4,8 @@ import "https://unpkg.com/jquery@3.6.0/dist/jquery.js";
 
 import "https://cdnjs.cloudflare.com/ajax/libs/jquery-migrate/1.4.1/jquery-migrate.min.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js";
-import { html, LitElement } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { html, LitElement, nothing } from "lit";
+import { customElement, property, state } from "lit/decorators.js";
 import AbstractClassNodeTool from "../../es6/canvas_widget/AbstractClassNodeTool";
 import BiDirAssociationEdgeTool from "../../es6/canvas_widget/BiDirAssociationEdgeTool";
 import Canvas from "../../es6/canvas_widget/Canvas";
@@ -57,7 +57,7 @@ import ViewInitOperation from "../../es6/operations/non_ot/ViewInitOperation";
 import { getUserInfo } from "../../es6/User";
 import Util from "../../es6/Util";
 import { SyncMetaWidget } from "../../widget";
-import { Doc as YDoc } from "yjs";
+import { Map as YMap, Doc as YDoc } from "yjs";
 
 // canvas widget
 @customElement(getWidgetTagName(CONFIG.WIDGET.NAME.MAIN))
@@ -69,6 +69,8 @@ export class CanvasWidget extends SyncMetaWidget(
   @property({ type: Number }) yjsPort = 1234;
   @property({ type: String }) yjsProtocol = "ws";
   @property({ type: String }) yjsSpaceTitle = window.spaceTitle;
+
+  @state() metamodelEmpty = true;
 
   canvas: Canvas;
   metamodel: any;
@@ -108,25 +110,28 @@ export class CanvasWidget extends SyncMetaWidget(
       <div class="main-container p-2 d-flex flex-column h-100">
         <error-alert></error-alert>
         <div class="row" id="main-widget-utilities-container">
-          <div class="col-9 d-flex justify-content-between">
-            <div class="layout-buttons btn-group">
-              <button
-                id="viewsHide"
-                class="btn btn-light"
-                title="Close the View Panel"
-                @click=${this.hideViews}
-              >
-                <i class="bi bi-caret-up"></i>
-              </button>
-              <button
-                id="viewsShow"
-                class="btn btn-light"
-                title="Show the View Panel"
-                @click=${this.showViews}
-              >
-                <i class="bi bi-caret-down"></i>
-              </button>
-
+          <div class="col col-md-9 d-flex">
+            <div class="layout-buttons px-2 btn-group"> 
+              ${
+                this.metamodelEmpty
+                  ? html`<button
+                        id="viewsHide"
+                        class="btn btn-light"
+                        title="Close the View Panel"
+                        @click=${this.hideViews}
+                      >
+                        <i class="bi bi-caret-up"></i>
+                      </button>
+                      <button
+                        id="viewsShow"
+                        class="btn btn-light"
+                        title="Show the View Panel"
+                        @click=${this.showViews}
+                      >
+                        <i class="bi bi-caret-down"></i>
+                      </button>`
+                  : nothing
+              }
               <button
                 id="showtype"
                 class="btn btn-light"
@@ -148,6 +153,11 @@ export class CanvasWidget extends SyncMetaWidget(
               >
                 <i class="bi bi-layout-wtf"></i>
               </button>
+              <button id="save_image" class="btn btn-light">
+                <i class="bi bi-camera"></i>
+              </button>
+            </div>
+            <div class="zoom-buttons px-2 btn-group">
               <button id="zoomIn" class="btn btn-light" title="Zoom in">
                 <i class="bi bi-zoom-in"></i>
               </button>
@@ -155,19 +165,7 @@ export class CanvasWidget extends SyncMetaWidget(
                 <i class="bi bi-zoom-out"></i>
               </button>
             </div>
-            <button
-                id="save"
-                class="btn btn-light"
-                title="Save the current state of the model"
-              >
-                <i class="bi bi-cloud-arrow-up"></i>
-              </button>
-            <div class="operation-buttons btn-group">
-              
-              <!-- Uncommented the below line for Export as PNG! -->
-              <button id="save_image" class="btn btn-light">
-                <i class="bi bi-camera"></i>
-              </button>
+            <div class="operation-buttons px-2 btn-group">
               <button
                 id="undo-btn"
                 class="btn btn-light"
@@ -188,7 +186,7 @@ export class CanvasWidget extends SyncMetaWidget(
               >View:<span id="lblCurrentViewId"></span
             ></strong>
           </div>
-          <div class="col-3">
+          <div class="col col-md-3">
             <div class="input-group">
               <input
                 type="text"
@@ -465,6 +463,10 @@ export class CanvasWidget extends SyncMetaWidget(
         const userMap = y.getMap("users");
         const dataMap = y.getMap("data");
 
+        dataMap.observe((event: any) => {
+          this.metamodelEmpty = !dataMap.get("metamodel");
+        });
+        this.metamodelEmpty = !dataMap.get("metamodel");
         // TODO: dataMap is empty as it seems to need some time to be initialized
         // This is a workaround to wait for the initialization
         setTimeout(() => {
@@ -667,11 +669,11 @@ function InitMainWidget(metamodel, model, _iwcw, user, y = window.y) {
           }
           case "ReloadWidgetOperation": {
             var text;
-            const value = event.currentTarget.get(key);
+            const value = (event.currentTarget as YMap<any>).get(key);
             switch (value) {
               case "import": {
                 const dataMap = y.getMap("data");
-                var model = dataMap.get("model");
+                var model = dataMap.get("model") as any;
                 text =
                   "ATTENTION! Imported new model containing <strong>" +
                   Object.keys(model.nodes).length +
@@ -707,11 +709,11 @@ function InitMainWidget(metamodel, model, _iwcw, user, y = window.y) {
             for (const key of nodesMap.keys()) {
               // check if the node also exists in the updated model
 
-              var nodeInModel = dataMap.get("model")?.nodes[key];
+              var nodeInModel = (dataMap.get("model") as any)?.nodes[key];
               if (nodeInModel) {
                 // update left and top position values
-                nodesMap.get(key).set("left", nodeInModel.left);
-                nodesMap.get(key).set("top", nodeInModel.top);
+                (nodesMap.get(key) as any).set("left", nodeInModel.left);
+                (nodesMap.get(key) as any).set("top", nodeInModel.top);
               }
             }
             const activityMap = y.getMap("activity");
@@ -830,7 +832,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y = window.y) {
 
       var activityOperation = new ActivityOperation(
         "ViewApplyActivity",
-        vvs.id,
+        (vvs as any).id,
         _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]
       );
       _iwcw.sendLocalNonOTOperation(
@@ -1009,7 +1011,7 @@ function InitMainWidget(metamodel, model, _iwcw, user, y = window.y) {
   var visualizeView = function (viewId) {
     const viewsMap = y.getMap("views");
     //ViewManager.getViewResource(viewId).getRepresentation('rdfjson', function (viewData) {
-    var viewData = viewsMap.get(viewId);
+    var viewData = viewsMap.get(viewId) as any;
     if (viewData) {
       resetCanvas();
       ViewToGraph(viewData);

@@ -13,7 +13,7 @@ declare global {
     _iwc_instance_: any;
     canvas: any;
     _addIwcIntentListener: (f: any) => void;
-    _reloadThisFuckingInstance: () => void;
+    _reloadPage: () => void;
     jsPlumbInstance: JsPlumbInstance;
     spaceTitle: any;
     syncmetaLog: {

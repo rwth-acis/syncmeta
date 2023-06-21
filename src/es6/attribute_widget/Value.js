@@ -24,6 +24,7 @@ const quillEditorHtml = await loadHTML(
  * @param {attribute_widget.AbstractNode|attribute_widget.AbstractEdge} rootSubjectEntity Topmost entity in the chain of entity the attribute is assigned to
  */
 class Value extends AbstractValue {
+  quillBinding;
   constructor(id, name, subjectEntity, rootSubjectEntity) {
     super(id, name, subjectEntity, rootSubjectEntity);
     var that = this;
@@ -46,8 +47,7 @@ class Value extends AbstractValue {
      */
     var _$node = $(_.template(quillEditorHtml)({ id: editorId }));
 
-    var _$editorRef;
-    _$editorRef = new Quill(_$node.get(0), {
+    var _$editorRef = new Quill(_$node.get(0), {
       theme: "snow",
       modules: {
         toolbar: false, // Snow includes toolbar by default
@@ -62,7 +62,10 @@ class Value extends AbstractValue {
      */
     this.setValue = function (value) {
       _value = value;
-      _$editorRef.setText(value);
+    };
+
+    this.setEditorValue = function (value) {
+      if (_$editorRef.getText() !== value) _$editorRef.setText(value);
     };
 
     /**
@@ -96,7 +99,7 @@ class Value extends AbstractValue {
       return _ytext;
     };
 
-    this.registerYType = function (ytext) {
+    this.registerYType = (ytext) => {
       if (!ytext) {
         throw new Error("YText not found");
       }
@@ -108,17 +111,22 @@ class Value extends AbstractValue {
         return;
       }
       _ytext = ytext;
-
-      new QuillBinding(_ytext, _$editorRef);
-      _ytext?.observe(function () {
-        _value = _ytext.toString();
-      });
-      _$editorRef.setText(_value);
+      this.quillBinding = new QuillBinding(
+        _ytext,
+        _$editorRef,
+        window.yjsConnection.websocketProvider.awareness
+      );
       //loging
       window.syncmetaLog.initializedYTexts += 1;
       if (window.syncmetaLog.hasOwnProperty(this.getEntityId()))
         window.syncmetaLog.objects[this.getEntityId()] += 1;
       else window.syncmetaLog.objects[this.getEntityId()] = 0;
+    };
+
+    window.onbeforeunload = () => {
+      if (_ytext) {
+        _ytext.unobserve();
+      }
     };
   }
 }

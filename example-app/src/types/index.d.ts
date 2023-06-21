@@ -8,7 +8,7 @@ declare global {
     caeFrames: any;
     _iwc_instance_: any;
     _addIwcIntentListener: (f: any) => void;
-    _reloadThisFuckingInstance: () => void;
+    _reloadPage: () => void;
     spaceTitle: string;
   }
 }

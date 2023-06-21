@@ -1,4 +1,8 @@
-import { EVENT_DRAG_START, EVENT_DRAG_STOP } from "@jsplumb/browser-ui";
+import {
+  EVENT_DRAG_START,
+  EVENT_DRAG_STOP,
+  EVENT_CONNECTION_CLICK,
+} from "@jsplumb/browser-ui";
 import { AnchorLocations } from "@jsplumb/browser-ui";
 import { BezierConnector } from "@jsplumb/browser-ui";
 import { FlowchartConnector } from "@jsplumb/browser-ui";
@@ -269,7 +273,6 @@ function HistoryManager() {
   var $redo = $("#redo");
 
   var propagateHistoryOperationFromJson = function (json) {
-    
     var operation = null,
       data = null,
       entity;
@@ -780,14 +783,14 @@ export class AbstractEdge extends AbstractEntity {
     if (edgeMap.has(id)) {
       _ymap = edgeMap.get(id);
     } else if (id && type && source && target) {
-      _ymap = new YMap();
-      edgeMap.set(id, new YMap());
       y.transact(() => {
+        _ymap = new YMap();
         _ymap.set("id", id);
         _ymap.set("type", type);
         _ymap.set("source", source.getEntityId());
         _ymap.set("target", target.getEntityId());
         _ymap.set("jabberId", _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]);
+        edgeMap.set(id, _ymap);
       });
     }
 
@@ -1367,8 +1370,13 @@ export class AbstractEdge extends AbstractEntity {
       var paintStyle = _.clone(_defaultPaintStyle);
 
       if (color) {
-        paintStyle.strokeStyle = color;
-        paintStyle.lineWidth = 8;
+        paintStyle = {
+          ...paintStyle,
+          stroke: color,
+          fill: color,
+          outlineStroke: "black",
+          strokeWidth: 8,
+        };
         if (_jsPlumbConnection) _jsPlumbConnection.setPaintStyle(paintStyle);
         else throw new Error("jsPlumbConnection is null");
       }
@@ -1422,8 +1430,11 @@ export class AbstractEdge extends AbstractEntity {
     this.bindMoveToolEvents = () => {
       if (_jsPlumbConnection) {
         //Enable Edge Select
-        $("." + id).on("click", function (e) {
-          e.stopPropagation();
+        //class contains id
+        jsPlumbInstance.bind(EVENT_CONNECTION_CLICK, (connection) => {
+          if (connection.cssClass.indexOf(id) === -1) return;
+          console.log(connection);
+
           _canvas.select(that);
         });
 
@@ -1431,12 +1442,6 @@ export class AbstractEdge extends AbstractEntity {
           .find("input")
           .prop("disabled", false)
           .css("pointerEvents", "");
-
-        /*$(_jsPlumbConnection.getOverlay("label").canvas).find("input[type=text]").autoGrowInput({
-                   comfortZone: 10,
-                   minWidth: 40,
-                   maxWidth: 100
-                   }).trigger("blur");*/
       } else throw new Error("jsPlumbConnection is null");
 
       if (id) {
@@ -1538,6 +1543,9 @@ export class AbstractEdge extends AbstractEntity {
  * @param {number} zIndex Position of node on z-axis
  */
 export class AbstractNode extends AbstractEntity {
+  MIN_WIDTH = 50;
+  MIN_HEIGHT = 50;
+
   nodeSelector;
   _$node;
   _isBeingDragged = false;
@@ -1554,6 +1562,11 @@ export class AbstractNode extends AbstractEntity {
     y
   ) {
     super(id);
+    if (height < this.MIN_HEIGHT) height = this.MIN_HEIGHT;
+    if (width < this.MIN_WIDTH) width = this.MIN_WIDTH;
+    if (top < 0) top = 0;
+    if (left < 0) left = 0;
+
     var that = this;
     y = y || window.y;
     if (!y) {
@@ -2442,6 +2455,7 @@ export class AbstractNode extends AbstractEntity {
         }
       }
       this._draw();
+      jsPlumbInstance.repaintEverything();
     };
 
     this.moveAbs = function (left, top, zIndex) {
@@ -2476,8 +2490,14 @@ export class AbstractNode extends AbstractEntity {
      * @param {number} offsetY Offset in y-direction
      */
     this.resize = function (offsetX, offsetY) {
-      _appearance.width += offsetX;
-      _appearance.height += offsetY;
+      _appearance.width =
+        _appearance.width + offsetX > this.MIN_WIDTH
+          ? _appearance.width + offsetX
+          : this.MIN_WIDTH;
+      _appearance.height =
+        _appearance.height + offsetY > this.MIN_HEIGHT
+          ? _appearance.height + offsetY
+          : this.MIN_HEIGHT;
       if (_ymap) {
         y.transact(() => {
           _ymap.set("width", _appearance.width);
@@ -2784,7 +2804,6 @@ export class AbstractNode extends AbstractEntity {
         _canvas.bindMoveToolEvents();
         _$node.css({ opacity: "" });
 
-        
         // if offset bigger than canvas size, no need to send the operation
         if (
           params.el.offsetLeft < 0 ||
@@ -2798,7 +2817,7 @@ export class AbstractNode extends AbstractEntity {
 
         var offsetX = Math.round(params.el.offsetLeft - originalPos.left);
         var offsetY = Math.round(params.el.offsetTop - originalPos.top);
-        
+
         // if offset is 0, no need to send the operation
         if (offsetX === 0 && offsetY === 0) return;
 
@@ -2978,8 +2997,9 @@ export class AbstractNode extends AbstractEntity {
   repaint() {
     window.jsPlumbInstance.repaint(this._$node.get(0));
 
-    _.each(EntityManagerInstance.getEdges(), function (e) {
-      e.setZIndex();
+    Object.values(EntityManagerInstance.getEdges()).forEach((edge) => {
+      edge.setZIndex();
+      // window.jsPlumbInstance.repaint(document.querySelector(`[class=".${edge.getJsPlumbConnection().cssClass.trim()}"]`));
     });
   }
 
@@ -3035,7 +3055,7 @@ export class AbstractNode extends AbstractEntity {
           }),
           // minimum size
           interact.modifiers.restrictSize({
-            min: { width: 40, height: 40 },
+            min: { width: 50, height: 50 },
           }),
         ],
         inertia: { enabled: false },
@@ -5935,8 +5955,33 @@ export function makeNode(type, $shape, anchors, attributes) {
           }
         }
       };
+
+      this.highlight = function (color = "green", username = "Anonymous") {
+        _$node.addClass("highlighted");
+        // set the border of the svg element
+        _$node.find("svg").css("border", "3px solid " + color);
+        _$node.find("svg").css("border-radius", "5px");
+        // add div with the username of the user who is currently editing the node
+        _$node.append(
+          '<div class="highlighted-user"> <i class="bi bi-pencil-fill me-1"></i>' +
+            username +
+            "</div>"
+        );
+        // set the color
+        _$node.find(".highlighted-user").css("color", color);
+        // set the size to small
+        _$node.find(".highlighted-user").css("font-size", "small");
+      };
+      this.unhighlight = function () {
+        _$node.removeClass("highlighted");
+        // remove the border of the svg element
+        _$node.find("svg").css("border", "none");
+        // remove the div with the username of the user who is currently editing the node
+        _$node.find(".highlighted-user").remove();
+      };
     }
     nodeSelector;
+
     /**
      * Get the jquery shape object from the node type
      * @static
@@ -7836,6 +7881,9 @@ export class SelectionValue extends AbstractValue {
             }
           });
         });
+      window.onbeforeunload = () => {
+        that.getRootSubjectEntity().getYMap().unobserveDeep();
+      };
     };
   }
 }
@@ -8190,6 +8238,9 @@ export class IntegerValue extends AbstractValue {
             }
           });
         });
+      window.onbeforeunload = () => {
+        that.getRootSubjectEntity().getYMap().unobserve();
+      };
     };
 
     init();
@@ -8602,14 +8653,6 @@ export class Value extends AbstractValue {
     if (!yMap) {
       throw new Error("yMap is undefined");
     }
-    y.transact(() => {
-      if (!yMap.has(id) || !(yMap.get(id) instanceof YText)) {
-        _ytext = new YText();
-        yMap.set(id, _ytext);
-      } else {
-        _ytext = yMap.get(id);
-      }
-    });
 
     var that = this;
     /**
@@ -8633,8 +8676,6 @@ export class Value extends AbstractValue {
     this.setValue = function (value) {
       _value = value;
       _$node.text(value);
-
-      this.value = _ytext.toString();
     };
 
     /**
@@ -8675,11 +8716,19 @@ export class Value extends AbstractValue {
     };
 
     this.registerYType = function () {
+      y.transact(() => {
+        if (!yMap.has(id) || !(yMap.get(id) instanceof YText)) {
+          _ytext = new YText(_value);
+          yMap.set(id, _ytext);
+        } else {
+          _ytext = yMap.get(id);
+        }
+      });
       _ytext.observe(
         _.debounce(function (event) {
           _value = _ytext.toString().replace(/\n/g, "");
           that.setValue(_value);
-          EntityManagerInstance.storeDataYjs();
+          EntityManagerInstance.saveState();
           const userMap = y.getMap("users");
           const jabberId = userMap.get(event.currentTarget.doc.clientID);
 
@@ -8705,6 +8754,10 @@ export class Value extends AbstractValue {
           );
         }, 500)
       );
+
+      window.onbeforeunload = () => {
+        _ytext.unobserve();
+      };
     };
 
     this.getYText = function () {

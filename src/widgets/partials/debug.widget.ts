@@ -14,6 +14,7 @@ import { SyncMetaWidget } from "../../widget";
 import { Text as YText, Map as YMap } from "yjs";
 import { EntityManagerInstance } from "../../es6/canvas_widget/Manager";
 import JSONtoGraph from "../../es6/canvas_widget/JSONtoGraph";
+import { createReloadHandler } from "../../es6/shared";
 // widget body used by all syncmeta widgets
 const guidance = getGuidanceModeling();
 
@@ -52,6 +53,9 @@ export class DebugWidget extends SyncMetaWidget(
     yjsInstance
       .connect()
       .then((y) => {
+        setTimeout(() => {
+          createReloadHandler();
+        }, 1000);
         const dataMap = y.getMap("data");
         console.info(
           "DEBUG: Yjs successfully initialized in " +
@@ -554,6 +558,7 @@ export class DebugWidget extends SyncMetaWidget(
           this.feedback(
             "Imported model successfully! The page will be reloaded."
           );
+          window._reloadPage();
           location.reload();
         })
         .catch((err) => {

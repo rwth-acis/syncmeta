@@ -383,6 +383,12 @@ class MultiLineValue extends AbstractValue {
         else window.syncmetaLog.objects[this.getEntityId()] = 0;
 
         initData(ytext);
+
+        window.onbeforeunload = function () {
+          if (_ytext) {
+            _ytext.unobserve();
+          }
+        };
       
     };
 

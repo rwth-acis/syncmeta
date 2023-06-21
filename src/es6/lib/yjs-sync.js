@@ -147,7 +147,7 @@ export function getInstance({ spaceTitle, host, protocol, port }) {
     });
   }
   window.onbeforeunload = function () {
-    window.yjsConnection.websocketProvider.destroy();
+    window.yjsConnection?.websocketProvider.destroy();
     window.yjsConnection = null;
   };
   return window.yjsConnection;

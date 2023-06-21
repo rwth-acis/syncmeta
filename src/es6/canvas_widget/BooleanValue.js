@@ -7,6 +7,7 @@ import AbstractValue from "./AbstractValue";
 import AbstractAttribute from "./AbstractAttribute";
 import ValueChangeOperation from "../operations/ot/ValueChangeOperation";
 import ActivityOperation from "../operations/non_ot/ActivityOperation";
+import { EntityManagerInstance } from "./Manager";
 import loadHTML from "../html.template.loader";
 
 let booleanValueHtml = await loadHTML(
@@ -158,6 +159,7 @@ class BooleanValue extends AbstractValue {
               _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID] ===
               operation.getJabberId()
             ) {
+              EntityManagerInstance.saveState();
               const activityMap = y.getMap("activity");
               activityMap.set(
                 ActivityOperation.TYPE,
@@ -193,21 +195,9 @@ class BooleanValue extends AbstractValue {
           });
         });
 
-      //Debounce the save function
-      that
-        .getRootSubjectEntity()
-        .getYMap()
-        .observe(
-          _.debounce(function (event) {
-            event.keysChanged.forEach(function (key) {
-              if (
-                key == "jabberId" &&
-                key === _iwcw.getUser()[CONFIG.NS.PERSON.JABBERID]
-              )
-                EntityManager.saveState();
-            });
-          }, 500)
-        );
+      window.onbeforeunload = function () {
+        that.getRootSubjectEntity().getYMap().unobserve();
+      };
     };
 
     init();

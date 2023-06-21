@@ -15,7 +15,6 @@ import { getInstance } from "../../src/es6/lib/yjs-sync";
 import "./main";
 
 import { APP_CONFIG } from "../config";
-import { Doc } from "yjs";
 
 const routes = [
   {
@@ -103,31 +102,6 @@ class StaticApp extends LitElement {
           100% {
             transform: rotate(360deg);
           }
-        }
-        iframe {
-          width: 100%;
-          height: 100%;
-        }
-        .maincontainer {
-          display: flex;
-          height: 600px;
-          flex-flow: row wrap;
-        }
-        .innercontainer {
-          padding: 5px;
-          margin: 5px;
-          flex: 1;
-        }
-        .innercontainer:nth-of-type(1) {
-          flex: 4;
-          display: flex;
-          flex-flow: column;
-        }
-
-        .innercontainer:nth-of-type(2) {
-          flex: 2;
-          display: flex;
-          flex-flow: column;
         }
       </style>
       <las2peer-frontend-statusbar

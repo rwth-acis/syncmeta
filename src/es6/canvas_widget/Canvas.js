@@ -7,7 +7,7 @@ import { newInstance } from "@jsplumb/browser-ui";
 import interact from "interactjs";
 import { default as _ } from "lodash-es";
 import { Map as YMap } from "yjs";
-
+import { BezierConnector } from "@jsplumb/browser-ui";
 import Util from "../Util";
 import AbstractEntity from "../canvas_widget/AbstractEntity";
 import DagreLayout from "../canvas_widget/DagreLayout";
@@ -133,6 +133,7 @@ export default class Canvas extends AbstractCanvas {
         filter: ".resizing",
         containment: "parentEnclosed",
       },
+      connector: BezierConnector.type,
     });
 
     window.jsPlumbInstance = jsPlumbInstance;
@@ -184,6 +185,8 @@ export default class Canvas extends AbstractCanvas {
           operation.getContainment()
         );
       }
+
+      if (!node) throw new Error("Node could not be created");
 
       if (operation.getDefaultLabel()) {
         node.getLabel().getValue().setValue(operation.getDefaultLabel());
@@ -1825,19 +1828,22 @@ export default class Canvas extends AbstractCanvas {
         const array = Array.from(event.changes.keys.entries());
         array.forEach(([key, change]) => {
           const userMap = y.getMap("users");
-          if (key !== userMap.get(y.clientID)) {
+          const me = userMap.get(y.clientID);
+          if (key !== me) {
             const userList = y.getMap("userList");
-            var userInfo = userList.get(key);
-            if (event.oldValue != null) {
-              var unselectedEntity = EntityManager.find(event.oldValue);
+            const userId = key.includes("@") ? key.split("@")[0] : key;
+            var userInfo = userList.get(userId);
+            if (change.oldValue != null) {
+              var unselectedEntity = EntityManager.find(change.oldValue);
               if (unselectedEntity) unselectedEntity.unhighlight();
             }
+            const selection = selectionMap.get(key);
 
-            if (event.value != null) {
-              var selectedEntity = EntityManager.find(event.value);
+            if (selection) {
+              var selectedEntity = EntityManager.find(selection);
               if (selectedEntity)
                 selectedEntity.highlight(
-                  Util.getColor(userInfo.globalId),
+                  Util.getColor(userInfo?.globalId),
                   userInfo[CONFIG.NS.PERSON.TITLE]
                 );
             }

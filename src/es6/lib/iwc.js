@@ -37,23 +37,7 @@ import { getWidgetTagName } from "../config";
  * @author Jonas K├Ânning (koenning@dbis.rwth-aachen.de)
  */
 
-export class Intent {
-  sender;
-  receiver;
-  data;
-  dataType = "text/xml";
-  action;
-  categories = ["", ""];
-  extras = {};
-  flags;
-  constructor(sender, receiver, action, data, global) {
-    this.sender = sender;
-    this.receiver = receiver;
-    this.data = data;
-    this.action = action;
-    this.flags = [global ? "PUBLISH_GLOBAL" : "PUBLISH_LOCAL"];
-  }
-}
+
 
 /**
  * Provides messaging functionality.
@@ -109,13 +93,13 @@ export class Client {
     } catch (error) {
       console.error(error);
     }
-    
 
     if (this._y) {
       // If yjs is available also connect a global listener
       const intents = this._y.getMap("intents");
       if (intents) intents.observe(handler);
     }
+    this._connected = true;
   }
 
   /**
@@ -147,7 +131,7 @@ export class Client {
   }
 
   publishLocal(intent, origin) {
-    //Find iframe and post message
+    //Find widget and post message
     const widgets = [];
     for (const el of document.querySelectorAll("*")) {
       if (el.tagName.match(/-widget$/i)) {
@@ -196,6 +180,24 @@ export class Client {
   }
 }
 
+export class Intent {
+  sender;
+  receiver;
+  data;
+  dataType = "text/xml";
+  action;
+  categories = ["", ""];
+  extras = {};
+  flags;
+  constructor(sender, receiver, action, data, global) {
+    this.sender = sender;
+    this.receiver = receiver;
+    this.data = data;
+    this.action = action;
+    this.flags = [global ? "PUBLISH_GLOBAL" : "PUBLISH_LOCAL"];
+  }
+}
+
 //======================= IWC.util ==============================
 
 export class util {
@@ -214,7 +216,7 @@ export class util {
   static validateIntent(intent) {
     if (typeof intent.sender != "string") {
       throw new Error(
-        "Intent object must possess property 'component' of type 'String'"
+        "Intent object must possess property 'sender' of type 'String'"
       );
     }
     if (typeof intent.data != "string") {

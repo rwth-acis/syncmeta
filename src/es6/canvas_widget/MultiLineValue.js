@@ -270,6 +270,9 @@ class MultiLineValue extends AbstractValue {
           );
         }
       });
+       window.onbeforeunload = () => {
+         _ytext.unobserve();
+       };
     };
 
     if (_iwcw) {

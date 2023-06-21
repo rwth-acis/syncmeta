@@ -112,6 +112,11 @@ class AttributeWrapper {
             operation.getContainment()
           );
         }
+        if (!node) {
+          throw new Error(
+            "Node " + operation.getEntityId() + " could not be created"
+          );
+        }
         node.addToWrapper(that);
       }
     };
@@ -231,7 +236,7 @@ class AttributeWrapper {
         Array.from(event.changes.keys.entries()).forEach(function (entry) {
           const key = entry[0];
           const action = entry[1].action;
-          if (action !== "add" || key.match(/\[(\w+?)\]/)) return;
+          if (action !== "add") return;
 
           let nodeId;
           if (
@@ -311,45 +316,50 @@ class AttributeWrapper {
         });
       });
       const edgesMap = y.getMap("edges");
-      edgesMap.observe(function (event) {
-        const array = Array.from(event.changes.keys.entries());
-        array.forEach(function (entry) {
+      edgesMap.observeDeep(([event]) => {
+        Array.from(event.changes.keys.entries()).forEach(function (entry) {
           const key = entry[0];
           const action = entry[1].action;
           if (action !== "add") return;
 
-          const jabberId = edgesMap.get(key).get("jabberId");
-          if (!jabberId) return;
+          let edgeId;
+          if (
+            event.target.get(key) instanceof YMap &&
+            event.target.get(key).has("jabberId")
+          ) {
+            const map = event.currentTarget.get(key);
 
-          const map = event.currentTarget.get(key);
+            edgeAddCallback(
+              new EdgeAddOperation(
+                map.get("id"),
+                map.get("type"),
+                map.get("source"),
+                map.get("target"),
+                null,
+                null,
+                null,
+                map.get("jabberId")
+              )
+            );
+          } else {
+            edgeId = event.target.get("id");
+          }
 
-          edgeAddCallback(
-            new EdgeAddOperation(
-              map.get("id"),
-              map.get("type"),
-              map.get("source"),
-              map.get("target"),
-              null,
-              null,
-              null,
-              jabberId
-            )
-          );
-          var edge = EntityManager.findEdge(map.get("id"));
+          var edge = EntityManager.findEdge(edgeId);
           if (!edge) {
-            throw new Error("edge is null");
+            return;
           }
           var attrs = edge.getAttributes();
           if (edge.getLabel().getEntityId() === key)
-            edge.getLabel().getValue().registerYType(map.get(key));
+            edge.getLabel().getValue().registerYType(event.target.get(key));
           else {
             var attrs = edge.getAttributes();
             for (var attrKey in attrs) {
               if (attrs.hasOwnProperty(attrKey)) {
                 if (attrs[attrKey].getEntityId() === key) {
                   var attr = attrs[attrKey];
-                  if (attr.getValue().hasOwnProperty("registerYType"))
-                    attr.getValue().registerYType(map.get(key));
+                  if (attr.getValue().registerYType)
+                    attr.getValue().registerYType(event.target.get(key));
                 }
               }
             }
@@ -359,6 +369,14 @@ class AttributeWrapper {
     }
     this.select(_modelAttributesNode);
   }
+}
+/**
+ * checks if key is from an attribute
+ * @param {*} key
+ * @returns
+ */
+function keyIsAttribute(key) {
+  return key.match(/\[(\w+?)\]/); // match [attribute]
 }
 
 export default AttributeWrapper;
