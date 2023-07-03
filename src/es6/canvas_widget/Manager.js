@@ -8756,7 +8756,11 @@ export class Value extends AbstractValue {
       );
 
       window.onbeforeunload = () => {
-        _ytext.unobserve();
+         if (_ytext) {
+           try {
+             _ytext.unobserve();
+           } catch (error) {}
+         }
       };
     };
 

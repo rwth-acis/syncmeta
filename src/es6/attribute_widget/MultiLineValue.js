@@ -385,9 +385,11 @@ class MultiLineValue extends AbstractValue {
         initData(ytext);
 
         window.onbeforeunload = function () {
-          if (_ytext) {
-            _ytext.unobserve();
-          }
+           if (_ytext) {
+             try {
+               _ytext.unobserve();
+             } catch (error) {}
+           }
         };
       
     };
