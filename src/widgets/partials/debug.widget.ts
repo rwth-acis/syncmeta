@@ -35,6 +35,7 @@ export class DebugWidget extends SyncMetaWidget(
       <span class="visually-hidden">Loading...</span>
      </div>`
   );
+  $toast;
 
   protected firstUpdated(
     _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
@@ -63,6 +64,9 @@ export class DebugWidget extends SyncMetaWidget(
             " with y-user-id: " +
             y.clientID
         );
+
+        const myToastEl = document.getElementById("confirmation-toast");
+        this.$toast = bootstrap.Toast.getOrCreateInstance(myToastEl);
 
         var $deleteMetamodel = $("#delete-meta-model").prop("disabled", false),
           $exportMetamodel = $("#export-meta-model").prop("disabled", false),
@@ -328,6 +332,20 @@ export class DebugWidget extends SyncMetaWidget(
 
                 <hr />
                 <div id="import-export-container">
+                  <div class="toast" id="confirmation-toast" role="alert" aria-live="assertive" aria-atomic="true"  data-bs-autohide="false">
+                      <div class="toast-header">
+                         <strong class="me-auto">Should the current model be deleted?</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                      </div>
+                  <div class="toast-body">
+                    <div >
+                      <button type="button" class="btn btn-secondary btn-sm"  id="delete-model-confirm" @click=${() =>
+                        this.importModel(true)}>Yes</button>
+                      <button type="button" class="btn btn-secondary btn-sm"  id="delete-model-reject" @click=${() =>
+                        this.importModel(false)}>No</button>
+                    </div>
+                  </div>
+                </div>
                   <div id="modelDiv" class="seperating_box">
                     <h6>
                       <strong>(Meta- or Guidance-)Model</strong>
@@ -336,7 +354,7 @@ export class DebugWidget extends SyncMetaWidget(
                       id="import-model"
                       class="btn btn-primary flex items-center justify-center"
                       title="Import a model to the canvas"
-                      @click="${this.importModel}"
+                      @click="${() => this.$toast.show()}"
                     >
                       Import
                     </button>
@@ -449,25 +467,13 @@ export class DebugWidget extends SyncMetaWidget(
     $("#delete-activity-list").prop("disabled", false);
   }
 
-  importModel() {
+  importModel(shouldDeleteModel = false) {
+    this.$toast.hide();
     this.$spinner.show();
     setTimeout(() => {
       getFileContent()
         .then((data) => {
-          try {
-            JSONtoGraph(data);
-          } catch (error) {
-            const deleteMetamodel = confirm(
-              "The imported model will not be compatible. Do you want to delete the current metamodel?"
-            );
-            if (deleteMetamodel) {
-              window.y.getMap("data").set("metamodel", null);
-            }
-          }
-          const deleteModel = confirm(
-            "Do you want to delete the current model?"
-          );
-          if (deleteModel) {
+          if (shouldDeleteModel) {
             var initAttributes = function (attrs, map) {
               if (attrs.hasOwnProperty("[attributes]")) {
                 var attr = attrs["[attributes]"].list;
