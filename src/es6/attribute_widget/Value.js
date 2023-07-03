@@ -125,7 +125,9 @@ class Value extends AbstractValue {
 
     window.onbeforeunload = () => {
       if (_ytext) {
-        _ytext.unobserve();
+        try {
+          _ytext.unobserve();
+        } catch (error) {}
       }
     };
   }
