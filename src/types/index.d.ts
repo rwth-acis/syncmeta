@@ -12,6 +12,7 @@ declare global {
     caeFrames: any;
     _iwc_instance_: any;
     canvas: any;
+    syncmeta: any;
     _addIwcIntentListener: (f: any) => void;
     _reloadPage: () => void;
     jsPlumbInstance: JsPlumbInstance;
