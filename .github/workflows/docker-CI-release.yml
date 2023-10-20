@@ -14,7 +14,8 @@ jobs:
     - name: Get tag
       id: get_tag
       shell: bash
-      run: echo "##[set-output name=tag;]$(echo ${GITHUB_REF#refs/tags/})"
+      run: echo "tag=$(echo ${GITHUB_REF#refs/tags/})" >> $GITHUB_ENV
+
     
     # get the major version of the release, e.g. for 1.2.3 -> 1
     # use this if you want to have an image with the major version as tag that is always the latest release of this major version
