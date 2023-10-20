@@ -452,6 +452,7 @@ export class CanvasWidget extends SyncMetaWidget(
     this.yjsInstance
       .connect()
       .then((y: YDoc) => {
+        window.syncmeta = { EntityManagerInstance: EntityManager };
         console.info(
           "CANVAS: Yjs Initialized successfully in room " +
             this.yjsSpaceTitle +
