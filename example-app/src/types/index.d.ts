@@ -10,5 +10,8 @@ declare global {
     _addIwcIntentListener: (f: any) => void;
     _reloadPage: () => void;
     spaceTitle: string;
+    syncmeta: {
+      EntityManagerInstance: any;
+    };
   }
 }
