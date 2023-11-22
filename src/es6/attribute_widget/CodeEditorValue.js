@@ -46,7 +46,7 @@ class CodeEditorValue extends AbstractValue {
 
     var editor = null;
 
-    var init = false
+    var init = false;
 
     /**
      * jQuery object of DOM node representing the node
@@ -57,9 +57,9 @@ class CodeEditorValue extends AbstractValue {
 
     var bindQuillEditor = function (ytext) {
       if (init) {
-        return
+        return;
       }
-      init = true
+      init = true;
       _ytext = ytext;
       new QuillBinding(_ytext, editor);
 
@@ -74,10 +74,12 @@ class CodeEditorValue extends AbstractValue {
         bindQuillEditor(ytext);
       }
     };
+
     const tagname = getWidgetTagName(CONFIG.WIDGET.NAME.ATTRIBUTE);
     const editorId = "editor-" + rootSubjectEntity.getEntityId();
+
     if (editor) {
-      $(editor.container).parent().show();
+      this.modal.show();
       // $("#wrapper").hide();
     } else {
       var tpl = $(
@@ -86,24 +88,36 @@ class CodeEditorValue extends AbstractValue {
           title: name,
         })
       );
+      this.modal = new bootstrap.Modal(tpl.get(0));
 
       $(tagname).find(".main-wrapper").append(tpl);
       // $("#wrapper").hide();
 
       const domElem = tpl.get(0).querySelector("#" + editorId);
+      if (!domElem) {
+        console.error("domElem not found", domElem);
+      }
+      // editor language is html
       editor = new Quill(domElem, {
         theme: "snow",
         modules: {
           toolbar: false, // Snow includes toolbar by default
         },
         placeholder: "Paste your SVG code here",
+
         syntax: true,
       });
       // editor.getSession().setMode("ace/mode/svg");
     }
 
-    _$node.click(function () {
+    // listen to close button
+    tpl.find(".btn-close").click(() => {
+      this.modal.hide();
+    });
+
+    _$node.click(() => {
       createYText();
+      this.modal.show();
     });
 
     /**
